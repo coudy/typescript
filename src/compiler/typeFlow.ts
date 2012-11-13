@@ -2682,9 +2682,6 @@ module TypeScript {
                     }
 
                     if (base.isClassInstance()) {
-                        if (this.currentScript) {
-                            this.currentScript.requiresInherits = true;
-                        }
                         if (!(type.isClassInstance())) {
                             this.checker.errorReporter.simpleError(baseRef, "Interface base type must be interface");
                         }

@@ -83,6 +83,7 @@ module TypeScript {
         private parsingDeclareFile = false;
         private amdDependencies: string[] = [];
         public inferPropertiesFromThisAssignment = false;
+        public requiresInherits = false;
 
         private resetStmtStack() {
             this.statementInfoStack = new IStatementInfo[];
@@ -1455,6 +1456,9 @@ module TypeScript {
                         }
                         currentList = implementsList;
                     }
+                    else if (this.currentToken.tokenId == TokenID.Extends) {
+                        this.requiresInherits = isClass;
+                    }
                     this.currentToken = this.scanner.scan();
                     keyword = false;
                 }
@@ -1496,8 +1500,14 @@ module TypeScript {
                     this.currentToken = this.scanner.scan();
                     continue;
                 }
+
                 else if ((this.currentToken.tokenId == TokenID.Extends) ||
                          (this.currentToken.tokenId == TokenID.Implements)) {
+
+                    if (this.currentToken.tokenId == TokenID.Extends) {
+                        this.requiresInherits = isClass;
+                    }
+
                     currentList = extendsList;
                     keyword = true;
                     continue;
@@ -4215,6 +4225,7 @@ module TypeScript {
             this.ambientModule = false;
             this.topLevel = true;
             this.hasTopLevelImportOrExport = false;
+            this.requiresInherits = false;
             this.fname = filename;
             this.currentUnitIndex = unitIndex;
             this.amdDependencies = [];
@@ -4285,6 +4296,7 @@ module TypeScript {
             script.topLevelMod = topLevelMod;
             script.containsUnicodeChar = this.scanner.seenUnicodeChar;
             script.containsUnicodeCharInComment = this.scanner.seenUnicodeCharInComment;
+            script.requiresInherits = this.requiresInherits;
             return script;
         }
     }

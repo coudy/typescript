@@ -1,6 +1,5 @@
 var C = (function () {
     function C() { }
-    C.zeek = 0;
     return C;
 })();
 var x1 = 3;

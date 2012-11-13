@@ -56,14 +56,14 @@ var G = (function (_super) {
 })(D);
 var H = (function () {
     function H() {
-        _super.prototype();
+        _super.call(this);
     }
     return H;
 })();
 var I = (function (_super) {
     __extends(I, _super);
     function I() {
-        _super.prototype();
+        _super.call(this);
     }
     return I;
 })(Object);
@@ -111,28 +111,28 @@ var N = (function () {
 })();
 var O = (function () {
     function O() {
-        this.= = undefined;
+        this.=;
         0;
     }
     return O;
 })();
 var P = (function () {
     function P() {
-        this.= = undefined;
+        this.=;
         0;
     }
     return P;
 })();
 var Q = (function () {
     function Q() {
-        this.. = undefined;
+        this..;
         p1 = 0;
     }
     return Q;
 })();
 var R = (function () {
     function R() {
-        this.. = undefined;
+        this..;
         p1 = 0;
     }
     return R;
