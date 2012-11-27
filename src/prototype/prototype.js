@@ -5177,6 +5177,25 @@ var SyntaxToken = (function () {
     SyntaxToken.create = function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
         return SyntaxToken.createStandardToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics);
     }
+    SyntaxToken.toJSON = function toJSON(token) {
+        return {
+            diagnostics: token.diagnostics(),
+            fullStart: token.fullStart(),
+            fullWidth: token.fullWidth(),
+            hasLeadingCommentTrivia: token.hasLeadingCommentTrivia(),
+            hasLeadingTrivia: token.hasLeadingTrivia(),
+            hasTrailingCommentTrivia: token.hasTrailingComentTrivia(),
+            hasTrailingTrivia: token.hasTrailingTrivia(),
+            isMissing: token.isMissing(),
+            keywordKind: (SyntaxKind)._map[token.keywordKind()],
+            kind: (SyntaxKind)._map[token.kind()],
+            start: token.start(),
+            text: token.text(),
+            value: token.value(),
+            valueText: token.valueText(),
+            width: token.width()
+        };
+    }
     SyntaxToken.createStandardToken = function createStandardToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
         var kind = tokenInfo.Kind;
         var keywordKind = tokenInfo.KeywordKind;
@@ -5188,6 +5207,9 @@ var SyntaxToken = (function () {
         var trailingComment = trailingTriviaInfo.HasComment;
         var token = null;
         token = {
+            toJSON: function (key) {
+                return SyntaxToken.toJSON(token);
+            },
             kind: function () {
                 return kind;
             },
@@ -7604,24 +7626,7 @@ var Program = (function () {
         var tokens = [];
         while(true) {
             var token = scanner.scan();
-            tokens.push({
-                diagnostics: token.diagnostics(),
-                fullStart: token.fullStart(),
-                fullText: token.fullText(text),
-                fullWidth: token.fullWidth(),
-                hasLeadingCommentTrivia: token.hasLeadingCommentTrivia(),
-                hasLeadingTrivia: token.hasLeadingTrivia(),
-                hasTrailingCommentTrivia: token.hasTrailingComentTrivia(),
-                hasTrailingTrivia: token.hasTrailingTrivia(),
-                isMissing: token.isMissing(),
-                keywordKind: (SyntaxKind)._map[token.keywordKind()],
-                kind: (SyntaxKind)._map[token.kind()],
-                start: token.start(),
-                text: token.text(),
-                value: token.value(),
-                valueText: token.valueText(),
-                width: token.width()
-            });
+            tokens.push(token);
             if(token.kind() === SyntaxKind.EndOfFileToken) {
                 break;
             }
