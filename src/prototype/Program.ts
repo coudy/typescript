@@ -28,25 +28,7 @@ class Program {
         while (true) {
             var token = scanner.scan();
 
-            tokens.push({
-                diagnostics: token.diagnostics(),
-                fullStart: token.fullStart(),
-                fullText: token.fullText(text),
-                fullWidth: token.fullWidth(),
-                hasLeadingCommentTrivia: token.hasLeadingCommentTrivia(),
-                hasLeadingTrivia: token.hasLeadingTrivia(),
-                hasTrailingCommentTrivia: token.hasTrailingComentTrivia(),
-                hasTrailingTrivia: token.hasTrailingTrivia(),
-                isMissing: token.isMissing(),
-                keywordKind: (<any>SyntaxKind)._map[token.keywordKind()],
-                kind: (<any>SyntaxKind)._map[token.kind()],
-                start: token.start(),
-                text: token.text(),
-                value: token.value(),
-                valueText: token.valueText(),
-                width: token.width()
-            });
-
+            tokens.push(token);
             if (token.kind() === SyntaxKind.EndOfFileToken) {
                 break;
             }

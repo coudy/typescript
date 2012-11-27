@@ -12,6 +12,26 @@ class SyntaxToken {
         return createStandardToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics);
     }
 
+    public static toJSON(token: ISyntaxToken) {
+        return {
+            diagnostics: token.diagnostics(),
+            fullStart: token.fullStart(),
+            fullWidth: token.fullWidth(),
+            hasLeadingCommentTrivia: token.hasLeadingCommentTrivia(),
+            hasLeadingTrivia: token.hasLeadingTrivia(),
+            hasTrailingCommentTrivia: token.hasTrailingComentTrivia(),
+            hasTrailingTrivia: token.hasTrailingTrivia(),
+            isMissing: token.isMissing(),
+            keywordKind: (<any>SyntaxKind)._map[token.keywordKind()],
+            kind: (<any>SyntaxKind)._map[token.kind()],
+            start: token.start(),
+            text: token.text(),
+            value: token.value(),
+            valueText: token.valueText(),
+            width: token.width()
+        };
+    }
+
     public static createStandardToken(fullStart: number,
                                       leadingTriviaInfo: ScannerTriviaInfo,
                                       tokenInfo: ScannerTokenInfo,
@@ -27,6 +47,7 @@ class SyntaxToken {
         var trailingComment = trailingTriviaInfo.HasComment;
         var token: ISyntaxToken = null;
         token = {
+            toJSON:(key) => SyntaxToken.toJSON(token),
             kind: () => kind,
             keywordKind: () => keywordKind,
             fullStart: () => fullStart,
