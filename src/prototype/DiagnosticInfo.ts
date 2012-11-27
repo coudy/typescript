@@ -5,7 +5,7 @@ class DiagnosticInfo {
     private arguments: any[] = null;
 
     // Only the compiler creates instances.
-    constructor (diagnosticCode: DiagnosticCode, ...arguments: any[]) {
+    constructor(diagnosticCode: DiagnosticCode, ...arguments: any[]) {
         this._diagnosticCode = diagnosticCode;
         this.arguments = arguments;
     }

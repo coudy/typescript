@@ -14,7 +14,7 @@ class LinePosition {
     /// The character position in the line.
     /// </param>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="line"/> or <paramref name="character"/> is less than zero. </exception>
-    constructor (line: number, character: number) {
+    constructor(line: number, character: number) {
         if (line < 0) {
             throw Errors.argumentOutOfRange("line");
         }

@@ -94,7 +94,7 @@ class TextBase implements IText {
         }
         else {
             TextUtilities.getStartAndLengthOfLineBreakEndingAt(this, lineStarts[lineNumber + 1] - 1, this.linebreakInfo);
-            return new TextLine(this, new TextSpan(first, this.linebreakInfo.startPosition - first), this.linebreakInfo.length, lineNumber); 
+            return new TextLine(this, new TextSpan(first, this.linebreakInfo.startPosition - first), this.linebreakInfo.length, lineNumber);
         }
 
     }
@@ -154,7 +154,7 @@ class TextBase implements IText {
         var length = this.length();
 
         // Corner case check
-        if (0 === this.length()) { 
+        if (0 === this.length()) {
             var result: number[] = [];
             result.push(0);
             return result;

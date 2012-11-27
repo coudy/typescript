@@ -3,8 +3,7 @@
 /// <summary>
 /// Immutable representation of a line in an IText instance.
 /// </summary>
-interface ITextLine
-{
+interface ITextLine {
     /// <summary>
     /// Start of the line.
     /// </summary>

@@ -69,49 +69,10 @@ enum ParserExpressionPrecedence {
     UnaryExpressionPrecedence= 15,
 }
 
-//enum ParserTerminatorState
-//{
-//    EndOfFile = 0,
-//    IsPossibleModuleElementStartOrStop = 1 << 3,
-//}
-
-//        private enum TerminatorState
-//        {
-//            IsNamespaceMemberStartOrStop = 1 << 0,
-//            IsAttributeDeclarationTerminator = 1 << 1,
-//            IsPossibleAggregateClauseStartOrStop = 1 << 2,
-//            IsEndOfReturnType = 1 << 4,
-//            IsEndOfParameterList = 1 << 5,
-//            IsEndOfFieldDeclaration = 1 << 6,
-//            IsPossibleEndOfVariableDeclaration = 1 << 7,
-//            IsEndOfTypeArgumentList = 1 << 8,
-//            IsPossibleStatementStartOrStop = 1 << 9,
-//            IsEndOfFixedStatement = 1 << 10,
-//            IsEndOfTryBlock = 1 << 11,
-//            IsEndOfCatchClause = 1 << 12,
-//            IsEndOfCatchBlock = 1 << 13,
-//            IsEndOfDoWhileExpression = 1 << 14,
-//            IsEndOfForStatementArgument = 1 << 15,
-//            IsEndOfDeclarationClause = 1 << 16,
-//            IsEndOfArgumentList = 1 << 17,
-//            IsSwitchSectionStart = 1 << 18,
-//            IsEndOfTypeParameterList = 1 << 19,
-//            IsEndOfMethodSignature = 1 << 20,
-//            IsEndOfNameInExplicitInterface = 1 << 21,
-//        }
-
-        //private const int LastTerminatorState = (int)TerminatorState.IsEndOfNameInExplicitInterface;
-
-        //private TerminatorState termState;
-
 class Parser {
     private scanner: Scanner = null;
     private oldTree: SyntaxTree = null;
-    // private cancellationToken: CancellationToken = null;
 
-    //private Blender firstBlender;
-    //private BlendedNode currentNode;
-    //private BlendedNode[] blendedTokens;
     private _currentToken: ISyntaxToken = null;
     private scannedTokens: ISyntaxToken[] = [];
     private previousToken: ISyntaxToken = null;
@@ -127,23 +88,10 @@ class Parser {
     constructor (
         scanner: Scanner,
         oldTree: SyntaxTree,
-        changes: TextChangeRange[]/*,
-            CancellationToken cancellationToken = default(CancellationToken)*/) {
+        changes: TextChangeRange[]) {
         this.scanner = scanner;
 
-        // this.cancellationToken = cancellationToken;
-
         this.oldTree = oldTree;
-
-        //this.currentNode = default(BlendedNode);
-        //if (this.isIncremental()) {
-        //    this.firstBlender = new Blender(lexer, this.oldTree != null ? this.oldTree.GetRoot(cancellationToken) : null, changes);
-        //    this.blendedTokens = new BlendedNode[32];
-        //}
-        //else {
-        //    this.firstBlender = default(Blender);
-        //    this.lexedTokens = new ArrayElement<SyntaxToken>[32];
-        //}
     }
 
     private isIncremental(): bool {
@@ -156,7 +104,6 @@ class Parser {
         var scanner = this.scanner;
 
         for (var i = 0; i < size; i++) {
-            // this.cancellationToken.ThrowIfCancellationRequested();
             var token = scanner.scan();
             this.addScannedToken(token);
 
@@ -180,24 +127,9 @@ class Parser {
         var offset = point.position - this.firstToken;
         Debug.assert(offset >= 0 && offset < this.tokenCount);
         this.tokenOffset = offset;
-        //this.currentToken = default(SyntaxToken);
-        //this.currentNode = default(BlendedNode);
+
         this.previousToken = point.previousToken;
         this.isInStrictMode = point.isInStrictMode;
-
-        //if (this.blendedTokens != null)
-        //{
-        //    // look forward for slots not holding a token
-        //    for (int i = this.tokenOffset; i < this.tokenCount; i++)
-        //    {
-        //        if (this.blendedTokens[i].Token == null)
-        //        {
-        //            // forget anything after and including any slot not holding a token
-        //            this.tokenCount = i;
-        //            break;
-        //        }
-        //    }
-        //}
     }
 
     private release(point: ParserResetPoint): void {
@@ -208,70 +140,7 @@ class Parser {
         }
     }
 
-    //private currentNode(): SyntaxNode {
-    //    // we will fail anyways. Assert is just to catch that earlier.
-    //    Debug.assert(this.blendedTokens != null);
-
-    //    //PERF: currentNode is a BlendedNode, which is a fairly large struct.
-    //    // the following code tries not to pull the whole struct into a local
-    //    // we only need .Node
-    //    var node = this.currentNode.Node;
-    //    if (node != null)
-    //    {
-    //        return node;
-    //    }
-
-    //    this.ReadCurrentNode();
-    //    return this.currentNode.Node;
-    //}
-
-    //private currentNodeKind(): SyntaxKind {
-    //    get
-    //    {
-    //        var cn = this.CurrentNode;
-    //        return cn != null ? cn.Kind : SyntaxKind.None;
-    //    }
-    //}
-
-    //private void ReadCurrentNode()
-    //{
-    //    if (this.tokenOffset == 0)
-    //    {
-    //        this.currentNode = this.firstBlender.ReadNode(this.mode);
-    //    }
-    //    else
-    //    {
-    //        this.currentNode = this.blendedTokens[this.tokenOffset - 1].Blender.ReadNode(this.mode);
-    //    }
-    //}
-
-    //protected SyntaxNode EatNode()
-    //{
-    //    // we will fail anyways. Assert is just to catch that earlier.
-    //    Debug.Assert(this.blendedTokens != null);
-
-    //    // remember result
-    //    var result = CurrentNode.Green;
-
-    //    // store possible non-token in token sequence 
-    //    if (this.tokenOffset >= this.blendedTokens.Length)
-    //    {
-    //        this.AddTokenSlot();
-    //    }
-
-    //    this.blendedTokens[this.tokenOffset++] = this.currentNode;
-    //    this.tokenCount = this.tokenOffset; // forget anything after this slot
-
-    //    // erase current state
-    //    this.currentNode = default(BlendedNode);
-    //    this.currentToken = default(SyntaxToken);
-
-    //    return result;
-    //}
-
     private currentToken(): ISyntaxToken {
-        //PERF: unlike BlendedNode, currentToken is a reference
-        // we want to localize it to avoid extra memory loads
         var result = this._currentToken;
 
         if (result === null) {
@@ -287,53 +156,12 @@ class Parser {
             this.addNewToken();
         }
 
-        //if (this.blendedTokens != null)
-        //{
-        //    return this.blendedTokens[this.tokenOffset].Token;
-        //}
-        //else
-        //{
         return this.scannedTokens[this.tokenOffset];
-        //}
     }
 
     private addNewToken(): void {
-        //if (this.blendedTokens != null)
-        //{
-        //    if (this.tokenCount > 0)
-        //    {
-        //        this.AddToken(this.blendedTokens[this.tokenCount - 1].Blender.ReadToken(this.mode));
-        //    }
-        //    else
-        //    {
-        //        if (this.currentNode.Token != null)
-        //        {
-        //            this.AddToken(this.currentNode);
-        //        }
-        //        else
-        //        {
-        //            this.AddToken(this.firstBlender.ReadToken(this.mode));
-        //        }
-        //    }
-        //}
-        //else
-        //{
         this.addScannedToken(this.scanner.scan());
-        //}
     }
-
-    // adds token to end of current token array
-    //private void AddToken(BlendedNode tokenResult)
-    //{
-    //    Debug.Assert(tokenResult.Token != null);
-    //    if (this.tokenCount >= this.blendedTokens.Length)
-    //    {
-    //        this.AddTokenSlot();
-    //    }
-
-    //    this.blendedTokens[this.tokenCount] = tokenResult;
-    //    this.tokenCount++;
-    //}
 
     private addScannedToken(token: ISyntaxToken): void {
         Debug.assert(token !== null);
@@ -344,34 +172,6 @@ class Parser {
         this.scannedTokens[this.tokenCount] = token;
         this.tokenCount++;
     }
-
-    //private void AddTokenSlot()
-    //{
-    //    // shift tokens to left if we are far to the right
-    //    // don't shift if reset points have fixed locked tge starting point at the token in the window
-    //    if (this.tokenOffset > (this.blendedTokens.Length >> 1)
-    //        && (this.resetStart == -1 || this.resetStart > this.firstToken))
-    //    {
-    //        int shiftOffset = (this.resetStart == -1) ? this.tokenOffset : this.resetStart - this.firstToken;
-    //        int shiftCount = this.tokenCount - shiftOffset;
-    //        Debug.Assert(shiftOffset > 0);
-    //        this.firstBlender = this.blendedTokens[shiftOffset - 1].Blender;
-    //        if (shiftCount > 0)
-    //        {
-    //            Array.Copy(this.blendedTokens, shiftOffset, this.blendedTokens, 0, shiftCount);
-    //        }
-
-    //        this.firstToken += shiftOffset;
-    //        this.tokenCount -= shiftOffset;
-    //        this.tokenOffset -= shiftOffset;
-    //    }
-    //    else
-    //    {
-    //        var tmp = new BlendedNode[this.blendedTokens.Length * 2];
-    //        Array.Copy(this.blendedTokens, tmp, this.blendedTokens.Length);
-    //        this.blendedTokens = tmp;
-    //    }
-    //}
 
     private tryShiftScannedTokens(): void {
         // shift tokens to left if we are far to the right
@@ -401,12 +201,7 @@ class Parser {
             this.addNewToken();
         }
 
-        //if (this.blendedTokens != null) {
-        //    return this.blendedTokens[this.tokenOffset + n].Token;
-        //}
-        //else {
         return this.scannedTokens[this.tokenOffset + n];
-        //}
     }
 
     //this method is called very frequently
@@ -420,10 +215,6 @@ class Parser {
     private moveToNextToken(): void {
         this.previousToken = this._currentToken;
         this._currentToken = null;
-
-        //if (this.blendedTokens != null) {
-        //    this.currentNode = null; 
-        //}
 
         this.tokenOffset++;
     }
@@ -515,49 +306,6 @@ class Parser {
         return token;
     }
 
-    //private SyntaxToken CreateMissingToken(SyntaxKind expected, ErrorCode code, bool reportError)
-    //{
-    //    // should we eat the current ParseToken's leading trivia?
-    //    var token = Syntax.MissingToken(expected);
-    //    if (reportError)
-    //    {
-    //        token = AddError(token, code);
-    //    }
-
-    //    return token;
-    //}
-
-    //protected SyntaxToken EatToken(SyntaxKind kind, bool reportError)
-    //{
-    //    if (reportError)
-    //    {
-    //        return EatToken(kind);
-    //    }
-
-    //    Debug.Assert(kind.IsAnyToken());
-    //    if (this.CurrentToken.Kind != kind)
-    //    {
-    //        return Syntax.MissingToken(kind);
-    //    }
-    //    else
-    //    {
-    //        return this.EatToken();
-    //    }
-    //}
-
-    //protected SyntaxToken EatToken(SyntaxKind kind, ErrorCode code, bool reportError = true)
-    //{
-    //    Debug.Assert(kind.IsAnyToken());
-    //    if (this.CurrentToken.Kind != kind)
-    //    {
-    //        return CreateMissingToken(kind, code, reportError);
-    //    }
-    //    else
-    //    {
-    //        return this.EatToken();
-    //    }
-    //}
-
     private eatTokenWithPrejudice(kind: SyntaxKind): ISyntaxToken {
         var token = this.currentToken();
 
@@ -569,42 +317,6 @@ class Parser {
         this.moveToNextToken();
         return token;
     }
-
-    //protected SyntaxToken EatTokenWithPrejudice(ErrorCode errorCode, params object[] args)
-    //{
-    //    var token = this.EatToken();
-    //    token = WithAdditionalDiagnostics(token, MakeError(token.LeadingWidth, token.Width, errorCode, args));
-    //    return token;
-    //}
-
-    //protected SyntaxToken EatContextualToken(SyntaxKind kind, ErrorCode code, bool reportError = true)
-    //{
-    //    Debug.Assert(kind.IsAnyToken());
-
-    //    if (this.CurrentToken.ContextualKind != kind)
-    //    {
-    //        return CreateMissingToken(kind, code, reportError);
-    //    }
-    //    else
-    //    {
-    //        return ConvertToKeyword(this.EatToken());
-    //    }
-    //}
-
-    //protected SyntaxToken EatContextualToken(SyntaxKind kind, bool reportError = true)
-    //{
-    //    Debug.Assert(kind.IsAnyToken());
-
-    //    var contextualKind = this.CurrentToken.ContextualKind;
-    //    if (contextualKind != kind)
-    //    {
-    //        return CreateMissingToken(kind, contextualKind, reportError);                
-    //    }
-    //    else
-    //    {
-    //        return ConvertToKeyword(this.EatToken());
-    //    }
-    //}
 
     private getExpectedTokenDiagnosticInfo(expected: SyntaxKind, actual: SyntaxKind): DiagnosticInfo {
         var span = this.getDiagnosticSpanForMissingToken();
@@ -626,14 +338,6 @@ class Parser {
 
         throw Errors.notYetImplemented();
     }
-
-    //protected virtual SyntaxDiagnosticInfo GetExpectedTokenError(SyntaxKind expected, SyntaxKind actual)
-    //{
-    //    int offset, width;
-    //    this.GetDiagnosticSpanForMissingToken(out offset, out width);
-
-    //    return this.GetExpectedTokenError(expected, actual, offset, width);
-    //}
 
     private getDiagnosticSpanForMissingToken(): TextSpan {
         // If the previous token has a trailing EndOfLineTrivia,
@@ -664,272 +368,6 @@ class Parser {
         // return node.WithDiagnostics(node.GetDiagnostics().Concat(diagnostics).ToArray());
         throw Errors.notYetImplemented();
     }
-
-    //protected TNode AddError<TNode>(TNode node, ErrorCode code, params object[] args) where TNode : SyntaxNode
-    //{
-    //    if (node.IsMissing)
-    //    {
-    //        int offset, width;
-    //        this.GetDiagnosticSpanForMissingToken(out offset, out width);
-
-    //        return WithAdditionalDiagnostics(node, MakeError(offset, width, code, args));
-    //    }
-
-    //    return WithAdditionalDiagnostics(node, MakeError(node, code, args));
-    //}
-
-    //protected TNode AddError<TNode>(TNode node, int offset, int length, ErrorCode code, params object[] args) where TNode : SyntaxNode
-    //{
-    //    return WithAdditionalDiagnostics(node, MakeError(offset, length, code, args));
-    //}
-
-    //protected TNode AddError<TNode>(TNode node, SyntaxNode location, ErrorCode code, params object[] args) where TNode : SyntaxNode
-    //{
-    //    // assumes non-terminals will at most appear once in sub-tree
-    //    int offset;
-    //    FindOffset(node, location, out offset);
-    //    return WithAdditionalDiagnostics(node, MakeError(offset, location.Width, code, args));
-    //}
-
-    //protected TNode AddErrorToFirstToken<TNode>(TNode node, ErrorCode code, params object[] args) where TNode : SyntaxNode
-    //{
-    //    var firstToken = node.GetFirstToken(true);
-    //    return WithAdditionalDiagnostics(node, MakeError(0, firstToken.Width, code, args));
-    //}
-
-    //protected TNode AddErrorToLastToken<TNode>(TNode node, ErrorCode code, params object[] args) where TNode : SyntaxNode
-    //{
-    //    var lastToken = node.GetLastToken();
-    //    var offset = node.FullWidth; //advance to end of entire node
-    //    var width = 0;
-    //    if (lastToken != null) //will be null if all tokens are missing
-    //    {
-    //        offset -= lastToken.FullWidth; //rewind past last token
-    //        offset += lastToken.LeadingWidth; //advance past last token leading trivia - now at start of last token
-    //        width += lastToken.Width;
-    //    }
-    //    return WithAdditionalDiagnostics(node, MakeError(offset, width, code, args));
-    //}
-
-    //protected static SyntaxDiagnosticInfo MakeError(int offset, int width, ErrorCode code, params object[] args)
-    //{
-    //    return new SyntaxDiagnosticInfo(offset, width, code, args);
-    //}
-
-    //protected static SyntaxDiagnosticInfo MakeError(SyntaxNode node, ErrorCode code, params object[] args)
-    //{
-    //    return new SyntaxDiagnosticInfo(node.LeadingWidth, node.Width, code, args);
-    //}
-
-    //protected static SyntaxDiagnosticInfo MakeError(ErrorCode code, params object[] args)
-    //{
-    //    return new SyntaxDiagnosticInfo(code, args);
-    //}
-
-    //protected TNode AddLeadingSkippedSyntax<TNode>(TNode node, SyntaxNode skippedSyntax) where TNode : SyntaxNode
-    //{
-    //    var oldToken = node as SyntaxToken ?? node.GetFirstToken(includeZeroWidth: true);
-    //    var newToken = AddSkippedSyntax(oldToken, skippedSyntax, trailing: false);
-    //    return SyntaxFirstTokenReplacer.Replace(node, oldToken, newToken, skippedSyntax.FullWidth);
-    //}
-
-    //protected TNode AddTrailingSkippedSyntax<TNode>(TNode node, SyntaxNode skippedSyntax) where TNode : SyntaxNode
-    //{
-    //    var token = node as SyntaxToken;
-    //    if (token != null)
-    //    {
-    //        return (TNode)(object)AddSkippedSyntax(token, skippedSyntax, trailing: true);
-    //    }
-    //    else
-    //    {
-    //        var lastToken = node.GetLastToken(includeZeroWidth: true);
-    //        var newToken = AddSkippedSyntax(lastToken, skippedSyntax, trailing: true);
-    //        return SyntaxLastTokenReplacer.Replace(node, newToken);
-    //    }
-    //}
-
-    /// <summary>
-    /// Converts skippedSyntax node into tokens and adds these as trivia on the target token.
-    /// Also adds the first error (in depth-first preorder) found in the skipped syntax tree to the target token.
-    /// </summary>
-    //internal SyntaxToken AddSkippedSyntax(SyntaxToken target, SyntaxNode skippedSyntax, bool trailing)
-    //{
-    //    var builder = new SyntaxListBuilder(4);
-
-    //    // the error in we'll attach to the node
-    //    SyntaxDiagnosticInfo diagnostic = null;
-
-    //    // the position of the error within the skipedSyntax node full tree
-    //    int diagnosticOffset = 0;
-
-    //    int currentOffset = 0;
-    //    foreach (var node in skippedSyntax.EnumerateNodes())
-    //    {
-    //        SyntaxToken token = node as SyntaxToken;
-    //        if (token != null)
-    //        {
-    //            builder.Add(token.GetLeadingTrivia());
-
-    //            if (token.Width > 0)
-    //            {
-    //                // separate trivia from the tokens
-    //                SyntaxToken tk = token.WithLeadingTrivia(null).WithTrailingTrivia(null);
-
-    //                // adjust relative offsets of diagnostics attached to the token:
-    //                int leadingWidth = token.LeadingWidth;
-    //                if (leadingWidth > 0)
-    //                {
-    //                    var tokenDiagnostics = tk.GetDiagnostics();
-    //                    for (int i = 0; i < tokenDiagnostics.Length; i++)
-    //                    {
-    //                        var d = (SyntaxDiagnosticInfo)tokenDiagnostics[i];
-    //                        tokenDiagnostics[i] = new SyntaxDiagnosticInfo(d.Offset - leadingWidth, d.Width, (ErrorCode)d.Code, d.Arguments);
-    //                    }
-    //                }
-
-    //                builder.Add(Syntax.SkippedTokensTrivia(tk));
-    //            }
-    //            else
-    //            {
-    //                // do not create zero-width structured trivia, GetStructure doesn't work well for them
-    //                var existing = (SyntaxDiagnosticInfo)token.GetDiagnostics().FirstOrDefault();
-    //                if (existing != null)
-    //                {
-    //                    diagnostic = existing;
-    //                    diagnosticOffset = currentOffset;
-    //                }
-    //            }
-    //            builder.Add(token.GetTrailingTrivia());
-
-    //            currentOffset += token.FullWidth;
-    //        }
-    //        else if (node.ContainsDiagnostics && diagnostic == null)
-    //        {
-    //            // only propagate the first error to reduce noise:
-    //            var existing = (SyntaxDiagnosticInfo)node.GetDiagnostics().FirstOrDefault();
-    //            if (existing != null)
-    //            {
-    //                diagnostic = existing;
-    //                diagnosticOffset = currentOffset;
-    //            }
-    //        }
-    //    }
-
-    //    int triviaWidth = currentOffset;
-    //    var trivia = builder.ToListNode();
-
-    //    // total width of everything preceding the added trivia
-    //    int triviaOffset;
-    //    if (trailing)
-    //    {
-    //        var trailingTrivia = target.GetTrailingTrivia();
-    //        triviaOffset = target.FullWidth; //added trivia is full width (before addition)
-    //        target = target.WithTrailingTrivia(SyntaxList.Concat(trailingTrivia, trivia));
-    //    }
-    //    else
-    //    {
-    //        // Since we're adding triviaWidth before the token, we have to add that much to
-    //        // the offset of each of its diagnostics.
-    //        if (triviaWidth > 0)
-    //        {
-    //            var targetDiagnostics = target.GetDiagnostics();
-    //            for (int i = 0; i < targetDiagnostics.Length; i++)
-    //            {
-    //                var d = (SyntaxDiagnosticInfo)targetDiagnostics[i];
-    //                targetDiagnostics[i] = new SyntaxDiagnosticInfo(d.Offset + triviaWidth, d.Width, (ErrorCode)d.Code, d.Arguments);
-    //            }
-    //        }
-
-    //        var leadingTrivia = target.GetLeadingTrivia();
-    //        target = target.WithLeadingTrivia(SyntaxList.Concat(trivia, leadingTrivia));
-    //        triviaOffset = 0; //added trivia is first, so offset is zero
-    //    }
-
-    //    if (diagnostic != null)
-    //    {
-    //        int newOffset = triviaOffset + diagnosticOffset + diagnostic.Offset;
-
-    //        target = WithAdditionalDiagnostics(target, 
-    //            new SyntaxDiagnosticInfo(newOffset, diagnostic.Width, (ErrorCode)diagnostic.Code, diagnostic.Arguments)
-    //        );
-    //    }
-
-    //    return target;
-    //}
-
-    /// <summary>
-    /// This function searches for the given location node within the subtree rooted at root node. 
-    /// If it finds it, the function computes the offset span of that child node within the root and returns true, 
-    /// otherwise it returns false.
-    /// </summary>
-    /// <param name="root">Root node</param>
-    /// <param name="location">Node to search in the subtree rooted at root node</param>
-    /// <param name="offset">Offset of the location node within the subtree rooted at child</param>
-    /// <returns></returns>
-    //private bool FindOffset(SyntaxNode root, SyntaxNode location, out int offset)
-    //{            
-    //    int currentOffset = 0;
-    //    offset = 0;
-    //    if (root != null)
-    //    {                
-    //        for (int i = 0, n = root.SlotCount; i < n; i++)
-    //        {
-    //            var child = root.GetSlot(i);                    
-    //            if (child == null)
-    //            {
-    //                // ignore null slots
-    //                continue;
-    //            }
-
-    //            // check if the child node is the location node
-    //            if (child == location)
-    //            {
-    //                // Found the location node in the subtree
-    //                // Initialize offset with the offset of the location node within its parent
-    //                // and walk up the stack of recursive calls adding the offset of each node
-    //                // within its parent
-    //                offset = currentOffset;
-    //                return true;
-    //            }
-
-    //            // search for the location node in the subtree rooted at child node
-    //            if (this.FindOffset(child, location, out offset))
-    //            {
-    //                // Found the location node in child's subtree
-    //                // Add the offset of child node within its parent to offset
-    //                // and continue walking up the stack
-    //                offset += child.LeadingWidth + currentOffset;
-    //                return true;
-    //            }
-
-    //            // We didn't find the location node in the subtree rooted at child
-    //            // Move on to the next child
-    //            currentOffset += child.FullWidth;
-    //        }
-    //    }
-
-    //    // We didn't find the location node within the subtree rooted at root node
-    //    return false;
-    //}
-
-    //protected SyntaxToken ConvertToKeyword(SyntaxToken token)
-    //{
-    //    if (token.Kind != token.ContextualKind)
-    //    {
-    //        var kw = token.IsMissing
-    //                ? Syntax.MissingToken(token.LeadingTrivia.Node, token.ContextualKind, token.TrailingTrivia.Node)
-    //                : Syntax.Token(token.LeadingTrivia.Node, token.ContextualKind, token.TrailingTrivia.Node);
-    //        var d = token.GetDiagnostics();
-    //        if (d != null && d.Length > 0)
-    //        {
-    //            kw = kw.WithDiagnostics(d);
-    //        }
-
-    //        return kw;
-    //    }
-
-    //    return token;
-    //}
 
     private getPrecedence(expressionKind: SyntaxKind): ParserExpressionPrecedence {
         switch (expressionKind) {
@@ -1017,14 +455,6 @@ class Parser {
 
         return new SourceUnitSyntax(SyntaxNodeList.create(moduleElements), this.currentToken());
     }
-
-    //public parseDeclarationSourceUnit(): DeclarationSourceUnitSyntax {
-    //    if (true) {
-    //        throw Errors.notYetImplemented();
-    //    }
-
-    //    return null;
-    //}
 
     private parseModuleElement(): ModuleElementSyntax {
         if (this.isImportDeclaration()) {
@@ -1788,23 +1218,6 @@ class Parser {
 
         // Because arrow functions and parenthesized expressions look similar, we have to check far
         // enough ahead to be sure we've actually got an arrow function.
-
-        //if (this.previousToken == null) {
-        //    return false;
-        //}
-
-        //// Note: this list may not be exhaustive.  For example, 
-        //switch (this.previousToken.kind()) {
-        //    case SyntaxKind.OpenParenToken:         // foo(() => {})
-        //    case SyntaxKind.CommaToken:             // foo(x, () => {})
-        //    case SyntaxKind.EqualsToken:            // var foo = () => {}
-        //    case SyntaxKind.ColonToken:             // var x = { foo: () => {} }
-        //    case SyntaxKind.ReturnKeyword:          // return () => { }
-        //    case SyntaxKind.EqualsGreaterThanToken: // var x = () => () => { }
-        //        break;
-        //    default:
-        //        return false;
-        //}
 
         // First, check for things that definitely have enough information to let us know it's an
         // arrow function. Then, try to actually parse it as a lambda, and only return if we see

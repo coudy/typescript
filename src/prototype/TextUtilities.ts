@@ -6,7 +6,7 @@ class LinebreakInfo {
 }
 
 class TextUtilities {
-        /// <summary>
+    /// <summary>
     /// Return startLineBreak = index-1, lengthLineBreak = 2   if there is a \r\n at index-1
     /// Return startLineBreak = index,   lengthLineBreak = 1   if there is a 1-char newline at index
     /// Return startLineBreak = index+1, lengthLineBreak = 0   if there is no newline at index.
@@ -55,8 +55,7 @@ class TextUtilities {
         return this.getLengthOfLineBreakSlow(text, index, c);
     }
 
-    private static getLengthOfLineBreakSlow(text: IText, index: number, c: number): number
-    {
+    private static getLengthOfLineBreakSlow(text: IText, index: number, c: number): number {
         if (c === CharacterCodes.carriageReturn) {
             var next = index + 1;
             return (next < text.length()) && CharacterCodes.newLine === text.charCodeAt(next) ? 2 : 1;

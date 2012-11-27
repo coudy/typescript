@@ -1,6 +1,6 @@
 ///<reference path='References.ts' />
 
-var Environment = (function() {
+var Environment = (function () {
 
     // Create an IO object for use inside WindowsScriptHost hosts
     // Depends on WSCript and FileSystemObject
@@ -8,15 +8,15 @@ var Environment = (function() {
         var fso = new ActiveXObject("Scripting.FileSystemObject");
         var streamObjectPool = [];
 
-        function getStreamObject(): any { 
+        function getStreamObject(): any {
             if (streamObjectPool.length > 0) {
                 return streamObjectPool.pop();
-            }  else {
+            } else {
                 return new ActiveXObject("ADODB.Stream");
             }
         }
 
-        function releaseStreamObject(obj: any) { 
+        function releaseStreamObject(obj: any) {
             streamObjectPool.push(obj);
         }
 
@@ -26,7 +26,7 @@ var Environment = (function() {
         }
 
         return {
-            readFile: function(path) {
+            readFile: function (path) {
                 try {
                     var streamObj = getStreamObject();
                     streamObj.Open();
@@ -39,10 +39,10 @@ var Environment = (function() {
                         || (bomChar.charCodeAt(0) === 0xFF && bomChar.charCodeAt(1) === 0xFE)) {
                         streamObj.Charset = 'unicode';
                     } else if (bomChar.charCodeAt(0) === 0xEF && bomChar.charCodeAt(1) === 0xBB) {
-                        streamObj.Charset = 'utf-8'; 
+                        streamObj.Charset = 'utf-8';
                     }
 
-                    // Read the whole file
+                // Read the whole file
                     var str = streamObj.ReadText(-1 /* read from the current position to EOS */);
                     streamObj.Close();
                     releaseStreamObject(streamObj);
@@ -53,142 +53,29 @@ var Environment = (function() {
                 }
             },
 
-            writeFile: function(path, contents) {
+            writeFile: function (path, contents) {
                 var file = this.createFile(path);
                 file.Write(contents);
                 file.Close();
             },
 
-            fileExists: function(path: string): bool {
+            fileExists: function (path: string): bool {
                 return fso.FileExists(path);
             },
 
-            //resolvePath: function(path: string): string {
-            //    return fso.GetAbsolutePathName(path);
-            //},
-
-            //dirName: function(path: string): string {
-            //    return fso.GetParentFolderName(path);
-            //},
-
-            //findFile: function(rootPath: string, partialFilePath: string): IResolvedFile {
-            //    var path = fso.GetAbsolutePathName(rootPath) + "/" + partialFilePath;
-
-            //    while (true) {
-            //        if (fso.FileExists(path)) {
-            //            try {
-            //                var content = this.readFile(path);
-            //                return { content: content, path: path };
-            //            }
-            //            catch (err) {
-            //                //Tools.CompilerDiagnostics.debugPrint("Could not find " + path + ", trying parent");
-            //            }
-            //        }
-            //        else {
-            //            rootPath = fso.GetParentFolderName(fso.GetAbsolutePathName(rootPath));
-
-            //            if (rootPath == "") {
-            //                return null;
-            //            }
-            //            else {
-            //                path = fso.BuildPath(rootPath, partialFilePath);
-            //            }
-            //        }
-            //    }
-            //},
-
-            deleteFile: function(path: string): void {
+            deleteFile: function (path: string): void {
                 if (fso.FileExists(path)) {
                     fso.DeleteFile(path, true); // true: delete read-only files
                 }
             },
 
-            //createFile: function (path, useUTF8?) {
-            //    try {
-            //        var streamObj = getStreamObject();
-            //        streamObj.Charset = useUTF8 ? 'utf-8' : 'x-ansi';
-            //        streamObj.Open();
-            //        return {
-            //            Write: function (str) { streamObj.WriteText(str, 0); },
-            //            WriteLine: function (str) { streamObj.WriteText(str, 1); },
-            //            Close: function () {
-            //                streamObj.SaveToFile(path, 2);
-            //                streamObj.Close();
-            //                releaseStreamObject(streamObj);
-            //            }
-            //        };
-            //    } catch (ex) {
-            //        WScript.StdErr.WriteLine("Couldn't write to file '" + path + "'");
-            //        throw ex;
-            //    }
-            //},
-
-            directoryExists: function(path) {
+            directoryExists: function (path) {
                 return <bool>fso.FolderExists(path);
             },
 
-            //createDirectory: function(path) {
-            //    if (!this.directoryExists(path)) {
-            //        fso.CreateFolder(path);
-            //    }
-            //},
-
-            //dir: function(path, spec?, options?) {
-            //    options = options || <{ recursive?: bool; }>{};
-            //    function filesInFolder(folder, root): string[]{
-            //        var paths = [];
-            //        var fc: Enumerator;
-
-            //        if (options.recursive) {
-            //            fc = new Enumerator(folder.subfolders);
-
-            //            for (; !fc.atEnd() ; fc.moveNext()) {
-            //                paths = paths.concat(filesInFolder(fc.item(), root + "/" + fc.item().Name));
-            //            }
-            //        }
-
-            //        fc = new Enumerator(folder.files);
-
-            //        for (; !fc.atEnd() ; fc.moveNext()) {
-            //            if (!spec || fc.item().Name.match(spec)) {
-            //                paths.push(root + "/" + fc.item().Name);
-            //            }
-            //        }
-
-            //        return paths;
-            //    }
-
-            //    var folder = fso.GetFolder(path);
-            //    var paths = [];
-
-            //    return filesInFolder(folder, path);
-            //},
-
-            //print: function(str) {
-            //    WScript.StdOut.Write(str);
-            //},
-
-            //printLine: function(str) {
-            //    WScript.Echo(str);
-            //},
-
             arguments: <string[]>args,
 
-            //stderr: WScript.StdErr,
             standardOut: WScript.StdOut,
-            //watchFiles: null,
-            //run: function(source, filename) {
-            //    eval(source);
-            //},
-            //getExecutingFilePath: function () {
-            //    return WScript.ScriptFullName;
-            //},
-            //quit: function (exitCode? : number = 0) {
-            //    try {
-            //        WScript.Quit(exitCode);
-            //    } catch (e) {
-            //    }
-            //}
         }
     };
 

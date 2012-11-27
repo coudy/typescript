@@ -17,7 +17,7 @@ class SlidingTextWindow {
     private _characterWindowCount: number = 0; // # of valid characters in _characterWindow
     private stringTable: StringTable = null;
 
-    constructor (text: IText, stringTable: StringTable) {
+    constructor(text: IText, stringTable: StringTable) {
         Debug.assert(stringTable !== null);
         this.text = text;
         this.stringTable = stringTable;

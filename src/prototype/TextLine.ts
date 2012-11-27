@@ -1,11 +1,12 @@
+///<reference path='References.ts' />
+
 class TextLine implements ITextLine {
     private _text: IText = null;
     private _textSpan: TextSpan = null;
     private _lineBreakLength: number;
     private _lineNumber: number;
 
-    constructor (text: IText, body: TextSpan, lineBreakLength: number, lineNumber: number)
-    {
+    constructor(text: IText, body: TextSpan, lineBreakLength: number, lineNumber: number) {
         Contract.throwIfNull(text);
         Contract.throwIfFalse(lineBreakLength >= 0);
         Contract.requires(lineNumber >= 0);

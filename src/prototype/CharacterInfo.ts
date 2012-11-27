@@ -1,3 +1,5 @@
+///<reference path='References.ts' />
+
 class CharacterInfo {
     public static isDecimalDigit(c: number): bool {
         return c >= CharacterCodes._0 && c <= CharacterCodes._9;

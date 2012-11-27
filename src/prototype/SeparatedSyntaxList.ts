@@ -91,4 +91,5 @@ class SeparatedSyntaxList {
                 return nodes[value];
             },
         };
+    }
 }

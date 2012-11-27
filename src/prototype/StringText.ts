@@ -12,7 +12,7 @@ class StringText extends TextBase {
     /// <summary>
     /// Initializes an instance of <see cref="T:StringText"/> with provided data.
     /// </summary>
-    constructor (data: string) {
+    constructor(data: string) {
         super();
 
         if (data === null) {
