@@ -36,7 +36,7 @@ class Program {
         var contents = environment.readFile(filePath);
         var text = new StringText(contents);
         var scanner = Scanner.create(text, languageVersion);
-        var parser = new Parser(scanner, null, null);
+        var parser = new Parser(scanner);
 
         var sourceUnit = parser.parseSourceUnit();
 
@@ -106,7 +106,7 @@ class Program {
     runParser(environment: IEnvironment, contents: string, filePath: string): void {
         var text = new StringText(contents);
         var scanner = Scanner.create(text, LanguageVersion.EcmaScript5);
-        var parser = new Parser(scanner, null, null);
+        var parser = new Parser(scanner);
 
         if (StringUtilities.endsWith(filePath, ".ts")) {
             parser.parseSourceUnit();

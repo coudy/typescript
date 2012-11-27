@@ -17,10 +17,12 @@ class SyntaxToken {
             diagnostics: token.diagnostics(),
             fullStart: token.fullStart(),
             fullWidth: token.fullWidth(),
-            hasLeadingCommentTrivia: token.hasLeadingCommentTrivia(),
             hasLeadingTrivia: token.hasLeadingTrivia(),
-            hasTrailingCommentTrivia: token.hasTrailingComentTrivia(),
+            hasLeadingCommentTrivia: token.hasLeadingCommentTrivia(),
+            hasLeadingNewLineTrivia: token.hasLeadingNewLineTrivia(),
             hasTrailingTrivia: token.hasTrailingTrivia(),
+            hasTrailingCommentTrivia: token.hasTrailingComentTrivia(),
+            hasTrailingNewLineTrivia: token.hasTrailingNewLineTrivia(),
             isMissing: token.isMissing(),
             keywordKind: (<any>SyntaxKind)._map[token.keywordKind()],
             kind: (<any>SyntaxKind)._map[token.kind()],
@@ -43,8 +45,13 @@ class SyntaxToken {
         Contract.throwIfNull(text);
         var leadingWidth = leadingTriviaInfo.Width;
         var trailingWidth = trailingTriviaInfo.Width;
+
         var leadingComment = leadingTriviaInfo.HasComment;
         var trailingComment = trailingTriviaInfo.HasComment;
+
+        var leadingNewLine = leadingTriviaInfo.HasNewLine;
+        var trailingNewLine = trailingTriviaInfo.HasNewLine;
+
         var token: ISyntaxToken = null;
         token = {
             toJSON:(key) => SyntaxToken.toJSON(token),
@@ -71,9 +78,11 @@ class SyntaxToken {
             },
             diagnostics: () => diagnostics,
             hasLeadingTrivia: () => leadingWidth > 0,
-            hasTrailingTrivia: () => trailingWidth > 0,
             hasLeadingCommentTrivia: () => leadingComment,
+            hasLeadingNewLineTrivia: () => leadingNewLine,
+            hasTrailingTrivia: () => trailingWidth > 0,
             hasTrailingComentTrivia: () => trailingComment,
+            hasTrailingNewLineTrivia: () => trailingNewLine,
             leadingTrivia: (text: IText): ISyntaxTriviaList => {
                 throw Errors.notYetImplemented();
             },
@@ -103,9 +112,11 @@ class SyntaxToken {
             valueText: () => "",
             diagnostics: () => [],
             hasLeadingTrivia: () => false,
-            hasTrailingTrivia: () => false,
             hasLeadingCommentTrivia: () => false,
+            hasLeadingNewLineTrivia: () => false,
+            hasTrailingTrivia: () => false,
             hasTrailingComentTrivia: () => false,
+            hasTrailingNewLineTrivia: () => false,
             leadingTrivia: (text: IText): ISyntaxTriviaList => SyntaxTriviaList.empty,
             trailingTrivia: (text: IText): ISyntaxTriviaList => SyntaxTriviaList.empty,
         };

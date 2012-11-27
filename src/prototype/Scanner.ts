@@ -10,6 +10,7 @@ class ScannerTokenInfo {
 class ScannerTriviaInfo {
     public Width: number;
     public HasComment: bool;
+    public HasNewLine: bool;
 }
 
 class Scanner {
@@ -93,6 +94,7 @@ class Scanner {
         this.textWindow.start();
         triviaInfo.Width = 0;
         triviaInfo.HasComment = false;
+        triviaInfo.HasNewLine = false;
 
         while (true) {
             var ch = this.textWindow.peekCharAtPosition();
@@ -136,6 +138,8 @@ class Scanner {
             }
 
             if (this.isNewLineCharacter(ch)) {
+                triviaInfo.HasNewLine = true;
+
                 if (ch === CharacterCodes.carriageReturn) {
                     this.textWindow.advanceChar1();
                     triviaInfo.Width++;

@@ -85,13 +85,17 @@ class Parser {
     private resetCount: number = 0;
     private resetStart: number = 0;
 
+    private options: ParseOptions = null;
+
     constructor (
         scanner: Scanner,
-        oldTree: SyntaxTree,
-        changes: TextChangeRange[]) {
-        this.scanner = scanner;
+        oldTree?: SyntaxTree,
+        changes?: TextChangeRange[],
+        options?: ParseOptions) {
 
+        this.scanner = scanner;
         this.oldTree = oldTree;
+        this.options = options || new ParseOptions();
     }
 
     private isIncremental(): bool {
@@ -217,6 +221,38 @@ class Parser {
         this._currentToken = null;
 
         this.tokenOffset++;
+    }
+
+    private eatExplicitOrAutomaticSemicolon(reportError?: bool = true): ISyntaxToken {
+        var token = this.currentToken();
+
+        if (token.kind() === SyntaxKind.SemicolonToken) {
+            return this.eatToken(SyntaxKind.SemicolonToken);
+        }
+
+        // Only attempt automatic semicolon insertion if the options allow for it.
+        if (!this.options.allowAutomaticSemicolonInsertion()) {
+            var automaticSemicolonAllowed = false;
+
+            // An automatic semicolon is always allowed if we're at the end of the file.
+            automaticSemicolonAllowed = automaticSemicolonAllowed || token.kind() === SyntaxKind.EndOfFileToken;
+
+            // Or if the next token is a close brace (regardless of which line it is on).
+            automaticSemicolonAllowed = automaticSemicolonAllowed || token.kind() === SyntaxKind.CloseBraceToken;
+
+            // It is also allowed if there is a newline between the last token seen and the next one.
+            automaticSemicolonAllowed = automaticSemicolonAllowed || (this.previousToken !== null && !this.previousToken.hasTrailingNewLineTrivia());
+
+            if (automaticSemicolonAllowed) {
+                // Automatic semicolon insertion was allowed.  So just eat a missing semicolon token 
+                // and don't report an error.
+                return this.eatToken(SyntaxKind.SemicolonToken, /*reportError:*/ false);
+            }
+        }
+
+        // Automatic semicolon is not allowed.  Just try to eat the semicolon and report the
+        // error if the caller asked for it.
+        this.eatToken(SyntaxKind.SemicolonToken);
     }
 
     //this method is called very frequently
@@ -649,7 +685,7 @@ class Parser {
                    this.currentToken().kind() !== SyntaxKind.EndOfFileToken) {
                 var element = this.parseModuleElement();
                 
-                moduleElements = moduleElements === null ? [] : moduleElements;
+                moduleElements = moduleElements || []; 
                 moduleElements.push(element);
             }
         }
@@ -704,7 +740,7 @@ class Parser {
                 }
 
                 var typeMember = this.parseTypeMember();
-                typeMembers = typeMembers === null ? [] : typeMembers;
+                typeMembers = typeMembers || [];
                 typeMembers.push(typeMember);
 
                 if (this.currentToken().kind() === SyntaxKind.SemicolonToken) {
@@ -831,9 +867,72 @@ class Parser {
         else if (this.isBlock()) {
             return this.parseBlock(/*allowFunctionDeclaration:*/ false);
         }
+        else if (this.isExpressionStatement()) {
+            return this.parseExpressionStatement();
+        }
         else {
             throw Errors.notYetImplemented();
         }
+    }
+
+    private isExpressionStatement(): bool {
+        // This is nearly the full 'first-set' for the expression statement.  The only tokens 
+        // removed are the '{' and 'function' tokens as specified by the grammar.
+
+        var currentToken = this.currentToken();
+        var kind = currentToken.kind();
+        var keywordKind = currentToken.keywordKind();
+
+        switch (kind) {
+            case SyntaxKind.NumericLiteral:
+            case SyntaxKind.StringLiteral:
+            case SyntaxKind.RegularExpressionLiteral:
+                return true;
+
+            case SyntaxKind.OpenBracketToken: // For array literals.
+            case SyntaxKind.OpenParenToken: // For parenthesized expressions
+                return true;
+
+            // Prefix unary expressions.
+            case SyntaxKind.PlusPlusToken:
+            case SyntaxKind.MinusMinusToken:
+            case SyntaxKind.PlusToken:
+            case SyntaxKind.MinusToken:
+            case SyntaxKind.TildeToken:
+            case SyntaxKind.ExclamationToken:
+                return true;
+        }
+
+        switch (keywordKind) {
+            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.TrueKeyword:
+            case SyntaxKind.FalseKeyword:
+            case SyntaxKind.NullKeyword:
+                return true;
+
+            case SyntaxKind.NewKeyword: // For object creation expressions.
+                return true;
+
+            // Prefix unary expressions
+            case SyntaxKind.DeleteKeyword:
+            case SyntaxKind.VoidKeyword:
+            case SyntaxKind.TypeOfKeyword:
+                return true;
+        }
+
+        if (this.isIdentifier(this.currentToken())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private parseExpressionStatement(): ExpressionStatementSyntax {
+        var expression = this.parseExpression(/*allowIn:*/ true);
+
+        var semicolon = this.eatExplicitOrAutomaticSemicolon();
+
+        return new ExpressionStatementSyntax(expression, semicolon);
     }
 
     private isIfStatement(): bool {
@@ -1356,7 +1455,7 @@ class Parser {
             }
 
             if (this.currentToken().kind() === SyntaxKind.CommaToken) {
-                expressions = expressions === null ? [] : expressions;
+                expressions = expressions || []; 
 
                 if (addOmittedExpression) {
                     expressions.push(new OmittedExpressionSyntax());
@@ -1373,7 +1472,7 @@ class Parser {
                 break;
             }
             
-            expressions = expressions === null ? [] : expressions;
+            expressions = expressions || []; 
             expressions.push(expression);
             addOmittedExpression = false;
 
@@ -1415,6 +1514,8 @@ class Parser {
 
             // REVIEW: add error tolerance here.
             var statement = this.parseStatement(allowFunctionDeclaration);
+            
+            statements = statements || [];
             statements.push(statement);
         }
 

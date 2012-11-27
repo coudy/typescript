@@ -21,6 +21,7 @@
 ///<reference path='LanguageVersion.ts' />
 ///<reference path='LinePosition.ts' />
 ///<reference path='MathPrototype.ts' />
+///<reference path='ParseOptions.ts' />
 ///<reference path='Parser.ts' />
 ///<reference path='Scanner.ts' />
 ///<reference path='SeparatedSyntaxList.ts' />
