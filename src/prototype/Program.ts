@@ -34,7 +34,7 @@ class Program {
             }
         }
 
-        var actualResult = JSON2.stringify(tokens);
+        var actualResult = JSON2.stringify(tokens, null, 4);
         var expectedFile = filePath + ".expected";
         var actualFile = filePath + ".actual";
 
