@@ -20,10 +20,12 @@ interface ISyntaxToken {
     diagnostics(): DiagnosticInfo[];
 
     hasLeadingTrivia(): bool;
-    hasTrailingTrivia(): bool;
-
     hasLeadingCommentTrivia(): bool;
+    hasLeadingNewLineTrivia(): bool;
+
+    hasTrailingTrivia(): bool;
     hasTrailingComentTrivia(): bool;
+    hasTrailingNewLineTrivia(): bool;
 
     leadingTrivia(text: IText): ISyntaxTriviaList;
     trailingTrivia(text: IText): ISyntaxTriviaList;

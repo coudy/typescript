@@ -348,7 +348,7 @@ class FunctionDeclarationSyntax extends StatementSyntax {
             throw Errors.argument("exportKeyword");
         }
 
-        if (functionKeyword.kind() !== SyntaxKind.FunctionKeyword) {
+        if (functionKeyword.keywordKind() !== SyntaxKind.FunctionKeyword) {
             throw Errors.argument("functionKeyword");
         }
 
@@ -1558,5 +1558,34 @@ class IfStatementSyntax extends StatementSyntax {
 
     public elseClause(): ElseClauseSyntax {
         return this._elseClause;
+    }
+}
+
+class ExpressionStatementSyntax extends StatementSyntax {
+    private _expression: ExpressionSyntax = null;
+    private _semicolonToken: ISyntaxToken = null;
+
+    constructor(expression: ExpressionSyntax,
+                semicolonToken: ISyntaxToken) {
+        super();
+
+        if (expression === null) {
+            throw Errors.argumentNull("expression");
+        }
+
+        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) {
+            throw Errors.argument("semicolonToken");
+        }
+
+        this._expression = expression;
+        this._semicolonToken = semicolonToken;
+    }
+
+    public expression(): ExpressionSyntax {
+        return this._expression;
+    }
+
+    public semicolonToken(): ISyntaxToken {
+        return this._semicolonToken;
     }
 }
