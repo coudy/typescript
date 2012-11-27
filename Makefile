@@ -20,6 +20,9 @@ TSRC=$(BASE)test
 # harness source location
 HSRC=$(BASE)src\harness
 
+# prototype source location
+PSRC=$(BASE)src\prototype
+
 STRC_LOCAL=$(HOST) $(BUILT_LOCAL)\tsc.js -cflowu 
 STRC_LKG=$(HOST) $(BIN)\tsc.js -cflowu 
 
@@ -111,6 +114,26 @@ SERVICES_SOURCES= \
   $(COMPILER_SOURCES_BASE) \
   $(SERVICES_SOURCES_BASE)
 
+PROTOTYPE_SOURCES_BASE= \
+  $(PSRC)\ArrayUtilities.ts \
+  $(PSRC)\CharacterCodes.ts \
+  $(PSRC)\Environment.ts \
+  $(PSRC)\Errors.ts \
+  $(PSRC)\Contract.ts \
+  $(PSRC)\IEnvironment.ts \
+  $(PSRC)\IText.ts \
+  $(PSRC)\ITextLine.ts \
+  $(PSRC)\LinePosition.ts \
+  $(PSRC)\MathPrototype.ts \
+  $(PSRC)\SubText.ts \
+  $(PSRC)\TextBase.ts \
+  $(PSRC)\TextLine.ts \
+  $(PSRC)\TextSpan.ts \
+  $(PSRC)\TextUtilities.ts \
+  $(PSRC)\Program.ts
+
+PROTOTYPE_SOURCES=$(PROTOTYPE_SOURCES_BASE)
+
 prebuild-local:
 	if not exist $(BUILT) mkdir $(BUILT)
 	if not exist $(BUILT_LOCAL) mkdir $(BUILT_LOCAL)
@@ -144,6 +167,12 @@ $(BUILT_LOCALTEST)\typescriptServices.js: $(SERVICES_SOURCES)
 local: prebuild-local $(BUILT_LOCAL)\typescript.js $(BUILT_LOCAL)\tsc.js $(BUILT_LOCAL)\typescriptServices.js
 
 compiler: local
+
+prototype: $(PROTOTYPE_SOURCES)
+	$(STRC_LKG) $(PROTOTYPE_SOURCES) -out $(PSRC)\prototype.js
+
+runprototype: prototype
+	$(HOST) $(PSRC)\prototype.js $(COMPILER_SOURCES)
 
 COMPILER_TESTS=--compiler
 LS_TESTS=--ls
