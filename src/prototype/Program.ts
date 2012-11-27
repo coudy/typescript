@@ -1,6 +1,69 @@
 ///<reference path='References.ts' />
 
 class Program {
+    runTests(environment: IEnvironment): void {
+        this.runScannerTests(environment);
+    }
+
+    runScannerTests(environment: IEnvironment): void {
+        var testFiles = environment.listFiles("C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5");
+        for (var index in testFiles) {
+            var filePath = testFiles[index];
+            this.runScannerTest(environment, filePath, LanguageVersion.EcmaScript5);
+        }
+    }
+
+    runScannerTest(environment: IEnvironment, filePath: string, languageVersion: LanguageVersion): void {
+        if (!StringUtilities.endsWith(filePath, ".ts")) {
+            return;
+        }
+
+        environment.standardOut.WriteLine("Testing Scanner: " + filePath);
+
+        var contents = environment.readFile(filePath);
+        var text = new StringText(contents);
+        var scanner = Scanner.create(text, languageVersion);
+
+        var tokens = [];
+        while (true) {
+            var token = scanner.scan();
+
+            tokens.push({
+                diagnostics: token.diagnostics(),
+                fullStart: token.fullStart(),
+                fullText: token.fullText(text),
+                fullWidth: token.fullWidth(),
+                hasLeadingCommentTrivia: token.hasLeadingCommentTrivia(),
+                hasLeadingTrivia: token.hasLeadingTrivia(),
+                hasTrailingCommentTrivia: token.hasTrailingComentTrivia(),
+                hasTrailingTrivia: token.hasTrailingTrivia(),
+                isMissing: token.isMissing(),
+                keywordKind: (<any>SyntaxKind)._map[token.keywordKind()],
+                kind: (<any>SyntaxKind)._map[token.kind()],
+                start: token.start(),
+                text: token.text(),
+                value: token.value(),
+                valueText: token.valueText(),
+                width: token.width()
+            });
+
+            if (token.kind() === SyntaxKind.EndOfFileToken) {
+                break;
+            }
+        }
+
+        var actualResult = JSON2.stringify(tokens);
+        var expectedFile = filePath + ".expected";
+        var actualFile = filePath + ".actual";
+
+        var expectedResult = environment.readFile(expectedFile);
+
+        if (expectedResult !== actualResult) {
+            environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
+            environment.writeFile(actualFile, actualResult);
+        }
+    }
+
     run(environment: IEnvironment): void {
         if (true) {
             for (var index in environment.arguments) {
@@ -71,4 +134,5 @@ class Program {
 }
 
 var program = new Program();
+program.runTests(Environment);
 program.run(Environment);

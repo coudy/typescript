@@ -1,3 +1,4 @@
+///<reference path='..\harness\external\json2.ts' />
 ///<reference path='ArrayUtilities.ts' />
 ///<reference path='CharacterCodes.ts' />
 ///<reference path='CharacterInfo.ts' />

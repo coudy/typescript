@@ -41,10 +41,12 @@ class SyntaxToken {
                        itext.toString(new TextSpan(fullStart + leadingWidth + text.length, trailingWidth));
             },
             value: () => {
-                throw Errors.notYetImplemented();
+                // TODO: return proper value here.
+                return null;
             },
             valueText: () => {
-                throw Errors.notYetImplemented();
+                // TODO: return proper value here.
+                return null;
             },
             diagnostics: () => diagnostics,
             hasLeadingTrivia: () => leadingWidth > 0,
