@@ -4,7 +4,7 @@ class SyntaxDiagnosticInfo extends DiagnosticInfo {
     private _offset = 0;
     private _width = 0;
 
-    constructor (offset: number, width: number, code: DiagnosticCode, ...args: any[]) {
+    constructor(offset: number, width: number, code: DiagnosticCode, ...args: any[]) {
         super(code, args);
 
         if (width < 0) {

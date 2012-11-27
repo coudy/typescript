@@ -26,7 +26,7 @@ class Scanner {
         return new Scanner(text, languageVersion, new StringTable());
     }
 
-    constructor (text: IText, languageVersion: LanguageVersion, stringTable: StringTable) {
+    constructor(text: IText, languageVersion: LanguageVersion, stringTable: StringTable) {
         Contract.throwIfNull(stringTable);
 
         this._text = text;
@@ -85,10 +85,10 @@ class Scanner {
     }
 
     private createToken(start: number): ISyntaxToken {
-        return SyntaxToken.create(start, this.leadingTriviaInfo, this.tokenInfo, this.trailingTriviaInfo, 
+        return SyntaxToken.create(start, this.leadingTriviaInfo, this.tokenInfo, this.trailingTriviaInfo,
             this.errors.length == 0 ? null : this.errors);
     }
-    
+
     private scanTriviaInfo(afterFirstToken: bool, isTrailing: bool, triviaInfo: ScannerTriviaInfo): void {
         this.textWindow.start();
         triviaInfo.Width = 0;
@@ -349,7 +349,7 @@ class Scanner {
         if (this.textWindow.peekCharAtPosition() === CharacterCodes.dot) {
             this.textWindow.advanceChar1();
         }
-        
+
         while (CharacterInfo.isDecimalDigit(this.textWindow.peekCharAtPosition())) {
             this.textWindow.advanceChar1();
         }
@@ -363,7 +363,7 @@ class Scanner {
         if (ch === CharacterCodes.minus || ch === CharacterCodes.plus) {
             this.textWindow.advanceChar1();
         }
-        
+
         while (CharacterInfo.isDecimalDigit(this.textWindow.peekCharAtPosition())) {
             this.textWindow.advanceChar1();
         }
@@ -390,7 +390,7 @@ class Scanner {
             var ch = this.textWindow.peekCharN(1);
             return ch === CharacterCodes.x || ch === CharacterCodes.X;
         }
-        
+
         return false;
     }
 
@@ -698,7 +698,7 @@ class Scanner {
             case SyntaxKind.FalseKeyword:
                 return false;
         }
-        
+
         Debug.assert(this.textWindow.peekCharAtPosition() === CharacterCodes.slash);
         var start = this.textWindow.position();
 

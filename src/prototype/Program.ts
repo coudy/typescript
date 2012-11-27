@@ -23,7 +23,7 @@ class Program {
         var text = new StringText(contents);
         var scanner = Scanner.create(text, LanguageVersion.EcmaScript5);
         var parser = new Parser(scanner, null, null);
-        
+
         if (StringUtilities.endsWith(filePath, ".ts")) {
             parser.parseSourceUnit();
         }
@@ -50,7 +50,7 @@ class Program {
             if (token.diagnostics()) {
                 throw new Error("Error parsing!");
             }
-            
+
             var tokenText = token.text();
             var tokenFullText = token.fullText(text);
 

@@ -7,7 +7,7 @@ class SubText extends TextBase {
     private text: IText = null;
     private span: TextSpan = null;
 
-    constructor (text: IText, span: TextSpan) {
+    constructor(text: IText, span: TextSpan) {
         super();
 
         if (text === null) {
@@ -17,8 +17,7 @@ class SubText extends TextBase {
         if (span.start() < 0 ||
             span.start() >= text.length() ||
              span.end() < 0 ||
-             span.end() > text.length())
-        {
+             span.end() > text.length()) {
             throw Errors.argument("span");
         }
 

@@ -20,11 +20,10 @@ class StringTable {
     private count: number;
     private mask: number;
 
-    constructor(mask: number = 31, nested: StringTable = null)
-    {
+    constructor(mask: number = 31, nested: StringTable = null) {
         this.mask = mask;
         this.entries = ArrayUtilities.createArray(mask + 1);
-        
+
         // nested table is supposed to be freezed and readonly.
         this.nested = nested;
     }
@@ -32,7 +31,7 @@ class StringTable {
     public addString(key: string): string {
         var hashCode = StringTable.computeStringHashCode(key);
 
-        if (this.nested !==null) {
+        if (this.nested !== null) {
             var exist = this.nested.findStringEntry(key, hashCode);
             if (exist !== null) {
                 return exist.Text;

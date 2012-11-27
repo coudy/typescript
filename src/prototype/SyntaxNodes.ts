@@ -1,11 +1,5 @@
 ///<reference path='References.ts' />
 
-//class SourceUnitSyntax extends SyntaxNode {
-//}
-
-//class DeclarationSourceUnitSyntax extends SourceUnitSyntax {
-//}
-
 class SourceUnitSyntax extends SyntaxNode {
     private _moduleElements: ISyntaxNodeList/*<ModuleElementSyntax>*/;
     private _endOfFileToken: ISyntaxToken;
@@ -1490,7 +1484,7 @@ class IfStatementSyntax extends StatementSyntax {
     private _statement: StatementSyntax = null;
     private _elseClause: ElseClauseSyntax = null;
 
-    constructor (ifKeyword: ISyntaxToken,
+    constructor(ifKeyword: ISyntaxToken,
         openParenToken: ISyntaxToken,
         condition: ExpressionSyntax,
         closeParenToken: ISyntaxToken,

@@ -32,7 +32,7 @@ class DiagnosticMessages {
     public static getDiagnosticMessage(code: DiagnosticCode, args: any[]): string {
         var formatString = getFormatString(code);
 
-        var result = formatString.replace(/{(\d+)}/g, function(match, num) { 
+        var result = formatString.replace(/{(\d+)}/g, function (match, num) {
             return typeof args[num] !== 'undefined'
                 ? args[num]
                 : match;

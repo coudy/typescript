@@ -1,3 +1,5 @@
+///<reference path='References.ts' />
+
 class CharacterCodes {
     public static nullCharacter: number = 0;
 
@@ -13,7 +15,7 @@ class CharacterCodes {
 
     public static _0: number = "0".charCodeAt(0);
     public static _9: number = "9".charCodeAt(0);
-    
+
     public static a: number = "a".charCodeAt(0);
     public static b: number = "b".charCodeAt(0);
     public static e: number = "e".charCodeAt(0);
@@ -26,13 +28,13 @@ class CharacterCodes {
     public static v: number = "v".charCodeAt(0);
     public static x: number = "x".charCodeAt(0);
     public static z: number = "z".charCodeAt(0);
-    
+
     public static A: number = "A".charCodeAt(0);
     public static E: number = "E".charCodeAt(0);
     public static F: number = "F".charCodeAt(0);
     public static X: number = "X".charCodeAt(0);
     public static Z: number = "Z".charCodeAt(0);
-    
+
     public static ampersand: number = "&".charCodeAt(0);
     public static asterisk: number = "*".charCodeAt(0);
     public static backslash: number = "\\".charCodeAt(0);

@@ -129,8 +129,7 @@ class TextSpan {
     /// <returns>
     /// <c>true</c> if the position intersects, otherwise <c>false</c>.
     /// </returns>
-    public intersectsWithPosition(position: number): bool 
-    {
+    public intersectsWithPosition(position: number): bool {
         return position <= this.end() && position >= this._start;
     }
 
@@ -143,13 +142,11 @@ class TextSpan {
     /// <returns>
     /// The intersection of the spans, or null if the intersection is empty.
     /// </returns>
-    public intersection(span: TextSpan): TextSpan
-    {
+    public intersection(span: TextSpan): TextSpan {
         var intersectStart = MathPrototype.max(this._start, span._start);
         var intersectEnd = MathPrototype.min(this.end(), span.end());
 
-        if (intersectStart <= intersectEnd)
-        {
+        if (intersectStart <= intersectEnd) {
             return TextSpan.fromBounds(intersectStart, intersectEnd);
         }
 
@@ -160,8 +157,7 @@ class TextSpan {
     /// Creates a new <see cref="T:TextSpan"/> from <param name="start" /> and <param
     /// name="end"/> positions as opposed to a position and length.
     /// </summary>
-    public static fromBounds(start: number, end: number): TextSpan 
-    {
+    public static fromBounds(start: number, end: number): TextSpan {
         Contract.requires(start >= 0);
         Contract.requires(end - start >= 0);
         return new TextSpan(start, end - start);
