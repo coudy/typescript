@@ -828,6 +828,9 @@ class Parser {
         else if (this.isIfStatement()) {
             return this.parseIfStatement();
         }
+        else if (this.isBlock()) {
+            return this.parseBlock(/*allowFunctionDeclaration:*/ false);
+        }
         else {
             throw Errors.notYetImplemented();
         }

@@ -87,7 +87,9 @@ class SyntaxToken {
 
     // TODO: This needs to take in the proper position.
     public static createEmptyToken(kind: SyntaxKind): ISyntaxToken {
-        return {
+        var token: ISyntaxToken;
+        token = {
+            toJSON:(key) => SyntaxToken.toJSON(token),
             kind: () => kind,
             keywordKind: () => SyntaxKind.None,
             fullStart: () => 0,
@@ -107,5 +109,7 @@ class SyntaxToken {
             leadingTrivia: (text: IText): ISyntaxTriviaList => SyntaxTriviaList.empty,
             trailingTrivia: (text: IText): ISyntaxTriviaList => SyntaxTriviaList.empty,
         };
+
+        return token;
     }
 }

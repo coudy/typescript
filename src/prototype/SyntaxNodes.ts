@@ -19,6 +19,10 @@ class SourceUnitSyntax extends SyntaxNode {
         this._endOfFileToken = endOfFileToken;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.SourceUnit;
+    }
+
     public moduleElements(): ISyntaxNodeList {
         return this._moduleElements;
     }
@@ -700,6 +704,10 @@ class IdentifierNameSyntax extends NameSyntax {
         this._identifier = identifier;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.IdentifierName;
+    }
+
     public identifier(): ISyntaxToken {
         return this._identifier;
     }
@@ -920,6 +928,10 @@ class BlockSyntax extends StatementSyntax {
         this._openBraceToken = openBraceToken;
         this._statements = statements;
         this._closeBraceToken = closeBraceToken;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.Block;
     }
 
     public openBraceToken(): ISyntaxToken {
@@ -1518,6 +1530,10 @@ class IfStatementSyntax extends StatementSyntax {
         this._closeParenToken = closeParenToken;
         this._statement = statement;
         this._elseClause = elseClause;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.IfStatement;
     }
 
     public ifKeyword(): ISyntaxToken {

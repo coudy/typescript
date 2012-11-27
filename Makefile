@@ -4,6 +4,7 @@ BUILT_LOCAL=$(BUILT)\local
 BUILT_LOCALTEST=$(BUILT)\localtest
 
 HOST=$(TYPESCRIPT_HOST)
+DEBUG_HOST=$(TYPESCRIPT_DEBUG_HOST)
 
 #compiler source location
 CSRC=$(BASE)src\compiler
@@ -172,7 +173,7 @@ prototype: $(PROTOTYPE_SOURCES)
 	$(STRC_LKG) $(PROTOTYPE_SOURCES) -out $(PSRC)\prototype.js
 
 runprototype: prototype
-	$(HOST) $(PSRC)\prototype.js $(COMPILER_SOURCES)
+	$(DEBUG_HOST) $(PSRC)\prototype.js $(COMPILER_SOURCES)
 
 COMPILER_TESTS=--compiler
 LS_TESTS=--ls

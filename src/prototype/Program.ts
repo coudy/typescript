@@ -1,15 +1,54 @@
 ///<reference path='References.ts' />
 
 class Program {
-    runTests(environment: IEnvironment): void {
-        this.runScannerTests(environment);
+    runAllTests(environment: IEnvironment): void {
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
+            filePath => this.runScannerTest(environment, filePath, LanguageVersion.EcmaScript5));
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript3",
+            filePath => this.runScannerTest(environment, filePath, LanguageVersion.EcmaScript3));
+
+            
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
+            filePath => this.runParserTest(environment, filePath, LanguageVersion.EcmaScript5));
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript3",
+            filePath => this.runParserTest(environment, filePath, LanguageVersion.EcmaScript3));
     }
 
-    runScannerTests(environment: IEnvironment): void {
-        var testFiles = environment.listFiles("C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5");
+    private runTests(
+        environment: IEnvironment,
+        path: string,
+        action: (filePath: string) => void) {
+
+        var testFiles = environment.listFiles(path);
         for (var index in testFiles) {
             var filePath = testFiles[index];
-            this.runScannerTest(environment, filePath, LanguageVersion.EcmaScript5);
+            action(filePath);
+        }
+    }
+
+    runParserTest(environment: IEnvironment, filePath: string, languageVersion: LanguageVersion): void {
+        if (!StringUtilities.endsWith(filePath, ".ts")) {
+            return;
+        }
+
+        environment.standardOut.WriteLine("Testing Parser: " + filePath);
+
+        var contents = environment.readFile(filePath);
+        var text = new StringText(contents);
+        var scanner = Scanner.create(text, languageVersion);
+        var parser = new Parser(scanner, null, null);
+
+        var sourceUnit = parser.parseSourceUnit();
+
+        var actualResult = JSON2.stringify(sourceUnit, null, 4);
+        var expectedFile = filePath + ".expected";
+        var actualFile = filePath + ".actual";
+
+        var expectedResult = environment.readFile(expectedFile);
+
+        if (expectedResult !== actualResult) {
+            environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
+            environment.writeFile(actualFile, actualResult);
         }
     }
 
@@ -116,5 +155,5 @@ class Program {
 }
 
 var program = new Program();
-program.runTests(Environment);
+program.runAllTests(Environment);
 program.run(Environment);
