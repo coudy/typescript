@@ -1,7 +1,19 @@
 ///<reference path='References.ts' />
 
 class SyntaxNodeList {
+    public static toJSON(list: ISyntaxNodeList) {
+        var result = [];
+
+        for (var i = 0; i < list.count(); i++) {
+            result.push(list.syntaxNodeAt(i));
+        }
+
+        return result;
+    }
+
     public static empty: ISyntaxNodeList = {
+        toJSON: (key) => [],
+
         count: () => {
             return 0;
         },
@@ -18,7 +30,9 @@ class SyntaxNodeList {
 
         if (nodes.length === 1) {
             var item = nodes[0];
-            return {
+            var list: ISyntaxNodeList;
+            list = {
+                toJSON: (key) => toJSON(list),
                 count: () => 1,
                 syntaxNodeAt: (index: number) => {
                     if (index !== 0) {
@@ -28,9 +42,14 @@ class SyntaxNodeList {
                     return item;
                 }
             };
+
+            return list;
         }
 
-        return {
+        var list: ISyntaxNodeList;
+        list = {
+            toJSON: (key) => toJSON(list),
+
             count: () => nodes.length,
 
             syntaxNodeAt: (index: number) => {
@@ -41,5 +60,7 @@ class SyntaxNodeList {
                 return nodes[index];
             }
         };
+
+        return list;
     }
 }

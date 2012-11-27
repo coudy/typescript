@@ -131,6 +131,15 @@ enum SyntaxKind {
     EndOfFileToken,
 
     // SyntaxNodes
+    SourceUnit,
+
+    // Names
+    IdentifierName,
+    QualifiedName,
+
+    // Statements
+    Block,
+    IfStatement,
 
     // Expressions
     PlusExpression,
