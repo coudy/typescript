@@ -2493,4 +2493,78 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
 }
 
 class EnumDeclarationSyntax extends ModuleElementSyntax {
+    private _exportKeyword: ISyntaxToken = null;
+    private _enumKeyword: ISyntaxToken = null;
+    private _identifier: ISyntaxToken = null;
+    private _openBraceToken: ISyntaxToken = null;
+    private _variableDeclarators: ISeparatedSyntaxList = null;
+    private _closeBraceToken: ISyntaxToken = null;
+
+    constructor(exportKeyword: ISyntaxToken,
+                enumKeyword: ISyntaxToken,
+                identifier: ISyntaxToken,
+                openBraceToken: ISyntaxToken,
+                variableDeclarators: ISeparatedSyntaxList,
+                closeBraceToken: ISyntaxToken) {
+        super();
+
+        if (exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
+            throw Errors.argument("exportKeyword");
+        }
+
+        if (enumKeyword.keywordKind() !== SyntaxKind.EnumKeyword) {
+            throw Errors.argument("enumKeyword");
+        }
+
+        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) {
+            throw Errors.argument("identifier");
+        }
+
+        if (openBraceToken.kind() !== SyntaxKind.OpenBraceToken) {
+            throw Errors.argument("openBraceToken");
+        }
+
+        if (variableDeclarators === null) {
+            throw Errors.argumentNull("variableDeclarators");
+        }
+
+        if (closeBraceToken.kind() !== SyntaxKind.CloseBraceToken) {
+            throw Errors.argument("closeBraceToken");
+        }
+
+        this._exportKeyword = exportKeyword;
+        this._enumKeyword = enumKeyword;
+        this._identifier = identifier;
+        this._openBraceToken = openBraceToken;
+        this._variableDeclarators = variableDeclarators;
+        this._closeBraceToken = closeBraceToken;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.EnumDeclaration;
+    }
+
+    public exportKeyword(): ISyntaxToken {
+        return this._exportKeyword;
+    }
+
+    public enumKeyword(): ISyntaxToken {
+        return this._enumKeyword;
+    }
+
+    public identifier(): ISyntaxToken {
+        return this._identifier;
+    }
+
+    public openBraceToken(): ISyntaxToken {
+        return this._openBraceToken;
+    }
+
+    public variableDeclarators(): ISeparatedSyntaxList {
+        return this._variableDeclarators;
+    }
+
+    public closeBraceToken(): ISyntaxToken {
+        return this._closeBraceToken;
+    }
 }

@@ -90,7 +90,7 @@ var Environment = (function () {
                         fc = new Enumerator(folder.subfolders);
 
                         for (; !fc.atEnd() ; fc.moveNext()) {
-                            paths = paths.concat(filesInFolder(fc.item(), root + "/" + fc.item().Name));
+                            paths = paths.concat(filesInFolder(fc.item(), root + "\\" + fc.item().Name));
                         }
                     }
 
@@ -98,7 +98,7 @@ var Environment = (function () {
 
                     for (; !fc.atEnd() ; fc.moveNext()) {
                         if (!spec || fc.item().Name.match(spec)) {
-                            paths.push(root + "/" + fc.item().Name);
+                            paths.push(root + "\\" + fc.item().Name);
                         }
                     }
 
