@@ -1133,9 +1133,83 @@ class Parser {
         else if (this.isReturnStatement()) {
             return this.parseReturnStatement();
         }
+        else if (this.isSwitchStatement()) {
+            return this.parseSwitchStatement();
+        }
         else {
             throw Errors.notYetImplemented();
         }
+    }
+
+    private isSwitchStatement(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.SwitchKeyword;
+    }
+
+    private parseSwitchStatement() {
+        Debug.assert(this.isSwitchStatement());
+        
+        var switchKeyword = this.eatKeyword(SyntaxKind.SwitchKeyword);
+        var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
+        var expression = this.parseExpression(/*allowIn:*/ true);
+        var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
+
+        var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
+
+        var caseClauses: CaseClauseSyntax[] = null;
+        if (!openBraceToken.isMissing()) {
+            while (true) {
+                if (this.currentToken().kind() === SyntaxKind.CloseBraceToken || this.currentToken().kind() === SyntaxKind.EndOfFileToken) {
+                    break;
+                }
+
+                if (this.isCaseClause()) {
+                    var caseClause = this.parseCaseClause();
+
+                    caseClauses = caseClauses || [];
+                    caseClauses.push(caseClause);
+                }
+                else {
+                    // TODO: Error tolerance.
+                    break;
+                }
+            }
+        }
+
+        var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
+        return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken,
+            openBraceToken, SyntaxNodeList.create(caseClauses), closeBraceToken);
+    }
+
+    private isCaseClause(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.CaseKeyword || this.currentToken().keywordKind() === SyntaxKind.DefaultKeyword;
+    }
+
+    private parseCaseClause(): CaseClauseSyntax {
+        Debug.assert(this.isCaseClause());
+
+        var caseOrDefaultKeyword = this.eatAnyToken();
+        var expression: ExpressionSyntax = null;
+        if (this.currentToken().kind() !== SyntaxKind.ColonToken) {
+            expression = this.parseExpression(/*allowIn:*/ true);
+        }
+
+        var colonToken = this.eatToken(SyntaxKind.ColonToken);
+
+        var statements: StatementSyntax[] = null;
+
+        while (true) {
+            if (this.isCaseClause() || this.currentToken().kind() == SyntaxKind.EndOfFileToken || this.currentToken().kind() === SyntaxKind.CloseBraceToken) {
+                break;
+            }
+
+            var statement = this.parseStatement(/*allowFunctionDeclaration:*/ false);
+            statements = statements || [];
+            statements.push(statement);
+
+            // TODO: error recovery.
+        }
+
+        return new CaseClauseSyntax(caseOrDefaultKeyword, expression, colonToken, SyntaxNodeList.create(statements));
     }
 
     private isReturnStatement(): bool {
