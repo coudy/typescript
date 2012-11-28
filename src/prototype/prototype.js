@@ -2654,20 +2654,35 @@ var Scanner = (function () {
         this.tokenInfo.Text = this.textWindow.getText(true);
         this.tokenInfo.Kind = SyntaxKind.IdentifierNameToken;
     };
-    Scanner.prototype.isIdentifierStart = function (character) {
+    Scanner.prototype.isIdentifierStart_Fast = function (character) {
         if((character >= CharacterCodes.a && character <= CharacterCodes.z) || (character >= CharacterCodes.A && character <= CharacterCodes.Z) || character === CharacterCodes._ || character === CharacterCodes.$) {
             return true;
         }
+        return false;
+    };
+    Scanner.prototype.isIdentifierStart_Slow = function () {
         var ch = this.peekCharOrUnicodeEscape();
         return Unicode.isIdentifierStart(ch, this.languageVersion);
     };
-    Scanner.prototype.isIdentifierPart = function () {
+    Scanner.prototype.isIdentifierStart = function (character) {
+        return this.isIdentifierStart_Fast(character) || this.isIdentifierStart_Slow();
+    };
+    Scanner.prototype.isIdentifierPart_Fast = function () {
         var character = this.textWindow.peekCharAtPosition();
-        if(this.isIdentifierStart(character)) {
+        if(this.isIdentifierStart_Fast(character)) {
+            return true;
+        }
+        return character >= CharacterCodes._0 && character <= CharacterCodes._9;
+    };
+    Scanner.prototype.isIdentifierPart_Slow = function () {
+        if(this.isIdentifierStart_Slow()) {
             return true;
         }
         var ch = this.peekCharOrUnicodeEscape();
         return Unicode.isIdentifierPart(ch, this.languageVersion);
+    };
+    Scanner.prototype.isIdentifierPart = function () {
+        return this.isIdentifierPart_Fast() || this.isIdentifierPart_Slow();
     };
     Scanner.prototype.scanIdentifierOrKeyword = function () {
         this.scanIdentifier();
@@ -8945,6 +8960,9 @@ var Unicode = (function () {
         65343
     ];
     Unicode.lookupInUnicodeMap = function lookupInUnicodeMap(code, map) {
+        if(code < map[0]) {
+            return false;
+        }
         var lo = 0;
         var hi = map.length;
         var mid;

@@ -74,6 +74,11 @@ class Unicode {
     ];
 
     private static lookupInUnicodeMap(code: number, map: number[]): bool {
+        // Bail out quickly if it couldn't possibly be in the map.
+        if (code < map[0]) {
+            return false;
+        }
+
         // Perform binary search in one of the unicode range maps
         var lo: number = 0;
         var hi: number = map.length;

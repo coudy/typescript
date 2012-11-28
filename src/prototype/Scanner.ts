@@ -417,7 +417,7 @@ class Scanner {
         this.tokenInfo.Kind = SyntaxKind.IdentifierNameToken;
     }
 
-    private isIdentifierStart(character: number): bool {
+    private isIdentifierStart_Fast(character: number): bool {
         if ((character >= CharacterCodes.a && character <= CharacterCodes.z) ||
             (character >= CharacterCodes.A && character <= CharacterCodes.Z) ||
             character === CharacterCodes._ ||
@@ -425,18 +425,38 @@ class Scanner {
             return true;
         }
 
+        return false;
+    }
+
+    private isIdentifierStart_Slow(): bool {
         var ch = this.peekCharOrUnicodeEscape();
         return Unicode.isIdentifierStart(ch, this.languageVersion);
     }
 
-    private isIdentifierPart(): bool {
+    private isIdentifierStart(character: number): bool {
+        return this.isIdentifierStart_Fast(character) || this.isIdentifierStart_Slow();
+    }
+
+    private isIdentifierPart_Fast(): bool {
         var character = this.textWindow.peekCharAtPosition();
-        if (this.isIdentifierStart(character)) {
+        if (this.isIdentifierStart_Fast(character)) {
+            return true;
+        }
+
+        return character >= CharacterCodes._0 && character <= CharacterCodes._9;
+    }
+
+    private isIdentifierPart_Slow(): bool {
+        if (this.isIdentifierStart_Slow()) {
             return true;
         }
 
         var ch = this.peekCharOrUnicodeEscape();
         return Unicode.isIdentifierPart(ch, this.languageVersion);
+    }
+
+    private isIdentifierPart(): bool {
+        return this.isIdentifierPart_Fast() || this.isIdentifierPart_Slow();
     }
 
     private scanIdentifierOrKeyword(): void {
