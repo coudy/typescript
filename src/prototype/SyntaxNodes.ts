@@ -1381,6 +1381,10 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
         this._closeBracketToken = closeBracketToken;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.ElementAccessExpression;
+    }
+
     public expression(): ExpressionSyntax {
         return this._expression;
     }
@@ -2604,6 +2608,10 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
         this._type = type;
         this._greaterThanToken = greaterThanToken;
         this._expression = expression;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.CastExpression;
     }
 
     public lessThanToken(): ISyntaxToken {

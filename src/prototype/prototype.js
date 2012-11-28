@@ -4179,32 +4179,36 @@ var SyntaxKind;
     SyntaxKind.ParenthesizedExpression = 194;
     SyntaxKind._map[195] = "ParenthesizedArrowFunctionExpression";
     SyntaxKind.ParenthesizedArrowFunctionExpression = 195;
-    SyntaxKind._map[196] = "VariableDeclaration";
-    SyntaxKind.VariableDeclaration = 196;
-    SyntaxKind._map[197] = "VariableDeclarator";
-    SyntaxKind.VariableDeclarator = 197;
-    SyntaxKind._map[198] = "ParameterList";
-    SyntaxKind.ParameterList = 198;
-    SyntaxKind._map[199] = "ArgumentList";
-    SyntaxKind.ArgumentList = 199;
-    SyntaxKind._map[200] = "ImplementsClause";
-    SyntaxKind.ImplementsClause = 200;
-    SyntaxKind._map[201] = "EqualsValueClause";
-    SyntaxKind.EqualsValueClause = 201;
-    SyntaxKind._map[202] = "CaseSwitchClause";
-    SyntaxKind.CaseSwitchClause = 202;
-    SyntaxKind._map[203] = "DefaultSwitchClause";
-    SyntaxKind.DefaultSwitchClause = 203;
-    SyntaxKind._map[204] = "ElseClause";
-    SyntaxKind.ElseClause = 204;
-    SyntaxKind._map[205] = "Parameter";
-    SyntaxKind.Parameter = 205;
-    SyntaxKind._map[206] = "FunctionSignature";
-    SyntaxKind.FunctionSignature = 206;
-    SyntaxKind._map[207] = "CallSignature";
-    SyntaxKind.CallSignature = 207;
-    SyntaxKind._map[208] = "TypeAnnotation";
-    SyntaxKind.TypeAnnotation = 208;
+    SyntaxKind._map[196] = "CastExpression";
+    SyntaxKind.CastExpression = 196;
+    SyntaxKind._map[197] = "ElementAccessExpression";
+    SyntaxKind.ElementAccessExpression = 197;
+    SyntaxKind._map[198] = "VariableDeclaration";
+    SyntaxKind.VariableDeclaration = 198;
+    SyntaxKind._map[199] = "VariableDeclarator";
+    SyntaxKind.VariableDeclarator = 199;
+    SyntaxKind._map[200] = "ParameterList";
+    SyntaxKind.ParameterList = 200;
+    SyntaxKind._map[201] = "ArgumentList";
+    SyntaxKind.ArgumentList = 201;
+    SyntaxKind._map[202] = "ImplementsClause";
+    SyntaxKind.ImplementsClause = 202;
+    SyntaxKind._map[203] = "EqualsValueClause";
+    SyntaxKind.EqualsValueClause = 203;
+    SyntaxKind._map[204] = "CaseSwitchClause";
+    SyntaxKind.CaseSwitchClause = 204;
+    SyntaxKind._map[205] = "DefaultSwitchClause";
+    SyntaxKind.DefaultSwitchClause = 205;
+    SyntaxKind._map[206] = "ElseClause";
+    SyntaxKind.ElseClause = 206;
+    SyntaxKind._map[207] = "Parameter";
+    SyntaxKind.Parameter = 207;
+    SyntaxKind._map[208] = "FunctionSignature";
+    SyntaxKind.FunctionSignature = 208;
+    SyntaxKind._map[209] = "CallSignature";
+    SyntaxKind.CallSignature = 209;
+    SyntaxKind._map[210] = "TypeAnnotation";
+    SyntaxKind.TypeAnnotation = 210;
     SyntaxKind.FirstStandardKeyword = SyntaxKind.BreakKeyword;
     SyntaxKind.LastStandardKeyword = SyntaxKind.WithKeyword;
     SyntaxKind.FirstFutureReservedKeyword = SyntaxKind.ClassKeyword;
@@ -5676,6 +5680,9 @@ var ElementAccessExpressionSyntax = (function (_super) {
         this._argumentExpression = argumentExpression;
         this._closeBracketToken = closeBracketToken;
     }
+    ElementAccessExpressionSyntax.prototype.kind = function () {
+        return SyntaxKind.ElementAccessExpression;
+    };
     ElementAccessExpressionSyntax.prototype.expression = function () {
         return this._expression;
     };
@@ -6541,6 +6548,9 @@ var CastExpressionSyntax = (function (_super) {
         this._greaterThanToken = greaterThanToken;
         this._expression = expression;
     }
+    CastExpressionSyntax.prototype.kind = function () {
+        return SyntaxKind.CastExpression;
+    };
     CastExpressionSyntax.prototype.lessThanToken = function () {
         return this._lessThanToken;
     };

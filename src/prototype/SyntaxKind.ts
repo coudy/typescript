@@ -228,6 +228,8 @@ enum SyntaxKind {
     ObjectCreationExpression,
     ParenthesizedExpression,
     ParenthesizedArrowFunctionExpression,
+    CastExpression,
+    ElementAccessExpression,
 
     // Variable declarations
     VariableDeclaration,
