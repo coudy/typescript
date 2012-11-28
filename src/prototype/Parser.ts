@@ -224,6 +224,27 @@ class Parser {
         this.tokenOffset++;
     }
 
+    private canEatAutomaticSemicolon(): bool {
+        var token = this.currentToken();
+
+        // An automatic semicolon is always allowed if we're at the end of the file.
+        if (token.kind() === SyntaxKind.EndOfFileToken) {
+            return true;
+        }
+
+        // Or if the next token is a close brace (regardless of which line it is on).
+        if (token.kind() === SyntaxKind.CloseBraceToken) {
+            return true;
+        }
+
+        // It is also allowed if there is a newline between the last token seen and the next one.
+        if (this.previousToken !== null && this.previousToken.hasTrailingNewLineTrivia()) {
+            return true;
+        }
+
+        return false;
+    }
+
     private canEatExplicitOrAutomaticSemicolon(): bool {
         var token = this.currentToken();
 
@@ -231,42 +252,38 @@ class Parser {
             return true;
         }
 
-        // Only attempt automatic semicolon insertion if the options allow for it.
-        if (this.options.allowAutomaticSemicolonInsertion()) {
-            // An automatic semicolon is always allowed if we're at the end of the file.
-            if (token.kind() === SyntaxKind.EndOfFileToken) {
-                return true;
-            }
-
-            // Or if the next token is a close brace (regardless of which line it is on).
-            if (token.kind() === SyntaxKind.CloseBraceToken) {
-                return true;
-            }
-
-            // It is also allowed if there is a newline between the last token seen and the next one.
-            if (this.previousToken !== null && !this.previousToken.hasTrailingNewLineTrivia()) {
-                return true;
-            }
-        }
-
-        return false;
+        return this.canEatAutomaticSemicolon();
     }
 
-    private eatExplicitOrAutomaticSemicolon(reportError?: bool = true): ISyntaxToken {
+    private eatExplicitOrAutomaticSemicolon(): ISyntaxToken {
         var token = this.currentToken();
 
-        if (this.canEatExplicitOrAutomaticSemicolon()) {
-            return this.eatToken(SyntaxKind.SemicolonToken, /*reportError:*/ false);
+        // If we see a semicolon, then we can definitely eat it.
+        if (token.kind() === SyntaxKind.SemicolonToken) {
+            return this.eatToken(SyntaxKind.SemicolonToken);
         }
 
-        // Automatic semicolon is not allowed.  Just try to eat the semicolon and report the
-        // error if the caller asked for it.
-        this.eatToken(SyntaxKind.SemicolonToken, reportError);
+        // Check if an automatic semicolon could go here.  If so, synthesize one.  However, if the
+        // user has the option set to error on automatic semicolons, then add an error to that
+        // token as well.
+        if (this.canEatAutomaticSemicolon()) {
+            var semicolonToken = SyntaxToken.createEmptyToken(SyntaxKind.SemicolonToken);
+
+            if (!this.options.allowAutomaticSemicolonInsertion()) {
+                semicolonToken = this.withAdditionalDiagnostics(semicolonToken, new DiagnosticInfo(DiagnosticCode.AutomaticSemicolonInsertionNotAllowed)); 
+            }
+
+            return semicolonToken;
+        }
+
+        // No semicolon could be consumed here at all.  Just call the standard eating function
+        // so we get the token and the error for it.
+        return this.eatToken(SyntaxKind.SemicolonToken);
     }
 
     //this method is called very frequently
     //we should keep it simple so that it can be inlined.
-    private eatToken(kind: SyntaxKind, reportError?: bool = true): ISyntaxToken {
+    private eatToken(kind: SyntaxKind): ISyntaxToken {
         Debug.assert(SyntaxFacts.isTokenKind(kind))
 
         var token = this.currentToken();
@@ -276,10 +293,10 @@ class Parser {
         }
 
         //slow part of EatToken(SyntaxKind kind)
-        return this.createMissingToken(kind, token.kind(), /*reportError: */ reportError);
+        return this.createMissingToken(kind, token.kind());
     }
 
-    private eatKeyword(kind: SyntaxKind, reportError?: bool = true): ISyntaxToken {
+    private eatKeyword(kind: SyntaxKind): ISyntaxToken {
         Debug.assert(SyntaxFacts.isTokenKind(kind))
 
         var token = this.currentToken();
@@ -289,35 +306,35 @@ class Parser {
         }
 
         //slow part of EatToken(SyntaxKind kind)
-        return this.createMissingToken(kind, token.kind(), /*reportError: */ reportError);
+        return this.createMissingToken(kind, token.kind());
     }
 
     // This method should be called when the grammar calls for on *IdentifierName* and not an
     // *Identifier*.
-    private eatIdentifierNameToken(reportError?: bool = true): ISyntaxToken {
+    private eatIdentifierNameToken(): ISyntaxToken {
         var token = this.currentToken();
         if (token.kind() === SyntaxKind.IdentifierNameToken) {
             this.moveToNextToken();
             return token;
         }
 
-        return this.createMissingToken(SyntaxKind.IdentifierNameToken, token.kind(), /*reportError: */ reportError);
+        return this.createMissingToken(SyntaxKind.IdentifierNameToken, token.kind());
     }
 
     // This method should be called when the grammar calls for on *Identifier* and not an
     // *IdentifierName*.
-    private eatIdentifierToken(reportError?: bool = true): ISyntaxToken {
+    private eatIdentifierToken(): ISyntaxToken {
         var token = this.currentToken();
         if (token.kind() === SyntaxKind.IdentifierNameToken) {
             if (this.isKeyword(token.keywordKind())) {
-                return this.createMissingToken(SyntaxKind.IdentifierNameToken, token.keywordKind(), /*reportError: */ reportError);
+                return this.createMissingToken(SyntaxKind.IdentifierNameToken, token.keywordKind());
             }
 
             this.moveToNextToken();
             return token;
         }
 
-        return this.createMissingToken(SyntaxKind.IdentifierNameToken, token.kind(), /*reportError: */ reportError);
+        return this.createMissingToken(SyntaxKind.IdentifierNameToken, token.kind());
     }
 
     private isIdentifier(token: ISyntaxToken): bool {
@@ -342,12 +359,9 @@ class Parser {
         return false;
     }
 
-    private createMissingToken(expected: SyntaxKind, actual: SyntaxKind, reportError: bool): ISyntaxToken {
+    private createMissingToken(expected: SyntaxKind, actual: SyntaxKind): ISyntaxToken {
         var token = SyntaxToken.createEmptyToken(expected);
-        if (reportError) {
-            token = this.withAdditionalDiagnostics(token, this.getExpectedTokenDiagnosticInfo(expected, actual));
-        }
-
+        token = this.withAdditionalDiagnostics(token, this.getExpectedTokenDiagnosticInfo(expected, actual));
         return token;
     }
 
@@ -1154,8 +1168,10 @@ class Parser {
         // If there is no newline after the break keyword, then we can consume an optional 
         // identifier.
         var identifier: ISyntaxToken = null;
-        if (!breakKeyword.hasTrailingNewLineTrivia() && this.isIdentifier(this.currentToken())) {
-            identifier = this.eatIdentifierToken();
+        if (!this.canEatExplicitOrAutomaticSemicolon()) {
+            if (this.isIdentifier(this.currentToken())) {
+                identifier = this.eatIdentifierToken();
+            }
         }
 
         var semicolon = this.eatExplicitOrAutomaticSemicolon();
@@ -1243,15 +1259,11 @@ class Parser {
         var returnKeyword = this.eatKeyword(SyntaxKind.ReturnKeyword);
 
         var expression: ExpressionSyntax = null;
-        var semicolonToken: ISyntaxToken = null;
-
-        if (this.canEatExplicitOrAutomaticSemicolon()) {
-            semicolonToken = this.eatExplicitOrAutomaticSemicolon();
-        }
-        else {
+        if (!this.canEatExplicitOrAutomaticSemicolon()) {
             expression = this.parseExpression(/*allowIn:*/ true);
-            semicolonToken = this.eatExplicitOrAutomaticSemicolon();
         }
+        
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
 
         return new ReturnStatementSyntax(returnKeyword, expression, semicolonToken);
     }
@@ -1572,7 +1584,12 @@ class Parser {
 
                 case SyntaxKind.PlusPlusToken:
                 case SyntaxKind.MinusMinusToken:
-                    // TODO: verify there is no newline between the previous token and the current one.
+                    // Because of automatic semicolon insertion, we should only consume the ++ or -- 
+                    // if it is on the same line as the previous token.
+                    if (this.previousToken !== null && this.previousToken.hasTrailingNewLineTrivia()) {
+                        return expression;
+                    }
+
                     expression = new PostfixUnaryExpressionSyntax(
                         SyntaxFacts.getPostfixUnaryExpressionFromOperatorToken(currentTokenKind), expression, this.eatAnyToken());
                     break;

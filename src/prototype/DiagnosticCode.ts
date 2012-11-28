@@ -8,6 +8,7 @@ enum DiagnosticCode {
     _0_keyword_expected = 4,
     _0_expected = 5,
     Identifier_expected__0_is_a_keyword = 6,
+    AutomaticSemicolonInsertionNotAllowed = 7,
 }
 
 class DiagnosticMessages {
@@ -21,6 +22,7 @@ class DiagnosticMessages {
             codeToFormatString[DiagnosticCode._0_keyword_expected] = "'{0}' keyword expected.";
             codeToFormatString[DiagnosticCode._0_expected] = "'{0}' expected.";
             codeToFormatString[DiagnosticCode.Identifier_expected__0_is_a_keyword] = "Identifier expected; '{0}' is a keyword.";
+            codeToFormatString[DiagnosticCode.AutomaticSemicolonInsertionNotAllowed] = "Automatic semicolon insertion not allowed.";
         }
     }
 
