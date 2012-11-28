@@ -132,6 +132,7 @@ class Parser {
         Debug.assert(offset >= 0 && offset < this.tokenCount);
         this.tokenOffset = offset;
 
+        this._currentToken = null;
         this.previousToken = point.previousToken;
         this.isInStrictMode = point.isInStrictMode;
     }
@@ -624,7 +625,7 @@ class Parser {
 
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
         var classElements: ClassElementSyntax[] = null;
-        if (!openBraceToken.isMissing) {
+        if (!openBraceToken.isMissing()) {
             while (true) {
                 if (this.currentToken().kind() === SyntaxKind.CloseBraceToken || this.currentToken().kind() === SyntaxKind.EndOfFileToken) {
                     break;
@@ -643,8 +644,105 @@ class Parser {
             openBraceToken, SyntaxNodeList.create(classElements), closeBraceToken);
     }
 
-    private parseClassElement(): ClassElementSyntax {
+    private isConstructorDeclaration(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.ConstructorKeyword;
+    }
+
+    private isMemberFunctionDeclaration(): bool {
+        var resetPoint = this.getResetPoint();
+        try {
+            if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
+                this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
+                this.eatAnyToken();
+            }
+
+            if (this.currentToken().keywordKind() === SyntaxKind.StaticKeyword) {
+                this.eatAnyToken();
+            }
+
+            if (!this.isIdentifier(this.currentToken())) {
+                return false;
+            }
+
+            this.eatAnyToken();
+            return this.currentToken().kind() === SyntaxKind.OpenParenToken;
+        }
+        finally {
+            this.reset(resetPoint);
+            this.release(resetPoint);
+        }
+    }
+
+    private isMemberAccessorDeclaration(): bool {
+        var resetPoint = this.getResetPoint();
+        try {
+            if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
+                this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
+                this.eatAnyToken();
+            }
+
+            if (this.currentToken().keywordKind() === SyntaxKind.StaticKeyword) {
+                this.eatAnyToken();
+            }
+
+            if (this.currentToken().keywordKind() !== SyntaxKind.GetKeyword &&
+                this.currentToken().keywordKind() !== SyntaxKind.SetKeyword) {
+                return false;
+            }
+            
+            this.eatAnyToken();
+            return this.isIdentifier(this.currentToken());
+        }
+        finally {
+            this.reset(resetPoint);
+            this.release(resetPoint);
+        }
+    }
+
+    private isMemberVariableDeclaration(): bool {
+        if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
+            this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
+            return true;
+        }
+
+        if (this.currentToken().keywordKind() === SyntaxKind.StaticKeyword) {
+            return true;
+        }
+
+        return this.isIdentifier(this.currentToken());
+    }
+
+    private isMemberDeclaration(): bool {
+        // Note: the order of these calls is important.  Specifically, isMemberVariableDeclaration
+        // checks for a subset of the conditions of the other two.
+        return this.isMemberFunctionDeclaration() ||
+               this.isMemberAccessorDeclaration() ||
+               this.isMemberVariableDeclaration();
+    }
+
+    private isClassElement(): bool {
+        return this.isConstructorDeclaration() || this.isMemberDeclaration();
+    }
+
+    private parseConstructorDeclaration(): ConstructorDeclarationSyntax {
         throw Errors.notYetImplemented();
+    }
+
+    private parseMemberDeclaration(): MemberDeclarationSyntax {
+        throw Errors.notYetImplemented();
+    }
+
+    private parseClassElement(): ClassElementSyntax {
+        Debug.assert(this.isClassElement());
+        if (this.isConstructorDeclaration()) {
+            return this.parseConstructorDeclaration();
+        }
+        else if (this.isMemberDeclaration()) {
+            return this.parseMemberDeclaration();
+        }
+        else {
+            throw Errors.notYetImplemented();
+        }
     }
 
     private isFunctionDeclaration(): bool {
@@ -915,7 +1013,27 @@ class Parser {
     }
 
     private parseImplementsClause(): ImplementsClauseSyntax {
-        throw Errors.notYetImplemented();
+        Debug.assert(this.isImplementsClause());
+
+        var implementsKeyword = this.eatKeyword(SyntaxKind.ImplementsKeyword);
+        var typeNames: any[] = [];
+
+        var typeName = this.parseName();
+        typeNames.push(typeName);
+
+        while (true) {
+            if (this.currentToken().kind() === SyntaxKind.CommaToken) {
+                typeNames.push(this.eatToken(SyntaxKind.CommaToken));
+
+                typeName = this.parseName();
+                typeNames.push(typeName);
+            }
+
+            // TODO: error recovery.
+            break;
+        }
+
+        return new ImplementsClauseSyntax(implementsKeyword, SeparatedSyntaxList.create(typeNames));
     }
 
     private parseStatement(allowFunctionDeclaration: bool): StatementSyntax {
