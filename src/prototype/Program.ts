@@ -2,6 +2,8 @@
 
 class Program {
     runAllTests(environment: IEnvironment): void {
+        environment.standardOut.WriteLine("");
+
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
             filePath => this.runScannerTest(environment, filePath, LanguageVersion.EcmaScript5));
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript3",
@@ -12,6 +14,8 @@ class Program {
             filePath => this.runParserTest(environment, filePath, LanguageVersion.EcmaScript5));
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript3",
             filePath => this.runParserTest(environment, filePath, LanguageVersion.EcmaScript3));
+
+        environment.standardOut.WriteLine("");
     }
 
     private runTests(

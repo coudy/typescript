@@ -170,6 +170,90 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
 }
 
 class ClassDeclarationSyntax extends ModuleElementSyntax {
+    private _exportKeyword: ISyntaxToken = null;
+    private _classKeyword: ISyntaxToken = null;
+    private _identifier: ISyntaxToken = null;
+    private _extendsClause: ExtendsClauseSyntax = null;
+    private _implementsClause: ImplementsClauseSyntax = null;
+    private _openBraceToken: ISyntaxToken = null;
+    private _classElements: ISyntaxNodeList = null;
+    private _closeBraceToken: ISyntaxToken = null;
+
+    constructor(exportKeyword: ISyntaxToken,
+                classKeyword: ISyntaxToken,
+                identifier: ISyntaxToken,
+                extendsClause: ExtendsClauseSyntax,
+                implementsClause: ImplementsClauseSyntax,
+                openBraceToken: ISyntaxToken,
+                classElements: ISyntaxNodeList,
+                closeBraceToken: ISyntaxToken) {
+        super();
+
+        if (exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
+            throw Errors.argument("exportKeyword");
+        }
+
+        if (classKeyword.keywordKind() !== SyntaxKind.ClassKeyword) {
+            throw Errors.argument("classKeyword");
+        }
+
+        if (identifier.kind() !== SyntaxKind.IdentifierName) {
+            throw Errors.argument("identifier");
+        }
+
+        if (openBraceToken.kind() !== SyntaxKind.OpenBraceToken) {
+            throw Errors.argument("openBraceToken");
+        }
+
+        if (classElements === null) {
+            throw Errors.argumentNull("classElements");
+        }
+
+        if (closeBraceToken.kind() !== SyntaxKind.CloseBraceToken) {
+            throw Errors.argument("closeBraceToken");
+        }
+
+        this._exportKeyword = exportKeyword;
+        this._classKeyword = classKeyword;
+        this._identifier = identifier;
+        this._extendsClause = extendsClause;
+        this._implementsClause = implementsClause;
+        this._openBraceToken = openBraceToken;
+        this._classElements = classElements;
+        this._closeBraceToken = closeBraceToken;
+    }
+
+    public exportKeyword(): ISyntaxToken {
+        return this._exportKeyword;
+    }
+
+    public classKeyword(): ISyntaxToken {
+        return this._classKeyword;
+    }
+
+    public identifier(): ISyntaxToken {
+        return this._identifier;
+    }
+
+    public extendsClause(): ExtendsClauseSyntax {
+        return this._extendsClause;
+    }
+
+    public implementsClause(): ImplementsClauseSyntax {
+        return this._implementsClause;
+    }
+
+    public openBraceToken(): ISyntaxToken {
+        return this._openBraceToken;
+    }
+
+    public classElements(): ISyntaxNodeList {
+        return this._classElements;
+    }
+
+    public closeBraceToken(): ISyntaxToken {
+        return this._closeBraceToken;
+    }
 }
 
 class InterfaceDeclarationSyntax extends ModuleElementSyntax {
@@ -256,6 +340,35 @@ class ExtendsClauseSyntax extends SyntaxNode {
 
     public extendsKeyword(): ISyntaxToken {
         return this._extendsKeyword;
+    }
+
+    public typeNames(): ISeparatedSyntaxList {
+        return this._typeNames;
+    }
+}
+
+class ImplementsClauseSyntax extends SyntaxNode {
+    private _implementsKeyword: ISyntaxToken = null;
+    private _typeNames: ISeparatedSyntaxList = null;
+
+    constructor (implementsKeyword: ISyntaxToken,
+                 typeNames: ISeparatedSyntaxList) {
+        super();
+
+        if (implementsKeyword.keywordKind() !== SyntaxKind.ImplementsKeyword) {
+            throw Errors.argument("extendsKimplementsKeywordeyword");
+        }
+
+        if (typeNames === null) {
+            throw Errors.argumentNull("typeNames");
+        }
+
+        this._implementsKeyword = implementsKeyword;
+        this._typeNames = typeNames;
+    }
+
+    public implementsKeyword(): ISyntaxToken {
+        return this._implementsKeyword;
     }
 
     public typeNames(): ISeparatedSyntaxList {
@@ -1634,4 +1747,7 @@ class ExpressionStatementSyntax extends StatementSyntax {
     public semicolonToken(): ISyntaxToken {
         return this._semicolonToken;
     }
+}
+
+class ClassElementSyntax extends SyntaxNode {
 }

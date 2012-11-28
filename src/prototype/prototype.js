@@ -947,9 +947,43 @@ var Parser = (function () {
         return current;
     };
     Parser.prototype.isClassDeclaration = function () {
-        return this.tokenIsKeyword(this.currentToken(), SyntaxKind.ClassKeyword) && this.isIdentifier(this.peekTokenN(1));
+        if(this.currentToken().keywordKind() === SyntaxKind.ExportKeyword && this.peekTokenN(1).keywordKind() === SyntaxKind.ClassKeyword) {
+            return true;
+        }
+        return this.currentToken().keywordKind() === SyntaxKind.ClassKeyword && this.isIdentifier(this.peekTokenN(1));
     };
     Parser.prototype.parseClassDeclaration = function () {
+        Debug.assert(this.isClassDeclaration());
+        var exportKeyword = null;
+        if(this.currentToken().keywordKind() === SyntaxKind.ExportKeyword) {
+            exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
+        }
+        var classKeyword = this.eatKeyword(SyntaxKind.ClassKeyword);
+        var identifier = this.eatIdentifierToken();
+        var extendsClause = null;
+        if(this.isExtendsClause()) {
+            extendsClause = this.parseExtendsClause();
+        }
+        var implementsClause = null;
+        if(this.isImplementsClause()) {
+            implementsClause = this.parseImplementsClause();
+        }
+        var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
+        var classElements = null;
+        if(!openBraceToken.isMissing) {
+            while(true) {
+                if(this.currentToken().kind() === SyntaxKind.CloseBraceToken || this.currentToken().kind() === SyntaxKind.EndOfFileToken) {
+                    break;
+                }
+                var classElement = this.parseClassElement();
+                classElements = classElements || [];
+                classElements.push(classElement);
+            }
+        }
+        var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
+        return new ClassDeclarationSyntax(exportKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, SyntaxNodeList.create(classElements), closeBraceToken);
+    };
+    Parser.prototype.parseClassElement = function () {
         throw Errors.notYetImplemented();
     };
     Parser.prototype.isFunctionDeclaration = function () {
@@ -1131,11 +1165,17 @@ var Parser = (function () {
     Parser.prototype.isPropertySignature = function () {
         return this.isIdentifier(this.currentToken());
     };
+    Parser.prototype.isExtendsClause = function () {
+        return this.currentToken().keywordKind() === SyntaxKind.ExtendsKeyword;
+    };
     Parser.prototype.parseExtendsClause = function () {
         throw Errors.notYetImplemented();
     };
-    Parser.prototype.isExtendsClause = function () {
-        return this.currentToken().keywordKind() === SyntaxKind.ExtendsKeyword;
+    Parser.prototype.isImplementsClause = function () {
+        return this.currentToken().keywordKind() === SyntaxKind.ImplementsKeyword;
+    };
+    Parser.prototype.parseImplementsClause = function () {
+        throw Errors.notYetImplemented();
     };
     Parser.prototype.parseStatement = function (allowFunctionDeclaration) {
         if(this.isVariableStatement()) {
@@ -4218,10 +4258,67 @@ var ImportDeclarationSyntax = (function (_super) {
 })(ModuleElementSyntax);
 var ClassDeclarationSyntax = (function (_super) {
     __extends(ClassDeclarationSyntax, _super);
-    function ClassDeclarationSyntax() {
-        _super.apply(this, arguments);
-
+    function ClassDeclarationSyntax(exportKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken) {
+        _super.call(this);
+        this._exportKeyword = null;
+        this._classKeyword = null;
+        this._identifier = null;
+        this._extendsClause = null;
+        this._implementsClause = null;
+        this._openBraceToken = null;
+        this._classElements = null;
+        this._closeBraceToken = null;
+        if(exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
+            throw Errors.argument("exportKeyword");
+        }
+        if(classKeyword.keywordKind() !== SyntaxKind.ClassKeyword) {
+            throw Errors.argument("classKeyword");
+        }
+        if(identifier.kind() !== SyntaxKind.IdentifierName) {
+            throw Errors.argument("identifier");
+        }
+        if(openBraceToken.kind() !== SyntaxKind.OpenBraceToken) {
+            throw Errors.argument("openBraceToken");
+        }
+        if(classElements === null) {
+            throw Errors.argumentNull("classElements");
+        }
+        if(closeBraceToken.kind() !== SyntaxKind.CloseBraceToken) {
+            throw Errors.argument("closeBraceToken");
+        }
+        this._exportKeyword = exportKeyword;
+        this._classKeyword = classKeyword;
+        this._identifier = identifier;
+        this._extendsClause = extendsClause;
+        this._implementsClause = implementsClause;
+        this._openBraceToken = openBraceToken;
+        this._classElements = classElements;
+        this._closeBraceToken = closeBraceToken;
     }
+    ClassDeclarationSyntax.prototype.exportKeyword = function () {
+        return this._exportKeyword;
+    };
+    ClassDeclarationSyntax.prototype.classKeyword = function () {
+        return this._classKeyword;
+    };
+    ClassDeclarationSyntax.prototype.identifier = function () {
+        return this._identifier;
+    };
+    ClassDeclarationSyntax.prototype.extendsClause = function () {
+        return this._extendsClause;
+    };
+    ClassDeclarationSyntax.prototype.implementsClause = function () {
+        return this._implementsClause;
+    };
+    ClassDeclarationSyntax.prototype.openBraceToken = function () {
+        return this._openBraceToken;
+    };
+    ClassDeclarationSyntax.prototype.classElements = function () {
+        return this._classElements;
+    };
+    ClassDeclarationSyntax.prototype.closeBraceToken = function () {
+        return this._closeBraceToken;
+    };
     return ClassDeclarationSyntax;
 })(ModuleElementSyntax);
 var InterfaceDeclarationSyntax = (function (_super) {
@@ -4293,6 +4390,29 @@ var ExtendsClauseSyntax = (function (_super) {
         return this._typeNames;
     };
     return ExtendsClauseSyntax;
+})(SyntaxNode);
+var ImplementsClauseSyntax = (function (_super) {
+    __extends(ImplementsClauseSyntax, _super);
+    function ImplementsClauseSyntax(implementsKeyword, typeNames) {
+        _super.call(this);
+        this._implementsKeyword = null;
+        this._typeNames = null;
+        if(implementsKeyword.keywordKind() !== SyntaxKind.ImplementsKeyword) {
+            throw Errors.argument("extendsKimplementsKeywordeyword");
+        }
+        if(typeNames === null) {
+            throw Errors.argumentNull("typeNames");
+        }
+        this._implementsKeyword = implementsKeyword;
+        this._typeNames = typeNames;
+    }
+    ImplementsClauseSyntax.prototype.implementsKeyword = function () {
+        return this._implementsKeyword;
+    };
+    ImplementsClauseSyntax.prototype.typeNames = function () {
+        return this._typeNames;
+    };
+    return ImplementsClauseSyntax;
 })(SyntaxNode);
 var ModuleDeclarationSyntax = (function (_super) {
     __extends(ModuleDeclarationSyntax, _super);
@@ -5405,6 +5525,14 @@ var ExpressionStatementSyntax = (function (_super) {
     };
     return ExpressionStatementSyntax;
 })(StatementSyntax);
+var ClassElementSyntax = (function (_super) {
+    __extends(ClassElementSyntax, _super);
+    function ClassElementSyntax() {
+        _super.apply(this, arguments);
+
+    }
+    return ClassElementSyntax;
+})(SyntaxNode);
 var SyntaxToken = (function () {
     function SyntaxToken() { }
     SyntaxToken.create = function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
@@ -7889,6 +8017,7 @@ var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (environment) {
         var _this = this;
+        environment.standardOut.WriteLine("");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
             return _this.runScannerTest(environment, filePath, LanguageVersion.EcmaScript5);
         });
@@ -7901,6 +8030,7 @@ var Program = (function () {
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript3", function (filePath) {
             return _this.runParserTest(environment, filePath, LanguageVersion.EcmaScript3);
         });
+        environment.standardOut.WriteLine("");
     };
     Program.prototype.runTests = function (environment, path, action) {
         var testFiles = environment.listFiles(path);
