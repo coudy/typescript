@@ -1111,7 +1111,21 @@ class Parser {
     }
 
     private parsePropertySignature(): PropertySignatureSyntax {
-        throw Errors.notYetImplemented();
+        Debug.assert(this.isPropertySignature());
+
+        var identifier = this.eatIdentifierToken();
+        
+        var questionToken: ISyntaxToken = null;
+        if (this.currentToken().kind() === SyntaxKind.QuestionToken) {
+            questionToken = this.eatToken(SyntaxKind.QuestionToken);
+        }
+
+        var typeAnnotation: TypeAnnotationSyntax = null;
+        if (this.isTypeAnnotation()) {
+            typeAnnotation = this.parseTypeAnnotation();
+        }
+
+        return new PropertySignatureSyntax(identifier, questionToken, typeAnnotation);
     }
 
     private isCallSignature(): bool {
@@ -1928,6 +1942,9 @@ class Parser {
             case SyntaxKind.OpenBracketToken:
                 return this.parseArrayLiteralExpression();
 
+            case SyntaxKind.OpenBraceToken:
+                return this.parseObjectLiteralExpression();
+
             case SyntaxKind.OpenParenToken:
                 return this.parseParenthesizedOrLambdaExpression();
 
@@ -2170,6 +2187,124 @@ class Parser {
         // Anything else wasn't clear enough.  Try to parse the expression as a lambda and bail out
         // if we fail.
         return false;
+    }
+
+    private parseObjectLiteralExpression(): ObjectLiteralExpressionSyntax {
+        Debug.assert(this.currentToken().kind() === SyntaxKind.OpenBraceToken);
+
+        var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
+        var propertyAssignments: any[] = null;
+
+        while (true) {
+            if (this.currentToken().kind() === SyntaxKind.CloseBraceToken || this.currentToken().kind() === SyntaxKind.EndOfFileToken) {
+                break;
+            }
+
+            if (this.isPropertyAssignment()) {
+                var propertyAssignment = this.parsePropertyAssignment();
+
+                propertyAssignments = propertyAssignments || [];
+                propertyAssignments.push(propertyAssignment);
+
+                if (this.currentToken().kind() === SyntaxKind.CommaToken) {
+                    var commaToken = this.eatToken(SyntaxKind.CommaToken);
+                    propertyAssignments.push(commaToken);
+                    continue;
+                }
+            }
+
+            // TODO: error recovery
+            break;
+        }
+
+        var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
+        return new ObjectLiteralExpressionSyntax(
+            openBraceToken, SeparatedSyntaxList.create(propertyAssignments), closeBraceToken);
+    }
+
+    private parsePropertyAssignment(): PropertyAssignmentSyntax {
+        Debug.assert(this.isPropertyAssignment());
+        if (this.isGetAccessorPropertyAssignment()) {
+            return this.parseGetAccessorPropertyAssignment();
+        }
+        else if (this.isSetAccessorPropertyAssignment()) {
+            return this.parseSetAccessorPropertyAssignment();
+        }
+        else if (this.isSimplePropertyAssignment()) {
+            return this.parseSimplePropertyAssignment();
+        }
+        else {
+            throw Errors.invalidOperation();
+        }
+    }
+
+    private isPropertyAssignment(): bool {
+        return this.isGetAccessorPropertyAssignment() ||
+               this.isSetAccessorPropertyAssignment() ||
+               this.isSimplePropertyAssignment();
+    }
+
+    private isGetAccessorPropertyAssignment(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.GetKeyword &&
+               this.isPropertyName(this.peekTokenN(1));
+    }
+
+    private parseGetAccessorPropertyAssignment(): GetAccessorPropertyAssignmentSyntax {
+        Debug.assert(this.isGetAccessorPropertyAssignment());
+
+        var getKeyword = this.eatKeyword(SyntaxKind.GetKeyword);
+        var propertyName = this.eatAnyToken();
+        var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
+        var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
+        var block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
+
+        return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block);
+    }
+
+    private isSetAccessorPropertyAssignment(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.SetKeyword &&
+               this.isPropertyName(this.peekTokenN(1));
+    }
+
+    private parseSetAccessorPropertyAssignment(): SetAccessorPropertyAssignmentSyntax {
+        Debug.assert(this.isSetAccessorPropertyAssignment());
+
+        var setKeyword = this.eatKeyword(SyntaxKind.SetKeyword);
+        var propertyName = this.eatAnyToken();
+        var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
+        var parameterName = this.eatIdentifierToken();
+        var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
+        var block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
+
+        return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block);
+    }
+
+    private isSimplePropertyAssignment(): bool {
+        return this.isPropertyName(this.currentToken());
+    }
+
+    private parseSimplePropertyAssignment(): SimplePropertyAssignmentSyntax {
+        Debug.assert(this.isSimplePropertyAssignment());
+
+        var propertyName = this.eatAnyToken();
+        var colonToken = this.eatToken(SyntaxKind.ColonToken);
+        var expression = this.parseAssignmentExpression(/*allowIn:*/ true);
+
+        return new SimplePropertyAssignmentSyntax(propertyName, colonToken, expression);
+    }
+
+    private isPropertyName(token: ISyntaxToken): bool {
+        // NOTE: we do *not* want to check "this.isIdentifier" here.  Any IdentifierNameToken is 
+        // allowed here, even reserved words like keywords.
+        switch (token.kind()) {
+            case SyntaxKind.IdentifierNameToken:
+            case SyntaxKind.StringLiteral:
+            case SyntaxKind.NumericLiteral:
+                return true;
+
+            default:
+                return false;
+        }
     }
 
     private parseArrayLiteralExpression(): ArrayLiteralExpressionSyntax {
