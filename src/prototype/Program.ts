@@ -113,7 +113,7 @@ class Program {
 
         if (StringUtilities.endsWith(filePath, ".ts")) {
             var unit = parser.parseSourceUnit();
-            var json = JSON.stringify(unit);
+            var json = JSON2.stringify(unit);
         }
         else {
             environment.standardOut.WriteLine("skipping unknown file file.");

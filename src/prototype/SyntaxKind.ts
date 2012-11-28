@@ -143,6 +143,7 @@ enum SyntaxKind {
     // Types
     ObjectType,
     PredefinedType,
+    FunctionType,
 
     // TypeMembers
     InterfaceDeclaration,
@@ -160,6 +161,10 @@ enum SyntaxKind {
     VariableStatement,
     ExpressionStatement,
     ReturnStatement,
+    SwitchStatement,
+    BreakStatement,
+    ForStatement,
+    ForInStatement,
 
     // Expressions
     PlusExpression,
@@ -218,16 +223,31 @@ enum SyntaxKind {
     MemberAccessExpression,
     InvocationExpression,
     ThisExpression,
+    ArrayLiteralExpression,
+    ObjectCreationExpression,
+    ParenthesizedExpression,
+    ParenthesizedArrowFunctionExpression,
 
+    // Variable declarations
     VariableDeclaration,
     VariableDeclarator,
-    Parameter,
-    FunctionSignature,
+
+    // Lists
     ParameterList,
     ArgumentList,
+
+    // Clauses
     ImplementsClause,
-    TypeAnnotation,
     EqualsValueClause,
+    CaseSwitchClause,
+    DefaultSwitchClause,
+    ElseClause,
+
+    // Misc.
+    Parameter,
+    FunctionSignature,
+    CallSignature,
+    TypeAnnotation,
 
     FirstStandardKeyword = BreakKeyword,
     LastStandardKeyword = WithKeyword,
