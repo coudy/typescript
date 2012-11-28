@@ -882,7 +882,7 @@ var Parser = (function () {
 
             }
         }
-        throw Errors.notYetImplemented();
+        throw Errors.invalidOperation();
     };
     Parser.prototype.parseSourceUnit = function () {
         var moduleElements = [];
@@ -905,7 +905,11 @@ var Parser = (function () {
                     if(this.isClassDeclaration()) {
                         return this.parseClassDeclaration();
                     } else {
-                        return this.parseStatement(true);
+                        if(this.isEnumDeclaration()) {
+                            return this.parseEnumDeclaration();
+                        } else {
+                            return this.parseStatement(true);
+                        }
                     }
                 }
             }
@@ -957,6 +961,15 @@ var Parser = (function () {
             current = new QualifiedNameSyntax(current, dotToken, identifierName);
         }
         return current;
+    };
+    Parser.prototype.isEnumDeclaration = function () {
+        if(this.currentToken().keywordKind() === SyntaxKind.ExportKeyword && this.peekTokenN(1).keywordKind() === SyntaxKind.EnumKeyword) {
+            return true;
+        }
+        return this.currentToken().keywordKind() === SyntaxKind.EnumKeyword && this.isIdentifier(this.peekTokenN(1));
+    };
+    Parser.prototype.parseEnumDeclaration = function () {
+        throw Errors.notYetImplemented();
     };
     Parser.prototype.isClassDeclaration = function () {
         if(this.currentToken().keywordKind() === SyntaxKind.ExportKeyword && this.peekTokenN(1).keywordKind() === SyntaxKind.ClassKeyword) {
@@ -1108,7 +1121,7 @@ var Parser = (function () {
                 if(this.isMemberVariableDeclaration()) {
                     return this.parseMemberVariableDeclaration();
                 } else {
-                    throw Errors.notYetImplemented();
+                    throw Errors.invalidOperation();
                 }
             }
         }
@@ -1121,7 +1134,7 @@ var Parser = (function () {
             if(this.isMemberDeclaration()) {
                 return this.parseMemberDeclaration();
             } else {
-                throw Errors.notYetImplemented();
+                throw Errors.invalidOperation();
             }
         }
     };
@@ -2136,6 +2149,7 @@ var Parser = (function () {
         }
     };
     Parser.prototype.parseTypeLiteral = function () {
+        Debug.assert(this.isTypeLiteral());
         if(this.isObjectType()) {
             return this.parseObjectType();
         } else {
@@ -2145,7 +2159,7 @@ var Parser = (function () {
                 if(this.isConstructorType()) {
                     return this.parseConstructorType();
                 } else {
-                    throw Errors.notYetImplemented();
+                    throw Errors.invalidOperation();
                 }
             }
         }
@@ -6561,6 +6575,14 @@ var ForInStatementSyntax = (function (_super) {
     };
     return ForInStatementSyntax;
 })(BaseForStatementSyntax);
+var EnumDeclarationSyntax = (function (_super) {
+    __extends(EnumDeclarationSyntax, _super);
+    function EnumDeclarationSyntax() {
+        _super.apply(this, arguments);
+
+    }
+    return EnumDeclarationSyntax;
+})(ModuleElementSyntax);
 var SyntaxToken = (function () {
     function SyntaxToken() { }
     SyntaxToken.create = function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {

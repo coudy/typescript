@@ -2491,3 +2491,6 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         return this._expression;
     }
 }
+
+class EnumDeclarationSyntax extends ModuleElementSyntax {
+}

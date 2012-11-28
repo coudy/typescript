@@ -505,7 +505,7 @@ class Parser {
                 return ParserExpressionPrecedence.UnaryExpressionPrecedence;
         }
 
-        throw Errors.notYetImplemented();
+        throw Errors.invalidOperation();
     }
 
     public parseSourceUnit(): SourceUnitSyntax {
@@ -531,6 +531,9 @@ class Parser {
         }
         else if (this.isClassDeclaration()) {
             return this.parseClassDeclaration();
+        }
+        else if (this.isEnumDeclaration()) {
+            return this.parseEnumDeclaration();
         }
         else {
             return this.parseStatement(/*allowFunctionDeclaration:*/ true);
@@ -606,6 +609,20 @@ class Parser {
         }
 
         return current;
+    }
+
+    private isEnumDeclaration(): bool {
+        if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword &&
+            this.peekTokenN(1).keywordKind() === SyntaxKind.EnumKeyword) {
+            return true;
+        }
+
+        return this.currentToken().keywordKind() === SyntaxKind.EnumKeyword &&
+               this.isIdentifier(this.peekTokenN(1));
+    }
+
+    private parseEnumDeclaration(): EnumDeclarationSyntax {
+        throw Errors.notYetImplemented();
     }
 
     private isClassDeclaration(): bool {
@@ -818,7 +835,7 @@ class Parser {
             return this.parseMemberVariableDeclaration();
         }
         else {
-            throw Errors.notYetImplemented();
+            throw Errors.invalidOperation();
         }
     }
 
@@ -831,7 +848,7 @@ class Parser {
             return this.parseMemberDeclaration();
         }
         else {
-            throw Errors.notYetImplemented();
+            throw Errors.invalidOperation();
         }
     }
 
@@ -2263,6 +2280,7 @@ class Parser {
     }
 
     private parseTypeLiteral(): TypeSyntax {
+        Debug.assert(this.isTypeLiteral());
         if (this.isObjectType()) {
             return this.parseObjectType();
         }
@@ -2273,7 +2291,7 @@ class Parser {
             return this.parseConstructorType();
         }
         else {
-            throw Errors.notYetImplemented();
+            throw Errors.invalidOperation();
         }
     }
 
