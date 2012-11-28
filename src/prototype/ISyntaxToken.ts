@@ -24,7 +24,7 @@ interface ISyntaxToken {
     hasLeadingNewLineTrivia(): bool;
 
     hasTrailingTrivia(): bool;
-    hasTrailingComentTrivia(): bool;
+    hasTrailingCommentTrivia(): bool;
     hasTrailingNewLineTrivia(): bool;
 
     leadingTrivia(text: IText): ISyntaxTriviaList;

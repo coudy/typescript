@@ -209,6 +209,10 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
         this._body = body;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.InterfaceDeclaration;
+    }
+
     public exportKeyword(): ISyntaxToken {
         return this._exportKeyword;
     }
@@ -306,6 +310,10 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
         this._closeBraceToken = closeBraceToken;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.ModuleDeclaration;
+    }
+
     public moduleKeyword(): ISyntaxToken {
         return this._moduleKeyword;
     }
@@ -361,6 +369,16 @@ class FunctionDeclarationSyntax extends StatementSyntax {
         if (semicolonToken !== null && semicolonToken.kind() !== SyntaxKind.SemicolonToken) {
             throw Errors.argument("semicolonToken");
         }
+
+        this._exportKeyword = exportKeyword;
+        this._functionKeyword = functionKeyword;
+        this._functionSignature = functionSignature
+        this._semicolonToken = semicolonToken;
+        this._block = block;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.FunctionDeclaration;
     }
 
     public exportKeyword(): ISyntaxToken {
@@ -416,6 +434,10 @@ class VariableStatementSyntax extends StatementSyntax {
         this._varKeyword = varKeyword;
         this._variableDeclarations = variableDeclarations;
         this._semicolonToken = semicolonToken;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.VariableStatement;
     }
 
     public exportKeyword(): ISyntaxToken {
@@ -790,6 +812,10 @@ class ObjectTypeSyntax extends TypeSyntax {
         this._closeBraceToken = closeBraceToken;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.ObjectType;
+    }
+
     public openBraceToken(): ISyntaxToken {
         return this._openBraceToken;
     }
@@ -1045,6 +1071,10 @@ class MemberAccessExpressionSyntax extends ExpressionSyntax {
         this._identifierName = identifierName;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.MemberAccessExpression;
+    }
+
     public expression(): ExpressionSyntax {
         return this._expression;
     }
@@ -1169,6 +1199,10 @@ class InvocationExpressionSyntax extends ExpressionSyntax {
         this._argumentList = argumentList;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.InvocationExpression;
+    }
+
     public expression(): ExpressionSyntax {
         return this._expression;
     }
@@ -1203,6 +1237,10 @@ class ArgumentListSyntax extends SyntaxNode {
         this._openParenToken = openParenToken;
         this._arguments = arguments;
         this._closeParenToken = closeParenToken;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ArgumentList;
     }
 
     public openParenToken(): ISyntaxToken {
@@ -1417,6 +1455,10 @@ class ParameterListSyntax extends SyntaxNode {
         this._closeParenToken = closeParenToken;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.ParameterList;
+    }
+
     public openParenToken(): ISyntaxToken {
         return this._openParenToken;
     }
@@ -1579,6 +1621,10 @@ class ExpressionStatementSyntax extends StatementSyntax {
 
         this._expression = expression;
         this._semicolonToken = semicolonToken;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ExpressionStatement;
     }
 
     public expression(): ExpressionSyntax {
