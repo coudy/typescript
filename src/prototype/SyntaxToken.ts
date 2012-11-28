@@ -13,25 +13,68 @@ class SyntaxToken {
     }
 
     public static toJSON(token: ISyntaxToken) {
-        return {
-            diagnostics: token.diagnostics(),
-            fullStart: token.fullStart(),
-            fullWidth: token.fullWidth(),
-            hasLeadingTrivia: token.hasLeadingTrivia(),
-            hasLeadingCommentTrivia: token.hasLeadingCommentTrivia(),
-            hasLeadingNewLineTrivia: token.hasLeadingNewLineTrivia(),
-            hasTrailingTrivia: token.hasTrailingTrivia(),
-            hasTrailingCommentTrivia: token.hasTrailingComentTrivia(),
-            hasTrailingNewLineTrivia: token.hasTrailingNewLineTrivia(),
-            isMissing: token.isMissing(),
-            keywordKind: (<any>SyntaxKind)._map[token.keywordKind()],
-            kind: (<any>SyntaxKind)._map[token.kind()],
-            start: token.start(),
-            text: token.text(),
-            value: token.value(),
-            valueText: token.valueText(),
-            width: token.width()
+        var result: any = {
+            kind: (<any>SyntaxKind)._map[token.kind()]
         };
+
+        if (token.keywordKind() != SyntaxKind.None) {
+            result.keywordKind = (<any>SyntaxKind)._map[token.keywordKind()];
+        }
+
+        result.start = token.start();
+        if (token.fullStart() != token.start()) {
+            result.fullStart = token.fullStart();
+        }
+
+        result.width = token.width();
+        if (token.fullWidth() != token.width()) {
+            result.fullWidth = token.fullWidth();
+        }
+
+        if (token.isMissing()) {
+            result.isMissing = true;
+        }
+
+        result.text = token.text();
+
+        if (token.value() !== null) {
+            result.value() = token.value;
+        }
+
+        if (token.valueText() !== null) {
+            result.valueText = token.valueText();
+        }
+
+        if (token.hasLeadingTrivia()) {
+            result.hasLeadingTrivia = true;
+        }
+
+        if (token.hasLeadingCommentTrivia()) {
+            result.hasLeadingCommentTrivia = true;
+        }
+
+        if (token.hasLeadingNewLineTrivia()) {
+            result.hasLeadingNewLineTrivia = true;
+        }
+
+        if (token.hasTrailingTrivia()) {
+            result.hasTrailingTrivia = true;
+        }
+
+        if (token.hasTrailingCommentTrivia()) {
+            result.hasTrailingCommentTrivia = true;
+        }
+
+        if (token.hasTrailingNewLineTrivia()) {
+            result.hasTrailingNewLineTrivia = true;
+        }
+
+        var diagnostics = token.diagnostics();
+        if (diagnostics && diagnostics.length > 0) {
+            result.diagnostics = diagnostics;
+        }
+
+        return result;
     }
 
     public static createStandardToken(fullStart: number,
@@ -81,7 +124,7 @@ class SyntaxToken {
             hasLeadingCommentTrivia: () => leadingComment,
             hasLeadingNewLineTrivia: () => leadingNewLine,
             hasTrailingTrivia: () => trailingWidth > 0,
-            hasTrailingComentTrivia: () => trailingComment,
+            hasTrailingCommentTrivia: () => trailingComment,
             hasTrailingNewLineTrivia: () => trailingNewLine,
             leadingTrivia: (text: IText): ISyntaxTriviaList => {
                 throw Errors.notYetImplemented();
@@ -115,7 +158,7 @@ class SyntaxToken {
             hasLeadingCommentTrivia: () => false,
             hasLeadingNewLineTrivia: () => false,
             hasTrailingTrivia: () => false,
-            hasTrailingComentTrivia: () => false,
+            hasTrailingCommentTrivia: () => false,
             hasTrailingNewLineTrivia: () => false,
             leadingTrivia: (text: IText): ISyntaxTriviaList => SyntaxTriviaList.empty,
             trailingTrivia: (text: IText): ISyntaxTriviaList => SyntaxTriviaList.empty,

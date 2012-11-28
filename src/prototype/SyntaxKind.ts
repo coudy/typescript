@@ -137,9 +137,19 @@ enum SyntaxKind {
     IdentifierName,
     QualifiedName,
 
+    // Types
+    ObjectType,
+
+    // TypeMembers
+    InterfaceDeclaration,
+    FunctionDeclaration,
+    ModuleDeclaration,
+
     // Statements
     Block,
     IfStatement,
+    VariableStatement,
+    ExpressionStatement,
 
     // Expressions
     PlusExpression,
@@ -195,10 +205,14 @@ enum SyntaxKind {
     SubtractExpression,
     PostIncrementExpression,
     PostDecrementExpression,
+    MemberAccessExpression,
+    InvocationExpression,
 
     VariableDeclaration,
     Parameter,
     FunctionSignature,
+    ParameterList,
+    ArgumentList,
 
     FirstStandardKeyword = BreakKeyword,
     LastStandardKeyword = WithKeyword,

@@ -223,11 +223,11 @@ class Parser {
         this.tokenOffset++;
     }
 
-    private eatExplicitOrAutomaticSemicolon(reportError?: bool = true): ISyntaxToken {
+    private canEatExplicitOrAutomaticSemicolon(): bool {
         var token = this.currentToken();
 
         if (token.kind() === SyntaxKind.SemicolonToken) {
-            return this.eatToken(SyntaxKind.SemicolonToken);
+            return true;
         }
 
         // Only attempt automatic semicolon insertion if the options allow for it.
@@ -235,19 +235,29 @@ class Parser {
             var automaticSemicolonAllowed = false;
 
             // An automatic semicolon is always allowed if we're at the end of the file.
-            automaticSemicolonAllowed = automaticSemicolonAllowed || token.kind() === SyntaxKind.EndOfFileToken;
+            if (token.kind() === SyntaxKind.EndOfFileToken) {
+                return true;
+            }
 
             // Or if the next token is a close brace (regardless of which line it is on).
-            automaticSemicolonAllowed = automaticSemicolonAllowed || token.kind() === SyntaxKind.CloseBraceToken;
+            if (token.kind() === SyntaxKind.CloseBraceToken) {
+                return true;
+            }
 
             // It is also allowed if there is a newline between the last token seen and the next one.
-            automaticSemicolonAllowed = automaticSemicolonAllowed || (this.previousToken !== null && !this.previousToken.hasTrailingNewLineTrivia());
-
-            if (automaticSemicolonAllowed) {
-                // Automatic semicolon insertion was allowed.  So just eat a missing semicolon token 
-                // and don't report an error.
-                return this.eatToken(SyntaxKind.SemicolonToken, /*reportError:*/ false);
+            if (this.previousToken !== null && !this.previousToken.hasTrailingNewLineTrivia()) {
+                return true;
             }
+        }
+
+        return false;
+    }
+
+    private eatExplicitOrAutomaticSemicolon(reportError?: bool = true): ISyntaxToken {
+        var token = this.currentToken();
+
+        if (this.canEatExplicitOrAutomaticSemicolon()) {
+            return this.eatToken(SyntaxKind.SemicolonToken, /*reportError:*/ false);
         }
 
         // Automatic semicolon is not allowed.  Just try to eat the semicolon and report the
@@ -527,7 +537,7 @@ class Parser {
         var identifier = this.eatIdentifierToken();
         var equalsToken = this.eatToken(SyntaxKind.EqualsToken);
         var moduleReference = this.parseModuleReference();
-        var semicolonToken = this.eatToken(SyntaxKind.SemicolonToken);
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
 
         return new ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken);
     }
@@ -612,14 +622,12 @@ class Parser {
 
         var semicolonToken: ISyntaxToken = null;
         var block: BlockSyntax = null;
-        if (this.currentToken().kind() === SyntaxKind.SemicolonToken) {
-            semicolonToken = this.eatToken(SyntaxKind.SemicolonToken);
-        }
-        else if (this.isBlock()) {
+
+        if (this.isBlock()) {
             block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
         }
         else {
-            throw Errors.notYetImplemented();
+            semicolonToken = this.eatExplicitOrAutomaticSemicolon();
         }
 
         return new FunctionDeclarationSyntax(exportKeyword, functionKeyword, functionSignature, block, semicolonToken);
@@ -743,6 +751,7 @@ class Parser {
                 typeMembers = typeMembers || [];
                 typeMembers.push(typeMember);
 
+                // TODO: Should we do automatic semicolon insertion here?
                 if (this.currentToken().kind() === SyntaxKind.SemicolonToken) {
                     var semicolonToken = this.eatToken(SyntaxKind.SemicolonToken);
                     typeMembers.push(semicolonToken);
@@ -999,7 +1008,7 @@ class Parser {
                 continue;
             }
 
-            if (this.currentToken().kind() === SyntaxKind.SemicolonToken || this.currentToken().kind() === SyntaxKind.EndOfFileToken) {
+            if (this.canEatExplicitOrAutomaticSemicolon()) {
                 break;
             }
 
@@ -1008,8 +1017,7 @@ class Parser {
             break;
         }
 
-        var semicolonToken = this.eatToken(SyntaxKind.SemicolonToken);
-
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
         return new VariableStatementSyntax(exportKeyword, varKeyword, SeparatedSyntaxList.create(variableDeclarations), semicolonToken);
     }
 
