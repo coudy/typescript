@@ -570,6 +570,9 @@ class VariableStatementSyntax extends StatementSyntax {
 class ExpressionSyntax extends SyntaxNode {
 }
 
+class UnaryExpressionSyntax extends ExpressionSyntax {
+}
+
 class VariableDeclarationSyntax extends SyntaxNode {
     private _varKeyword: ISyntaxToken;
     private _variableDeclarators: ISeparatedSyntaxList;
@@ -668,14 +671,14 @@ class EqualsValueClauseSyntax extends SyntaxNode {
     }
 }
 
-class PrefixUnaryExpressionSyntax extends ExpressionSyntax {
+class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
     private _kind: SyntaxKind = SyntaxKind.None;
     private _operatorToken: ISyntaxToken;
-    private _operand: ExpressionSyntax;
+    private _operand: UnaryExpressionSyntax;
 
     constructor (kind: SyntaxKind,
                  operatorToken: ISyntaxToken,
-                 operand: ExpressionSyntax) {
+                 operand: UnaryExpressionSyntax) {
         super();
 
         // Add error checking for kind and operator token.
@@ -696,12 +699,12 @@ class PrefixUnaryExpressionSyntax extends ExpressionSyntax {
         return this._operatorToken;
     }
 
-    public operand(): ExpressionSyntax {
+    public operand(): UnaryExpressionSyntax {
         return this._operand;
     }
 }
 
-class ThisExpressionSyntax extends ExpressionSyntax {
+class ThisExpressionSyntax extends UnaryExpressionSyntax {
     private _thisKeyword: ISyntaxToken;
 
     constructor (thisKeyword: ISyntaxToken) {
@@ -723,7 +726,7 @@ class ThisExpressionSyntax extends ExpressionSyntax {
     }
 }
 
-class LiteralExpressionSyntax extends ExpressionSyntax {
+class LiteralExpressionSyntax extends UnaryExpressionSyntax {
     private _kind: SyntaxKind = SyntaxKind.None;
     private _literalToken: ISyntaxToken;
 
@@ -745,7 +748,7 @@ class LiteralExpressionSyntax extends ExpressionSyntax {
     }
 }
 
-class ArrayLiteralExpressionSyntax extends ExpressionSyntax {
+class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
     private _openBracketToken: ISyntaxToken;
     private _expressions: ISeparatedSyntaxList;
     private _closeBracketToken: ISyntaxToken;
@@ -795,7 +798,7 @@ class OmittedExpressionSyntax extends ExpressionSyntax {
     }
 }
 
-class ParenthesizedExpressionSyntax extends ExpressionSyntax {
+class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
     private _openParenToken: ISyntaxToken;
     private _expression: ExpressionSyntax;
     private _closeParenToken: ISyntaxToken;
@@ -839,7 +842,7 @@ class ParenthesizedExpressionSyntax extends ExpressionSyntax {
     }
 }
 
-class ArrowFunctionExpressionSyntax extends ExpressionSyntax {
+class ArrowFunctionExpressionSyntax extends UnaryExpressionSyntax {
     private _equalsGreaterThanToken: ISyntaxToken;
     private _body: SyntaxNode;
 
@@ -870,7 +873,7 @@ class ArrowFunctionExpressionSyntax extends ExpressionSyntax {
     }
 }
 
-class TypeSyntax extends ExpressionSyntax {
+class TypeSyntax extends UnaryExpressionSyntax {
 }
 
 class NameSyntax extends TypeSyntax {
@@ -1260,7 +1263,7 @@ class ParameterSyntax extends SyntaxNode {
     }
 }
 
-class MemberAccessExpressionSyntax extends ExpressionSyntax {
+class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
     private _expression: ExpressionSyntax;
     private _dotToken: ISyntaxToken;
     private _identifierName: IdentifierNameSyntax;
@@ -1304,7 +1307,7 @@ class MemberAccessExpressionSyntax extends ExpressionSyntax {
     }
 }
 
-class PostfixUnaryExpressionSyntax extends ExpressionSyntax {
+class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
     private _kind: SyntaxKind = SyntaxKind.None;
     private _operand: ExpressionSyntax;
     private _operatorToken: ISyntaxToken;
@@ -1344,7 +1347,7 @@ class PostfixUnaryExpressionSyntax extends ExpressionSyntax {
     }
 }
 
-class ElementAccessExpressionSyntax extends ExpressionSyntax {
+class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
     private _expression: ExpressionSyntax;
     private _openBracketToken: ISyntaxToken;
     private _argumentExpression: ExpressionSyntax;
@@ -1395,7 +1398,7 @@ class ElementAccessExpressionSyntax extends ExpressionSyntax {
     }
 }
 
-class InvocationExpressionSyntax extends ExpressionSyntax {
+class InvocationExpressionSyntax extends UnaryExpressionSyntax {
     private _expression: ExpressionSyntax;
     private _argumentList: ArgumentListSyntax;
 
@@ -2068,7 +2071,7 @@ class ReturnStatementSyntax extends StatementSyntax {
     }
 }
 
-class ObjectCreationExpressionSyntax extends ExpressionSyntax {
+class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
     private _newKeyword: ISyntaxToken;
     private _expression: ExpressionSyntax;
     private _argumentList: ArgumentListSyntax;
@@ -2566,5 +2569,56 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
 
     public closeBraceToken(): ISyntaxToken {
         return this._closeBraceToken;
+    }
+}
+
+class CastExpressionSyntax extends UnaryExpressionSyntax {
+    private _lessThanToken: ISyntaxToken;
+    private _type: TypeSyntax;
+    private _greaterThanToken: ISyntaxToken;
+    private _expression: UnaryExpressionSyntax;
+
+    constructor(lessThanToken: ISyntaxToken,
+                type: TypeSyntax,
+                greaterThanToken: ISyntaxToken,
+                expression: UnaryExpressionSyntax) {
+        super();
+
+        if (lessThanToken.kind() !== SyntaxKind.LessThanToken) {
+            throw Errors.argument("lessThanToken");
+        }
+
+        if (type === null) {
+            throw Errors.argumentNull("null");
+        }
+
+        if (greaterThanToken.kind() !== SyntaxKind.GreaterThanToken) {
+            throw Errors.argument("greaterThanToken");
+        }
+
+        if (expression === null) {
+            throw Errors.argumentNull("expression");
+        }
+
+        this._lessThanToken = lessThanToken;
+        this._type = type;
+        this._greaterThanToken = greaterThanToken;
+        this._expression = expression;
+    }
+
+    public lessThanToken(): ISyntaxToken {
+        return this._lessThanToken;
+    }
+
+    public type(): TypeSyntax {
+        return this._type;
+    }
+
+    public greaterThanToken(): ISyntaxToken {
+        return this._greaterThanToken;
+    }
+
+    public expression(): UnaryExpressionSyntax {
+        return this._expression;
     }
 }
