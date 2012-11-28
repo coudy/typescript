@@ -1928,6 +1928,10 @@ var Parser = (function () {
                 return this.parseObjectCreationExpression();
 
             }
+            case SyntaxKind.FunctionKeyword: {
+                return this.parseFunctionExpression();
+
+            }
         }
         switch(currentTokenKind) {
             case SyntaxKind.NumericLiteral: {
@@ -1963,6 +1967,17 @@ var Parser = (function () {
             throw Errors.notYetImplemented();
         }
         return new IdentifierNameSyntax(this.eatIdentifierToken());
+    };
+    Parser.prototype.parseFunctionExpression = function () {
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.FunctionKeyword);
+        var functionKeyword = this.eatKeyword(SyntaxKind.FunctionKeyword);
+        var identifier = null;
+        if(this.isIdentifier(this.currentToken())) {
+            identifier = this.eatIdentifierToken();
+        }
+        var callSignature = this.parseCallSignature();
+        var block = this.parseBlock(true);
+        return new FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block);
     };
     Parser.prototype.parseCastExpression = function () {
         Debug.assert(this.currentToken().kind() === SyntaxKind.LessThanToken);
@@ -2235,7 +2250,6 @@ var Parser = (function () {
         return new BlockSyntax(openBraceToken, SyntaxNodeList.create(statements), closeBraceToken);
     };
     Parser.prototype.parseCallSignature = function () {
-        Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
         var parameterList = this.parseParameterList();
         var typeAnnotation = null;
         if(this.isTypeAnnotation()) {
@@ -4301,34 +4315,36 @@ var SyntaxKind;
     SyntaxKind.CastExpression = 198;
     SyntaxKind._map[199] = "ElementAccessExpression";
     SyntaxKind.ElementAccessExpression = 199;
-    SyntaxKind._map[200] = "VariableDeclaration";
-    SyntaxKind.VariableDeclaration = 200;
-    SyntaxKind._map[201] = "VariableDeclarator";
-    SyntaxKind.VariableDeclarator = 201;
-    SyntaxKind._map[202] = "ParameterList";
-    SyntaxKind.ParameterList = 202;
-    SyntaxKind._map[203] = "ArgumentList";
-    SyntaxKind.ArgumentList = 203;
-    SyntaxKind._map[204] = "ImplementsClause";
-    SyntaxKind.ImplementsClause = 204;
-    SyntaxKind._map[205] = "EqualsValueClause";
-    SyntaxKind.EqualsValueClause = 205;
-    SyntaxKind._map[206] = "CaseSwitchClause";
-    SyntaxKind.CaseSwitchClause = 206;
-    SyntaxKind._map[207] = "DefaultSwitchClause";
-    SyntaxKind.DefaultSwitchClause = 207;
-    SyntaxKind._map[208] = "ElseClause";
-    SyntaxKind.ElseClause = 208;
-    SyntaxKind._map[209] = "Parameter";
-    SyntaxKind.Parameter = 209;
-    SyntaxKind._map[210] = "FunctionSignature";
-    SyntaxKind.FunctionSignature = 210;
-    SyntaxKind._map[211] = "CallSignature";
-    SyntaxKind.CallSignature = 211;
-    SyntaxKind._map[212] = "TypeAnnotation";
-    SyntaxKind.TypeAnnotation = 212;
-    SyntaxKind._map[213] = "SimplePropertyAssignment";
-    SyntaxKind.SimplePropertyAssignment = 213;
+    SyntaxKind._map[200] = "FunctionExpression";
+    SyntaxKind.FunctionExpression = 200;
+    SyntaxKind._map[201] = "VariableDeclaration";
+    SyntaxKind.VariableDeclaration = 201;
+    SyntaxKind._map[202] = "VariableDeclarator";
+    SyntaxKind.VariableDeclarator = 202;
+    SyntaxKind._map[203] = "ParameterList";
+    SyntaxKind.ParameterList = 203;
+    SyntaxKind._map[204] = "ArgumentList";
+    SyntaxKind.ArgumentList = 204;
+    SyntaxKind._map[205] = "ImplementsClause";
+    SyntaxKind.ImplementsClause = 205;
+    SyntaxKind._map[206] = "EqualsValueClause";
+    SyntaxKind.EqualsValueClause = 206;
+    SyntaxKind._map[207] = "CaseSwitchClause";
+    SyntaxKind.CaseSwitchClause = 207;
+    SyntaxKind._map[208] = "DefaultSwitchClause";
+    SyntaxKind.DefaultSwitchClause = 208;
+    SyntaxKind._map[209] = "ElseClause";
+    SyntaxKind.ElseClause = 209;
+    SyntaxKind._map[210] = "Parameter";
+    SyntaxKind.Parameter = 210;
+    SyntaxKind._map[211] = "FunctionSignature";
+    SyntaxKind.FunctionSignature = 211;
+    SyntaxKind._map[212] = "CallSignature";
+    SyntaxKind.CallSignature = 212;
+    SyntaxKind._map[213] = "TypeAnnotation";
+    SyntaxKind.TypeAnnotation = 213;
+    SyntaxKind._map[214] = "SimplePropertyAssignment";
+    SyntaxKind.SimplePropertyAssignment = 214;
     SyntaxKind.FirstStandardKeyword = SyntaxKind.BreakKeyword;
     SyntaxKind.LastStandardKeyword = SyntaxKind.WithKeyword;
     SyntaxKind.FirstFutureReservedKeyword = SyntaxKind.ClassKeyword;
@@ -5918,7 +5934,7 @@ var ConditionalExpressionSyntax = (function (_super) {
         if(whenTrue === null) {
             throw Errors.argumentNull("whenTrue");
         }
-        if(colonToken.kind() !== SyntaxKind.QuestionToken) {
+        if(colonToken.kind() !== SyntaxKind.ColonToken) {
             throw Errors.argument("colonToken");
         }
         if(whenFalse === null) {
@@ -5930,6 +5946,9 @@ var ConditionalExpressionSyntax = (function (_super) {
         this._colonToken = colonToken;
         this._whenFalse = whenFalse;
     }
+    ConditionalExpressionSyntax.prototype.kind = function () {
+        return SyntaxKind.ConditionalExpression;
+    };
     ConditionalExpressionSyntax.prototype.condition = function () {
         return this._condition;
     };
@@ -6834,6 +6853,44 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
     };
     return SetAccessorPropertyAssignmentSyntax;
 })(AccessorPropertyAssignmentSyntax);
+var FunctionExpressionSyntax = (function (_super) {
+    __extends(FunctionExpressionSyntax, _super);
+    function FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block) {
+        _super.call(this);
+        if(functionKeyword.keywordKind() !== SyntaxKind.FunctionKeyword) {
+            throw Errors.argument("functionKeyword");
+        }
+        if(identifier !== null && identifier.kind() !== SyntaxKind.IdentifierNameToken) {
+            throw Errors.argument("identifier");
+        }
+        if(callSignature === null) {
+            throw Errors.argumentNull("callSignature");
+        }
+        if(block === null) {
+            throw Errors.argumentNull("block");
+        }
+        this._functionKeyword = functionKeyword;
+        this._identifier = identifier;
+        this._callSignature = callSignature;
+        this._block = block;
+    }
+    FunctionExpressionSyntax.prototype.kind = function () {
+        return SyntaxKind.FunctionExpression;
+    };
+    FunctionExpressionSyntax.prototype.functionKeyword = function () {
+        return this._functionKeyword;
+    };
+    FunctionExpressionSyntax.prototype.identifier = function () {
+        return this._identifier;
+    };
+    FunctionExpressionSyntax.prototype.callSignature = function () {
+        return this._callSignature;
+    };
+    FunctionExpressionSyntax.prototype.block = function () {
+        return this._block;
+    };
+    return FunctionExpressionSyntax;
+})(UnaryExpressionSyntax);
 var SyntaxToken = (function () {
     function SyntaxToken() { }
     SyntaxToken.create = function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
