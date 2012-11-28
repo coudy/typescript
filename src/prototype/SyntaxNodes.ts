@@ -1556,7 +1556,7 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
             throw Errors.argumentNull("whenTrue");
         }
 
-        if (colonToken.kind() !== SyntaxKind.QuestionToken) {
+        if (colonToken.kind() !== SyntaxKind.ColonToken) {
             throw Errors.argument("colonToken");
         }
 
@@ -1569,6 +1569,10 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
         this._whenTrue = whenTrue;
         this._colonToken = colonToken;
         this._whenFalse = whenFalse;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ConditionalExpression;
     }
 
     public condition(): ExpressionSyntax {
@@ -2855,5 +2859,60 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
 
     public parameterName(): ISyntaxToken {
         return this._parameterName;
+    }
+}
+
+class FunctionExpressionSyntax extends UnaryExpressionSyntax {
+    private _functionKeyword: ISyntaxToken;
+    private _identifier: ISyntaxToken;
+    private _callSignature: CallSignatureSyntax;
+    private _block: BlockSyntax;
+
+    constructor(functionKeyword: ISyntaxToken,
+                identifier: ISyntaxToken,
+                callSignature: CallSignatureSyntax,
+                block: BlockSyntax) {
+        super();
+
+        if (functionKeyword.keywordKind() !== SyntaxKind.FunctionKeyword) {
+            throw Errors.argument("functionKeyword");
+        }
+
+        if (identifier !== null && identifier.kind() !== SyntaxKind.IdentifierNameToken) {
+            throw Errors.argument("identifier");
+        }
+
+        if (callSignature === null) {
+            throw Errors.argumentNull("callSignature");
+        }
+
+        if (block === null) {
+            throw Errors.argumentNull("block");
+        }
+
+        this._functionKeyword = functionKeyword;
+        this._identifier = identifier;
+        this._callSignature = callSignature;
+        this._block = block;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.FunctionExpression;
+    }
+
+    public functionKeyword(): ISyntaxToken {
+        return this._functionKeyword;
+    }
+
+    public identifier(): ISyntaxToken {
+        return this._identifier;
+    }
+
+    public callSignature(): CallSignatureSyntax {
+        return this._callSignature;
+    }
+
+    public block(): BlockSyntax {
+        return this._block;
     }
 }

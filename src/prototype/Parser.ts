@@ -1927,6 +1927,9 @@ class Parser {
 
             case SyntaxKind.NewKeyword:
                 return this.parseObjectCreationExpression();
+
+            case SyntaxKind.FunctionKeyword:
+                return this.parseFunctionExpression();
         }
 
         switch (currentTokenKind) {
@@ -1959,6 +1962,22 @@ class Parser {
 
         // Nothing else worked, just try to consume an identifier so we report an error.
         return new IdentifierNameSyntax(this.eatIdentifierToken());
+    }
+
+    private parseFunctionExpression(): FunctionExpressionSyntax {
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.FunctionKeyword);
+
+        var functionKeyword = this.eatKeyword(SyntaxKind.FunctionKeyword);
+        var identifier: ISyntaxToken = null;
+        
+        if (this.isIdentifier(this.currentToken())) {
+            identifier = this.eatIdentifierToken();
+        }
+
+        var callSignature = this.parseCallSignature();
+        var block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
+
+        return new FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block);
     }
 
     private parseCastExpression(): CastExpressionSyntax {
@@ -2392,8 +2411,6 @@ class Parser {
     }
 
     private parseCallSignature(): CallSignatureSyntax {
-        Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
-
         var parameterList = this.parseParameterList();
         var typeAnnotation: TypeAnnotationSyntax = null;
         if (this.isTypeAnnotation()) {
