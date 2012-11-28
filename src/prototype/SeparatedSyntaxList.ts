@@ -2,6 +2,8 @@
 
 class SeparatedSyntaxList {
     public static empty: ISeparatedSyntaxList = {
+        toJSON: (key) => [],
+
         count: () => 0,
         syntaxNodeCount: () => 0,
         separatorCount: () => 0,
@@ -18,6 +20,16 @@ class SeparatedSyntaxList {
             throw Errors.argumentOutOfRange("index");
         }
     };
+
+    private static toJSON(list: ISeparatedSyntaxList) {
+        var result = [];
+
+        for (var i = 0; i < list.count(); i++) {
+            result.push(list.itemAt(i));
+        }
+
+        return result;
+    }
 
     public static create(nodes: any[]): ISeparatedSyntaxList {
         if (nodes === null || nodes.length === 0) {
@@ -37,13 +49,20 @@ class SeparatedSyntaxList {
 
         if (nodes.length === 1) {
             var item = nodes[0];
-            return {
+            var list: ISeparatedSyntaxList;
+            list = {
+                toJSON: (key) => toJSON(list),
+
                 count: () => 1,
                 syntaxNodeCount: () => 1,
                 separatorCount: () => 0,
 
                 itemAt: (index: number): any => {
-                    throw Errors.argumentOutOfRange("index");
+                    if (index !== 0) {
+                        throw Errors.argumentOutOfRange("index");
+                    }
+
+                    return item;
                 },
 
                 syntaxNodeAt: (index: number) => {
@@ -58,9 +77,14 @@ class SeparatedSyntaxList {
                     throw Errors.argumentOutOfRange("index");
                 }
             };
+
+            return list;
         }
 
-        return {
+        var list: ISeparatedSyntaxList;
+        list = {
+            toJSON: (key) => toJSON(list),
+
             count: () => nodes.length,
             syntaxNodeCount: () => IntegerUtilities.integerDivide(nodes.length + 1, 2),
             separatorCount: () => IntegerUtilities.integerDivide(nodes.length, 2),
@@ -91,5 +115,7 @@ class SeparatedSyntaxList {
                 return nodes[value];
             },
         };
+
+        return list;
     }
 }

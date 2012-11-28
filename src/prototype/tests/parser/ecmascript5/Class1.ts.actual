@@ -42,7 +42,19 @@
                     "text": "implements",
                     "hasTrailingTrivia": true
                 },
-                "_typeNames": {}
+                "_typeNames": [
+                    {
+                        "kind": "IdentifierName",
+                        "_identifier": {
+                            "kind": "IdentifierNameToken",
+                            "start": 39,
+                            "width": 7,
+                            "fullWidth": 8,
+                            "text": "ILogger",
+                            "hasTrailingTrivia": true
+                        }
+                    }
+                ]
             },
             "_openBraceToken": {
                 "kind": "OpenBraceToken",
@@ -83,7 +95,7 @@
                                 "width": 1,
                                 "text": "("
                             },
-                            "_parameters": {},
+                            "_parameters": [],
                             "_closeParenToken": {
                                 "kind": "CloseParenToken",
                                 "start": 77,
@@ -136,17 +148,6 @@
                                     "text": "return",
                                     "hasTrailingTrivia": true
                                 },
-                                "_semicolonToken": {
-                                    "kind": "SemicolonToken",
-                                    "start": 0,
-                                    "width": 0,
-                                    "isMissing": true,
-                                    "text": "",
-                                    "valueText": ""
-                                }
-                            },
-                            {
-                                "kind": "ExpressionStatement",
                                 "_expression": {
                                     "kind": "BooleanLiteralExpression",
                                     "_literalToken": {
@@ -207,7 +208,7 @@
                                 "width": 1,
                                 "text": "("
                             },
-                            "_parameters": {},
+                            "_parameters": [],
                             "_closeParenToken": {
                                 "kind": "CloseParenToken",
                                 "start": 125,
@@ -260,17 +261,6 @@
                                     "text": "return",
                                     "hasTrailingTrivia": true
                                 },
-                                "_semicolonToken": {
-                                    "kind": "SemicolonToken",
-                                    "start": 0,
-                                    "width": 0,
-                                    "isMissing": true,
-                                    "text": "",
-                                    "valueText": ""
-                                }
-                            },
-                            {
-                                "kind": "ExpressionStatement",
                                 "_expression": {
                                     "kind": "BooleanLiteralExpression",
                                     "_literalToken": {
@@ -331,7 +321,7 @@
                                 "width": 1,
                                 "text": "("
                             },
-                            "_parameters": {},
+                            "_parameters": [],
                             "_closeParenToken": {
                                 "kind": "CloseParenToken",
                                 "start": 175,
@@ -384,17 +374,6 @@
                                     "text": "return",
                                     "hasTrailingTrivia": true
                                 },
-                                "_semicolonToken": {
-                                    "kind": "SemicolonToken",
-                                    "start": 0,
-                                    "width": 0,
-                                    "isMissing": true,
-                                    "text": "",
-                                    "valueText": ""
-                                }
-                            },
-                            {
-                                "kind": "ExpressionStatement",
                                 "_expression": {
                                     "kind": "BooleanLiteralExpression",
                                     "_literalToken": {
@@ -455,7 +434,7 @@
                                 "width": 1,
                                 "text": "("
                             },
-                            "_parameters": {},
+                            "_parameters": [],
                             "_closeParenToken": {
                                 "kind": "CloseParenToken",
                                 "start": 223,
@@ -508,17 +487,6 @@
                                     "text": "return",
                                     "hasTrailingTrivia": true
                                 },
-                                "_semicolonToken": {
-                                    "kind": "SemicolonToken",
-                                    "start": 0,
-                                    "width": 0,
-                                    "isMissing": true,
-                                    "text": "",
-                                    "valueText": ""
-                                }
-                            },
-                            {
-                                "kind": "ExpressionStatement",
                                 "_expression": {
                                     "kind": "BooleanLiteralExpression",
                                     "_literalToken": {
@@ -579,7 +547,7 @@
                                 "width": 1,
                                 "text": "("
                             },
-                            "_parameters": {},
+                            "_parameters": [],
                             "_closeParenToken": {
                                 "kind": "CloseParenToken",
                                 "start": 271,
@@ -632,17 +600,6 @@
                                     "text": "return",
                                     "hasTrailingTrivia": true
                                 },
-                                "_semicolonToken": {
-                                    "kind": "SemicolonToken",
-                                    "start": 0,
-                                    "width": 0,
-                                    "isMissing": true,
-                                    "text": "",
-                                    "valueText": ""
-                                }
-                            },
-                            {
-                                "kind": "ExpressionStatement",
                                 "_expression": {
                                     "kind": "BooleanLiteralExpression",
                                     "_literalToken": {
@@ -703,7 +660,37 @@
                                 "width": 1,
                                 "text": "("
                             },
-                            "_parameters": {},
+                            "_parameters": [
+                                {
+                                    "kind": "Parameter",
+                                    "_identifier": {
+                                        "kind": "IdentifierNameToken",
+                                        "start": 317,
+                                        "width": 1,
+                                        "text": "s"
+                                    },
+                                    "_typeAnontation": {
+                                        "kind": "TypeAnnotation",
+                                        "_colonToken": {
+                                            "kind": "ColonToken",
+                                            "start": 318,
+                                            "width": 1,
+                                            "fullWidth": 2,
+                                            "text": ":",
+                                            "hasTrailingTrivia": true
+                                        },
+                                        "_type": {
+                                            "kind": "IdentifierName",
+                                            "_identifier": {
+                                                "kind": "IdentifierNameToken",
+                                                "start": 320,
+                                                "width": 6,
+                                                "text": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            ],
                             "_closeParenToken": {
                                 "kind": "CloseParenToken",
                                 "start": 326,

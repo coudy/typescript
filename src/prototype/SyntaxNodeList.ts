@@ -14,9 +14,7 @@ class SyntaxNodeList {
     public static empty: ISyntaxNodeList = {
         toJSON: (key) => [],
 
-        count: () => {
-            return 0;
-        },
+        count: () => 0,
 
         syntaxNodeAt: (index: number): SyntaxNode => {
             throw Errors.argumentOutOfRange("index");

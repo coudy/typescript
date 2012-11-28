@@ -800,10 +800,10 @@ class Parser {
             staticKeyword = this.eatToken(SyntaxKind.StaticKeyword);
         }
 
-        var variableDeclaration = this.parseVariableDeclaration();
+        var variableDeclarator = this.parseVariableDeclarator(/*allowIn:*/ true);
         var semicolon = this.eatExplicitOrAutomaticSemicolon();
 
-        return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclaration, semicolon);
+        return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolon);
     }
 
     private parseMemberDeclaration(): MemberDeclarationSyntax {
@@ -1151,9 +1151,136 @@ class Parser {
         else if (this.isBreakStatement()) {
             return this.parseBreakStatement();
         }
+        else if (this.isForOrForInStatement()) {
+            return this.parseForOrForInStatement();
+        }
         else {
             throw Errors.notYetImplemented();
         }
+    }
+
+    private isForOrForInStatement(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.ForKeyword;
+    }
+
+    private parseForOrForInStatement(): BaseForStatementSyntax {
+        Debug.assert(this.isForOrForInStatement());
+
+        var forKeyword = this.eatKeyword(SyntaxKind.ForKeyword);
+        var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
+        
+        var currentToken = this.currentToken();
+        if (currentToken.keywordKind() === SyntaxKind.VarKeyword) {
+            // for ( var VariableDeclarationListNoIn; Expressionopt ; Expressionopt ) Statement
+            // for ( var VariableDeclarationNoIn in Expression ) Statement
+            return this.parseForOrForInStatementWithVariableDeclaration(forKeyword, openParenToken);
+        }
+        else if (currentToken.kind() === SyntaxKind.SemicolonToken) {
+            // for ( ; Expressionopt ; Expressionopt ) Statement
+            return this.parseForStatement(forKeyword, openParenToken);
+        }
+        else {
+            // for ( ExpressionNoInopt; Expressionopt ; Expressionopt ) Statement
+            // for ( LeftHandSideExpression in Expression ) Statement
+            return this.parseForOrForInStatementWithInitializer(forKeyword, openParenToken);
+        }
+    }
+
+    private parseForOrForInStatementWithVariableDeclaration(forKeyword: ISyntaxToken, openParenToken: ISyntaxToken): BaseForStatementSyntax {
+        Debug.assert(forKeyword.keywordKind() === SyntaxKind.ForKeyword &&
+                     openParenToken.kind() === SyntaxKind.OpenParenToken);
+        Debug.assert(this.previousToken.kind() === SyntaxKind.OpenParenToken);
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.VarKeyword);
+
+        // for ( var VariableDeclarationListNoIn; Expressionopt ; Expressionopt ) Statement
+        // for ( var VariableDeclarationNoIn in Expression ) Statement
+
+        var variableDeclaration = this.parseVariableDeclaration(/*allowIn:*/ false);
+
+        if (this.currentToken().keywordKind() === SyntaxKind.InKeyword) {
+            return this.parseForInStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, variableDeclaration, null);
+        }
+
+        return this.parseForStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, variableDeclaration, null);
+    }
+
+    private parseForInStatementWithVariableDeclarationOrInitializer(forKeyword: ISyntaxToken,
+                                                                    openParenToken: ISyntaxToken,
+                                                                    variableDeclaration: VariableDeclarationSyntax,
+                                                                    initializer: ExpressionSyntax): ForInStatementSyntax {
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.InKeyword);
+
+        // for ( var VariableDeclarationNoIn in Expression ) Statement
+        var inKeyword = this.eatKeyword(SyntaxKind.InKeyword);
+        var expression = this.parseExpression(/*allowIn:*/ true);
+        var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
+        var statement = this.parseStatement(/*allowFunctionDeclaration:*/ false);
+
+        return new ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration,
+            initializer, inKeyword, expression, closeParenToken, statement);
+    }
+
+    private parseForOrForInStatementWithInitializer(forKeyword: ISyntaxToken, openParenToken: ISyntaxToken): BaseForStatementSyntax {
+        Debug.assert(forKeyword.keywordKind() === SyntaxKind.ForKeyword &&
+                     openParenToken.kind() === SyntaxKind.OpenParenToken);
+        Debug.assert(this.previousToken.kind() === SyntaxKind.OpenParenToken);
+        
+        // for ( ExpressionNoInopt; Expressionopt ; Expressionopt ) Statement
+        // for ( LeftHandSideExpression in Expression ) Statement
+
+        var initializer = this.parseExpression(/*allowIn:*/ false);
+        if (this.currentToken().keywordKind() === SyntaxKind.InKeyword) {
+            return this.parseForInStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, null, initializer);
+        }
+        else {
+            return this.parseForStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, null, initializer);
+        }
+    }
+
+    private parseForStatement(forKeyword: ISyntaxToken, openParenToken: ISyntaxToken): ForStatementSyntax {
+        Debug.assert(forKeyword.keywordKind() === SyntaxKind.ForKeyword &&
+                     openParenToken.kind() === SyntaxKind.OpenParenToken);
+        Debug.assert(this.previousToken.kind() === SyntaxKind.OpenParenToken);
+
+        // for ( ExpressionNoInopt; Expressionopt ; Expressionopt ) Statement
+        var initializer: ExpressionSyntax = null;
+
+        if (this.currentToken().kind() !== SyntaxKind.SemicolonToken &&
+            this.currentToken().kind() !== SyntaxKind.CloseParenToken &&
+            this.currentToken().kind() !== SyntaxKind.EndOfFileToken) {
+            initializer = this.parseExpression(/*allowIn:*/ false);
+        }
+
+        return this.parseForStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, null, initializer);
+    }
+
+    private parseForStatementWithVariableDeclarationOrInitializer(forKeyword: ISyntaxToken,
+                                                                  openParenToken: ISyntaxToken,
+                                                                  variableDeclaration: VariableDeclarationSyntax,
+                                                                  initializer: ExpressionSyntax): ForStatementSyntax {
+        
+        var firstSemicolonToken = this.eatToken(SyntaxKind.SemicolonToken);
+
+        var condition: ExpressionSyntax = null;
+        if (this.currentToken().kind() !== SyntaxKind.SemicolonToken &&
+            this.currentToken().kind() !== SyntaxKind.CloseParenToken &&
+            this.currentToken().kind() !== SyntaxKind.EndOfFileToken) {
+            condition = this.parseExpression(/*allowIn:*/ true);
+        }
+
+        var secondSemicolonToken = this.eatToken(SyntaxKind.SemicolonToken);
+
+        var incrementor: ExpressionSyntax = null;
+        if (this.currentToken().kind() !== SyntaxKind.CloseParenToken &&
+            this.currentToken().kind() !== SyntaxKind.EndOfFileToken) {
+            incrementor = this.parseExpression(/*allowIn:*/ true);
+        }
+
+        var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
+        var statement = this.parseStatement(/*allowFunctionDeclaration:*/ false);
+
+        return new ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, 
+            firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement);
     }
 
     private isBreakStatement(): bool {
@@ -1375,37 +1502,37 @@ class Parser {
             exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
         }
 
+        var variableDeclaration = this.parseVariableDeclaration(/*allowIn:*/ true);
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+
+        return new VariableStatementSyntax(exportKeyword, variableDeclaration, semicolonToken);
+    }
+
+    private parseVariableDeclaration(allowIn: bool): VariableDeclarationSyntax {
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.VarKeyword);
         var varKeyword = this.eatKeyword(SyntaxKind.VarKeyword);
 
-        var variableDeclarations = [];
+        var variableDeclarators = [];
 
-        var variableDeclaration = this.parseVariableDeclaration();
-        variableDeclarations.push(variableDeclaration);
+        var variableDeclarator = this.parseVariableDeclarator(allowIn);
+        variableDeclarators.push(variableDeclarator);
 
         while (true) {
-            if (this.currentToken().kind() === SyntaxKind.CommaToken) {
-                var commaToken = this.eatToken(SyntaxKind.CommaToken);
-                variableDeclarations.push(commaToken);
-
-                variableDeclaration = this.parseVariableDeclaration();
-                variableDeclarations.push(variableDeclaration);
-                continue;
-            }
-
-            if (this.canEatExplicitOrAutomaticSemicolon()) {
+            if (this.currentToken().kind() !== SyntaxKind.CommaToken) {
                 break;
             }
 
-            // TODO: Add appropriate error recovery here.  Consume tokens until we reach a 
-            // semicolon or comma.  For now, just bail out.
-            break;
+            var commaToken = this.eatToken(SyntaxKind.CommaToken);
+            variableDeclarators.push(commaToken);
+
+            variableDeclarator = this.parseVariableDeclarator(allowIn);
+            variableDeclarators.push(variableDeclarator);
         }
 
-        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
-        return new VariableStatementSyntax(exportKeyword, varKeyword, SeparatedSyntaxList.create(variableDeclarations), semicolonToken);
+        return new VariableDeclarationSyntax(varKeyword, SeparatedSyntaxList.create(variableDeclarators));
     }
 
-    private parseVariableDeclaration(): VariableDeclarationSyntax {
+    private parseVariableDeclarator(allowIn: bool): VariableDeclaratorSyntax {
         var identifier = this.eatIdentifierToken();
         var equalsValueClause: EqualsValueClauseSyntax = null;
         var typeAnnotation: TypeAnnotationSyntax = null;
@@ -1416,22 +1543,22 @@ class Parser {
             }
 
             if (this.isEqualsValueClause()) {
-                equalsValueClause = this.parseEqualsValuesClause();
+                equalsValueClause = this.parseEqualsValuesClause(allowIn);
             }
         }
 
-        return new VariableDeclarationSyntax(identifier, typeAnnotation, equalsValueClause);
+        return new VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause);
     }
 
     private isEqualsValueClause(): bool {
         return this.currentToken().kind() === SyntaxKind.EqualsToken;
     }
 
-    private parseEqualsValuesClause(): EqualsValueClauseSyntax {
+    private parseEqualsValuesClause(allowIn: bool): EqualsValueClauseSyntax {
         Debug.assert(this.isEqualsValueClause());
 
         var equalsToken = this.eatToken(SyntaxKind.EqualsToken);
-        var value = this.parseAssignmentExpression(/*allowIn:*/ true);
+        var value = this.parseAssignmentExpression(allowIn);
 
         return new EqualsValueClauseSyntax(equalsToken, value);
     }
@@ -2186,7 +2313,7 @@ class Parser {
 
         var equalsValueClause: EqualsValueClauseSyntax = null;
         if (this.isEqualsValueClause()) {
-            equalsValueClause = this.parseEqualsValuesClause();
+            equalsValueClause = this.parseEqualsValuesClause(/*allowIn:*/ true);
         }
 
         return new ParameterSyntax(dotDotDotToken, publicOrPrivateToken, identifier, questionToken, typeAnnotation, equalsValueClause);
