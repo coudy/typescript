@@ -257,6 +257,7 @@ var DiagnosticCode;
     DiagnosticCode._0_keyword_expected = 4;
     DiagnosticCode._0_expected = 5;
     DiagnosticCode.Identifier_expected__0_is_a_keyword = 6;
+    DiagnosticCode.AutomaticSemicolonInsertionNotAllowed = 7;
 })(DiagnosticCode || (DiagnosticCode = {}));
 var DiagnosticMessages = (function () {
     function DiagnosticMessages() { }
@@ -270,6 +271,7 @@ var DiagnosticMessages = (function () {
             DiagnosticMessages.codeToFormatString[DiagnosticCode._0_keyword_expected] = "'{0}' keyword expected.";
             DiagnosticMessages.codeToFormatString[DiagnosticCode._0_expected] = "'{0}' expected.";
             DiagnosticMessages.codeToFormatString[DiagnosticCode.Identifier_expected__0_is_a_keyword] = "Identifier expected; '{0}' is a keyword.";
+            DiagnosticMessages.codeToFormatString[DiagnosticCode.AutomaticSemicolonInsertionNotAllowed] = "Automatic semicolon insertion not allowed.";
         }
     }
     DiagnosticMessages.getFormatString = function getFormatString(code) {
@@ -659,73 +661,76 @@ var Parser = (function () {
         this._currentToken = null;
         this.tokenOffset++;
     };
+    Parser.prototype.canEatAutomaticSemicolon = function () {
+        var token = this.currentToken();
+        if(token.kind() === SyntaxKind.EndOfFileToken) {
+            return true;
+        }
+        if(token.kind() === SyntaxKind.CloseBraceToken) {
+            return true;
+        }
+        if(this.previousToken !== null && this.previousToken.hasTrailingNewLineTrivia()) {
+            return true;
+        }
+        return false;
+    };
     Parser.prototype.canEatExplicitOrAutomaticSemicolon = function () {
         var token = this.currentToken();
         if(token.kind() === SyntaxKind.SemicolonToken) {
             return true;
         }
-        if(!this.options.allowAutomaticSemicolonInsertion()) {
-            var automaticSemicolonAllowed = false;
-            if(token.kind() === SyntaxKind.EndOfFileToken) {
-                return true;
-            }
-            if(token.kind() === SyntaxKind.CloseBraceToken) {
-                return true;
-            }
-            if(this.previousToken !== null && !this.previousToken.hasTrailingNewLineTrivia()) {
-                return true;
-            }
-        }
-        return false;
+        return this.canEatAutomaticSemicolon();
     };
-    Parser.prototype.eatExplicitOrAutomaticSemicolon = function (reportError) {
-        if (typeof reportError === "undefined") { reportError = true; }
+    Parser.prototype.eatExplicitOrAutomaticSemicolon = function () {
         var token = this.currentToken();
-        if(this.canEatExplicitOrAutomaticSemicolon()) {
-            return this.eatToken(SyntaxKind.SemicolonToken, false);
+        if(token.kind() === SyntaxKind.SemicolonToken) {
+            return this.eatToken(SyntaxKind.SemicolonToken);
         }
-        this.eatToken(SyntaxKind.SemicolonToken);
+        if(this.canEatAutomaticSemicolon()) {
+            var semicolonToken = SyntaxToken.createEmptyToken(SyntaxKind.SemicolonToken);
+            if(!this.options.allowAutomaticSemicolonInsertion()) {
+                semicolonToken = this.withAdditionalDiagnostics(semicolonToken, new DiagnosticInfo(DiagnosticCode.AutomaticSemicolonInsertionNotAllowed));
+            }
+            return semicolonToken;
+        }
+        return this.eatToken(SyntaxKind.SemicolonToken);
     };
-    Parser.prototype.eatToken = function (kind, reportError) {
-        if (typeof reportError === "undefined") { reportError = true; }
+    Parser.prototype.eatToken = function (kind) {
         Debug.assert(SyntaxFacts.isTokenKind(kind));
         var token = this.currentToken();
         if(token.kind() === kind) {
             this.moveToNextToken();
             return token;
         }
-        return this.createMissingToken(kind, token.kind(), reportError);
+        return this.createMissingToken(kind, token.kind());
     };
-    Parser.prototype.eatKeyword = function (kind, reportError) {
-        if (typeof reportError === "undefined") { reportError = true; }
+    Parser.prototype.eatKeyword = function (kind) {
         Debug.assert(SyntaxFacts.isTokenKind(kind));
         var token = this.currentToken();
         if(token.keywordKind() === kind) {
             this.moveToNextToken();
             return token;
         }
-        return this.createMissingToken(kind, token.kind(), reportError);
+        return this.createMissingToken(kind, token.kind());
     };
-    Parser.prototype.eatIdentifierNameToken = function (reportError) {
-        if (typeof reportError === "undefined") { reportError = true; }
+    Parser.prototype.eatIdentifierNameToken = function () {
         var token = this.currentToken();
         if(token.kind() === SyntaxKind.IdentifierNameToken) {
             this.moveToNextToken();
             return token;
         }
-        return this.createMissingToken(SyntaxKind.IdentifierNameToken, token.kind(), reportError);
+        return this.createMissingToken(SyntaxKind.IdentifierNameToken, token.kind());
     };
-    Parser.prototype.eatIdentifierToken = function (reportError) {
-        if (typeof reportError === "undefined") { reportError = true; }
+    Parser.prototype.eatIdentifierToken = function () {
         var token = this.currentToken();
         if(token.kind() === SyntaxKind.IdentifierNameToken) {
             if(this.isKeyword(token.keywordKind())) {
-                return this.createMissingToken(SyntaxKind.IdentifierNameToken, token.keywordKind(), reportError);
+                return this.createMissingToken(SyntaxKind.IdentifierNameToken, token.keywordKind());
             }
             this.moveToNextToken();
             return token;
         }
-        return this.createMissingToken(SyntaxKind.IdentifierNameToken, token.kind(), reportError);
+        return this.createMissingToken(SyntaxKind.IdentifierNameToken, token.kind());
     };
     Parser.prototype.isIdentifier = function (token) {
         return token.kind() === SyntaxKind.IdentifierNameToken && !this.isKeyword(token.keywordKind());
@@ -742,11 +747,9 @@ var Parser = (function () {
         }
         return false;
     };
-    Parser.prototype.createMissingToken = function (expected, actual, reportError) {
+    Parser.prototype.createMissingToken = function (expected, actual) {
         var token = SyntaxToken.createEmptyToken(expected);
-        if(reportError) {
-            token = this.withAdditionalDiagnostics(token, this.getExpectedTokenDiagnosticInfo(expected, actual));
-        }
+        token = this.withAdditionalDiagnostics(token, this.getExpectedTokenDiagnosticInfo(expected, actual));
         return token;
     };
     Parser.prototype.eatTokenWithPrejudice = function (kind) {
@@ -1365,8 +1368,10 @@ var Parser = (function () {
         Debug.assert(this.isBreakStatement());
         var breakKeyword = this.eatKeyword(SyntaxKind.BreakKeyword);
         var identifier = null;
-        if(!breakKeyword.hasTrailingNewLineTrivia() && this.isIdentifier(this.currentToken())) {
-            identifier = this.eatIdentifierToken();
+        if(!this.canEatExplicitOrAutomaticSemicolon()) {
+            if(this.isIdentifier(this.currentToken())) {
+                identifier = this.eatIdentifierToken();
+            }
         }
         var semicolon = this.eatExplicitOrAutomaticSemicolon();
         return new BreakStatementSyntax(breakKeyword, identifier, semicolon);
@@ -1428,13 +1433,10 @@ var Parser = (function () {
         Debug.assert(this.isReturnStatement());
         var returnKeyword = this.eatKeyword(SyntaxKind.ReturnKeyword);
         var expression = null;
-        var semicolonToken = null;
-        if(this.canEatExplicitOrAutomaticSemicolon()) {
-            semicolonToken = this.eatExplicitOrAutomaticSemicolon();
-        } else {
+        if(!this.canEatExplicitOrAutomaticSemicolon()) {
             expression = this.parseExpression(true);
-            semicolonToken = this.eatExplicitOrAutomaticSemicolon();
         }
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
         return new ReturnStatementSyntax(returnKeyword, expression, semicolonToken);
     };
     Parser.prototype.isExpressionStatement = function () {
@@ -1678,6 +1680,9 @@ var Parser = (function () {
                 }
                 case SyntaxKind.PlusPlusToken:
                 case SyntaxKind.MinusMinusToken: {
+                    if(this.previousToken !== null && this.previousToken.hasTrailingNewLineTrivia()) {
+                        return expression;
+                    }
                     expression = new PostfixUnaryExpressionSyntax(SyntaxFacts.getPostfixUnaryExpressionFromOperatorToken(currentTokenKind), expression, this.eatAnyToken());
                     break;
 
