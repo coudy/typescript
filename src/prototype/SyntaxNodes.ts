@@ -1,7 +1,7 @@
 ///<reference path='References.ts' />
 
 class SourceUnitSyntax extends SyntaxNode {
-    private _moduleElements: ISyntaxNodeList/*<ModuleElementSyntax>*/;
+    private _moduleElements: ISyntaxNodeList;
     private _endOfFileToken: ISyntaxToken;
 
     constructor (moduleElements: ISyntaxNodeList, endOfFileToken: ISyntaxToken) {
@@ -39,10 +39,10 @@ class ModuleReferenceSyntax extends SyntaxNode {
 }
 
 class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
-    private _moduleKeyword: ISyntaxToken = null;
-    private _openParenToken: ISyntaxToken = null;
-    private _stringLiteral: ISyntaxToken = null;
-    private _closeParenToken: ISyntaxToken = null;
+    private _moduleKeyword: ISyntaxToken;
+    private _openParenToken: ISyntaxToken;
+    private _stringLiteral: ISyntaxToken;
+    private _closeParenToken: ISyntaxToken;
 
     constructor (moduleKeyword: ISyntaxToken,
                  openParenToken: ISyntaxToken,
@@ -90,7 +90,7 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
 }
 
 class ModuleNameModuleReference extends ModuleReferenceSyntax {
-    private _moduleName: NameSyntax = null;
+    private _moduleName: NameSyntax;
 
     constructor (moduleName: NameSyntax) {
         super();
@@ -108,11 +108,11 @@ class ModuleNameModuleReference extends ModuleReferenceSyntax {
 }
 
 class ImportDeclarationSyntax extends ModuleElementSyntax {
-    private _importKeyword: ISyntaxToken = null;
-    private _identifier: ISyntaxToken = null;
-    private _equalsToken: ISyntaxToken = null;
-    private _moduleReference: ModuleReferenceSyntax = null;
-    private _semicolonToken: ISyntaxToken = null;
+    private _importKeyword: ISyntaxToken;
+    private _identifier: ISyntaxToken;
+    private _equalsToken: ISyntaxToken;
+    private _moduleReference: ModuleReferenceSyntax;
+    private _semicolonToken: ISyntaxToken;
 
     constructor (importKeyword: ISyntaxToken,
                  identifier: ISyntaxToken,
@@ -170,14 +170,14 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
 }
 
 class ClassDeclarationSyntax extends ModuleElementSyntax {
-    private _exportKeyword: ISyntaxToken = null;
-    private _classKeyword: ISyntaxToken = null;
-    private _identifier: ISyntaxToken = null;
-    private _extendsClause: ExtendsClauseSyntax = null;
-    private _implementsClause: ImplementsClauseSyntax = null;
-    private _openBraceToken: ISyntaxToken = null;
-    private _classElements: ISyntaxNodeList = null;
-    private _closeBraceToken: ISyntaxToken = null;
+    private _exportKeyword: ISyntaxToken;
+    private _classKeyword: ISyntaxToken;
+    private _identifier: ISyntaxToken;
+    private _extendsClause: ExtendsClauseSyntax;
+    private _implementsClause: ImplementsClauseSyntax;
+    private _openBraceToken: ISyntaxToken;
+    private _classElements: ISyntaxNodeList;
+    private _closeBraceToken: ISyntaxToken;
 
     constructor(exportKeyword: ISyntaxToken,
                 classKeyword: ISyntaxToken,
@@ -261,11 +261,11 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
 }
 
 class InterfaceDeclarationSyntax extends ModuleElementSyntax {
-    private _exportKeyword: ISyntaxToken = null;
-    private _interfaceKeyword: ISyntaxToken = null;
-    private _identifier: ISyntaxToken = null;
-    private _extendsClause: ExtendsClauseSyntax = null;
-    private _body: ObjectTypeSyntax = null;
+    private _exportKeyword: ISyntaxToken;
+    private _interfaceKeyword: ISyntaxToken;
+    private _identifier: ISyntaxToken;
+    private _extendsClause: ExtendsClauseSyntax;
+    private _body: ObjectTypeSyntax;
 
     constructor (exportKeyword: ISyntaxToken,
                  interfaceKeyword: ISyntaxToken,
@@ -323,8 +323,8 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
 }
 
 class ExtendsClauseSyntax extends SyntaxNode {
-    private _extendsKeyword: ISyntaxToken = null;
-    private _typeNames: ISeparatedSyntaxList = null;
+    private _extendsKeyword: ISyntaxToken;
+    private _typeNames: ISeparatedSyntaxList;
 
     constructor (extendsKeyword: ISyntaxToken,
                  typeNames: ISeparatedSyntaxList) {
@@ -352,8 +352,8 @@ class ExtendsClauseSyntax extends SyntaxNode {
 }
 
 class ImplementsClauseSyntax extends SyntaxNode {
-    private _implementsKeyword: ISyntaxToken = null;
-    private _typeNames: ISeparatedSyntaxList = null;
+    private _implementsKeyword: ISyntaxToken;
+    private _typeNames: ISeparatedSyntaxList;
 
     constructor (implementsKeyword: ISyntaxToken,
                  typeNames: ISeparatedSyntaxList) {
@@ -385,12 +385,12 @@ class ImplementsClauseSyntax extends SyntaxNode {
 }
 
 class ModuleDeclarationSyntax extends ModuleElementSyntax {
-    private _exportKeyword: ISyntaxToken = null;
-    private _moduleKeyword: ISyntaxToken = null;
-    private _moduleName: NameSyntax = null;
-    private _openBraceToken: ISyntaxToken = null;
-    private _moduleElements: ISyntaxNodeList = null;
-    private _closeBraceToken: ISyntaxToken = null;
+    private _exportKeyword: ISyntaxToken;
+    private _moduleKeyword: ISyntaxToken;
+    private _moduleName: NameSyntax;
+    private _openBraceToken: ISyntaxToken;
+    private _moduleElements: ISyntaxNodeList;
+    private _closeBraceToken: ISyntaxToken;
 
     constructor (exportKeyword: ISyntaxToken,
                  moduleKeyword: ISyntaxToken,
@@ -460,11 +460,11 @@ class StatementSyntax extends ModuleElementSyntax {
 }
 
 class FunctionDeclarationSyntax extends StatementSyntax {
-    private _exportKeyword: ISyntaxToken = null;
-    private _functionKeyword: ISyntaxToken = null;
-    private _functionSignature: FunctionSignatureSyntax = null;
-    private _block: BlockSyntax = null;
-    private _semicolonToken: ISyntaxToken = null;
+    private _exportKeyword: ISyntaxToken;
+    private _functionKeyword: ISyntaxToken;
+    private _functionSignature: FunctionSignatureSyntax;
+    private _block: BlockSyntax;
+    private _semicolonToken: ISyntaxToken;
 
     constructor (exportKeyword: ISyntaxToken,
                  functionKeyword: ISyntaxToken,
@@ -524,9 +524,9 @@ class FunctionDeclarationSyntax extends StatementSyntax {
 }
 
 class VariableStatementSyntax extends StatementSyntax {
-    private _exportKeyword: ISyntaxToken = null;
-    private _variableDeclaration: VariableDeclarationSyntax = null;
-    private _semicolonToken: ISyntaxToken = null;
+    private _exportKeyword: ISyntaxToken;
+    private _variableDeclaration: VariableDeclarationSyntax;
+    private _semicolonToken: ISyntaxToken;
 
     constructor (exportKeyword: ISyntaxToken,
                  variableDeclaration: VariableDeclarationSyntax,
@@ -571,8 +571,8 @@ class ExpressionSyntax extends SyntaxNode {
 }
 
 class VariableDeclarationSyntax extends SyntaxNode {
-    private _varKeyword: ISyntaxToken = null;
-    private _variableDeclarators: ISeparatedSyntaxList = null;
+    private _varKeyword: ISyntaxToken;
+    private _variableDeclarators: ISeparatedSyntaxList;
 
     constructor(varKeyword: ISyntaxToken,
                 variableDeclarators: ISeparatedSyntaxList) {
@@ -604,9 +604,9 @@ class VariableDeclarationSyntax extends SyntaxNode {
 }
 
 class VariableDeclaratorSyntax extends SyntaxNode {
-    private _identifier: ISyntaxToken = null;
-    private _typeAnnotation: TypeAnnotationSyntax = null;
-    private _equalsValueClause: EqualsValueClauseSyntax = null;
+    private _identifier: ISyntaxToken;
+    private _typeAnnotation: TypeAnnotationSyntax;
+    private _equalsValueClause: EqualsValueClauseSyntax;
 
     constructor (identifier: ISyntaxToken,
                  typeAnnotation: TypeAnnotationSyntax,
@@ -640,8 +640,8 @@ class VariableDeclaratorSyntax extends SyntaxNode {
 }
 
 class EqualsValueClauseSyntax extends SyntaxNode {
-    private _equalsToken: ISyntaxToken = null;
-    private _value: ExpressionSyntax = null;
+    private _equalsToken: ISyntaxToken;
+    private _value: ExpressionSyntax;
 
     constructor (equalsToken: ISyntaxToken,
                  value: ExpressionSyntax) {
@@ -670,8 +670,8 @@ class EqualsValueClauseSyntax extends SyntaxNode {
 
 class PrefixUnaryExpressionSyntax extends ExpressionSyntax {
     private _kind: SyntaxKind = SyntaxKind.None;
-    private _operatorToken: ISyntaxToken = null;
-    private _operand: ExpressionSyntax = null;
+    private _operatorToken: ISyntaxToken;
+    private _operand: ExpressionSyntax;
 
     constructor (kind: SyntaxKind,
                  operatorToken: ISyntaxToken,
@@ -702,7 +702,7 @@ class PrefixUnaryExpressionSyntax extends ExpressionSyntax {
 }
 
 class ThisExpressionSyntax extends ExpressionSyntax {
-    private _thisKeyword: ISyntaxToken = null;
+    private _thisKeyword: ISyntaxToken;
 
     constructor (thisKeyword: ISyntaxToken) {
         super();
@@ -725,7 +725,7 @@ class ThisExpressionSyntax extends ExpressionSyntax {
 
 class LiteralExpressionSyntax extends ExpressionSyntax {
     private _kind: SyntaxKind = SyntaxKind.None;
-    private _literalToken: ISyntaxToken = null;
+    private _literalToken: ISyntaxToken;
 
     constructor (kind: SyntaxKind, literalToken: ISyntaxToken) {
         super();
@@ -746,9 +746,9 @@ class LiteralExpressionSyntax extends ExpressionSyntax {
 }
 
 class ArrayLiteralExpressionSyntax extends ExpressionSyntax {
-    private _openBracketToken: ISyntaxToken = null;
-    private _expressions: ISeparatedSyntaxList = null;
-    private _closeBracketToken: ISyntaxToken = null;
+    private _openBracketToken: ISyntaxToken;
+    private _expressions: ISeparatedSyntaxList;
+    private _closeBracketToken: ISyntaxToken;
 
     constructor (openBracketToken: ISyntaxToken,
                  expressions: ISeparatedSyntaxList,
@@ -796,9 +796,9 @@ class OmittedExpressionSyntax extends ExpressionSyntax {
 }
 
 class ParenthesizedExpressionSyntax extends ExpressionSyntax {
-    private _openParenToken: ISyntaxToken = null;
-    private _expression: ExpressionSyntax = null;
-    private _closeParenToken: ISyntaxToken = null;
+    private _openParenToken: ISyntaxToken;
+    private _expression: ExpressionSyntax;
+    private _closeParenToken: ISyntaxToken;
 
     constructor (openParenToken: ISyntaxToken,
                  expression: ExpressionSyntax,
@@ -840,8 +840,8 @@ class ParenthesizedExpressionSyntax extends ExpressionSyntax {
 }
 
 class ArrowFunctionExpressionSyntax extends ExpressionSyntax {
-    private _equalsGreaterThanToken: ISyntaxToken = null;
-    private _body: SyntaxNode = null;
+    private _equalsGreaterThanToken: ISyntaxToken;
+    private _body: SyntaxNode;
 
     constructor (equalsGreaterThanToken: ISyntaxToken,
                  body: SyntaxNode) {
@@ -877,7 +877,7 @@ class NameSyntax extends TypeSyntax {
 }
 
 class IdentifierNameSyntax extends NameSyntax {
-    private _identifier: ISyntaxToken = null;
+    private _identifier: ISyntaxToken;
 
     constructor (identifier: ISyntaxToken) {
         super();
@@ -903,9 +903,9 @@ class IdentifierNameSyntax extends NameSyntax {
 }
 
 class QualifiedNameSyntax extends NameSyntax {
-    private _left: NameSyntax = null;
-    private _dotToken: ISyntaxToken = null;
-    private _right: IdentifierNameSyntax = null;
+    private _left: NameSyntax;
+    private _dotToken: ISyntaxToken;
+    private _right: IdentifierNameSyntax;
 
     constructor (left: NameSyntax,
                  dotToken: ISyntaxToken,
@@ -946,9 +946,9 @@ class ConstructorTypeSyntax extends TypeSyntax {
 }
 
 class FunctionTypeSyntax extends TypeSyntax {
-    private _parameterList: ParameterListSyntax = null;
-    private _equalsGreaterThanToken: ISyntaxToken = null;
-    private _type: TypeSyntax = null;
+    private _parameterList: ParameterListSyntax;
+    private _equalsGreaterThanToken: ISyntaxToken;
+    private _type: TypeSyntax;
 
     constructor(parameterList: ParameterListSyntax,
                 equalsGreaterThanToken: ISyntaxToken,
@@ -990,9 +990,9 @@ class FunctionTypeSyntax extends TypeSyntax {
 }
 
 class ObjectTypeSyntax extends TypeSyntax {
-    private _openBraceToken: ISyntaxToken = null;
-    private _typeMembers: ISeparatedSyntaxList = null;
-    private _closeBraceToken: ISyntaxToken = null;
+    private _openBraceToken: ISyntaxToken;
+    private _typeMembers: ISeparatedSyntaxList;
+    private _closeBraceToken: ISyntaxToken;
 
     constructor (openBraceToken: ISyntaxToken,
                  typeMembers: ISeparatedSyntaxList,
@@ -1034,9 +1034,9 @@ class ObjectTypeSyntax extends TypeSyntax {
 }
 
 class ArrayTypeSyntax extends TypeSyntax {
-    private _type: TypeSyntax = null;
-    private _openBracketToken: ISyntaxToken = null;
-    private _closeBracketToken: ISyntaxToken = null;
+    private _type: TypeSyntax;
+    private _openBracketToken: ISyntaxToken;
+    private _closeBracketToken: ISyntaxToken;
 
     constructor (type: TypeSyntax,
                  openBracketToken: ISyntaxToken,
@@ -1070,7 +1070,7 @@ class ArrayTypeSyntax extends TypeSyntax {
 }
 
 class PredefinedTypeSyntax extends TypeSyntax {
-    private _keyword: ISyntaxToken = null;
+    private _keyword: ISyntaxToken;
     
     constructor (keyword: ISyntaxToken) {
         super();
@@ -1089,8 +1089,8 @@ class PredefinedTypeSyntax extends TypeSyntax {
 }
 
 class TypeAnnotationSyntax extends SyntaxNode {
-    private _colonToken: ISyntaxToken = null;
-    private _type: TypeSyntax = null;
+    private _colonToken: ISyntaxToken;
+    private _type: TypeSyntax;
 
     constructor (colonToken: ISyntaxToken,
                  type: TypeSyntax) {
@@ -1122,7 +1122,7 @@ class TypeAnnotationSyntax extends SyntaxNode {
 }
 
 class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax {
-    private _callSignature: CallSignatureSyntax = null;
+    private _callSignature: CallSignatureSyntax;
 
     constructor (callSignature: CallSignatureSyntax,
                  equalsGreaterThanToken: ISyntaxToken,
@@ -1146,9 +1146,9 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
 }
 
 class BlockSyntax extends StatementSyntax {
-    private _openBraceToken: ISyntaxToken = null;
-    private _statements: ISyntaxNodeList = null;
-    private _closeBraceToken: ISyntaxToken = null;
+    private _openBraceToken: ISyntaxToken;
+    private _statements: ISyntaxNodeList;
+    private _closeBraceToken: ISyntaxToken;
 
     constructor (openBraceToken: ISyntaxToken,
                  statements: ISyntaxNodeList,
@@ -1190,12 +1190,12 @@ class BlockSyntax extends StatementSyntax {
 }
 
 class ParameterSyntax extends SyntaxNode {
-    private _dotDotDotToken: ISyntaxToken = null;
-    private _publicOrPrivateKeyword: ISyntaxToken = null;
-    private _identifier: ISyntaxToken = null;
-    private _questionToken: ISyntaxToken = null;
-    private _typeAnontation: TypeAnnotationSyntax = null;
-    private _equalsValueClause: EqualsValueClauseSyntax = null;
+    private _dotDotDotToken: ISyntaxToken;
+    private _publicOrPrivateKeyword: ISyntaxToken;
+    private _identifier: ISyntaxToken;
+    private _questionToken: ISyntaxToken;
+    private _typeAnontation: TypeAnnotationSyntax;
+    private _equalsValueClause: EqualsValueClauseSyntax;
 
     constructor (dotDotDotToken: ISyntaxToken,
                  publicOrPrivateKeyword: ISyntaxToken,
@@ -1261,9 +1261,9 @@ class ParameterSyntax extends SyntaxNode {
 }
 
 class MemberAccessExpressionSyntax extends ExpressionSyntax {
-    private _expression: ExpressionSyntax = null;
-    private _dotToken: ISyntaxToken = null;
-    private _identifierName: IdentifierNameSyntax = null;
+    private _expression: ExpressionSyntax;
+    private _dotToken: ISyntaxToken;
+    private _identifierName: IdentifierNameSyntax;
 
     constructor (expression: ExpressionSyntax,
                  dotToken: ISyntaxToken,
@@ -1306,8 +1306,8 @@ class MemberAccessExpressionSyntax extends ExpressionSyntax {
 
 class PostfixUnaryExpressionSyntax extends ExpressionSyntax {
     private _kind: SyntaxKind = SyntaxKind.None;
-    private _operand: ExpressionSyntax = null;
-    private _operatorToken: ISyntaxToken = null;
+    private _operand: ExpressionSyntax;
+    private _operatorToken: ISyntaxToken;
 
     constructor (kind: SyntaxKind,
                  operand: ExpressionSyntax,
@@ -1345,10 +1345,10 @@ class PostfixUnaryExpressionSyntax extends ExpressionSyntax {
 }
 
 class ElementAccessExpressionSyntax extends ExpressionSyntax {
-    private _expression: ExpressionSyntax = null;
-    private _openBracketToken: ISyntaxToken = null;
-    private _argumentExpression: ExpressionSyntax = null;
-    private _closeBracketToken: ISyntaxToken = null;
+    private _expression: ExpressionSyntax;
+    private _openBracketToken: ISyntaxToken;
+    private _argumentExpression: ExpressionSyntax;
+    private _closeBracketToken: ISyntaxToken;
 
     constructor (expression: ExpressionSyntax,
                  openBracketToken: ISyntaxToken,
@@ -1396,8 +1396,8 @@ class ElementAccessExpressionSyntax extends ExpressionSyntax {
 }
 
 class InvocationExpressionSyntax extends ExpressionSyntax {
-    private _expression: ExpressionSyntax = null;
-    private _argumentList: ArgumentListSyntax = null;
+    private _expression: ExpressionSyntax;
+    private _argumentList: ArgumentListSyntax;
 
     constructor (expression: ExpressionSyntax,
                  argumentList: ArgumentListSyntax) {
@@ -1429,9 +1429,9 @@ class InvocationExpressionSyntax extends ExpressionSyntax {
 }
 
 class ArgumentListSyntax extends SyntaxNode {
-    private _openParenToken: ISyntaxToken = null;
-    private _arguments: ISeparatedSyntaxList = null;
-    private _closeParenToken: ISyntaxToken = null;
+    private _openParenToken: ISyntaxToken;
+    private _arguments: ISeparatedSyntaxList;
+    private _closeParenToken: ISyntaxToken;
 
     constructor (openParenToken: ISyntaxToken,
                  arguments: ISeparatedSyntaxList,
@@ -1474,9 +1474,9 @@ class ArgumentListSyntax extends SyntaxNode {
 
 class BinaryExpressionSyntax extends ExpressionSyntax {
     private _kind: SyntaxKind = SyntaxKind.None;
-    private _left: ExpressionSyntax = null;
-    private _operatorToken: ISyntaxToken = null;
-    private _right: ExpressionSyntax = null;
+    private _left: ExpressionSyntax;
+    private _operatorToken: ISyntaxToken;
+    private _right: ExpressionSyntax;
 
     constructor (kind: SyntaxKind,
                  left: ExpressionSyntax,
@@ -1520,11 +1520,11 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
 }
 
 class ConditionalExpressionSyntax extends ExpressionSyntax {
-    private _condition: ExpressionSyntax = null;
-    private _questionToken: ISyntaxToken = null;
-    private _whenTrue: ExpressionSyntax = null;
-    private _colonToken: ISyntaxToken = null;
-    private _whenFalse: ExpressionSyntax = null;
+    private _condition: ExpressionSyntax;
+    private _questionToken: ISyntaxToken;
+    private _whenTrue: ExpressionSyntax;
+    private _colonToken: ISyntaxToken;
+    private _whenFalse: ExpressionSyntax;
 
     constructor (condition: ExpressionSyntax,
                  questionToken: ISyntaxToken,
@@ -1588,10 +1588,10 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
 }
 
 class FunctionSignatureSyntax extends TypeMemberSyntax {
-    private _identifier: ISyntaxToken = null;
-    private _questionToken: ISyntaxToken = null;
-    private _parameterList: ParameterListSyntax = null;
-    private _typeAnnotation: TypeAnnotationSyntax = null;
+    private _identifier: ISyntaxToken;
+    private _questionToken: ISyntaxToken;
+    private _parameterList: ParameterListSyntax;
+    private _typeAnnotation: TypeAnnotationSyntax;
 
     constructor (identifier: ISyntaxToken,
                  questionToken: ISyntaxToken,
@@ -1645,9 +1645,9 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
 }
 
 class ParameterListSyntax extends SyntaxNode {
-    private _openParenToken: ISyntaxToken = null;
-    private _parameters: ISeparatedSyntaxList = null;
-    private _closeParenToken: ISyntaxToken = null;
+    private _openParenToken: ISyntaxToken;
+    private _parameters: ISeparatedSyntaxList;
+    private _closeParenToken: ISyntaxToken;
 
     constructor (openParenToken: ISyntaxToken,
                  parameters: ISeparatedSyntaxList,
@@ -1689,8 +1689,8 @@ class ParameterListSyntax extends SyntaxNode {
 }
 
 class CallSignatureSyntax extends TypeMemberSyntax {
-    private _parameterList: ParameterListSyntax = null;
-    private _typeAnnotation: TypeAnnotationSyntax = null;
+    private _parameterList: ParameterListSyntax;
+    private _typeAnnotation: TypeAnnotationSyntax;
     
     constructor (parameterList: ParameterListSyntax,
                  typeAnnotation: TypeAnnotationSyntax) {
@@ -1718,8 +1718,8 @@ class CallSignatureSyntax extends TypeMemberSyntax {
 }
 
 class ElseClauseSyntax extends SyntaxNode {
-    private _elseKeyword: ISyntaxToken = null;
-    private _statement: StatementSyntax = null;
+    private _elseKeyword: ISyntaxToken;
+    private _statement: StatementSyntax;
 
     constructor (elseKeyword: ISyntaxToken,
                  statement: StatementSyntax) {
@@ -1751,12 +1751,12 @@ class ElseClauseSyntax extends SyntaxNode {
 }
 
 class IfStatementSyntax extends StatementSyntax {
-    private _ifKeyword: ISyntaxToken = null;
-    private _openParenToken: ISyntaxToken = null;
-    private _condition: ExpressionSyntax = null;
-    private _closeParenToken: ISyntaxToken = null;
-    private _statement: StatementSyntax = null;
-    private _elseClause: ElseClauseSyntax = null;
+    private _ifKeyword: ISyntaxToken;
+    private _openParenToken: ISyntaxToken;
+    private _condition: ExpressionSyntax;
+    private _closeParenToken: ISyntaxToken;
+    private _statement: StatementSyntax;
+    private _elseClause: ElseClauseSyntax;
 
     constructor(ifKeyword: ISyntaxToken,
         openParenToken: ISyntaxToken,
@@ -1824,8 +1824,8 @@ class IfStatementSyntax extends StatementSyntax {
 }
 
 class ExpressionStatementSyntax extends StatementSyntax {
-    private _expression: ExpressionSyntax = null;
-    private _semicolonToken: ISyntaxToken = null;
+    private _expression: ExpressionSyntax;
+    private _semicolonToken: ISyntaxToken;
 
     constructor(expression: ExpressionSyntax,
                 semicolonToken: ISyntaxToken) {
@@ -1860,10 +1860,10 @@ class ClassElementSyntax extends SyntaxNode {
 }
 
 class ConstructorDeclarationSyntax extends ClassElementSyntax {
-    private _constructorKeyword: ISyntaxToken = null;
-    private _parameterList: ParameterListSyntax = null;
-    private _block: BlockSyntax = null;
-    private _semicolonToken: ISyntaxToken = null;
+    private _constructorKeyword: ISyntaxToken;
+    private _parameterList: ParameterListSyntax;
+    private _block: BlockSyntax;
+    private _semicolonToken: ISyntaxToken;
 
     constructor(constructorKeyword: ISyntaxToken,
                 parameterList: ParameterListSyntax,
@@ -1913,8 +1913,8 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
 }
 
 class MemberDeclarationSyntax extends ClassElementSyntax {
-    private _publicOrPrivateKeyword: ISyntaxToken = null;
-    private _staticKeyword: ISyntaxToken = null;
+    private _publicOrPrivateKeyword: ISyntaxToken;
+    private _staticKeyword: ISyntaxToken;
 
     constructor(publicOrPrivateKeyword: ISyntaxToken,
                 staticKeyword: ISyntaxToken) {
@@ -1944,9 +1944,9 @@ class MemberDeclarationSyntax extends ClassElementSyntax {
 }
 
 class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
-    private _functionSignature: FunctionSignatureSyntax = null;
-    private _block: BlockSyntax = null;
-    private _semicolonToken: ISyntaxToken = null;
+    private _functionSignature: FunctionSignatureSyntax;
+    private _block: BlockSyntax;
+    private _semicolonToken: ISyntaxToken;
 
     constructor(publicOrPrivateKeyword: ISyntaxToken,
                 staticKeyword: ISyntaxToken,
@@ -1991,8 +1991,8 @@ class MemberAccessorDeclarationSyntax extends MemberDeclarationSyntax {
 }
 
 class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
-    private _variableDeclarator: VariableDeclaratorSyntax = null;
-    private _semicolonToken: ISyntaxToken = null;
+    private _variableDeclarator: VariableDeclaratorSyntax;
+    private _semicolonToken: ISyntaxToken;
 
     constructor(publicOrPrivateKeyword: ISyntaxToken,
                 staticKeyword: ISyntaxToken,
@@ -2029,9 +2029,9 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
 }
 
 class ReturnStatementSyntax extends StatementSyntax {
-    private _returnKeyword: ISyntaxToken = null;
-    private _expression: ExpressionSyntax = null;
-    private _semicolonToken: ISyntaxToken = null;
+    private _returnKeyword: ISyntaxToken;
+    private _expression: ExpressionSyntax;
+    private _semicolonToken: ISyntaxToken;
 
     constructor(returnKeyword: ISyntaxToken,
                 expression: ExpressionSyntax,
@@ -2069,9 +2069,9 @@ class ReturnStatementSyntax extends StatementSyntax {
 }
 
 class ObjectCreationExpressionSyntax extends ExpressionSyntax {
-    private _newKeyword: ISyntaxToken = null;
-    private _expression: ExpressionSyntax = null;
-    private _argumentList: ArgumentListSyntax = null;
+    private _newKeyword: ISyntaxToken;
+    private _expression: ExpressionSyntax;
+    private _argumentList: ArgumentListSyntax;
 
     constructor(newKeyword: ISyntaxToken,
                 expression: ExpressionSyntax,
@@ -2109,13 +2109,13 @@ class ObjectCreationExpressionSyntax extends ExpressionSyntax {
 }
 
 class SwitchStatementSyntax extends StatementSyntax {
-    private _switchKeyword: ISyntaxToken = null;
-    private _openParenToken: ISyntaxToken = null;
-    private _expression: ExpressionSyntax = null;
-    private _closeParenToken: ISyntaxToken = null;
-    private _openBraceToken: ISyntaxToken = null;
-    private _caseClauses: ISyntaxNodeList = null;
-    private _closeBraceToken: ISyntaxToken = null;
+    private _switchKeyword: ISyntaxToken;
+    private _openParenToken: ISyntaxToken;
+    private _expression: ExpressionSyntax;
+    private _closeParenToken: ISyntaxToken;
+    private _openBraceToken: ISyntaxToken;
+    private _caseClauses: ISyntaxNodeList;
+    private _closeBraceToken: ISyntaxToken;
 
     constructor(switchKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
@@ -2197,8 +2197,8 @@ class SwitchStatementSyntax extends StatementSyntax {
 }
 
 class SwitchClauseSyntax extends SyntaxNode {
-    private _colonToken: ISyntaxToken = null;
-    private _statements: ISyntaxNodeList = null;
+    private _colonToken: ISyntaxToken;
+    private _statements: ISyntaxNodeList;
 
     constructor(colonToken: ISyntaxToken,
                 statements: ISyntaxNodeList) {
@@ -2226,8 +2226,8 @@ class SwitchClauseSyntax extends SyntaxNode {
 }
 
 class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
-    private _caseKeyword: ISyntaxToken = null;
-    private _expression: ExpressionSyntax = null;
+    private _caseKeyword: ISyntaxToken;
+    private _expression: ExpressionSyntax;
 
     constructor(caseKeyword: ISyntaxToken,
                 expression: ExpressionSyntax,
@@ -2261,7 +2261,7 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
 }
 
 class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
-    private _defaultKeyword: ISyntaxToken = null;
+    private _defaultKeyword: ISyntaxToken;
 
     constructor(defaultKeyword: ISyntaxToken,
                 colonToken: ISyntaxToken,
@@ -2285,9 +2285,9 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
 }
 
 class BreakStatementSyntax extends StatementSyntax {
-    private _breakKeyword: ISyntaxToken = null;
-    private _identifier: ISyntaxToken = null;
-    private _semicolonToken: ISyntaxToken = null;
+    private _breakKeyword: ISyntaxToken;
+    private _identifier: ISyntaxToken;
+    private _semicolonToken: ISyntaxToken;
 
     constructor(breakKeyword: ISyntaxToken,
                 identifier: ISyntaxToken,
@@ -2329,11 +2329,11 @@ class BreakStatementSyntax extends StatementSyntax {
 }
 
 class BaseForStatementSyntax extends StatementSyntax {
-    private _forKeyword: ISyntaxToken = null;
-    private _openParenToken: ISyntaxToken = null;
-    private _variableDeclaration: VariableDeclarationSyntax = null;
-    private _closeParenToken: ISyntaxToken = null;
-    private _statement: StatementSyntax = null;
+    private _forKeyword: ISyntaxToken;
+    private _openParenToken: ISyntaxToken;
+    private _variableDeclaration: VariableDeclarationSyntax;
+    private _closeParenToken: ISyntaxToken;
+    private _statement: StatementSyntax;
 
     constructor(forKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
@@ -2387,11 +2387,11 @@ class BaseForStatementSyntax extends StatementSyntax {
 }
 
 class ForStatementSyntax extends BaseForStatementSyntax {
-    private _initializer: ExpressionSyntax = null;
-    private _firstSemicolonToken: ISyntaxToken = null;
-    private _condition: ExpressionSyntax = null;
-    private _secondSemicolonToken: ISyntaxToken = null;
-    private _incrementor: ExpressionSyntax = null;
+    private _initializer: ExpressionSyntax;
+    private _firstSemicolonToken: ISyntaxToken;
+    private _condition: ExpressionSyntax;
+    private _secondSemicolonToken: ISyntaxToken;
+    private _incrementor: ExpressionSyntax;
 
     constructor(forKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
@@ -2448,9 +2448,9 @@ class ForStatementSyntax extends BaseForStatementSyntax {
 }
 
 class ForInStatementSyntax extends BaseForStatementSyntax {
-    private _left: ExpressionSyntax = null;
-    private _inKeyword: ISyntaxToken = null;
-    private _expression: ExpressionSyntax = null;
+    private _left: ExpressionSyntax;
+    private _inKeyword: ISyntaxToken;
+    private _expression: ExpressionSyntax;
 
     constructor(forKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
@@ -2493,12 +2493,12 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
 }
 
 class EnumDeclarationSyntax extends ModuleElementSyntax {
-    private _exportKeyword: ISyntaxToken = null;
-    private _enumKeyword: ISyntaxToken = null;
-    private _identifier: ISyntaxToken = null;
-    private _openBraceToken: ISyntaxToken = null;
-    private _variableDeclarators: ISeparatedSyntaxList = null;
-    private _closeBraceToken: ISyntaxToken = null;
+    private _exportKeyword: ISyntaxToken;
+    private _enumKeyword: ISyntaxToken;
+    private _identifier: ISyntaxToken;
+    private _openBraceToken: ISyntaxToken;
+    private _variableDeclarators: ISeparatedSyntaxList;
+    private _closeBraceToken: ISyntaxToken;
 
     constructor(exportKeyword: ISyntaxToken,
                 enumKeyword: ISyntaxToken,

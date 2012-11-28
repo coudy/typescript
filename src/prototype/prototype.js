@@ -4680,10 +4680,6 @@ var ExternalModuleReferenceSyntax = (function (_super) {
     __extends(ExternalModuleReferenceSyntax, _super);
     function ExternalModuleReferenceSyntax(moduleKeyword, openParenToken, stringLiteral, closeParenToken) {
         _super.call(this);
-        this._moduleKeyword = null;
-        this._openParenToken = null;
-        this._stringLiteral = null;
-        this._closeParenToken = null;
         if(moduleKeyword.keywordKind() !== SyntaxKind.ModuleKeyword) {
             throw Errors.argument("moduleKeyword");
         }
@@ -4719,7 +4715,6 @@ var ModuleNameModuleReference = (function (_super) {
     __extends(ModuleNameModuleReference, _super);
     function ModuleNameModuleReference(moduleName) {
         _super.call(this);
-        this._moduleName = null;
         if(moduleName === null) {
             throw Errors.argumentNull("moduleName");
         }
@@ -4734,11 +4729,6 @@ var ImportDeclarationSyntax = (function (_super) {
     __extends(ImportDeclarationSyntax, _super);
     function ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken) {
         _super.call(this);
-        this._importKeyword = null;
-        this._identifier = null;
-        this._equalsToken = null;
-        this._moduleReference = null;
-        this._semicolonToken = null;
         if(importKeyword.kind() !== SyntaxKind.ImportKeyword) {
             throw Errors.argument("importKeyword");
         }
@@ -4781,14 +4771,6 @@ var ClassDeclarationSyntax = (function (_super) {
     __extends(ClassDeclarationSyntax, _super);
     function ClassDeclarationSyntax(exportKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken) {
         _super.call(this);
-        this._exportKeyword = null;
-        this._classKeyword = null;
-        this._identifier = null;
-        this._extendsClause = null;
-        this._implementsClause = null;
-        this._openBraceToken = null;
-        this._classElements = null;
-        this._closeBraceToken = null;
         if(exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
             throw Errors.argument("exportKeyword");
         }
@@ -4849,11 +4831,6 @@ var InterfaceDeclarationSyntax = (function (_super) {
     __extends(InterfaceDeclarationSyntax, _super);
     function InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, extendsClause, body) {
         _super.call(this);
-        this._exportKeyword = null;
-        this._interfaceKeyword = null;
-        this._identifier = null;
-        this._extendsClause = null;
-        this._body = null;
         if(exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
             throw Errors.argument("exportKeyword");
         }
@@ -4896,8 +4873,6 @@ var ExtendsClauseSyntax = (function (_super) {
     __extends(ExtendsClauseSyntax, _super);
     function ExtendsClauseSyntax(extendsKeyword, typeNames) {
         _super.call(this);
-        this._extendsKeyword = null;
-        this._typeNames = null;
         if(extendsKeyword.keywordKind() !== SyntaxKind.ExtendsKeyword) {
             throw Errors.argument("extendsKeyword");
         }
@@ -4919,8 +4894,6 @@ var ImplementsClauseSyntax = (function (_super) {
     __extends(ImplementsClauseSyntax, _super);
     function ImplementsClauseSyntax(implementsKeyword, typeNames) {
         _super.call(this);
-        this._implementsKeyword = null;
-        this._typeNames = null;
         if(implementsKeyword.keywordKind() !== SyntaxKind.ImplementsKeyword) {
             throw Errors.argument("extendsKimplementsKeywordeyword");
         }
@@ -4945,12 +4918,6 @@ var ModuleDeclarationSyntax = (function (_super) {
     __extends(ModuleDeclarationSyntax, _super);
     function ModuleDeclarationSyntax(exportKeyword, moduleKeyword, moduleName, openBraceToken, moduleElements, closeBraceToken) {
         _super.call(this);
-        this._exportKeyword = null;
-        this._moduleKeyword = null;
-        this._moduleName = null;
-        this._openBraceToken = null;
-        this._moduleElements = null;
-        this._closeBraceToken = null;
         if(exportKeyword != null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
             throw Errors.argument("exportKeyword");
         }
@@ -5007,11 +4974,6 @@ var FunctionDeclarationSyntax = (function (_super) {
     __extends(FunctionDeclarationSyntax, _super);
     function FunctionDeclarationSyntax(exportKeyword, functionKeyword, functionSignature, block, semicolonToken) {
         _super.call(this);
-        this._exportKeyword = null;
-        this._functionKeyword = null;
-        this._functionSignature = null;
-        this._block = null;
-        this._semicolonToken = null;
         if(exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
             throw Errors.argument("exportKeyword");
         }
@@ -5054,9 +5016,6 @@ var VariableStatementSyntax = (function (_super) {
     __extends(VariableStatementSyntax, _super);
     function VariableStatementSyntax(exportKeyword, variableDeclaration, semicolonToken) {
         _super.call(this);
-        this._exportKeyword = null;
-        this._variableDeclaration = null;
-        this._semicolonToken = null;
         if(exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
             throw Errors.argument("exportKeyword");
         }
@@ -5096,8 +5055,6 @@ var VariableDeclarationSyntax = (function (_super) {
     __extends(VariableDeclarationSyntax, _super);
     function VariableDeclarationSyntax(varKeyword, variableDeclarators) {
         _super.call(this);
-        this._varKeyword = null;
-        this._variableDeclarators = null;
         if(varKeyword.keywordKind() !== SyntaxKind.VarKeyword) {
             throw Errors.argument("varKeyword");
         }
@@ -5122,9 +5079,6 @@ var VariableDeclaratorSyntax = (function (_super) {
     __extends(VariableDeclaratorSyntax, _super);
     function VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause) {
         _super.call(this);
-        this._identifier = null;
-        this._typeAnnotation = null;
-        this._equalsValueClause = null;
         if(identifier.kind() !== SyntaxKind.IdentifierNameToken) {
             throw Errors.argument("identifier");
         }
@@ -5150,8 +5104,6 @@ var EqualsValueClauseSyntax = (function (_super) {
     __extends(EqualsValueClauseSyntax, _super);
     function EqualsValueClauseSyntax(equalsToken, value) {
         _super.call(this);
-        this._equalsToken = null;
-        this._value = null;
         if(equalsToken.kind() !== SyntaxKind.EqualsToken) {
             throw Errors.argument("equalsToken");
         }
@@ -5174,8 +5126,6 @@ var PrefixUnaryExpressionSyntax = (function (_super) {
     function PrefixUnaryExpressionSyntax(kind, operatorToken, operand) {
         _super.call(this);
         this._kind = SyntaxKind.None;
-        this._operatorToken = null;
-        this._operand = null;
         if(operand === null) {
             throw Errors.argumentNull("operand");
         }
@@ -5198,7 +5148,6 @@ var ThisExpressionSyntax = (function (_super) {
     __extends(ThisExpressionSyntax, _super);
     function ThisExpressionSyntax(thisKeyword) {
         _super.call(this);
-        this._thisKeyword = null;
         if(thisKeyword.keywordKind() !== SyntaxKind.ThisKeyword) {
             throw Errors.argument("thisKeyword");
         }
@@ -5217,7 +5166,6 @@ var LiteralExpressionSyntax = (function (_super) {
     function LiteralExpressionSyntax(kind, literalToken) {
         _super.call(this);
         this._kind = SyntaxKind.None;
-        this._literalToken = null;
         this._kind = kind;
         this._literalToken = literalToken;
     }
@@ -5233,9 +5181,6 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
     __extends(ArrayLiteralExpressionSyntax, _super);
     function ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken) {
         _super.call(this);
-        this._openBracketToken = null;
-        this._expressions = null;
-        this._closeBracketToken = null;
         if(openBracketToken.kind() !== SyntaxKind.OpenBracketToken) {
             throw Errors.argument("openBracketToken");
         }
@@ -5274,9 +5219,6 @@ var ParenthesizedExpressionSyntax = (function (_super) {
     __extends(ParenthesizedExpressionSyntax, _super);
     function ParenthesizedExpressionSyntax(openParenToken, expression, closeParenToken) {
         _super.call(this);
-        this._openParenToken = null;
-        this._expression = null;
-        this._closeParenToken = null;
         if(openParenToken.kind() !== SyntaxKind.OpenParenToken) {
             throw Errors.argument("openParenToken");
         }
@@ -5308,8 +5250,6 @@ var ArrowFunctionExpressionSyntax = (function (_super) {
     __extends(ArrowFunctionExpressionSyntax, _super);
     function ArrowFunctionExpressionSyntax(equalsGreaterThanToken, body) {
         _super.call(this);
-        this._equalsGreaterThanToken = null;
-        this._body = null;
         if(equalsGreaterThanToken.kind() !== SyntaxKind.EqualsGreaterThanToken) {
             throw Errors.argument("equalsGreaterThanToken");
         }
@@ -5347,7 +5287,6 @@ var IdentifierNameSyntax = (function (_super) {
     __extends(IdentifierNameSyntax, _super);
     function IdentifierNameSyntax(identifier) {
         _super.call(this);
-        this._identifier = null;
         if(identifier.kind() !== SyntaxKind.IdentifierNameToken) {
             throw Errors.argument("identifier");
         }
@@ -5368,9 +5307,6 @@ var QualifiedNameSyntax = (function (_super) {
     __extends(QualifiedNameSyntax, _super);
     function QualifiedNameSyntax(left, dotToken, right) {
         _super.call(this);
-        this._left = null;
-        this._dotToken = null;
-        this._right = null;
         if(left === null) {
             throw Errors.argumentNull("left");
         }
@@ -5407,9 +5343,6 @@ var FunctionTypeSyntax = (function (_super) {
     __extends(FunctionTypeSyntax, _super);
     function FunctionTypeSyntax(parameterList, equalsGreaterThanToken, type) {
         _super.call(this);
-        this._parameterList = null;
-        this._equalsGreaterThanToken = null;
-        this._type = null;
         if(parameterList === null) {
             throw Errors.argumentNull("parameterList");
         }
@@ -5441,9 +5374,6 @@ var ObjectTypeSyntax = (function (_super) {
     __extends(ObjectTypeSyntax, _super);
     function ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken) {
         _super.call(this);
-        this._openBraceToken = null;
-        this._typeMembers = null;
-        this._closeBraceToken = null;
         if(openBraceToken.kind() !== SyntaxKind.OpenBraceToken) {
             throw Errors.argument("openBraceToken");
         }
@@ -5475,9 +5405,6 @@ var ArrayTypeSyntax = (function (_super) {
     __extends(ArrayTypeSyntax, _super);
     function ArrayTypeSyntax(type, openBracketToken, closeBracketToken) {
         _super.call(this);
-        this._type = null;
-        this._openBracketToken = null;
-        this._closeBracketToken = null;
         if(openBracketToken.kind() !== SyntaxKind.OpenBracketToken) {
             throw Errors.argument("openBracketToken");
         }
@@ -5503,7 +5430,6 @@ var PredefinedTypeSyntax = (function (_super) {
     __extends(PredefinedTypeSyntax, _super);
     function PredefinedTypeSyntax(keyword) {
         _super.call(this);
-        this._keyword = null;
         this._keyword = keyword;
     }
     PredefinedTypeSyntax.prototype.kind = function () {
@@ -5518,8 +5444,6 @@ var TypeAnnotationSyntax = (function (_super) {
     __extends(TypeAnnotationSyntax, _super);
     function TypeAnnotationSyntax(colonToken, type) {
         _super.call(this);
-        this._colonToken = null;
-        this._type = null;
         if(colonToken.kind() !== SyntaxKind.ColonToken) {
             throw Errors.argument("colonToken");
         }
@@ -5544,7 +5468,6 @@ var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
     __extends(ParenthesizedArrowFunctionExpressionSyntax, _super);
     function ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body) {
         _super.call(this, equalsGreaterThanToken, body);
-        this._callSignature = null;
         if(callSignature === null) {
             throw Errors.argumentNull("callSignature");
         }
@@ -5562,9 +5485,6 @@ var BlockSyntax = (function (_super) {
     __extends(BlockSyntax, _super);
     function BlockSyntax(openBraceToken, statements, closeBraceToken) {
         _super.call(this);
-        this._openBraceToken = null;
-        this._statements = null;
-        this._closeBraceToken = null;
         if(openBraceToken.kind() !== SyntaxKind.OpenBraceToken) {
             throw Errors.argument("openBraceToken");
         }
@@ -5596,12 +5516,6 @@ var ParameterSyntax = (function (_super) {
     __extends(ParameterSyntax, _super);
     function ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause) {
         _super.call(this);
-        this._dotDotDotToken = null;
-        this._publicOrPrivateKeyword = null;
-        this._identifier = null;
-        this._questionToken = null;
-        this._typeAnontation = null;
-        this._equalsValueClause = null;
         if(dotDotDotToken != null && dotDotDotToken.kind() !== SyntaxKind.DotDotDotToken) {
             throw Errors.argument("dotDotDotToken");
         }
@@ -5648,9 +5562,6 @@ var MemberAccessExpressionSyntax = (function (_super) {
     __extends(MemberAccessExpressionSyntax, _super);
     function MemberAccessExpressionSyntax(expression, dotToken, identifierName) {
         _super.call(this);
-        this._expression = null;
-        this._dotToken = null;
-        this._identifierName = null;
         if(expression === null) {
             throw Errors.argumentNull("expression");
         }
@@ -5683,8 +5594,6 @@ var PostfixUnaryExpressionSyntax = (function (_super) {
     function PostfixUnaryExpressionSyntax(kind, operand, operatorToken) {
         _super.call(this);
         this._kind = SyntaxKind.None;
-        this._operand = null;
-        this._operatorToken = null;
         if(kind !== SyntaxKind.PostIncrementExpression && kind !== SyntaxKind.PostDecrementExpression) {
             throw Errors.argument("kind");
         }
@@ -5713,10 +5622,6 @@ var ElementAccessExpressionSyntax = (function (_super) {
     __extends(ElementAccessExpressionSyntax, _super);
     function ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken) {
         _super.call(this);
-        this._expression = null;
-        this._openBracketToken = null;
-        this._argumentExpression = null;
-        this._closeBracketToken = null;
         if(expression === null) {
             throw Errors.argumentNull("expression");
         }
@@ -5752,8 +5657,6 @@ var InvocationExpressionSyntax = (function (_super) {
     __extends(InvocationExpressionSyntax, _super);
     function InvocationExpressionSyntax(expression, argumentList) {
         _super.call(this);
-        this._expression = null;
-        this._argumentList = null;
         if(expression === null) {
             throw Errors.argument("expression");
         }
@@ -5778,9 +5681,6 @@ var ArgumentListSyntax = (function (_super) {
     __extends(ArgumentListSyntax, _super);
     function ArgumentListSyntax(openParenToken, arguments, closeParenToken) {
         _super.call(this);
-        this._openParenToken = null;
-        this._arguments = null;
-        this._closeParenToken = null;
         if(openParenToken.kind() !== SyntaxKind.OpenParenToken) {
             throw Errors.argument("openParenToken");
         }
@@ -5813,9 +5713,6 @@ var BinaryExpressionSyntax = (function (_super) {
     function BinaryExpressionSyntax(kind, left, operatorToken, right) {
         _super.call(this);
         this._kind = SyntaxKind.None;
-        this._left = null;
-        this._operatorToken = null;
-        this._right = null;
         if(left === null) {
             throw Errors.argumentNull("left");
         }
@@ -5845,11 +5742,6 @@ var ConditionalExpressionSyntax = (function (_super) {
     __extends(ConditionalExpressionSyntax, _super);
     function ConditionalExpressionSyntax(condition, questionToken, whenTrue, colonToken, whenFalse) {
         _super.call(this);
-        this._condition = null;
-        this._questionToken = null;
-        this._whenTrue = null;
-        this._colonToken = null;
-        this._whenFalse = null;
         if(condition === null) {
             throw Errors.argumentNull("condition");
         }
@@ -5908,10 +5800,6 @@ var FunctionSignatureSyntax = (function (_super) {
     __extends(FunctionSignatureSyntax, _super);
     function FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation) {
         _super.call(this);
-        this._identifier = null;
-        this._questionToken = null;
-        this._parameterList = null;
-        this._typeAnnotation = null;
         if(identifier.kind() !== SyntaxKind.IdentifierNameToken) {
             throw Errors.argument("identifier");
         }
@@ -5963,9 +5851,6 @@ var ParameterListSyntax = (function (_super) {
     __extends(ParameterListSyntax, _super);
     function ParameterListSyntax(openParenToken, parameters, closeParenToken) {
         _super.call(this);
-        this._openParenToken = null;
-        this._parameters = null;
-        this._closeParenToken = null;
         if(openParenToken.kind() !== SyntaxKind.OpenParenToken) {
             throw Errors.argument("openParenToken");
         }
@@ -5997,8 +5882,6 @@ var CallSignatureSyntax = (function (_super) {
     __extends(CallSignatureSyntax, _super);
     function CallSignatureSyntax(parameterList, typeAnnotation) {
         _super.call(this);
-        this._parameterList = null;
-        this._typeAnnotation = null;
         if(parameterList === null) {
             throw Errors.argumentNull("parameterList");
         }
@@ -6020,8 +5903,6 @@ var ElseClauseSyntax = (function (_super) {
     __extends(ElseClauseSyntax, _super);
     function ElseClauseSyntax(elseKeyword, statement) {
         _super.call(this);
-        this._elseKeyword = null;
-        this._statement = null;
         if(elseKeyword.keywordKind() !== SyntaxKind.ElseKeyword) {
             throw Errors.argument("elseKeyword");
         }
@@ -6046,12 +5927,6 @@ var IfStatementSyntax = (function (_super) {
     __extends(IfStatementSyntax, _super);
     function IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause) {
         _super.call(this);
-        this._ifKeyword = null;
-        this._openParenToken = null;
-        this._condition = null;
-        this._closeParenToken = null;
-        this._statement = null;
-        this._elseClause = null;
         if(ifKeyword.keywordKind() !== SyntaxKind.IfKeyword) {
             throw Errors.argument("ifKeyword");
         }
@@ -6101,8 +5976,6 @@ var ExpressionStatementSyntax = (function (_super) {
     __extends(ExpressionStatementSyntax, _super);
     function ExpressionStatementSyntax(expression, semicolonToken) {
         _super.call(this);
-        this._expression = null;
-        this._semicolonToken = null;
         if(expression === null) {
             throw Errors.argumentNull("expression");
         }
@@ -6135,10 +6008,6 @@ var ConstructorDeclarationSyntax = (function (_super) {
     __extends(ConstructorDeclarationSyntax, _super);
     function ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken) {
         _super.call(this);
-        this._constructorKeyword = null;
-        this._parameterList = null;
-        this._block = null;
-        this._semicolonToken = null;
         if(constructorKeyword.keywordKind() !== SyntaxKind.ConstructorKeyword) {
             throw Errors.argument("constructorKeyword");
         }
@@ -6174,8 +6043,6 @@ var MemberDeclarationSyntax = (function (_super) {
     __extends(MemberDeclarationSyntax, _super);
     function MemberDeclarationSyntax(publicOrPrivateKeyword, staticKeyword) {
         _super.call(this);
-        this._publicOrPrivateKeyword = null;
-        this._staticKeyword = null;
         if(publicOrPrivateKeyword !== null && publicOrPrivateKeyword.keywordKind() !== SyntaxKind.PublicKeyword && publicOrPrivateKeyword.keywordKind() !== SyntaxKind.PrivateKeyword) {
             throw Errors.argument("publicOrPrivateKeyword");
         }
@@ -6197,9 +6064,6 @@ var MemberFunctionDeclarationSyntax = (function (_super) {
     __extends(MemberFunctionDeclarationSyntax, _super);
     function MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken) {
         _super.call(this, publicOrPrivateKeyword, staticKeyword);
-        this._functionSignature = null;
-        this._block = null;
-        this._semicolonToken = null;
         if(functionSignature === null) {
             throw Errors.argumentNull("functionSignature");
         }
@@ -6236,8 +6100,6 @@ var MemberVariableDeclarationSyntax = (function (_super) {
     __extends(MemberVariableDeclarationSyntax, _super);
     function MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolonToken) {
         _super.call(this, publicOrPrivateKeyword, staticKeyword);
-        this._variableDeclarator = null;
-        this._semicolonToken = null;
         if(variableDeclarator === null) {
             throw Errors.argumentNull("variableDeclarator");
         }
@@ -6262,9 +6124,6 @@ var ReturnStatementSyntax = (function (_super) {
     __extends(ReturnStatementSyntax, _super);
     function ReturnStatementSyntax(returnKeyword, expression, semicolonToken) {
         _super.call(this);
-        this._returnKeyword = null;
-        this._expression = null;
-        this._semicolonToken = null;
         if(returnKeyword.keywordKind() !== SyntaxKind.ReturnKeyword) {
             throw Errors.argument("returnKeyword");
         }
@@ -6293,9 +6152,6 @@ var ObjectCreationExpressionSyntax = (function (_super) {
     __extends(ObjectCreationExpressionSyntax, _super);
     function ObjectCreationExpressionSyntax(newKeyword, expression, argumentList) {
         _super.call(this);
-        this._newKeyword = null;
-        this._expression = null;
-        this._argumentList = null;
         if(newKeyword.keywordKind() !== SyntaxKind.NewKeyword) {
             throw Errors.argument("newKeyword");
         }
@@ -6324,13 +6180,6 @@ var SwitchStatementSyntax = (function (_super) {
     __extends(SwitchStatementSyntax, _super);
     function SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, caseClauses, closeBraceToken) {
         _super.call(this);
-        this._switchKeyword = null;
-        this._openParenToken = null;
-        this._expression = null;
-        this._closeParenToken = null;
-        this._openBraceToken = null;
-        this._caseClauses = null;
-        this._closeBraceToken = null;
         if(switchKeyword.keywordKind() !== SyntaxKind.SwitchKeyword) {
             throw Errors.argument("switchKeyword");
         }
@@ -6390,8 +6239,6 @@ var SwitchClauseSyntax = (function (_super) {
     __extends(SwitchClauseSyntax, _super);
     function SwitchClauseSyntax(colonToken, statements) {
         _super.call(this);
-        this._colonToken = null;
-        this._statements = null;
         if(colonToken.kind() !== SyntaxKind.ColonToken) {
             throw Errors.argument("colonToken");
         }
@@ -6413,8 +6260,6 @@ var CaseSwitchClauseSyntax = (function (_super) {
     __extends(CaseSwitchClauseSyntax, _super);
     function CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements) {
         _super.call(this, colonToken, statements);
-        this._caseKeyword = null;
-        this._expression = null;
         if(caseKeyword.keywordKind() !== SyntaxKind.CaseKeyword) {
             throw Errors.argument("caseKeyword");
         }
@@ -6439,7 +6284,6 @@ var DefaultSwitchClauseSyntax = (function (_super) {
     __extends(DefaultSwitchClauseSyntax, _super);
     function DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements) {
         _super.call(this, colonToken, statements);
-        this._defaultKeyword = null;
         if(defaultKeyword.keywordKind() !== SyntaxKind.DefaultKeyword) {
             throw Errors.argument("defaultKeyword");
         }
@@ -6457,9 +6301,6 @@ var BreakStatementSyntax = (function (_super) {
     __extends(BreakStatementSyntax, _super);
     function BreakStatementSyntax(breakKeyword, identifier, semicolonToken) {
         _super.call(this);
-        this._breakKeyword = null;
-        this._identifier = null;
-        this._semicolonToken = null;
         if(breakKeyword.keywordKind() !== SyntaxKind.BreakKeyword) {
             throw Errors.argument("breakKeyword");
         }
@@ -6491,11 +6332,6 @@ var BaseForStatementSyntax = (function (_super) {
     __extends(BaseForStatementSyntax, _super);
     function BaseForStatementSyntax(forKeyword, openParenToken, variableDeclaration, closeParenToken, statement) {
         _super.call(this);
-        this._forKeyword = null;
-        this._openParenToken = null;
-        this._variableDeclaration = null;
-        this._closeParenToken = null;
-        this._statement = null;
         if(forKeyword.keywordKind() !== SyntaxKind.ForKeyword) {
             throw Errors.argument("forKeyword");
         }
@@ -6535,11 +6371,6 @@ var ForStatementSyntax = (function (_super) {
     __extends(ForStatementSyntax, _super);
     function ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement) {
         _super.call(this, forKeyword, openParenToken, variableDeclaration, closeParenToken, statement);
-        this._initializer = null;
-        this._firstSemicolonToken = null;
-        this._condition = null;
-        this._secondSemicolonToken = null;
-        this._incrementor = null;
         if(firstSemicolonToken.kind() !== SyntaxKind.SemicolonToken) {
             throw Errors.argument("firstSemicolonToken");
         }
@@ -6576,9 +6407,6 @@ var ForInStatementSyntax = (function (_super) {
     __extends(ForInStatementSyntax, _super);
     function ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration, left, inKeyword, expression, closeParenToken, statement) {
         _super.call(this, forKeyword, openParenToken, variableDeclaration, closeParenToken, statement);
-        this._left = null;
-        this._inKeyword = null;
-        this._expression = null;
         if(inKeyword.keywordKind() !== SyntaxKind.InKeyword) {
             throw Errors.argument("inKeyword");
         }
@@ -6607,12 +6435,6 @@ var EnumDeclarationSyntax = (function (_super) {
     __extends(EnumDeclarationSyntax, _super);
     function EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken) {
         _super.call(this);
-        this._exportKeyword = null;
-        this._enumKeyword = null;
-        this._identifier = null;
-        this._openBraceToken = null;
-        this._variableDeclarators = null;
-        this._closeBraceToken = null;
         if(exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
             throw Errors.argument("exportKeyword");
         }
