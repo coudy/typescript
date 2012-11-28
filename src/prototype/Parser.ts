@@ -720,7 +720,22 @@ class Parser {
     }
 
     private parseConstructorDeclaration(): ConstructorDeclarationSyntax {
-        throw Errors.notYetImplemented();
+        Debug.assert(this.isConstructorDeclaration());
+
+        var constructorKeyword = this.eatKeyword(SyntaxKind.ConstructorKeyword);
+        var parameterList = this.parseParameterList();
+
+        var semicolonToken: ISyntaxToken = null;
+        var block: BlockSyntax = null;
+
+        if (this.isBlock()) {
+            block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
+        }
+        else {
+            semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+        }
+
+        return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken);
     }
 
     private parseMemberFunctionDeclaration(): MemberFunctionDeclarationSyntax {
@@ -756,8 +771,23 @@ class Parser {
     }
 
     private parseMemberVariableDeclaration(): MemberVariableDeclarationSyntax {
-        // Debug.assert(this.isMemberVariableDeclaration());
-        throw Errors.notYetImplemented();
+        Debug.assert(this.isMemberVariableDeclaration());
+
+        var publicOrPrivateKeyword: ISyntaxToken = null;
+        if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
+            this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
+            publicOrPrivateKeyword = this.eatAnyToken();
+        }
+
+        var staticKeyword: ISyntaxToken = null;
+        if (this.currentToken().kind() === SyntaxKind.StaticKeyword) {
+            staticKeyword = this.eatToken(SyntaxKind.StaticKeyword);
+        }
+
+        var variableDeclaration = this.parseVariableDeclaration();
+        var semicolon = this.eatExplicitOrAutomaticSemicolon();
+
+        return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclaration, semicolon);
     }
 
     private parseMemberDeclaration(): MemberDeclarationSyntax {
@@ -1746,7 +1776,7 @@ class Parser {
 
     private parseThisExpression(): ThisExpressionSyntax {
         Debug.assert(this.currentToken().keywordKind() === SyntaxKind.ThisKeyword);
-        var thisKeyword = this.eatToken(SyntaxKind.ThisKeyword);
+        var thisKeyword = this.eatKeyword(SyntaxKind.ThisKeyword);
         return new ThisExpressionSyntax(thisKeyword);
     }
 
@@ -1792,29 +1822,31 @@ class Parser {
 
         var parameters: any[] = null;
 
-        if (this.currentToken().kind() !== SyntaxKind.CloseParenToken && this.currentToken().kind() !== SyntaxKind.EndOfFileToken) {
-            var parameter = this.parseParameter();
-            parameters = [];
-            parameters.push(parameter);
-        }
-
-        while (true) {
-            if (this.currentToken().kind() === SyntaxKind.CloseParenToken || this.currentToken().kind() === SyntaxKind.EndOfFileToken) {
-                break;
-            }
-
-            if (this.currentToken().kind() == SyntaxKind.CommaToken) {
-                var commaToken = this.eatToken(SyntaxKind.CommaToken);
-
-                parameters = parameters == null ? [] : parameters;
-                parameters.push(commaToken);
-
+        if (!openParenToken.isMissing()) {
+            if (this.currentToken().kind() !== SyntaxKind.CloseParenToken && this.currentToken().kind() !== SyntaxKind.EndOfFileToken) {
                 var parameter = this.parseParameter();
+                parameters = [];
                 parameters.push(parameter);
             }
-            else {
-                // TODO: add error tolerance here.
-                break;
+
+            while (true) {
+                if (this.currentToken().kind() === SyntaxKind.CloseParenToken || this.currentToken().kind() === SyntaxKind.EndOfFileToken) {
+                    break;
+                }
+
+                if (this.currentToken().kind() == SyntaxKind.CommaToken) {
+                    var commaToken = this.eatToken(SyntaxKind.CommaToken);
+
+                    parameters = parameters == null ? [] : parameters;
+                    parameters.push(commaToken);
+
+                    var parameter = this.parseParameter();
+                    parameters.push(parameter);
+                }
+                else {
+                    // TODO: add error tolerance here.
+                    break;
+                }
             }
         }
 
@@ -1876,7 +1908,13 @@ class Parser {
     }
 
     private parseFunctionType(): FunctionTypeSyntax {
-        throw Errors.notYetImplemented();
+        Debug.assert(this.isFunctionType());
+
+        var parameterList = this.parseParameterList();
+        var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
+        var returnType = this.parseType();
+
+        return new FunctionTypeSyntax(parameterList, equalsGreaterThanToken, returnType);
     }
 
     private parseConstructorType(): ConstructorTypeSyntax {
@@ -1927,8 +1965,8 @@ class Parser {
         }
 
         var publicOrPrivateToken: ISyntaxToken = null;
-        if (this.currentToken().kind() === SyntaxKind.PublicKeyword ||
-            this.currentToken().kind() === SyntaxKind.PrivateKeyword) {
+        if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
+            this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
             publicOrPrivateToken = this.eatAnyToken();
         }
 
