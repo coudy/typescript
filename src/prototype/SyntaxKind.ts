@@ -142,17 +142,23 @@ enum SyntaxKind {
 
     // Types
     ObjectType,
+    PredefinedType,
 
     // TypeMembers
     InterfaceDeclaration,
     FunctionDeclaration,
     ModuleDeclaration,
+    ClassDeclaration,
+
+    // ClassElements
+    MemberFunctionDeclaration,
 
     // Statements
     Block,
     IfStatement,
     VariableStatement,
     ExpressionStatement,
+    ReturnStatement,
 
     // Expressions
     PlusExpression,
@@ -216,6 +222,8 @@ enum SyntaxKind {
     FunctionSignature,
     ParameterList,
     ArgumentList,
+    ImplementsClause,
+    TypeAnnotation,
 
     FirstStandardKeyword = BreakKeyword,
     LastStandardKeyword = WithKeyword,

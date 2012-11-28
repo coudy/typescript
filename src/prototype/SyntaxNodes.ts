@@ -223,6 +223,10 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
         this._closeBraceToken = closeBraceToken;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.ClassDeclaration;
+    }
+
     public exportKeyword(): ISyntaxToken {
         return this._exportKeyword;
     }
@@ -365,6 +369,10 @@ class ImplementsClauseSyntax extends SyntaxNode {
 
         this._implementsKeyword = implementsKeyword;
         this._typeNames = typeNames;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ImplementsClause;
     }
 
     public implementsKeyword(): ISyntaxToken {
@@ -988,6 +996,10 @@ class PredefinedTypeSyntax extends TypeSyntax {
         this._keyword = keyword;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.PredefinedType;
+    }
+
     public keyword(): ISyntaxToken {
         return this._keyword;
     }
@@ -1011,6 +1023,10 @@ class TypeAnnotationSyntax extends SyntaxNode {
 
         this._colonToken = colonToken;
         this._type = type;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.TypeAnnotation;
     }
 
     public colonToken(): ISyntaxToken {
@@ -1799,6 +1815,10 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
         this._semicolonToken = semicolonToken;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.MemberFunctionDeclaration;
+    }
+
     public publicOrPrivateKeyword(): ISyntaxToken {
         return this._publicOrPrivateKeyword;
     }
@@ -1847,6 +1867,10 @@ class ReturnStatementSyntax extends StatementSyntax {
         this._returnKeyword = returnKeyword;
         this._expression = expression;
         this._semicolonToken = semicolonToken;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ReturnStatement;
     }
 
     public returnKeyword(): ISyntaxToken {
