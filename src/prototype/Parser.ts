@@ -592,11 +592,58 @@ class Parser {
     }
 
     private isClassDeclaration(): bool {
-        return this.tokenIsKeyword(this.currentToken(), SyntaxKind.ClassKeyword) &&
+        if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword &&
+            this.peekTokenN(1).keywordKind() === SyntaxKind.ClassKeyword) {
+            return true;
+        }
+
+        return this.currentToken().keywordKind() === SyntaxKind.ClassKeyword &&
                this.isIdentifier(this.peekTokenN(1));
     }
 
     private parseClassDeclaration(): ClassDeclarationSyntax {
+        Debug.assert(this.isClassDeclaration());
+
+        var exportKeyword: ISyntaxToken = null;
+        if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword) {
+            exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
+        }
+
+        var classKeyword = this.eatKeyword(SyntaxKind.ClassKeyword);
+        var identifier = this.eatIdentifierToken();
+
+        var extendsClause: ExtendsClauseSyntax = null;
+        if (this.isExtendsClause()) {
+            extendsClause = this.parseExtendsClause();
+        }
+
+        var implementsClause: ImplementsClauseSyntax = null;
+        if (this.isImplementsClause()) {
+            implementsClause = this.parseImplementsClause();
+        }
+
+        var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
+        var classElements: ClassElementSyntax[] = null;
+        if (!openBraceToken.isMissing) {
+            while (true) {
+                if (this.currentToken().kind() === SyntaxKind.CloseBraceToken || this.currentToken().kind() === SyntaxKind.EndOfFileToken) {
+                    break;
+                }
+
+                var classElement = this.parseClassElement();
+
+                classElements = classElements || [];
+                classElements.push(classElement);
+            }
+        }
+
+        var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
+        return new ClassDeclarationSyntax(
+            exportKeyword, classKeyword, identifier, extendsClause, implementsClause, 
+            openBraceToken, SyntaxNodeList.create(classElements), closeBraceToken);
+    }
+
+    private parseClassElement(): ClassElementSyntax {
         throw Errors.notYetImplemented();
     }
 
@@ -855,12 +902,20 @@ class Parser {
         return this.isIdentifier(this.currentToken());
     }
 
+    private isExtendsClause(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.ExtendsKeyword;
+    }
+
     private parseExtendsClause(): ExtendsClauseSyntax {
         throw Errors.notYetImplemented();
     }
 
-    private isExtendsClause(): bool {
-        return this.currentToken().keywordKind() === SyntaxKind.ExtendsKeyword;
+    private isImplementsClause(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.ImplementsKeyword;
+    }
+
+    private parseImplementsClause(): ImplementsClauseSyntax {
+        throw Errors.notYetImplemented();
     }
 
     private parseStatement(allowFunctionDeclaration: bool): StatementSyntax {
