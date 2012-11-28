@@ -622,7 +622,45 @@ class Parser {
     }
 
     private parseEnumDeclaration(): EnumDeclarationSyntax {
-        throw Errors.notYetImplemented();
+        Debug.assert(this.isEnumDeclaration());
+
+        var exportKeyword: ISyntaxToken = null;
+        if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword) {
+            exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
+        }
+
+        var enumKeyword = this.eatKeyword(SyntaxKind.EnumKeyword);
+        var identifier = this.eatIdentifierToken();
+
+        var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
+        var variableDeclarators: any[] = null;
+
+        if (!openBraceToken.isMissing()) {
+            while (true) {
+                if (this.currentToken().kind() === SyntaxKind.CloseBraceToken || this.currentToken().kind() === SyntaxKind.EndOfFileToken) {
+                    break;
+                }
+
+                var variableDeclarator = this.parseVariableDeclarator(/*allowIn:*/ true);
+
+                variableDeclarators = variableDeclarators || [];
+                variableDeclarators.push(variableDeclarator);
+
+                if (this.currentToken().kind() === SyntaxKind.CommaToken) {
+                    var commaToken = this.eatToken(SyntaxKind.CommaToken);
+                    variableDeclarators.push(commaToken);
+                    continue;
+                }
+
+                // TODO: error recovery.
+                break;
+            }
+        }
+
+        var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
+
+        return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier,
+            openBraceToken, SeparatedSyntaxList.create(variableDeclarators), closeBraceToken);
     }
 
     private isClassDeclaration(): bool {

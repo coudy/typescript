@@ -145,11 +145,12 @@ enum SyntaxKind {
     PredefinedType,
     FunctionType,
 
-    // TypeMembers
+    // Module elements.
     InterfaceDeclaration,
     FunctionDeclaration,
     ModuleDeclaration,
     ClassDeclaration,
+    EnumDeclaration,
 
     // ClassElements
     MemberFunctionDeclaration,
