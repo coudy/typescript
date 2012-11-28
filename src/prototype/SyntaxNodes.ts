@@ -1757,3 +1757,71 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
 
 class MemberDeclarationSyntax extends ClassElementSyntax {
 }
+
+class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
+    private _publicOrPrivateKeyword: ISyntaxToken = null;
+    private _staticKeyword: ISyntaxToken = null;
+    private _functionSignature: FunctionSignatureSyntax = null;
+    private _block: BlockSyntax = null;
+    private _semicolonToken: ISyntaxToken = null;
+
+    constructor(publicOrPrivateKeyword: ISyntaxToken,
+                staticKeyword: ISyntaxToken,
+                functionSignature: FunctionSignatureSyntax,
+                block: BlockSyntax,
+                semicolonToken: ISyntaxToken) {
+        super();
+
+        if (publicOrPrivateKeyword !== null &&
+            publicOrPrivateKeyword.keywordKind() !== SyntaxKind.PublicKeyword &&
+            publicOrPrivateKeyword.keywordKind() !== SyntaxKind.PrivateKeyword) {
+            throw Errors.argument("publicOrPrivateKeyword");
+        }
+
+        if (staticKeyword !== null && staticKeyword.keywordKind() !== SyntaxKind.StaticKeyword) {
+            throw Errors.argument("staticKeyword");
+        }
+
+        if (functionSignature === null) {
+            throw Errors.argumentNull("functionSignature");
+        }
+
+        // TODO: Check that exactly one of 'block' and 'semicolon' is set.
+
+        if (semicolonToken !== null && semicolonToken.kind() !== SyntaxKind.SemicolonToken) {
+            throw Errors.argument("semicolonToken");
+        }
+
+        this._publicOrPrivateKeyword = publicOrPrivateKeyword;
+        this._staticKeyword = staticKeyword;
+        this._functionSignature = functionSignature;
+        this._block = block;
+        this._semicolonToken = semicolonToken;
+    }
+
+    public publicOrPrivateKeyword(): ISyntaxToken {
+        return this._publicOrPrivateKeyword;
+    }
+
+    public staticKeyword(): ISyntaxToken {
+        return this._staticKeyword;
+    }
+
+    public functionSignature(): FunctionSignatureSyntax {
+        return this._functionSignature;
+    }
+
+    public block(): BlockSyntax {
+        return this._block;
+    }
+
+    public semicolonToken(): ISyntaxToken {
+        return this._semicolonToken;
+    }
+}
+
+class MemberAccessorDeclarationSyntax extends MemberDeclarationSyntax {
+}
+
+class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
+}

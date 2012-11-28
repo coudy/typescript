@@ -660,12 +660,7 @@ class Parser {
                 this.eatAnyToken();
             }
 
-            if (!this.isIdentifier(this.currentToken())) {
-                return false;
-            }
-
-            this.eatAnyToken();
-            return this.currentToken().kind() === SyntaxKind.OpenParenToken;
+            return this.isFunctionSignature();
         }
         finally {
             this.reset(resetPoint);
@@ -728,8 +723,56 @@ class Parser {
         throw Errors.notYetImplemented();
     }
 
-    private parseMemberDeclaration(): MemberDeclarationSyntax {
+    private parseMemberFunctionDeclaration(): MemberFunctionDeclarationSyntax {
+        Debug.assert(this.isMemberFunctionDeclaration());
+        var publicOrPrivateKeyword: ISyntaxToken = null;
+        if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
+            this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
+            publicOrPrivateKeyword = this.eatAnyToken();
+        }
+
+        var staticKeyword: ISyntaxToken = null;
+        if (this.currentToken().kind() === SyntaxKind.StaticKeyword) {
+            staticKeyword = this.eatToken(SyntaxKind.StaticKeyword);
+        }
+
+        var functionSignature = this.parseFunctionSignature();
+
+        var block: BlockSyntax = null;
+        var semicolon: ISyntaxToken = null;
+
+        if (this.isBlock()) {
+            block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
+        }
+        else {
+            semicolon = this.eatExplicitOrAutomaticSemicolon();
+        }
+
+        return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolon);
+    }
+
+    private parseMemberAccessorDeclaration(): MemberAccessorDeclarationSyntax {
         throw Errors.notYetImplemented();
+    }
+
+    private parseMemberVariableDeclaration(): MemberVariableDeclarationSyntax {
+        throw Errors.notYetImplemented();
+    }
+
+    private parseMemberDeclaration(): MemberDeclarationSyntax {
+        Debug.assert(this.isMemberDeclaration());
+        if (this.isMemberFunctionDeclaration()) {
+            return this.parseMemberFunctionDeclaration();
+        }
+        else if (this.isMemberAccessorDeclaration()) {
+            return this.parseMemberAccessorDeclaration();
+        }
+        else if (this.isMemberVariableDeclaration()) {
+            return this.parseMemberVariableDeclaration();
+        }
+        else {
+            throw Errors.notYetImplemented();
+        }
     }
 
     private parseClassElement(): ClassElementSyntax {

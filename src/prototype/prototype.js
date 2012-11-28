@@ -996,11 +996,7 @@ var Parser = (function () {
             if(this.currentToken().keywordKind() === SyntaxKind.StaticKeyword) {
                 this.eatAnyToken();
             }
-            if(!this.isIdentifier(this.currentToken())) {
-                return false;
-            }
-            this.eatAnyToken();
-            return this.currentToken().kind() === SyntaxKind.OpenParenToken;
+            return this.isFunctionSignature();
         }finally {
             this.reset(resetPoint);
             this.release(resetPoint);
@@ -1043,8 +1039,47 @@ var Parser = (function () {
     Parser.prototype.parseConstructorDeclaration = function () {
         throw Errors.notYetImplemented();
     };
-    Parser.prototype.parseMemberDeclaration = function () {
+    Parser.prototype.parseMemberFunctionDeclaration = function () {
+        Debug.assert(this.isMemberFunctionDeclaration());
+        var publicOrPrivateKeyword = null;
+        if(this.currentToken().keywordKind() === SyntaxKind.PublicKeyword || this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
+            publicOrPrivateKeyword = this.eatAnyToken();
+        }
+        var staticKeyword = null;
+        if(this.currentToken().kind() === SyntaxKind.StaticKeyword) {
+            staticKeyword = this.eatToken(SyntaxKind.StaticKeyword);
+        }
+        var functionSignature = this.parseFunctionSignature();
+        var block = null;
+        var semicolon = null;
+        if(this.isBlock()) {
+            block = this.parseBlock(true);
+        } else {
+            semicolon = this.eatExplicitOrAutomaticSemicolon();
+        }
+        return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolon);
+    };
+    Parser.prototype.parseMemberAccessorDeclaration = function () {
         throw Errors.notYetImplemented();
+    };
+    Parser.prototype.parseMemberVariableDeclaration = function () {
+        throw Errors.notYetImplemented();
+    };
+    Parser.prototype.parseMemberDeclaration = function () {
+        Debug.assert(this.isMemberDeclaration());
+        if(this.isMemberFunctionDeclaration()) {
+            return this.parseMemberFunctionDeclaration();
+        } else {
+            if(this.isMemberAccessorDeclaration()) {
+                return this.parseMemberAccessorDeclaration();
+            } else {
+                if(this.isMemberVariableDeclaration()) {
+                    return this.parseMemberVariableDeclaration();
+                } else {
+                    throw Errors.notYetImplemented();
+                }
+            }
+        }
     };
     Parser.prototype.parseClassElement = function () {
         Debug.assert(this.isClassElement());
@@ -5643,6 +5678,66 @@ var MemberDeclarationSyntax = (function (_super) {
     }
     return MemberDeclarationSyntax;
 })(ClassElementSyntax);
+var MemberFunctionDeclarationSyntax = (function (_super) {
+    __extends(MemberFunctionDeclarationSyntax, _super);
+    function MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken) {
+        _super.call(this);
+        this._publicOrPrivateKeyword = null;
+        this._staticKeyword = null;
+        this._functionSignature = null;
+        this._block = null;
+        this._semicolonToken = null;
+        if(publicOrPrivateKeyword !== null && publicOrPrivateKeyword.keywordKind() !== SyntaxKind.PublicKeyword && publicOrPrivateKeyword.keywordKind() !== SyntaxKind.PrivateKeyword) {
+            throw Errors.argument("publicOrPrivateKeyword");
+        }
+        if(staticKeyword !== null && staticKeyword.keywordKind() !== SyntaxKind.StaticKeyword) {
+            throw Errors.argument("staticKeyword");
+        }
+        if(functionSignature === null) {
+            throw Errors.argumentNull("functionSignature");
+        }
+        if(semicolonToken !== null && semicolonToken.kind() !== SyntaxKind.SemicolonToken) {
+            throw Errors.argument("semicolonToken");
+        }
+        this._publicOrPrivateKeyword = publicOrPrivateKeyword;
+        this._staticKeyword = staticKeyword;
+        this._functionSignature = functionSignature;
+        this._block = block;
+        this._semicolonToken = semicolonToken;
+    }
+    MemberFunctionDeclarationSyntax.prototype.publicOrPrivateKeyword = function () {
+        return this._publicOrPrivateKeyword;
+    };
+    MemberFunctionDeclarationSyntax.prototype.staticKeyword = function () {
+        return this._staticKeyword;
+    };
+    MemberFunctionDeclarationSyntax.prototype.functionSignature = function () {
+        return this._functionSignature;
+    };
+    MemberFunctionDeclarationSyntax.prototype.block = function () {
+        return this._block;
+    };
+    MemberFunctionDeclarationSyntax.prototype.semicolonToken = function () {
+        return this._semicolonToken;
+    };
+    return MemberFunctionDeclarationSyntax;
+})(MemberDeclarationSyntax);
+var MemberAccessorDeclarationSyntax = (function (_super) {
+    __extends(MemberAccessorDeclarationSyntax, _super);
+    function MemberAccessorDeclarationSyntax() {
+        _super.apply(this, arguments);
+
+    }
+    return MemberAccessorDeclarationSyntax;
+})(MemberDeclarationSyntax);
+var MemberVariableDeclarationSyntax = (function (_super) {
+    __extends(MemberVariableDeclarationSyntax, _super);
+    function MemberVariableDeclarationSyntax() {
+        _super.apply(this, arguments);
+
+    }
+    return MemberVariableDeclarationSyntax;
+})(MemberDeclarationSyntax);
 var SyntaxToken = (function () {
     function SyntaxToken() { }
     SyntaxToken.create = function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
