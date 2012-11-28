@@ -1663,30 +1663,33 @@ class Parser {
         return this.parseSubExpression(0, allowIn);
     }
 
+    // Called when you need to parse an expression, but you do not want to allow 'CommaExpressions'.
+    // i.e. if you have "var a = 1, b = 2" then when we parse '1' we want to parse with higher 
+    // precedence than 'comma'.  Otherwise we'll get: "var a = (1, (b = 2))", instead of
+    // "var a = (1), b = (2)");
     private parseAssignmentExpression(allowIn: bool): ExpressionSyntax {
         return this.parseSubExpression(ParserExpressionPrecedence.AssignmentExpressionPrecedence, allowIn);
     }
 
-    private parseSubExpression(precedence: ParserExpressionPrecedence, allowIn: bool): ExpressionSyntax {
-        var leftOperand: ExpressionSyntax = null;
-
+    private parseUnaryExpression(): UnaryExpressionSyntax {
         var currentTokenKind = this.currentToken().kind();
         if (SyntaxFacts.isPrefixUnaryExpressionOperatorToken(currentTokenKind)) {
             var operatorKind = SyntaxFacts.getPrefixUnaryExpression(currentTokenKind);
 
             var operatorToken = this.eatAnyToken();
 
-            // Note: we don't actuall have to pass 'allowIn' here.  Any unary expression has such
-            // high precedence that we'd never actually consume an 'in' expression if we saw one.
-            // i.e. if we had "!f in bar", that would be parsed as "(!f) in bar" not "!(f in bar)".
-            // However, we need to pass something, so we just pass this along.
-            var operand = this.parseSubExpression(this.getPrecedence(operatorKind), allowIn);
-            leftOperand = new PrefixUnaryExpressionSyntax(operatorKind, operatorToken, operand);
+            var operand = this.parseUnaryExpression(); 
+            return new PrefixUnaryExpressionSyntax(operatorKind, operatorToken, operand);
         }
         else {
-            leftOperand = this.parseTerm(/*allowInvocation*/ true);
+            return this.parseTerm(/*allowInvocation*/ true);
         }
+    }
 
+    private parseSubExpression(precedence: ParserExpressionPrecedence, allowIn: bool): ExpressionSyntax {
+        // Because unary expression have the highest precedence, we can always parse one, regardless 
+        // of what precedence was passed in.
+        var leftOperand: ExpressionSyntax = this.parseUnaryExpression();
         leftOperand = this.parseBinaryExpressions(precedence, allowIn, leftOperand);
         leftOperand = this.parseConditionalExpression(precedence, allowIn, leftOperand);
 
@@ -1778,7 +1781,7 @@ class Parser {
         }
     }
 
-    private parseTerm(allowInvocation: bool): ExpressionSyntax {
+    private parseTerm(allowInvocation: bool): UnaryExpressionSyntax {
         var term = this.parseTermWorker();
         if (term.isMissing()) {
             return term;
@@ -1787,7 +1790,7 @@ class Parser {
         return this.parsePostFixExpression(term, allowInvocation);
     }
 
-    private parsePostFixExpression(expression: ExpressionSyntax, allowInvocation: bool): ExpressionSyntax {
+    private parsePostFixExpression(expression: UnaryExpressionSyntax, allowInvocation: bool): UnaryExpressionSyntax {
         Debug.assert(expression !== null);
 
         while (true) {
@@ -1879,7 +1882,7 @@ class Parser {
         return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken);
     }
 
-    private parseTermWorker(): ExpressionSyntax {
+    private parseTermWorker(): UnaryExpressionSyntax {
         var currentToken = this.currentToken();
 
         if (this.isIdentifier(currentToken)) {
@@ -1919,6 +1922,9 @@ class Parser {
 
             case SyntaxKind.OpenParenToken:
                 return this.parseParenthesizedOrLambdaExpression();
+
+            case SyntaxKind.LessThanToken:
+                return this.parseCastExpression();
         }
 
         // Parse out a missing name here once code for all cases has been included.
@@ -1928,6 +1934,17 @@ class Parser {
 
         // Nothing else worked, just try to consume an identifier so we report an error.
         return new IdentifierNameSyntax(this.eatIdentifierToken());
+    }
+
+    private parseCastExpression(): CastExpressionSyntax {
+        Debug.assert(this.currentToken().kind() === SyntaxKind.LessThanToken);
+
+        var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
+        var type = this.parseType();
+        var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
+        var expression = this.parseUnaryExpression();
+
+        return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression);
     }
 
     private parseObjectCreationExpression(): ObjectCreationExpressionSyntax {
@@ -1946,7 +1963,7 @@ class Parser {
         return new ObjectCreationExpressionSyntax(newKeyword, expression, argumentList);
     }
 
-    private parseParenthesizedOrLambdaExpression(): ExpressionSyntax {
+    private parseParenthesizedOrLambdaExpression(): UnaryExpressionSyntax {
         Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
 
             var result = this.tryParseArrowFunctionExpression();

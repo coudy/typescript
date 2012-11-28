@@ -1726,17 +1726,19 @@ var Parser = (function () {
     Parser.prototype.parseAssignmentExpression = function (allowIn) {
         return this.parseSubExpression(ParserExpressionPrecedence.AssignmentExpressionPrecedence, allowIn);
     };
-    Parser.prototype.parseSubExpression = function (precedence, allowIn) {
-        var leftOperand = null;
+    Parser.prototype.parseUnaryExpression = function () {
         var currentTokenKind = this.currentToken().kind();
         if(SyntaxFacts.isPrefixUnaryExpressionOperatorToken(currentTokenKind)) {
             var operatorKind = SyntaxFacts.getPrefixUnaryExpression(currentTokenKind);
             var operatorToken = this.eatAnyToken();
-            var operand = this.parseSubExpression(this.getPrecedence(operatorKind), allowIn);
-            leftOperand = new PrefixUnaryExpressionSyntax(operatorKind, operatorToken, operand);
+            var operand = this.parseUnaryExpression();
+            return new PrefixUnaryExpressionSyntax(operatorKind, operatorToken, operand);
         } else {
-            leftOperand = this.parseTerm(true);
+            return this.parseTerm(true);
         }
+    };
+    Parser.prototype.parseSubExpression = function (precedence, allowIn) {
+        var leftOperand = this.parseUnaryExpression();
         leftOperand = this.parseBinaryExpressions(precedence, allowIn, leftOperand);
         leftOperand = this.parseConditionalExpression(precedence, allowIn, leftOperand);
         return leftOperand;
@@ -1932,11 +1934,23 @@ var Parser = (function () {
                 return this.parseParenthesizedOrLambdaExpression();
 
             }
+            case SyntaxKind.LessThanToken: {
+                return this.parseCastExpression();
+
+            }
         }
         if(true) {
             throw Errors.notYetImplemented();
         }
         return new IdentifierNameSyntax(this.eatIdentifierToken());
+    };
+    Parser.prototype.parseCastExpression = function () {
+        Debug.assert(this.currentToken().kind() === SyntaxKind.LessThanToken);
+        var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
+        var type = this.parseType();
+        var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
+        var expression = this.parseUnaryExpression();
+        return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression);
     };
     Parser.prototype.parseObjectCreationExpression = function () {
         Debug.assert(this.currentToken().keywordKind() === SyntaxKind.NewKeyword);
@@ -5051,6 +5065,14 @@ var ExpressionSyntax = (function (_super) {
     }
     return ExpressionSyntax;
 })(SyntaxNode);
+var UnaryExpressionSyntax = (function (_super) {
+    __extends(UnaryExpressionSyntax, _super);
+    function UnaryExpressionSyntax() {
+        _super.apply(this, arguments);
+
+    }
+    return UnaryExpressionSyntax;
+})(ExpressionSyntax);
 var VariableDeclarationSyntax = (function (_super) {
     __extends(VariableDeclarationSyntax, _super);
     function VariableDeclarationSyntax(varKeyword, variableDeclarators) {
@@ -5143,7 +5165,7 @@ var PrefixUnaryExpressionSyntax = (function (_super) {
         return this._operand;
     };
     return PrefixUnaryExpressionSyntax;
-})(ExpressionSyntax);
+})(UnaryExpressionSyntax);
 var ThisExpressionSyntax = (function (_super) {
     __extends(ThisExpressionSyntax, _super);
     function ThisExpressionSyntax(thisKeyword) {
@@ -5160,7 +5182,7 @@ var ThisExpressionSyntax = (function (_super) {
         return this._thisKeyword;
     };
     return ThisExpressionSyntax;
-})(ExpressionSyntax);
+})(UnaryExpressionSyntax);
 var LiteralExpressionSyntax = (function (_super) {
     __extends(LiteralExpressionSyntax, _super);
     function LiteralExpressionSyntax(kind, literalToken) {
@@ -5176,7 +5198,7 @@ var LiteralExpressionSyntax = (function (_super) {
         return this._literalToken;
     };
     return LiteralExpressionSyntax;
-})(ExpressionSyntax);
+})(UnaryExpressionSyntax);
 var ArrayLiteralExpressionSyntax = (function (_super) {
     __extends(ArrayLiteralExpressionSyntax, _super);
     function ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken) {
@@ -5207,7 +5229,7 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
         return this._closeBracketToken;
     };
     return ArrayLiteralExpressionSyntax;
-})(ExpressionSyntax);
+})(UnaryExpressionSyntax);
 var OmittedExpressionSyntax = (function (_super) {
     __extends(OmittedExpressionSyntax, _super);
     function OmittedExpressionSyntax() {
@@ -5245,7 +5267,7 @@ var ParenthesizedExpressionSyntax = (function (_super) {
         return this._closeParenToken;
     };
     return ParenthesizedExpressionSyntax;
-})(ExpressionSyntax);
+})(UnaryExpressionSyntax);
 var ArrowFunctionExpressionSyntax = (function (_super) {
     __extends(ArrowFunctionExpressionSyntax, _super);
     function ArrowFunctionExpressionSyntax(equalsGreaterThanToken, body) {
@@ -5266,7 +5288,7 @@ var ArrowFunctionExpressionSyntax = (function (_super) {
         return this._body;
     };
     return ArrowFunctionExpressionSyntax;
-})(ExpressionSyntax);
+})(UnaryExpressionSyntax);
 var TypeSyntax = (function (_super) {
     __extends(TypeSyntax, _super);
     function TypeSyntax() {
@@ -5274,7 +5296,7 @@ var TypeSyntax = (function (_super) {
 
     }
     return TypeSyntax;
-})(ExpressionSyntax);
+})(UnaryExpressionSyntax);
 var NameSyntax = (function (_super) {
     __extends(NameSyntax, _super);
     function NameSyntax() {
@@ -5588,7 +5610,7 @@ var MemberAccessExpressionSyntax = (function (_super) {
         return this._identifierName;
     };
     return MemberAccessExpressionSyntax;
-})(ExpressionSyntax);
+})(UnaryExpressionSyntax);
 var PostfixUnaryExpressionSyntax = (function (_super) {
     __extends(PostfixUnaryExpressionSyntax, _super);
     function PostfixUnaryExpressionSyntax(kind, operand, operatorToken) {
@@ -5617,7 +5639,7 @@ var PostfixUnaryExpressionSyntax = (function (_super) {
         return this._operatorToken;
     };
     return PostfixUnaryExpressionSyntax;
-})(ExpressionSyntax);
+})(UnaryExpressionSyntax);
 var ElementAccessExpressionSyntax = (function (_super) {
     __extends(ElementAccessExpressionSyntax, _super);
     function ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken) {
@@ -5652,7 +5674,7 @@ var ElementAccessExpressionSyntax = (function (_super) {
         return this._closeBracketToken;
     };
     return ElementAccessExpressionSyntax;
-})(ExpressionSyntax);
+})(UnaryExpressionSyntax);
 var InvocationExpressionSyntax = (function (_super) {
     __extends(InvocationExpressionSyntax, _super);
     function InvocationExpressionSyntax(expression, argumentList) {
@@ -5676,7 +5698,7 @@ var InvocationExpressionSyntax = (function (_super) {
         return this._argumentList;
     };
     return InvocationExpressionSyntax;
-})(ExpressionSyntax);
+})(UnaryExpressionSyntax);
 var ArgumentListSyntax = (function (_super) {
     __extends(ArgumentListSyntax, _super);
     function ArgumentListSyntax(openParenToken, arguments, closeParenToken) {
@@ -6175,7 +6197,7 @@ var ObjectCreationExpressionSyntax = (function (_super) {
         return this._argumentList;
     };
     return ObjectCreationExpressionSyntax;
-})(ExpressionSyntax);
+})(UnaryExpressionSyntax);
 var SwitchStatementSyntax = (function (_super) {
     __extends(SwitchStatementSyntax, _super);
     function SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, caseClauses, closeBraceToken) {
@@ -6483,6 +6505,41 @@ var EnumDeclarationSyntax = (function (_super) {
     };
     return EnumDeclarationSyntax;
 })(ModuleElementSyntax);
+var CastExpressionSyntax = (function (_super) {
+    __extends(CastExpressionSyntax, _super);
+    function CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression) {
+        _super.call(this);
+        if(lessThanToken.kind() !== SyntaxKind.LessThanToken) {
+            throw Errors.argument("lessThanToken");
+        }
+        if(type === null) {
+            throw Errors.argumentNull("null");
+        }
+        if(greaterThanToken.kind() !== SyntaxKind.GreaterThanToken) {
+            throw Errors.argument("greaterThanToken");
+        }
+        if(expression === null) {
+            throw Errors.argumentNull("expression");
+        }
+        this._lessThanToken = lessThanToken;
+        this._type = type;
+        this._greaterThanToken = greaterThanToken;
+        this._expression = expression;
+    }
+    CastExpressionSyntax.prototype.lessThanToken = function () {
+        return this._lessThanToken;
+    };
+    CastExpressionSyntax.prototype.type = function () {
+        return this._type;
+    };
+    CastExpressionSyntax.prototype.greaterThanToken = function () {
+        return this._greaterThanToken;
+    };
+    CastExpressionSyntax.prototype.expression = function () {
+        return this._expression;
+    };
+    return CastExpressionSyntax;
+})(UnaryExpressionSyntax);
 var SyntaxToken = (function () {
     function SyntaxToken() { }
     SyntaxToken.create = function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
