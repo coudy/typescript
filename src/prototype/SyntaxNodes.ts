@@ -1059,6 +1059,10 @@ class ArrayTypeSyntax extends TypeSyntax {
         this._closeBracketToken = closeBracketToken;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.ArrayType;
+    }
+
     public type(): TypeSyntax {
         return this._type;
     }
@@ -1649,6 +1653,35 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
 }
 
 class PropertySignatureSyntax extends TypeMemberSyntax {
+    private _identifier: ISyntaxToken;
+    private _questionToken: ISyntaxToken;
+    private _typeAnnotation: TypeAnnotationSyntax;
+
+    constructor(identifier: ISyntaxToken,
+                questionToken: ISyntaxToken,
+                typeAnnotation: TypeAnnotationSyntax) {
+        super();
+
+        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) {
+            throw Errors.argument("identifier");
+        }
+
+        this._identifier = identifier;
+        this._questionToken = questionToken;
+        this._typeAnnotation = typeAnnotation;
+    }
+
+    public identifier(): ISyntaxToken {
+        return this._identifier;
+    }
+
+    public questionToken(): ISyntaxToken {
+        return this._questionToken;
+    }
+
+    public typeAnnotation(): TypeAnnotationSyntax {
+        return this._typeAnnotation;
+    }
 }
 
 class ParameterListSyntax extends SyntaxNode {
@@ -2628,5 +2661,199 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
 
     public expression(): UnaryExpressionSyntax {
         return this._expression;
+    }
+}
+
+class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
+    private _openBraceToken: ISyntaxToken;
+    private _propertyAssignments: ISeparatedSyntaxList;
+    private _closeBraceToken: ISyntaxToken;
+
+    constructor(openBraceToken: ISyntaxToken,
+                propertyAssignments: ISeparatedSyntaxList,
+                closeBraceToken: ISyntaxToken) {
+        super();
+
+        if (openBraceToken.kind() !== SyntaxKind.OpenBraceToken) {
+            throw Errors.argument("openBraceToken");
+        }
+
+        if (propertyAssignments === null) {
+            throw Errors.argument("propertyAssignments");
+        }
+
+        if (closeBraceToken.kind() !== SyntaxKind.CloseBraceToken) {
+            throw Errors.argument("closeBraceToken");
+        }
+        
+        this._openBraceToken = openBraceToken;
+        this._propertyAssignments = propertyAssignments;
+        this._closeBraceToken = closeBraceToken;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ObjectLiteralExpression;
+    }
+
+    public openBraceToken(): ISyntaxToken {
+        return this._openBraceToken;
+    }
+
+    public propertyAssignments(): ISeparatedSyntaxList {
+        return this._propertyAssignments;
+    }
+
+    public closeBraceToken(): ISyntaxToken {
+        return this._closeBraceToken;
+    }
+}
+
+class PropertyAssignmentSyntax extends SyntaxNode {
+    private _propertyName: ISyntaxToken;
+
+    constructor(propertyName: ISyntaxToken) {
+        super();
+
+        if (propertyName.kind() !== SyntaxKind.IdentifierNameToken &&
+            propertyName.kind() !== SyntaxKind.StringLiteral &&
+            propertyName.kind() !== SyntaxKind.NumericLiteral) {
+            throw Errors.argument("propertyName");
+        }
+
+        this._propertyName = propertyName;
+    }
+    
+    public propertyName(): ISyntaxToken {
+        return this._propertyName;
+    }
+}
+
+class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
+    private _colonToken: ISyntaxToken;
+    private _expression: ExpressionSyntax;
+
+    constructor(propertyName: ISyntaxToken,
+                colonToken: ISyntaxToken,
+                expression: ExpressionSyntax) {
+        super(propertyName);
+
+        if (colonToken.kind() !== SyntaxKind.ColonToken) {
+            throw Errors.argument("colonToken");
+        }
+
+        if (expression === null) {
+            throw Errors.argumentNull("expression");
+        }
+
+        this._colonToken = colonToken;
+        this._expression = expression;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.SimplePropertyAssignment;
+    }
+
+    public colonToken(): ISyntaxToken {
+        return this._colonToken;
+    }
+
+    public expression(): ExpressionSyntax {
+        return this._expression;
+    }
+}
+
+class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
+    private _openParenToken: ISyntaxToken;
+    private _closeParenToken: ISyntaxToken;
+    private _block: BlockSyntax;
+
+    constructor(propertyName: ISyntaxToken,
+                openParenToken: ISyntaxToken,
+                closeParenToken: ISyntaxToken,
+                block: BlockSyntax) {
+        super(propertyName);
+
+        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) {
+            throw Errors.argument("openParenToken");
+        }
+
+        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) {
+            throw Errors.argument("closeParenToken");
+        }
+
+        if (block === null) {
+            throw Errors.argumentNull("block");
+        }
+
+        this._openParenToken = openParenToken;
+        this._closeParenToken = closeParenToken;
+        this._block = block;
+    }
+
+    public openParenToken(): ISyntaxToken {
+        return this._openParenToken;
+    }
+
+    public closeParenToken(): ISyntaxToken {
+        return this._closeParenToken;
+    }
+
+    public block(): BlockSyntax {
+        return this._block;
+    }
+}
+
+class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSyntax {
+    private _getKeyword: ISyntaxToken;
+
+    constructor(getKeyword: ISyntaxToken,
+                propertyName: ISyntaxToken,
+                openParenToken: ISyntaxToken,
+                closeParenToken: ISyntaxToken,
+                block: BlockSyntax) {
+        super(propertyName, openParenToken, closeParenToken, block);
+
+        if (getKeyword.keywordKind() !== SyntaxKind.GetKeyword) {
+            throw Errors.argument("getKeyword");
+        }
+
+        this._getKeyword = getKeyword;
+    }
+
+    public getKeyword(): ISyntaxToken {
+        return this._getKeyword;
+    }
+}
+
+class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSyntax {
+    private _setKeyword: ISyntaxToken;
+    private _parameterName: ISyntaxToken;
+
+    constructor(setKeyword: ISyntaxToken,
+                propertyName: ISyntaxToken,
+                openParenToken: ISyntaxToken,
+                parameterName: ISyntaxToken,
+                closeParenToken: ISyntaxToken,
+                block: BlockSyntax) {
+        super(propertyName, openParenToken, closeParenToken, block);
+
+        if (setKeyword.keywordKind() !== SyntaxKind.SetKeyword) {
+            throw Errors.argument("setKeyword");
+        }
+
+        if (parameterName.kind() !== SyntaxKind.IdentifierNameToken) {
+            throw Errors.argument("parameterName");
+        }
+
+        this._setKeyword = setKeyword;
+        this._parameterName = parameterName;
+    }
+
+    public setKeyword(): ISyntaxToken {
+        return this._setKeyword;
+    }
+
+    public parameterName(): ISyntaxToken {
+        return this._parameterName;
     }
 }

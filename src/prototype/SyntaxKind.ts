@@ -144,6 +144,7 @@ enum SyntaxKind {
     ObjectType,
     PredefinedType,
     FunctionType,
+    ArrayType,
 
     // Module elements.
     InterfaceDeclaration,
@@ -225,6 +226,7 @@ enum SyntaxKind {
     InvocationExpression,
     ThisExpression,
     ArrayLiteralExpression,
+    ObjectLiteralExpression,
     ObjectCreationExpression,
     ParenthesizedExpression,
     ParenthesizedArrowFunctionExpression,
@@ -251,6 +253,7 @@ enum SyntaxKind {
     FunctionSignature,
     CallSignature,
     TypeAnnotation,
+    SimplePropertyAssignment,
 
     FirstStandardKeyword = BreakKeyword,
     LastStandardKeyword = WithKeyword,
