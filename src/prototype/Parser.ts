@@ -756,6 +756,7 @@ class Parser {
     }
 
     private parseMemberVariableDeclaration(): MemberVariableDeclarationSyntax {
+        // Debug.assert(this.isMemberVariableDeclaration());
         throw Errors.notYetImplemented();
     }
 
