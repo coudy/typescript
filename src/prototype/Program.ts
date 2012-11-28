@@ -9,7 +9,6 @@ class Program {
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript3",
             filePath => this.runScannerTest(environment, filePath, LanguageVersion.EcmaScript3));
 
-            
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
             filePath => this.runParserTest(environment, filePath, LanguageVersion.EcmaScript5));
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript3",
@@ -113,7 +112,8 @@ class Program {
         var parser = new Parser(scanner);
 
         if (StringUtilities.endsWith(filePath, ".ts")) {
-            parser.parseSourceUnit();
+            var unit = parser.parseSourceUnit();
+            var json = JSON.stringify(unit);
         }
         else {
             environment.standardOut.WriteLine("skipping unknown file file.");

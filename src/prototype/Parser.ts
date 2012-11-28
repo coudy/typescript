@@ -472,6 +472,10 @@ class Parser {
             case SyntaxKind.UnsignedRightShiftExpression:
                 return ParserExpressionPrecedence.ShiftExpressionPrecdence;
 
+            case SyntaxKind.AddExpression:
+            case SyntaxKind.SubtractExpression:
+                return ParserExpressionPrecedence.AdditiveExpressionPrecedence;
+
             case SyntaxKind.MultiplyExpression:
             case SyntaxKind.DivideExpression:
             case SyntaxKind.ModuloExpression:
@@ -1350,7 +1354,7 @@ class Parser {
             leftOperand = new PrefixUnaryExpressionSyntax(operatorKind, operatorToken, operand);
         }
         else {
-            leftOperand = this.parseTerm(precedence);
+            leftOperand = this.parseTerm(/*allowInvocation*/ true);
         }
 
         leftOperand = this.parseBinaryExpressions(precedence, allowIn, leftOperand);
@@ -1444,22 +1448,26 @@ class Parser {
         }
     }
 
-    private parseTerm(precedence: number): ExpressionSyntax {
-        var term = this.parseTermWorker(precedence);
+    private parseTerm(allowInvocation: bool): ExpressionSyntax {
+        var term = this.parseTermWorker();
         if (term.isMissing()) {
             return term;
         }
 
-        return this.parsePostFixExpression(term);
+        return this.parsePostFixExpression(term, allowInvocation);
     }
 
-    private parsePostFixExpression(expression: ExpressionSyntax): ExpressionSyntax {
+    private parsePostFixExpression(expression: ExpressionSyntax, allowInvocation: bool): ExpressionSyntax {
         Debug.assert(expression !== null);
 
         while (true) {
             var currentTokenKind = this.currentToken().kind();
             switch (currentTokenKind) {
                 case SyntaxKind.OpenParenToken:
+                    if (!allowInvocation) {
+                        return expression;
+                    }
+
                     expression = new InvocationExpressionSyntax(expression, this.parseArgumentList());
                     break;
 
@@ -1485,8 +1493,12 @@ class Parser {
         }
     }
 
+    private isArgumentList(): bool {
+        return this.currentToken().kind() === SyntaxKind.OpenParenToken;
+    }
+
     private parseArgumentList(): ArgumentListSyntax { 
-        Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
+        Debug.assert(this.isArgumentList());
 
         var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
 
@@ -1532,7 +1544,7 @@ class Parser {
         return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken);
     }
 
-    private parseTermWorker(precedence: number): ExpressionSyntax {
+    private parseTermWorker(): ExpressionSyntax {
         var currentToken = this.currentToken();
 
         if (this.isIdentifier(currentToken)) {
@@ -1552,6 +1564,9 @@ class Parser {
 
             case SyntaxKind.NullKeyword:
                 return this.parseLiteralExpression(SyntaxKind.NullLiteralExpression);
+
+            case SyntaxKind.NewKeyword:
+                return this.parseObjectCreationExpression();
         }
 
         switch (currentTokenKind) {
@@ -1568,7 +1583,7 @@ class Parser {
                 return this.parseArrayLiteralExpression();
 
             case SyntaxKind.OpenParenToken:
-                return this.parseParenthesizedOrLambdaExpression(precedence);
+                return this.parseParenthesizedOrLambdaExpression();
         }
 
         // Parse out a missing name here once code for all cases has been included.
@@ -1580,10 +1595,26 @@ class Parser {
         return new IdentifierNameSyntax(this.eatIdentifierToken());
     }
 
-    private parseParenthesizedOrLambdaExpression(precedence: number): ExpressionSyntax {
+    private parseObjectCreationExpression(): ObjectCreationExpressionSyntax {
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.NewKeyword);
+        var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
+
+        // While parsing the sub term we don't want to allow invocations to be parsed.  that's because
+        // we want "new Foo()" to parse as "new Foo()" (one node), not "new (Foo())".
+        var expression = this.parseTerm(/*allowInvocation:*/ false);
+
+        var argumentList: ArgumentListSyntax = null;
+        if (this.isArgumentList()) {
+            argumentList = this.parseArgumentList();
+        }
+
+        return new ObjectCreationExpressionSyntax(newKeyword, expression, argumentList);
+    }
+
+    private parseParenthesizedOrLambdaExpression(): ExpressionSyntax {
         Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
 
-            var result = this.tryParseArrowFunctionExpression(precedence);
+            var result = this.tryParseArrowFunctionExpression();
             if (result !== null) {
                 return result;
             }
@@ -1596,20 +1627,26 @@ class Parser {
         return new ParenthesizedExpressionSyntax(openParenToken, expression, closeParenToken);
     }
 
-    private tryParseArrowFunctionExpression(precedence: ParserExpressionPrecedence): ArrowFunctionExpressionSyntax {
+    private tryParseArrowFunctionExpression(): ArrowFunctionExpressionSyntax {
         Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
 
         // Because arrow functions and parenthesized expressions look similar, we have to check far
         // enough ahead to be sure we've actually got an arrow function.
 
         // First, check for things that definitely have enough information to let us know it's an
-        // arrow function. Then, try to actually parse it as a lambda, and only return if we see
-        // an => 
+        // arrow function.
 
         if (this.isDefinitelyArrowFunctionExpression()) {
             return this.parseParenthesizedArrowFunctionExpression(/*requiresArrow:*/ false);
         }
 
+        // Now, look for cases where we're sure it's not an arrow function.  This will help save us
+        // a costly parse.
+        if (this.isDefinitelyParenthesizedExpression()) {
+            return null;
+        }
+
+        // Then, try to actually parse it as a lambda, and only return if we see an => 
         var resetPoint = this.getResetPoint();
         try {
             var arrowFunction = this.parseParenthesizedArrowFunctionExpression(/*requiresArrow:*/ true);
@@ -1621,6 +1658,56 @@ class Parser {
         finally {
             this.release(resetPoint);
         }
+    }
+
+    private isDefinitelyParenthesizedExpression(): bool {
+        Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
+        var token1 = this.peekTokenN(1);
+        var token2 = this.peekTokenN(2);
+
+        if (token1.kind() === SyntaxKind.CloseParenToken) {
+            // ()
+            // Not definitely a parenthesized expression.
+            return false;
+        }
+
+        if (token1.kind() !== SyntaxKind.IdentifierNameToken) {
+            // (+
+            // (++
+            // etc.
+            //
+            // Since a parenthesized arrow function must start with "()" or "(id", we know we must
+            // have a parenthesized expressoin here instead.
+            return true;
+        }
+
+        if (token1.kind() === SyntaxKind.IdentifierNameToken) {
+            // (id
+            // Could still be an arrow function.  Look a bit more.
+
+            if (token2.kind() == SyntaxKind.DotToken) {
+                // (id.
+                // Definitely a parenthesized expression.
+                return true;
+            }
+
+            if (SyntaxFacts.isBinaryExpressionOperatorToken(token2.kind()) && 
+                token2.kind() !== SyntaxKind.CommaToken) {
+                // (id +
+                // (id <
+                //
+                // but not: (id, 
+                //
+                // etc.
+                // Definitely a parenthesized expression of some sort.
+                return true;
+            }
+        }
+
+        // TODO: Add more cases if you're sure that there is enough information to know not to 
+        // parse this as an arrow function.
+
+        return false;
     }
 
     private parseParenthesizedArrowFunctionExpression(requireArrow: bool): ParenthesizedArrowFunctionExpressionSyntax {
@@ -1715,6 +1802,9 @@ class Parser {
                 }
             }
         }
+
+        // TODO: Add more cases if you're sure that there is enough information to know to 
+        // parse this as an arrow function.  Note: be very careful here.
 
         // Anything else wasn't clear enough.  Try to parse the expression as a lambda and bail out
         // if we fail.
