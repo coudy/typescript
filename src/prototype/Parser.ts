@@ -232,9 +232,7 @@ class Parser {
         }
 
         // Only attempt automatic semicolon insertion if the options allow for it.
-        if (!this.options.allowAutomaticSemicolonInsertion()) {
-            var automaticSemicolonAllowed = false;
-
+        if (this.options.allowAutomaticSemicolonInsertion()) {
             // An automatic semicolon is always allowed if we're at the end of the file.
             if (token.kind() === SyntaxKind.EndOfFileToken) {
                 return true;
@@ -263,7 +261,7 @@ class Parser {
 
         // Automatic semicolon is not allowed.  Just try to eat the semicolon and report the
         // error if the caller asked for it.
-        this.eatToken(SyntaxKind.SemicolonToken);
+        this.eatToken(SyntaxKind.SemicolonToken, reportError);
     }
 
     //this method is called very frequently
@@ -1136,9 +1134,32 @@ class Parser {
         else if (this.isSwitchStatement()) {
             return this.parseSwitchStatement();
         }
+        else if (this.isBreakStatement()) {
+            return this.parseBreakStatement();
+        }
         else {
             throw Errors.notYetImplemented();
         }
+    }
+
+    private isBreakStatement(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.BreakKeyword;
+    }
+
+    private parseBreakStatement(): BreakStatementSyntax {
+        Debug.assert(this.isBreakStatement());
+
+        var breakKeyword = this.eatKeyword(SyntaxKind.BreakKeyword);
+
+        // If there is no newline after the break keyword, then we can consume an optional 
+        // identifier.
+        var identifier: ISyntaxToken = null;
+        if (!breakKeyword.hasTrailingNewLineTrivia() && this.isIdentifier(this.currentToken())) {
+            identifier = this.eatIdentifierToken();
+        }
+
+        var semicolon = this.eatExplicitOrAutomaticSemicolon();
+        return new BreakStatementSyntax(breakKeyword, identifier, semicolon);
     }
 
     private isSwitchStatement(): bool {
