@@ -852,6 +852,11 @@ var Parser = (function () {
                 return ParserExpressionPrecedence.ShiftExpressionPrecdence;
 
             }
+            case SyntaxKind.AddExpression:
+            case SyntaxKind.SubtractExpression: {
+                return ParserExpressionPrecedence.AdditiveExpressionPrecedence;
+
+            }
             case SyntaxKind.MultiplyExpression:
             case SyntaxKind.DivideExpression:
             case SyntaxKind.ModuloExpression: {
@@ -1508,7 +1513,7 @@ var Parser = (function () {
             var operand = this.parseSubExpression(this.getPrecedence(operatorKind), allowIn);
             leftOperand = new PrefixUnaryExpressionSyntax(operatorKind, operatorToken, operand);
         } else {
-            leftOperand = this.parseTerm(precedence);
+            leftOperand = this.parseTerm(true);
         }
         leftOperand = this.parseBinaryExpressions(precedence, allowIn, leftOperand);
         leftOperand = this.parseConditionalExpression(precedence, allowIn, leftOperand);
@@ -1575,19 +1580,22 @@ var Parser = (function () {
             }
         }
     };
-    Parser.prototype.parseTerm = function (precedence) {
-        var term = this.parseTermWorker(precedence);
+    Parser.prototype.parseTerm = function (allowInvocation) {
+        var term = this.parseTermWorker();
         if(term.isMissing()) {
             return term;
         }
-        return this.parsePostFixExpression(term);
+        return this.parsePostFixExpression(term, allowInvocation);
     };
-    Parser.prototype.parsePostFixExpression = function (expression) {
+    Parser.prototype.parsePostFixExpression = function (expression, allowInvocation) {
         Debug.assert(expression !== null);
         while(true) {
             var currentTokenKind = this.currentToken().kind();
             switch(currentTokenKind) {
                 case SyntaxKind.OpenParenToken: {
+                    if(!allowInvocation) {
+                        return expression;
+                    }
                     expression = new InvocationExpressionSyntax(expression, this.parseArgumentList());
                     break;
 
@@ -1615,8 +1623,11 @@ var Parser = (function () {
             }
         }
     };
+    Parser.prototype.isArgumentList = function () {
+        return this.currentToken().kind() === SyntaxKind.OpenParenToken;
+    };
     Parser.prototype.parseArgumentList = function () {
-        Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
+        Debug.assert(this.isArgumentList());
         var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
         var arguments = null;
         if(this.currentToken().kind() !== SyntaxKind.CloseParenToken && this.currentToken().kind() !== SyntaxKind.EndOfFileToken) {
@@ -1648,7 +1659,7 @@ var Parser = (function () {
         var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
         return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken);
     };
-    Parser.prototype.parseTermWorker = function (precedence) {
+    Parser.prototype.parseTermWorker = function () {
         var currentToken = this.currentToken();
         if(this.isIdentifier(currentToken)) {
             var identifier = this.eatIdentifierToken();
@@ -1670,6 +1681,10 @@ var Parser = (function () {
                 return this.parseLiteralExpression(SyntaxKind.NullLiteralExpression);
 
             }
+            case SyntaxKind.NewKeyword: {
+                return this.parseObjectCreationExpression();
+
+            }
         }
         switch(currentTokenKind) {
             case SyntaxKind.NumericLiteral: {
@@ -1689,7 +1704,7 @@ var Parser = (function () {
 
             }
             case SyntaxKind.OpenParenToken: {
-                return this.parseParenthesizedOrLambdaExpression(precedence);
+                return this.parseParenthesizedOrLambdaExpression();
 
             }
         }
@@ -1698,9 +1713,19 @@ var Parser = (function () {
         }
         return new IdentifierNameSyntax(this.eatIdentifierToken());
     };
-    Parser.prototype.parseParenthesizedOrLambdaExpression = function (precedence) {
+    Parser.prototype.parseObjectCreationExpression = function () {
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.NewKeyword);
+        var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
+        var expression = this.parseTerm(false);
+        var argumentList = null;
+        if(this.isArgumentList()) {
+            argumentList = this.parseArgumentList();
+        }
+        return new ObjectCreationExpressionSyntax(newKeyword, expression, argumentList);
+    };
+    Parser.prototype.parseParenthesizedOrLambdaExpression = function () {
         Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
-        var result = this.tryParseArrowFunctionExpression(precedence);
+        var result = this.tryParseArrowFunctionExpression();
         if(result !== null) {
             return result;
         }
@@ -1709,10 +1734,13 @@ var Parser = (function () {
         var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
         return new ParenthesizedExpressionSyntax(openParenToken, expression, closeParenToken);
     };
-    Parser.prototype.tryParseArrowFunctionExpression = function (precedence) {
+    Parser.prototype.tryParseArrowFunctionExpression = function () {
         Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
         if(this.isDefinitelyArrowFunctionExpression()) {
             return this.parseParenthesizedArrowFunctionExpression(false);
+        }
+        if(this.isDefinitelyParenthesizedExpression()) {
+            return null;
         }
         var resetPoint = this.getResetPoint();
         try  {
@@ -1724,6 +1752,26 @@ var Parser = (function () {
         }finally {
             this.release(resetPoint);
         }
+    };
+    Parser.prototype.isDefinitelyParenthesizedExpression = function () {
+        Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
+        var token1 = this.peekTokenN(1);
+        var token2 = this.peekTokenN(2);
+        if(token1.kind() === SyntaxKind.CloseParenToken) {
+            return false;
+        }
+        if(token1.kind() !== SyntaxKind.IdentifierNameToken) {
+            return true;
+        }
+        if(token1.kind() === SyntaxKind.IdentifierNameToken) {
+            if(token2.kind() == SyntaxKind.DotToken) {
+                return true;
+            }
+            if(SyntaxFacts.isBinaryExpressionOperatorToken(token2.kind()) && token2.kind() !== SyntaxKind.CommaToken) {
+                return true;
+            }
+        }
+        return false;
     };
     Parser.prototype.parseParenthesizedArrowFunctionExpression = function (requireArrow) {
         Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
@@ -5637,9 +5685,6 @@ var CallSignatureSyntax = (function (_super) {
         if(parameterList === null) {
             throw Errors.argumentNull("parameterList");
         }
-        if(returnTypeAnnotation === null) {
-            throw Errors.argumentNull("returnTypeAnnotation");
-        }
         this._parameterList = parameterList;
         this._returnTypeAnnotation = returnTypeAnnotation;
     }
@@ -5921,6 +5966,34 @@ var ReturnStatementSyntax = (function (_super) {
     };
     return ReturnStatementSyntax;
 })(StatementSyntax);
+var ObjectCreationExpressionSyntax = (function (_super) {
+    __extends(ObjectCreationExpressionSyntax, _super);
+    function ObjectCreationExpressionSyntax(newKeyword, expression, argumentList) {
+        _super.call(this);
+        this._newKeyword = null;
+        this._expression = null;
+        this._argumentList = null;
+        if(newKeyword.keywordKind() !== SyntaxKind.NewKeyword) {
+            throw Errors.argument("newKeyword");
+        }
+        if(expression === null) {
+            throw Errors.argumentNull("expression");
+        }
+        this._newKeyword = newKeyword;
+        this._expression = expression;
+        this._argumentList = argumentList;
+    }
+    ObjectCreationExpressionSyntax.prototype.newKeyword = function () {
+        return this._newKeyword;
+    };
+    ObjectCreationExpressionSyntax.prototype.expression = function () {
+        return this._expression;
+    };
+    ObjectCreationExpressionSyntax.prototype.argumentList = function () {
+        return this._argumentList;
+    };
+    return ObjectCreationExpressionSyntax;
+})(ExpressionSyntax);
 var SyntaxToken = (function () {
     function SyntaxToken() { }
     SyntaxToken.create = function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
@@ -8490,7 +8563,8 @@ var Program = (function () {
         var scanner = Scanner.create(text, LanguageVersion.EcmaScript5);
         var parser = new Parser(scanner);
         if(StringUtilities.endsWith(filePath, ".ts")) {
-            parser.parseSourceUnit();
+            var unit = parser.parseSourceUnit();
+            var json = JSON.stringify(unit);
         } else {
             environment.standardOut.WriteLine("skipping unknown file file.");
         }

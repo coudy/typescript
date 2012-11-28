@@ -1654,10 +1654,6 @@ class CallSignatureSyntax extends TypeMemberSyntax {
             throw Errors.argumentNull("parameterList");
         }
 
-        if (returnTypeAnnotation === null) {
-            throw Errors.argumentNull("returnTypeAnnotation");
-        }
-
         this._parameterList = parameterList;
         this._returnTypeAnnotation = returnTypeAnnotation;
     }
@@ -2015,5 +2011,41 @@ class ReturnStatementSyntax extends StatementSyntax {
 
     public semicolonToken(): ISyntaxToken {
         return this._semicolonToken;
+    }
+}
+
+class ObjectCreationExpressionSyntax extends ExpressionSyntax {
+    private _newKeyword: ISyntaxToken = null;
+    private _expression: ExpressionSyntax = null;
+    private _argumentList: ArgumentListSyntax = null;
+
+    constructor(newKeyword: ISyntaxToken,
+                expression: ExpressionSyntax,
+                argumentList: ArgumentListSyntax) {
+        super();
+
+        if (newKeyword.keywordKind() !== SyntaxKind.NewKeyword) {
+            throw Errors.argument("newKeyword");
+        }
+
+        if (expression === null) {
+            throw Errors.argumentNull("expression");
+        }
+
+        this._newKeyword = newKeyword;
+        this._expression = expression;
+        this._argumentList = argumentList;
+    }
+
+    public newKeyword(): ISyntaxToken {
+        return this._newKeyword;
+    }
+
+    public expression(): ExpressionSyntax {
+        return this._expression;
+    }
+
+    public argumentList(): ArgumentListSyntax {
+        return this._argumentList;
     }
 }
