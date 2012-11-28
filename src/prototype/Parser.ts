@@ -87,7 +87,7 @@ class Parser {
 
     private options: ParseOptions = null;
 
-    constructor (
+    constructor(
         scanner: Scanner,
         oldTree?: SyntaxTree,
         changes?: TextChangeRange[],
@@ -293,7 +293,7 @@ class Parser {
         //slow part of EatToken(SyntaxKind kind)
         return this.createMissingToken(kind, token.kind(), /*reportError: */ reportError);
     }
-    
+
     // This method should be called when the grammar calls for on *IdentifierName* and not an
     // *Identifier*.
     private eatIdentifierNameToken(reportError?: bool = true): ISyntaxToken {
@@ -640,7 +640,7 @@ class Parser {
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
         return new ClassDeclarationSyntax(
-            exportKeyword, classKeyword, identifier, extendsClause, implementsClause, 
+            exportKeyword, classKeyword, identifier, extendsClause, implementsClause,
             openBraceToken, SyntaxNodeList.create(classElements), closeBraceToken);
     }
 
@@ -684,7 +684,7 @@ class Parser {
                 this.currentToken().keywordKind() !== SyntaxKind.SetKeyword) {
                 return false;
             }
-            
+
             this.eatAnyToken();
             return this.isIdentifier(this.currentToken());
         }
@@ -880,8 +880,8 @@ class Parser {
             while (this.currentToken().kind() !== SyntaxKind.CloseBraceToken &&
                    this.currentToken().kind() !== SyntaxKind.EndOfFileToken) {
                 var element = this.parseModuleElement();
-                
-                moduleElements = moduleElements || []; 
+
+                moduleElements = moduleElements || [];
                 moduleElements.push(element);
             }
         }
@@ -1095,9 +1095,35 @@ class Parser {
         else if (this.isExpressionStatement()) {
             return this.parseExpressionStatement();
         }
+        else if (this.isReturnStatement()) {
+            return this.parseReturnStatement();
+        }
         else {
             throw Errors.notYetImplemented();
         }
+    }
+
+    private isReturnStatement(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.ReturnKeyword;
+    }
+
+    private parseReturnStatement(): ReturnStatementSyntax {
+        Debug.assert(this.isReturnStatement());
+
+        var returnKeyword = this.eatKeyword(SyntaxKind.ReturnKeyword);
+
+        var expression: ExpressionSyntax = null;
+        var semicolonToken: ISyntaxToken = null;
+
+        if (this.canEatExplicitOrAutomaticSemicolon()) {
+            semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+        }
+        else {
+            expression = this.parseExpression(/*allowIn:*/ true);
+            semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+        }
+
+        return new ReturnStatementSyntax(returnKeyword, expression, semicolonToken);
     }
 
     private isExpressionStatement(): bool {
