@@ -948,6 +948,9 @@ var Parser = (function () {
         var identifierName = this.eatIdentifierNameToken();
         return new IdentifierNameSyntax(identifierName);
     };
+    Parser.prototype.isName = function () {
+        return this.isIdentifier(this.currentToken());
+    };
     Parser.prototype.parseName = function () {
         var isIdentifier = this.currentToken().kind() === SyntaxKind.IdentifierNameToken;
         var identifier = this.eatIdentifierToken();
@@ -1734,7 +1737,7 @@ var Parser = (function () {
             var operand = this.parseUnaryExpression();
             return new PrefixUnaryExpressionSyntax(operatorKind, operatorToken, operand);
         } else {
-            return this.parseTerm(true);
+            return this.parseTerm(true, false);
         }
     };
     Parser.prototype.parseSubExpression = function (precedence, allowIn) {
@@ -1804,8 +1807,8 @@ var Parser = (function () {
             }
         }
     };
-    Parser.prototype.parseTerm = function (allowInvocation) {
-        var term = this.parseTermWorker();
+    Parser.prototype.parseTerm = function (allowInvocation, allowType) {
+        var term = this.parseTermWorker(allowType);
         if(term.isMissing()) {
             return term;
         }
@@ -1886,8 +1889,11 @@ var Parser = (function () {
         var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
         return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken);
     };
-    Parser.prototype.parseTermWorker = function () {
+    Parser.prototype.parseTermWorker = function (allowType) {
         var currentToken = this.currentToken();
+        if(allowType && this.isType()) {
+            return this.parseType();
+        }
         if(this.isIdentifier(currentToken)) {
             var identifier = this.eatIdentifierToken();
             return new IdentifierNameSyntax(identifier);
@@ -1955,7 +1961,7 @@ var Parser = (function () {
     Parser.prototype.parseObjectCreationExpression = function () {
         Debug.assert(this.currentToken().keywordKind() === SyntaxKind.NewKeyword);
         var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
-        var expression = this.parseTerm(false);
+        var expression = this.parseTerm(false, true);
         var argumentList = null;
         if(this.isArgumentList()) {
             argumentList = this.parseArgumentList();
@@ -1999,7 +2005,7 @@ var Parser = (function () {
         if(token1.kind() === SyntaxKind.CloseParenToken) {
             return false;
         }
-        if(token1.kind() !== SyntaxKind.IdentifierNameToken) {
+        if(!this.isIdentifier(token1)) {
             return true;
         }
         if(token1.kind() === SyntaxKind.IdentifierNameToken) {
@@ -2167,6 +2173,9 @@ var Parser = (function () {
         var colonToken = this.eatToken(SyntaxKind.ColonToken);
         var type = this.parseType();
         return new TypeAnnotationSyntax(colonToken, type);
+    };
+    Parser.prototype.isType = function () {
+        return this.isPredefinedType() || this.isTypeLiteral() || this.isName();
     };
     Parser.prototype.parseType = function () {
         var type = this.parseNonArrayType();

@@ -591,6 +591,10 @@ class Parser {
         return new IdentifierNameSyntax(identifierName);
     }
 
+    private isName(): bool {
+        return this.isIdentifier(this.currentToken());
+    }
+
     private parseName(): NameSyntax {
         var isIdentifier = this.currentToken().kind() === SyntaxKind.IdentifierNameToken;
         var identifier = this.eatIdentifierToken();
@@ -1682,7 +1686,7 @@ class Parser {
             return new PrefixUnaryExpressionSyntax(operatorKind, operatorToken, operand);
         }
         else {
-            return this.parseTerm(/*allowInvocation*/ true);
+            return this.parseTerm(/*allowInvocation*/ true, /*allowType:*/ false);
         }
     }
 
@@ -1781,8 +1785,8 @@ class Parser {
         }
     }
 
-    private parseTerm(allowInvocation: bool): UnaryExpressionSyntax {
-        var term = this.parseTermWorker();
+    private parseTerm(allowInvocation: bool, allowType: bool): UnaryExpressionSyntax {
+        var term = this.parseTermWorker(allowType);
         if (term.isMissing()) {
             return term;
         }
@@ -1882,8 +1886,12 @@ class Parser {
         return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken);
     }
 
-    private parseTermWorker(): UnaryExpressionSyntax {
+    private parseTermWorker(allowType: bool): UnaryExpressionSyntax {
         var currentToken = this.currentToken();
+
+        if (allowType && this.isType()) {
+            return this.parseType();
+        }
 
         if (this.isIdentifier(currentToken)) {
             var identifier = this.eatIdentifierToken();
@@ -1953,7 +1961,7 @@ class Parser {
 
         // While parsing the sub term we don't want to allow invocations to be parsed.  that's because
         // we want "new Foo()" to parse as "new Foo()" (one node), not "new (Foo())".
-        var expression = this.parseTerm(/*allowInvocation:*/ false);
+        var expression = this.parseTerm(/*allowInvocation:*/ false, /*allowType:*/ true);
 
         var argumentList: ArgumentListSyntax = null;
         if (this.isArgumentList()) {
@@ -2023,9 +2031,10 @@ class Parser {
             return false;
         }
 
-        if (token1.kind() !== SyntaxKind.IdentifierNameToken) {
+        if (!this.isIdentifier(token1)) {
             // (+
             // (++
+            // (null
             // etc.
             //
             // Since a parenthesized arrow function must start with "()" or "(id", we know we must
@@ -2307,6 +2316,12 @@ class Parser {
         var type = this.parseType();
 
         return new TypeAnnotationSyntax(colonToken, type);
+    }
+
+    private isType(): bool {
+        return this.isPredefinedType() ||
+               this.isTypeLiteral() ||
+               this.isName();
     }
 
     private parseType(): TypeSyntax {
