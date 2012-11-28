@@ -197,7 +197,7 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
             throw Errors.argument("classKeyword");
         }
 
-        if (identifier.kind() !== SyntaxKind.IdentifierName) {
+        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) {
             throw Errors.argument("identifier");
         }
 
@@ -1824,4 +1824,40 @@ class MemberAccessorDeclarationSyntax extends MemberDeclarationSyntax {
 }
 
 class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
+}
+
+class ReturnStatementSyntax extends StatementSyntax {
+    private _returnKeyword: ISyntaxToken = null;
+    private _expression: ExpressionSyntax = null;
+    private _semicolonToken: ISyntaxToken = null;
+
+    constructor(returnKeyword: ISyntaxToken,
+                expression: ExpressionSyntax,
+                semicolonToken: ISyntaxToken) {
+        super();
+
+        if (returnKeyword.keywordKind() !== SyntaxKind.ReturnKeyword) {
+            throw Errors.argument("returnKeyword");
+        }
+
+        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) {
+            throw Errors.argument("semicolonToken");
+        }
+
+        this._returnKeyword = returnKeyword;
+        this._expression = expression;
+        this._semicolonToken = semicolonToken;
+    }
+
+    public returnKeyword(): ISyntaxToken {
+        return this._returnKeyword;
+    }
+
+    public expression(): ExpressionSyntax {
+        return this._expression;
+    }
+
+    public semicolonToken(): ISyntaxToken {
+        return this._semicolonToken;
+    }
 }

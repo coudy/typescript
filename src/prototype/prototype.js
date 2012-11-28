@@ -1313,12 +1313,32 @@ var Parser = (function () {
                         if(this.isExpressionStatement()) {
                             return this.parseExpressionStatement();
                         } else {
-                            throw Errors.notYetImplemented();
+                            if(this.isReturnStatement()) {
+                                return this.parseReturnStatement();
+                            } else {
+                                throw Errors.notYetImplemented();
+                            }
                         }
                     }
                 }
             }
         }
+    };
+    Parser.prototype.isReturnStatement = function () {
+        return this.currentToken().keywordKind() === SyntaxKind.ReturnKeyword;
+    };
+    Parser.prototype.parseReturnStatement = function () {
+        Debug.assert(this.isReturnStatement());
+        var returnKeyword = this.eatKeyword(SyntaxKind.ReturnKeyword);
+        var expression = null;
+        var semicolonToken = null;
+        if(this.canEatExplicitOrAutomaticSemicolon()) {
+            semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+        } else {
+            expression = this.parseExpression(true);
+            semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+        }
+        return new ReturnStatementSyntax(returnKeyword, expression, semicolonToken);
     };
     Parser.prototype.isExpressionStatement = function () {
         var currentToken = this.currentToken();
@@ -4403,7 +4423,7 @@ var ClassDeclarationSyntax = (function (_super) {
         if(classKeyword.keywordKind() !== SyntaxKind.ClassKeyword) {
             throw Errors.argument("classKeyword");
         }
-        if(identifier.kind() !== SyntaxKind.IdentifierName) {
+        if(identifier.kind() !== SyntaxKind.IdentifierNameToken) {
             throw Errors.argument("identifier");
         }
         if(openBraceToken.kind() !== SyntaxKind.OpenBraceToken) {
@@ -5738,6 +5758,34 @@ var MemberVariableDeclarationSyntax = (function (_super) {
     }
     return MemberVariableDeclarationSyntax;
 })(MemberDeclarationSyntax);
+var ReturnStatementSyntax = (function (_super) {
+    __extends(ReturnStatementSyntax, _super);
+    function ReturnStatementSyntax(returnKeyword, expression, semicolonToken) {
+        _super.call(this);
+        this._returnKeyword = null;
+        this._expression = null;
+        this._semicolonToken = null;
+        if(returnKeyword.keywordKind() !== SyntaxKind.ReturnKeyword) {
+            throw Errors.argument("returnKeyword");
+        }
+        if(semicolonToken.kind() !== SyntaxKind.SemicolonToken) {
+            throw Errors.argument("semicolonToken");
+        }
+        this._returnKeyword = returnKeyword;
+        this._expression = expression;
+        this._semicolonToken = semicolonToken;
+    }
+    ReturnStatementSyntax.prototype.returnKeyword = function () {
+        return this._returnKeyword;
+    };
+    ReturnStatementSyntax.prototype.expression = function () {
+        return this._expression;
+    };
+    ReturnStatementSyntax.prototype.semicolonToken = function () {
+        return this._semicolonToken;
+    };
+    return ReturnStatementSyntax;
+})(StatementSyntax);
 var SyntaxToken = (function () {
     function SyntaxToken() { }
     SyntaxToken.create = function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
