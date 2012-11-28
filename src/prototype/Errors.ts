@@ -20,4 +20,8 @@ class Errors {
     public static notYetImplemented(): Error {
         return new Error("Not yet implemented.");
     }
+
+    public static invalidOperation(): Error {
+        return new Error("Invalid operation.");
+    }
 }

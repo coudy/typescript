@@ -1319,18 +1319,18 @@ class Parser {
 
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
-        var caseClauses: CaseClauseSyntax[] = null;
+        var switchClauses: SwitchClauseSyntax[] = null;
         if (!openBraceToken.isMissing()) {
             while (true) {
                 if (this.currentToken().kind() === SyntaxKind.CloseBraceToken || this.currentToken().kind() === SyntaxKind.EndOfFileToken) {
                     break;
                 }
 
-                if (this.isCaseClause()) {
-                    var caseClause = this.parseCaseClause();
+                if (this.isSwitchClause()) {
+                    var switchClause = this.parseSwitchClause();
 
-                    caseClauses = caseClauses || [];
-                    caseClauses.push(caseClause);
+                    switchClauses = switchClauses || [];
+                    switchClauses.push(switchClause);
                 }
                 else {
                     // TODO: Error tolerance.
@@ -1341,28 +1341,64 @@ class Parser {
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
         return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken,
-            openBraceToken, SyntaxNodeList.create(caseClauses), closeBraceToken);
+            openBraceToken, SyntaxNodeList.create(switchClauses), closeBraceToken);
     }
 
-    private isCaseClause(): bool {
-        return this.currentToken().keywordKind() === SyntaxKind.CaseKeyword || this.currentToken().keywordKind() === SyntaxKind.DefaultKeyword;
+    private isCaseSwitchClause(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.CaseKeyword;
     }
 
-    private parseCaseClause(): CaseClauseSyntax {
-        Debug.assert(this.isCaseClause());
+    private isDefaultSwitchClause(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.DefaultKeyword;
+    }
 
-        var caseOrDefaultKeyword = this.eatAnyToken();
+    private isSwitchClause(): bool {
+        return this.isCaseSwitchClause() || this.isDefaultSwitchClause();
+    }
+
+    private parseSwitchClause(): SwitchClauseSyntax {
+        Debug.assert(this.isSwitchClause());
+        if (this.isCaseSwitchClause()) {
+            return this.parseCaseSwitchClause();
+        }
+        else if (this.isDefaultSwitchClause()) {
+            return this.parseDefaultSwitchClause();
+        }
+        else {
+            throw Errors.invalidOperation();
+        }
+    }
+
+    private parseCaseSwitchClause(): CaseSwitchClauseSyntax {
+        Debug.assert(this.isCaseSwitchClause());
+
+        var caseKeyword = this.eatKeyword(SyntaxKind.CaseKeyword);
         var expression: ExpressionSyntax = null;
         if (this.currentToken().kind() !== SyntaxKind.ColonToken) {
             expression = this.parseExpression(/*allowIn:*/ true);
         }
 
         var colonToken = this.eatToken(SyntaxKind.ColonToken);
+        var statements = this.parseSwitchClauseStatements();
 
+        return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements);
+    }
+
+    private parseDefaultSwitchClause(): DefaultSwitchClauseSyntax {
+        Debug.assert(this.isDefaultSwitchClause());
+
+        var defaultKeyword = this.eatKeyword(SyntaxKind.DefaultKeyword);
+        var colonToken = this.eatToken(SyntaxKind.ColonToken);
+        var statements = this.parseSwitchClauseStatements();
+
+        return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements);
+    }
+
+    private parseSwitchClauseStatements(): ISyntaxNodeList {
         var statements: StatementSyntax[] = null;
 
         while (true) {
-            if (this.isCaseClause() || this.currentToken().kind() == SyntaxKind.EndOfFileToken || this.currentToken().kind() === SyntaxKind.CloseBraceToken) {
+            if (this.isSwitchClause() || this.currentToken().kind() == SyntaxKind.EndOfFileToken || this.currentToken().kind() === SyntaxKind.CloseBraceToken) {
                 break;
             }
 
@@ -1373,7 +1409,7 @@ class Parser {
             // TODO: error recovery.
         }
 
-        return new CaseClauseSyntax(caseOrDefaultKeyword, expression, colonToken, SyntaxNodeList.create(statements));
+        return SyntaxNodeList.create(statements);
     }
 
     private isReturnStatement(): bool {
@@ -1477,11 +1513,16 @@ class Parser {
     }
 
     private isElseClause(): bool {
-        return this.currentToken().kind() === SyntaxKind.ElseKeyword;
+        return this.currentToken().keywordKind() === SyntaxKind.ElseKeyword;
     }
 
     private parseElseClause(): ElseClauseSyntax {
-        throw Errors.notYetImplemented();
+        Debug.assert(this.isElseClause());
+
+        var elseKeyword = this.eatKeyword(SyntaxKind.ElseKeyword);
+        var statement = this.parseStatement(/*allowFunctionDeclaration:*/ false);
+
+        return new ElseClauseSyntax(elseKeyword, statement);
     }
 
     private isVariableStatement(): bool {
@@ -2138,12 +2179,12 @@ class Parser {
         Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
 
         var parameterList = this.parseParameterList();
-        var returnTypeAnnotation: TypeAnnotationSyntax = null;
+        var typeAnnotation: TypeAnnotationSyntax = null;
         if (this.isTypeAnnotation()) {
-            returnTypeAnnotation = this.parseTypeAnnotation();
+            typeAnnotation = this.parseTypeAnnotation();
         }
 
-        return new CallSignatureSyntax(parameterList, returnTypeAnnotation);
+        return new CallSignatureSyntax(parameterList, typeAnnotation);
     }
 
     private parseParameterList(): ParameterListSyntax {

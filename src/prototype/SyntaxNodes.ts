@@ -772,6 +772,10 @@ class ArrayLiteralExpressionSyntax extends ExpressionSyntax {
         this._closeBracketToken = closeBracketToken;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.ArrayLiteralExpression;
+    }
+
     public openBracketToken(): ISyntaxToken {
         return this._openBracketToken;
     }
@@ -812,6 +816,14 @@ class ParenthesizedExpressionSyntax extends ExpressionSyntax {
         if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) {
             throw Errors.argument("closeParenToken");
         }
+
+        this._openParenToken = openParenToken;
+        this._expression = expression;
+        this._closeParenToken = closeParenToken;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ParenthesizedExpression;
     }
 
     public openParenToken(): ISyntaxToken {
@@ -958,6 +970,10 @@ class FunctionTypeSyntax extends TypeSyntax {
         this._parameterList = parameterList;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
         this._type = type;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.FunctionType;
     }
 
     public parameterList(): ParameterListSyntax {
@@ -1118,6 +1134,10 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
         }
 
         this._callSignature = callSignature;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ParenthesizedArrowFunctionExpression;
     }
 
     public callSignature(): CallSignatureSyntax {
@@ -1670,10 +1690,10 @@ class ParameterListSyntax extends SyntaxNode {
 
 class CallSignatureSyntax extends TypeMemberSyntax {
     private _parameterList: ParameterListSyntax = null;
-    private _returnTypeAnnotation: TypeAnnotationSyntax = null;
+    private _typeAnnotation: TypeAnnotationSyntax = null;
     
     constructor (parameterList: ParameterListSyntax,
-                 returnTypeAnnotation: TypeAnnotationSyntax) {
+                 typeAnnotation: TypeAnnotationSyntax) {
         super();
 
         if (parameterList === null) {
@@ -1681,15 +1701,19 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         }
 
         this._parameterList = parameterList;
-        this._returnTypeAnnotation = returnTypeAnnotation;
+        this._typeAnnotation = typeAnnotation;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.CallSignature;
     }
 
     public parameterList(): ParameterListSyntax {
         return this._parameterList;
     }
 
-    public returnTypeAnnotation(): TypeAnnotationSyntax {
-        return this._returnTypeAnnotation;
+    public typeAnnotation(): TypeAnnotationSyntax {
+        return this._typeAnnotation;
     }
 }
 
@@ -1711,6 +1735,10 @@ class ElseClauseSyntax extends SyntaxNode {
 
         this._elseKeyword = elseKeyword;
         this._statement = statement;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ElseClause;
     }
 
     public elseKeyword(): ISyntaxToken {
@@ -2063,6 +2091,10 @@ class ObjectCreationExpressionSyntax extends ExpressionSyntax {
         this._argumentList = argumentList;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.ObjectCreationExpression;
+    }
+
     public newKeyword(): ISyntaxToken {
         return this._newKeyword;
     }
@@ -2131,6 +2163,10 @@ class SwitchStatementSyntax extends StatementSyntax {
         this._closeBraceToken = closeBraceToken;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.SwitchStatement;
+    }
+
     public switchKeyword(): ISyntaxToken {
         return this._switchKeyword;
     }
@@ -2160,22 +2196,13 @@ class SwitchStatementSyntax extends StatementSyntax {
     }
 }
 
-class CaseClauseSyntax extends SyntaxNode {
-    private _caseOrDefaultKeyword: ISyntaxToken = null;
-    private _expression: ExpressionSyntax = null;
+class SwitchClauseSyntax extends SyntaxNode {
     private _colonToken: ISyntaxToken = null;
     private _statements: ISyntaxNodeList = null;
 
-    constructor(caseOrDefaultKeyword: ISyntaxToken,
-                expression: ExpressionSyntax,
-                colonToken: ISyntaxToken,
+    constructor(colonToken: ISyntaxToken,
                 statements: ISyntaxNodeList) {
         super();
-
-        if (caseOrDefaultKeyword.keywordKind() !== SyntaxKind.CaseKeyword &&
-            caseOrDefaultKeyword.keywordKind() !== SyntaxKind.DefaultKeyword) {
-            throw Errors.argument("caseOrDefaultKeyword");
-        }
 
         if (colonToken.kind() !== SyntaxKind.ColonToken) {
             throw Errors.argument("colonToken");
@@ -2184,19 +2211,9 @@ class CaseClauseSyntax extends SyntaxNode {
         if (statements === null) {
             throw Errors.argumentNull("statements");
         }
-
-        this._caseOrDefaultKeyword = caseOrDefaultKeyword;
-        this._expression = expression;
+        
         this._colonToken = colonToken;
         this._statements = statements;
-    }
-
-    public caseOrDefaultKeyword(): ISyntaxToken {
-        return this._caseOrDefaultKeyword;
-    }
-
-    public expression(): ExpressionSyntax {
-        return this._expression;
     }
 
     public colonToken(): ISyntaxToken {
@@ -2205,6 +2222,65 @@ class CaseClauseSyntax extends SyntaxNode {
 
     public statements(): ISyntaxNodeList {
         return this._statements;
+    }
+}
+
+class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
+    private _caseKeyword: ISyntaxToken = null;
+    private _expression: ExpressionSyntax = null;
+
+    constructor(caseKeyword: ISyntaxToken,
+                expression: ExpressionSyntax,
+                colonToken: ISyntaxToken,
+                statements: ISyntaxNodeList) {
+        super(colonToken, statements);
+
+        if (caseKeyword.keywordKind() !== SyntaxKind.CaseKeyword) {
+            throw Errors.argument("caseKeyword");
+        }
+
+        if (expression === null) {
+            throw Errors.argumentNull("expression");
+        }
+
+        this._caseKeyword = caseKeyword;
+        this._expression = expression;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.CaseSwitchClause;
+    }
+
+    public caseKeyword(): ISyntaxToken {
+        return this._caseKeyword;
+    }
+
+    public expression(): ExpressionSyntax {
+        return this._expression;
+    }
+}
+
+class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
+    private _defaultKeyword: ISyntaxToken = null;
+
+    constructor(defaultKeyword: ISyntaxToken,
+                colonToken: ISyntaxToken,
+                statements: ISyntaxNodeList) {
+        super(colonToken, statements);
+
+        if (defaultKeyword.keywordKind() !== SyntaxKind.DefaultKeyword) {
+            throw Errors.argument("defaultKeyword");
+        }
+
+        this._defaultKeyword = defaultKeyword;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.DefaultSwitchClause;
+    }
+
+    public defaultKeyword(): ISyntaxToken {
+        return this._defaultKeyword;
     }
 }
 
@@ -2233,6 +2309,10 @@ class BreakStatementSyntax extends StatementSyntax {
         this._breakKeyword = breakKeyword;
         this._identifier = identifier;
         this._semicolonToken = semicolonToken;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.BreakStatement;
     }
 
     public breakKeyword(): ISyntaxToken {
@@ -2342,6 +2422,10 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         this._incrementor = incrementor;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.ForStatement;
+    }
+
     public initializer(): ExpressionSyntax {
         return this._initializer;
     }
@@ -2389,6 +2473,10 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         this._left = left;
         this._inKeyword = inKeyword;
         this._expression = expression;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ForInStatement;
     }
 
     public left(): ExpressionSyntax {
