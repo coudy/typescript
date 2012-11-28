@@ -152,6 +152,7 @@ enum SyntaxKind {
 
     // ClassElements
     MemberFunctionDeclaration,
+    ConstructorDeclaration,
 
     // Statements
     Block,
@@ -216,6 +217,7 @@ enum SyntaxKind {
     PostDecrementExpression,
     MemberAccessExpression,
     InvocationExpression,
+    ThisExpression,
 
     VariableDeclaration,
     Parameter,

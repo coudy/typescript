@@ -688,6 +688,10 @@ class ThisExpressionSyntax extends ExpressionSyntax {
         this._thisKeyword = thisKeyword;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.ThisExpression;
+    }
+
     public thisKeyword(): ISyntaxToken {
         return this._thisKeyword;
     }
@@ -904,6 +908,43 @@ class ConstructorTypeSyntax extends TypeSyntax {
 }
 
 class FunctionTypeSyntax extends TypeSyntax {
+    private _parameterList: ParameterListSyntax = null;
+    private _equalsGreaterThanToken: ISyntaxToken = null;
+    private _type: TypeSyntax = null;
+
+    constructor(parameterList: ParameterListSyntax,
+                equalsGreaterThanToken: ISyntaxToken,
+                type: TypeSyntax) {
+        super();
+
+        if (parameterList === null) {
+            throw Errors.argumentNull("parameterList");
+        }
+
+        if (equalsGreaterThanToken.kind() !== SyntaxKind.EqualsGreaterThanToken) {
+            throw Errors.argument("equalsGreaterThanToken");
+        }
+
+        if (type === null) {
+            throw Errors.argumentNull("type");
+        }
+
+        this._parameterList = parameterList;
+        this._equalsGreaterThanToken = equalsGreaterThanToken;
+        this._type = type;
+    }
+
+    public parameterList(): ParameterListSyntax {
+        return this._parameterList;
+    }
+
+    public equalsGreaterThanToken(): ISyntaxToken {
+        return this._equalsGreaterThanToken;
+    }
+
+    public type(): TypeSyntax {
+        return this._type;
+    }
 }
 
 class ObjectTypeSyntax extends TypeSyntax {
@@ -1769,23 +1810,64 @@ class ClassElementSyntax extends SyntaxNode {
 }
 
 class ConstructorDeclarationSyntax extends ClassElementSyntax {
-}
-
-class MemberDeclarationSyntax extends ClassElementSyntax {
-}
-
-class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
-    private _publicOrPrivateKeyword: ISyntaxToken = null;
-    private _staticKeyword: ISyntaxToken = null;
-    private _functionSignature: FunctionSignatureSyntax = null;
+    private _constructorKeyword: ISyntaxToken = null;
+    private _parameterList: ParameterListSyntax = null;
     private _block: BlockSyntax = null;
     private _semicolonToken: ISyntaxToken = null;
 
-    constructor(publicOrPrivateKeyword: ISyntaxToken,
-                staticKeyword: ISyntaxToken,
-                functionSignature: FunctionSignatureSyntax,
+    constructor(constructorKeyword: ISyntaxToken,
+                parameterList: ParameterListSyntax,
                 block: BlockSyntax,
                 semicolonToken: ISyntaxToken) {
+        super();
+
+        if (constructorKeyword.keywordKind() !== SyntaxKind.ConstructorKeyword) {
+            throw Errors.argument("constructorKeyword");
+        }
+
+        if (parameterList === null) {
+            throw Errors.argumentNull("parameterList");
+        }
+
+        // TODO: Check that exactly one of block and semicolonToken are set.
+
+        if (semicolonToken !== null && semicolonToken.kind() !== SyntaxKind.SemicolonToken) {
+            throw Errors.argument("SemicolonToken");
+        }
+
+        this._constructorKeyword = constructorKeyword;
+        this._parameterList = parameterList;
+        this._block = block;
+        this._semicolonToken = semicolonToken;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ConstructorDeclaration;
+    }
+
+    public constructorKeyword(): ISyntaxToken {
+        return this._constructorKeyword;
+    }
+
+    public parameterList(): ParameterListSyntax {
+        return this._parameterList;
+    }
+
+    public block(): BlockSyntax {
+        return this._block;
+    }
+
+    public semicolonToken(): ISyntaxToken {
+        return this._semicolonToken;
+    }
+}
+
+class MemberDeclarationSyntax extends ClassElementSyntax {
+    private _publicOrPrivateKeyword: ISyntaxToken = null;
+    private _staticKeyword: ISyntaxToken = null;
+
+    constructor(publicOrPrivateKeyword: ISyntaxToken,
+                staticKeyword: ISyntaxToken) {
         super();
 
         if (publicOrPrivateKeyword !== null &&
@@ -1798,6 +1880,31 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
             throw Errors.argument("staticKeyword");
         }
 
+        this._publicOrPrivateKeyword = publicOrPrivateKeyword;
+        this._staticKeyword = staticKeyword;
+    }
+
+    public publicOrPrivateKeyword(): ISyntaxToken {
+        return this._publicOrPrivateKeyword;
+    }
+
+    public staticKeyword(): ISyntaxToken {
+        return this._staticKeyword;
+    }
+}
+
+class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
+    private _functionSignature: FunctionSignatureSyntax = null;
+    private _block: BlockSyntax = null;
+    private _semicolonToken: ISyntaxToken = null;
+
+    constructor(publicOrPrivateKeyword: ISyntaxToken,
+                staticKeyword: ISyntaxToken,
+                functionSignature: FunctionSignatureSyntax,
+                block: BlockSyntax,
+                semicolonToken: ISyntaxToken) {
+        super(publicOrPrivateKeyword, staticKeyword);
+
         if (functionSignature === null) {
             throw Errors.argumentNull("functionSignature");
         }
@@ -1808,8 +1915,6 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
             throw Errors.argument("semicolonToken");
         }
 
-        this._publicOrPrivateKeyword = publicOrPrivateKeyword;
-        this._staticKeyword = staticKeyword;
         this._functionSignature = functionSignature;
         this._block = block;
         this._semicolonToken = semicolonToken;
@@ -1817,14 +1922,6 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.MemberFunctionDeclaration;
-    }
-
-    public publicOrPrivateKeyword(): ISyntaxToken {
-        return this._publicOrPrivateKeyword;
-    }
-
-    public staticKeyword(): ISyntaxToken {
-        return this._staticKeyword;
     }
 
     public functionSignature(): FunctionSignatureSyntax {
@@ -1844,6 +1941,41 @@ class MemberAccessorDeclarationSyntax extends MemberDeclarationSyntax {
 }
 
 class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
+    private _variableDeclaration: VariableDeclarationSyntax = null;
+    private _semicolonToken: ISyntaxToken = null;
+
+    constructor(publicOrPrivateKeyword: ISyntaxToken,
+                staticKeyword: ISyntaxToken,
+                variableDeclaration: VariableDeclarationSyntax,
+                semicolonToken: ISyntaxToken) {
+        super(publicOrPrivateKeyword, staticKeyword);
+
+        if (variableDeclaration === null) {
+            throw Errors.argumentNull("variableDeclaration");
+        }
+
+        // TODO: Check that exactly one of 'block' and 'semicolon' is set.
+
+        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) {
+            throw Errors.argument("semicolonToken");
+        }
+
+        this._variableDeclaration = variableDeclaration;
+        this._semicolonToken = semicolonToken;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.MemberFunctionDeclaration;
+    }
+
+    public variableDeclaration(): VariableDeclarationSyntax {
+        return this._variableDeclaration;
+    }
+
+    public semicolonToken(): ISyntaxToken {
+        return this._semicolonToken;
+    }
+
 }
 
 class ReturnStatementSyntax extends StatementSyntax {
