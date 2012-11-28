@@ -69,11 +69,14 @@ enum SyntaxKind {
     YieldKeyword,
 
     // TypeScript keywords.
-    ModuleKeyword,
     AnyKeyword,
     BoolKeyword,
     NumberKeyword,
     StringKeyword,
+    ConstructorKeyword,
+    ModuleKeyword,
+    GetKeyword,
+    SetKeyword,
 
     // Punctuators
     OpenBraceToken,

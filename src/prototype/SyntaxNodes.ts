@@ -1751,3 +1751,9 @@ class ExpressionStatementSyntax extends StatementSyntax {
 
 class ClassElementSyntax extends SyntaxNode {
 }
+
+class ConstructorDeclarationSyntax extends ClassElementSyntax {
+}
+
+class MemberDeclarationSyntax extends ClassElementSyntax {
+}
