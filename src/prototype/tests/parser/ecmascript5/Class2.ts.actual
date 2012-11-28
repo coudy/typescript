@@ -43,7 +43,19 @@
                     "text": "implements",
                     "hasTrailingTrivia": true
                 },
-                "_typeNames": {}
+                "_typeNames": [
+                    {
+                        "kind": "IdentifierName",
+                        "_identifier": {
+                            "kind": "IdentifierNameToken",
+                            "start": 46,
+                            "width": 7,
+                            "fullWidth": 8,
+                            "text": "ILogger",
+                            "hasTrailingTrivia": true
+                        }
+                    }
+                ]
             },
             "_openBraceToken": {
                 "kind": "OpenBraceToken",
@@ -76,7 +88,46 @@
                             "width": 1,
                             "text": "("
                         },
-                        "_parameters": {},
+                        "_parameters": [
+                            {
+                                "kind": "Parameter",
+                                "_publicOrPrivateKeyword": {
+                                    "kind": "IdentifierNameToken",
+                                    "keywordKind": "PublicKeyword",
+                                    "start": 78,
+                                    "width": 6,
+                                    "fullWidth": 7,
+                                    "text": "public",
+                                    "hasTrailingTrivia": true
+                                },
+                                "_identifier": {
+                                    "kind": "IdentifierNameToken",
+                                    "start": 85,
+                                    "width": 6,
+                                    "text": "logger"
+                                },
+                                "_typeAnontation": {
+                                    "kind": "TypeAnnotation",
+                                    "_colonToken": {
+                                        "kind": "ColonToken",
+                                        "start": 91,
+                                        "width": 1,
+                                        "fullWidth": 2,
+                                        "text": ":",
+                                        "hasTrailingTrivia": true
+                                    },
+                                    "_type": {
+                                        "kind": "IdentifierName",
+                                        "_identifier": {
+                                            "kind": "IdentifierNameToken",
+                                            "start": 93,
+                                            "width": 7,
+                                            "text": "ILogger"
+                                        }
+                                    }
+                                }
+                            }
+                        ],
                         "_closeParenToken": {
                             "kind": "CloseParenToken",
                             "start": 100,
@@ -199,7 +250,7 @@
                                                 "width": 1,
                                                 "text": "("
                                             },
-                                            "_arguments": {},
+                                            "_arguments": [],
                                             "_closeParenToken": {
                                                 "kind": "CloseParenToken",
                                                 "start": 162,

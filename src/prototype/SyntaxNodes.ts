@@ -525,13 +525,11 @@ class FunctionDeclarationSyntax extends StatementSyntax {
 
 class VariableStatementSyntax extends StatementSyntax {
     private _exportKeyword: ISyntaxToken = null;
-    private _varKeyword: ISyntaxToken = null;
-    private _variableDeclarations: ISeparatedSyntaxList = null;
+    private _variableDeclaration: VariableDeclarationSyntax = null;
     private _semicolonToken: ISyntaxToken = null;
 
     constructor (exportKeyword: ISyntaxToken,
-                 varKeyword: ISyntaxToken,
-                 variableDeclarations: ISeparatedSyntaxList,
+                 variableDeclaration: VariableDeclarationSyntax,
                  semicolonToken: ISyntaxToken) {
         super();
 
@@ -539,12 +537,8 @@ class VariableStatementSyntax extends StatementSyntax {
             throw Errors.argument("exportKeyword");
         }
 
-        if (varKeyword.keywordKind() !== SyntaxKind.VarKeyword) {
-            throw Errors.argument("varKeyword");
-        }
-
-        if (variableDeclarations === null) {
-            throw Errors.argumentNull("variableDeclarations");
+        if (variableDeclaration === null) {
+            throw Errors.argumentNull("variableDeclaration");
         }
 
         if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) {
@@ -552,8 +546,7 @@ class VariableStatementSyntax extends StatementSyntax {
         }
 
         this._exportKeyword = exportKeyword;
-        this._varKeyword = varKeyword;
-        this._variableDeclarations = variableDeclarations;
+        this._variableDeclaration = variableDeclaration;
         this._semicolonToken = semicolonToken;
     }
 
@@ -565,12 +558,8 @@ class VariableStatementSyntax extends StatementSyntax {
         return this._exportKeyword;
     }
 
-    public varKeyword(): ISyntaxToken {
-        return this._varKeyword;
-    }
-
-    public variableDeclarations(): ISeparatedSyntaxList {
-        return this._variableDeclarations;
+    public variableDeclaration(): VariableDeclarationSyntax {
+        return this._variableDeclaration;
     }
 
     public semicolonToken(): ISyntaxToken {
@@ -582,6 +571,39 @@ class ExpressionSyntax extends SyntaxNode {
 }
 
 class VariableDeclarationSyntax extends SyntaxNode {
+    private _varKeyword: ISyntaxToken = null;
+    private _variableDeclarators: ISeparatedSyntaxList = null;
+
+    constructor(varKeyword: ISyntaxToken,
+                variableDeclarators: ISeparatedSyntaxList) {
+        super();
+
+        if (varKeyword.keywordKind() !== SyntaxKind.VarKeyword) {
+            throw Errors.argument("varKeyword");
+        }
+
+        if (variableDeclarators === null) {
+            throw Errors.argumentNull("variableDeclarators");
+        }
+
+        this._varKeyword = varKeyword;
+        this._variableDeclarators = variableDeclarators;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.VariableDeclaration;
+    }
+
+    public varKeyword(): ISyntaxToken {
+        return this._varKeyword;
+    }
+
+    public variableDeclarators(): ISeparatedSyntaxList {
+        return this._variableDeclarators;
+    }
+}
+
+class VariableDeclaratorSyntax extends SyntaxNode {
     private _identifier: ISyntaxToken = null;
     private _typeAnnotation: TypeAnnotationSyntax = null;
     private _equalsValueClause: EqualsValueClauseSyntax = null;
@@ -601,7 +623,7 @@ class VariableDeclarationSyntax extends SyntaxNode {
     }
 
     public kind(): SyntaxKind {
-        return SyntaxKind.VariableDeclaration;
+        return SyntaxKind.VariableDeclarator;
     }
 
     public identifier(): ISyntaxToken {
@@ -631,6 +653,10 @@ class EqualsValueClauseSyntax extends SyntaxNode {
 
         this._equalsToken = equalsToken;
         this._value = value;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.EqualsValueClause;
     }
 
     public equalsValue(): ISyntaxToken {
@@ -1937,17 +1963,17 @@ class MemberAccessorDeclarationSyntax extends MemberDeclarationSyntax {
 }
 
 class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
-    private _variableDeclaration: VariableDeclarationSyntax = null;
+    private _variableDeclarator: VariableDeclaratorSyntax = null;
     private _semicolonToken: ISyntaxToken = null;
 
     constructor(publicOrPrivateKeyword: ISyntaxToken,
                 staticKeyword: ISyntaxToken,
-                variableDeclaration: VariableDeclarationSyntax,
+                variableDeclarator: VariableDeclaratorSyntax,
                 semicolonToken: ISyntaxToken) {
         super(publicOrPrivateKeyword, staticKeyword);
 
-        if (variableDeclaration === null) {
-            throw Errors.argumentNull("variableDeclaration");
+        if (variableDeclarator === null) {
+            throw Errors.argumentNull("variableDeclarator");
         }
 
         // TODO: Check that exactly one of 'block' and 'semicolon' is set.
@@ -1956,7 +1982,7 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
             throw Errors.argument("semicolonToken");
         }
 
-        this._variableDeclaration = variableDeclaration;
+        this._variableDeclarator = variableDeclarator;
         this._semicolonToken = semicolonToken;
     }
 
@@ -1964,8 +1990,8 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
         return SyntaxKind.MemberFunctionDeclaration;
     }
 
-    public variableDeclaration(): VariableDeclarationSyntax {
-        return this._variableDeclaration;
+    public variableDeclarator(): VariableDeclaratorSyntax {
+        return this._variableDeclarator;
     }
 
     public semicolonToken(): ISyntaxToken {
@@ -2219,5 +2245,161 @@ class BreakStatementSyntax extends StatementSyntax {
 
     public semicolonToken(): ISyntaxToken {
         return this._semicolonToken;
+    }
+}
+
+class BaseForStatementSyntax extends StatementSyntax {
+    private _forKeyword: ISyntaxToken = null;
+    private _openParenToken: ISyntaxToken = null;
+    private _variableDeclaration: VariableDeclarationSyntax = null;
+    private _closeParenToken: ISyntaxToken = null;
+    private _statement: StatementSyntax = null;
+
+    constructor(forKeyword: ISyntaxToken,
+                openParenToken: ISyntaxToken,
+                variableDeclaration: VariableDeclarationSyntax,
+                closeParenToken: ISyntaxToken,
+                statement: StatementSyntax) {
+        super();
+
+        if (forKeyword.keywordKind() !== SyntaxKind.ForKeyword) {
+            throw Errors.argument("forKeyword");
+        }
+
+        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) {
+            throw Errors.argument("openParenToken");
+        }
+
+        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) {
+            throw Errors.argument("closeParenToken");
+        }
+
+        if (statement === null) {
+            throw Errors.argumentNull("statement");
+        }
+
+        this._forKeyword = forKeyword;
+        this._openParenToken = openParenToken;
+        this._variableDeclaration = variableDeclaration;
+        this._closeParenToken = closeParenToken;
+        this._statement = statement;
+    }
+
+    public forKeyword(): ISyntaxToken {
+        return this._forKeyword;
+    }
+
+    public openParenToken(): ISyntaxToken {
+        return this._openParenToken;
+    }
+
+    public variableDeclaration(): VariableDeclarationSyntax {
+        return this._variableDeclaration;
+    }
+
+    public closeParenToken(): ISyntaxToken {
+        return this._closeParenToken;
+    }
+
+    public statement(): StatementSyntax {
+        return this._statement;
+    }
+}
+
+class ForStatementSyntax extends BaseForStatementSyntax {
+    private _initializer: ExpressionSyntax = null;
+    private _firstSemicolonToken: ISyntaxToken = null;
+    private _condition: ExpressionSyntax = null;
+    private _secondSemicolonToken: ISyntaxToken = null;
+    private _incrementor: ExpressionSyntax = null;
+
+    constructor(forKeyword: ISyntaxToken,
+                openParenToken: ISyntaxToken,
+                variableDeclaration: VariableDeclarationSyntax,
+                initializer: ExpressionSyntax,
+                firstSemicolonToken: ISyntaxToken,
+                condition: ExpressionSyntax,
+                secondSemicolonToken: ISyntaxToken,
+                incrementor: ExpressionSyntax,
+                closeParenToken: ISyntaxToken,
+                statement: StatementSyntax) {
+        super(forKeyword, openParenToken, variableDeclaration, closeParenToken, statement);
+
+        // TODO: Check that exactly one of variableDeclaration and initializer is set.
+
+        if (firstSemicolonToken.kind() !== SyntaxKind.SemicolonToken) {
+            throw Errors.argument("firstSemicolonToken");
+        }
+
+        if (secondSemicolonToken.kind() !== SyntaxKind.SemicolonToken) {
+            throw Errors.argument("secondSemicolonToken");
+        }
+
+        this._initializer = initializer;
+        this._firstSemicolonToken = firstSemicolonToken;
+        this._condition = condition;
+        this._secondSemicolonToken = secondSemicolonToken;
+        this._incrementor = incrementor;
+    }
+
+    public initializer(): ExpressionSyntax {
+        return this._initializer;
+    }
+
+    public firstSemicolonToken(): ISyntaxToken {
+        return this._firstSemicolonToken;
+    }
+
+    public condition(): ExpressionSyntax {
+        return this._condition;
+    }
+
+    public secondSemicolonToken(): ISyntaxToken {
+        return this._secondSemicolonToken;
+    }
+
+    public incrementor(): ExpressionSyntax {
+        return this._incrementor;
+    }
+}
+
+class ForInStatementSyntax extends BaseForStatementSyntax {
+    private _left: ExpressionSyntax = null;
+    private _inKeyword: ISyntaxToken = null;
+    private _expression: ExpressionSyntax = null;
+
+    constructor(forKeyword: ISyntaxToken,
+                openParenToken: ISyntaxToken,
+                variableDeclaration: VariableDeclarationSyntax,
+                left: ExpressionSyntax,
+                inKeyword: ISyntaxToken,
+                expression: ExpressionSyntax,
+                closeParenToken: ISyntaxToken,
+                statement: StatementSyntax) {
+        super(forKeyword, openParenToken, variableDeclaration, closeParenToken, statement);
+
+        if (inKeyword.keywordKind() !== SyntaxKind.InKeyword) {
+            throw Errors.argument("inKeyword");
+        }
+
+        if (expression === null) {
+            throw Errors.argumentNull("expression");
+        }
+
+        this._left = left;
+        this._inKeyword = inKeyword;
+        this._expression = expression;
+    }
+
+    public left(): ExpressionSyntax {
+        return this._left;
+    }
+
+    public inKeyword(): ISyntaxToken {
+        return this._inKeyword;
+    }
+
+    public expression(): ExpressionSyntax {
+        return this._expression;
     }
 }

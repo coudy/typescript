@@ -1090,9 +1090,9 @@ var Parser = (function () {
         if(this.currentToken().kind() === SyntaxKind.StaticKeyword) {
             staticKeyword = this.eatToken(SyntaxKind.StaticKeyword);
         }
-        var variableDeclaration = this.parseVariableDeclaration();
+        var variableDeclarator = this.parseVariableDeclarator(true);
         var semicolon = this.eatExplicitOrAutomaticSemicolon();
-        return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclaration, semicolon);
+        return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolon);
     };
     Parser.prototype.parseMemberDeclaration = function () {
         Debug.assert(this.isMemberDeclaration());
@@ -1351,7 +1351,11 @@ var Parser = (function () {
                                     if(this.isBreakStatement()) {
                                         return this.parseBreakStatement();
                                     } else {
-                                        throw Errors.notYetImplemented();
+                                        if(this.isForOrForInStatement()) {
+                                            return this.parseForOrForInStatement();
+                                        } else {
+                                            throw Errors.notYetImplemented();
+                                        }
                                     }
                                 }
                             }
@@ -1360,6 +1364,76 @@ var Parser = (function () {
                 }
             }
         }
+    };
+    Parser.prototype.isForOrForInStatement = function () {
+        return this.currentToken().keywordKind() === SyntaxKind.ForKeyword;
+    };
+    Parser.prototype.parseForOrForInStatement = function () {
+        Debug.assert(this.isForOrForInStatement());
+        var forKeyword = this.eatKeyword(SyntaxKind.ForKeyword);
+        var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
+        var currentToken = this.currentToken();
+        if(currentToken.keywordKind() === SyntaxKind.VarKeyword) {
+            return this.parseForOrForInStatementWithVariableDeclaration(forKeyword, openParenToken);
+        } else {
+            if(currentToken.kind() === SyntaxKind.SemicolonToken) {
+                return this.parseForStatement(forKeyword, openParenToken);
+            } else {
+                return this.parseForOrForInStatementWithInitializer(forKeyword, openParenToken);
+            }
+        }
+    };
+    Parser.prototype.parseForOrForInStatementWithVariableDeclaration = function (forKeyword, openParenToken) {
+        Debug.assert(forKeyword.keywordKind() === SyntaxKind.ForKeyword && openParenToken.kind() === SyntaxKind.OpenParenToken);
+        Debug.assert(this.previousToken.kind() === SyntaxKind.OpenParenToken);
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.VarKeyword);
+        var variableDeclaration = this.parseVariableDeclaration(false);
+        if(this.currentToken().keywordKind() === SyntaxKind.InKeyword) {
+            return this.parseForInStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, variableDeclaration, null);
+        }
+        return this.parseForStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, variableDeclaration, null);
+    };
+    Parser.prototype.parseForInStatementWithVariableDeclarationOrInitializer = function (forKeyword, openParenToken, variableDeclaration, initializer) {
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.InKeyword);
+        var inKeyword = this.eatKeyword(SyntaxKind.InKeyword);
+        var expression = this.parseExpression(true);
+        var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
+        var statement = this.parseStatement(false);
+        return new ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, inKeyword, expression, closeParenToken, statement);
+    };
+    Parser.prototype.parseForOrForInStatementWithInitializer = function (forKeyword, openParenToken) {
+        Debug.assert(forKeyword.keywordKind() === SyntaxKind.ForKeyword && openParenToken.kind() === SyntaxKind.OpenParenToken);
+        Debug.assert(this.previousToken.kind() === SyntaxKind.OpenParenToken);
+        var initializer = this.parseExpression(false);
+        if(this.currentToken().keywordKind() === SyntaxKind.InKeyword) {
+            return this.parseForInStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, null, initializer);
+        } else {
+            return this.parseForStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, null, initializer);
+        }
+    };
+    Parser.prototype.parseForStatement = function (forKeyword, openParenToken) {
+        Debug.assert(forKeyword.keywordKind() === SyntaxKind.ForKeyword && openParenToken.kind() === SyntaxKind.OpenParenToken);
+        Debug.assert(this.previousToken.kind() === SyntaxKind.OpenParenToken);
+        var initializer = null;
+        if(this.currentToken().kind() !== SyntaxKind.SemicolonToken && this.currentToken().kind() !== SyntaxKind.CloseParenToken && this.currentToken().kind() !== SyntaxKind.EndOfFileToken) {
+            initializer = this.parseExpression(false);
+        }
+        return this.parseForStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, null, initializer);
+    };
+    Parser.prototype.parseForStatementWithVariableDeclarationOrInitializer = function (forKeyword, openParenToken, variableDeclaration, initializer) {
+        var firstSemicolonToken = this.eatToken(SyntaxKind.SemicolonToken);
+        var condition = null;
+        if(this.currentToken().kind() !== SyntaxKind.SemicolonToken && this.currentToken().kind() !== SyntaxKind.CloseParenToken && this.currentToken().kind() !== SyntaxKind.EndOfFileToken) {
+            condition = this.parseExpression(true);
+        }
+        var secondSemicolonToken = this.eatToken(SyntaxKind.SemicolonToken);
+        var incrementor = null;
+        if(this.currentToken().kind() !== SyntaxKind.CloseParenToken && this.currentToken().kind() !== SyntaxKind.EndOfFileToken) {
+            incrementor = this.parseExpression(true);
+        }
+        var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
+        var statement = this.parseStatement(false);
+        return new ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement);
     };
     Parser.prototype.isBreakStatement = function () {
         return this.currentToken().keywordKind() === SyntaxKind.BreakKeyword;
@@ -1528,27 +1602,28 @@ var Parser = (function () {
         if(this.currentToken().keywordKind() === SyntaxKind.ExportKeyword) {
             exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
         }
+        var variableDeclaration = this.parseVariableDeclaration(true);
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+        return new VariableStatementSyntax(exportKeyword, variableDeclaration, semicolonToken);
+    };
+    Parser.prototype.parseVariableDeclaration = function (allowIn) {
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.VarKeyword);
         var varKeyword = this.eatKeyword(SyntaxKind.VarKeyword);
-        var variableDeclarations = [];
-        var variableDeclaration = this.parseVariableDeclaration();
-        variableDeclarations.push(variableDeclaration);
+        var variableDeclarators = [];
+        var variableDeclarator = this.parseVariableDeclarator(allowIn);
+        variableDeclarators.push(variableDeclarator);
         while(true) {
-            if(this.currentToken().kind() === SyntaxKind.CommaToken) {
-                var commaToken = this.eatToken(SyntaxKind.CommaToken);
-                variableDeclarations.push(commaToken);
-                variableDeclaration = this.parseVariableDeclaration();
-                variableDeclarations.push(variableDeclaration);
-                continue;
-            }
-            if(this.canEatExplicitOrAutomaticSemicolon()) {
+            if(this.currentToken().kind() !== SyntaxKind.CommaToken) {
                 break;
             }
-            break;
+            var commaToken = this.eatToken(SyntaxKind.CommaToken);
+            variableDeclarators.push(commaToken);
+            variableDeclarator = this.parseVariableDeclarator(allowIn);
+            variableDeclarators.push(variableDeclarator);
         }
-        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
-        return new VariableStatementSyntax(exportKeyword, varKeyword, SeparatedSyntaxList.create(variableDeclarations), semicolonToken);
+        return new VariableDeclarationSyntax(varKeyword, SeparatedSyntaxList.create(variableDeclarators));
     };
-    Parser.prototype.parseVariableDeclaration = function () {
+    Parser.prototype.parseVariableDeclarator = function (allowIn) {
         var identifier = this.eatIdentifierToken();
         var equalsValueClause = null;
         var typeAnnotation = null;
@@ -1557,18 +1632,18 @@ var Parser = (function () {
                 typeAnnotation = this.parseTypeAnnotation();
             }
             if(this.isEqualsValueClause()) {
-                equalsValueClause = this.parseEqualsValuesClause();
+                equalsValueClause = this.parseEqualsValuesClause(allowIn);
             }
         }
-        return new VariableDeclarationSyntax(identifier, typeAnnotation, equalsValueClause);
+        return new VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause);
     };
     Parser.prototype.isEqualsValueClause = function () {
         return this.currentToken().kind() === SyntaxKind.EqualsToken;
     };
-    Parser.prototype.parseEqualsValuesClause = function () {
+    Parser.prototype.parseEqualsValuesClause = function (allowIn) {
         Debug.assert(this.isEqualsValueClause());
         var equalsToken = this.eatToken(SyntaxKind.EqualsToken);
-        var value = this.parseAssignmentExpression(true);
+        var value = this.parseAssignmentExpression(allowIn);
         return new EqualsValueClauseSyntax(equalsToken, value);
     };
     Parser.prototype.parseExpression = function (allowIn) {
@@ -2100,7 +2175,7 @@ var Parser = (function () {
         }
         var equalsValueClause = null;
         if(this.isEqualsValueClause()) {
-            equalsValueClause = this.parseEqualsValuesClause();
+            equalsValueClause = this.parseEqualsValuesClause(true);
         }
         return new ParameterSyntax(dotDotDotToken, publicOrPrivateToken, identifier, questionToken, typeAnnotation, equalsValueClause);
     };
@@ -2955,6 +3030,9 @@ var Scanner = (function () {
 var SeparatedSyntaxList = (function () {
     function SeparatedSyntaxList() { }
     SeparatedSyntaxList.empty = {
+        toJSON: function (key) {
+            return [];
+        },
         count: function () {
             return 0;
         },
@@ -2974,6 +3052,13 @@ var SeparatedSyntaxList = (function () {
             throw Errors.argumentOutOfRange("index");
         }
     };
+    SeparatedSyntaxList.toJSON = function toJSON(list) {
+        var result = [];
+        for(var i = 0; i < list.count(); i++) {
+            result.push(list.itemAt(i));
+        }
+        return result;
+    }
     SeparatedSyntaxList.create = function create(nodes) {
         if(nodes === null || nodes.length === 0) {
             return SeparatedSyntaxList.empty;
@@ -2988,7 +3073,11 @@ var SeparatedSyntaxList = (function () {
         }
         if(nodes.length === 1) {
             var item = nodes[0];
-            return {
+            var list;
+            list = {
+                toJSON: function (key) {
+                    return SeparatedSyntaxList.toJSON(list);
+                },
                 count: function () {
                     return 1;
                 },
@@ -2999,7 +3088,10 @@ var SeparatedSyntaxList = (function () {
                     return 0;
                 },
                 itemAt: function (index) {
-                    throw Errors.argumentOutOfRange("index");
+                    if(index !== 0) {
+                        throw Errors.argumentOutOfRange("index");
+                    }
+                    return item;
                 },
                 syntaxNodeAt: function (index) {
                     if(index !== 0) {
@@ -3011,8 +3103,13 @@ var SeparatedSyntaxList = (function () {
                     throw Errors.argumentOutOfRange("index");
                 }
             };
+            return list;
         }
-        return {
+        var list;
+        list = {
+            toJSON: function (key) {
+                return SeparatedSyntaxList.toJSON(list);
+            },
             count: function () {
                 return nodes.length;
             },
@@ -3043,6 +3140,7 @@ var SeparatedSyntaxList = (function () {
                 return nodes[value];
             }
         };
+        return list;
     }
     return SeparatedSyntaxList;
 })();
@@ -3959,18 +4057,22 @@ var SyntaxKind;
     SyntaxKind.ThisExpression = 185;
     SyntaxKind._map[186] = "VariableDeclaration";
     SyntaxKind.VariableDeclaration = 186;
-    SyntaxKind._map[187] = "Parameter";
-    SyntaxKind.Parameter = 187;
-    SyntaxKind._map[188] = "FunctionSignature";
-    SyntaxKind.FunctionSignature = 188;
-    SyntaxKind._map[189] = "ParameterList";
-    SyntaxKind.ParameterList = 189;
-    SyntaxKind._map[190] = "ArgumentList";
-    SyntaxKind.ArgumentList = 190;
-    SyntaxKind._map[191] = "ImplementsClause";
-    SyntaxKind.ImplementsClause = 191;
-    SyntaxKind._map[192] = "TypeAnnotation";
-    SyntaxKind.TypeAnnotation = 192;
+    SyntaxKind._map[187] = "VariableDeclarator";
+    SyntaxKind.VariableDeclarator = 187;
+    SyntaxKind._map[188] = "Parameter";
+    SyntaxKind.Parameter = 188;
+    SyntaxKind._map[189] = "FunctionSignature";
+    SyntaxKind.FunctionSignature = 189;
+    SyntaxKind._map[190] = "ParameterList";
+    SyntaxKind.ParameterList = 190;
+    SyntaxKind._map[191] = "ArgumentList";
+    SyntaxKind.ArgumentList = 191;
+    SyntaxKind._map[192] = "ImplementsClause";
+    SyntaxKind.ImplementsClause = 192;
+    SyntaxKind._map[193] = "TypeAnnotation";
+    SyntaxKind.TypeAnnotation = 193;
+    SyntaxKind._map[194] = "EqualsValueClause";
+    SyntaxKind.EqualsValueClause = 194;
     SyntaxKind.FirstStandardKeyword = SyntaxKind.BreakKeyword;
     SyntaxKind.LastStandardKeyword = SyntaxKind.WithKeyword;
     SyntaxKind.FirstFutureReservedKeyword = SyntaxKind.ClassKeyword;
@@ -4847,27 +4949,22 @@ var FunctionDeclarationSyntax = (function (_super) {
 })(StatementSyntax);
 var VariableStatementSyntax = (function (_super) {
     __extends(VariableStatementSyntax, _super);
-    function VariableStatementSyntax(exportKeyword, varKeyword, variableDeclarations, semicolonToken) {
+    function VariableStatementSyntax(exportKeyword, variableDeclaration, semicolonToken) {
         _super.call(this);
         this._exportKeyword = null;
-        this._varKeyword = null;
-        this._variableDeclarations = null;
+        this._variableDeclaration = null;
         this._semicolonToken = null;
         if(exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
             throw Errors.argument("exportKeyword");
         }
-        if(varKeyword.keywordKind() !== SyntaxKind.VarKeyword) {
-            throw Errors.argument("varKeyword");
-        }
-        if(variableDeclarations === null) {
-            throw Errors.argumentNull("variableDeclarations");
+        if(variableDeclaration === null) {
+            throw Errors.argumentNull("variableDeclaration");
         }
         if(semicolonToken.kind() !== SyntaxKind.SemicolonToken) {
             throw Errors.argument("semicolonToken");
         }
         this._exportKeyword = exportKeyword;
-        this._varKeyword = varKeyword;
-        this._variableDeclarations = variableDeclarations;
+        this._variableDeclaration = variableDeclaration;
         this._semicolonToken = semicolonToken;
     }
     VariableStatementSyntax.prototype.kind = function () {
@@ -4876,11 +4973,8 @@ var VariableStatementSyntax = (function (_super) {
     VariableStatementSyntax.prototype.exportKeyword = function () {
         return this._exportKeyword;
     };
-    VariableStatementSyntax.prototype.varKeyword = function () {
-        return this._varKeyword;
-    };
-    VariableStatementSyntax.prototype.variableDeclarations = function () {
-        return this._variableDeclarations;
+    VariableStatementSyntax.prototype.variableDeclaration = function () {
+        return this._variableDeclaration;
     };
     VariableStatementSyntax.prototype.semicolonToken = function () {
         return this._semicolonToken;
@@ -4897,7 +4991,33 @@ var ExpressionSyntax = (function (_super) {
 })(SyntaxNode);
 var VariableDeclarationSyntax = (function (_super) {
     __extends(VariableDeclarationSyntax, _super);
-    function VariableDeclarationSyntax(identifier, typeAnnotation, equalsValueClause) {
+    function VariableDeclarationSyntax(varKeyword, variableDeclarators) {
+        _super.call(this);
+        this._varKeyword = null;
+        this._variableDeclarators = null;
+        if(varKeyword.keywordKind() !== SyntaxKind.VarKeyword) {
+            throw Errors.argument("varKeyword");
+        }
+        if(variableDeclarators === null) {
+            throw Errors.argumentNull("variableDeclarators");
+        }
+        this._varKeyword = varKeyword;
+        this._variableDeclarators = variableDeclarators;
+    }
+    VariableDeclarationSyntax.prototype.kind = function () {
+        return SyntaxKind.VariableDeclaration;
+    };
+    VariableDeclarationSyntax.prototype.varKeyword = function () {
+        return this._varKeyword;
+    };
+    VariableDeclarationSyntax.prototype.variableDeclarators = function () {
+        return this._variableDeclarators;
+    };
+    return VariableDeclarationSyntax;
+})(SyntaxNode);
+var VariableDeclaratorSyntax = (function (_super) {
+    __extends(VariableDeclaratorSyntax, _super);
+    function VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause) {
         _super.call(this);
         this._identifier = null;
         this._typeAnnotation = null;
@@ -4909,19 +5029,19 @@ var VariableDeclarationSyntax = (function (_super) {
         this._typeAnnotation = typeAnnotation;
         this._equalsValueClause = equalsValueClause;
     }
-    VariableDeclarationSyntax.prototype.kind = function () {
-        return SyntaxKind.VariableDeclaration;
+    VariableDeclaratorSyntax.prototype.kind = function () {
+        return SyntaxKind.VariableDeclarator;
     };
-    VariableDeclarationSyntax.prototype.identifier = function () {
+    VariableDeclaratorSyntax.prototype.identifier = function () {
         return this._identifier;
     };
-    VariableDeclarationSyntax.prototype.typeAnnotation = function () {
+    VariableDeclaratorSyntax.prototype.typeAnnotation = function () {
         return this._typeAnnotation;
     };
-    VariableDeclarationSyntax.prototype.equalsValueClause = function () {
+    VariableDeclaratorSyntax.prototype.equalsValueClause = function () {
         return this._equalsValueClause;
     };
-    return VariableDeclarationSyntax;
+    return VariableDeclaratorSyntax;
 })(SyntaxNode);
 var EqualsValueClauseSyntax = (function (_super) {
     __extends(EqualsValueClauseSyntax, _super);
@@ -4935,6 +5055,9 @@ var EqualsValueClauseSyntax = (function (_super) {
         this._equalsToken = equalsToken;
         this._value = value;
     }
+    EqualsValueClauseSyntax.prototype.kind = function () {
+        return SyntaxKind.EqualsValueClause;
+    };
     EqualsValueClauseSyntax.prototype.equalsValue = function () {
         return this._equalsToken;
     };
@@ -5987,24 +6110,24 @@ var MemberAccessorDeclarationSyntax = (function (_super) {
 })(MemberDeclarationSyntax);
 var MemberVariableDeclarationSyntax = (function (_super) {
     __extends(MemberVariableDeclarationSyntax, _super);
-    function MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclaration, semicolonToken) {
+    function MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolonToken) {
         _super.call(this, publicOrPrivateKeyword, staticKeyword);
-        this._variableDeclaration = null;
+        this._variableDeclarator = null;
         this._semicolonToken = null;
-        if(variableDeclaration === null) {
-            throw Errors.argumentNull("variableDeclaration");
+        if(variableDeclarator === null) {
+            throw Errors.argumentNull("variableDeclarator");
         }
         if(semicolonToken.kind() !== SyntaxKind.SemicolonToken) {
             throw Errors.argument("semicolonToken");
         }
-        this._variableDeclaration = variableDeclaration;
+        this._variableDeclarator = variableDeclarator;
         this._semicolonToken = semicolonToken;
     }
     MemberVariableDeclarationSyntax.prototype.kind = function () {
         return SyntaxKind.MemberFunctionDeclaration;
     };
-    MemberVariableDeclarationSyntax.prototype.variableDeclaration = function () {
-        return this._variableDeclaration;
+    MemberVariableDeclarationSyntax.prototype.variableDeclarator = function () {
+        return this._variableDeclarator;
     };
     MemberVariableDeclarationSyntax.prototype.semicolonToken = function () {
         return this._semicolonToken;
@@ -6200,6 +6323,116 @@ var BreakStatementSyntax = (function (_super) {
     };
     return BreakStatementSyntax;
 })(StatementSyntax);
+var BaseForStatementSyntax = (function (_super) {
+    __extends(BaseForStatementSyntax, _super);
+    function BaseForStatementSyntax(forKeyword, openParenToken, variableDeclaration, closeParenToken, statement) {
+        _super.call(this);
+        this._forKeyword = null;
+        this._openParenToken = null;
+        this._variableDeclaration = null;
+        this._closeParenToken = null;
+        this._statement = null;
+        if(forKeyword.keywordKind() !== SyntaxKind.ForKeyword) {
+            throw Errors.argument("forKeyword");
+        }
+        if(openParenToken.kind() !== SyntaxKind.OpenParenToken) {
+            throw Errors.argument("openParenToken");
+        }
+        if(closeParenToken.kind() !== SyntaxKind.CloseParenToken) {
+            throw Errors.argument("closeParenToken");
+        }
+        if(statement === null) {
+            throw Errors.argumentNull("statement");
+        }
+        this._forKeyword = forKeyword;
+        this._openParenToken = openParenToken;
+        this._variableDeclaration = variableDeclaration;
+        this._closeParenToken = closeParenToken;
+        this._statement = statement;
+    }
+    BaseForStatementSyntax.prototype.forKeyword = function () {
+        return this._forKeyword;
+    };
+    BaseForStatementSyntax.prototype.openParenToken = function () {
+        return this._openParenToken;
+    };
+    BaseForStatementSyntax.prototype.variableDeclaration = function () {
+        return this._variableDeclaration;
+    };
+    BaseForStatementSyntax.prototype.closeParenToken = function () {
+        return this._closeParenToken;
+    };
+    BaseForStatementSyntax.prototype.statement = function () {
+        return this._statement;
+    };
+    return BaseForStatementSyntax;
+})(StatementSyntax);
+var ForStatementSyntax = (function (_super) {
+    __extends(ForStatementSyntax, _super);
+    function ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement) {
+        _super.call(this, forKeyword, openParenToken, variableDeclaration, closeParenToken, statement);
+        this._initializer = null;
+        this._firstSemicolonToken = null;
+        this._condition = null;
+        this._secondSemicolonToken = null;
+        this._incrementor = null;
+        if(firstSemicolonToken.kind() !== SyntaxKind.SemicolonToken) {
+            throw Errors.argument("firstSemicolonToken");
+        }
+        if(secondSemicolonToken.kind() !== SyntaxKind.SemicolonToken) {
+            throw Errors.argument("secondSemicolonToken");
+        }
+        this._initializer = initializer;
+        this._firstSemicolonToken = firstSemicolonToken;
+        this._condition = condition;
+        this._secondSemicolonToken = secondSemicolonToken;
+        this._incrementor = incrementor;
+    }
+    ForStatementSyntax.prototype.initializer = function () {
+        return this._initializer;
+    };
+    ForStatementSyntax.prototype.firstSemicolonToken = function () {
+        return this._firstSemicolonToken;
+    };
+    ForStatementSyntax.prototype.condition = function () {
+        return this._condition;
+    };
+    ForStatementSyntax.prototype.secondSemicolonToken = function () {
+        return this._secondSemicolonToken;
+    };
+    ForStatementSyntax.prototype.incrementor = function () {
+        return this._incrementor;
+    };
+    return ForStatementSyntax;
+})(BaseForStatementSyntax);
+var ForInStatementSyntax = (function (_super) {
+    __extends(ForInStatementSyntax, _super);
+    function ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration, left, inKeyword, expression, closeParenToken, statement) {
+        _super.call(this, forKeyword, openParenToken, variableDeclaration, closeParenToken, statement);
+        this._left = null;
+        this._inKeyword = null;
+        this._expression = null;
+        if(inKeyword.keywordKind() !== SyntaxKind.InKeyword) {
+            throw Errors.argument("inKeyword");
+        }
+        if(expression === null) {
+            throw Errors.argumentNull("expression");
+        }
+        this._left = left;
+        this._inKeyword = inKeyword;
+        this._expression = expression;
+    }
+    ForInStatementSyntax.prototype.left = function () {
+        return this._left;
+    };
+    ForInStatementSyntax.prototype.inKeyword = function () {
+        return this._inKeyword;
+    };
+    ForInStatementSyntax.prototype.expression = function () {
+        return this._expression;
+    };
+    return ForInStatementSyntax;
+})(BaseForStatementSyntax);
 var SyntaxToken = (function () {
     function SyntaxToken() { }
     SyntaxToken.create = function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {

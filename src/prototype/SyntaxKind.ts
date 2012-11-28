@@ -220,12 +220,14 @@ enum SyntaxKind {
     ThisExpression,
 
     VariableDeclaration,
+    VariableDeclarator,
     Parameter,
     FunctionSignature,
     ParameterList,
     ArgumentList,
     ImplementsClause,
     TypeAnnotation,
+    EqualsValueClause,
 
     FirstStandardKeyword = BreakKeyword,
     LastStandardKeyword = WithKeyword,
