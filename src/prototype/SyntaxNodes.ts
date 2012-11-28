@@ -2049,3 +2049,135 @@ class ObjectCreationExpressionSyntax extends ExpressionSyntax {
         return this._argumentList;
     }
 }
+
+class SwitchStatementSyntax extends StatementSyntax {
+    private _switchKeyword: ISyntaxToken = null;
+    private _openParenToken: ISyntaxToken = null;
+    private _expression: ExpressionSyntax = null;
+    private _closeParenToken: ISyntaxToken = null;
+    private _openBraceToken: ISyntaxToken = null;
+    private _caseClauses: ISyntaxNodeList = null;
+    private _closeBraceToken: ISyntaxToken = null;
+
+    constructor(switchKeyword: ISyntaxToken,
+                openParenToken: ISyntaxToken,
+                expression: ExpressionSyntax,
+                closeParenToken: ISyntaxToken,
+                openBraceToken: ISyntaxToken,
+                caseClauses: ISyntaxNodeList,
+                closeBraceToken: ISyntaxToken) {
+        super();
+
+        if (switchKeyword.keywordKind() !== SyntaxKind.SwitchKeyword) {
+            throw Errors.argument("switchKeyword");
+        }
+
+        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) {
+            throw Errors.argument("openParenToken");
+        }
+
+        if (expression === null) {
+            throw Errors.argumentNull("expression");
+        }
+
+        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) {
+            throw Errors.argument("closeParenToken");
+        }
+
+        if (openBraceToken.kind() !== SyntaxKind.OpenBraceToken) {
+            throw Errors.argument("openBraceToken");
+        }
+
+        if (caseClauses === null) {
+            throw Errors.argumentNull("caseClauses");
+        }
+
+        if (closeBraceToken.kind() !== SyntaxKind.CloseBraceToken) {
+            throw Errors.argument("closeBraceToken");
+        }
+
+        this._switchKeyword = switchKeyword;
+        this._openParenToken = openParenToken;
+        this._expression = expression;
+        this._closeParenToken = closeParenToken;
+        this._openBraceToken = openBraceToken;
+        this._caseClauses = caseClauses;
+        this._closeBraceToken = closeBraceToken;
+    }
+
+    public switchKeyword(): ISyntaxToken {
+        return this._switchKeyword;
+    }
+
+    public openParenToken(): ISyntaxToken {
+        return this._openParenToken;
+    }
+
+    public expression(): ExpressionSyntax {
+        return this._expression;
+    }
+
+    public closeParenToken(): ISyntaxToken {
+        return this._closeParenToken;
+    }
+
+    public openBraceToken(): ISyntaxToken {
+        return this._openBraceToken;
+    }
+
+    public caseClauses(): ISyntaxNodeList {
+        return this._caseClauses;
+    }
+
+    public closeBraceToken(): ISyntaxToken {
+        return this._closeBraceToken;
+    }
+}
+
+class CaseClauseSyntax extends SyntaxNode {
+    private _caseOrDefaultKeyword: ISyntaxToken = null;
+    private _expression: ExpressionSyntax = null;
+    private _colonToken: ISyntaxToken = null;
+    private _statements: ISyntaxNodeList = null;
+
+    constructor(caseOrDefaultKeyword: ISyntaxToken,
+                expression: ExpressionSyntax,
+                colonToken: ISyntaxToken,
+                statements: ISyntaxNodeList) {
+        super();
+
+        if (caseOrDefaultKeyword.keywordKind() !== SyntaxKind.CaseKeyword &&
+            caseOrDefaultKeyword.keywordKind() !== SyntaxKind.DefaultKeyword) {
+            throw Errors.argument("caseOrDefaultKeyword");
+        }
+
+        if (colonToken.kind() !== SyntaxKind.ColonToken) {
+            throw Errors.argument("colonToken");
+        }
+
+        if (statements === null) {
+            throw Errors.argumentNull("statements");
+        }
+
+        this._caseOrDefaultKeyword = caseOrDefaultKeyword;
+        this._expression = expression;
+        this._colonToken = colonToken;
+        this._statements = statements;
+    }
+
+    public caseOrDefaultKeyword(): ISyntaxToken {
+        return this._caseOrDefaultKeyword;
+    }
+
+    public expression(): ExpressionSyntax {
+        return this._expression;
+    }
+
+    public colonToken(): ISyntaxToken {
+        return this._colonToken;
+    }
+
+    public statements(): ISyntaxNodeList {
+        return this._statements;
+    }
+}

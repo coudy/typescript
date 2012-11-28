@@ -1342,13 +1342,67 @@ var Parser = (function () {
                             if(this.isReturnStatement()) {
                                 return this.parseReturnStatement();
                             } else {
-                                throw Errors.notYetImplemented();
+                                if(this.isSwitchStatement()) {
+                                    return this.parseSwitchStatement();
+                                } else {
+                                    throw Errors.notYetImplemented();
+                                }
                             }
                         }
                     }
                 }
             }
         }
+    };
+    Parser.prototype.isSwitchStatement = function () {
+        return this.currentToken().keywordKind() === SyntaxKind.SwitchKeyword;
+    };
+    Parser.prototype.parseSwitchStatement = function () {
+        Debug.assert(this.isSwitchStatement());
+        var switchKeyword = this.eatKeyword(SyntaxKind.SwitchKeyword);
+        var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
+        var expression = this.parseExpression(true);
+        var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
+        var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
+        var caseClauses = null;
+        if(!openBraceToken.isMissing()) {
+            while(true) {
+                if(this.currentToken().kind() === SyntaxKind.CloseBraceToken || this.currentToken().kind() === SyntaxKind.EndOfFileToken) {
+                    break;
+                }
+                if(this.isCaseClause()) {
+                    var caseClause = this.parseCaseClause();
+                    caseClauses = caseClauses || [];
+                    caseClauses.push(caseClause);
+                } else {
+                    break;
+                }
+            }
+        }
+        var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
+        return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, SyntaxNodeList.create(caseClauses), closeBraceToken);
+    };
+    Parser.prototype.isCaseClause = function () {
+        return this.currentToken().keywordKind() === SyntaxKind.CaseKeyword || this.currentToken().keywordKind() === SyntaxKind.DefaultKeyword;
+    };
+    Parser.prototype.parseCaseClause = function () {
+        Debug.assert(this.isCaseClause());
+        var caseOrDefaultKeyword = this.eatAnyToken();
+        var expression = null;
+        if(this.currentToken().kind() !== SyntaxKind.ColonToken) {
+            expression = this.parseExpression(true);
+        }
+        var colonToken = this.eatToken(SyntaxKind.ColonToken);
+        var statements = null;
+        while(true) {
+            if(this.isCaseClause() || this.currentToken().kind() == SyntaxKind.EndOfFileToken || this.currentToken().kind() === SyntaxKind.CloseBraceToken) {
+                break;
+            }
+            var statement = this.parseStatement(false);
+            statements = statements || [];
+            statements.push(statement);
+        }
+        return new CaseClauseSyntax(caseOrDefaultKeyword, expression, colonToken, SyntaxNodeList.create(statements));
     };
     Parser.prototype.isReturnStatement = function () {
         return this.currentToken().keywordKind() === SyntaxKind.ReturnKeyword;
@@ -5994,6 +6048,105 @@ var ObjectCreationExpressionSyntax = (function (_super) {
     };
     return ObjectCreationExpressionSyntax;
 })(ExpressionSyntax);
+var SwitchStatementSyntax = (function (_super) {
+    __extends(SwitchStatementSyntax, _super);
+    function SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, caseClauses, closeBraceToken) {
+        _super.call(this);
+        this._switchKeyword = null;
+        this._openParenToken = null;
+        this._expression = null;
+        this._closeParenToken = null;
+        this._openBraceToken = null;
+        this._caseClauses = null;
+        this._closeBraceToken = null;
+        if(switchKeyword.keywordKind() !== SyntaxKind.SwitchKeyword) {
+            throw Errors.argument("switchKeyword");
+        }
+        if(openParenToken.kind() !== SyntaxKind.OpenParenToken) {
+            throw Errors.argument("openParenToken");
+        }
+        if(expression === null) {
+            throw Errors.argumentNull("expression");
+        }
+        if(closeParenToken.kind() !== SyntaxKind.CloseParenToken) {
+            throw Errors.argument("closeParenToken");
+        }
+        if(openBraceToken.kind() !== SyntaxKind.OpenBraceToken) {
+            throw Errors.argument("openBraceToken");
+        }
+        if(caseClauses === null) {
+            throw Errors.argumentNull("caseClauses");
+        }
+        if(closeBraceToken.kind() !== SyntaxKind.CloseBraceToken) {
+            throw Errors.argument("closeBraceToken");
+        }
+        this._switchKeyword = switchKeyword;
+        this._openParenToken = openParenToken;
+        this._expression = expression;
+        this._closeParenToken = closeParenToken;
+        this._openBraceToken = openBraceToken;
+        this._caseClauses = caseClauses;
+        this._closeBraceToken = closeBraceToken;
+    }
+    SwitchStatementSyntax.prototype.switchKeyword = function () {
+        return this._switchKeyword;
+    };
+    SwitchStatementSyntax.prototype.openParenToken = function () {
+        return this._openParenToken;
+    };
+    SwitchStatementSyntax.prototype.expression = function () {
+        return this._expression;
+    };
+    SwitchStatementSyntax.prototype.closeParenToken = function () {
+        return this._closeParenToken;
+    };
+    SwitchStatementSyntax.prototype.openBraceToken = function () {
+        return this._openBraceToken;
+    };
+    SwitchStatementSyntax.prototype.caseClauses = function () {
+        return this._caseClauses;
+    };
+    SwitchStatementSyntax.prototype.closeBraceToken = function () {
+        return this._closeBraceToken;
+    };
+    return SwitchStatementSyntax;
+})(StatementSyntax);
+var CaseClauseSyntax = (function (_super) {
+    __extends(CaseClauseSyntax, _super);
+    function CaseClauseSyntax(caseOrDefaultKeyword, expression, colonToken, statements) {
+        _super.call(this);
+        this._caseOrDefaultKeyword = null;
+        this._expression = null;
+        this._colonToken = null;
+        this._statements = null;
+        if(caseOrDefaultKeyword.keywordKind() !== SyntaxKind.CaseKeyword && caseOrDefaultKeyword.keywordKind() !== SyntaxKind.DefaultKeyword) {
+            throw Errors.argument("caseOrDefaultKeyword");
+        }
+        if(colonToken.kind() !== SyntaxKind.ColonToken) {
+            throw Errors.argument("colonToken");
+        }
+        if(statements === null) {
+            throw Errors.argumentNull("statements");
+        }
+        this._caseOrDefaultKeyword = caseOrDefaultKeyword;
+        this._expression = expression;
+        this._colonToken = colonToken;
+        this._statements = statements;
+    }
+    CaseClauseSyntax.prototype.caseOrDefaultKeyword = function () {
+        return this._caseOrDefaultKeyword;
+    };
+    CaseClauseSyntax.prototype.expression = function () {
+        return this._expression;
+    };
+    CaseClauseSyntax.prototype.colonToken = function () {
+        return this._colonToken;
+    };
+    CaseClauseSyntax.prototype.statements = function () {
+        return this._statements;
+    };
+    return CaseClauseSyntax;
+})(SyntaxNode);
 var SyntaxToken = (function () {
     function SyntaxToken() { }
     SyntaxToken.create = function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
