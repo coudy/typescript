@@ -2181,3 +2181,43 @@ class CaseClauseSyntax extends SyntaxNode {
         return this._statements;
     }
 }
+
+class BreakStatementSyntax extends StatementSyntax {
+    private _breakKeyword: ISyntaxToken = null;
+    private _identifier: ISyntaxToken = null;
+    private _semicolonToken: ISyntaxToken = null;
+
+    constructor(breakKeyword: ISyntaxToken,
+                identifier: ISyntaxToken,
+                semicolonToken: ISyntaxToken) {
+        super();
+
+        if (breakKeyword.keywordKind() !== SyntaxKind.BreakKeyword) {
+            throw Errors.argument("breakKeyword");
+        }
+
+        if (identifier !== null && identifier.kind() !== SyntaxKind.IdentifierNameToken) {
+            throw Errors.argument("identifier");
+        }
+
+        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) {
+            throw Errors.argument("semicolonToken");
+        }
+
+        this._breakKeyword = breakKeyword;
+        this._identifier = identifier;
+        this._semicolonToken = semicolonToken;
+    }
+
+    public breakKeyword(): ISyntaxToken {
+        return this._breakKeyword;
+    }
+
+    public identifier(): ISyntaxToken {
+        return this._identifier;
+    }
+
+    public semicolonToken(): ISyntaxToken {
+        return this._semicolonToken;
+    }
+}

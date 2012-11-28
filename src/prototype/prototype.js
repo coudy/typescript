@@ -1345,7 +1345,11 @@ var Parser = (function () {
                                 if(this.isSwitchStatement()) {
                                     return this.parseSwitchStatement();
                                 } else {
-                                    throw Errors.notYetImplemented();
+                                    if(this.isBreakStatement()) {
+                                        return this.parseBreakStatement();
+                                    } else {
+                                        throw Errors.notYetImplemented();
+                                    }
                                 }
                             }
                         }
@@ -1353,6 +1357,19 @@ var Parser = (function () {
                 }
             }
         }
+    };
+    Parser.prototype.isBreakStatement = function () {
+        return this.currentToken().keywordKind() === SyntaxKind.BreakKeyword;
+    };
+    Parser.prototype.parseBreakStatement = function () {
+        Debug.assert(this.isBreakStatement());
+        var breakKeyword = this.eatKeyword(SyntaxKind.BreakKeyword);
+        var identifier = null;
+        if(!breakKeyword.hasTrailingNewLineTrivia() && this.isIdentifier(this.currentToken())) {
+            identifier = this.eatIdentifierToken();
+        }
+        var semicolon = this.eatExplicitOrAutomaticSemicolon();
+        return new BreakStatementSyntax(breakKeyword, identifier, semicolon);
     };
     Parser.prototype.isSwitchStatement = function () {
         return this.currentToken().keywordKind() === SyntaxKind.SwitchKeyword;
@@ -6147,6 +6164,37 @@ var CaseClauseSyntax = (function (_super) {
     };
     return CaseClauseSyntax;
 })(SyntaxNode);
+var BreakStatementSyntax = (function (_super) {
+    __extends(BreakStatementSyntax, _super);
+    function BreakStatementSyntax(breakKeyword, identifier, semicolonToken) {
+        _super.call(this);
+        this._breakKeyword = null;
+        this._identifier = null;
+        this._semicolonToken = null;
+        if(breakKeyword.keywordKind() !== SyntaxKind.BreakKeyword) {
+            throw Errors.argument("breakKeyword");
+        }
+        if(identifier !== null && identifier.kind() !== SyntaxKind.IdentifierNameToken) {
+            throw Errors.argument("identifier");
+        }
+        if(semicolonToken.kind() !== SyntaxKind.SemicolonToken) {
+            throw Errors.argument("semicolonToken");
+        }
+        this._breakKeyword = breakKeyword;
+        this._identifier = identifier;
+        this._semicolonToken = semicolonToken;
+    }
+    BreakStatementSyntax.prototype.breakKeyword = function () {
+        return this._breakKeyword;
+    };
+    BreakStatementSyntax.prototype.identifier = function () {
+        return this._identifier;
+    };
+    BreakStatementSyntax.prototype.semicolonToken = function () {
+        return this._semicolonToken;
+    };
+    return BreakStatementSyntax;
+})(StatementSyntax);
 var SyntaxToken = (function () {
     function SyntaxToken() { }
     SyntaxToken.create = function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
