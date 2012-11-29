@@ -1168,7 +1168,12 @@ class Parser {
     }
 
     private parseExtendsClause(): ExtendsClauseSyntax {
-        throw Errors.notYetImplemented();
+        Debug.assert(this.isExtendsClause());
+
+        var extendsKeyword = this.eatKeyword(SyntaxKind.ExtendsKeyword);
+        var typeNames = this.parseTypeNameList();
+
+        return new ExtendsClauseSyntax(extendsKeyword, typeNames);
     }
 
     private isImplementsClause(): bool {
@@ -1179,6 +1184,12 @@ class Parser {
         Debug.assert(this.isImplementsClause());
 
         var implementsKeyword = this.eatKeyword(SyntaxKind.ImplementsKeyword);
+        var typeNames = this.parseTypeNameList();
+
+        return new ImplementsClauseSyntax(implementsKeyword, typeNames);
+    }
+
+    private parseTypeNameList(): ISeparatedSyntaxList {
         var typeNames: any[] = [];
 
         var typeName = this.parseName();
@@ -1196,7 +1207,7 @@ class Parser {
             break;
         }
 
-        return new ImplementsClauseSyntax(implementsKeyword, SeparatedSyntaxList.create(typeNames));
+        return SeparatedSyntaxList.create(typeNames);
     }
 
     private parseStatement(allowFunctionDeclaration: bool): StatementSyntax {
@@ -1547,6 +1558,7 @@ class Parser {
         }
 
         switch (keywordKind) {
+            case SyntaxKind.SuperKeyword:
             case SyntaxKind.ThisKeyword:
             case SyntaxKind.TrueKeyword:
             case SyntaxKind.FalseKeyword:
@@ -1944,6 +1956,9 @@ class Parser {
 
             case SyntaxKind.FunctionKeyword:
                 return this.parseFunctionExpression();
+
+            case SyntaxKind.SuperKeyword:
+                return this.parseSuperExpression();
         }
 
         switch (currentTokenKind) {
@@ -1976,6 +1991,13 @@ class Parser {
 
         // Nothing else worked, just try to consume an identifier so we report an error.
         return new IdentifierNameSyntax(this.eatIdentifierToken());
+    }
+
+    private parseSuperExpression(): SuperExpressionSyntax {
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.SuperKeyword);
+        
+        var superKeyword = this.eatKeyword(SyntaxKind.SuperKeyword);
+        return new SuperExpressionSyntax(superKeyword);
     }
 
     private parseFunctionExpression(): FunctionExpressionSyntax {

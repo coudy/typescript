@@ -341,6 +341,10 @@ class ExtendsClauseSyntax extends SyntaxNode {
         this._extendsKeyword = extendsKeyword;
         this._typeNames = typeNames;
     }
+    
+    public kind(): SyntaxKind {
+        return SyntaxKind.ExtendsClause;
+    }
 
     public extendsKeyword(): ISyntaxToken {
         return this._extendsKeyword;
@@ -930,6 +934,10 @@ class QualifiedNameSyntax extends NameSyntax {
         this._left = left;
         this._dotToken = dotToken;
         this._right = right;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.QualifiedName;
     }
 
     public left(): NameSyntax {
@@ -2940,5 +2948,27 @@ class EmptyStatementSyntax extends StatementSyntax {
 
     public semicolonToken(): ISyntaxToken {
         return this._semicolonToken;
+    }
+}
+
+class SuperExpressionSyntax extends UnaryExpressionSyntax {
+    private _superKeyword: ISyntaxToken;
+
+    constructor(superKeyword: ISyntaxToken) {
+        super();
+
+        if (superKeyword.keywordKind() !== SyntaxKind.SuperKeyword) {
+            throw Errors.argument("superKeyword");
+        }
+
+        this._superKeyword = superKeyword;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.SuperExpression;
+    }
+
+    public superKeyword(): ISyntaxToken {
+        return this._superKeyword;
     }
 }

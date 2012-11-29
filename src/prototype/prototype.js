@@ -1360,7 +1360,10 @@ var Parser = (function () {
         return this.currentToken().keywordKind() === SyntaxKind.ExtendsKeyword;
     };
     Parser.prototype.parseExtendsClause = function () {
-        throw Errors.notYetImplemented();
+        Debug.assert(this.isExtendsClause());
+        var extendsKeyword = this.eatKeyword(SyntaxKind.ExtendsKeyword);
+        var typeNames = this.parseTypeNameList();
+        return new ExtendsClauseSyntax(extendsKeyword, typeNames);
     };
     Parser.prototype.isImplementsClause = function () {
         return this.currentToken().keywordKind() === SyntaxKind.ImplementsKeyword;
@@ -1368,6 +1371,10 @@ var Parser = (function () {
     Parser.prototype.parseImplementsClause = function () {
         Debug.assert(this.isImplementsClause());
         var implementsKeyword = this.eatKeyword(SyntaxKind.ImplementsKeyword);
+        var typeNames = this.parseTypeNameList();
+        return new ImplementsClauseSyntax(implementsKeyword, typeNames);
+    };
+    Parser.prototype.parseTypeNameList = function () {
         var typeNames = [];
         var typeName = this.parseName();
         typeNames.push(typeName);
@@ -1379,7 +1386,7 @@ var Parser = (function () {
             }
             break;
         }
-        return new ImplementsClauseSyntax(implementsKeyword, SeparatedSyntaxList.create(typeNames));
+        return SeparatedSyntaxList.create(typeNames);
     };
     Parser.prototype.parseStatement = function (allowFunctionDeclaration) {
         if(this.isVariableStatement()) {
@@ -1636,6 +1643,7 @@ var Parser = (function () {
             }
         }
         switch(keywordKind) {
+            case SyntaxKind.SuperKeyword:
             case SyntaxKind.ThisKeyword:
             case SyntaxKind.TrueKeyword:
             case SyntaxKind.FalseKeyword:
@@ -1944,6 +1952,10 @@ var Parser = (function () {
                 return this.parseFunctionExpression();
 
             }
+            case SyntaxKind.SuperKeyword: {
+                return this.parseSuperExpression();
+
+            }
         }
         switch(currentTokenKind) {
             case SyntaxKind.NumericLiteral: {
@@ -1979,6 +1991,11 @@ var Parser = (function () {
             throw Errors.notYetImplemented();
         }
         return new IdentifierNameSyntax(this.eatIdentifierToken());
+    };
+    Parser.prototype.parseSuperExpression = function () {
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.SuperKeyword);
+        var superKeyword = this.eatKeyword(SyntaxKind.SuperKeyword);
+        return new SuperExpressionSyntax(superKeyword);
     };
     Parser.prototype.parseFunctionExpression = function () {
         Debug.assert(this.currentToken().keywordKind() === SyntaxKind.FunctionKeyword);
@@ -4331,36 +4348,40 @@ var SyntaxKind;
     SyntaxKind.ElementAccessExpression = 200;
     SyntaxKind._map[201] = "FunctionExpression";
     SyntaxKind.FunctionExpression = 201;
-    SyntaxKind._map[202] = "VariableDeclaration";
-    SyntaxKind.VariableDeclaration = 202;
-    SyntaxKind._map[203] = "VariableDeclarator";
-    SyntaxKind.VariableDeclarator = 203;
-    SyntaxKind._map[204] = "ParameterList";
-    SyntaxKind.ParameterList = 204;
-    SyntaxKind._map[205] = "ArgumentList";
-    SyntaxKind.ArgumentList = 205;
-    SyntaxKind._map[206] = "ImplementsClause";
-    SyntaxKind.ImplementsClause = 206;
-    SyntaxKind._map[207] = "EqualsValueClause";
-    SyntaxKind.EqualsValueClause = 207;
-    SyntaxKind._map[208] = "CaseSwitchClause";
-    SyntaxKind.CaseSwitchClause = 208;
-    SyntaxKind._map[209] = "DefaultSwitchClause";
-    SyntaxKind.DefaultSwitchClause = 209;
-    SyntaxKind._map[210] = "ElseClause";
-    SyntaxKind.ElseClause = 210;
-    SyntaxKind._map[211] = "Parameter";
-    SyntaxKind.Parameter = 211;
-    SyntaxKind._map[212] = "FunctionSignature";
-    SyntaxKind.FunctionSignature = 212;
-    SyntaxKind._map[213] = "PropertySignature";
-    SyntaxKind.PropertySignature = 213;
-    SyntaxKind._map[214] = "CallSignature";
-    SyntaxKind.CallSignature = 214;
-    SyntaxKind._map[215] = "TypeAnnotation";
-    SyntaxKind.TypeAnnotation = 215;
-    SyntaxKind._map[216] = "SimplePropertyAssignment";
-    SyntaxKind.SimplePropertyAssignment = 216;
+    SyntaxKind._map[202] = "SuperExpression";
+    SyntaxKind.SuperExpression = 202;
+    SyntaxKind._map[203] = "VariableDeclaration";
+    SyntaxKind.VariableDeclaration = 203;
+    SyntaxKind._map[204] = "VariableDeclarator";
+    SyntaxKind.VariableDeclarator = 204;
+    SyntaxKind._map[205] = "ParameterList";
+    SyntaxKind.ParameterList = 205;
+    SyntaxKind._map[206] = "ArgumentList";
+    SyntaxKind.ArgumentList = 206;
+    SyntaxKind._map[207] = "ImplementsClause";
+    SyntaxKind.ImplementsClause = 207;
+    SyntaxKind._map[208] = "ExtendsClause";
+    SyntaxKind.ExtendsClause = 208;
+    SyntaxKind._map[209] = "EqualsValueClause";
+    SyntaxKind.EqualsValueClause = 209;
+    SyntaxKind._map[210] = "CaseSwitchClause";
+    SyntaxKind.CaseSwitchClause = 210;
+    SyntaxKind._map[211] = "DefaultSwitchClause";
+    SyntaxKind.DefaultSwitchClause = 211;
+    SyntaxKind._map[212] = "ElseClause";
+    SyntaxKind.ElseClause = 212;
+    SyntaxKind._map[213] = "Parameter";
+    SyntaxKind.Parameter = 213;
+    SyntaxKind._map[214] = "FunctionSignature";
+    SyntaxKind.FunctionSignature = 214;
+    SyntaxKind._map[215] = "PropertySignature";
+    SyntaxKind.PropertySignature = 215;
+    SyntaxKind._map[216] = "CallSignature";
+    SyntaxKind.CallSignature = 216;
+    SyntaxKind._map[217] = "TypeAnnotation";
+    SyntaxKind.TypeAnnotation = 217;
+    SyntaxKind._map[218] = "SimplePropertyAssignment";
+    SyntaxKind.SimplePropertyAssignment = 218;
     SyntaxKind.FirstStandardKeyword = SyntaxKind.BreakKeyword;
     SyntaxKind.LastStandardKeyword = SyntaxKind.WithKeyword;
     SyntaxKind.FirstFutureReservedKeyword = SyntaxKind.ClassKeyword;
@@ -5067,6 +5088,9 @@ var ExtendsClauseSyntax = (function (_super) {
         this._extendsKeyword = extendsKeyword;
         this._typeNames = typeNames;
     }
+    ExtendsClauseSyntax.prototype.kind = function () {
+        return SyntaxKind.ExtendsClause;
+    };
     ExtendsClauseSyntax.prototype.extendsKeyword = function () {
         return this._extendsKeyword;
     };
@@ -5513,6 +5537,9 @@ var QualifiedNameSyntax = (function (_super) {
         this._dotToken = dotToken;
         this._right = right;
     }
+    QualifiedNameSyntax.prototype.kind = function () {
+        return SyntaxKind.QualifiedName;
+    };
     QualifiedNameSyntax.prototype.left = function () {
         return this._left;
     };
@@ -6927,6 +6954,23 @@ var EmptyStatementSyntax = (function (_super) {
     };
     return EmptyStatementSyntax;
 })(StatementSyntax);
+var SuperExpressionSyntax = (function (_super) {
+    __extends(SuperExpressionSyntax, _super);
+    function SuperExpressionSyntax(superKeyword) {
+        _super.call(this);
+        if(superKeyword.keywordKind() !== SyntaxKind.SuperKeyword) {
+            throw Errors.argument("superKeyword");
+        }
+        this._superKeyword = superKeyword;
+    }
+    SuperExpressionSyntax.prototype.kind = function () {
+        return SyntaxKind.SuperExpression;
+    };
+    SuperExpressionSyntax.prototype.superKeyword = function () {
+        return this._superKeyword;
+    };
+    return SuperExpressionSyntax;
+})(UnaryExpressionSyntax);
 var SyntaxToken = (function () {
     function SyntaxToken() { }
     SyntaxToken.create = function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {

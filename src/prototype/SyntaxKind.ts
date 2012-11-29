@@ -234,6 +234,7 @@ enum SyntaxKind {
     CastExpression,
     ElementAccessExpression,
     FunctionExpression,
+    SuperExpression,
 
     // Variable declarations
     VariableDeclaration,
@@ -245,6 +246,7 @@ enum SyntaxKind {
 
     // Clauses
     ImplementsClause,
+    ExtendsClause,
     EqualsValueClause,
     CaseSwitchClause,
     DefaultSwitchClause,
