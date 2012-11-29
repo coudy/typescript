@@ -252,6 +252,7 @@ enum SyntaxKind {
     // Misc.
     Parameter,
     FunctionSignature,
+    PropertySignature,
     CallSignature,
     TypeAnnotation,
     SimplePropertyAssignment,
