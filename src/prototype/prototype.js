@@ -1333,7 +1333,15 @@ var Parser = (function () {
         throw Errors.notYetImplemented();
     };
     Parser.prototype.parseIndexSignature = function () {
-        throw Errors.notYetImplemented();
+        Debug.assert(this.isIndexSignature());
+        var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
+        var parameter = this.parseParameter();
+        var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
+        var typeAnnotation = null;
+        if(this.isTypeAnnotation()) {
+            typeAnnotation = this.parseTypeAnnotation();
+        }
+        return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation);
     };
     Parser.prototype.parseFunctionSignature = function () {
         Debug.assert(this.currentToken().kind() === SyntaxKind.IdentifierNameToken);
@@ -6360,9 +6368,8 @@ var FunctionSignatureSyntax = (function (_super) {
 })(TypeMemberSyntax);
 var IndexSignatureSyntax = (function (_super) {
     __extends(IndexSignatureSyntax, _super);
-    function IndexSignatureSyntax() {
-        _super.apply(this, arguments);
-
+    function IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation) {
+        _super.call(this);
     }
     return IndexSignatureSyntax;
 })(TypeMemberSyntax);
@@ -7584,6 +7591,84 @@ var TypeOfExpressionSyntax = (function (_super) {
     };
     return TypeOfExpressionSyntax;
 })(UnaryExpressionSyntax);
+var StandardToken = (function () {
+    function StandardToken(kind, keywordKind, text, fullStart, leadingWidth, trailingWidth, hasLeadingCommentTrivia, hasTrailingCommentTrivia, hasLeadingNewLineTrivia, hasTrailingNewLineTrivia, diagnostics) {
+        this._kind = kind;
+        this._keywordKind = keywordKind;
+        this._text = text;
+        this._fullStart = fullStart;
+        this._leadingWidth = leadingWidth;
+        this._trailingWidth = trailingWidth;
+        this._hasLeadingCommentTrivia = hasLeadingCommentTrivia;
+        this._hasLeadingNewLineTrivia = hasLeadingNewLineTrivia;
+        this._hasTrailingCommentTrivia = hasTrailingCommentTrivia;
+        this._hasTrailingNewLineTrivia = hasTrailingNewLineTrivia;
+    }
+    StandardToken.prototype.toJSON = function (key) {
+        return SyntaxToken.toJSON(this);
+    };
+    StandardToken.prototype.kind = function () {
+        return this._kind;
+    };
+    StandardToken.prototype.keywordKind = function () {
+        return this._keywordKind;
+    };
+    StandardToken.prototype.fullStart = function () {
+        return this._fullStart;
+    };
+    StandardToken.prototype.fullWidth = function () {
+        return this._leadingWidth + this._text.length + this._trailingWidth;
+    };
+    StandardToken.prototype.start = function () {
+        return this._fullStart + this._leadingWidth;
+    };
+    StandardToken.prototype.width = function () {
+        return this._text.length;
+    };
+    StandardToken.prototype.isMissing = function () {
+        return false;
+    };
+    StandardToken.prototype.text = function () {
+        return this._text;
+    };
+    StandardToken.prototype.fullText = function (itext) {
+        return itext.toString(new TextSpan(this._fullStart, this._leadingWidth)) + this._text + itext.toString(new TextSpan(this._fullStart + this._leadingWidth + this._text.length, this._trailingWidth));
+    };
+    StandardToken.prototype.value = function () {
+        return null;
+    };
+    StandardToken.prototype.valueText = function () {
+        return null;
+    };
+    StandardToken.prototype.diagnostics = function () {
+        return this._diagnostics;
+    };
+    StandardToken.prototype.hasLeadingTrivia = function () {
+        return this._leadingWidth > 0;
+    };
+    StandardToken.prototype.hasLeadingCommentTrivia = function () {
+        return this._hasLeadingCommentTrivia;
+    };
+    StandardToken.prototype.hasLeadingNewLineTrivia = function () {
+        return this._hasLeadingNewLineTrivia;
+    };
+    StandardToken.prototype.hasTrailingTrivia = function () {
+        return this._trailingWidth > 0;
+    };
+    StandardToken.prototype.hasTrailingCommentTrivia = function () {
+        return this._hasTrailingCommentTrivia;
+    };
+    StandardToken.prototype.hasTrailingNewLineTrivia = function () {
+        return this._hasTrailingNewLineTrivia;
+    };
+    StandardToken.prototype.leadingTrivia = function (text) {
+        throw Errors.notYetImplemented();
+    };
+    StandardToken.prototype.trailingTrivia = function (text) {
+        throw Errors.notYetImplemented();
+    };
+    return StandardToken;
+})();
 var SyntaxToken = (function () {
     function SyntaxToken() { }
     SyntaxToken.create = function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
@@ -7649,73 +7734,7 @@ var SyntaxToken = (function () {
         var trailingComment = trailingTriviaInfo.HasComment;
         var leadingNewLine = leadingTriviaInfo.HasNewLine;
         var trailingNewLine = trailingTriviaInfo.HasNewLine;
-        var token = null;
-        token = {
-            toJSON: function (key) {
-                return SyntaxToken.toJSON(token);
-            },
-            kind: function () {
-                return kind;
-            },
-            keywordKind: function () {
-                return keywordKind;
-            },
-            fullStart: function () {
-                return fullStart;
-            },
-            fullWidth: function () {
-                return leadingWidth + text.length + trailingWidth;
-            },
-            start: function () {
-                return fullStart + leadingWidth;
-            },
-            width: function () {
-                return text.length;
-            },
-            isMissing: function () {
-                return false;
-            },
-            text: function () {
-                return text;
-            },
-            fullText: function (itext) {
-                return itext.toString(new TextSpan(fullStart, leadingWidth)) + text + itext.toString(new TextSpan(fullStart + leadingWidth + text.length, trailingWidth));
-            },
-            value: function () {
-                return null;
-            },
-            valueText: function () {
-                return null;
-            },
-            diagnostics: function () {
-                return diagnostics;
-            },
-            hasLeadingTrivia: function () {
-                return leadingWidth > 0;
-            },
-            hasLeadingCommentTrivia: function () {
-                return leadingComment;
-            },
-            hasLeadingNewLineTrivia: function () {
-                return leadingNewLine;
-            },
-            hasTrailingTrivia: function () {
-                return trailingWidth > 0;
-            },
-            hasTrailingCommentTrivia: function () {
-                return trailingComment;
-            },
-            hasTrailingNewLineTrivia: function () {
-                return trailingNewLine;
-            },
-            leadingTrivia: function (text) {
-                throw Errors.notYetImplemented();
-            },
-            trailingTrivia: function (text) {
-                throw Errors.notYetImplemented();
-            }
-        };
-        return token;
+        return new StandardToken(kind, keywordKind, text, fullStart, leadingWidth, trailingWidth, leadingComment, trailingComment, leadingNewLine, trailingNewLine, diagnostics);
     }
     SyntaxToken.createEmptyToken = function createEmptyToken(kind) {
         var token;
@@ -10155,6 +10174,8 @@ var Program = (function () {
         }
     };
     Program.prototype.runParser = function (environment, contents, filePath) {
+        if(filePath.indexOf("harness") < 0) {
+        }
         var text = new StringText(contents);
         var scanner = Scanner.create(text, LanguageVersion.EcmaScript5);
         var parser = new Parser(scanner);
@@ -10194,6 +10215,6 @@ var Program = (function () {
     };
     return Program;
 })();
+(WScript).StdIn.ReadLine();
 var program = new Program();
-program.runAllTests(Environment);
 program.run(Environment);

@@ -1122,7 +1122,18 @@ class Parser {
     }
 
     private parseIndexSignature(): IndexSignatureSyntax {
-        throw Errors.notYetImplemented();
+        Debug.assert(this.isIndexSignature());
+
+        var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
+        var parameter = this.parseParameter();
+        var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
+
+        var typeAnnotation: TypeAnnotationSyntax = null;
+        if (this.isTypeAnnotation()) {
+            typeAnnotation = this.parseTypeAnnotation();
+        }
+
+        return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation);
     }
 
     private parseFunctionSignature(): FunctionSignatureSyntax {

@@ -1730,6 +1730,54 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
 }
 
 class IndexSignatureSyntax extends TypeMemberSyntax {
+    private _openBracketToken: ISyntaxToken;
+    private _parameter: ParameterSyntax;
+    private _closeBracketToken: ISyntaxToken;
+    private _typeAnnotation: TypeAnnotationSyntax;
+
+    constructor(openBracketToken: ISyntaxToken,
+                parameter: ParameterSyntax,
+                closeBracketToken: ISyntaxToken,
+                typeAnnotation: TypeAnnotationSyntax) {
+        super();
+
+        if (openBracketToken.kind() !== SyntaxKind.OpenBracketToken) {
+            throw Errors.argument("openBracketToken");
+        }
+
+        if (parameter === null) {
+            throw Errors.argumentNull("parameter");
+        }
+
+        if (closeBracketToken.kind() !== SyntaxKind.CloseBracketToken) {
+            throw Errors.argument("closeBracketToken");
+        }
+
+        if (typeAnnotation === null) {
+            throw Errors.argumentNull("typeAnnotation");
+        }
+
+        this._openBracketToken = openBracketToken;
+        this._parameter = parameter;
+        this._closeBracketToken = closeBracketToken;
+        this._typeAnnotation = typeAnnotation;
+    }
+
+    public openBracketToken(): ISyntaxToken {
+        return this._openBracketToken;
+    }
+
+    public parameter(): ParameterSyntax {
+        return this._parameter;
+    }
+
+    public closeBracketToken(): ISyntaxToken {
+        return this._closeBracketToken;
+    }
+
+    public typeAnnotation(): TypeAnnotationSyntax {
+        return this._typeAnnotation;
+    }
 }
 
 class PropertySignatureSyntax extends TypeMemberSyntax {

@@ -1,5 +1,222 @@
 ///<reference path='References.ts' />
 
+//class SimpleSyntaxToken implements ISyntaxToken {
+//    private _kind: SyntaxKind;
+//    private _keywordKind: SyntaxKind;
+//    private _hasTrailingNewLine: bool;
+
+//    constructor(kind: SyntaxKind, keywordKind: SyntaxKind, hasTrailingNewLine: bool) {
+//        this._kind = kind;
+//        this._keywordKind = keywordKind;
+//        this._hasTrailingNewLine = hasTrailingNewLine;
+//    }
+
+//    public kind(): SyntaxKind {
+//        return this._kind;
+//    }
+
+//    public keywordKind(): SyntaxKind {
+//        return this._keywordKind;
+//    }
+
+//    public fullStart(): number {
+//        throw new Error();
+//    }
+
+//    public fullWidth(): number {
+//        throw new Error();
+//    }
+
+//    public start(): number {
+//        throw new Error();
+//    }
+
+//    public width(): number {
+//        throw new Error();
+//    }
+
+//    public isMissing(): bool {
+//        return false;
+//    }
+
+//    public text(): string {
+//        throw new Error();
+//    }
+
+//    public fullText(text: IText): string {
+//        throw new Error();
+//    }
+
+//    public value(): any {
+//        throw new Error();
+//    }
+
+//    public valueText(): string {
+//        throw new Error();
+//    }
+
+//    public diagnostics(): DiagnosticInfo[] {
+//        throw new Error();
+//    }
+
+//    public hasLeadingTrivia(): bool {
+//        throw new Error();
+//    }
+
+//    public hasLeadingCommentTrivia(): bool {
+//        throw new Error();
+//    }
+
+//    public hasLeadingNewLineTrivia(): bool {
+//        throw new Error();
+//    }
+
+//    public hasTrailingTrivia(): bool {
+//        throw new Error();
+//    }
+
+//    public hasTrailingCommentTrivia(): bool {
+//        throw new Error();
+//    }
+
+//    public hasTrailingNewLineTrivia(): bool {
+//        return this._hasTrailingNewLine;
+//    }
+
+//    public leadingTrivia(text: IText): ISyntaxTriviaList {
+//        throw new Error();
+//    }
+
+//    public trailingTrivia(text: IText): ISyntaxTriviaList {
+//        throw new Error();
+//    }
+//}
+
+class StandardToken implements ISyntaxToken {
+    private _kind: SyntaxKind;
+    private _keywordKind: SyntaxKind;
+    private _fullStart: number;
+    private _leadingWidth: number;
+    private _text: string;
+    private _trailingWidth: number;
+    private _diagnostics: DiagnosticInfo[];
+    private _hasLeadingCommentTrivia: bool;
+    private _hasLeadingNewLineTrivia: bool;
+    private _hasTrailingCommentTrivia: bool;
+    private _hasTrailingNewLineTrivia: bool;
+
+    constructor(kind: SyntaxKind,
+                keywordKind: SyntaxKind,
+                text: string,
+                fullStart: number,
+                leadingWidth: number,
+                trailingWidth: number,
+                hasLeadingCommentTrivia: bool,
+                hasTrailingCommentTrivia: bool,
+                hasLeadingNewLineTrivia: bool,
+                hasTrailingNewLineTrivia: bool,
+                diagnostics: DiagnosticInfo[]) {
+        this._kind = kind;
+        this._keywordKind = keywordKind;
+        this._text = text;
+        this._fullStart = fullStart;
+        this._leadingWidth = leadingWidth;
+        this._trailingWidth = trailingWidth;
+        this._hasLeadingCommentTrivia = hasLeadingCommentTrivia;
+        this._hasLeadingNewLineTrivia = hasLeadingNewLineTrivia;
+        this._hasTrailingCommentTrivia = hasTrailingCommentTrivia;
+        this._hasTrailingNewLineTrivia = hasTrailingNewLineTrivia;
+    }
+
+    public toJSON(key) {
+        return SyntaxToken.toJSON(this);
+    }
+
+    public kind() {
+        return this._kind;
+    }
+
+    public keywordKind() {
+        return this._keywordKind;
+    }
+
+    public fullStart() {
+        return this._fullStart;
+    }
+
+    public fullWidth() {
+        return this._leadingWidth + this._text.length + this._trailingWidth;
+    }
+
+    public start() {
+        return this._fullStart + this._leadingWidth;
+    }
+
+    public width() {
+        return this._text.length;
+    }
+
+    public isMissing() {
+        return false;
+    }
+
+    public text() {
+        return this._text;
+    }
+
+    public fullText(itext: IText): string {
+        return itext.toString(new TextSpan(this._fullStart, this._leadingWidth)) +
+               this._text +
+               itext.toString(new TextSpan(this._fullStart + this._leadingWidth + this._text.length, this._trailingWidth));
+    }
+
+    public value(): string {
+        // TODO: return proper value here.
+        return null;
+    }
+
+    public valueText(): string {
+        // TODO: return proper value here.
+        return null;
+    }
+
+    public diagnostics() {
+        return this._diagnostics;
+    }
+
+    public hasLeadingTrivia() {
+        return this._leadingWidth > 0;
+    }
+
+    public hasLeadingCommentTrivia() {
+        return this._hasLeadingCommentTrivia;
+    }
+
+    public hasLeadingNewLineTrivia() {
+        return this._hasLeadingNewLineTrivia;
+    }
+
+    public hasTrailingTrivia() {
+        return this._trailingWidth > 0;
+    }
+
+    public hasTrailingCommentTrivia() {
+        return this._hasTrailingCommentTrivia;
+    }
+
+    public hasTrailingNewLineTrivia() {
+        return this._hasTrailingNewLineTrivia;
+    }
+
+    public leadingTrivia(text: IText): ISyntaxTriviaList {
+        throw Errors.notYetImplemented();
+    }
+
+    public trailingTrivia(text: IText): ISyntaxTriviaList {
+        throw Errors.notYetImplemented();
+    }
+}
+
 class SyntaxToken {
     public static create(fullStart: number,
                          leadingTriviaInfo: ScannerTriviaInfo,
@@ -8,7 +225,7 @@ class SyntaxToken {
                          diagnostics: DiagnosticInfo[]): ISyntaxToken {
         // TODO: use a more efficient implementation for when there is no trivia, or the kind is
         // one of the well known types.
-
+        // return new SimpleSyntaxToken(tokenInfo.Kind, tokenInfo.KeywordKind, trailingTriviaInfo.HasNewLine);
         return createStandardToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics);
     }
 
@@ -95,46 +312,9 @@ class SyntaxToken {
         var leadingNewLine = leadingTriviaInfo.HasNewLine;
         var trailingNewLine = trailingTriviaInfo.HasNewLine;
 
-        var token: ISyntaxToken = null;
-        token = {
-            toJSON:(key) => SyntaxToken.toJSON(token),
-            kind: () => kind,
-            keywordKind: () => keywordKind,
-            fullStart: () => fullStart,
-            fullWidth: () => leadingWidth + text.length + trailingWidth,
-            start: () => fullStart + leadingWidth,
-            width: () => text.length,
-            isMissing: () => false,
-            text: () => text,
-            fullText: (itext: IText): string => {
-                return itext.toString(new TextSpan(fullStart, leadingWidth)) +
-                       text +
-                       itext.toString(new TextSpan(fullStart + leadingWidth + text.length, trailingWidth));
-            },
-            value: () => {
-                // TODO: return proper value here.
-                return null;
-            },
-            valueText: () => {
-                // TODO: return proper value here.
-                return null;
-            },
-            diagnostics: () => diagnostics,
-            hasLeadingTrivia: () => leadingWidth > 0,
-            hasLeadingCommentTrivia: () => leadingComment,
-            hasLeadingNewLineTrivia: () => leadingNewLine,
-            hasTrailingTrivia: () => trailingWidth > 0,
-            hasTrailingCommentTrivia: () => trailingComment,
-            hasTrailingNewLineTrivia: () => trailingNewLine,
-            leadingTrivia: (text: IText): ISyntaxTriviaList => {
-                throw Errors.notYetImplemented();
-            },
-            trailingTrivia: (text: IText): ISyntaxTriviaList => {
-                throw Errors.notYetImplemented();
-            },
-        };
-
-        return token;
+        return new StandardToken(
+            kind, keywordKind, text, fullStart, leadingWidth, trailingWidth,
+             leadingComment, trailingComment, leadingNewLine, trailingNewLine, diagnostics);
     }
 
     // TODO: This needs to take in the proper position.

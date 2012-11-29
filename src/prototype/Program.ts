@@ -111,6 +111,10 @@ class Program {
     }
 
     runParser(environment: IEnvironment, contents: string, filePath: string): void {
+        if (filePath.indexOf("harness") < 0) {
+            // return;
+        }
+
         var text = new StringText(contents);
         var scanner = Scanner.create(text, LanguageVersion.EcmaScript5);
         var parser = new Parser(scanner);
@@ -162,6 +166,7 @@ class Program {
     }
 }
 
+// (<any>WScript).StdIn.ReadLine();
 var program = new Program();
-program.runAllTests(Environment);
+// program.runAllTests(Environment);
 program.run(Environment);
