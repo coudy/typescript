@@ -165,10 +165,12 @@ enum SyntaxKind {
     ReturnStatement,
     SwitchStatement,
     BreakStatement,
+    ContinueStatement,
     ForStatement,
     ForInStatement,
     EmptyStatement,
     ThrowStatement,
+    WhileStatement,
 
     // Expressions
     PlusExpression,

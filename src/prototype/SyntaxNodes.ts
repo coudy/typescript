@@ -2428,19 +2428,80 @@ class BreakStatementSyntax extends StatementSyntax {
     }
 }
 
-class BaseForStatementSyntax extends StatementSyntax {
+class ContinueStatementSyntax extends StatementSyntax {
+    private _continueKeyword: ISyntaxToken;
+    private _identifier: ISyntaxToken;
+    private _semicolonToken: ISyntaxToken;
+
+    constructor(continueKeyword: ISyntaxToken,
+                identifier: ISyntaxToken,
+                semicolonToken: ISyntaxToken) {
+        super();
+
+        if (continueKeyword.keywordKind() !== SyntaxKind.ContinueKeyword) {
+            throw Errors.argument("continueKeyword");
+        }
+
+        if (identifier !== null && identifier.kind() !== SyntaxKind.IdentifierNameToken) {
+            throw Errors.argument("identifier");
+        }
+
+        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) {
+            throw Errors.argument("semicolonToken");
+        }
+
+        this._continueKeyword = continueKeyword;
+        this._identifier = identifier;
+        this._semicolonToken = semicolonToken;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ContinueStatement;
+    }
+
+    public continueKeyword(): ISyntaxToken {
+        return this._continueKeyword;
+    }
+
+    public identifier(): ISyntaxToken {
+        return this._identifier;
+    }
+
+    public semicolonToken(): ISyntaxToken {
+        return this._semicolonToken;
+    }
+}
+
+class IterationStatementSyntax extends StatementSyntax {
+    private _statement: StatementSyntax;
+
+    constructor(statement: StatementSyntax) {
+        super();
+
+        if (statement === null) {
+            throw Errors.argumentNull("statement");
+        }
+
+        this._statement = statement;
+    }
+
+    public statement(): StatementSyntax {
+        return this._statement;
+    }
+}
+
+class BaseForStatementSyntax extends IterationStatementSyntax {
     private _forKeyword: ISyntaxToken;
     private _openParenToken: ISyntaxToken;
     private _variableDeclaration: VariableDeclarationSyntax;
     private _closeParenToken: ISyntaxToken;
-    private _statement: StatementSyntax;
 
     constructor(forKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
                 variableDeclaration: VariableDeclarationSyntax,
                 closeParenToken: ISyntaxToken,
                 statement: StatementSyntax) {
-        super();
+        super(statement);
 
         if (forKeyword.keywordKind() !== SyntaxKind.ForKeyword) {
             throw Errors.argument("forKeyword");
@@ -2454,15 +2515,10 @@ class BaseForStatementSyntax extends StatementSyntax {
             throw Errors.argument("closeParenToken");
         }
 
-        if (statement === null) {
-            throw Errors.argumentNull("statement");
-        }
-
         this._forKeyword = forKeyword;
         this._openParenToken = openParenToken;
         this._variableDeclaration = variableDeclaration;
         this._closeParenToken = closeParenToken;
-        this._statement = statement;
     }
 
     public forKeyword(): ISyntaxToken {
@@ -2479,10 +2535,6 @@ class BaseForStatementSyntax extends StatementSyntax {
 
     public closeParenToken(): ISyntaxToken {
         return this._closeParenToken;
-    }
-
-    public statement(): StatementSyntax {
-        return this._statement;
     }
 }
 
@@ -2589,6 +2641,62 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
 
     public expression(): ExpressionSyntax {
         return this._expression;
+    }
+}
+
+class WhileStatementSyntax extends IterationStatementSyntax {
+    private _whileKeyword: ISyntaxToken;
+    private _openParenToken: ISyntaxToken;
+    private _condition: ExpressionSyntax;
+    private _closeParenToken: ISyntaxToken;
+
+    constructor(whileKeyword: ISyntaxToken,
+                openParenToken: ISyntaxToken,
+                condition: ExpressionSyntax,
+                closeParenToken: ISyntaxToken,
+                statement: StatementSyntax) {
+        super(statement);
+
+        if (whileKeyword.keywordKind() !== SyntaxKind.WhileKeyword) {
+            throw Errors.argument("whileKeyword");
+        }
+
+        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) {
+            throw Errors.argument("openParenToken");
+        }
+
+        if (condition === null) {
+            throw Errors.argumentNull("condition");
+        }
+
+        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) {
+            throw Errors.argument("closeParenToken");
+        }
+
+        this._whileKeyword = whileKeyword;
+        this._openParenToken = openParenToken;
+        this._condition = condition;
+        this._closeParenToken = closeParenToken;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.WhileStatement;
+    }
+
+    public whileKeyword(): ISyntaxToken {
+        return this._whileKeyword;
+    }
+
+    public openParenToken(): ISyntaxToken {
+        return this._openParenToken;
+    }
+
+    public condition(): ExpressionSyntax {
+        return this._condition;
+    }
+
+    public closeParenToken(): ISyntaxToken {
+        return this._closeParenToken;
     }
 }
 

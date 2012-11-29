@@ -1238,15 +1238,37 @@ class Parser {
         else if (this.isBreakStatement()) {
             return this.parseBreakStatement();
         }
+        else if (this.isContinueStatement()) {
+            return this.parseContinueStatement();
+        }
         else if (this.isForOrForInStatement()) {
             return this.parseForOrForInStatement();
         }
         else if (this.isEmptyStatement()) {
             return this.parseEmptyStatement();
         }
+        else if (this.isWhileStatement()) {
+            return this.parseWhileStatement();
+        }
         else {
             throw Errors.notYetImplemented();
         }
+    }
+
+    private isWhileStatement(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.WhileKeyword;
+    }
+
+    private parseWhileStatement(): WhileStatementSyntax {
+        Debug.assert(this.isWhileStatement());
+
+        var whileKeyword = this.eatKeyword(SyntaxKind.WhileKeyword);
+        var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
+        var condition = this.parseExpression(/*allowIn:*/ true);
+        var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
+        var statement = this.parseStatement(/*allowFunctionDeclaration:*/ false);
+
+        return new WhileStatementSyntax(whileKeyword, openParenToken, condition, closeParenToken, statement);
     }
 
     private isEmptyStatement(): bool {
@@ -1404,6 +1426,28 @@ class Parser {
 
         var semicolon = this.eatExplicitOrAutomaticSemicolon();
         return new BreakStatementSyntax(breakKeyword, identifier, semicolon);
+    }
+
+    private isContinueStatement(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.ContinueKeyword;
+    }
+
+    private parseContinueStatement(): ContinueStatementSyntax {
+        Debug.assert(this.isContinueStatement());
+
+        var continueKeyword = this.eatKeyword(SyntaxKind.ContinueKeyword);
+
+        // If there is no newline after the break keyword, then we can consume an optional 
+        // identifier.
+        var identifier: ISyntaxToken = null;
+        if (!this.canEatExplicitOrAutomaticSemicolon()) {
+            if (this.isIdentifier(this.currentToken())) {
+                identifier = this.eatIdentifierToken();
+            }
+        }
+
+        var semicolon = this.eatExplicitOrAutomaticSemicolon();
+        return new ContinueStatementSyntax(continueKeyword, identifier, semicolon);
     }
 
     private isSwitchStatement(): bool {
@@ -2125,6 +2169,7 @@ class Parser {
         Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
         var token1 = this.peekTokenN(1);
         var token2 = this.peekTokenN(2);
+        var token3 = this.peekTokenN(3);
 
         if (token1.kind() === SyntaxKind.CloseParenToken) {
             // ()
@@ -2165,6 +2210,16 @@ class Parser {
                 // etc.
                 // Definitely a parenthesized expression of some sort.
                 return true;
+            }
+
+            if (token2.kind() === SyntaxKind.QuestionToken) {
+                // (id?
+                
+                if (token3.kind() === SyntaxKind.NumericLiteral) {
+                    // (id?1
+                    // Definitely a parenthesized expression.
+                    return true;
+                }
             }
         }
 
