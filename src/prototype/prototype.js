@@ -2085,6 +2085,10 @@ var Parser = (function () {
                 return this.parseSuperExpression();
 
             }
+            case SyntaxKind.TypeOfKeyword: {
+                return this.parseTypeOfExpression();
+
+            }
         }
         switch(currentTokenKind) {
             case SyntaxKind.NumericLiteral: {
@@ -2120,6 +2124,12 @@ var Parser = (function () {
             throw Errors.notYetImplemented();
         }
         return new IdentifierNameSyntax(this.eatIdentifierToken());
+    };
+    Parser.prototype.parseTypeOfExpression = function () {
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.TypeOfKeyword);
+        var typeOfKeyword = this.eatKeyword(SyntaxKind.TypeOfKeyword);
+        var expression = this.parseUnaryExpression();
+        return new TypeOfExpressionSyntax(typeOfKeyword, expression);
     };
     Parser.prototype.parseSuperExpression = function () {
         Debug.assert(this.currentToken().keywordKind() === SyntaxKind.SuperKeyword);
@@ -2197,7 +2207,7 @@ var Parser = (function () {
             return true;
         }
         if(token1.kind() === SyntaxKind.IdentifierNameToken) {
-            if(token2.kind() === SyntaxKind.DotToken || token2.kind() === SyntaxKind.OpenParenToken) {
+            if(token2.kind() === SyntaxKind.DotToken || token2.kind() === SyntaxKind.OpenParenToken || token2.kind() === SyntaxKind.OpenBracketToken) {
                 return true;
             }
             if(SyntaxFacts.isBinaryExpressionOperatorToken(token2.kind()) && token2.kind() !== SyntaxKind.CommaToken) {
@@ -7421,6 +7431,30 @@ var DoStatementSyntax = (function (_super) {
     };
     return DoStatementSyntax;
 })(IterationStatementSyntax);
+var TypeOfExpressionSyntax = (function (_super) {
+    __extends(TypeOfExpressionSyntax, _super);
+    function TypeOfExpressionSyntax(typeOfKeyword, expression) {
+        _super.call(this);
+        if(typeOfKeyword.keywordKind() !== SyntaxKind.TypeOfKeyword) {
+            throw Errors.argument("typeOfKeyword");
+        }
+        if(expression === null) {
+            throw Errors.argumentNull("expression");
+        }
+        this._typeOfKeyword = typeOfKeyword;
+        this._expression = expression;
+    }
+    TypeOfExpressionSyntax.prototype.kind = function () {
+        return SyntaxKind.TypeOfExpression;
+    };
+    TypeOfExpressionSyntax.prototype.typeOfKeyword = function () {
+        return this._typeOfKeyword;
+    };
+    TypeOfExpressionSyntax.prototype.expression = function () {
+        return this._expression;
+    };
+    return TypeOfExpressionSyntax;
+})(UnaryExpressionSyntax);
 var SyntaxToken = (function () {
     function SyntaxToken() { }
     SyntaxToken.create = function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {

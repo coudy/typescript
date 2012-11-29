@@ -3392,3 +3392,37 @@ class DoStatementSyntax extends IterationStatementSyntax {
         return this._semicolonToken;
     }
 }
+
+class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
+    private _typeOfKeyword: ISyntaxToken;
+    private _expression: ExpressionSyntax;
+
+    constructor(typeOfKeyword: ISyntaxToken,
+                expression: ExpressionSyntax) {
+        super();
+
+        if (typeOfKeyword.keywordKind() !== SyntaxKind.TypeOfKeyword) {
+            throw Errors.argument("typeOfKeyword");
+        }
+
+        if (expression === null) {
+            throw Errors.argumentNull("expression");
+        }
+
+        this._typeOfKeyword = typeOfKeyword;
+        this._expression = expression;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.TypeOfExpression;
+    }
+
+    public typeOfKeyword(): ISyntaxToken {
+        return this._typeOfKeyword;
+    }
+
+    public expression(): ExpressionSyntax {
+        return this._expression;
+    }
+
+}

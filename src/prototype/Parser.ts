@@ -2128,6 +2128,9 @@ class Parser {
 
             case SyntaxKind.SuperKeyword:
                 return this.parseSuperExpression();
+
+            case SyntaxKind.TypeOfKeyword:
+                return this.parseTypeOfExpression();
         }
 
         switch (currentTokenKind) {
@@ -2160,6 +2163,15 @@ class Parser {
 
         // Nothing else worked, just try to consume an identifier so we report an error.
         return new IdentifierNameSyntax(this.eatIdentifierToken());
+    }
+
+    private parseTypeOfExpression(): TypeOfExpressionSyntax {
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.TypeOfKeyword);
+
+        var typeOfKeyword = this.eatKeyword(SyntaxKind.TypeOfKeyword);
+        var expression = this.parseUnaryExpression();
+
+        return new TypeOfExpressionSyntax(typeOfKeyword, expression);
     }
 
     private parseSuperExpression(): SuperExpressionSyntax {
@@ -2289,9 +2301,11 @@ class Parser {
             // Could still be an arrow function.  Look a bit more.
 
             if (token2.kind() === SyntaxKind.DotToken ||
-                token2.kind() === SyntaxKind.OpenParenToken) {
+                token2.kind() === SyntaxKind.OpenParenToken ||
+                token2.kind() === SyntaxKind.OpenBracketToken) {
                 // (id.
                 // (id(
+                // (id[
                 // Definitely a parenthesized expression.
                 return true;
             }

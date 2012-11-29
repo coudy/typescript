@@ -79,7 +79,7 @@ module TypeScript {
                     namesList.push(sourceMapper.names.join('","'));
                 }
 
-                var recordSourceMapping = (mappedPosition: SourceMapPosition, nameIndex: number) {
+                var recordSourceMapping = (mappedPosition: SourceMapPosition, nameIndex: number) => {
                     if (recordedPosition != null &&
                         recordedPosition.emittedColumn == mappedPosition.emittedColumn &&
                         recordedPosition.emittedLine == mappedPosition.emittedLine) {
@@ -127,7 +127,7 @@ module TypeScript {
                 }
 
                 // Record starting spans
-                var recordSourceMappingSiblings = (sourceMappings: SourceMapping[]) {
+                var recordSourceMappingSiblings = (sourceMappings: SourceMapping[]) => {
                     for (var i = 0; i < sourceMappings.length; i++) {
                         var sourceMapping = sourceMappings[i];
                         recordSourceMapping(sourceMapping.start, sourceMapping.nameIndex);
