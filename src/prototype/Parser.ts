@@ -1215,7 +1215,7 @@ class Parser {
             return this.parseVariableStatement();
         }
         else if (this.isLabeledStatement()) {
-            return this.parseLabeledStatement(allowFunctionDeclaration);
+            return this.parseLabeledStatement();
         }
         else if (allowFunctionDeclaration && this.isFunctionDeclaration()) {
             return this.parseFunctionDeclaration();
@@ -1253,6 +1253,9 @@ class Parser {
         else if (this.isWhileStatement()) {
             return this.parseWhileStatement();
         }
+        else if (this.isDoStatement()) {
+            return this.parseDoStatement();
+        }
         else if (this.isTryStatement()) {
             return this.parseTryStatement();
         }
@@ -1261,16 +1264,34 @@ class Parser {
         }
     }
 
+    private isDoStatement(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.DoKeyword;
+    }
+
+    private parseDoStatement(): DoStatementSyntax {
+        Debug.assert(this.isDoStatement());
+
+        var doKeyword = this.eatKeyword(SyntaxKind.DoKeyword);
+        var statement = this.parseStatement(/*allowFunctionDeclaration:*/ false);
+        var whileKeyword = this.eatKeyword(SyntaxKind.WhileKeyword);
+        var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
+        var condition = this.parseExpression(/*allowIn:*/ true);
+        var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+
+        return new DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken);
+    }
+
     private isLabeledStatement(): bool {
         return this.isIdentifier(this.currentToken()) && this.peekTokenN(1).kind() === SyntaxKind.ColonToken;
     }
 
-    private parseLabeledStatement(allowFunctionDeclaration: bool): LabeledStatement {
+    private parseLabeledStatement(): LabeledStatement {
         Debug.assert(this.isLabeledStatement());
         
         var identifier = this.eatIdentifierToken();
         var colonToken = this.eatToken(SyntaxKind.ColonToken);
-        var statement = this.parseStatement(allowFunctionDeclaration);
+        var statement = this.parseStatement(/*allowFunctionDeclaration:*/ false);
         
         return new LabeledStatement(identifier, colonToken, statement);
     }

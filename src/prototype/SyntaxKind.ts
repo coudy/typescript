@@ -171,6 +171,9 @@ enum SyntaxKind {
     EmptyStatement,
     ThrowStatement,
     WhileStatement,
+    TryStatement,
+    LabeledStatement,
+    DoStatement,
 
     // Expressions
     PlusExpression,
@@ -254,6 +257,8 @@ enum SyntaxKind {
     CaseSwitchClause,
     DefaultSwitchClause,
     ElseClause,
+    CatchClause,
+    FinallyClause,
 
     // Misc.
     Parameter,
