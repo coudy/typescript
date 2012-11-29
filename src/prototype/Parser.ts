@@ -2103,8 +2103,13 @@ class Parser {
         }
 
         if (this.isIdentifier(currentToken)) {
-            var identifier = this.eatIdentifierToken();
-            return new IdentifierNameSyntax(identifier);
+            if (this.isSimpleArrowFunctionExpression()) {
+                return this.parseSimpleArrowFunctionExpression();
+            }
+            else {
+                var identifier = this.eatIdentifierToken();
+                return new IdentifierNameSyntax(identifier);
+            }
         }
 
         var currentTokenKind = currentToken.kind();
@@ -2150,7 +2155,7 @@ class Parser {
                 return this.parseObjectLiteralExpression();
 
             case SyntaxKind.OpenParenToken:
-                return this.parseParenthesizedOrLambdaExpression();
+                return this.parseParenthesizedOrArrowFunctionExpression();
 
             case SyntaxKind.LessThanToken:
                 return this.parseCastExpression();
@@ -2224,7 +2229,7 @@ class Parser {
         return new ObjectCreationExpressionSyntax(newKeyword, expression, argumentList);
     }
 
-    private parseParenthesizedOrLambdaExpression(): UnaryExpressionSyntax {
+    private parseParenthesizedOrArrowFunctionExpression(): UnaryExpressionSyntax {
         Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
 
             var result = this.tryParseArrowFunctionExpression();
@@ -2232,7 +2237,7 @@ class Parser {
                 return result;
             }
 
-        // Doesn't look like a lambda, so parse this as a parenthesized expression.
+        // Doesn't look like an arrow function, so parse this as a parenthesized expression.
         var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
         var expression = this.parseExpression(/*allowIn:*/ true);
         var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
@@ -2259,7 +2264,7 @@ class Parser {
             return null;
         }
 
-        // Then, try to actually parse it as a lambda, and only return if we see an => 
+        // Then, try to actually parse it as a arrow function, and only return if we see an => 
         var resetPoint = this.getResetPoint();
         try {
             var arrowFunction = this.parseParenthesizedArrowFunctionExpression(/*requiresArrow:*/ true);
@@ -2358,16 +2363,34 @@ class Parser {
         }
 
         var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
-        var body: SyntaxNode = null;
-
-        if (this.isBlock()) {
-            body = this.parseBlock(/*allowFunctionDeclaration:*/ false);
-        }
-        else {
-            body = this.parseAssignmentExpression(/*allowIn:*/ true); 
-        }
+        var body = this.parseArrowFunctionBody();
 
         return new ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body);
+    }
+
+    private parseArrowFunctionBody(): SyntaxNode {
+        if (this.isBlock()) {
+            return this.parseBlock(/*allowFunctionDeclaration:*/ false);
+        }
+        else {
+            return this.parseAssignmentExpression(/*allowIn:*/ true); 
+        }
+    }
+
+    private isSimpleArrowFunctionExpression(): bool {
+        return this.isIdentifier(this.currentToken()) && 
+               this.peekTokenN(1).kind() === SyntaxKind.EqualsGreaterThanToken;
+    }
+
+    private parseSimpleArrowFunctionExpression(): SimpleArrowFunctionExpression {
+        Debug.assert(this.isSimpleArrowFunctionExpression());
+
+        var identifier = this.eatIdentifierToken();
+        var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
+        var body = this.parseArrowFunctionBody();
+
+        return new SimpleArrowFunctionExpression(
+            identifier, equalsGreaterThanToken, body);
     }
 
     private isBlock(): bool {
@@ -2384,13 +2407,13 @@ class Parser {
 
         if (token1.kind() === SyntaxKind.CloseParenToken) {
             // ()
-            // Definitely not a parenthesized expression. And could be a lambda.
+            // Definitely not a parenthesized expression. And could be an arrow function.
             return true;
         }
 
         if (this.isIdentifier(token1)) {
             // (id
-            // Could be a parenthesized expression or a lambda
+            // Could be a parenthesized expression or a arrow function
 
             // NOTE:
             // (id, 
@@ -2398,7 +2421,7 @@ class Parser {
 
             if (token2.kind() === SyntaxKind.ColonToken) {
                 // (id:
-                // Definitely not a parenthesized expression. possibly a lambda.
+                // Definitely not a parenthesized expression. possibly a arrow function.
                 return true;
             }
             else if (token2.kind() === SyntaxKind.QuestionToken) {
@@ -2406,26 +2429,26 @@ class Parser {
                 // Could be a parenthesized ternary.
                 if (token3.kind() === SyntaxKind.ColonToken) {
                     // (id?:
-                    // Definitely a lambda.
+                    // Definitely an arrow function.
                     return true;
                 }
                 else if (token3.kind() === SyntaxKind.CommaExpression) {
                     // (id?,
-                    // Definitely a lambda.
+                    // Definitely an arrow function.
                     return true;
                 }
                 else if (token3.kind() === SyntaxKind.CloseParenToken) {
                     // (id?)
-                    // Definitely a lambda.
+                    // Definitely an arrow function.
                 }
             }
             else if (token2.kind() === SyntaxKind.CloseParenToken) {
                 // (id)
-                // Could be a parenthesized expression or a lambda
+                // Could be a parenthesized expression or an arrow function.
 
                 // (id):
                 //
-                // Looks like a lambda.  However, there is a potential ambiguity here.  We could have:
+                // Looks like an arrow function.  However, there is a potential ambiguity here.  We could have:
                 //
                 //  var v = (id): type =>
                 //
@@ -2435,7 +2458,7 @@ class Parser {
 
                 if (token3.kind() === SyntaxKind.EqualsGreaterThanToken) {
                     // (id) =>
-                    // definitely a lambda.
+                    // definitely an arrow function.
                     return true;
                 }
             }
@@ -2444,7 +2467,7 @@ class Parser {
         // TODO: Add more cases if you're sure that there is enough information to know to 
         // parse this as an arrow function.  Note: be very careful here.
 
-        // Anything else wasn't clear enough.  Try to parse the expression as a lambda and bail out
+        // Anything else wasn't clear enough.  Try to parse the expression as an arrow function and bail out
         // if we fail.
         return false;
     }

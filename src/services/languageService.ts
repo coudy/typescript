@@ -290,7 +290,7 @@ module Services {
             public kind: string,
             public name: string,
             public containerKind: string,
-            public containerName: string,
+            public containerName: string
             /*TODO*//*public overloads:DefinitionInfo[]*/) {
         }
     }
@@ -1981,7 +1981,7 @@ module Services {
         // of an AST node referencing a known declaration kind.
         //
         private getDeclNodeElementKindModifiers(ast: TypeScript.AST): string {
-            var addMofifier = (result: string, testValue: bool, value: string): string {
+            var addMofifier = (result: string, testValue: bool, value: string): string => {
                 if (!testValue)
                     return result;
 

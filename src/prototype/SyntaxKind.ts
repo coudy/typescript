@@ -237,6 +237,7 @@ enum SyntaxKind {
     ObjectCreationExpression,
     ParenthesizedExpression,
     ParenthesizedArrowFunctionExpression,
+    SimpleArrowFunctionExpression,
     CastExpression,
     ElementAccessExpression,
     FunctionExpression,

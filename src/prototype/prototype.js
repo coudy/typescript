@@ -2054,8 +2054,12 @@ var Parser = (function () {
             return this.parseType();
         }
         if(this.isIdentifier(currentToken)) {
-            var identifier = this.eatIdentifierToken();
-            return new IdentifierNameSyntax(identifier);
+            if(this.isSimpleArrowFunctionExpression()) {
+                return this.parseSimpleArrowFunctionExpression();
+            } else {
+                var identifier = this.eatIdentifierToken();
+                return new IdentifierNameSyntax(identifier);
+            }
         }
         var currentTokenKind = currentToken.kind();
         var currentTokenKeywordKind = currentToken.keywordKind();
@@ -2112,7 +2116,7 @@ var Parser = (function () {
 
             }
             case SyntaxKind.OpenParenToken: {
-                return this.parseParenthesizedOrLambdaExpression();
+                return this.parseParenthesizedOrArrowFunctionExpression();
 
             }
             case SyntaxKind.LessThanToken: {
@@ -2165,7 +2169,7 @@ var Parser = (function () {
         }
         return new ObjectCreationExpressionSyntax(newKeyword, expression, argumentList);
     };
-    Parser.prototype.parseParenthesizedOrLambdaExpression = function () {
+    Parser.prototype.parseParenthesizedOrArrowFunctionExpression = function () {
         Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
         var result = this.tryParseArrowFunctionExpression();
         if(result !== null) {
@@ -2228,13 +2232,25 @@ var Parser = (function () {
             return null;
         }
         var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
-        var body = null;
-        if(this.isBlock()) {
-            body = this.parseBlock(false);
-        } else {
-            body = this.parseAssignmentExpression(true);
-        }
+        var body = this.parseArrowFunctionBody();
         return new ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body);
+    };
+    Parser.prototype.parseArrowFunctionBody = function () {
+        if(this.isBlock()) {
+            return this.parseBlock(false);
+        } else {
+            return this.parseAssignmentExpression(true);
+        }
+    };
+    Parser.prototype.isSimpleArrowFunctionExpression = function () {
+        return this.isIdentifier(this.currentToken()) && this.peekTokenN(1).kind() === SyntaxKind.EqualsGreaterThanToken;
+    };
+    Parser.prototype.parseSimpleArrowFunctionExpression = function () {
+        Debug.assert(this.isSimpleArrowFunctionExpression());
+        var identifier = this.eatIdentifierToken();
+        var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
+        var body = this.parseArrowFunctionBody();
+        return new SimpleArrowFunctionExpression(identifier, equalsGreaterThanToken, body);
     };
     Parser.prototype.isBlock = function () {
         return this.currentToken().kind() === SyntaxKind.OpenBraceToken;
@@ -4503,50 +4519,52 @@ var SyntaxKind;
     SyntaxKind.ParenthesizedExpression = 203;
     SyntaxKind._map[204] = "ParenthesizedArrowFunctionExpression";
     SyntaxKind.ParenthesizedArrowFunctionExpression = 204;
-    SyntaxKind._map[205] = "CastExpression";
-    SyntaxKind.CastExpression = 205;
-    SyntaxKind._map[206] = "ElementAccessExpression";
-    SyntaxKind.ElementAccessExpression = 206;
-    SyntaxKind._map[207] = "FunctionExpression";
-    SyntaxKind.FunctionExpression = 207;
-    SyntaxKind._map[208] = "SuperExpression";
-    SyntaxKind.SuperExpression = 208;
-    SyntaxKind._map[209] = "VariableDeclaration";
-    SyntaxKind.VariableDeclaration = 209;
-    SyntaxKind._map[210] = "VariableDeclarator";
-    SyntaxKind.VariableDeclarator = 210;
-    SyntaxKind._map[211] = "ParameterList";
-    SyntaxKind.ParameterList = 211;
-    SyntaxKind._map[212] = "ArgumentList";
-    SyntaxKind.ArgumentList = 212;
-    SyntaxKind._map[213] = "ImplementsClause";
-    SyntaxKind.ImplementsClause = 213;
-    SyntaxKind._map[214] = "ExtendsClause";
-    SyntaxKind.ExtendsClause = 214;
-    SyntaxKind._map[215] = "EqualsValueClause";
-    SyntaxKind.EqualsValueClause = 215;
-    SyntaxKind._map[216] = "CaseSwitchClause";
-    SyntaxKind.CaseSwitchClause = 216;
-    SyntaxKind._map[217] = "DefaultSwitchClause";
-    SyntaxKind.DefaultSwitchClause = 217;
-    SyntaxKind._map[218] = "ElseClause";
-    SyntaxKind.ElseClause = 218;
-    SyntaxKind._map[219] = "CatchClause";
-    SyntaxKind.CatchClause = 219;
-    SyntaxKind._map[220] = "FinallyClause";
-    SyntaxKind.FinallyClause = 220;
-    SyntaxKind._map[221] = "Parameter";
-    SyntaxKind.Parameter = 221;
-    SyntaxKind._map[222] = "FunctionSignature";
-    SyntaxKind.FunctionSignature = 222;
-    SyntaxKind._map[223] = "PropertySignature";
-    SyntaxKind.PropertySignature = 223;
-    SyntaxKind._map[224] = "CallSignature";
-    SyntaxKind.CallSignature = 224;
-    SyntaxKind._map[225] = "TypeAnnotation";
-    SyntaxKind.TypeAnnotation = 225;
-    SyntaxKind._map[226] = "SimplePropertyAssignment";
-    SyntaxKind.SimplePropertyAssignment = 226;
+    SyntaxKind._map[205] = "SimpleArrowFunctionExpression";
+    SyntaxKind.SimpleArrowFunctionExpression = 205;
+    SyntaxKind._map[206] = "CastExpression";
+    SyntaxKind.CastExpression = 206;
+    SyntaxKind._map[207] = "ElementAccessExpression";
+    SyntaxKind.ElementAccessExpression = 207;
+    SyntaxKind._map[208] = "FunctionExpression";
+    SyntaxKind.FunctionExpression = 208;
+    SyntaxKind._map[209] = "SuperExpression";
+    SyntaxKind.SuperExpression = 209;
+    SyntaxKind._map[210] = "VariableDeclaration";
+    SyntaxKind.VariableDeclaration = 210;
+    SyntaxKind._map[211] = "VariableDeclarator";
+    SyntaxKind.VariableDeclarator = 211;
+    SyntaxKind._map[212] = "ParameterList";
+    SyntaxKind.ParameterList = 212;
+    SyntaxKind._map[213] = "ArgumentList";
+    SyntaxKind.ArgumentList = 213;
+    SyntaxKind._map[214] = "ImplementsClause";
+    SyntaxKind.ImplementsClause = 214;
+    SyntaxKind._map[215] = "ExtendsClause";
+    SyntaxKind.ExtendsClause = 215;
+    SyntaxKind._map[216] = "EqualsValueClause";
+    SyntaxKind.EqualsValueClause = 216;
+    SyntaxKind._map[217] = "CaseSwitchClause";
+    SyntaxKind.CaseSwitchClause = 217;
+    SyntaxKind._map[218] = "DefaultSwitchClause";
+    SyntaxKind.DefaultSwitchClause = 218;
+    SyntaxKind._map[219] = "ElseClause";
+    SyntaxKind.ElseClause = 219;
+    SyntaxKind._map[220] = "CatchClause";
+    SyntaxKind.CatchClause = 220;
+    SyntaxKind._map[221] = "FinallyClause";
+    SyntaxKind.FinallyClause = 221;
+    SyntaxKind._map[222] = "Parameter";
+    SyntaxKind.Parameter = 222;
+    SyntaxKind._map[223] = "FunctionSignature";
+    SyntaxKind.FunctionSignature = 223;
+    SyntaxKind._map[224] = "PropertySignature";
+    SyntaxKind.PropertySignature = 224;
+    SyntaxKind._map[225] = "CallSignature";
+    SyntaxKind.CallSignature = 225;
+    SyntaxKind._map[226] = "TypeAnnotation";
+    SyntaxKind.TypeAnnotation = 226;
+    SyntaxKind._map[227] = "SimplePropertyAssignment";
+    SyntaxKind.SimplePropertyAssignment = 227;
     SyntaxKind.FirstStandardKeyword = SyntaxKind.BreakKeyword;
     SyntaxKind.LastStandardKeyword = SyntaxKind.WithKeyword;
     SyntaxKind.FirstFutureReservedKeyword = SyntaxKind.ClassKeyword;
@@ -5653,6 +5671,40 @@ var ArrowFunctionExpressionSyntax = (function (_super) {
     };
     return ArrowFunctionExpressionSyntax;
 })(UnaryExpressionSyntax);
+var SimpleArrowFunctionExpression = (function (_super) {
+    __extends(SimpleArrowFunctionExpression, _super);
+    function SimpleArrowFunctionExpression(identifier, equalsGreaterThanToken, body) {
+        _super.call(this, equalsGreaterThanToken, body);
+        if(identifier.kind() !== SyntaxKind.IdentifierNameToken) {
+            throw Errors.argumentNull("identifier");
+        }
+        this._identifier = identifier;
+    }
+    SimpleArrowFunctionExpression.prototype.kind = function () {
+        return SyntaxKind.SimpleArrowFunctionExpression;
+    };
+    SimpleArrowFunctionExpression.prototype.identifier = function () {
+        return this._identifier;
+    };
+    return SimpleArrowFunctionExpression;
+})(ArrowFunctionExpressionSyntax);
+var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
+    __extends(ParenthesizedArrowFunctionExpressionSyntax, _super);
+    function ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body) {
+        _super.call(this, equalsGreaterThanToken, body);
+        if(callSignature === null) {
+            throw Errors.argumentNull("callSignature");
+        }
+        this._callSignature = callSignature;
+    }
+    ParenthesizedArrowFunctionExpressionSyntax.prototype.kind = function () {
+        return SyntaxKind.ParenthesizedArrowFunctionExpression;
+    };
+    ParenthesizedArrowFunctionExpressionSyntax.prototype.callSignature = function () {
+        return this._callSignature;
+    };
+    return ParenthesizedArrowFunctionExpressionSyntax;
+})(ArrowFunctionExpressionSyntax);
 var TypeSyntax = (function (_super) {
     __extends(TypeSyntax, _super);
     function TypeSyntax() {
@@ -5856,23 +5908,6 @@ var TypeAnnotationSyntax = (function (_super) {
     };
     return TypeAnnotationSyntax;
 })(SyntaxNode);
-var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
-    __extends(ParenthesizedArrowFunctionExpressionSyntax, _super);
-    function ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body) {
-        _super.call(this, equalsGreaterThanToken, body);
-        if(callSignature === null) {
-            throw Errors.argumentNull("callSignature");
-        }
-        this._callSignature = callSignature;
-    }
-    ParenthesizedArrowFunctionExpressionSyntax.prototype.kind = function () {
-        return SyntaxKind.ParenthesizedArrowFunctionExpression;
-    };
-    ParenthesizedArrowFunctionExpressionSyntax.prototype.callSignature = function () {
-        return this._callSignature;
-    };
-    return ParenthesizedArrowFunctionExpressionSyntax;
-})(ArrowFunctionExpressionSyntax);
 var BlockSyntax = (function (_super) {
     __extends(BlockSyntax, _super);
     function BlockSyntax(openBraceToken, statements, closeBraceToken) {
@@ -10012,7 +10047,7 @@ var Program = (function () {
         }
     };
     Program.prototype.run = function (environment) {
-        if(true) {
+        if(false) {
             for(var index in environment.arguments) {
                 var filePath = environment.arguments[index];
                 environment.standardOut.WriteLine("Parsing: " + filePath);
@@ -10044,9 +10079,6 @@ var Program = (function () {
         while(true) {
             var token = scanner.scan();
             tokens.push(token);
-            if(token.kind() === SyntaxKind.EndOfFileToken) {
-                break;
-            }
             if(token.diagnostics()) {
                 throw new Error("Error parsing!");
             }
@@ -10055,6 +10087,9 @@ var Program = (function () {
             textArray.push(tokenFullText);
             if(tokenFullText.substr(token.start() - token.fullStart(), token.width()) !== tokenText) {
                 throw new Error("Token invariant broken!");
+            }
+            if(token.kind() === SyntaxKind.EndOfFileToken) {
+                break;
             }
         }
         environment.standardOut.WriteLine("Token Count: " + tokens.length);

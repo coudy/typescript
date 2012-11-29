@@ -173,7 +173,7 @@ prototype: $(PROTOTYPE_SOURCES)
 	$(STRC_LKG) $(PROTOTYPE_SOURCES) -out $(PSRC)\prototype.js
 
 runprototype: prototype
-	$(DEBUG_HOST) $(PSRC)\prototype.js $(COMPILER_SOURCES)
+	$(DEBUG_HOST) $(PSRC)\prototype.js $(SERVICES_SOURCES)
 
 COMPILER_TESTS=--compiler
 LS_TESTS=--ls

@@ -877,6 +877,54 @@ class ArrowFunctionExpressionSyntax extends UnaryExpressionSyntax {
     }
 }
 
+class SimpleArrowFunctionExpression extends ArrowFunctionExpressionSyntax {
+    private _identifier: ISyntaxToken;
+
+    constructor (identifier: ISyntaxToken,
+                 equalsGreaterThanToken: ISyntaxToken,
+                 body: SyntaxNode) {
+        super(equalsGreaterThanToken, body);
+
+        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) {
+            throw Errors.argumentNull("identifier");
+        }
+
+        this._identifier = identifier;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.SimpleArrowFunctionExpression;
+    }
+
+    public identifier(): ISyntaxToken {
+        return this._identifier;
+    }
+}
+
+class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax {
+    private _callSignature: CallSignatureSyntax;
+
+    constructor (callSignature: CallSignatureSyntax,
+                 equalsGreaterThanToken: ISyntaxToken,
+                 body: SyntaxNode) {
+        super(equalsGreaterThanToken, body);
+
+        if (callSignature === null) {
+            throw Errors.argumentNull("callSignature");
+        }
+
+        this._callSignature = callSignature;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ParenthesizedArrowFunctionExpression;
+    }
+
+    public callSignature(): CallSignatureSyntax {
+        return this._callSignature;
+    }
+}
+
 class TypeSyntax extends UnaryExpressionSyntax {
 }
 
@@ -1133,30 +1181,6 @@ class TypeAnnotationSyntax extends SyntaxNode {
 
     public type(): TypeSyntax {
         return this._type;
-    }
-}
-
-class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax {
-    private _callSignature: CallSignatureSyntax;
-
-    constructor (callSignature: CallSignatureSyntax,
-                 equalsGreaterThanToken: ISyntaxToken,
-                 body: SyntaxNode) {
-        super(equalsGreaterThanToken, body);
-
-        if (callSignature === null) {
-            throw Errors.argumentNull("callSignature");
-        }
-
-        this._callSignature = callSignature;
-    }
-
-    public kind(): SyntaxKind {
-        return SyntaxKind.ParenthesizedArrowFunctionExpression;
-    }
-
-    public callSignature(): CallSignatureSyntax {
-        return this._callSignature;
     }
 }
 

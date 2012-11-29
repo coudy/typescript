@@ -93,7 +93,7 @@ class Program {
     }
 
     run(environment: IEnvironment): void {
-        if (true) {
+        if (false) {
             for (var index in environment.arguments) {
                 var filePath: string = environment.arguments[index];
                 environment.standardOut.WriteLine("Parsing: " + filePath);
@@ -135,10 +135,6 @@ class Program {
             var token = scanner.scan();
             tokens.push(token);
 
-            if (token.kind() === SyntaxKind.EndOfFileToken) {
-                break;
-            }
-
             if (token.diagnostics()) {
                 throw new Error("Error parsing!");
             }
@@ -150,6 +146,10 @@ class Program {
 
             if (tokenFullText.substr(token.start() - token.fullStart(), token.width()) !== tokenText) {
                 throw new Error("Token invariant broken!");
+            }
+
+            if (token.kind() === SyntaxKind.EndOfFileToken) {
+                break;
             }
         }
 

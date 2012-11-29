@@ -909,8 +909,8 @@ module Formatting {
         public startPosition() { return this._start; }
         public end() { return new SnapshotPoint(this._snapshot, this._end); }
         public endPosition() { return this._end; }
-        public endIncludingLineBreak() { return new SnapshotPoint(this._snapshot, this._end + this._lineBreak.length); };
-        public endIncludingLineBreakPosition() { return this._end + this._lineBreak.length; };
+        public endIncludingLineBreak() { return new SnapshotPoint(this._snapshot, this._end + this._lineBreak.length); }
+        public endIncludingLineBreakPosition() { return this._end + this._lineBreak.length; }
         public length() { return this._end - this._start; }
         public lineNumber() { return this._lineNumber; }
         public getText(): string { return this._snapshot.GetText(Span.FromBounds(this._start, this._end)); }
