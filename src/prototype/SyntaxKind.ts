@@ -167,6 +167,7 @@ enum SyntaxKind {
     BreakStatement,
     ForStatement,
     ForInStatement,
+    EmptyStatement,
 
     // Expressions
     PlusExpression,
