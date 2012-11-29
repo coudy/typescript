@@ -4339,12 +4339,14 @@ var SyntaxKind;
     SyntaxKind.Parameter = 210;
     SyntaxKind._map[211] = "FunctionSignature";
     SyntaxKind.FunctionSignature = 211;
-    SyntaxKind._map[212] = "CallSignature";
-    SyntaxKind.CallSignature = 212;
-    SyntaxKind._map[213] = "TypeAnnotation";
-    SyntaxKind.TypeAnnotation = 213;
-    SyntaxKind._map[214] = "SimplePropertyAssignment";
-    SyntaxKind.SimplePropertyAssignment = 214;
+    SyntaxKind._map[212] = "PropertySignature";
+    SyntaxKind.PropertySignature = 212;
+    SyntaxKind._map[213] = "CallSignature";
+    SyntaxKind.CallSignature = 213;
+    SyntaxKind._map[214] = "TypeAnnotation";
+    SyntaxKind.TypeAnnotation = 214;
+    SyntaxKind._map[215] = "SimplePropertyAssignment";
+    SyntaxKind.SimplePropertyAssignment = 215;
     SyntaxKind.FirstStandardKeyword = SyntaxKind.BreakKeyword;
     SyntaxKind.LastStandardKeyword = SyntaxKind.WithKeyword;
     SyntaxKind.FirstFutureReservedKeyword = SyntaxKind.ClassKeyword;
@@ -6036,6 +6038,9 @@ var PropertySignatureSyntax = (function (_super) {
         this._questionToken = questionToken;
         this._typeAnnotation = typeAnnotation;
     }
+    PropertySignatureSyntax.prototype.kind = function () {
+        return SyntaxKind.PropertySignature;
+    };
     PropertySignatureSyntax.prototype.identifier = function () {
         return this._identifier;
     };

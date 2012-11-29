@@ -1675,6 +1675,10 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         this._typeAnnotation = typeAnnotation;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.PropertySignature;
+    }
+
     public identifier(): ISyntaxToken {
         return this._identifier;
     }
