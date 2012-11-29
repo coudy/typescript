@@ -1227,9 +1227,23 @@ class Parser {
         else if (this.isForOrForInStatement()) {
             return this.parseForOrForInStatement();
         }
+        else if (this.isEmptyStatement()) {
+            return this.parseEmptyStatement();
+        }
         else {
             throw Errors.notYetImplemented();
         }
+    }
+
+    private isEmptyStatement(): bool {
+        return this.currentToken().kind() === SyntaxKind.SemicolonToken;
+    }
+
+    private parseEmptyStatement(): EmptyStatementSyntax {
+        Debug.assert(this.isEmptyStatement());
+
+        var semicolonToken = this.eatToken(SyntaxKind.SemicolonToken);
+        return new EmptyStatementSyntax(semicolonToken);
     }
 
     private isForOrForInStatement(): bool {
@@ -2082,8 +2096,10 @@ class Parser {
             // (id
             // Could still be an arrow function.  Look a bit more.
 
-            if (token2.kind() == SyntaxKind.DotToken) {
+            if (token2.kind() === SyntaxKind.DotToken ||
+                token2.kind() === SyntaxKind.OpenParenToken) {
                 // (id.
+                // (id(
                 // Definitely a parenthesized expression.
                 return true;
             }

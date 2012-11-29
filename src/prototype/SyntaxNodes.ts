@@ -2920,3 +2920,25 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
         return this._block;
     }
 }
+
+class EmptyStatementSyntax extends StatementSyntax {
+    private _semicolonToken: ISyntaxToken;
+
+    constructor(semicolonToken: ISyntaxToken) {
+        super();
+
+        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) {
+            throw Errors.argument("semicolonToken");
+        }
+
+        this._semicolonToken = semicolonToken;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.EmptyStatement;
+    }
+
+    public semicolonToken(): ISyntaxToken {
+        return this._semicolonToken;
+    }
+}
