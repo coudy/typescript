@@ -2084,6 +2084,50 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
 
 }
 
+class ThrowStatementSyntax extends StatementSyntax {
+    private _throwKeyword: ISyntaxToken;
+    private _expression: ExpressionSyntax;
+    private _semicolonToken: ISyntaxToken;
+
+    constructor(throwKeyword: ISyntaxToken,
+                expression: ExpressionSyntax,
+                semicolonToken: ISyntaxToken) {
+        super();
+
+        if (throwKeyword.keywordKind() !== SyntaxKind.ThrowKeyword) {
+            throw Errors.argument("throwKeyword");
+        }
+
+        if (expression === null) {
+            throw Errors.argument("expression");
+        }
+
+        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) {
+            throw Errors.argument("semicolonToken");
+        }
+
+        this._throwKeyword = throwKeyword;
+        this._expression = expression;
+        this._semicolonToken = semicolonToken;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ThrowStatement;
+    }
+
+    public throwKeyword(): ISyntaxToken {
+        return this._throwKeyword;
+    }
+
+    public expression(): ExpressionSyntax {
+        return this._expression;
+    }
+
+    public semicolonToken(): ISyntaxToken {
+        return this._semicolonToken;
+    }
+}
+
 class ReturnStatementSyntax extends StatementSyntax {
     private _returnKeyword: ISyntaxToken;
     private _expression: ExpressionSyntax;

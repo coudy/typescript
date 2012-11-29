@@ -1109,8 +1109,8 @@ var Parser = (function () {
             publicOrPrivateKeyword = this.eatAnyToken();
         }
         var staticKeyword = null;
-        if(this.currentToken().kind() === SyntaxKind.StaticKeyword) {
-            staticKeyword = this.eatToken(SyntaxKind.StaticKeyword);
+        if(this.currentToken().keywordKind() === SyntaxKind.StaticKeyword) {
+            staticKeyword = this.eatKeyword(SyntaxKind.StaticKeyword);
         }
         var functionSignature = this.parseFunctionSignature();
         var block = null;
@@ -1410,16 +1410,20 @@ var Parser = (function () {
                                 if(this.isSwitchStatement()) {
                                     return this.parseSwitchStatement();
                                 } else {
-                                    if(this.isBreakStatement()) {
-                                        return this.parseBreakStatement();
+                                    if(this.isThrowStatement()) {
+                                        return this.parseThrowStatement();
                                     } else {
-                                        if(this.isForOrForInStatement()) {
-                                            return this.parseForOrForInStatement();
+                                        if(this.isBreakStatement()) {
+                                            return this.parseBreakStatement();
                                         } else {
-                                            if(this.isEmptyStatement()) {
-                                                return this.parseEmptyStatement();
+                                            if(this.isForOrForInStatement()) {
+                                                return this.parseForOrForInStatement();
                                             } else {
-                                                throw Errors.notYetImplemented();
+                                                if(this.isEmptyStatement()) {
+                                                    return this.parseEmptyStatement();
+                                                } else {
+                                                    throw Errors.notYetImplemented();
+                                                }
                                             }
                                         }
                                     }
@@ -1602,6 +1606,22 @@ var Parser = (function () {
             statements.push(statement);
         }
         return SyntaxNodeList.create(statements);
+    };
+    Parser.prototype.isThrowStatement = function () {
+        return this.currentToken().keywordKind() === SyntaxKind.ThrowKeyword;
+    };
+    Parser.prototype.parseThrowStatement = function () {
+        Debug.assert(this.isThrowStatement());
+        var throwKeyword = this.eatKeyword(SyntaxKind.ThrowKeyword);
+        var expression = null;
+        if(this.canEatExplicitOrAutomaticSemicolon()) {
+            var token = this.createMissingToken(SyntaxKind.IdentifierNameToken, SyntaxKind.None);
+            expression = new IdentifierNameSyntax(token);
+        } else {
+            expression = this.parseExpression(true);
+        }
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+        return new ThrowStatementSyntax(throwKeyword, expression, semicolonToken);
     };
     Parser.prototype.isReturnStatement = function () {
         return this.currentToken().keywordKind() === SyntaxKind.ReturnKeyword;
@@ -4220,168 +4240,170 @@ var SyntaxKind;
     SyntaxKind.ForInStatement = 136;
     SyntaxKind._map[137] = "EmptyStatement";
     SyntaxKind.EmptyStatement = 137;
-    SyntaxKind._map[138] = "PlusExpression";
-    SyntaxKind.PlusExpression = 138;
-    SyntaxKind._map[139] = "NegateExpression";
-    SyntaxKind.NegateExpression = 139;
-    SyntaxKind._map[140] = "BitwiseNotExpression";
-    SyntaxKind.BitwiseNotExpression = 140;
-    SyntaxKind._map[141] = "LogicalNotExpression";
-    SyntaxKind.LogicalNotExpression = 141;
-    SyntaxKind._map[142] = "PreIncrementExpression";
-    SyntaxKind.PreIncrementExpression = 142;
-    SyntaxKind._map[143] = "PreDecrementExpression";
-    SyntaxKind.PreDecrementExpression = 143;
-    SyntaxKind._map[144] = "DeleteExpression";
-    SyntaxKind.DeleteExpression = 144;
-    SyntaxKind._map[145] = "TypeOfExpression";
-    SyntaxKind.TypeOfExpression = 145;
-    SyntaxKind._map[146] = "VoidExpression";
-    SyntaxKind.VoidExpression = 146;
-    SyntaxKind._map[147] = "BooleanLiteralExpression";
-    SyntaxKind.BooleanLiteralExpression = 147;
-    SyntaxKind._map[148] = "NullLiteralExpression";
-    SyntaxKind.NullLiteralExpression = 148;
-    SyntaxKind._map[149] = "NumericLiteralExpression";
-    SyntaxKind.NumericLiteralExpression = 149;
-    SyntaxKind._map[150] = "RegularExpressionLiteralExpression";
-    SyntaxKind.RegularExpressionLiteralExpression = 150;
-    SyntaxKind._map[151] = "StringLiteralExpression";
-    SyntaxKind.StringLiteralExpression = 151;
-    SyntaxKind._map[152] = "CommaExpression";
-    SyntaxKind.CommaExpression = 152;
-    SyntaxKind._map[153] = "AssignmentExpression";
-    SyntaxKind.AssignmentExpression = 153;
-    SyntaxKind._map[154] = "AddAssignmentExpression";
-    SyntaxKind.AddAssignmentExpression = 154;
-    SyntaxKind._map[155] = "SubtractAssignmentExpression";
-    SyntaxKind.SubtractAssignmentExpression = 155;
-    SyntaxKind._map[156] = "MultiplyAssignmentExpression";
-    SyntaxKind.MultiplyAssignmentExpression = 156;
-    SyntaxKind._map[157] = "DivideAssignmentExpression";
-    SyntaxKind.DivideAssignmentExpression = 157;
-    SyntaxKind._map[158] = "ModuloAssignmentExpression";
-    SyntaxKind.ModuloAssignmentExpression = 158;
-    SyntaxKind._map[159] = "AndAssignmentExpression";
-    SyntaxKind.AndAssignmentExpression = 159;
-    SyntaxKind._map[160] = "ExclusiveOrAssignmentExpression";
-    SyntaxKind.ExclusiveOrAssignmentExpression = 160;
-    SyntaxKind._map[161] = "OrAssignmentExpression";
-    SyntaxKind.OrAssignmentExpression = 161;
-    SyntaxKind._map[162] = "LeftShiftAssignmentExpression";
-    SyntaxKind.LeftShiftAssignmentExpression = 162;
-    SyntaxKind._map[163] = "SignedRightShiftAssignmentExpression";
-    SyntaxKind.SignedRightShiftAssignmentExpression = 163;
-    SyntaxKind._map[164] = "UnsignedRightShiftAssignmentExpression";
-    SyntaxKind.UnsignedRightShiftAssignmentExpression = 164;
-    SyntaxKind._map[165] = "ConditionalExpression";
-    SyntaxKind.ConditionalExpression = 165;
-    SyntaxKind._map[166] = "LogicalOrExpression";
-    SyntaxKind.LogicalOrExpression = 166;
-    SyntaxKind._map[167] = "LogicalAndExpression";
-    SyntaxKind.LogicalAndExpression = 167;
-    SyntaxKind._map[168] = "BitwiseOrExpression";
-    SyntaxKind.BitwiseOrExpression = 168;
-    SyntaxKind._map[169] = "BitwiseExclusiveOrExpression";
-    SyntaxKind.BitwiseExclusiveOrExpression = 169;
-    SyntaxKind._map[170] = "BitwiseAndExpression";
-    SyntaxKind.BitwiseAndExpression = 170;
-    SyntaxKind._map[171] = "EqualsWithTypeConversionExpression";
-    SyntaxKind.EqualsWithTypeConversionExpression = 171;
-    SyntaxKind._map[172] = "NotEqualsWithTypeConversionExpression";
-    SyntaxKind.NotEqualsWithTypeConversionExpression = 172;
-    SyntaxKind._map[173] = "EqualsExpression";
-    SyntaxKind.EqualsExpression = 173;
-    SyntaxKind._map[174] = "NotEqualsExpression";
-    SyntaxKind.NotEqualsExpression = 174;
-    SyntaxKind._map[175] = "LessThanExpression";
-    SyntaxKind.LessThanExpression = 175;
-    SyntaxKind._map[176] = "GreaterThanExpression";
-    SyntaxKind.GreaterThanExpression = 176;
-    SyntaxKind._map[177] = "LessThanOrEqualExpression";
-    SyntaxKind.LessThanOrEqualExpression = 177;
-    SyntaxKind._map[178] = "GreaterThanOrEqualExpression";
-    SyntaxKind.GreaterThanOrEqualExpression = 178;
-    SyntaxKind._map[179] = "InstanceOfExpression";
-    SyntaxKind.InstanceOfExpression = 179;
-    SyntaxKind._map[180] = "InExpression";
-    SyntaxKind.InExpression = 180;
-    SyntaxKind._map[181] = "LeftShiftExpression";
-    SyntaxKind.LeftShiftExpression = 181;
-    SyntaxKind._map[182] = "SignedRightShiftExpression";
-    SyntaxKind.SignedRightShiftExpression = 182;
-    SyntaxKind._map[183] = "UnsignedRightShiftExpression";
-    SyntaxKind.UnsignedRightShiftExpression = 183;
-    SyntaxKind._map[184] = "MultiplyExpression";
-    SyntaxKind.MultiplyExpression = 184;
-    SyntaxKind._map[185] = "DivideExpression";
-    SyntaxKind.DivideExpression = 185;
-    SyntaxKind._map[186] = "ModuloExpression";
-    SyntaxKind.ModuloExpression = 186;
-    SyntaxKind._map[187] = "AddExpression";
-    SyntaxKind.AddExpression = 187;
-    SyntaxKind._map[188] = "SubtractExpression";
-    SyntaxKind.SubtractExpression = 188;
-    SyntaxKind._map[189] = "PostIncrementExpression";
-    SyntaxKind.PostIncrementExpression = 189;
-    SyntaxKind._map[190] = "PostDecrementExpression";
-    SyntaxKind.PostDecrementExpression = 190;
-    SyntaxKind._map[191] = "MemberAccessExpression";
-    SyntaxKind.MemberAccessExpression = 191;
-    SyntaxKind._map[192] = "InvocationExpression";
-    SyntaxKind.InvocationExpression = 192;
-    SyntaxKind._map[193] = "ThisExpression";
-    SyntaxKind.ThisExpression = 193;
-    SyntaxKind._map[194] = "ArrayLiteralExpression";
-    SyntaxKind.ArrayLiteralExpression = 194;
-    SyntaxKind._map[195] = "ObjectLiteralExpression";
-    SyntaxKind.ObjectLiteralExpression = 195;
-    SyntaxKind._map[196] = "ObjectCreationExpression";
-    SyntaxKind.ObjectCreationExpression = 196;
-    SyntaxKind._map[197] = "ParenthesizedExpression";
-    SyntaxKind.ParenthesizedExpression = 197;
-    SyntaxKind._map[198] = "ParenthesizedArrowFunctionExpression";
-    SyntaxKind.ParenthesizedArrowFunctionExpression = 198;
-    SyntaxKind._map[199] = "CastExpression";
-    SyntaxKind.CastExpression = 199;
-    SyntaxKind._map[200] = "ElementAccessExpression";
-    SyntaxKind.ElementAccessExpression = 200;
-    SyntaxKind._map[201] = "FunctionExpression";
-    SyntaxKind.FunctionExpression = 201;
-    SyntaxKind._map[202] = "SuperExpression";
-    SyntaxKind.SuperExpression = 202;
-    SyntaxKind._map[203] = "VariableDeclaration";
-    SyntaxKind.VariableDeclaration = 203;
-    SyntaxKind._map[204] = "VariableDeclarator";
-    SyntaxKind.VariableDeclarator = 204;
-    SyntaxKind._map[205] = "ParameterList";
-    SyntaxKind.ParameterList = 205;
-    SyntaxKind._map[206] = "ArgumentList";
-    SyntaxKind.ArgumentList = 206;
-    SyntaxKind._map[207] = "ImplementsClause";
-    SyntaxKind.ImplementsClause = 207;
-    SyntaxKind._map[208] = "ExtendsClause";
-    SyntaxKind.ExtendsClause = 208;
-    SyntaxKind._map[209] = "EqualsValueClause";
-    SyntaxKind.EqualsValueClause = 209;
-    SyntaxKind._map[210] = "CaseSwitchClause";
-    SyntaxKind.CaseSwitchClause = 210;
-    SyntaxKind._map[211] = "DefaultSwitchClause";
-    SyntaxKind.DefaultSwitchClause = 211;
-    SyntaxKind._map[212] = "ElseClause";
-    SyntaxKind.ElseClause = 212;
-    SyntaxKind._map[213] = "Parameter";
-    SyntaxKind.Parameter = 213;
-    SyntaxKind._map[214] = "FunctionSignature";
-    SyntaxKind.FunctionSignature = 214;
-    SyntaxKind._map[215] = "PropertySignature";
-    SyntaxKind.PropertySignature = 215;
-    SyntaxKind._map[216] = "CallSignature";
-    SyntaxKind.CallSignature = 216;
-    SyntaxKind._map[217] = "TypeAnnotation";
-    SyntaxKind.TypeAnnotation = 217;
-    SyntaxKind._map[218] = "SimplePropertyAssignment";
-    SyntaxKind.SimplePropertyAssignment = 218;
+    SyntaxKind._map[138] = "ThrowStatement";
+    SyntaxKind.ThrowStatement = 138;
+    SyntaxKind._map[139] = "PlusExpression";
+    SyntaxKind.PlusExpression = 139;
+    SyntaxKind._map[140] = "NegateExpression";
+    SyntaxKind.NegateExpression = 140;
+    SyntaxKind._map[141] = "BitwiseNotExpression";
+    SyntaxKind.BitwiseNotExpression = 141;
+    SyntaxKind._map[142] = "LogicalNotExpression";
+    SyntaxKind.LogicalNotExpression = 142;
+    SyntaxKind._map[143] = "PreIncrementExpression";
+    SyntaxKind.PreIncrementExpression = 143;
+    SyntaxKind._map[144] = "PreDecrementExpression";
+    SyntaxKind.PreDecrementExpression = 144;
+    SyntaxKind._map[145] = "DeleteExpression";
+    SyntaxKind.DeleteExpression = 145;
+    SyntaxKind._map[146] = "TypeOfExpression";
+    SyntaxKind.TypeOfExpression = 146;
+    SyntaxKind._map[147] = "VoidExpression";
+    SyntaxKind.VoidExpression = 147;
+    SyntaxKind._map[148] = "BooleanLiteralExpression";
+    SyntaxKind.BooleanLiteralExpression = 148;
+    SyntaxKind._map[149] = "NullLiteralExpression";
+    SyntaxKind.NullLiteralExpression = 149;
+    SyntaxKind._map[150] = "NumericLiteralExpression";
+    SyntaxKind.NumericLiteralExpression = 150;
+    SyntaxKind._map[151] = "RegularExpressionLiteralExpression";
+    SyntaxKind.RegularExpressionLiteralExpression = 151;
+    SyntaxKind._map[152] = "StringLiteralExpression";
+    SyntaxKind.StringLiteralExpression = 152;
+    SyntaxKind._map[153] = "CommaExpression";
+    SyntaxKind.CommaExpression = 153;
+    SyntaxKind._map[154] = "AssignmentExpression";
+    SyntaxKind.AssignmentExpression = 154;
+    SyntaxKind._map[155] = "AddAssignmentExpression";
+    SyntaxKind.AddAssignmentExpression = 155;
+    SyntaxKind._map[156] = "SubtractAssignmentExpression";
+    SyntaxKind.SubtractAssignmentExpression = 156;
+    SyntaxKind._map[157] = "MultiplyAssignmentExpression";
+    SyntaxKind.MultiplyAssignmentExpression = 157;
+    SyntaxKind._map[158] = "DivideAssignmentExpression";
+    SyntaxKind.DivideAssignmentExpression = 158;
+    SyntaxKind._map[159] = "ModuloAssignmentExpression";
+    SyntaxKind.ModuloAssignmentExpression = 159;
+    SyntaxKind._map[160] = "AndAssignmentExpression";
+    SyntaxKind.AndAssignmentExpression = 160;
+    SyntaxKind._map[161] = "ExclusiveOrAssignmentExpression";
+    SyntaxKind.ExclusiveOrAssignmentExpression = 161;
+    SyntaxKind._map[162] = "OrAssignmentExpression";
+    SyntaxKind.OrAssignmentExpression = 162;
+    SyntaxKind._map[163] = "LeftShiftAssignmentExpression";
+    SyntaxKind.LeftShiftAssignmentExpression = 163;
+    SyntaxKind._map[164] = "SignedRightShiftAssignmentExpression";
+    SyntaxKind.SignedRightShiftAssignmentExpression = 164;
+    SyntaxKind._map[165] = "UnsignedRightShiftAssignmentExpression";
+    SyntaxKind.UnsignedRightShiftAssignmentExpression = 165;
+    SyntaxKind._map[166] = "ConditionalExpression";
+    SyntaxKind.ConditionalExpression = 166;
+    SyntaxKind._map[167] = "LogicalOrExpression";
+    SyntaxKind.LogicalOrExpression = 167;
+    SyntaxKind._map[168] = "LogicalAndExpression";
+    SyntaxKind.LogicalAndExpression = 168;
+    SyntaxKind._map[169] = "BitwiseOrExpression";
+    SyntaxKind.BitwiseOrExpression = 169;
+    SyntaxKind._map[170] = "BitwiseExclusiveOrExpression";
+    SyntaxKind.BitwiseExclusiveOrExpression = 170;
+    SyntaxKind._map[171] = "BitwiseAndExpression";
+    SyntaxKind.BitwiseAndExpression = 171;
+    SyntaxKind._map[172] = "EqualsWithTypeConversionExpression";
+    SyntaxKind.EqualsWithTypeConversionExpression = 172;
+    SyntaxKind._map[173] = "NotEqualsWithTypeConversionExpression";
+    SyntaxKind.NotEqualsWithTypeConversionExpression = 173;
+    SyntaxKind._map[174] = "EqualsExpression";
+    SyntaxKind.EqualsExpression = 174;
+    SyntaxKind._map[175] = "NotEqualsExpression";
+    SyntaxKind.NotEqualsExpression = 175;
+    SyntaxKind._map[176] = "LessThanExpression";
+    SyntaxKind.LessThanExpression = 176;
+    SyntaxKind._map[177] = "GreaterThanExpression";
+    SyntaxKind.GreaterThanExpression = 177;
+    SyntaxKind._map[178] = "LessThanOrEqualExpression";
+    SyntaxKind.LessThanOrEqualExpression = 178;
+    SyntaxKind._map[179] = "GreaterThanOrEqualExpression";
+    SyntaxKind.GreaterThanOrEqualExpression = 179;
+    SyntaxKind._map[180] = "InstanceOfExpression";
+    SyntaxKind.InstanceOfExpression = 180;
+    SyntaxKind._map[181] = "InExpression";
+    SyntaxKind.InExpression = 181;
+    SyntaxKind._map[182] = "LeftShiftExpression";
+    SyntaxKind.LeftShiftExpression = 182;
+    SyntaxKind._map[183] = "SignedRightShiftExpression";
+    SyntaxKind.SignedRightShiftExpression = 183;
+    SyntaxKind._map[184] = "UnsignedRightShiftExpression";
+    SyntaxKind.UnsignedRightShiftExpression = 184;
+    SyntaxKind._map[185] = "MultiplyExpression";
+    SyntaxKind.MultiplyExpression = 185;
+    SyntaxKind._map[186] = "DivideExpression";
+    SyntaxKind.DivideExpression = 186;
+    SyntaxKind._map[187] = "ModuloExpression";
+    SyntaxKind.ModuloExpression = 187;
+    SyntaxKind._map[188] = "AddExpression";
+    SyntaxKind.AddExpression = 188;
+    SyntaxKind._map[189] = "SubtractExpression";
+    SyntaxKind.SubtractExpression = 189;
+    SyntaxKind._map[190] = "PostIncrementExpression";
+    SyntaxKind.PostIncrementExpression = 190;
+    SyntaxKind._map[191] = "PostDecrementExpression";
+    SyntaxKind.PostDecrementExpression = 191;
+    SyntaxKind._map[192] = "MemberAccessExpression";
+    SyntaxKind.MemberAccessExpression = 192;
+    SyntaxKind._map[193] = "InvocationExpression";
+    SyntaxKind.InvocationExpression = 193;
+    SyntaxKind._map[194] = "ThisExpression";
+    SyntaxKind.ThisExpression = 194;
+    SyntaxKind._map[195] = "ArrayLiteralExpression";
+    SyntaxKind.ArrayLiteralExpression = 195;
+    SyntaxKind._map[196] = "ObjectLiteralExpression";
+    SyntaxKind.ObjectLiteralExpression = 196;
+    SyntaxKind._map[197] = "ObjectCreationExpression";
+    SyntaxKind.ObjectCreationExpression = 197;
+    SyntaxKind._map[198] = "ParenthesizedExpression";
+    SyntaxKind.ParenthesizedExpression = 198;
+    SyntaxKind._map[199] = "ParenthesizedArrowFunctionExpression";
+    SyntaxKind.ParenthesizedArrowFunctionExpression = 199;
+    SyntaxKind._map[200] = "CastExpression";
+    SyntaxKind.CastExpression = 200;
+    SyntaxKind._map[201] = "ElementAccessExpression";
+    SyntaxKind.ElementAccessExpression = 201;
+    SyntaxKind._map[202] = "FunctionExpression";
+    SyntaxKind.FunctionExpression = 202;
+    SyntaxKind._map[203] = "SuperExpression";
+    SyntaxKind.SuperExpression = 203;
+    SyntaxKind._map[204] = "VariableDeclaration";
+    SyntaxKind.VariableDeclaration = 204;
+    SyntaxKind._map[205] = "VariableDeclarator";
+    SyntaxKind.VariableDeclarator = 205;
+    SyntaxKind._map[206] = "ParameterList";
+    SyntaxKind.ParameterList = 206;
+    SyntaxKind._map[207] = "ArgumentList";
+    SyntaxKind.ArgumentList = 207;
+    SyntaxKind._map[208] = "ImplementsClause";
+    SyntaxKind.ImplementsClause = 208;
+    SyntaxKind._map[209] = "ExtendsClause";
+    SyntaxKind.ExtendsClause = 209;
+    SyntaxKind._map[210] = "EqualsValueClause";
+    SyntaxKind.EqualsValueClause = 210;
+    SyntaxKind._map[211] = "CaseSwitchClause";
+    SyntaxKind.CaseSwitchClause = 211;
+    SyntaxKind._map[212] = "DefaultSwitchClause";
+    SyntaxKind.DefaultSwitchClause = 212;
+    SyntaxKind._map[213] = "ElseClause";
+    SyntaxKind.ElseClause = 213;
+    SyntaxKind._map[214] = "Parameter";
+    SyntaxKind.Parameter = 214;
+    SyntaxKind._map[215] = "FunctionSignature";
+    SyntaxKind.FunctionSignature = 215;
+    SyntaxKind._map[216] = "PropertySignature";
+    SyntaxKind.PropertySignature = 216;
+    SyntaxKind._map[217] = "CallSignature";
+    SyntaxKind.CallSignature = 217;
+    SyntaxKind._map[218] = "TypeAnnotation";
+    SyntaxKind.TypeAnnotation = 218;
+    SyntaxKind._map[219] = "SimplePropertyAssignment";
+    SyntaxKind.SimplePropertyAssignment = 219;
     SyntaxKind.FirstStandardKeyword = SyntaxKind.BreakKeyword;
     SyntaxKind.LastStandardKeyword = SyntaxKind.WithKeyword;
     SyntaxKind.FirstFutureReservedKeyword = SyntaxKind.ClassKeyword;
@@ -6366,6 +6388,37 @@ var MemberVariableDeclarationSyntax = (function (_super) {
     };
     return MemberVariableDeclarationSyntax;
 })(MemberDeclarationSyntax);
+var ThrowStatementSyntax = (function (_super) {
+    __extends(ThrowStatementSyntax, _super);
+    function ThrowStatementSyntax(throwKeyword, expression, semicolonToken) {
+        _super.call(this);
+        if(throwKeyword.keywordKind() !== SyntaxKind.ThrowKeyword) {
+            throw Errors.argument("throwKeyword");
+        }
+        if(expression === null) {
+            throw Errors.argument("expression");
+        }
+        if(semicolonToken.kind() !== SyntaxKind.SemicolonToken) {
+            throw Errors.argument("semicolonToken");
+        }
+        this._throwKeyword = throwKeyword;
+        this._expression = expression;
+        this._semicolonToken = semicolonToken;
+    }
+    ThrowStatementSyntax.prototype.kind = function () {
+        return SyntaxKind.ThrowStatement;
+    };
+    ThrowStatementSyntax.prototype.throwKeyword = function () {
+        return this._throwKeyword;
+    };
+    ThrowStatementSyntax.prototype.expression = function () {
+        return this._expression;
+    };
+    ThrowStatementSyntax.prototype.semicolonToken = function () {
+        return this._semicolonToken;
+    };
+    return ThrowStatementSyntax;
+})(StatementSyntax);
 var ReturnStatementSyntax = (function (_super) {
     __extends(ReturnStatementSyntax, _super);
     function ReturnStatementSyntax(returnKeyword, expression, semicolonToken) {

@@ -822,8 +822,8 @@ class Parser {
         }
 
         var staticKeyword: ISyntaxToken = null;
-        if (this.currentToken().kind() === SyntaxKind.StaticKeyword) {
-            staticKeyword = this.eatToken(SyntaxKind.StaticKeyword);
+        if (this.currentToken().keywordKind() === SyntaxKind.StaticKeyword) {
+            staticKeyword = this.eatKeyword(SyntaxKind.StaticKeyword);
         }
 
         var functionSignature = this.parseFunctionSignature();
@@ -1232,6 +1232,9 @@ class Parser {
         else if (this.isSwitchStatement()) {
             return this.parseSwitchStatement();
         }
+        else if (this.isThrowStatement()) {
+            return this.parseThrowStatement();
+        }
         else if (this.isBreakStatement()) {
             return this.parseBreakStatement();
         }
@@ -1508,6 +1511,32 @@ class Parser {
         }
 
         return SyntaxNodeList.create(statements);
+    }
+
+    private isThrowStatement(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.ThrowKeyword;
+    }
+
+    private parseThrowStatement(): ThrowStatementSyntax {
+        Debug.assert(this.isThrowStatement());
+
+        var throwKeyword = this.eatKeyword(SyntaxKind.ThrowKeyword);
+
+        var expression: ExpressionSyntax = null;
+        if (this.canEatExplicitOrAutomaticSemicolon()) {
+            // Because of automatic semicolon insertion, we need to report error if this 
+            // throw could be terminated with a semicolon.  Note: we can't call 'parseExpression'
+            // directly as that might consume an expression on the following line.  
+            var token = this.createMissingToken(SyntaxKind.IdentifierNameToken, SyntaxKind.None);
+            expression = new IdentifierNameSyntax(token);
+        }
+        else {
+            expression = this.parseExpression(/*allowIn:*/ true);
+        }
+        
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+
+        return new ThrowStatementSyntax(throwKeyword, expression, semicolonToken);
     }
 
     private isReturnStatement(): bool {
