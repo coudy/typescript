@@ -3258,3 +3258,43 @@ class FinallyClauseSyntax extends SyntaxNode {
         return this._block;
     }
 }
+
+class LabeledStatement extends StatementSyntax {
+    private _identifier: ISyntaxToken;
+    private _colonToken: ISyntaxToken;
+    private _statement: StatementSyntax;
+
+    constructor(identifier: ISyntaxToken,
+                colonToken: ISyntaxToken,
+                statement: StatementSyntax) {
+        super();
+
+        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) {
+            throw Errors.argument("identifier");
+        }
+
+        if (colonToken.kind() !== SyntaxKind.ColonToken) {
+            throw Errors.argument("colonToken");
+        }
+
+        if (statement === null) {
+            throw Errors.argumentNull("statement");
+        }
+
+        this._identifier = identifier;
+        this._colonToken = colonToken;
+        this._statement = statement;
+    }
+
+    public identifier(): ISyntaxToken {
+        return this._identifier;
+    }
+
+    public colonToken(): ISyntaxToken {
+        return this._colonToken;
+    }
+
+    public statement(): StatementSyntax {
+        return this._statement;
+    }
+}

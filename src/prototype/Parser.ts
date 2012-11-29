@@ -1214,6 +1214,9 @@ class Parser {
         if (this.isVariableStatement()) {
             return this.parseVariableStatement();
         }
+        else if (this.isLabeledStatement()) {
+            return this.parseLabeledStatement(allowFunctionDeclaration);
+        }
         else if (allowFunctionDeclaration && this.isFunctionDeclaration()) {
             return this.parseFunctionDeclaration();
         }
@@ -1256,6 +1259,20 @@ class Parser {
         else {
             throw Errors.notYetImplemented();
         }
+    }
+
+    private isLabeledStatement(): bool {
+        return this.isIdentifier(this.currentToken()) && this.peekTokenN(1).kind() === SyntaxKind.ColonToken;
+    }
+
+    private parseLabeledStatement(allowFunctionDeclaration: bool): LabeledStatement {
+        Debug.assert(this.isLabeledStatement());
+        
+        var identifier = this.eatIdentifierToken();
+        var colonToken = this.eatToken(SyntaxKind.ColonToken);
+        var statement = this.parseStatement(allowFunctionDeclaration);
+        
+        return new LabeledStatement(identifier, colonToken, statement);
     }
 
     private isTryStatement(): bool {
