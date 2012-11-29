@@ -35,7 +35,7 @@ class Program {
         }
 
         if (filePath.indexOf("RealSource") >= 0) {
-            return;
+            // return;
         }
 
         environment.standardOut.WriteLine("Testing Parser: " + filePath);
