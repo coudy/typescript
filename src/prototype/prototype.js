@@ -1132,8 +1132,8 @@ var Parser = (function () {
             publicOrPrivateKeyword = this.eatAnyToken();
         }
         var staticKeyword = null;
-        if(this.currentToken().kind() === SyntaxKind.StaticKeyword) {
-            staticKeyword = this.eatToken(SyntaxKind.StaticKeyword);
+        if(this.currentToken().keywordKind() === SyntaxKind.StaticKeyword) {
+            staticKeyword = this.eatKeyword(SyntaxKind.StaticKeyword);
         }
         var variableDeclarator = this.parseVariableDeclarator(true);
         var semicolon = this.eatExplicitOrAutomaticSemicolon();
@@ -2130,7 +2130,7 @@ var Parser = (function () {
                 return true;
             }
             if(token2.kind() === SyntaxKind.QuestionToken) {
-                if(token3.kind() === SyntaxKind.NumericLiteral) {
+                if(token3.kind() !== SyntaxKind.ColonToken && token3.kind() !== SyntaxKind.CloseParenToken && token3.kind() !== SyntaxKind.CommaToken) {
                     return true;
                 }
             }
@@ -3975,6 +3975,9 @@ var StringUtilities = (function () {
     StringUtilities.endsWith = function endsWith(string, value) {
         return string.substring(string.length - value.length, string.length) === value;
     }
+    StringUtilities.startsWith = function startsWith(string, value) {
+        return string.substr(0, value.length) === value;
+    }
     return StringUtilities;
 })();
 var SyntaxDiagnosticInfo = (function (_super) {
@@ -4840,7 +4843,11 @@ var SyntaxNode = (function () {
         for(var name in this) {
             var value = this[name];
             if(value && typeof value === 'object') {
-                result[name] = value;
+                if(typeof value.toJSON === 'function') {
+                    result[name] = value.toJSON(name);
+                } else {
+                    result[name] = value;
+                }
             }
         }
         return result;
@@ -9656,6 +9663,9 @@ var Program = (function () {
     };
     Program.prototype.runParserTest = function (environment, filePath, languageVersion) {
         if(!StringUtilities.endsWith(filePath, ".ts")) {
+            return;
+        }
+        if(filePath.indexOf("RealSource") >= 0) {
             return;
         }
         environment.standardOut.WriteLine("Testing Parser: " + filePath);

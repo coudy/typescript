@@ -855,8 +855,8 @@ class Parser {
         }
 
         var staticKeyword: ISyntaxToken = null;
-        if (this.currentToken().kind() === SyntaxKind.StaticKeyword) {
-            staticKeyword = this.eatToken(SyntaxKind.StaticKeyword);
+        if (this.currentToken().keywordKind() === SyntaxKind.StaticKeyword) {
+            staticKeyword = this.eatKeyword(SyntaxKind.StaticKeyword);
         }
 
         var variableDeclarator = this.parseVariableDeclarator(/*allowIn:*/ true);
@@ -2214,9 +2214,18 @@ class Parser {
 
             if (token2.kind() === SyntaxKind.QuestionToken) {
                 // (id?
-                
-                if (token3.kind() === SyntaxKind.NumericLiteral) {
-                    // (id?1
+                //
+                // In order to be a arrow function it would need to be:
+                //
+                // (id?:
+                // (id?)
+                // (id?,
+                //
+                // Anything else, and it must be a parenthesized expression.
+
+                if (token3.kind() !== SyntaxKind.ColonToken &&
+                    token3.kind() !== SyntaxKind.CloseParenToken &&
+                    token3.kind() !== SyntaxKind.CommaToken) {
                     // Definitely a parenthesized expression.
                     return true;
                 }

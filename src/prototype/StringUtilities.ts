@@ -8,4 +8,8 @@ class StringUtilities {
     public static endsWith(string: string, value: string): bool {
         return string.substring(string.length - value.length, string.length) === value;
     }
+
+    public static startsWith(string: string, value: string): bool {
+        return string.substr(0, value.length) === value;
+    }
 }

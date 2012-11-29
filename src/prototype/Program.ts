@@ -34,6 +34,10 @@ class Program {
             return;
         }
 
+        if (filePath.indexOf("RealSource") >= 0) {
+            return;
+        }
+
         environment.standardOut.WriteLine("Testing Parser: " + filePath);
 
         var contents = environment.readFile(filePath);
