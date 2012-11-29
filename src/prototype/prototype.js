@@ -2728,7 +2728,19 @@ var Scanner = (function () {
         }
     };
     Scanner.prototype.isNewLineCharacter = function (ch) {
-        return ch === CharacterCodes.carriageReturn || ch === CharacterCodes.newLine;
+        switch(ch) {
+            case CharacterCodes.carriageReturn:
+            case CharacterCodes.newLine:
+            case CharacterCodes.paragraphSeparator:
+            case CharacterCodes.lineSeparator: {
+                return true;
+
+            }
+            default: {
+                return false;
+
+            }
+        }
     };
     Scanner.prototype.scanSingleLineCommentTrivia = function (triviaInfo) {
         while(true) {
@@ -3278,57 +3290,69 @@ var Scanner = (function () {
         this.tokenInfo.Kind = SyntaxKind.ErrorToken;
         this.addSimpleDiagnosticInfo(DiagnosticCode.Unexpected_character_0, this.tokenInfo.Text);
     };
-    Scanner.prototype.scanEscapeSequence = function () {
+    Scanner.prototype.skipEscapeSequence = function () {
+        Debug.assert(this.textWindow.peekCharAtPosition() === CharacterCodes.backslash);
         var start = this.textWindow.position();
-        var ch = this.textWindow.peekCharAtPosition();
         this.textWindow.advanceChar1();
-        Debug.assert(ch === CharacterCodes.backslash);
-        ch = this.textWindow.peekCharAtPosition();
+        var ch = this.textWindow.peekCharAtPosition();
         this.textWindow.advanceChar1();
         switch(ch) {
             case CharacterCodes.singleQuote:
             case CharacterCodes.doubleQuote:
             case CharacterCodes.backslash: {
-                return ch;
+                return;
 
             }
             case CharacterCodes._0: {
-                return CharacterCodes.nullCharacter;
+                return;
 
             }
             case CharacterCodes.b: {
-                return CharacterCodes.backspace;
+                return;
 
             }
             case CharacterCodes.f: {
-                return CharacterCodes.formFeed;
+                return;
 
             }
             case CharacterCodes.n: {
-                return CharacterCodes.newLine;
+                return;
 
             }
             case CharacterCodes.r: {
-                return CharacterCodes.carriageReturn;
+                return;
 
             }
             case CharacterCodes.t: {
-                return CharacterCodes.tab;
+                return;
 
             }
             case CharacterCodes.v: {
-                return CharacterCodes.verticalTab;
+                return;
 
             }
             case CharacterCodes.x:
             case CharacterCodes.u: {
                 this.textWindow.reset(start);
-                return this.scanUnicodeOrHexEscape(this.errors);
+                var value = this.scanUnicodeOrHexEscape(this.errors);
+                return;
+
+            }
+            case CharacterCodes.carriageReturn: {
+                if(this.textWindow.peekCharAtPosition() === CharacterCodes.newLine) {
+                    this.textWindow.advanceChar1();
+                }
+                return;
+
+            }
+            case CharacterCodes.newLine:
+            case CharacterCodes.paragraphSeparator:
+            case CharacterCodes.lineSeparator: {
+                return;
 
             }
             default: {
-                this.addComplexDiagnosticInfo(start, this.textWindow.position() - start, DiagnosticCode.Unrecognized_escape_sequence);
-                return ch;
+                return;
 
             }
         }
@@ -3340,13 +3364,13 @@ var Scanner = (function () {
         while(true) {
             var ch = this.textWindow.peekCharAtPosition();
             if(ch === CharacterCodes.backslash) {
-                ch = this.scanEscapeSequence();
+                this.skipEscapeSequence();
             } else {
                 if(ch === quoteCharacter) {
                     this.textWindow.advanceChar1();
                     break;
                 } else {
-                    if(ch === CharacterCodes.nullCharacter) {
+                    if(this.isNewLineCharacter(ch) || ch === CharacterCodes.nullCharacter) {
                         this.addSimpleDiagnosticInfo(DiagnosticCode.Missing_closing_quote_character);
                         break;
                     } else {
@@ -10004,7 +10028,6 @@ var Program = (function () {
             return;
         }
         if(filePath.indexOf("RealSource") >= 0) {
-            return;
         }
         environment.standardOut.WriteLine("Testing Parser: " + filePath);
         var contents = environment.readFile(filePath);
@@ -10047,7 +10070,7 @@ var Program = (function () {
         }
     };
     Program.prototype.run = function (environment) {
-        if(false) {
+        if(true) {
             for(var index in environment.arguments) {
                 var filePath = environment.arguments[index];
                 environment.standardOut.WriteLine("Parsing: " + filePath);

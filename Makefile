@@ -173,7 +173,7 @@ prototype: $(PROTOTYPE_SOURCES)
 	$(STRC_LKG) $(PROTOTYPE_SOURCES) -out $(PSRC)\prototype.js
 
 runprototype: prototype
-	$(DEBUG_HOST) $(PSRC)\prototype.js $(SERVICES_SOURCES)
+	$(DEBUG_HOST) $(PSRC)\prototype.js $(FRONTEND_SOURCES) $(SERVICES_SOURCES) $(BUILT_LOCALTEST)\typescriptServices.js $(HSRC)\harness.ts $(HSRC)\diff.ts $(HSRC)\exec.ts $(HSRC)\baselining.ts $(HSRC)\fourslash.ts $(HSRC)\dumpAST-baselining.ts $(HSRC)\external\json2.ts $(HSRC)\runner.ts
 
 COMPILER_TESTS=--compiler
 LS_TESTS=--ls

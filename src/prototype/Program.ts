@@ -35,7 +35,7 @@ class Program {
         }
 
         if (filePath.indexOf("RealSource") >= 0) {
-            return;
+            // return;
         }
 
         environment.standardOut.WriteLine("Testing Parser: " + filePath);
@@ -93,7 +93,7 @@ class Program {
     }
 
     run(environment: IEnvironment): void {
-        if (false) {
+        if (true) {
             for (var index in environment.arguments) {
                 var filePath: string = environment.arguments[index];
                 environment.standardOut.WriteLine("Parsing: " + filePath);

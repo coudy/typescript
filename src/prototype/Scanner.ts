@@ -163,7 +163,15 @@ class Scanner {
     }
 
     private isNewLineCharacter(ch: number): bool {
-        return ch === CharacterCodes.carriageReturn || ch === CharacterCodes.newLine;
+        switch (ch) {
+            case CharacterCodes.carriageReturn:
+            case CharacterCodes.newLine:
+            case CharacterCodes.paragraphSeparator:
+            case CharacterCodes.lineSeparator:
+                return true;
+            default:
+                return false;
+        }
     }
 
     private scanSingleLineCommentTrivia(triviaInfo: ScannerTriviaInfo): void {
@@ -783,40 +791,76 @@ class Scanner {
         this.addSimpleDiagnosticInfo(DiagnosticCode.Unexpected_character_0, this.tokenInfo.Text);
     }
 
-    private scanEscapeSequence(): number {
-        var start = this.textWindow.position();
-        var ch = this.textWindow.peekCharAtPosition();
-        this.textWindow.advanceChar1();
-        Debug.assert(ch === CharacterCodes.backslash);
+    private skipEscapeSequence(): void {
+        Debug.assert(this.textWindow.peekCharAtPosition() === CharacterCodes.backslash);
 
-        ch = this.textWindow.peekCharAtPosition();
+        var start = this.textWindow.position();
+
+        // Consume the backslash.
+        this.textWindow.advanceChar1();
+
+        // Get the char after the backslash
+        var ch = this.textWindow.peekCharAtPosition();
         this.textWindow.advanceChar1();
         switch (ch) {
             case CharacterCodes.singleQuote:
             case CharacterCodes.doubleQuote:
             case CharacterCodes.backslash:
-                return ch;
+                // value is ch itself;
+                return;
+
             case CharacterCodes._0:
-                return CharacterCodes.nullCharacter;
+                // TODO: Deal with this part of the spec rule: 0 [lookahead ∉DecimalDigit]
+                // value is CharacterCodes.nullCharacter;
+                return;
+
             case CharacterCodes.b:
-                return CharacterCodes.backspace;
+                // value is CharacterCodes.backspace;
+                return;
+
             case CharacterCodes.f:
-                return CharacterCodes.formFeed;
+                // value is CharacterCodes.formFeed;
+                return;
+
             case CharacterCodes.n:
-                return CharacterCodes.newLine;
+                // value is CharacterCodes.newLine;
+                return;
+
             case CharacterCodes.r:
-                return CharacterCodes.carriageReturn;
+                // value is CharacterCodes.carriageReturn;
+                return;
+
             case CharacterCodes.t:
-                return CharacterCodes.tab;
+                // value is CharacterCodes.tab;
+                return;
+
             case CharacterCodes.v:
-                return CharacterCodes.verticalTab;
+                // value is CharacterCodes.verticalTab;
+                return;
+
             case CharacterCodes.x:
             case CharacterCodes.u:
                 this.textWindow.reset(start);
-                return this.scanUnicodeOrHexEscape(this.errors);
+                var value = this.scanUnicodeOrHexEscape(this.errors);
+                return;
+
+            case CharacterCodes.carriageReturn:
+                // If it's \r\n then consume both characters.
+                if (this.textWindow.peekCharAtPosition() === CharacterCodes.newLine) {
+                    this.textWindow.advanceChar1();
+                }
+                return;
+            case CharacterCodes.newLine:
+            case CharacterCodes.paragraphSeparator:
+            case CharacterCodes.lineSeparator:
+                return;
+
             default:
-                this.addComplexDiagnosticInfo(start, this.textWindow.position() - start, DiagnosticCode.Unrecognized_escape_sequence);
-                return ch;
+                // Any other character is ok as well.  As per rule:
+                // EscapeSequence :: CharacterEscapeSequence
+                // CharacterEscapeSequence :: NonEscapeCharacter
+                // NonEscapeCharacter :: SourceCharacter but notEscapeCharacter or LineTerminator
+                return;
         }
     }
 
@@ -830,13 +874,13 @@ class Scanner {
         while (true) {
             var ch = this.textWindow.peekCharAtPosition();
             if (ch === CharacterCodes.backslash) {
-                ch = this.scanEscapeSequence();
+                this.skipEscapeSequence();
             }
             else if (ch === quoteCharacter) {
                 this.textWindow.advanceChar1();
                 break;
             }
-            else if (ch === CharacterCodes.nullCharacter) {
+            else if (this.isNewLineCharacter(ch) || ch === CharacterCodes.nullCharacter) {
                 this.addSimpleDiagnosticInfo(DiagnosticCode.Missing_closing_quote_character);
                 break;
             }
