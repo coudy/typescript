@@ -668,21 +668,34 @@ class Parser {
     }
 
     private isClassDeclaration(): bool {
-        if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword &&
-            this.peekTokenN(1).keywordKind() === SyntaxKind.ClassKeyword) {
+        var token0 = this.currentToken();
+
+        var token1 = this.peekTokenN(1);
+        if (token0.keywordKind() === SyntaxKind.ExportKeyword &&
+            token1.keywordKind() === SyntaxKind.ClassKeyword) {
             return true;
         }
 
-        return this.currentToken().keywordKind() === SyntaxKind.ClassKeyword &&
-               this.isIdentifier(this.peekTokenN(1));
+        if (token0.keywordKind() === SyntaxKind.DeclareKeyword &&
+            token1.keywordKind() === SyntaxKind.ClassKeyword) {
+            return true;
+        }
+
+        return token0.keywordKind() === SyntaxKind.ClassKeyword &&
+               this.isIdentifier(token1);
     }
 
     private parseClassDeclaration(): ClassDeclarationSyntax {
         Debug.assert(this.isClassDeclaration());
 
         var exportKeyword: ISyntaxToken = null;
+        var declareKeyword: ISyntaxToken = null;
+
         if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword) {
             exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
+        }
+        else if (this.currentToken().keywordKind() === SyntaxKind.DeclareKeyword) {
+            declareKeyword = this.eatKeyword(SyntaxKind.DeclareKeyword);
         }
 
         var classKeyword = this.eatKeyword(SyntaxKind.ClassKeyword);
@@ -715,7 +728,7 @@ class Parser {
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
         return new ClassDeclarationSyntax(
-            exportKeyword, classKeyword, identifier, extendsClause, implementsClause,
+            exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause,
             openBraceToken, SyntaxNodeList.create(classElements), closeBraceToken);
     }
 

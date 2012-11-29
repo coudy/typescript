@@ -10,6 +10,7 @@ class SyntaxFacts {
         "const": SyntaxKind.ConstKeyword,
         "constructor": SyntaxKind.ConstructorKeyword,
         "debugger": SyntaxKind.DebuggerKeyword,
+        "declare": SyntaxKind.DeclareKeyword,
         "default": SyntaxKind.DefaultKeyword,
         "delete": SyntaxKind.DeleteKeyword,
         "do": SyntaxKind.DoKeyword,

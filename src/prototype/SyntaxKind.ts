@@ -77,6 +77,7 @@ enum SyntaxKind {
     ModuleKeyword,
     GetKeyword,
     SetKeyword,
+    DeclareKeyword,
 
     // Punctuators
     OpenBraceToken,

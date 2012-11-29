@@ -171,6 +171,7 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
 
 class ClassDeclarationSyntax extends ModuleElementSyntax {
     private _exportKeyword: ISyntaxToken;
+    private _declareKeyword: ISyntaxToken;
     private _classKeyword: ISyntaxToken;
     private _identifier: ISyntaxToken;
     private _extendsClause: ExtendsClauseSyntax;
@@ -180,6 +181,7 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
     private _closeBraceToken: ISyntaxToken;
 
     constructor(exportKeyword: ISyntaxToken,
+                declareKeyword: ISyntaxToken,
                 classKeyword: ISyntaxToken,
                 identifier: ISyntaxToken,
                 extendsClause: ExtendsClauseSyntax,
@@ -191,6 +193,10 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
 
         if (exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
             throw Errors.argument("exportKeyword");
+        }
+
+        if (declareKeyword !== null && declareKeyword.keywordKind() !== SyntaxKind.DeclareKeyword) {
+            throw Errors.argument("declareKeyword");
         }
 
         if (classKeyword.keywordKind() !== SyntaxKind.ClassKeyword) {
@@ -214,6 +220,7 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
         }
 
         this._exportKeyword = exportKeyword;
+        this._declareKeyword = declareKeyword;
         this._classKeyword = classKeyword;
         this._identifier = identifier;
         this._extendsClause = extendsClause;
@@ -225,6 +232,10 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.ClassDeclaration;
+    }
+
+    public declareKeyword(): ISyntaxToken {
+        return this._declareKeyword;
     }
 
     public exportKeyword(): ISyntaxToken {
