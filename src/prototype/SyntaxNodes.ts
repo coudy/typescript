@@ -3124,3 +3124,137 @@ class SuperExpressionSyntax extends UnaryExpressionSyntax {
         return this._superKeyword;
     }
 }
+
+class TryStatementSyntax extends StatementSyntax {
+    private _tryKeyword: ISyntaxToken;
+    private _block: BlockSyntax;
+    private _catchClause: CatchClauseSyntax;
+    private _finallyClause: FinallyClauseSyntax;
+
+    constructor(tryKeyword: ISyntaxToken,
+        block: BlockSyntax,
+        catchClause: CatchClauseSyntax,
+        finallyClause: FinallyClauseSyntax) {
+        super();
+
+        if (tryKeyword.keywordKind() !== SyntaxKind.TryKeyword) {
+            throw Errors.argument("tryKeyword");
+        }
+
+        if (block === null) {
+            throw Errors.argumentNull("block");
+        }
+
+        this._tryKeyword = tryKeyword;
+        this._block = block;
+        this._catchClause = catchClause;
+        this._finallyClause = finallyClause;
+    }
+
+    public tryKeyword(): ISyntaxToken {
+        return this._tryKeyword;
+    }
+
+    public block(): BlockSyntax {
+        return this._block;
+    }
+
+    public catchClause(): CatchClauseSyntax {
+        return this._catchClause;
+    }
+
+    public finallyClause(): FinallyClauseSyntax {
+        return this._finallyClause;
+    }
+}
+
+class CatchClauseSyntax extends SyntaxNode {
+    private _catchKeyword: ISyntaxToken;
+    private _openParenToken: ISyntaxToken;
+    private _identifier: ISyntaxToken;
+    private _closeParenToken: ISyntaxToken;
+    private _block: BlockSyntax;
+
+    constructor(catchKeyword: ISyntaxToken,
+                openParenToken: ISyntaxToken,
+                identifier: ISyntaxToken,
+                closeParenToken: ISyntaxToken,
+                block: BlockSyntax) {
+        super();
+
+        if (catchKeyword.keywordKind() !== SyntaxKind.CatchKeyword) {
+            throw Errors.argument("catchKeyword");
+        }
+
+        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) {
+            throw Errors.argument("openParenToken");
+        }
+
+        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) {
+            throw Errors.argument("identifier");
+        }
+
+        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) {
+            throw Errors.argument("closeParenToken");
+        }
+
+        if (block === null) {
+            throw Errors.argument("block");
+        }
+
+        this._catchKeyword = catchKeyword;
+        this._openParenToken = openParenToken;
+        this._identifier = identifier;
+        this._closeParenToken = closeParenToken;
+        this._block = block;
+    }
+
+    public catchKeyword(): ISyntaxToken {
+        return this._catchKeyword;
+    }
+
+    public openParenToken(): ISyntaxToken {
+        return this._openParenToken;
+    }
+
+    public identifier(): ISyntaxToken {
+        return this._identifier;
+    }
+
+    public closeParenToken(): ISyntaxToken {
+        return this._closeParenToken;
+    }
+
+    public block(): BlockSyntax {
+        return this._block;
+    }
+}
+
+class FinallyClauseSyntax extends SyntaxNode {
+    private _finallyKeyword: ISyntaxToken;
+    private _block: BlockSyntax;
+
+    constructor(finallyKeyword: ISyntaxToken,
+                block: BlockSyntax) {
+        super();
+
+        if (finallyKeyword.keywordKind() !== SyntaxKind.FinallyKeyword) {
+            throw Errors.argument("finallyKeyword");
+        }
+
+        if (block === null) {
+            throw Errors.argumentNull("block");
+        }
+
+        this._finallyKeyword = finallyKeyword;
+        this._block = block;
+    }
+
+    public finallyKeyword(): ISyntaxToken {
+        return this._finallyKeyword;
+    }
+     
+    public block(): BlockSyntax {
+        return this._block;
+    }
+}

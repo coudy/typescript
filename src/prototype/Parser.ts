@@ -1250,9 +1250,67 @@ class Parser {
         else if (this.isWhileStatement()) {
             return this.parseWhileStatement();
         }
+        else if (this.isTryStatement()) {
+            return this.parseTryStatement();
+        }
         else {
             throw Errors.notYetImplemented();
         }
+    }
+
+    private isTryStatement(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.TryKeyword;
+    }
+
+    private parseTryStatement(): TryStatementSyntax {
+        Debug.assert(this.isTryStatement());
+
+        var tryKeyword = this.eatKeyword(SyntaxKind.TryKeyword);
+        var block = this.parseBlock(/*allowFunctionDeclaration:*/ false);
+
+        var catchClause: CatchClauseSyntax = null;
+        if (this.isCatchClause()) {
+            catchClause = this.parseCatchClause();
+        }
+
+        var finallyClause: FinallyClauseSyntax = null;
+        if (this.isFinallyClause()) {
+            finallyClause = this.parseFinallyClause();
+        }
+
+        // TODO: Report error if both catch and finally clauses are missing.
+        // (Alternatively, report that at semantic checking time).
+
+        return new TryStatementSyntax(tryKeyword, block, catchClause, finallyClause);
+    }
+
+    private isCatchClause(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.CatchKeyword;
+    }
+
+    private parseCatchClause(): CatchClauseSyntax {
+        Debug.assert(this.isCatchClause());
+
+        var catchKeyword = this.eatKeyword(SyntaxKind.CatchKeyword);
+        var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
+        var identifier = this.eatIdentifierToken();
+        var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
+        var block = this.parseBlock(/*allowFunctionDeclaration:*/ false);
+
+        return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block);
+    }
+
+    private isFinallyClause(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.FinallyKeyword;
+    }
+
+    private parseFinallyClause(): FinallyClauseSyntax {
+        Debug.assert(this.isFinallyClause());
+
+        var finallyKeyword = this.eatKeyword(SyntaxKind.FinallyKeyword);
+        var block = this.parseBlock(/*allowFunctionDeclaration:*/ false);
+
+        return new FinallyClauseSyntax(finallyKeyword, block);
     }
 
     private isWhileStatement(): bool {
@@ -2517,23 +2575,23 @@ class Parser {
     }
 
     private parseBlock(allowFunctionDeclaration: bool): BlockSyntax {
-        Debug.assert(this.currentToken().kind() === SyntaxKind.OpenBraceToken);
-
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
         var statements: StatementSyntax[] = null;
 
-        while (true) {
-            if (this.currentToken().kind() === SyntaxKind.CloseBraceToken || 
-                this.currentToken().kind() === SyntaxKind.EndOfFileToken) {
-                break;
-            }
+        if (!openBraceToken.isMissing()) {
+            while (true) {
+                if (this.currentToken().kind() === SyntaxKind.CloseBraceToken ||
+                    this.currentToken().kind() === SyntaxKind.EndOfFileToken) {
+                    break;
+                }
 
-            // REVIEW: add error tolerance here.
-            var statement = this.parseStatement(allowFunctionDeclaration);
-            
-            statements = statements || [];
-            statements.push(statement);
+                // REVIEW: add error tolerance here.
+                var statement = this.parseStatement(allowFunctionDeclaration);
+
+                statements = statements || [];
+                statements.push(statement);
+            }
         }
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);

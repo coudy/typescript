@@ -1428,7 +1428,11 @@ var Parser = (function () {
                                                         if(this.isWhileStatement()) {
                                                             return this.parseWhileStatement();
                                                         } else {
-                                                            throw Errors.notYetImplemented();
+                                                            if(this.isTryStatement()) {
+                                                                return this.parseTryStatement();
+                                                            } else {
+                                                                throw Errors.notYetImplemented();
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -1442,6 +1446,44 @@ var Parser = (function () {
                 }
             }
         }
+    };
+    Parser.prototype.isTryStatement = function () {
+        return this.currentToken().keywordKind() === SyntaxKind.TryKeyword;
+    };
+    Parser.prototype.parseTryStatement = function () {
+        Debug.assert(this.isTryStatement());
+        var tryKeyword = this.eatKeyword(SyntaxKind.TryKeyword);
+        var block = this.parseBlock(false);
+        var catchClause = null;
+        if(this.isCatchClause()) {
+            catchClause = this.parseCatchClause();
+        }
+        var finallyClause = null;
+        if(this.isFinallyClause()) {
+            finallyClause = this.parseFinallyClause();
+        }
+        return new TryStatementSyntax(tryKeyword, block, catchClause, finallyClause);
+    };
+    Parser.prototype.isCatchClause = function () {
+        return this.currentToken().keywordKind() === SyntaxKind.CatchKeyword;
+    };
+    Parser.prototype.parseCatchClause = function () {
+        Debug.assert(this.isCatchClause());
+        var catchKeyword = this.eatKeyword(SyntaxKind.CatchKeyword);
+        var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
+        var identifier = this.eatIdentifierToken();
+        var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
+        var block = this.parseBlock(false);
+        return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block);
+    };
+    Parser.prototype.isFinallyClause = function () {
+        return this.currentToken().keywordKind() === SyntaxKind.FinallyKeyword;
+    };
+    Parser.prototype.parseFinallyClause = function () {
+        Debug.assert(this.isFinallyClause());
+        var finallyKeyword = this.eatKeyword(SyntaxKind.FinallyKeyword);
+        var block = this.parseBlock(false);
+        return new FinallyClauseSyntax(finallyKeyword, block);
     };
     Parser.prototype.isWhileStatement = function () {
         return this.currentToken().keywordKind() === SyntaxKind.WhileKeyword;
@@ -2325,16 +2367,17 @@ var Parser = (function () {
         return new ThisExpressionSyntax(thisKeyword);
     };
     Parser.prototype.parseBlock = function (allowFunctionDeclaration) {
-        Debug.assert(this.currentToken().kind() === SyntaxKind.OpenBraceToken);
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
         var statements = null;
-        while(true) {
-            if(this.currentToken().kind() === SyntaxKind.CloseBraceToken || this.currentToken().kind() === SyntaxKind.EndOfFileToken) {
-                break;
+        if(!openBraceToken.isMissing()) {
+            while(true) {
+                if(this.currentToken().kind() === SyntaxKind.CloseBraceToken || this.currentToken().kind() === SyntaxKind.EndOfFileToken) {
+                    break;
+                }
+                var statement = this.parseStatement(allowFunctionDeclaration);
+                statements = statements || [];
+                statements.push(statement);
             }
-            var statement = this.parseStatement(allowFunctionDeclaration);
-            statements = statements || [];
-            statements.push(statement);
         }
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
         return new BlockSyntax(openBraceToken, SyntaxNodeList.create(statements), closeBraceToken);
@@ -7152,6 +7195,98 @@ var SuperExpressionSyntax = (function (_super) {
     };
     return SuperExpressionSyntax;
 })(UnaryExpressionSyntax);
+var TryStatementSyntax = (function (_super) {
+    __extends(TryStatementSyntax, _super);
+    function TryStatementSyntax(tryKeyword, block, catchClause, finallyClause) {
+        _super.call(this);
+        if(tryKeyword.keywordKind() !== SyntaxKind.TryKeyword) {
+            throw Errors.argument("tryKeyword");
+        }
+        if(block === null) {
+            throw Errors.argumentNull("block");
+        }
+        this._tryKeyword = tryKeyword;
+        this._block = block;
+        this._catchClause = catchClause;
+        this._finallyClause = finallyClause;
+    }
+    TryStatementSyntax.prototype.tryKeyword = function () {
+        return this._tryKeyword;
+    };
+    TryStatementSyntax.prototype.block = function () {
+        return this._block;
+    };
+    TryStatementSyntax.prototype.catchClause = function () {
+        return this._catchClause;
+    };
+    TryStatementSyntax.prototype.finallyClause = function () {
+        return this._finallyClause;
+    };
+    return TryStatementSyntax;
+})(StatementSyntax);
+var CatchClauseSyntax = (function (_super) {
+    __extends(CatchClauseSyntax, _super);
+    function CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block) {
+        _super.call(this);
+        if(catchKeyword.keywordKind() !== SyntaxKind.CatchKeyword) {
+            throw Errors.argument("catchKeyword");
+        }
+        if(openParenToken.kind() !== SyntaxKind.OpenParenToken) {
+            throw Errors.argument("openParenToken");
+        }
+        if(identifier.kind() !== SyntaxKind.IdentifierNameToken) {
+            throw Errors.argument("identifier");
+        }
+        if(closeParenToken.kind() !== SyntaxKind.CloseParenToken) {
+            throw Errors.argument("closeParenToken");
+        }
+        if(block === null) {
+            throw Errors.argument("block");
+        }
+        this._catchKeyword = catchKeyword;
+        this._openParenToken = openParenToken;
+        this._identifier = identifier;
+        this._closeParenToken = closeParenToken;
+        this._block = block;
+    }
+    CatchClauseSyntax.prototype.catchKeyword = function () {
+        return this._catchKeyword;
+    };
+    CatchClauseSyntax.prototype.openParenToken = function () {
+        return this._openParenToken;
+    };
+    CatchClauseSyntax.prototype.identifier = function () {
+        return this._identifier;
+    };
+    CatchClauseSyntax.prototype.closeParenToken = function () {
+        return this._closeParenToken;
+    };
+    CatchClauseSyntax.prototype.block = function () {
+        return this._block;
+    };
+    return CatchClauseSyntax;
+})(SyntaxNode);
+var FinallyClauseSyntax = (function (_super) {
+    __extends(FinallyClauseSyntax, _super);
+    function FinallyClauseSyntax(finallyKeyword, block) {
+        _super.call(this);
+        if(finallyKeyword.keywordKind() !== SyntaxKind.FinallyKeyword) {
+            throw Errors.argument("finallyKeyword");
+        }
+        if(block === null) {
+            throw Errors.argumentNull("block");
+        }
+        this._finallyKeyword = finallyKeyword;
+        this._block = block;
+    }
+    FinallyClauseSyntax.prototype.finallyKeyword = function () {
+        return this._finallyKeyword;
+    };
+    FinallyClauseSyntax.prototype.block = function () {
+        return this._block;
+    };
+    return FinallyClauseSyntax;
+})(SyntaxNode);
 var SyntaxToken = (function () {
     function SyntaxToken() { }
     SyntaxToken.create = function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
