@@ -908,20 +908,31 @@ class Parser {
     }
 
     private isFunctionDeclaration(): bool {
-        if (this.currentToken().keywordKind() === SyntaxKind.FunctionKeyword) {
+        var token0 = this.currentToken();
+        if (token0.keywordKind() === SyntaxKind.FunctionKeyword) {
             return true;
         }
 
-        return this.currentToken().keywordKind() === SyntaxKind.ExportKeyword &&
-               this.peekTokenN(1).keywordKind() === SyntaxKind.FunctionKeyword;
+        var token1 = this.peekTokenN(1);
+        if (token0.keywordKind() === SyntaxKind.ExportKeyword &&
+            token1.keywordKind() === SyntaxKind.FunctionKeyword) {
+            return true;
+        }
+
+        return token0.keywordKind() === SyntaxKind.DeclareKeyword &&
+               token1.keywordKind() === SyntaxKind.FunctionKeyword;
     }
 
     private parseFunctionDeclaration(): FunctionDeclarationSyntax {
         Debug.assert(this.isFunctionDeclaration());
 
         var exportKeyword: ISyntaxToken = null;
+        var declareKeyword: ISyntaxToken = null;
         if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword) {
             exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
+        }
+        else if (this.currentToken().keywordKind() === SyntaxKind.DeclareKeyword) {
+            declareKeyword = this.eatKeyword(SyntaxKind.DeclareKeyword);
         }
 
         var functionKeyword = this.eatKeyword(SyntaxKind.FunctionKeyword);
@@ -937,22 +948,28 @@ class Parser {
             semicolonToken = this.eatExplicitOrAutomaticSemicolon();
         }
 
-        return new FunctionDeclarationSyntax(exportKeyword, functionKeyword, functionSignature, block, semicolonToken);
+        return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken);
     }
 
     private isModuleDeclaration(): bool {
-        // export module
-        if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword &&
-            this.peekTokenN(1).keywordKind() === SyntaxKind.ModuleKeyword) {
+        var token0 = this.currentToken();
+        var token1 = this.peekTokenN(1);
 
+        // export module
+        if (token0.keywordKind() === SyntaxKind.ExportKeyword &&
+            token1.keywordKind() === SyntaxKind.ModuleKeyword) {
+            return true;
+        }
+
+        // declare module
+        if (token0.keywordKind() === SyntaxKind.DeclareKeyword &&
+            token1.keywordKind() === SyntaxKind.ModuleKeyword) {
             return true;
         }
 
         // Module is not a javascript keyword.  So we need to use a bit of lookahead here to ensure
         // that we're actually looking at a module construct and not some javascript expression.
-        if (this.currentToken().keywordKind() === SyntaxKind.ModuleKeyword) {
-            var token1 = this.peekTokenN(1);
-
+        if (token0.keywordKind() === SyntaxKind.ModuleKeyword) {
             // module {
             if (token1.kind() === SyntaxKind.OpenBraceToken) {
                 return true;
@@ -977,12 +994,15 @@ class Parser {
     }
 
     private parseModuleDeclaration(): ModuleDeclarationSyntax {
-        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.ModuleKeyword ||
-                     this.currentToken().keywordKind() === SyntaxKind.ExportKeyword);
+        Debug.assert(this.isModuleDeclaration());
 
         var exportKeyword: ISyntaxToken = null;
+        var declareKeyword: ISyntaxToken = null;
         if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword) {
             exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
+        }
+        else if (this.currentToken().keywordKind() === SyntaxKind.DeclareKeyword) {
+            declareKeyword = this.eatKeyword(SyntaxKind.DeclareKeyword);
         }
 
         var moduleKeyword = this.eatKeyword(SyntaxKind.ModuleKeyword);
@@ -1008,7 +1028,8 @@ class Parser {
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
 
         return new ModuleDeclarationSyntax(
-            exportKeyword, moduleKeyword, moduleName, openBraceToken, SyntaxNodeList.create(moduleElements), closeBraceToken);
+            exportKeyword, declareKeyword, moduleKeyword, moduleName, 
+            openBraceToken, SyntaxNodeList.create(moduleElements), closeBraceToken);
     }
 
     private isInterfaceDeclaration(): bool {
@@ -1807,27 +1828,37 @@ class Parser {
     }
 
     private isVariableStatement(): bool {
-        if (this.currentToken().keywordKind() === SyntaxKind.VarKeyword) {
+        var token0 = this.currentToken();
+        if (token0.keywordKind() === SyntaxKind.VarKeyword) {
             return true;
         }
 
-        return this.currentToken().keywordKind() === SyntaxKind.ExportKeyword &&
-               this.peekTokenN(1).keywordKind() === SyntaxKind.VarKeyword;
+        var token1 = this.peekTokenN(1);
+        if (token0.keywordKind() === SyntaxKind.ExportKeyword &&
+            token1.keywordKind() === SyntaxKind.VarKeyword) {
+            return true;
+        }
+
+        return token0.keywordKind() === SyntaxKind.DeclareKeyword &&
+               token1.keywordKind() === SyntaxKind.VarKeyword;
     }
 
     private parseVariableStatement(): VariableStatementSyntax {
-        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.ExportKeyword ||
-                     this.currentToken().keywordKind() === SyntaxKind.VarKeyword);
+        Debug.assert(this.isVariableStatement());
 
         var exportKeyword: ISyntaxToken = null;
+        var declareKeyword: ISyntaxToken = null;
         if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword) {
             exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
+        }
+        else if (this.currentToken().keywordKind() === SyntaxKind.DeclareKeyword) {
+            declareKeyword = this.eatKeyword(SyntaxKind.DeclareKeyword);
         }
 
         var variableDeclaration = this.parseVariableDeclaration(/*allowIn:*/ true);
         var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
 
-        return new VariableStatementSyntax(exportKeyword, variableDeclaration, semicolonToken);
+        return new VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken);
     }
 
     private parseVariableDeclaration(allowIn: bool): VariableDeclarationSyntax {

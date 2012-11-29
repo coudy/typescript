@@ -1178,16 +1178,26 @@ var Parser = (function () {
         }
     };
     Parser.prototype.isFunctionDeclaration = function () {
-        if(this.currentToken().keywordKind() === SyntaxKind.FunctionKeyword) {
+        var token0 = this.currentToken();
+        if(token0.keywordKind() === SyntaxKind.FunctionKeyword) {
             return true;
         }
-        return this.currentToken().keywordKind() === SyntaxKind.ExportKeyword && this.peekTokenN(1).keywordKind() === SyntaxKind.FunctionKeyword;
+        var token1 = this.peekTokenN(1);
+        if(token0.keywordKind() === SyntaxKind.ExportKeyword && token1.keywordKind() === SyntaxKind.FunctionKeyword) {
+            return true;
+        }
+        return token0.keywordKind() === SyntaxKind.DeclareKeyword && token1.keywordKind() === SyntaxKind.FunctionKeyword;
     };
     Parser.prototype.parseFunctionDeclaration = function () {
         Debug.assert(this.isFunctionDeclaration());
         var exportKeyword = null;
+        var declareKeyword = null;
         if(this.currentToken().keywordKind() === SyntaxKind.ExportKeyword) {
             exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
+        } else {
+            if(this.currentToken().keywordKind() === SyntaxKind.DeclareKeyword) {
+                declareKeyword = this.eatKeyword(SyntaxKind.DeclareKeyword);
+            }
         }
         var functionKeyword = this.eatKeyword(SyntaxKind.FunctionKeyword);
         var functionSignature = this.parseFunctionSignature();
@@ -1198,14 +1208,18 @@ var Parser = (function () {
         } else {
             semicolonToken = this.eatExplicitOrAutomaticSemicolon();
         }
-        return new FunctionDeclarationSyntax(exportKeyword, functionKeyword, functionSignature, block, semicolonToken);
+        return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken);
     };
     Parser.prototype.isModuleDeclaration = function () {
-        if(this.currentToken().keywordKind() === SyntaxKind.ExportKeyword && this.peekTokenN(1).keywordKind() === SyntaxKind.ModuleKeyword) {
+        var token0 = this.currentToken();
+        var token1 = this.peekTokenN(1);
+        if(token0.keywordKind() === SyntaxKind.ExportKeyword && token1.keywordKind() === SyntaxKind.ModuleKeyword) {
             return true;
         }
-        if(this.currentToken().keywordKind() === SyntaxKind.ModuleKeyword) {
-            var token1 = this.peekTokenN(1);
+        if(token0.keywordKind() === SyntaxKind.DeclareKeyword && token1.keywordKind() === SyntaxKind.ModuleKeyword) {
+            return true;
+        }
+        if(token0.keywordKind() === SyntaxKind.ModuleKeyword) {
             if(token1.kind() === SyntaxKind.OpenBraceToken) {
                 return true;
             }
@@ -1222,10 +1236,15 @@ var Parser = (function () {
         return false;
     };
     Parser.prototype.parseModuleDeclaration = function () {
-        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.ModuleKeyword || this.currentToken().keywordKind() === SyntaxKind.ExportKeyword);
+        Debug.assert(this.isModuleDeclaration());
         var exportKeyword = null;
+        var declareKeyword = null;
         if(this.currentToken().keywordKind() === SyntaxKind.ExportKeyword) {
             exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
+        } else {
+            if(this.currentToken().keywordKind() === SyntaxKind.DeclareKeyword) {
+                declareKeyword = this.eatKeyword(SyntaxKind.DeclareKeyword);
+            }
         }
         var moduleKeyword = this.eatKeyword(SyntaxKind.ModuleKeyword);
         var moduleName = null;
@@ -1242,7 +1261,7 @@ var Parser = (function () {
             }
         }
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
-        return new ModuleDeclarationSyntax(exportKeyword, moduleKeyword, moduleName, openBraceToken, SyntaxNodeList.create(moduleElements), closeBraceToken);
+        return new ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, openBraceToken, SyntaxNodeList.create(moduleElements), closeBraceToken);
     };
     Parser.prototype.isInterfaceDeclaration = function () {
         if(this.currentToken().keywordKind() === SyntaxKind.ExportKeyword && this.peekTokenN(1).keywordKind() === SyntaxKind.InterfaceKeyword) {
@@ -1837,20 +1856,30 @@ var Parser = (function () {
         return new ElseClauseSyntax(elseKeyword, statement);
     };
     Parser.prototype.isVariableStatement = function () {
-        if(this.currentToken().keywordKind() === SyntaxKind.VarKeyword) {
+        var token0 = this.currentToken();
+        if(token0.keywordKind() === SyntaxKind.VarKeyword) {
             return true;
         }
-        return this.currentToken().keywordKind() === SyntaxKind.ExportKeyword && this.peekTokenN(1).keywordKind() === SyntaxKind.VarKeyword;
+        var token1 = this.peekTokenN(1);
+        if(token0.keywordKind() === SyntaxKind.ExportKeyword && token1.keywordKind() === SyntaxKind.VarKeyword) {
+            return true;
+        }
+        return token0.keywordKind() === SyntaxKind.DeclareKeyword && token1.keywordKind() === SyntaxKind.VarKeyword;
     };
     Parser.prototype.parseVariableStatement = function () {
-        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.ExportKeyword || this.currentToken().keywordKind() === SyntaxKind.VarKeyword);
+        Debug.assert(this.isVariableStatement());
         var exportKeyword = null;
+        var declareKeyword = null;
         if(this.currentToken().keywordKind() === SyntaxKind.ExportKeyword) {
             exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
+        } else {
+            if(this.currentToken().keywordKind() === SyntaxKind.DeclareKeyword) {
+                declareKeyword = this.eatKeyword(SyntaxKind.DeclareKeyword);
+            }
         }
         var variableDeclaration = this.parseVariableDeclaration(true);
         var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
-        return new VariableStatementSyntax(exportKeyword, variableDeclaration, semicolonToken);
+        return new VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken);
     };
     Parser.prototype.parseVariableDeclaration = function (allowIn) {
         Debug.assert(this.currentToken().keywordKind() === SyntaxKind.VarKeyword);
@@ -5235,11 +5264,11 @@ var ClassDeclarationSyntax = (function (_super) {
     ClassDeclarationSyntax.prototype.kind = function () {
         return SyntaxKind.ClassDeclaration;
     };
-    ClassDeclarationSyntax.prototype.declareKeyword = function () {
-        return this._declareKeyword;
-    };
     ClassDeclarationSyntax.prototype.exportKeyword = function () {
         return this._exportKeyword;
+    };
+    ClassDeclarationSyntax.prototype.declareKeyword = function () {
+        return this._declareKeyword;
     };
     ClassDeclarationSyntax.prototype.classKeyword = function () {
         return this._classKeyword;
@@ -5356,10 +5385,13 @@ var ImplementsClauseSyntax = (function (_super) {
 })(SyntaxNode);
 var ModuleDeclarationSyntax = (function (_super) {
     __extends(ModuleDeclarationSyntax, _super);
-    function ModuleDeclarationSyntax(exportKeyword, moduleKeyword, moduleName, openBraceToken, moduleElements, closeBraceToken) {
+    function ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, openBraceToken, moduleElements, closeBraceToken) {
         _super.call(this);
         if(exportKeyword != null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
             throw Errors.argument("exportKeyword");
+        }
+        if(declareKeyword != null && declareKeyword.keywordKind() !== SyntaxKind.DeclareKeyword) {
+            throw Errors.argument("declareKeyword");
         }
         if(moduleKeyword.keywordKind() !== SyntaxKind.ModuleKeyword) {
             throw Errors.argument("moduleKeyword");
@@ -5377,6 +5409,7 @@ var ModuleDeclarationSyntax = (function (_super) {
             throw Errors.argument("closeBraceToken");
         }
         this._moduleKeyword = moduleKeyword;
+        this._declareKeyword = declareKeyword;
         this._moduleName = moduleName;
         this._openBraceToken = openBraceToken;
         this._moduleElements = moduleElements;
@@ -5384,6 +5417,9 @@ var ModuleDeclarationSyntax = (function (_super) {
     }
     ModuleDeclarationSyntax.prototype.kind = function () {
         return SyntaxKind.ModuleDeclaration;
+    };
+    ModuleDeclarationSyntax.prototype.declareKeyword = function () {
+        return this._declareKeyword;
     };
     ModuleDeclarationSyntax.prototype.moduleKeyword = function () {
         return this._moduleKeyword;
@@ -5412,10 +5448,13 @@ var StatementSyntax = (function (_super) {
 })(ModuleElementSyntax);
 var FunctionDeclarationSyntax = (function (_super) {
     __extends(FunctionDeclarationSyntax, _super);
-    function FunctionDeclarationSyntax(exportKeyword, functionKeyword, functionSignature, block, semicolonToken) {
+    function FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken) {
         _super.call(this);
         if(exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
             throw Errors.argument("exportKeyword");
+        }
+        if(declareKeyword !== null && declareKeyword.keywordKind() !== SyntaxKind.DeclareKeyword) {
+            throw Errors.argument("declareKeyword");
         }
         if(functionKeyword.keywordKind() !== SyntaxKind.FunctionKeyword) {
             throw Errors.argument("functionKeyword");
@@ -5427,6 +5466,7 @@ var FunctionDeclarationSyntax = (function (_super) {
             throw Errors.argument("semicolonToken");
         }
         this._exportKeyword = exportKeyword;
+        this._declareKeyword = declareKeyword;
         this._functionKeyword = functionKeyword;
         this._functionSignature = functionSignature;
         this._semicolonToken = semicolonToken;
@@ -5437,6 +5477,9 @@ var FunctionDeclarationSyntax = (function (_super) {
     };
     FunctionDeclarationSyntax.prototype.exportKeyword = function () {
         return this._exportKeyword;
+    };
+    FunctionDeclarationSyntax.prototype.declareKeyword = function () {
+        return this._declareKeyword;
     };
     FunctionDeclarationSyntax.prototype.functionKeyword = function () {
         return this._functionKeyword;
@@ -5454,10 +5497,13 @@ var FunctionDeclarationSyntax = (function (_super) {
 })(StatementSyntax);
 var VariableStatementSyntax = (function (_super) {
     __extends(VariableStatementSyntax, _super);
-    function VariableStatementSyntax(exportKeyword, variableDeclaration, semicolonToken) {
+    function VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken) {
         _super.call(this);
         if(exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
             throw Errors.argument("exportKeyword");
+        }
+        if(declareKeyword !== null && declareKeyword.keywordKind() !== SyntaxKind.DeclareKeyword) {
+            throw Errors.argument("declareKeyword");
         }
         if(variableDeclaration === null) {
             throw Errors.argumentNull("variableDeclaration");
@@ -5466,6 +5512,7 @@ var VariableStatementSyntax = (function (_super) {
             throw Errors.argument("semicolonToken");
         }
         this._exportKeyword = exportKeyword;
+        this._declareKeyword = declareKeyword;
         this._variableDeclaration = variableDeclaration;
         this._semicolonToken = semicolonToken;
     }
@@ -5474,6 +5521,9 @@ var VariableStatementSyntax = (function (_super) {
     };
     VariableStatementSyntax.prototype.exportKeyword = function () {
         return this._exportKeyword;
+    };
+    VariableStatementSyntax.prototype.declareKeyword = function () {
+        return this._declareKeyword;
     };
     VariableStatementSyntax.prototype.variableDeclaration = function () {
         return this._variableDeclaration;
