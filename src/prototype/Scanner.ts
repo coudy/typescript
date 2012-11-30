@@ -4,7 +4,6 @@ class ScannerTokenInfo {
     public Kind: SyntaxKind;
     public KeywordKind: SyntaxKind;
     public Text: string;
-    public HasUnicodeEscapeSequence: bool;
 }
 
 class ScannerTriviaInfo {
@@ -211,7 +210,6 @@ class Scanner {
         this.tokenInfo.Kind = SyntaxKind.None;
         this.tokenInfo.KeywordKind = SyntaxKind.None;
         this.tokenInfo.Text = null;
-        this.tokenInfo.HasUnicodeEscapeSequence = false;
 
         var character = this.textWindow.peekCharAtPosition();
         switch (character) {
@@ -416,8 +414,6 @@ class Scanner {
 
     private scanIdentifier(): void {
         while (this.isIdentifierPart()) {
-            this.tokenInfo.HasUnicodeEscapeSequence = this.tokenInfo.HasUnicodeEscapeSequence || this.isUnicodeEscape();
-
             this.scanCharOrUnicodeEscape(this.errors);
         }
 
@@ -469,10 +465,6 @@ class Scanner {
 
     private scanIdentifierOrKeyword(): void {
         this.scanIdentifier();
-
-        if (this.tokenInfo.HasUnicodeEscapeSequence) {
-            return;
-        }
 
         var kind = SyntaxFacts.getTokenKind(this.tokenInfo.Text);
         if (kind != SyntaxKind.None) {

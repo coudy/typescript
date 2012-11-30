@@ -312,7 +312,11 @@ var DiagnosticInfo = (function () {
 
 var Environment = (function () {
     function getWindowsScriptHostEnvironment() {
-        var fso = new ActiveXObject("Scripting.FileSystemObject");
+        try  {
+            var fso = new ActiveXObject("Scripting.FileSystemObject");
+        } catch (e) {
+            return null;
+        }
         var streamObjectPool = [];
         function getStreamObject() {
             if(streamObjectPool.length > 0) {
@@ -2820,7 +2824,6 @@ var Scanner = (function () {
         this.tokenInfo.Kind = SyntaxKind.None;
         this.tokenInfo.KeywordKind = SyntaxKind.None;
         this.tokenInfo.Text = null;
-        this.tokenInfo.HasUnicodeEscapeSequence = false;
         var character = this.textWindow.peekCharAtPosition();
         switch(character) {
             case CharacterCodes.doubleQuote:
@@ -3026,7 +3029,6 @@ var Scanner = (function () {
     };
     Scanner.prototype.scanIdentifier = function () {
         while(this.isIdentifierPart()) {
-            this.tokenInfo.HasUnicodeEscapeSequence = this.tokenInfo.HasUnicodeEscapeSequence || this.isUnicodeEscape();
             this.scanCharOrUnicodeEscape(this.errors);
         }
         this.tokenInfo.Text = this.textWindow.getText(true);
@@ -3064,9 +3066,6 @@ var Scanner = (function () {
     };
     Scanner.prototype.scanIdentifierOrKeyword = function () {
         this.scanIdentifier();
-        if(this.tokenInfo.HasUnicodeEscapeSequence) {
-            return;
-        }
         var kind = SyntaxFacts.getTokenKind(this.tokenInfo.Text);
         if(kind != SyntaxKind.None) {
             this.tokenInfo.KeywordKind = kind;
@@ -6370,7 +6369,35 @@ var IndexSignatureSyntax = (function (_super) {
     __extends(IndexSignatureSyntax, _super);
     function IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation) {
         _super.call(this);
+        if(openBracketToken.kind() !== SyntaxKind.OpenBracketToken) {
+            throw Errors.argument("openBracketToken");
+        }
+        if(parameter === null) {
+            throw Errors.argumentNull("parameter");
+        }
+        if(closeBracketToken.kind() !== SyntaxKind.CloseBracketToken) {
+            throw Errors.argument("closeBracketToken");
+        }
+        if(typeAnnotation === null) {
+            throw Errors.argumentNull("typeAnnotation");
+        }
+        this._openBracketToken = openBracketToken;
+        this._parameter = parameter;
+        this._closeBracketToken = closeBracketToken;
+        this._typeAnnotation = typeAnnotation;
     }
+    IndexSignatureSyntax.prototype.openBracketToken = function () {
+        return this._openBracketToken;
+    };
+    IndexSignatureSyntax.prototype.parameter = function () {
+        return this._parameter;
+    };
+    IndexSignatureSyntax.prototype.closeBracketToken = function () {
+        return this._closeBracketToken;
+    };
+    IndexSignatureSyntax.prototype.typeAnnotation = function () {
+        return this._typeAnnotation;
+    };
     return IndexSignatureSyntax;
 })(TypeMemberSyntax);
 var PropertySignatureSyntax = (function (_super) {
@@ -10215,6 +10242,5 @@ var Program = (function () {
     };
     return Program;
 })();
-(WScript).StdIn.ReadLine();
 var program = new Program();
 program.run(Environment);

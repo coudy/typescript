@@ -12,7 +12,12 @@ var Environment = (function () {
     // Create an IO object for use inside WindowsScriptHost hosts
     // Depends on WSCript and FileSystemObject
     function getWindowsScriptHostEnvironment(): IEnvironment {
-        var fso = new ActiveXObject("Scripting.FileSystemObject");
+        try {
+            var fso = new ActiveXObject("Scripting.FileSystemObject");
+        } catch (e) {
+            return null;
+        }
+
         var streamObjectPool = [];
 
         function getStreamObject(): any {
