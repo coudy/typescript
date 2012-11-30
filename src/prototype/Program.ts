@@ -35,7 +35,7 @@ class Program {
         }
 
         if (filePath.indexOf("RealSource") >= 0) {
-            return;
+            // return;
         }
 
         environment.standardOut.WriteLine("Testing Parser: " + filePath);
@@ -102,11 +102,13 @@ class Program {
             }
         }
 
-        for (var index in environment.arguments) {
-            var filePath: string = environment.arguments[index];
-            environment.standardOut.WriteLine("Tokenizing: " + filePath);
+        if (false) {
+            for (var index in environment.arguments) {
+                var filePath: string = environment.arguments[index];
+                environment.standardOut.WriteLine("Tokenizing: " + filePath);
 
-            this.runScanner(environment, environment.readFile(filePath));
+                this.runScanner(environment, environment.readFile(filePath));
+            }
         }
     }
 
@@ -121,7 +123,7 @@ class Program {
 
         if (StringUtilities.endsWith(filePath, ".ts")) {
             var unit = parser.parseSourceUnit();
-            var json = JSON2.stringify(unit);
+            // var json = JSON2.stringify(unit);
         }
         else {
             environment.standardOut.WriteLine("skipping unknown file file.");
@@ -169,4 +171,7 @@ class Program {
 // (<any>WScript).StdIn.ReadLine();
 var program = new Program();
 program.runAllTests(Environment);
+var start = new Date().getTime();
 program.run(Environment);
+var end = new Date().getTime();
+Environment.standardOut.WriteLine("Total time: " + (end - start));

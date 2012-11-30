@@ -10196,7 +10196,6 @@ var Program = (function () {
             return;
         }
         if(filePath.indexOf("RealSource") >= 0) {
-            return;
         }
         environment.standardOut.WriteLine("Testing Parser: " + filePath);
         var contents = environment.readFile(filePath);
@@ -10246,10 +10245,12 @@ var Program = (function () {
                 this.runParser(environment, environment.readFile(filePath), filePath);
             }
         }
-        for(var index in environment.arguments) {
-            var filePath = environment.arguments[index];
-            environment.standardOut.WriteLine("Tokenizing: " + filePath);
-            this.runScanner(environment, environment.readFile(filePath));
+        if(false) {
+            for(var index in environment.arguments) {
+                var filePath = environment.arguments[index];
+                environment.standardOut.WriteLine("Tokenizing: " + filePath);
+                this.runScanner(environment, environment.readFile(filePath));
+            }
         }
     };
     Program.prototype.runParser = function (environment, contents, filePath) {
@@ -10260,7 +10261,6 @@ var Program = (function () {
         var parser = new Parser(scanner);
         if(StringUtilities.endsWith(filePath, ".ts")) {
             var unit = parser.parseSourceUnit();
-            var json = JSON2.stringify(unit);
         } else {
             environment.standardOut.WriteLine("skipping unknown file file.");
         }
@@ -10296,4 +10296,7 @@ var Program = (function () {
 })();
 var program = new Program();
 program.runAllTests(Environment);
+var start = new Date().getTime();
 program.run(Environment);
+var end = new Date().getTime();
+Environment.standardOut.WriteLine("Total time: " + (end - start));

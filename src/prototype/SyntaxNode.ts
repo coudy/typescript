@@ -15,12 +15,7 @@ class SyntaxNode {
         for (var name in this) {
             var value = this[name];
             if (value && typeof value === 'object') {
-                if (typeof value.toJSON === 'function') {
-                    result[name] = value.toJSON(name);
-                }
-                else {
-                    result[name] = value;
-                }
+                result[name] = value;
             }
         }
 
