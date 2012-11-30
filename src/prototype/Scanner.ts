@@ -66,6 +66,7 @@ class Scanner {
     }
 
     private previousTokenKind: SyntaxKind = SyntaxKind.None;
+    private previousTokenKeywordKind: SyntaxKind = SyntaxKind.None;
     private tokenInfo: ScannerTokenInfo = new ScannerTokenInfo();
     private leadingTriviaInfo = new ScannerTriviaInfo();
     private trailingTriviaInfo = new ScannerTriviaInfo();
@@ -81,6 +82,7 @@ class Scanner {
         this.scanTriviaInfo(/* afterFirstToken: */ true, /*isTrailing: */true, this.trailingTriviaInfo);
 
         this.previousTokenKind = this.tokenInfo.Kind;
+        this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
         return this.createToken(start);
     }
 
@@ -371,7 +373,9 @@ class Scanner {
 
         ch = this.textWindow.peekCharAtPosition();
         if (ch === CharacterCodes.minus || ch === CharacterCodes.plus) {
-            this.textWindow.advanceChar1();
+            if (CharacterInfo.isDecimalDigit(this.textWindow.peekCharN(1))) {
+                this.textWindow.advanceChar1();
+            }
         }
 
         while (CharacterInfo.isDecimalDigit(this.textWindow.peekCharAtPosition())) {
@@ -710,6 +714,11 @@ class Scanner {
     private tryScanRegularExpressionToken(): bool {
         switch (this.previousTokenKind) {
             case SyntaxKind.IdentifierNameToken:
+                if (this.previousTokenKeywordKind == SyntaxKind.None) {
+                    return false;
+                }
+                break;
+
             case SyntaxKind.StringLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.ThisKeyword:
@@ -903,7 +912,7 @@ class Scanner {
     private isHexEscape(): bool {
         if (this.textWindow.peekCharAtPosition() === CharacterCodes.backslash) {
             var ch2 = this.textWindow.peekCharN(1);
-            if (ch2 === CharacterCodes.h) {
+            if (ch2 === CharacterCodes.x) {
                 return true;
             }
         }
@@ -955,7 +964,7 @@ class Scanner {
         var ch = this.textWindow.peekCharAtPosition();
         if (ch === CharacterCodes.backslash) {
             var ch2 = this.textWindow.peekCharN(1);
-            if (ch2 === CharacterCodes.u || ch2 === CharacterCodes.h) {
+            if (ch2 === CharacterCodes.u || ch2 === CharacterCodes.x) {
                 return this.scanUnicodeOrHexEscape(errors);
             }
         }
@@ -971,7 +980,7 @@ class Scanner {
         this.textWindow.advanceChar1();
 
         character = this.textWindow.peekCharAtPosition();
-        Debug.assert(character === CharacterCodes.u || character === CharacterCodes.h);
+        Debug.assert(character === CharacterCodes.u || character === CharacterCodes.x);
 
         var intChar = 0;
         this.textWindow.advanceChar1();

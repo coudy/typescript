@@ -13,6 +13,9 @@ class Program {
             filePath => this.runParserTest(environment, filePath, LanguageVersion.EcmaScript5));
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript3",
             filePath => this.runParserTest(environment, filePath, LanguageVersion.EcmaScript3));
+            
+        this.runTests(environment, "C:\\temp\\monoco-files",
+            filePath => this.runParserTest(environment, filePath, LanguageVersion.EcmaScript5, false));
 
         environment.standardOut.WriteLine("");
     }
@@ -22,19 +25,23 @@ class Program {
         path: string,
         action: (filePath: string) => void) {
 
-        var testFiles = environment.listFiles(path);
+        var testFiles = environment.listFiles(path, null, { recursive: true });
         for (var index in testFiles) {
             var filePath = testFiles[index];
             action(filePath);
         }
     }
 
-    runParserTest(environment: IEnvironment, filePath: string, languageVersion: LanguageVersion): void {
+    runParserTest(environment: IEnvironment, filePath: string, languageVersion: LanguageVersion, verify? = true): void {
         if (!StringUtilities.endsWith(filePath, ".ts")) {
             return;
         }
 
         if (filePath.indexOf("RealSource") >= 0) {
+            return;
+        }
+
+        if (filePath.indexOf("node") < 0) {
             // return;
         }
 
@@ -48,14 +55,17 @@ class Program {
         var sourceUnit = parser.parseSourceUnit();
 
         var actualResult = JSON2.stringify(sourceUnit, null, 4);
-        var expectedFile = filePath + ".expected";
-        var actualFile = filePath + ".actual";
 
-        var expectedResult = environment.readFile(expectedFile);
+        if (verify) {
+            var expectedFile = filePath + ".expected";
+            var actualFile = filePath + ".actual";
 
-        if (expectedResult !== actualResult) {
-            environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
-            environment.writeFile(actualFile, actualResult);
+            var expectedResult = environment.readFile(expectedFile);
+
+            if (expectedResult !== actualResult) {
+                environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
+                environment.writeFile(actualFile, actualResult);
+            }
         }
     }
 

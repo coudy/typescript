@@ -577,7 +577,14 @@ class Parser {
     }
 
     private parseExternalModuleReference(): ExternalModuleReferenceSyntax {
-        throw Errors.notYetImplemented();
+        Debug.assert(this.isExternalModuleReference());
+
+        var moduleKeyword = this.eatKeyword(SyntaxKind.ModuleKeyword);
+        var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
+        var stringLiteral = this.eatToken(SyntaxKind.StringLiteral);
+        var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
+
+        return new ExternalModuleReferenceSyntax(moduleKeyword, openParenToken, stringLiteral, closeParenToken);
     }
 
     private parseModuleNameModuleReference(): ModuleNameModuleReference {
@@ -1006,10 +1013,14 @@ class Parser {
         }
 
         var moduleKeyword = this.eatKeyword(SyntaxKind.ModuleKeyword);
-        var moduleName: NameSyntax = null;
 
-        if (this.currentToken().kind() !== SyntaxKind.OpenBraceToken) {
+        var moduleName: NameSyntax = null;
+        var stringLiteral: ISyntaxToken = null;
+        if (this.isName()) {
             moduleName = this.parseName();
+        }
+        else if (this.currentToken().kind() === SyntaxKind.StringLiteral) {
+            stringLiteral = this.eatToken(SyntaxKind.StringLiteral);
         }
 
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
@@ -1028,7 +1039,7 @@ class Parser {
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
 
         return new ModuleDeclarationSyntax(
-            exportKeyword, declareKeyword, moduleKeyword, moduleName, 
+            exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral,
             openBraceToken, SyntaxNodeList.create(moduleElements), closeBraceToken);
     }
 
@@ -1256,6 +1267,7 @@ class Parser {
 
                 typeName = this.parseName();
                 typeNames.push(typeName);
+                continue;
             }
 
             // TODO: error recovery.
@@ -1771,6 +1783,9 @@ class Parser {
             case SyntaxKind.OpenParenToken: // For parenthesized expressions
                 return true;
 
+            case SyntaxKind.LessThanToken: // For cast expressions.
+                return true;
+
             // Prefix unary expressions.
             case SyntaxKind.PlusPlusToken:
             case SyntaxKind.MinusMinusToken:
@@ -2134,7 +2149,7 @@ class Parser {
             if (this.currentToken().kind() == SyntaxKind.CommaToken) {
                 var commaToken = this.eatToken(SyntaxKind.CommaToken);
 
-                arguments = arguments == null ? [] : arguments;
+                arguments = arguments || [];
                 arguments.push(commaToken);
 
                 var argument = this.parseAssignmentExpression(/*allowIn:*/ true);
@@ -2342,7 +2357,7 @@ class Parser {
 
         // Now, look for cases where we're sure it's not an arrow function.  This will help save us
         // a costly parse.
-        if (this.isDefinitelyParenthesizedExpression()) {
+        if (!this.isPossiblyArrowFunctionExpression()) {
             return null;
         }
 
@@ -2358,81 +2373,6 @@ class Parser {
         finally {
             this.release(resetPoint);
         }
-    }
-
-    private isDefinitelyParenthesizedExpression(): bool {
-        Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
-        var token1 = this.peekTokenN(1);
-        var token2 = this.peekTokenN(2);
-        var token3 = this.peekTokenN(3);
-
-        if (token1.kind() === SyntaxKind.CloseParenToken) {
-            // ()
-            // Not definitely a parenthesized expression.
-            return false;
-        }
-
-        if (!this.isIdentifier(token1)) {
-            // (+
-            // (++
-            // (null
-            // etc.
-            //
-            // Since a parenthesized arrow function must start with "()" or "(id", we know we must
-            // have a parenthesized expressoin here instead.
-            return true;
-        }
-
-        if (token1.kind() === SyntaxKind.IdentifierNameToken) {
-            // (id
-            // Could still be an arrow function.  Look a bit more.
-
-            if (token2.kind() === SyntaxKind.DotToken ||
-                token2.kind() === SyntaxKind.OpenParenToken ||
-                token2.kind() === SyntaxKind.OpenBracketToken) {
-                // (id.
-                // (id(
-                // (id[
-                // Definitely a parenthesized expression.
-                return true;
-            }
-
-            if (SyntaxFacts.isBinaryExpressionOperatorToken(token2.kind()) && 
-                token2.kind() !== SyntaxKind.CommaToken) {
-                // (id +
-                // (id <
-                //
-                // but not: (id, 
-                //
-                // etc.
-                // Definitely a parenthesized expression of some sort.
-                return true;
-            }
-
-            if (token2.kind() === SyntaxKind.QuestionToken) {
-                // (id?
-                //
-                // In order to be a arrow function it would need to be:
-                //
-                // (id?:
-                // (id?)
-                // (id?,
-                //
-                // Anything else, and it must be a parenthesized expression.
-
-                if (token3.kind() !== SyntaxKind.ColonToken &&
-                    token3.kind() !== SyntaxKind.CloseParenToken &&
-                    token3.kind() !== SyntaxKind.CommaToken) {
-                    // Definitely a parenthesized expression.
-                    return true;
-                }
-            }
-        }
-
-        // TODO: Add more cases if you're sure that there is enough information to know not to 
-        // parse this as an arrow function.
-
-        return false;
     }
 
     private parseParenthesizedArrowFunctionExpression(requireArrow: bool): ParenthesizedArrowFunctionExpressionSyntax {
@@ -2481,69 +2421,69 @@ class Parser {
 
     private isDefinitelyArrowFunctionExpression(): bool {
         Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
-
-        var token0 = this.currentToken();
+        
         var token1 = this.peekTokenN(1);
-        var token2 = this.peekTokenN(2);
-        var token3 = this.peekTokenN(3);
-
+        
         if (token1.kind() === SyntaxKind.CloseParenToken) {
             // ()
-            // Definitely not a parenthesized expression. And could be an arrow function.
+            // Definitely an arrow function.  Could never be a parenthesized expression.
             return true;
         }
 
-        if (this.isIdentifier(token1)) {
-            // (id
-            // Could be a parenthesized expression or a arrow function
+        if (token1.kind() === SyntaxKind.DotDotDotToken) {
+            // (...
+            // Definitely an arrow function.  Could never be a parenthesized expression.
+            return true;
+        }
 
-            // NOTE:
-            // (id, 
-            // Could be a parenthesized expression with a comma expression in it.
+        if (!this.isIdentifier(token1)) {
+            // All other arrow functions must start with (id
+            // so this is definitely not an arrow function.
+            return false;
+        }
 
-            if (token2.kind() === SyntaxKind.ColonToken) {
-                // (id:
-                // Definitely not a parenthesized expression. possibly a arrow function.
+        // (id
+        //
+        // Lots of options here.  Check for things that make us certain it's an
+        // arrow function.
+        var token2 = this.peekTokenN(2);
+        if (token2.kind() === SyntaxKind.ColonToken) {
+            // (id:
+            // Definitely an arrow function.  Could never be a parenthesized expression.
+            return true;
+        }
+
+        var token3 = this.peekTokenN(3);
+        if (token2.kind() === SyntaxKind.QuestionToken) {
+            // (id?
+            // Could be an arrow function, or a parenthesized conditional expression.
+
+            // Check for the things that could only be arrow functions.
+            if (token3.kind() === SyntaxKind.ColonToken ||
+                token3.kind() === SyntaxKind.CloseParenToken ||
+                token3.kind() === SyntaxKind.CommaToken) {
+                // (id?:
+                // (id?)
+                // (id?,
+                // These are the only cases where this could be an arrow function.
+                // And none of them can be parenthesized expression.
                 return true;
             }
-            else if (token2.kind() === SyntaxKind.QuestionToken) {
-                // (id?
-                // Could be a parenthesized ternary.
-                if (token3.kind() === SyntaxKind.ColonToken) {
-                    // (id?:
-                    // Definitely an arrow function.
-                    return true;
-                }
-                else if (token3.kind() === SyntaxKind.CommaExpression) {
-                    // (id?,
-                    // Definitely an arrow function.
-                    return true;
-                }
-                else if (token3.kind() === SyntaxKind.CloseParenToken) {
-                    // (id?)
-                    // Definitely an arrow function.
-                }
-            }
-            else if (token2.kind() === SyntaxKind.CloseParenToken) {
-                // (id)
-                // Could be a parenthesized expression or an arrow function.
+        }
 
-                // (id):
-                //
-                // Looks like an arrow function.  However, there is a potential ambiguity here.  We could have:
-                //
-                //  var v = (id): type =>
-                //
-                // or we could have:
-                //
-                //  var v = true ? (id) : type;
+        if (token2.kind() === SyntaxKind.CloseParenToken) {
+            // (id)
+            // Could be an arrow function, or a parenthesized conditional expression.
 
-                if (token3.kind() === SyntaxKind.EqualsGreaterThanToken) {
-                    // (id) =>
-                    // definitely an arrow function.
-                    return true;
-                }
+            if (token3.kind() === SyntaxKind.EqualsGreaterThanToken) {
+                // (id) =>
+                // Definitely an arrow function.  Could not be a parenthesized expression.
+                return true;
             }
+
+            // Note: "(id):" *looks* like it could be an arrow function.  However, it could
+            // show up in:  "foo ? (id): 
+            // So we can't return true here for that case.
         }
 
         // TODO: Add more cases if you're sure that there is enough information to know to 
@@ -2551,6 +2491,54 @@ class Parser {
 
         // Anything else wasn't clear enough.  Try to parse the expression as an arrow function and bail out
         // if we fail.
+        return false;
+    }
+
+    private isPossiblyArrowFunctionExpression(): bool {
+        Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
+        
+        var token1 = this.peekTokenN(1);
+
+        if (!this.isIdentifier(token1)) {
+            // All other arrow functions must start with (id
+            // so this is definitely not an arrow function.
+            return false;
+        }
+
+        var token2 = this.peekTokenN(2);
+        if (token2.kind() === SyntaxKind.EqualsToken) {
+            // (id =
+            //
+            // This *could* be an arrow function.  i.e. (id = 0) => { }
+            // Or it could be a parenthesized expression.  So we'll have to actually
+            // try to parse it.
+            return true;
+        }
+
+        if (token2.kind() === SyntaxKind.CommaToken) {
+            // (id,
+
+            // This *could* be an arrow function.  i.e. (id, id2) => { }
+            // Or it could be a parenthesized expression (as javascript supports
+            // the comma operator).  So we'll have to actually try to parse it.
+            return true;
+        }
+
+        if (token2.kind() === SyntaxKind.CloseParenToken) {
+            // (id)
+            
+            var token3 = this.peekTokenN(3);
+            if (token3.kind() === SyntaxKind.ColonToken) {
+                // (id):
+                //
+                // This could be an arrow function. i.e. (id): number => { }
+                // Or it could be parenthesized exprssion: foo ? (id) :
+                // So we'll have to actually try to parse it.
+                return true;
+            }
+        }
+
+        // Nothing else could be an arrow function.
         return false;
     }
 

@@ -153,6 +153,7 @@ enum SyntaxKind {
     ModuleDeclaration,
     ClassDeclaration,
     EnumDeclaration,
+    ImportDeclaration,
 
     // ClassElements
     MemberFunctionDeclaration,
@@ -273,6 +274,7 @@ enum SyntaxKind {
     Parameter,
     TypeAnnotation,
     SimplePropertyAssignment,
+    ExternalModuleReference,
 
     FirstStandardKeyword = BreakKeyword,
     LastStandardKeyword = WithKeyword,

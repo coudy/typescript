@@ -20,7 +20,6 @@ class CharacterCodes {
     public static b: number = "b".charCodeAt(0);
     public static e: number = "e".charCodeAt(0);
     public static f: number = "f".charCodeAt(0);
-    public static h: number = "h".charCodeAt(0);
     public static n: number = "n".charCodeAt(0);
     public static r: number = "r".charCodeAt(0);
     public static t: number = "t".charCodeAt(0);

@@ -44,10 +44,10 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
     private _stringLiteral: ISyntaxToken;
     private _closeParenToken: ISyntaxToken;
 
-    constructor (moduleKeyword: ISyntaxToken,
-                 openParenToken: ISyntaxToken,
-                 stringLiteral: ISyntaxToken,
-                 closeParenToken: ISyntaxToken) {
+    constructor(moduleKeyword: ISyntaxToken,
+                openParenToken: ISyntaxToken,
+                stringLiteral: ISyntaxToken,
+                closeParenToken: ISyntaxToken) {
         super();
 
         if (moduleKeyword.keywordKind() !== SyntaxKind.ModuleKeyword) {
@@ -70,6 +70,10 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         this._openParenToken = openParenToken;
         this._stringLiteral = stringLiteral;
         this._closeParenToken = closeParenToken;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ExternalModuleReference;
     }
 
     public moduleKeyword(): ISyntaxToken {
@@ -121,7 +125,7 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
                  semicolonToken: ISyntaxToken) {
         super();
 
-        if (importKeyword.kind() !== SyntaxKind.ImportKeyword) {
+        if (importKeyword.keywordKind() !== SyntaxKind.ImportKeyword) {
             throw Errors.argument("importKeyword");
         }
 
@@ -146,6 +150,10 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
         this._equalsToken = equalsToken;
         this._moduleReference = moduleReference;
         this._semicolonToken = semicolonToken;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ImportDeclaration;
     }
 
     public importKeyword(): ISyntaxToken {
@@ -404,6 +412,7 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
     private _declareKeyword: ISyntaxToken;
     private _moduleKeyword: ISyntaxToken;
     private _moduleName: NameSyntax;
+    private _stringLiteral: ISyntaxToken;
     private _openBraceToken: ISyntaxToken;
     private _moduleElements: ISyntaxNodeList;
     private _closeBraceToken: ISyntaxToken;
@@ -412,6 +421,7 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
                  declareKeyword: ISyntaxToken,
                  moduleKeyword: ISyntaxToken,
                  moduleName: NameSyntax,
+                 stringLiteral: ISyntaxToken,
                  openBraceToken: ISyntaxToken,
                  moduleElements: ISyntaxNodeList,
                  closeBraceToken: ISyntaxToken) {
@@ -429,8 +439,8 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
             throw Errors.argument("moduleKeyword");
         }
 
-        if (moduleName === null) {
-            throw Errors.argumentNull("moduleName");
+        if (stringLiteral !== null && stringLiteral.kind() !== SyntaxKind.StringLiteral) {
+            throw Errors.argumentNull("stringLiteral");
         }
 
         if (openBraceToken.kind() !== SyntaxKind.OpenBraceToken) {
