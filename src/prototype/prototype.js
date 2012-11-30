@@ -1334,7 +1334,14 @@ var Parser = (function () {
         }
     };
     Parser.prototype.parseConstructSignature = function () {
-        throw Errors.notYetImplemented();
+        Debug.assert(this.isConstructSignature());
+        var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
+        var parameterList = this.parseParameterList();
+        var typeAnnotation = null;
+        if(this.isTypeAnnotation()) {
+            typeAnnotation = this.parseTypeAnnotation();
+        }
+        return new ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation);
     };
     Parser.prototype.parseIndexSignature = function () {
         Debug.assert(this.isIndexSignature());
@@ -2102,7 +2109,7 @@ var Parser = (function () {
     Parser.prototype.parseTermWorker = function (allowType) {
         var currentToken = this.currentToken();
         if(allowType && this.isType()) {
-            return this.parseType();
+            return this.parseType(true);
         }
         if(this.isIdentifier(currentToken)) {
             if(this.isSimpleArrowFunctionExpression()) {
@@ -2142,6 +2149,10 @@ var Parser = (function () {
             }
             case SyntaxKind.TypeOfKeyword: {
                 return this.parseTypeOfExpression();
+
+            }
+            case SyntaxKind.DeleteKeyword: {
+                return this.parseDeleteExpression();
 
             }
         }
@@ -2186,6 +2197,12 @@ var Parser = (function () {
         var expression = this.parseUnaryExpression();
         return new TypeOfExpressionSyntax(typeOfKeyword, expression);
     };
+    Parser.prototype.parseDeleteExpression = function () {
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.DeleteKeyword);
+        var deleteKeyword = this.eatKeyword(SyntaxKind.DeleteKeyword);
+        var expression = this.parseUnaryExpression();
+        return new DeleteExpressionSyntax(deleteKeyword, expression);
+    };
     Parser.prototype.parseSuperExpression = function () {
         Debug.assert(this.currentToken().keywordKind() === SyntaxKind.SuperKeyword);
         var superKeyword = this.eatKeyword(SyntaxKind.SuperKeyword);
@@ -2205,7 +2222,7 @@ var Parser = (function () {
     Parser.prototype.parseCastExpression = function () {
         Debug.assert(this.currentToken().kind() === SyntaxKind.LessThanToken);
         var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
-        var type = this.parseType();
+        var type = this.parseType(false);
         var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
         var expression = this.parseUnaryExpression();
         return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression);
@@ -2532,15 +2549,18 @@ var Parser = (function () {
     Parser.prototype.parseTypeAnnotation = function () {
         Debug.assert(this.isTypeAnnotation());
         var colonToken = this.eatToken(SyntaxKind.ColonToken);
-        var type = this.parseType();
+        var type = this.parseType(false);
         return new TypeAnnotationSyntax(colonToken, type);
     };
     Parser.prototype.isType = function () {
         return this.isPredefinedType() || this.isTypeLiteral() || this.isName();
     };
-    Parser.prototype.parseType = function () {
+    Parser.prototype.parseType = function (requireCompleteArraySuffix) {
         var type = this.parseNonArrayType();
         while(this.currentToken().kind() === SyntaxKind.OpenBracketToken) {
+            if(requireCompleteArraySuffix && this.peekTokenN(1).kind() !== SyntaxKind.CloseBracketToken) {
+                break;
+            }
             var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
             var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
             type = new ArrayTypeSyntax(type, openBracketToken, closeBracketToken);
@@ -2578,7 +2598,7 @@ var Parser = (function () {
         Debug.assert(this.isFunctionType());
         var parameterList = this.parseParameterList();
         var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
-        var returnType = this.parseType();
+        var returnType = this.parseType(false);
         return new FunctionTypeSyntax(parameterList, equalsGreaterThanToken, returnType);
     };
     Parser.prototype.parseConstructorType = function () {
@@ -4625,18 +4645,22 @@ var SyntaxKind;
     SyntaxKind.CatchClause = 221;
     SyntaxKind._map[222] = "FinallyClause";
     SyntaxKind.FinallyClause = 222;
-    SyntaxKind._map[223] = "Parameter";
-    SyntaxKind.Parameter = 223;
-    SyntaxKind._map[224] = "FunctionSignature";
-    SyntaxKind.FunctionSignature = 224;
-    SyntaxKind._map[225] = "PropertySignature";
-    SyntaxKind.PropertySignature = 225;
-    SyntaxKind._map[226] = "CallSignature";
-    SyntaxKind.CallSignature = 226;
-    SyntaxKind._map[227] = "TypeAnnotation";
-    SyntaxKind.TypeAnnotation = 227;
-    SyntaxKind._map[228] = "SimplePropertyAssignment";
-    SyntaxKind.SimplePropertyAssignment = 228;
+    SyntaxKind._map[223] = "PropertySignature";
+    SyntaxKind.PropertySignature = 223;
+    SyntaxKind._map[224] = "CallSignature";
+    SyntaxKind.CallSignature = 224;
+    SyntaxKind._map[225] = "ConstructSignature";
+    SyntaxKind.ConstructSignature = 225;
+    SyntaxKind._map[226] = "IndexSignature";
+    SyntaxKind.IndexSignature = 226;
+    SyntaxKind._map[227] = "FunctionSignature";
+    SyntaxKind.FunctionSignature = 227;
+    SyntaxKind._map[228] = "Parameter";
+    SyntaxKind.Parameter = 228;
+    SyntaxKind._map[229] = "TypeAnnotation";
+    SyntaxKind.TypeAnnotation = 229;
+    SyntaxKind._map[230] = "SimplePropertyAssignment";
+    SyntaxKind.SimplePropertyAssignment = 230;
     SyntaxKind.FirstStandardKeyword = SyntaxKind.BreakKeyword;
     SyntaxKind.LastStandardKeyword = SyntaxKind.WithKeyword;
     SyntaxKind.FirstFutureReservedKeyword = SyntaxKind.ClassKeyword;
@@ -6316,24 +6340,43 @@ var ConditionalExpressionSyntax = (function (_super) {
 })(ExpressionSyntax);
 var TypeMemberSyntax = (function (_super) {
     __extends(TypeMemberSyntax, _super);
-    function TypeMemberSyntax() {
-        _super.apply(this, arguments);
-
+    function TypeMemberSyntax(typeAnnotation) {
+        _super.call(this);
+        this._typeAnnotation = typeAnnotation;
     }
+    TypeMemberSyntax.prototype.typeAnnotation = function () {
+        return this._typeAnnotation;
+    };
     return TypeMemberSyntax;
 })(SyntaxNode);
 var ConstructSignatureSyntax = (function (_super) {
     __extends(ConstructSignatureSyntax, _super);
-    function ConstructSignatureSyntax() {
-        _super.apply(this, arguments);
-
+    function ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation) {
+        _super.call(this, typeAnnotation);
+        if(newKeyword.keywordKind() !== SyntaxKind.NewKeyword) {
+            throw Errors.argument("newKeyword");
+        }
+        if(parameterList === null) {
+            throw Errors.argument("parameterList");
+        }
+        this._newKeyword = newKeyword;
+        this._parameterList = parameterList;
     }
+    ConstructSignatureSyntax.prototype.kind = function () {
+        return SyntaxKind.ConstructSignature;
+    };
+    ConstructSignatureSyntax.prototype.newKeyword = function () {
+        return this._newKeyword;
+    };
+    ConstructSignatureSyntax.prototype.parameterList = function () {
+        return this._parameterList;
+    };
     return ConstructSignatureSyntax;
 })(TypeMemberSyntax);
 var FunctionSignatureSyntax = (function (_super) {
     __extends(FunctionSignatureSyntax, _super);
     function FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation) {
-        _super.call(this);
+        _super.call(this, typeAnnotation);
         if(identifier.kind() !== SyntaxKind.IdentifierNameToken) {
             throw Errors.argument("identifier");
         }
@@ -6346,7 +6389,6 @@ var FunctionSignatureSyntax = (function (_super) {
         this._identifier = identifier;
         this._questionToken = questionToken;
         this._parameterList = parameterList;
-        this._typeAnnotation = typeAnnotation;
     }
     FunctionSignatureSyntax.prototype.kind = function () {
         return SyntaxKind.FunctionSignature;
@@ -6360,15 +6402,12 @@ var FunctionSignatureSyntax = (function (_super) {
     FunctionSignatureSyntax.prototype.parameterList = function () {
         return this._parameterList;
     };
-    FunctionSignatureSyntax.prototype.typeAnnotation = function () {
-        return this._typeAnnotation;
-    };
     return FunctionSignatureSyntax;
 })(TypeMemberSyntax);
 var IndexSignatureSyntax = (function (_super) {
     __extends(IndexSignatureSyntax, _super);
     function IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation) {
-        _super.call(this);
+        _super.call(this, typeAnnotation);
         if(openBracketToken.kind() !== SyntaxKind.OpenBracketToken) {
             throw Errors.argument("openBracketToken");
         }
@@ -6378,14 +6417,13 @@ var IndexSignatureSyntax = (function (_super) {
         if(closeBracketToken.kind() !== SyntaxKind.CloseBracketToken) {
             throw Errors.argument("closeBracketToken");
         }
-        if(typeAnnotation === null) {
-            throw Errors.argumentNull("typeAnnotation");
-        }
         this._openBracketToken = openBracketToken;
         this._parameter = parameter;
         this._closeBracketToken = closeBracketToken;
-        this._typeAnnotation = typeAnnotation;
     }
+    IndexSignatureSyntax.prototype.kind = function () {
+        return SyntaxKind.IndexSignature;
+    };
     IndexSignatureSyntax.prototype.openBracketToken = function () {
         return this._openBracketToken;
     };
@@ -6395,21 +6433,17 @@ var IndexSignatureSyntax = (function (_super) {
     IndexSignatureSyntax.prototype.closeBracketToken = function () {
         return this._closeBracketToken;
     };
-    IndexSignatureSyntax.prototype.typeAnnotation = function () {
-        return this._typeAnnotation;
-    };
     return IndexSignatureSyntax;
 })(TypeMemberSyntax);
 var PropertySignatureSyntax = (function (_super) {
     __extends(PropertySignatureSyntax, _super);
     function PropertySignatureSyntax(identifier, questionToken, typeAnnotation) {
-        _super.call(this);
+        _super.call(this, typeAnnotation);
         if(identifier.kind() !== SyntaxKind.IdentifierNameToken) {
             throw Errors.argument("identifier");
         }
         this._identifier = identifier;
         this._questionToken = questionToken;
-        this._typeAnnotation = typeAnnotation;
     }
     PropertySignatureSyntax.prototype.kind = function () {
         return SyntaxKind.PropertySignature;
@@ -6419,9 +6453,6 @@ var PropertySignatureSyntax = (function (_super) {
     };
     PropertySignatureSyntax.prototype.questionToken = function () {
         return this._questionToken;
-    };
-    PropertySignatureSyntax.prototype.typeAnnotation = function () {
-        return this._typeAnnotation;
     };
     return PropertySignatureSyntax;
 })(TypeMemberSyntax);
@@ -6459,21 +6490,17 @@ var ParameterListSyntax = (function (_super) {
 var CallSignatureSyntax = (function (_super) {
     __extends(CallSignatureSyntax, _super);
     function CallSignatureSyntax(parameterList, typeAnnotation) {
-        _super.call(this);
+        _super.call(this, typeAnnotation);
         if(parameterList === null) {
             throw Errors.argumentNull("parameterList");
         }
         this._parameterList = parameterList;
-        this._typeAnnotation = typeAnnotation;
     }
     CallSignatureSyntax.prototype.kind = function () {
         return SyntaxKind.CallSignature;
     };
     CallSignatureSyntax.prototype.parameterList = function () {
         return this._parameterList;
-    };
-    CallSignatureSyntax.prototype.typeAnnotation = function () {
-        return this._typeAnnotation;
     };
     return CallSignatureSyntax;
 })(TypeMemberSyntax);
@@ -7618,6 +7645,30 @@ var TypeOfExpressionSyntax = (function (_super) {
     };
     return TypeOfExpressionSyntax;
 })(UnaryExpressionSyntax);
+var DeleteExpressionSyntax = (function (_super) {
+    __extends(DeleteExpressionSyntax, _super);
+    function DeleteExpressionSyntax(deleteKeyword, expression) {
+        _super.call(this);
+        if(deleteKeyword.keywordKind() !== SyntaxKind.DeleteKeyword) {
+            throw Errors.argument("deleteKeyword");
+        }
+        if(expression === null) {
+            throw Errors.argumentNull("expression");
+        }
+        this._deleteKeyword = deleteKeyword;
+        this._expression = expression;
+    }
+    DeleteExpressionSyntax.prototype.kind = function () {
+        return SyntaxKind.DeleteExpression;
+    };
+    DeleteExpressionSyntax.prototype.deleteKeyword = function () {
+        return this._deleteKeyword;
+    };
+    DeleteExpressionSyntax.prototype.expression = function () {
+        return this._expression;
+    };
+    return DeleteExpressionSyntax;
+})(UnaryExpressionSyntax);
 var StandardToken = (function () {
     function StandardToken(kind, keywordKind, text, fullStart, leadingWidth, trailingWidth, hasLeadingCommentTrivia, hasTrailingCommentTrivia, hasLeadingNewLineTrivia, hasTrailingNewLineTrivia, diagnostics) {
         this._kind = kind;
@@ -7630,6 +7681,7 @@ var StandardToken = (function () {
         this._hasLeadingNewLineTrivia = hasLeadingNewLineTrivia;
         this._hasTrailingCommentTrivia = hasTrailingCommentTrivia;
         this._hasTrailingNewLineTrivia = hasTrailingNewLineTrivia;
+        this._diagnostics = diagnostics;
     }
     StandardToken.prototype.toJSON = function (key) {
         return SyntaxToken.toJSON(this);
@@ -10243,4 +10295,5 @@ var Program = (function () {
     return Program;
 })();
 var program = new Program();
+program.runAllTests(Environment);
 program.run(Environment);

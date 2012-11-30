@@ -1118,7 +1118,17 @@ class Parser {
     }
 
     private parseConstructSignature(): ConstructSignatureSyntax {
-        throw Errors.notYetImplemented();
+        Debug.assert(this.isConstructSignature());
+
+        var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
+        var parameterList = this.parseParameterList();
+        var typeAnnotation: TypeAnnotationSyntax = null;
+
+        if (this.isTypeAnnotation()) {
+            typeAnnotation = this.parseTypeAnnotation();
+        }
+
+        return new ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation);
     }
 
     private parseIndexSignature(): IndexSignatureSyntax {
@@ -2154,7 +2164,12 @@ class Parser {
         var currentToken = this.currentToken();
 
         if (allowType && this.isType()) {
-            return this.parseType();
+            // There's a lot of ambiguity in the language between typescript arrays, and javascript
+            // indexing.  For example, you can say: "new Foo[]".  In which case that new's up a foo 
+            // array.  Or you can say "new Foo[i]".  which accesses the i'th element of Foo and calls
+            // the construct operator on it. So, in this case, if we're parsing a 'new', we do allow
+            // seeing brackets, but only if they're *complete*.  
+            return this.parseType(/*requireCompleteArraySuffix:*/ true);
         }
 
         if (this.isIdentifier(currentToken)) {
@@ -2191,6 +2206,9 @@ class Parser {
 
             case SyntaxKind.TypeOfKeyword:
                 return this.parseTypeOfExpression();
+
+            case SyntaxKind.DeleteKeyword:
+                return this.parseDeleteExpression();
         }
 
         switch (currentTokenKind) {
@@ -2234,6 +2252,15 @@ class Parser {
         return new TypeOfExpressionSyntax(typeOfKeyword, expression);
     }
 
+    private parseDeleteExpression(): DeleteExpressionSyntax {
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.DeleteKeyword);
+
+        var deleteKeyword = this.eatKeyword(SyntaxKind.DeleteKeyword);
+        var expression = this.parseUnaryExpression();
+
+        return new DeleteExpressionSyntax(deleteKeyword, expression);
+    }
+
     private parseSuperExpression(): SuperExpressionSyntax {
         Debug.assert(this.currentToken().keywordKind() === SyntaxKind.SuperKeyword);
         
@@ -2261,7 +2288,7 @@ class Parser {
         Debug.assert(this.currentToken().kind() === SyntaxKind.LessThanToken);
 
         var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
-        var type = this.parseType();
+        var type = this.parseType(/*requireCompleteArraySuffix:*/ false);
         var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
         var expression = this.parseUnaryExpression();
 
@@ -2784,7 +2811,7 @@ class Parser {
         Debug.assert(this.isTypeAnnotation());
 
         var colonToken = this.eatToken(SyntaxKind.ColonToken);
-        var type = this.parseType();
+        var type = this.parseType(/*requireCompleteArraySuffix:*/ false);
 
         return new TypeAnnotationSyntax(colonToken, type);
     }
@@ -2795,10 +2822,14 @@ class Parser {
                this.isName();
     }
 
-    private parseType(): TypeSyntax {
+    private parseType(requireCompleteArraySuffix: bool): TypeSyntax {
         var type = this.parseNonArrayType();
 
         while (this.currentToken().kind() === SyntaxKind.OpenBracketToken) {
+            if (requireCompleteArraySuffix && this.peekTokenN(1).kind() !== SyntaxKind.CloseBracketToken) {
+                break;
+            }
+
             var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
             var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
 
@@ -2841,7 +2872,7 @@ class Parser {
 
         var parameterList = this.parseParameterList();
         var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
-        var returnType = this.parseType();
+        var returnType = this.parseType(/*requireCompleteArraySuffix:*/ false);
 
         return new FunctionTypeSyntax(parameterList, equalsGreaterThanToken, returnType);
     }

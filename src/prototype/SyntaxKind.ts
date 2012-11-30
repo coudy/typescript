@@ -262,11 +262,15 @@ enum SyntaxKind {
     CatchClause,
     FinallyClause,
 
-    // Misc.
-    Parameter,
-    FunctionSignature,
+    // Type members.
     PropertySignature,
     CallSignature,
+    ConstructSignature,
+    IndexSignature,
+    FunctionSignature,
+
+    // Misc.
+    Parameter,
     TypeAnnotation,
     SimplePropertyAssignment,
 

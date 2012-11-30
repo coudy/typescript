@@ -242,11 +242,11 @@ opts.option('services', {
 });
 
 opts.option('harness', {
-    set: function () => { files = IO.dir("tests/harness", /\.ts$/) }
+    set: function () { files = IO.dir("tests/harness", /\.ts$/) }
 });
 
 opts.option('dump', {
-    set: function (file) => Harness.registerLogger(new JSONLogger(file))
+    set: function (file) { Harness.registerLogger(new JSONLogger(file)); }
 });
 
 opts.option('root', {

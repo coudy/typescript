@@ -1673,22 +1673,63 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
 }
 
 class TypeMemberSyntax extends SyntaxNode {
+    private _typeAnnotation: TypeAnnotationSyntax;
+
+    constructor(typeAnnotation: TypeAnnotationSyntax) {
+        super();
+
+        this._typeAnnotation = typeAnnotation;
+    }
+
+    public typeAnnotation(): TypeAnnotationSyntax {
+        return this._typeAnnotation
+    }
 }
 
 class ConstructSignatureSyntax extends TypeMemberSyntax {
+    private _newKeyword: ISyntaxToken;
+    private _parameterList: ParameterListSyntax;
+
+    constructor(newKeyword: ISyntaxToken,
+                parameterList: ParameterListSyntax,
+                typeAnnotation: TypeAnnotationSyntax) {
+        super(typeAnnotation);
+
+        if (newKeyword.keywordKind() !== SyntaxKind.NewKeyword) {
+            throw Errors.argument("newKeyword");
+        }
+
+        if (parameterList === null) {
+            throw Errors.argument("parameterList");
+        }
+
+        this._newKeyword = newKeyword;
+        this._parameterList = parameterList;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ConstructSignature;
+    }
+
+    public newKeyword(): ISyntaxToken {
+        return this._newKeyword;
+    }
+
+    public parameterList(): ParameterListSyntax {
+        return this._parameterList;
+    }
 }
 
 class FunctionSignatureSyntax extends TypeMemberSyntax {
     private _identifier: ISyntaxToken;
     private _questionToken: ISyntaxToken;
     private _parameterList: ParameterListSyntax;
-    private _typeAnnotation: TypeAnnotationSyntax;
 
     constructor (identifier: ISyntaxToken,
                  questionToken: ISyntaxToken,
                  parameterList: ParameterListSyntax,
                  typeAnnotation: TypeAnnotationSyntax) {
-        super();
+        super(typeAnnotation);
 
         if (identifier.kind() !== SyntaxKind.IdentifierNameToken) {
             throw Errors.argument("identifier");
@@ -1705,7 +1746,6 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         this._identifier = identifier;
         this._questionToken = questionToken;
         this._parameterList = parameterList;
-        this._typeAnnotation = typeAnnotation;
     }
 
     public kind(): SyntaxKind {
@@ -1723,23 +1763,18 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
     public parameterList(): ParameterListSyntax {
         return this._parameterList;
     }
-
-    public typeAnnotation(): TypeAnnotationSyntax {
-        return this._typeAnnotation;
-    }
 }
 
 class IndexSignatureSyntax extends TypeMemberSyntax {
     private _openBracketToken: ISyntaxToken;
     private _parameter: ParameterSyntax;
     private _closeBracketToken: ISyntaxToken;
-    private _typeAnnotation: TypeAnnotationSyntax;
 
     constructor(openBracketToken: ISyntaxToken,
                 parameter: ParameterSyntax,
                 closeBracketToken: ISyntaxToken,
                 typeAnnotation: TypeAnnotationSyntax) {
-        super();
+        super(typeAnnotation);
 
         if (openBracketToken.kind() !== SyntaxKind.OpenBracketToken) {
             throw Errors.argument("openBracketToken");
@@ -1753,14 +1788,13 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
             throw Errors.argument("closeBracketToken");
         }
 
-        if (typeAnnotation === null) {
-            throw Errors.argumentNull("typeAnnotation");
-        }
-
         this._openBracketToken = openBracketToken;
         this._parameter = parameter;
         this._closeBracketToken = closeBracketToken;
-        this._typeAnnotation = typeAnnotation;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.IndexSignature;
     }
 
     public openBracketToken(): ISyntaxToken {
@@ -1774,10 +1808,6 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
     public closeBracketToken(): ISyntaxToken {
         return this._closeBracketToken;
     }
-
-    public typeAnnotation(): TypeAnnotationSyntax {
-        return this._typeAnnotation;
-    }
 }
 
 class PropertySignatureSyntax extends TypeMemberSyntax {
@@ -1788,7 +1818,7 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
     constructor(identifier: ISyntaxToken,
                 questionToken: ISyntaxToken,
                 typeAnnotation: TypeAnnotationSyntax) {
-        super();
+        super(typeAnnotation);
 
         if (identifier.kind() !== SyntaxKind.IdentifierNameToken) {
             throw Errors.argument("identifier");
@@ -1796,7 +1826,6 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
 
         this._identifier = identifier;
         this._questionToken = questionToken;
-        this._typeAnnotation = typeAnnotation;
     }
 
     public kind(): SyntaxKind {
@@ -1809,10 +1838,6 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
 
     public questionToken(): ISyntaxToken {
         return this._questionToken;
-    }
-
-    public typeAnnotation(): TypeAnnotationSyntax {
-        return this._typeAnnotation;
     }
 }
 
@@ -1866,14 +1891,13 @@ class CallSignatureSyntax extends TypeMemberSyntax {
     
     constructor (parameterList: ParameterListSyntax,
                  typeAnnotation: TypeAnnotationSyntax) {
-        super();
+        super(typeAnnotation);
 
         if (parameterList === null) {
             throw Errors.argumentNull("parameterList");
         }
 
         this._parameterList = parameterList;
-        this._typeAnnotation = typeAnnotation;
     }
 
     public kind(): SyntaxKind {
@@ -1882,10 +1906,6 @@ class CallSignatureSyntax extends TypeMemberSyntax {
 
     public parameterList(): ParameterListSyntax {
         return this._parameterList;
-    }
-
-    public typeAnnotation(): TypeAnnotationSyntax {
-        return this._typeAnnotation;
     }
 }
 
@@ -3535,6 +3555,40 @@ class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
 
     public typeOfKeyword(): ISyntaxToken {
         return this._typeOfKeyword;
+    }
+
+    public expression(): ExpressionSyntax {
+        return this._expression;
+    }
+
+}
+
+class DeleteExpressionSyntax extends UnaryExpressionSyntax {
+    private _deleteKeyword: ISyntaxToken;
+    private _expression: ExpressionSyntax;
+
+    constructor(deleteKeyword: ISyntaxToken,
+                expression: ExpressionSyntax) {
+        super();
+
+        if (deleteKeyword.keywordKind() !== SyntaxKind.DeleteKeyword) {
+            throw Errors.argument("deleteKeyword");
+        }
+
+        if (expression === null) {
+            throw Errors.argumentNull("expression");
+        }
+
+        this._deleteKeyword = deleteKeyword;
+        this._expression = expression;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.DeleteExpression;
+    }
+
+    public deleteKeyword(): ISyntaxToken {
+        return this._deleteKeyword;
     }
 
     public expression(): ExpressionSyntax {

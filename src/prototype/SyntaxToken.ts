@@ -126,6 +126,7 @@ class StandardToken implements ISyntaxToken {
         this._hasLeadingNewLineTrivia = hasLeadingNewLineTrivia;
         this._hasTrailingCommentTrivia = hasTrailingCommentTrivia;
         this._hasTrailingNewLineTrivia = hasTrailingNewLineTrivia;
+        this._diagnostics = diagnostics;
     }
 
     public toJSON(key) {

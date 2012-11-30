@@ -168,5 +168,5 @@ class Program {
 
 // (<any>WScript).StdIn.ReadLine();
 var program = new Program();
-// program.runAllTests(Environment);
+program.runAllTests(Environment);
 program.run(Environment);
