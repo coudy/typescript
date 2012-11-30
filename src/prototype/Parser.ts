@@ -104,7 +104,7 @@ class Parser {
 
     private preScan(): void {
         var size = MathPrototype.min(4096, MathPrototype.max(32, this.scanner.text().length() / 2));
-        var tokens: SyntaxToken[] = this.scannedTokens = ArrayUtilities.createArray(size);
+        var tokens: ISyntaxToken[] = this.scannedTokens = ArrayUtilities.createArray(size);
         var scanner = this.scanner;
 
         for (var i = 0; i < size; i++) {
@@ -267,7 +267,7 @@ class Parser {
         // user has the option set to error on automatic semicolons, then add an error to that
         // token as well.
         if (this.canEatAutomaticSemicolon()) {
-            var semicolonToken = SyntaxToken.createEmptyToken(SyntaxKind.SemicolonToken);
+            var semicolonToken = SyntaxTokenFactory.createEmptyToken(SyntaxKind.SemicolonToken, SyntaxKind.None);
 
             if (!this.options.allowAutomaticSemicolonInsertion()) {
                 semicolonToken = this.withAdditionalDiagnostics(semicolonToken, new DiagnosticInfo(DiagnosticCode.AutomaticSemicolonInsertionNotAllowed)); 
@@ -293,7 +293,7 @@ class Parser {
         }
 
         //slow part of EatToken(SyntaxKind kind)
-        return this.createMissingToken(kind, token.kind());
+        return this.createMissingToken(kind, SyntaxKind.None, token);
     }
 
     private eatKeyword(kind: SyntaxKind): ISyntaxToken {
@@ -306,7 +306,7 @@ class Parser {
         }
 
         //slow part of EatToken(SyntaxKind kind)
-        return this.createMissingToken(kind, token.kind());
+        return this.createMissingToken(SyntaxKind.IdentifierNameToken, kind, token);
     }
 
     // This method should be called when the grammar calls for on *IdentifierName* and not an
@@ -318,7 +318,7 @@ class Parser {
             return token;
         }
 
-        return this.createMissingToken(SyntaxKind.IdentifierNameToken, token.kind());
+        return this.createMissingToken(SyntaxKind.IdentifierNameToken, SyntaxKind.None, token);
     }
 
     // This method should be called when the grammar calls for on *Identifier* and not an
@@ -327,14 +327,14 @@ class Parser {
         var token = this.currentToken();
         if (token.kind() === SyntaxKind.IdentifierNameToken) {
             if (this.isKeyword(token.keywordKind())) {
-                return this.createMissingToken(SyntaxKind.IdentifierNameToken, token.keywordKind());
+                return this.createMissingToken(SyntaxKind.IdentifierNameToken, SyntaxKind.None, token);
             }
 
             this.moveToNextToken();
             return token;
         }
 
-        return this.createMissingToken(SyntaxKind.IdentifierNameToken, token.kind());
+        return this.createMissingToken(SyntaxKind.IdentifierNameToken, SyntaxKind.None, token);
     }
 
     private isIdentifier(token: ISyntaxToken): bool {
@@ -359,40 +359,50 @@ class Parser {
         return false;
     }
 
-    private createMissingToken(expected: SyntaxKind, actual: SyntaxKind): ISyntaxToken {
-        var token = SyntaxToken.createEmptyToken(expected);
-        token = this.withAdditionalDiagnostics(token, this.getExpectedTokenDiagnosticInfo(expected, actual));
+    private createMissingToken(expectedKind: SyntaxKind, expectedKeywordKind: SyntaxKind, actual: ISyntaxToken): ISyntaxToken {
+        var token = SyntaxTokenFactory.createEmptyToken(expectedKind, expectedKeywordKind);
+        token = this.withAdditionalDiagnostics(token, this.getExpectedTokenDiagnosticInfo(expectedKind, expectedKeywordKind, actual));
         return token;
     }
 
-    private eatTokenWithPrejudice(kind: SyntaxKind): ISyntaxToken {
-        var token = this.currentToken();
+    //private eatTokenWithPrejudice(kind: SyntaxKind): ISyntaxToken {
+    //    var token = this.currentToken();
 
-        Debug.assert(SyntaxFacts.isTokenKind(kind));
-        if (token.kind() !== kind) {
-            token = this.withAdditionalDiagnostics(token, this.getExpectedTokenDiagnosticInfo(kind, token.kind()));
-        }
+    //    Debug.assert(SyntaxFacts.isTokenKind(kind));
+    //    if (token.kind() !== kind) {
+    //        token = this.withAdditionalDiagnostics(token, this.getExpectedTokenDiagnosticInfo(kind, token.kind()));
+    //    }
 
-        this.moveToNextToken();
-        return token;
-    }
+    //    this.moveToNextToken();
+    //    return token;
+    //}
 
-    private getExpectedTokenDiagnosticInfo(expected: SyntaxKind, actual: SyntaxKind): DiagnosticInfo {
+    private getExpectedTokenDiagnosticInfo(expectedKind: SyntaxKind, expectedKeywordKind: SyntaxKind, actual: ISyntaxToken): DiagnosticInfo {
         var span = this.getDiagnosticSpanForMissingToken();
         var offset = span.start();
         var width = span.length();
-
-        if (expected === SyntaxKind.IdentifierNameToken) {
-            if (SyntaxFacts.isAnyKeyword(actual)) {
-                return new SyntaxDiagnosticInfo(offset, width, DiagnosticCode.Identifier_expected__0_is_a_keyword, SyntaxFacts.getText(actual));
+        
+        if (expectedKind === SyntaxKind.IdentifierNameToken) {
+            if (SyntaxFacts.isAnyKeyword(expectedKeywordKind)) {
+                // They wanted a keyword, just report that that keyword was missing.
+                return new SyntaxDiagnosticInfo(offset, width, DiagnosticCode._0_expected, SyntaxFacts.getText(expectedKeywordKind));
             }
             else {
-                return new SyntaxDiagnosticInfo(offset, width, DiagnosticCode.Identifier_expected);
+                // They wanted a real identifier.
+
+                // If the user supplied a keyword, give them a specialized message.
+                if (actual !== null && SyntaxFacts.isAnyKeyword(actual.keywordKind())) {
+                    return new SyntaxDiagnosticInfo(offset, width, DiagnosticCode.Identifier_expected__0_is_a_keyword, SyntaxFacts.getText(actual.keywordKind()));
+                }
+                else {
+                    // Otherwise just report that an identifier was expected.
+                    return new SyntaxDiagnosticInfo(offset, width, DiagnosticCode.Identifier_expected);
+                }
             }
         }
 
-        if (SyntaxFacts.isAnyPunctuation(expected)) {
-            return new SyntaxDiagnosticInfo(offset, width, DiagnosticCode._0_expected, SyntaxFacts.getText(expected));
+        if (SyntaxFacts.isAnyPunctuation(expectedKind)) {
+            return new SyntaxDiagnosticInfo(offset, width, DiagnosticCode._0_expected, SyntaxFacts.getText(expectedKind));
         }
 
         throw Errors.notYetImplemented();
@@ -1734,7 +1744,7 @@ class Parser {
             // Because of automatic semicolon insertion, we need to report error if this 
             // throw could be terminated with a semicolon.  Note: we can't call 'parseExpression'
             // directly as that might consume an expression on the following line.  
-            var token = this.createMissingToken(SyntaxKind.IdentifierNameToken, SyntaxKind.None);
+            var token = this.createMissingToken(SyntaxKind.IdentifierNameToken, SyntaxKind.None, null);
             expression = new IdentifierNameSyntax(token);
         }
         else {

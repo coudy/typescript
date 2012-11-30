@@ -693,7 +693,7 @@ var Parser = (function () {
             return this.eatToken(SyntaxKind.SemicolonToken);
         }
         if(this.canEatAutomaticSemicolon()) {
-            var semicolonToken = SyntaxToken.createEmptyToken(SyntaxKind.SemicolonToken);
+            var semicolonToken = SyntaxTokenFactory.createEmptyToken(SyntaxKind.SemicolonToken, SyntaxKind.None);
             if(!this.options.allowAutomaticSemicolonInsertion()) {
                 semicolonToken = this.withAdditionalDiagnostics(semicolonToken, new DiagnosticInfo(DiagnosticCode.AutomaticSemicolonInsertionNotAllowed));
             }
@@ -708,7 +708,7 @@ var Parser = (function () {
             this.moveToNextToken();
             return token;
         }
-        return this.createMissingToken(kind, token.kind());
+        return this.createMissingToken(kind, SyntaxKind.None, token);
     };
     Parser.prototype.eatKeyword = function (kind) {
         Debug.assert(SyntaxFacts.isTokenKind(kind));
@@ -717,7 +717,7 @@ var Parser = (function () {
             this.moveToNextToken();
             return token;
         }
-        return this.createMissingToken(kind, token.kind());
+        return this.createMissingToken(SyntaxKind.IdentifierNameToken, kind, token);
     };
     Parser.prototype.eatIdentifierNameToken = function () {
         var token = this.currentToken();
@@ -725,18 +725,18 @@ var Parser = (function () {
             this.moveToNextToken();
             return token;
         }
-        return this.createMissingToken(SyntaxKind.IdentifierNameToken, token.kind());
+        return this.createMissingToken(SyntaxKind.IdentifierNameToken, SyntaxKind.None, token);
     };
     Parser.prototype.eatIdentifierToken = function () {
         var token = this.currentToken();
         if(token.kind() === SyntaxKind.IdentifierNameToken) {
             if(this.isKeyword(token.keywordKind())) {
-                return this.createMissingToken(SyntaxKind.IdentifierNameToken, token.keywordKind());
+                return this.createMissingToken(SyntaxKind.IdentifierNameToken, SyntaxKind.None, token);
             }
             this.moveToNextToken();
             return token;
         }
-        return this.createMissingToken(SyntaxKind.IdentifierNameToken, token.kind());
+        return this.createMissingToken(SyntaxKind.IdentifierNameToken, SyntaxKind.None, token);
     };
     Parser.prototype.isIdentifier = function (token) {
         return token.kind() === SyntaxKind.IdentifierNameToken && !this.isKeyword(token.keywordKind());
@@ -753,33 +753,28 @@ var Parser = (function () {
         }
         return false;
     };
-    Parser.prototype.createMissingToken = function (expected, actual) {
-        var token = SyntaxToken.createEmptyToken(expected);
-        token = this.withAdditionalDiagnostics(token, this.getExpectedTokenDiagnosticInfo(expected, actual));
+    Parser.prototype.createMissingToken = function (expectedKind, expectedKeywordKind, actual) {
+        var token = SyntaxTokenFactory.createEmptyToken(expectedKind, expectedKeywordKind);
+        token = this.withAdditionalDiagnostics(token, this.getExpectedTokenDiagnosticInfo(expectedKind, expectedKeywordKind, actual));
         return token;
     };
-    Parser.prototype.eatTokenWithPrejudice = function (kind) {
-        var token = this.currentToken();
-        Debug.assert(SyntaxFacts.isTokenKind(kind));
-        if(token.kind() !== kind) {
-            token = this.withAdditionalDiagnostics(token, this.getExpectedTokenDiagnosticInfo(kind, token.kind()));
-        }
-        this.moveToNextToken();
-        return token;
-    };
-    Parser.prototype.getExpectedTokenDiagnosticInfo = function (expected, actual) {
+    Parser.prototype.getExpectedTokenDiagnosticInfo = function (expectedKind, expectedKeywordKind, actual) {
         var span = this.getDiagnosticSpanForMissingToken();
         var offset = span.start();
         var width = span.length();
-        if(expected === SyntaxKind.IdentifierNameToken) {
-            if(SyntaxFacts.isAnyKeyword(actual)) {
-                return new SyntaxDiagnosticInfo(offset, width, DiagnosticCode.Identifier_expected__0_is_a_keyword, SyntaxFacts.getText(actual));
+        if(expectedKind === SyntaxKind.IdentifierNameToken) {
+            if(SyntaxFacts.isAnyKeyword(expectedKeywordKind)) {
+                return new SyntaxDiagnosticInfo(offset, width, DiagnosticCode._0_expected, SyntaxFacts.getText(expectedKeywordKind));
             } else {
-                return new SyntaxDiagnosticInfo(offset, width, DiagnosticCode.Identifier_expected);
+                if(actual !== null && SyntaxFacts.isAnyKeyword(actual.keywordKind())) {
+                    return new SyntaxDiagnosticInfo(offset, width, DiagnosticCode.Identifier_expected__0_is_a_keyword, SyntaxFacts.getText(actual.keywordKind()));
+                } else {
+                    return new SyntaxDiagnosticInfo(offset, width, DiagnosticCode.Identifier_expected);
+                }
             }
         }
-        if(SyntaxFacts.isAnyPunctuation(expected)) {
-            return new SyntaxDiagnosticInfo(offset, width, DiagnosticCode._0_expected, SyntaxFacts.getText(expected));
+        if(SyntaxFacts.isAnyPunctuation(expectedKind)) {
+            return new SyntaxDiagnosticInfo(offset, width, DiagnosticCode._0_expected, SyntaxFacts.getText(expectedKind));
         }
         throw Errors.notYetImplemented();
     };
@@ -1782,7 +1777,7 @@ var Parser = (function () {
         var throwKeyword = this.eatKeyword(SyntaxKind.ThrowKeyword);
         var expression = null;
         if(this.canEatExplicitOrAutomaticSemicolon()) {
-            var token = this.createMissingToken(SyntaxKind.IdentifierNameToken, SyntaxKind.None);
+            var token = this.createMissingToken(SyntaxKind.IdentifierNameToken, SyntaxKind.None, null);
             expression = new IdentifierNameSyntax(token);
         } else {
             expression = this.parseExpression(true);
@@ -2758,7 +2753,7 @@ var Scanner = (function () {
         return this.createToken(start);
     };
     Scanner.prototype.createToken = function (start) {
-        return SyntaxToken.create(start, this.leadingTriviaInfo, this.tokenInfo, this.trailingTriviaInfo, this.errors.length == 0 ? null : this.errors);
+        return SyntaxTokenFactory.create(start, this.leadingTriviaInfo, this.tokenInfo, this.trailingTriviaInfo, this.errors.length == 0 ? null : this.errors);
     };
     Scanner.prototype.scanTriviaInfo = function (afterFirstToken, isTrailing, triviaInfo) {
         this.textWindow.start();
@@ -7731,91 +7726,23 @@ var DeleteExpressionSyntax = (function (_super) {
     };
     return DeleteExpressionSyntax;
 })(UnaryExpressionSyntax);
-var StandardToken = (function () {
-    function StandardToken(kind, keywordKind, text, fullStart, leadingWidth, trailingWidth, hasLeadingCommentTrivia, hasTrailingCommentTrivia, hasLeadingNewLineTrivia, hasTrailingNewLineTrivia, diagnostics) {
-        this._kind = kind;
-        this._keywordKind = keywordKind;
-        this._text = text;
-        this._fullStart = fullStart;
-        this._leadingWidth = leadingWidth;
-        this._trailingWidth = trailingWidth;
-        this._hasLeadingCommentTrivia = hasLeadingCommentTrivia;
-        this._hasLeadingNewLineTrivia = hasLeadingNewLineTrivia;
-        this._hasTrailingCommentTrivia = hasTrailingCommentTrivia;
-        this._hasTrailingNewLineTrivia = hasTrailingNewLineTrivia;
-        this._diagnostics = diagnostics;
+var SyntaxTokenFactory;
+(function (SyntaxTokenFactory) {
+    function getTriviaInfo(info) {
+        var comment = info.HasComment ? 1 : 0;
+        var newLine = info.HasNewLine ? 1 : 0;
+        return (info.Width << 2) | (comment << 1) | newLine;
     }
-    StandardToken.prototype.toJSON = function (key) {
-        return SyntaxToken.toJSON(this);
-    };
-    StandardToken.prototype.kind = function () {
-        return this._kind;
-    };
-    StandardToken.prototype.keywordKind = function () {
-        return this._keywordKind;
-    };
-    StandardToken.prototype.fullStart = function () {
-        return this._fullStart;
-    };
-    StandardToken.prototype.fullWidth = function () {
-        return this._leadingWidth + this._text.length + this._trailingWidth;
-    };
-    StandardToken.prototype.start = function () {
-        return this._fullStart + this._leadingWidth;
-    };
-    StandardToken.prototype.width = function () {
-        return this._text.length;
-    };
-    StandardToken.prototype.isMissing = function () {
-        return false;
-    };
-    StandardToken.prototype.text = function () {
-        return this._text;
-    };
-    StandardToken.prototype.fullText = function (itext) {
-        return itext.toString(new TextSpan(this._fullStart, this._leadingWidth)) + this._text + itext.toString(new TextSpan(this._fullStart + this._leadingWidth + this._text.length, this._trailingWidth));
-    };
-    StandardToken.prototype.value = function () {
-        return null;
-    };
-    StandardToken.prototype.valueText = function () {
-        return null;
-    };
-    StandardToken.prototype.diagnostics = function () {
-        return this._diagnostics;
-    };
-    StandardToken.prototype.hasLeadingTrivia = function () {
-        return this._leadingWidth > 0;
-    };
-    StandardToken.prototype.hasLeadingCommentTrivia = function () {
-        return this._hasLeadingCommentTrivia;
-    };
-    StandardToken.prototype.hasLeadingNewLineTrivia = function () {
-        return this._hasLeadingNewLineTrivia;
-    };
-    StandardToken.prototype.hasTrailingTrivia = function () {
-        return this._trailingWidth > 0;
-    };
-    StandardToken.prototype.hasTrailingCommentTrivia = function () {
-        return this._hasTrailingCommentTrivia;
-    };
-    StandardToken.prototype.hasTrailingNewLineTrivia = function () {
-        return this._hasTrailingNewLineTrivia;
-    };
-    StandardToken.prototype.leadingTrivia = function (text) {
-        throw Errors.notYetImplemented();
-    };
-    StandardToken.prototype.trailingTrivia = function (text) {
-        throw Errors.notYetImplemented();
-    };
-    return StandardToken;
-})();
-var SyntaxToken = (function () {
-    function SyntaxToken() { }
-    SyntaxToken.create = function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
-        return SyntaxToken.createStandardToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics);
+    function getTriviaLength(value) {
+        return value >> 2;
     }
-    SyntaxToken.toJSON = function toJSON(token) {
+    function hasTriviaComment(value) {
+        return (value & (1 << 1)) !== 0;
+    }
+    function hasTriviaNewLine(value) {
+        return (value & 1) !== 0;
+    }
+    function toJSON(token) {
         var result = {
             kind: (SyntaxKind)._map[token.kind()]
         };
@@ -7864,90 +7791,468 @@ var SyntaxToken = (function () {
         }
         return result;
     }
-    SyntaxToken.createStandardToken = function createStandardToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
-        var kind = tokenInfo.Kind;
-        var keywordKind = tokenInfo.KeywordKind;
-        var text = tokenInfo.Text == null ? SyntaxFacts.getText(kind) : tokenInfo.Text;
-        Contract.throwIfNull(text);
-        var leadingWidth = leadingTriviaInfo.Width;
-        var trailingWidth = trailingTriviaInfo.Width;
-        var leadingComment = leadingTriviaInfo.HasComment;
-        var trailingComment = trailingTriviaInfo.HasComment;
-        var leadingNewLine = leadingTriviaInfo.HasNewLine;
-        var trailingNewLine = trailingTriviaInfo.HasNewLine;
-        return new StandardToken(kind, keywordKind, text, fullStart, leadingWidth, trailingWidth, leadingComment, trailingComment, leadingNewLine, trailingNewLine, diagnostics);
-    }
-    SyntaxToken.createEmptyToken = function createEmptyToken(kind) {
-        var token;
-        token = {
-            toJSON: function (key) {
-                return SyntaxToken.toJSON(token);
-            },
-            kind: function () {
-                return kind;
-            },
-            keywordKind: function () {
-                return SyntaxKind.None;
-            },
-            fullStart: function () {
-                return 0;
-            },
-            fullWidth: function () {
-                return 0;
-            },
-            start: function () {
-                return 0;
-            },
-            width: function () {
-                return 0;
-            },
-            isMissing: function () {
-                return true;
-            },
-            text: function () {
-                return "";
-            },
-            fullText: function (itext) {
-                return "";
-            },
-            value: function () {
-                return null;
-            },
-            valueText: function () {
-                return "";
-            },
-            diagnostics: function () {
-                return [];
-            },
-            hasLeadingTrivia: function () {
-                return false;
-            },
-            hasLeadingCommentTrivia: function () {
-                return false;
-            },
-            hasLeadingNewLineTrivia: function () {
-                return false;
-            },
-            hasTrailingTrivia: function () {
-                return false;
-            },
-            hasTrailingCommentTrivia: function () {
-                return false;
-            },
-            hasTrailingNewLineTrivia: function () {
-                return false;
-            },
-            leadingTrivia: function (text) {
-                return SyntaxTriviaList.empty;
-            },
-            trailingTrivia: function (text) {
-                return SyntaxTriviaList.empty;
-            }
+    var EmptyToken = (function () {
+        function EmptyToken(kind, keywordKind) {
+            this._kind = kind;
+            this._keywordKind = keywordKind;
+        }
+        EmptyToken.prototype.toJSON = function (key) {
+            return toJSON(this);
         };
-        return token;
+        EmptyToken.prototype.kind = function () {
+            return this._kind;
+        };
+        EmptyToken.prototype.keywordKind = function () {
+            return this._keywordKind;
+        };
+        EmptyToken.prototype.fullStart = function () {
+            return 0;
+        };
+        EmptyToken.prototype.fullWidth = function () {
+            return 0;
+        };
+        EmptyToken.prototype.start = function () {
+            return 0;
+        };
+        EmptyToken.prototype.width = function () {
+            return 0;
+        };
+        EmptyToken.prototype.isMissing = function () {
+            return true;
+        };
+        EmptyToken.prototype.text = function () {
+            return "";
+        };
+        EmptyToken.prototype.fullText = function (itext) {
+            return "";
+        };
+        EmptyToken.prototype.value = function () {
+            return null;
+        };
+        EmptyToken.prototype.valueText = function () {
+            return "";
+        };
+        EmptyToken.prototype.diagnostics = function () {
+            return [];
+        };
+        EmptyToken.prototype.hasLeadingTrivia = function () {
+            return false;
+        };
+        EmptyToken.prototype.hasLeadingCommentTrivia = function () {
+            return false;
+        };
+        EmptyToken.prototype.hasLeadingNewLineTrivia = function () {
+            return false;
+        };
+        EmptyToken.prototype.hasTrailingTrivia = function () {
+            return false;
+        };
+        EmptyToken.prototype.hasTrailingCommentTrivia = function () {
+            return false;
+        };
+        EmptyToken.prototype.hasTrailingNewLineTrivia = function () {
+            return false;
+        };
+        EmptyToken.prototype.leadingTrivia = function (text) {
+            return SyntaxTriviaList.empty;
+        };
+        EmptyToken.prototype.trailingTrivia = function (text) {
+            return SyntaxTriviaList.empty;
+        };
+        return EmptyToken;
+    })();    
+    var FixedWidthTokenWithNoTrivia = (function () {
+        function FixedWidthTokenWithNoTrivia(kind, fullStart) {
+            this._kind = kind;
+            this._fullStart = fullStart;
+        }
+        FixedWidthTokenWithNoTrivia.prototype.toJSON = function (key) {
+            return toJSON(this);
+        };
+        FixedWidthTokenWithNoTrivia.prototype.isMissing = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.diagnostics = function () {
+            return null;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.kind = function () {
+            return this._kind;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.keywordKind = function () {
+            return SyntaxKind.None;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.fullStart = function () {
+            return this._fullStart;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.fullWidth = function () {
+            return this.width();
+        };
+        FixedWidthTokenWithNoTrivia.prototype.start = function () {
+            return this.fullStart();
+        };
+        FixedWidthTokenWithNoTrivia.prototype.width = function () {
+            return this.text().length;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.text = function () {
+            return SyntaxFacts.getText(this.kind());
+        };
+        FixedWidthTokenWithNoTrivia.prototype.value = function () {
+            return null;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.valueText = function () {
+            return null;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.fullText = function (text) {
+            return this.text();
+        };
+        FixedWidthTokenWithNoTrivia.prototype.hasLeadingTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.hasLeadingCommentTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.hasLeadingNewLineTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.hasTrailingTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.hasTrailingCommentTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.hasTrailingNewLineTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.leadingTrivia = function (text) {
+            return SyntaxTriviaList.empty;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.trailingTrivia = function (text) {
+            return SyntaxTriviaList.empty;
+        };
+        return FixedWidthTokenWithNoTrivia;
+    })();    
+    var FixedWidthTokenWithLeadingTrivia = (function () {
+        function FixedWidthTokenWithLeadingTrivia(kind, fullStart, leadingTriviaInfo) {
+            this._kind = kind;
+            this._fullStart = fullStart;
+            this._leadingTriviaInfo = leadingTriviaInfo;
+        }
+        FixedWidthTokenWithLeadingTrivia.prototype.toJSON = function (key) {
+            return toJSON(this);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.isMissing = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.diagnostics = function () {
+            return null;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.kind = function () {
+            return this._kind;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.keywordKind = function () {
+            return SyntaxKind.None;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.fullStart = function () {
+            return this._fullStart;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.fullWidth = function () {
+            return getTriviaLength(this._leadingTriviaInfo) + this.width();
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.start = function () {
+            return this.fullStart() + getTriviaLength(this._leadingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.width = function () {
+            return this.text().length;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.text = function () {
+            return SyntaxFacts.getText(this.kind());
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.value = function () {
+            return null;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.valueText = function () {
+            return null;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.fullText = function (text) {
+            throw Errors.notYetImplemented();
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.hasLeadingTrivia = function () {
+            return true;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.hasLeadingCommentTrivia = function () {
+            return hasTriviaComment(this._leadingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.hasLeadingNewLineTrivia = function () {
+            return hasTriviaNewLine(this._leadingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.leadingTrivia = function (text) {
+            throw Errors.notYetImplemented();
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.hasTrailingTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.hasTrailingCommentTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.hasTrailingNewLineTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.trailingTrivia = function (text) {
+            return SyntaxTriviaList.empty;
+        };
+        return FixedWidthTokenWithLeadingTrivia;
+    })();    
+    var FixedWidthTokenWithTrailingTrivia = (function () {
+        function FixedWidthTokenWithTrailingTrivia(kind, fullStart, trailingTriviaInfo) {
+            this._kind = kind;
+            this._fullStart = fullStart;
+            this._trailingTriviaInfo = trailingTriviaInfo;
+        }
+        FixedWidthTokenWithTrailingTrivia.prototype.toJSON = function (key) {
+            return toJSON(this);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.isMissing = function () {
+            return false;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.diagnostics = function () {
+            return null;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.kind = function () {
+            return this._kind;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.keywordKind = function () {
+            return SyntaxKind.None;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.fullStart = function () {
+            return this._fullStart;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.fullWidth = function () {
+            return this.width() + getTriviaLength(this._trailingTriviaInfo);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.start = function () {
+            return this.fullStart();
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.width = function () {
+            return this.text().length;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.text = function () {
+            return SyntaxFacts.getText(this.kind());
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.value = function () {
+            return null;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.valueText = function () {
+            return null;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.fullText = function (text) {
+            throw Errors.notYetImplemented();
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.hasLeadingTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.hasLeadingCommentTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.hasLeadingNewLineTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.leadingTrivia = function (text) {
+            return SyntaxTriviaList.empty;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.hasTrailingTrivia = function () {
+            return true;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.hasTrailingCommentTrivia = function () {
+            return hasTriviaComment(this._trailingTriviaInfo);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.hasTrailingNewLineTrivia = function () {
+            return hasTriviaNewLine(this._trailingTriviaInfo);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.trailingTrivia = function (text) {
+            throw Errors.notYetImplemented();
+        };
+        return FixedWidthTokenWithTrailingTrivia;
+    })();    
+    var FixedWidthTokenWithLeadingAndTrailingTrivia = (function () {
+        function FixedWidthTokenWithLeadingAndTrailingTrivia(kind, fullStart, leadingTriviaInfo, trailingTriviaInfo) {
+            this._kind = kind;
+            this._fullStart = fullStart;
+            this._leadingTriviaInfo = leadingTriviaInfo;
+            this._trailingTriviaInfo = trailingTriviaInfo;
+        }
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.toJSON = function (key) {
+            return toJSON(this);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isMissing = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.diagnostics = function () {
+            return null;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.kind = function () {
+            return this._kind;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.keywordKind = function () {
+            return SyntaxKind.None;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.fullStart = function () {
+            return this._fullStart;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.fullWidth = function () {
+            return getTriviaLength(this._leadingTriviaInfo) + this.text().length + getTriviaLength(this._trailingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.start = function () {
+            return this.fullStart();
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.width = function () {
+            return this.text().length;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.text = function () {
+            return SyntaxFacts.getText(this.kind());
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.value = function () {
+            return null;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.valueText = function () {
+            return null;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.fullText = function (text) {
+            throw Errors.notYetImplemented();
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingTrivia = function () {
+            return true;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingCommentTrivia = function () {
+            return hasTriviaComment(this._leadingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingNewLineTrivia = function () {
+            return hasTriviaNewLine(this._leadingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.leadingTrivia = function (text) {
+            throw Errors.notYetImplemented();
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingTrivia = function () {
+            return true;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingCommentTrivia = function () {
+            return hasTriviaComment(this._trailingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingNewLineTrivia = function () {
+            return hasTriviaNewLine(this._trailingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.trailingTrivia = function (text) {
+            throw Errors.notYetImplemented();
+        };
+        return FixedWidthTokenWithLeadingAndTrailingTrivia;
+    })();    
+    var FullToken = (function () {
+        function FullToken(kind, keywordKind, text, fullStart, leadingTriviaInfo, trailingTriviaInfo, diagnostics) {
+            this._kind = kind;
+            this._keywordKind = keywordKind;
+            this._text = text;
+            this._fullStart = fullStart;
+            this._leadingTriviaInfo = leadingTriviaInfo;
+            this._trailingTriviaInfo = trailingTriviaInfo;
+            this._diagnostics = diagnostics;
+        }
+        FullToken.prototype.toJSON = function (key) {
+            return toJSON(this);
+        };
+        FullToken.prototype.kind = function () {
+            return this._kind;
+        };
+        FullToken.prototype.keywordKind = function () {
+            return this._keywordKind;
+        };
+        FullToken.prototype.fullStart = function () {
+            return this._fullStart;
+        };
+        FullToken.prototype.fullWidth = function () {
+            return getTriviaLength(this._leadingTriviaInfo) + this._text.length + getTriviaLength(this._trailingTriviaInfo);
+        };
+        FullToken.prototype.start = function () {
+            return this._fullStart + getTriviaLength(this._leadingTriviaInfo);
+        };
+        FullToken.prototype.width = function () {
+            return this._text.length;
+        };
+        FullToken.prototype.isMissing = function () {
+            return false;
+        };
+        FullToken.prototype.text = function () {
+            return this._text;
+        };
+        FullToken.prototype.fullText = function (itext) {
+            return itext.toString(new TextSpan(this._fullStart, getTriviaLength(this._leadingTriviaInfo))) + this._text + itext.toString(new TextSpan(this.start() + this.width(), getTriviaLength(this._trailingTriviaInfo)));
+        };
+        FullToken.prototype.value = function () {
+            return null;
+        };
+        FullToken.prototype.valueText = function () {
+            return null;
+        };
+        FullToken.prototype.diagnostics = function () {
+            return this._diagnostics;
+        };
+        FullToken.prototype.hasLeadingTrivia = function () {
+            return getTriviaLength(this._leadingTriviaInfo) > 0;
+        };
+        FullToken.prototype.hasLeadingCommentTrivia = function () {
+            return hasTriviaComment(this._leadingTriviaInfo);
+        };
+        FullToken.prototype.hasLeadingNewLineTrivia = function () {
+            return hasTriviaNewLine(this._leadingTriviaInfo);
+        };
+        FullToken.prototype.hasTrailingTrivia = function () {
+            return getTriviaLength(this._trailingTriviaInfo) > 0;
+        };
+        FullToken.prototype.hasTrailingCommentTrivia = function () {
+            return hasTriviaComment(this._trailingTriviaInfo);
+        };
+        FullToken.prototype.hasTrailingNewLineTrivia = function () {
+            return hasTriviaNewLine(this._trailingTriviaInfo);
+        };
+        FullToken.prototype.leadingTrivia = function (text) {
+            throw Errors.notYetImplemented();
+        };
+        FullToken.prototype.trailingTrivia = function (text) {
+            throw Errors.notYetImplemented();
+        };
+        return FullToken;
+    })();    
+    function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
+        if(diagnostics === null || diagnostics.length === 0) {
+            if(SyntaxFacts.isAnyPunctuation(tokenInfo.Kind)) {
+                return createFixedWidthToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo);
+            }
+        }
+        return createFullToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics);
     }
-    return SyntaxToken;
-})();
+    SyntaxTokenFactory.create = create;
+    function createFixedWidthToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo) {
+        if(leadingTriviaInfo.Width === 0 && trailingTriviaInfo.Width === 0) {
+            return new FixedWidthTokenWithNoTrivia(tokenInfo.Kind, fullStart);
+        } else {
+            if(leadingTriviaInfo.Width === 0) {
+                return new FixedWidthTokenWithTrailingTrivia(tokenInfo.Kind, fullStart, getTriviaInfo(trailingTriviaInfo));
+            } else {
+                if(trailingTriviaInfo.Width === 0) {
+                    return new FixedWidthTokenWithLeadingTrivia(tokenInfo.Kind, fullStart, getTriviaInfo(leadingTriviaInfo));
+                } else {
+                    return new FixedWidthTokenWithLeadingAndTrailingTrivia(tokenInfo.Kind, fullStart, getTriviaInfo(leadingTriviaInfo), getTriviaInfo(trailingTriviaInfo));
+                }
+            }
+        }
+    }
+    function createFullToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
+        var text = tokenInfo.Text == null ? SyntaxFacts.getText(tokenInfo.Kind) : tokenInfo.Text;
+        return new FullToken(tokenInfo.Kind, tokenInfo.KeywordKind, text, fullStart, getTriviaInfo(leadingTriviaInfo), getTriviaInfo(trailingTriviaInfo), diagnostics);
+    }
+    function createEmptyToken(kind, keywordKind) {
+        return new EmptyToken(kind, keywordKind);
+    }
+    SyntaxTokenFactory.createEmptyToken = createEmptyToken;
+})(SyntaxTokenFactory || (SyntaxTokenFactory = {}));
 var SyntaxTree = (function () {
     function SyntaxTree() { }
     return SyntaxTree;

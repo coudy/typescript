@@ -87,7 +87,7 @@ class Scanner {
     }
 
     private createToken(start: number): ISyntaxToken {
-        return SyntaxToken.create(start, this.leadingTriviaInfo, this.tokenInfo, this.trailingTriviaInfo,
+        return SyntaxTokenFactory.create(start, this.leadingTriviaInfo, this.tokenInfo, this.trailingTriviaInfo,
             this.errors.length == 0 ? null : this.errors);
     }
 
