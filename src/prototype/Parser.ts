@@ -2868,7 +2868,14 @@ class Parser {
     }
 
     private parseConstructorType(): ConstructorTypeSyntax {
-        throw Errors.notYetImplemented();
+        Debug.assert(this.isConstructorType());
+
+        var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
+        var parameterList = this.parseParameterList();
+        var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
+        var type = this.parseType(/*requreCompleteArraySuffix:*/ false);
+
+        return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type);
     }
 
     private isTypeLiteral(): bool {

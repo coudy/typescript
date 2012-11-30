@@ -2605,7 +2605,12 @@ var Parser = (function () {
         return new FunctionTypeSyntax(parameterList, equalsGreaterThanToken, returnType);
     };
     Parser.prototype.parseConstructorType = function () {
-        throw Errors.notYetImplemented();
+        Debug.assert(this.isConstructorType());
+        var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
+        var parameterList = this.parseParameterList();
+        var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
+        var type = this.parseType(false);
+        return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type);
     };
     Parser.prototype.isTypeLiteral = function () {
         return this.isObjectType() || this.isFunctionType() || this.isConstructorType();
@@ -3018,11 +3023,11 @@ var Scanner = (function () {
         var ch = this.textWindow.peekCharAtPosition();
         if(ch === CharacterCodes.e || ch === CharacterCodes.E) {
             this.textWindow.advanceChar1();
-        }
-        ch = this.textWindow.peekCharAtPosition();
-        if(ch === CharacterCodes.minus || ch === CharacterCodes.plus) {
-            if(CharacterInfo.isDecimalDigit(this.textWindow.peekCharN(1))) {
-                this.textWindow.advanceChar1();
+            ch = this.textWindow.peekCharAtPosition();
+            if(ch === CharacterCodes.minus || ch === CharacterCodes.plus) {
+                if(CharacterInfo.isDecimalDigit(this.textWindow.peekCharN(1))) {
+                    this.textWindow.advanceChar1();
+                }
             }
         }
         while(CharacterInfo.isDecimalDigit(this.textWindow.peekCharAtPosition())) {
@@ -5918,10 +5923,37 @@ var QualifiedNameSyntax = (function (_super) {
 })(NameSyntax);
 var ConstructorTypeSyntax = (function (_super) {
     __extends(ConstructorTypeSyntax, _super);
-    function ConstructorTypeSyntax() {
-        _super.apply(this, arguments);
-
+    function ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type) {
+        _super.call(this);
+        if(newKeyword.keywordKind() !== SyntaxKind.NewKeyword) {
+            throw Errors.argument("newKeyword");
+        }
+        if(parameterList === null) {
+            throw Errors.argumentNull("parameterList");
+        }
+        if(equalsGreaterThanToken.kind() !== SyntaxKind.EqualsGreaterThanToken) {
+            throw Errors.argument("equalsGreaterThanToken");
+        }
+        if(type === null) {
+            throw Errors.argumentNull("type");
+        }
+        this._newKeyword = newKeyword;
+        this._parameterList = parameterList;
+        this._equalsGreaterThanToken = equalsGreaterThanToken;
+        this._type = type;
     }
+    ConstructorTypeSyntax.prototype.newKeyword = function () {
+        return this._newKeyword;
+    };
+    ConstructorTypeSyntax.prototype.parameterList = function () {
+        return this._parameterList;
+    };
+    ConstructorTypeSyntax.prototype.equalsGreaterThanToken = function () {
+        return this._equalsGreaterThanToken;
+    };
+    ConstructorTypeSyntax.prototype.type = function () {
+        return this._type;
+    };
     return ConstructorTypeSyntax;
 })(TypeSyntax);
 var FunctionTypeSyntax = (function (_super) {

@@ -1056,6 +1056,54 @@ class QualifiedNameSyntax extends NameSyntax {
 }
 
 class ConstructorTypeSyntax extends TypeSyntax {
+    private _newKeyword: ISyntaxToken;
+    private _parameterList: ParameterListSyntax;
+    private _equalsGreaterThanToken: ISyntaxToken;
+    private _type: TypeSyntax;
+
+    constructor(newKeyword: ISyntaxToken,
+        parameterList: ParameterListSyntax,
+        equalsGreaterThanToken: ISyntaxToken,
+        type: TypeSyntax) {
+        super();
+
+        if (newKeyword.keywordKind() !== SyntaxKind.NewKeyword) {
+            throw Errors.argument("newKeyword");
+        }
+
+        if (parameterList === null) {
+            throw Errors.argumentNull("parameterList");
+        }
+
+        if (equalsGreaterThanToken.kind() !== SyntaxKind.EqualsGreaterThanToken) {
+            throw Errors.argument("equalsGreaterThanToken");
+        }
+
+        if (type === null) {
+            throw Errors.argumentNull("type");
+        }
+
+        this._newKeyword = newKeyword;
+        this._parameterList = parameterList;
+        this._equalsGreaterThanToken = equalsGreaterThanToken;
+        this._type = type;
+    }
+
+    public newKeyword(): ISyntaxToken {
+        return this._newKeyword;
+    }
+
+    public parameterList(): ParameterListSyntax {
+        return this._parameterList;
+    }
+
+    public equalsGreaterThanToken(): ISyntaxToken {
+        return this._equalsGreaterThanToken;
+    }
+     
+    public type(): TypeSyntax {
+        return this._type;
+    }
 }
 
 class FunctionTypeSyntax extends TypeSyntax {
