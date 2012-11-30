@@ -528,9 +528,9 @@ var ParseOptions = (function () {
     return ParseOptions;
 })();
 var ParserRewindPoint = (function () {
-    function ParserRewindPoint(resetCount, absoluteTokenIndex, previousToken, isInStrictMode) {
+    function ParserRewindPoint(resetCount, absoluteIndex, previousToken, isInStrictMode) {
         this.resetCount = resetCount;
-        this.absoluteTokenIndex = absoluteTokenIndex;
+        this.absoluteIndex = absoluteIndex;
         this.previousToken = previousToken;
         this.isInStrictMode = isInStrictMode;
     }
@@ -557,15 +557,15 @@ var ParserExpressionPrecedence;
 })(ParserExpressionPrecedence || (ParserExpressionPrecedence = {}));
 var Parser = (function () {
     function Parser(scanner, oldTree, changes, options) {
-        this._currentToken = null;
-        this.previousToken = null;
+        this.options = null;
         this.scannedTokens = [];
         this.tokenCount = 0;
-        this.firstToken = 0;
-        this.tokenOffset = 0;
+        this.scannedTokensAbsoluteStartIndex = 0;
+        this.currentReletiveTokenIndex = 0;
         this.outstandingRewindPoints = 0;
-        this.firstRewindStartIndex = -1;
-        this.options = null;
+        this.firstRewindAbsoluteIndex = -1;
+        this._currentToken = null;
+        this.previousToken = null;
         this.scanner = scanner;
         this.oldTree = oldTree;
         this.options = options || new ParseOptions();
@@ -574,17 +574,17 @@ var Parser = (function () {
         return this.oldTree != null;
     };
     Parser.prototype.getRewindPoint = function () {
-        var pos = this.firstToken + this.tokenOffset;
+        var absoluteIndex = this.scannedTokensAbsoluteStartIndex + this.currentReletiveTokenIndex;
         if(this.outstandingRewindPoints === 0) {
-            this.firstRewindStartIndex = pos;
+            this.firstRewindAbsoluteIndex = absoluteIndex;
         }
         this.outstandingRewindPoints++;
-        return new ParserRewindPoint(this.outstandingRewindPoints, pos, this.previousToken, this.isInStrictMode);
+        return new ParserRewindPoint(this.outstandingRewindPoints, absoluteIndex, this.previousToken, this.isInStrictMode);
     };
     Parser.prototype.rewind = function (point) {
-        var offset = point.absoluteTokenIndex - this.firstToken;
-        Debug.assert(offset >= 0 && offset < this.tokenCount);
-        this.tokenOffset = offset;
+        var relativeTokenIndex = point.absoluteIndex - this.scannedTokensAbsoluteStartIndex;
+        Debug.assert(relativeTokenIndex >= 0 && relativeTokenIndex < this.tokenCount);
+        this.currentReletiveTokenIndex = relativeTokenIndex;
         this._currentToken = null;
         this.previousToken = point.previousToken;
         this.isInStrictMode = point.isInStrictMode;
@@ -593,7 +593,7 @@ var Parser = (function () {
         Debug.assert(this.outstandingRewindPoints == point.resetCount);
         this.outstandingRewindPoints--;
         if(this.outstandingRewindPoints == 0) {
-            this.firstRewindStartIndex = -1;
+            this.firstRewindAbsoluteIndex = -1;
         }
     };
     Parser.prototype.currentToken = function () {
@@ -605,10 +605,10 @@ var Parser = (function () {
         return result;
     };
     Parser.prototype.fetchCurrentToken = function () {
-        if(this.tokenOffset >= this.tokenCount) {
+        if(this.currentReletiveTokenIndex >= this.tokenCount) {
             this.addNewToken();
         }
-        return this.scannedTokens[this.tokenOffset];
+        return this.scannedTokens[this.currentReletiveTokenIndex];
     };
     Parser.prototype.addNewToken = function () {
         this.addScannedToken(this.scanner.scan());
@@ -622,26 +622,26 @@ var Parser = (function () {
         this.tokenCount++;
     };
     Parser.prototype.tryShiftScannedTokens = function () {
-        if(this.tokenOffset > (this.scannedTokens.length >> 1) && (this.firstRewindStartIndex == -1 || this.firstRewindStartIndex > this.firstToken)) {
-            var shiftOffset = (this.firstRewindStartIndex == -1) ? this.tokenOffset : this.firstRewindStartIndex - this.firstToken;
+        if(this.currentReletiveTokenIndex > (this.scannedTokens.length >> 1) && (this.firstRewindAbsoluteIndex == -1 || this.firstRewindAbsoluteIndex > this.scannedTokensAbsoluteStartIndex)) {
+            var shiftOffset = (this.firstRewindAbsoluteIndex == -1) ? this.currentReletiveTokenIndex : this.firstRewindAbsoluteIndex - this.scannedTokensAbsoluteStartIndex;
             var shiftCount = this.tokenCount - shiftOffset;
             Debug.assert(shiftOffset > 0);
             if(shiftCount > 0) {
                 ArrayUtilities.copy(this.scannedTokens, shiftOffset, this.scannedTokens, 0, shiftCount);
             }
-            this.firstToken += shiftOffset;
+            this.scannedTokensAbsoluteStartIndex += shiftOffset;
             this.tokenCount -= shiftOffset;
-            this.tokenOffset -= shiftOffset;
+            this.currentReletiveTokenIndex -= shiftOffset;
         } else {
             this.scannedTokens[this.scannedTokens.length * 2 - 1] = null;
         }
     };
     Parser.prototype.peekTokenN = function (n) {
         Debug.assert(n >= 0);
-        while(this.tokenOffset + n >= this.tokenCount) {
+        while(this.currentReletiveTokenIndex + n >= this.tokenCount) {
             this.addNewToken();
         }
-        return this.scannedTokens[this.tokenOffset + n];
+        return this.scannedTokens[this.currentReletiveTokenIndex + n];
     };
     Parser.prototype.eatAnyToken = function () {
         var token = this.currentToken();
@@ -651,7 +651,7 @@ var Parser = (function () {
     Parser.prototype.moveToNextToken = function () {
         this.previousToken = this._currentToken;
         this._currentToken = null;
-        this.tokenOffset++;
+        this.currentReletiveTokenIndex++;
     };
     Parser.prototype.canEatAutomaticSemicolon = function () {
         var token = this.currentToken();

@@ -8,10 +8,10 @@ class ParserRewindPoint {
                 // We don't need actually need it.  But we can use it to assert certain invariants.
                 public resetCount: number,
                 
-                // The index in the scanned tokens array that we want to rewind back to.  Note:
-                // this is an absolute index. i.e. this is *not* the index in the scanned  tokens
+                // The index in all the tokens we've scanned that we want to rewind back to.  Note:
+                // this is an absolute index. i.e. this is *not* the index in the scanned tokens
                 // window.  It is the index into the virtual array of all tokens.
-                public absoluteTokenIndex: number,
+                public absoluteIndex: number,
 
                 // The previous token when we were created.
                 public previousToken: ISyntaxToken,
@@ -90,12 +90,8 @@ class Parser {
     // is provided.
     private oldTree: SyntaxTree;
 
-    // The current token the parser is examining.  If it is null it needs to be fetched from the 
-    // scanner.
-    private _currentToken: ISyntaxToken = null;
-
-    // The previous token to the current token.  Set when we advance to the next token.
-    private previousToken: ISyntaxToken = null;
+    // Parsing options.
+    private options: ParseOptions = null;
 
     // A window of tokens that has been scanned.  
     private scannedTokens: ISyntaxToken[] = [];
@@ -103,13 +99,15 @@ class Parser {
     // The number of valud tokens in the scannedTokens array.
     private tokenCount: number = 0;
 
+    // The *absolute* index in the *full* array of tokens the *scannedTokens* array starts at.  i.e.
+    // if there were 100 tokens, and scannedTokens contains tokens [70, 80), then this value would be
+    // 70.
+    private scannedTokensAbsoluteStartIndex: number = 0;
 
-    private firstToken: number = 0;
-
-    // The offset in the scanned tokens array that we're at. 
-    private tokenOffset: number = 0;
-
-    private isInStrictMode: bool;
+    // The index in the scanned tokens array that we're at. i.e. if there 100 tokens and 
+    // scannedTokens contains tokens [70, 80), and we're on token 75, then this value would be '5'.
+    // Note: it is not absolute.  It is relative to the start of the scanned tokens window.
+    private currentReletiveTokenIndex: number = 0;
 
     // The number of outstanding rewind points there are.  As long as there is at least one 
     // outstanding rewind point, we will not advance the start of the scanned tokens array past
@@ -119,9 +117,21 @@ class Parser {
     // If there are any outstanding rewind points, this is index in the scanned tokens array
     // that the first rewind point points to.  If this is not -1, then we will not shift the
     // start of the tokens array past this point.
-    private firstRewindStartIndex: number = -1;
+    private firstRewindAbsoluteIndex: number = -1;
 
-    private options: ParseOptions = null;
+    // Current state of the parser.  If we need to rewind we will store and reset these values as
+    // appropriate.
+
+    // The current token the parser is examining.  If it is null it needs to be fetched from the 
+    // scanner.
+    private _currentToken: ISyntaxToken = null;
+
+    // The previous token to the current token.  Set when we advance to the next token.
+    private previousToken: ISyntaxToken = null;
+
+    // Whether or not we are in strict parsing mode.  All that changes in strict parsing mode is
+    // that some tokens that would be considered identifiers may be considered keywords.
+    private isInStrictMode: bool;
 
     constructor(
         scanner: Scanner,
@@ -139,20 +149,33 @@ class Parser {
     }
 
     private getRewindPoint(): ParserRewindPoint {
-        var pos = this.firstToken + this.tokenOffset;
+        // Find the absolute index of this rewind point.  i.e. it's the index as if we had an 
+        // array containing *all* tokens.  
+        var absoluteIndex = this.scannedTokensAbsoluteStartIndex + this.currentReletiveTokenIndex;
         if (this.outstandingRewindPoints === 0) {
-            this.firstRewindStartIndex = pos; // low water mark
+            // If this is the first rewind point, then store off this index.  We will ensure that
+            // we never shift the token window past this point.
+            this.firstRewindAbsoluteIndex = absoluteIndex;
         }
 
         this.outstandingRewindPoints++;
-        return new ParserRewindPoint(this.outstandingRewindPoints, pos, this.previousToken, this.isInStrictMode);
+        return new ParserRewindPoint(this.outstandingRewindPoints, absoluteIndex, this.previousToken, this.isInStrictMode);
     }
 
     private rewind(point: ParserRewindPoint): void {
-        var offset = point.absoluteTokenIndex - this.firstToken;
-        Debug.assert(offset >= 0 && offset < this.tokenCount);
-        this.tokenOffset = offset;
+        // The rewind point shows which absolute token we want to rewind to.  Get the relative 
+        // index in the actual array that we want to point to.
+        var relativeTokenIndex = point.absoluteIndex - this.scannedTokensAbsoluteStartIndex;
 
+        // Make sure we haven't screwed anything up.
+        Debug.assert(relativeTokenIndex >= 0 && relativeTokenIndex < this.tokenCount);
+
+        // Set ourselves back to that point.
+        this.currentReletiveTokenIndex = relativeTokenIndex;
+
+        // Clear out the current token.  We can retrieve it now from the scanned tokens array.
+        // Restore the previous token and strict mode setting that we were at when this rewind
+        // point was created.
         this._currentToken = null;
         this.previousToken = point.previousToken;
         this.isInStrictMode = point.isInStrictMode;
@@ -164,7 +187,10 @@ class Parser {
 
         this.outstandingRewindPoints--;
         if (this.outstandingRewindPoints == 0) {
-            this.firstRewindStartIndex = -1;
+            // If we just released the last outstanding rewind point, then we no longer need to 
+            // 'fix' the token window so it can't move forward.  Set the index to -1 so that we
+            // can shift things over the next time we read past the end of the array.
+            this.firstRewindAbsoluteIndex = -1;
         }
     }
 
@@ -180,11 +206,11 @@ class Parser {
     }
 
     private fetchCurrentToken(): ISyntaxToken {
-        if (this.tokenOffset >= this.tokenCount) {
+        if (this.currentReletiveTokenIndex >= this.tokenCount) {
             this.addNewToken();
         }
 
-        return this.scannedTokens[this.tokenOffset];
+        return this.scannedTokens[this.currentReletiveTokenIndex];
     }
 
     private addNewToken(): void {
@@ -204,18 +230,18 @@ class Parser {
     private tryShiftScannedTokens(): void {
         // shift tokens to left if we are far to the right
         // don't shift if reset points have fixed locked tge starting point at the token in the window
-        if (this.tokenOffset > (this.scannedTokens.length >> 1)
-            && (this.firstRewindStartIndex == -1 || this.firstRewindStartIndex > this.firstToken)) {
-            var shiftOffset = (this.firstRewindStartIndex == -1) ? this.tokenOffset : this.firstRewindStartIndex - this.firstToken;
+        if (this.currentReletiveTokenIndex > (this.scannedTokens.length >> 1)
+            && (this.firstRewindAbsoluteIndex == -1 || this.firstRewindAbsoluteIndex > this.scannedTokensAbsoluteStartIndex)) {
+            var shiftOffset = (this.firstRewindAbsoluteIndex == -1) ? this.currentReletiveTokenIndex : this.firstRewindAbsoluteIndex - this.scannedTokensAbsoluteStartIndex;
             var shiftCount = this.tokenCount - shiftOffset;
             Debug.assert(shiftOffset > 0);
             if (shiftCount > 0) {
                 ArrayUtilities.copy(this.scannedTokens, shiftOffset, this.scannedTokens, 0, shiftCount);
             }
 
-            this.firstToken += shiftOffset;
+            this.scannedTokensAbsoluteStartIndex += shiftOffset;
             this.tokenCount -= shiftOffset;
-            this.tokenOffset -= shiftOffset;
+            this.currentReletiveTokenIndex -= shiftOffset;
         }
         else {
             // Grow the exisitng array.
@@ -225,11 +251,11 @@ class Parser {
 
     private peekTokenN(n: number): ISyntaxToken {
         Debug.assert(n >= 0);
-        while (this.tokenOffset + n >= this.tokenCount) {
+        while (this.currentReletiveTokenIndex + n >= this.tokenCount) {
             this.addNewToken();
         }
 
-        return this.scannedTokens[this.tokenOffset + n];
+        return this.scannedTokens[this.currentReletiveTokenIndex + n];
     }
 
     //this method is called very frequently
@@ -244,7 +270,7 @@ class Parser {
         this.previousToken = this._currentToken;
         this._currentToken = null;
 
-        this.tokenOffset++;
+        this.currentReletiveTokenIndex++;
     }
 
     private canEatAutomaticSemicolon(): bool {
