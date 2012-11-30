@@ -527,14 +527,14 @@ var ParseOptions = (function () {
     };
     return ParseOptions;
 })();
-var ParserResetPoint = (function () {
-    function ParserResetPoint(resetCount, position, previousToken, isInStrictMode) {
+var ParserRewindPoint = (function () {
+    function ParserRewindPoint(resetCount, tokenIndex, previousToken, isInStrictMode) {
         this.resetCount = resetCount;
-        this.position = position;
+        this.tokenIndex = tokenIndex;
         this.previousToken = previousToken;
         this.isInStrictMode = isInStrictMode;
     }
-    return ParserResetPoint;
+    return ParserRewindPoint;
 })();
 var ParserExpressionPrecedence;
 (function (ParserExpressionPrecedence) {
@@ -557,16 +557,14 @@ var ParserExpressionPrecedence;
 })(ParserExpressionPrecedence || (ParserExpressionPrecedence = {}));
 var Parser = (function () {
     function Parser(scanner, oldTree, changes, options) {
-        this.scanner = null;
-        this.oldTree = null;
         this._currentToken = null;
-        this.scannedTokens = [];
         this.previousToken = null;
+        this.scannedTokens = [];
+        this.tokenCount = 0;
         this.firstToken = 0;
         this.tokenOffset = 0;
-        this.tokenCount = 0;
-        this.resetCount = 0;
-        this.resetStart = 0;
+        this.outstandingRewindPoints = 0;
+        this.firstRewindStartIndex = -1;
         this.options = null;
         this.scanner = scanner;
         this.oldTree = oldTree;
@@ -575,39 +573,27 @@ var Parser = (function () {
     Parser.prototype.isIncremental = function () {
         return this.oldTree != null;
     };
-    Parser.prototype.preScan = function () {
-        var size = MathPrototype.min(4096, MathPrototype.max(32, this.scanner.text().length() / 2));
-        var tokens = this.scannedTokens = ArrayUtilities.createArray(size);
-        var scanner = this.scanner;
-        for(var i = 0; i < size; i++) {
-            var token = scanner.scan();
-            this.addScannedToken(token);
-            if(token.kind() === SyntaxKind.EndOfFileToken) {
-                break;
-            }
-        }
-    };
-    Parser.prototype.getResetPoint = function () {
+    Parser.prototype.getRewindPoint = function () {
         var pos = this.firstToken + this.tokenOffset;
-        if(this.resetCount === 0) {
-            this.resetStart = pos;
+        if(this.outstandingRewindPoints === 0) {
+            this.firstRewindStartIndex = pos;
         }
-        this.resetCount++;
-        return new ParserResetPoint(this.resetCount, pos, this.previousToken, this.isInStrictMode);
+        this.outstandingRewindPoints++;
+        return new ParserRewindPoint(this.outstandingRewindPoints, pos, this.previousToken, this.isInStrictMode);
     };
-    Parser.prototype.reset = function (point) {
-        var offset = point.position - this.firstToken;
+    Parser.prototype.rewind = function (point) {
+        var offset = point.tokenIndex - this.firstToken;
         Debug.assert(offset >= 0 && offset < this.tokenCount);
         this.tokenOffset = offset;
         this._currentToken = null;
         this.previousToken = point.previousToken;
         this.isInStrictMode = point.isInStrictMode;
     };
-    Parser.prototype.release = function (point) {
-        Debug.assert(this.resetCount == point.resetCount);
-        this.resetCount--;
-        if(this.resetCount == 0) {
-            this.resetStart = -1;
+    Parser.prototype.releaseRewindPoint = function (point) {
+        Debug.assert(this.outstandingRewindPoints == point.resetCount);
+        this.outstandingRewindPoints--;
+        if(this.outstandingRewindPoints == 0) {
+            this.firstRewindStartIndex = -1;
         }
     };
     Parser.prototype.currentToken = function () {
@@ -636,8 +622,8 @@ var Parser = (function () {
         this.tokenCount++;
     };
     Parser.prototype.tryShiftScannedTokens = function () {
-        if(this.tokenOffset > (this.scannedTokens.length >> 1) && (this.resetStart == -1 || this.resetStart > this.firstToken)) {
-            var shiftOffset = (this.resetStart == -1) ? this.tokenOffset : this.resetStart - this.firstToken;
+        if(this.tokenOffset > (this.scannedTokens.length >> 1) && (this.firstRewindStartIndex == -1 || this.firstRewindStartIndex > this.firstToken)) {
+            var shiftOffset = (this.firstRewindStartIndex == -1) ? this.tokenOffset : this.firstRewindStartIndex - this.firstToken;
             var shiftCount = this.tokenCount - shiftOffset;
             Debug.assert(shiftOffset > 0);
             if(shiftCount > 0) {
@@ -1054,7 +1040,7 @@ var Parser = (function () {
         return this.currentToken().keywordKind() === SyntaxKind.ConstructorKeyword;
     };
     Parser.prototype.isMemberFunctionDeclaration = function () {
-        var resetPoint = this.getResetPoint();
+        var resetPoint = this.getRewindPoint();
         try  {
             if(this.currentToken().keywordKind() === SyntaxKind.PublicKeyword || this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
                 this.eatAnyToken();
@@ -1064,12 +1050,12 @@ var Parser = (function () {
             }
             return this.isFunctionSignature();
         }finally {
-            this.reset(resetPoint);
-            this.release(resetPoint);
+            this.rewind(resetPoint);
+            this.releaseRewindPoint(resetPoint);
         }
     };
     Parser.prototype.isMemberAccessorDeclaration = function () {
-        var resetPoint = this.getResetPoint();
+        var resetPoint = this.getRewindPoint();
         try  {
             if(this.currentToken().keywordKind() === SyntaxKind.PublicKeyword || this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
                 this.eatAnyToken();
@@ -1083,8 +1069,8 @@ var Parser = (function () {
             this.eatAnyToken();
             return this.isIdentifier(this.currentToken());
         }finally {
-            this.reset(resetPoint);
-            this.release(resetPoint);
+            this.rewind(resetPoint);
+            this.releaseRewindPoint(resetPoint);
         }
     };
     Parser.prototype.isMemberVariableDeclaration = function () {
@@ -2267,15 +2253,15 @@ var Parser = (function () {
         if(!this.isPossiblyArrowFunctionExpression()) {
             return null;
         }
-        var resetPoint = this.getResetPoint();
+        var resetPoint = this.getRewindPoint();
         try  {
             var arrowFunction = this.parseParenthesizedArrowFunctionExpression(true);
             if(arrowFunction === null) {
-                this.reset(resetPoint);
+                this.rewind(resetPoint);
             }
             return arrowFunction;
         }finally {
-            this.release(resetPoint);
+            this.releaseRewindPoint(resetPoint);
         }
     };
     Parser.prototype.parseParenthesizedArrowFunctionExpression = function (requireArrow) {

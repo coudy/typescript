@@ -24,6 +24,7 @@ class ArrayUtilities {
     }
 
     public static createArray(length: number): any[] {
+        // return new Array(length);
         var result = [];
         for (var i = 0; i < length; i++) {
             result.push(null);

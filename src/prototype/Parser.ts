@@ -1,10 +1,21 @@
 ///<reference path='References.ts' />
 
-class ParserResetPoint {
-    constructor (public resetCount: number,
-                 public position: number,
-                 public previousToken: ISyntaxToken,
-                 public isInStrictMode: bool) {
+// Represents a point in the scanned tokens array that we can rewind to if we are performing 
+// lookahead and decide we need to back track.  There can be many of these outstanding at a
+// time.  That way you can do speculative parsing while already in speculative parsing.
+class ParserRewindPoint {
+    constructor(// For debugging purposes, keep track of the reset count when we were created.  
+                // We don't need actually need it.  But we can use it to assert certain invariants.
+                public resetCount: number,
+                
+                // The index in the scanned tokens array that we want to rewind back to.
+                public tokenIndex: number,
+
+                // The previous token when we were created.
+                public previousToken: ISyntaxToken,
+
+                // Th state of strict mode when we were created.
+                public isInStrictMode: bool) {
     }
 }
 
@@ -70,20 +81,40 @@ enum ParserExpressionPrecedence {
 }
 
 class Parser {
-    private scanner: Scanner = null;
-    private oldTree: SyntaxTree = null;
+    // The scanner we're pulling tokens from.
+    private scanner: Scanner;
 
+    // The previous version of the syntax tree that was parsed.  Used for incremental parsing if it
+    // is provided.
+    private oldTree: SyntaxTree;
+
+    // The current token the parser is examining.  If it is null it needs to be fetched from the 
+    // scanner.
     private _currentToken: ISyntaxToken = null;
-    private scannedTokens: ISyntaxToken[] = [];
+
+    // The previous token to the current token.  Set when we advance to the next token.
     private previousToken: ISyntaxToken = null;
+
+    // A window of tokens that has been scanned.  
+    private scannedTokens: ISyntaxToken[] = [];
+
+    // The number of valud tokens in the scannedTokens array.
+    private tokenCount: number = 0;
 
     private firstToken: number = 0;
     private tokenOffset: number = 0;
 
     private isInStrictMode: bool;
-    private tokenCount: number = 0;
-    private resetCount: number = 0;
-    private resetStart: number = 0;
+
+    // The number of outstanding rewind points there are.  As long as there is at least one 
+    // outstanding rewind point, we will not advance the start of the scanned tokens array past
+    // token marked by the first rewind point.
+    private outstandingRewindPoints: number = 0;
+
+    // If there are any outstanding rewind points, this is index in the scanned tokens array
+    // that the first rewind point points to.  If this is not -1, then we will not shift the
+    // start of the tokens array past this point.
+    private firstRewindStartIndex: number = -1;
 
     private options: ParseOptions = null;
 
@@ -102,33 +133,18 @@ class Parser {
         return this.oldTree != null;
     }
 
-    private preScan(): void {
-        var size = MathPrototype.min(4096, MathPrototype.max(32, this.scanner.text().length() / 2));
-        var tokens: ISyntaxToken[] = this.scannedTokens = ArrayUtilities.createArray(size);
-        var scanner = this.scanner;
-
-        for (var i = 0; i < size; i++) {
-            var token = scanner.scan();
-            this.addScannedToken(token);
-
-            if (token.kind() === SyntaxKind.EndOfFileToken) {
-                break;
-            }
-        }
-    }
-
-    private getResetPoint(): ParserResetPoint {
+    private getRewindPoint(): ParserRewindPoint {
         var pos = this.firstToken + this.tokenOffset;
-        if (this.resetCount === 0) {
-            this.resetStart = pos; // low water mark
+        if (this.outstandingRewindPoints === 0) {
+            this.firstRewindStartIndex = pos; // low water mark
         }
 
-        this.resetCount++;
-        return new ParserResetPoint(this.resetCount, pos, this.previousToken, this.isInStrictMode);
+        this.outstandingRewindPoints++;
+        return new ParserRewindPoint(this.outstandingRewindPoints, pos, this.previousToken, this.isInStrictMode);
     }
 
-    private reset(point: ParserResetPoint): void {
-        var offset = point.position - this.firstToken;
+    private rewind(point: ParserRewindPoint): void {
+        var offset = point.tokenIndex - this.firstToken;
         Debug.assert(offset >= 0 && offset < this.tokenCount);
         this.tokenOffset = offset;
 
@@ -137,11 +153,13 @@ class Parser {
         this.isInStrictMode = point.isInStrictMode;
     }
 
-    private release(point: ParserResetPoint): void {
-        Debug.assert(this.resetCount == point.resetCount);
-        this.resetCount--;
-        if (this.resetCount == 0) {
-            this.resetStart = -1;
+    private releaseRewindPoint(point: ParserRewindPoint): void {
+        // Ensure that these are released in the right order.
+        Debug.assert(this.outstandingRewindPoints == point.resetCount);
+
+        this.outstandingRewindPoints--;
+        if (this.outstandingRewindPoints == 0) {
+            this.firstRewindStartIndex = -1;
         }
     }
 
@@ -182,8 +200,8 @@ class Parser {
         // shift tokens to left if we are far to the right
         // don't shift if reset points have fixed locked tge starting point at the token in the window
         if (this.tokenOffset > (this.scannedTokens.length >> 1)
-            && (this.resetStart == -1 || this.resetStart > this.firstToken)) {
-            var shiftOffset = (this.resetStart == -1) ? this.tokenOffset : this.resetStart - this.firstToken;
+            && (this.firstRewindStartIndex == -1 || this.firstRewindStartIndex > this.firstToken)) {
+            var shiftOffset = (this.firstRewindStartIndex == -1) ? this.tokenOffset : this.firstRewindStartIndex - this.firstToken;
             var shiftCount = this.tokenCount - shiftOffset;
             Debug.assert(shiftOffset > 0);
             if (shiftCount > 0) {
@@ -754,7 +772,7 @@ class Parser {
     }
 
     private isMemberFunctionDeclaration(): bool {
-        var resetPoint = this.getResetPoint();
+        var resetPoint = this.getRewindPoint();
         try {
             if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
                 this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
@@ -768,13 +786,13 @@ class Parser {
             return this.isFunctionSignature();
         }
         finally {
-            this.reset(resetPoint);
-            this.release(resetPoint);
+            this.rewind(resetPoint);
+            this.releaseRewindPoint(resetPoint);
         }
     }
 
     private isMemberAccessorDeclaration(): bool {
-        var resetPoint = this.getResetPoint();
+        var resetPoint = this.getRewindPoint();
         try {
             if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
                 this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
@@ -794,8 +812,8 @@ class Parser {
             return this.isIdentifier(this.currentToken());
         }
         finally {
-            this.reset(resetPoint);
-            this.release(resetPoint);
+            this.rewind(resetPoint);
+            this.releaseRewindPoint(resetPoint);
         }
     }
 
@@ -2394,16 +2412,16 @@ class Parser {
         }
 
         // Then, try to actually parse it as a arrow function, and only return if we see an => 
-        var resetPoint = this.getResetPoint();
+        var resetPoint = this.getRewindPoint();
         try {
             var arrowFunction = this.parseParenthesizedArrowFunctionExpression(/*requiresArrow:*/ true);
             if (arrowFunction === null) {
-                this.reset(resetPoint);
+                this.rewind(resetPoint);
             }
             return arrowFunction;
         }
         finally {
-            this.release(resetPoint);
+            this.releaseRewindPoint(resetPoint);
         }
     }
 
