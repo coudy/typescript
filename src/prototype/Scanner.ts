@@ -369,12 +369,12 @@ class Scanner {
         var ch = this.textWindow.peekCharAtPosition();
         if (ch === CharacterCodes.e || ch === CharacterCodes.E) {
             this.textWindow.advanceChar1();
-        }
 
-        ch = this.textWindow.peekCharAtPosition();
-        if (ch === CharacterCodes.minus || ch === CharacterCodes.plus) {
-            if (CharacterInfo.isDecimalDigit(this.textWindow.peekCharN(1))) {
-                this.textWindow.advanceChar1();
+            ch = this.textWindow.peekCharAtPosition();
+            if (ch === CharacterCodes.minus || ch === CharacterCodes.plus) {
+                if (CharacterInfo.isDecimalDigit(this.textWindow.peekCharN(1))) {
+                    this.textWindow.advanceChar1();
+                }
             }
         }
 

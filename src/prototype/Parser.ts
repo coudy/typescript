@@ -2392,7 +2392,9 @@ class Parser {
 
     private parseArrowFunctionBody(): SyntaxNode {
         if (this.isBlock()) {
-            return this.parseBlock(/*allowFunctionDeclaration:*/ false);
+            // TODO: The spec says that function declarations are not allowed.  However, we have some
+            // code that uses them.  So we allow them here.
+            return this.parseBlock(/*allowFunctionDeclaration:*/ true);
         }
         else {
             return this.parseAssignmentExpression(/*allowIn:*/ true); 

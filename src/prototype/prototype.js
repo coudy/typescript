@@ -2293,7 +2293,7 @@ var Parser = (function () {
     };
     Parser.prototype.parseArrowFunctionBody = function () {
         if(this.isBlock()) {
-            return this.parseBlock(false);
+            return this.parseBlock(true);
         } else {
             return this.parseAssignmentExpression(true);
         }
@@ -10212,7 +10212,11 @@ var Program = (function () {
         });
         for(var index in testFiles) {
             var filePath = testFiles[index];
-            action(filePath);
+            try  {
+                action(filePath);
+            } catch (e) {
+                environment.standardOut.WriteLine("Exception occurred");
+            }
         }
     };
     Program.prototype.runParserTest = function (environment, filePath, languageVersion, verify) {
@@ -10223,7 +10227,7 @@ var Program = (function () {
         if(filePath.indexOf("RealSource") >= 0) {
             return;
         }
-        if(filePath.indexOf("node") < 0) {
+        if(filePath.indexOf("small") < 0) {
         }
         environment.standardOut.WriteLine("Testing Parser: " + filePath);
         var contents = environment.readFile(filePath);
@@ -10231,8 +10235,8 @@ var Program = (function () {
         var scanner = Scanner.create(text, languageVersion);
         var parser = new Parser(scanner);
         var sourceUnit = parser.parseSourceUnit();
-        var actualResult = JSON2.stringify(sourceUnit, null, 4);
         if(verify) {
+            var actualResult = JSON2.stringify(sourceUnit, null, 4);
             var expectedFile = filePath + ".expected";
             var actualFile = filePath + ".actual";
             var expectedResult = environment.readFile(expectedFile);
@@ -10325,8 +10329,8 @@ var Program = (function () {
     return Program;
 })();
 var program = new Program();
-program.runAllTests(Environment);
 var start = new Date().getTime();
+program.runAllTests(Environment);
 program.run(Environment);
 var end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));

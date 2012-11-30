@@ -28,7 +28,13 @@ class Program {
         var testFiles = environment.listFiles(path, null, { recursive: true });
         for (var index in testFiles) {
             var filePath = testFiles[index];
-            action(filePath);
+
+            try {
+                action(filePath);
+            }
+            catch (e) {
+                environment.standardOut.WriteLine("Exception occurred");
+            }
         }
     }
 
@@ -41,7 +47,7 @@ class Program {
             return;
         }
 
-        if (filePath.indexOf("node") < 0) {
+        if (filePath.indexOf("small") < 0) {
             // return;
         }
 
@@ -54,9 +60,8 @@ class Program {
 
         var sourceUnit = parser.parseSourceUnit();
 
-        var actualResult = JSON2.stringify(sourceUnit, null, 4);
-
         if (verify) {
+            var actualResult = JSON2.stringify(sourceUnit, null, 4);
             var expectedFile = filePath + ".expected";
             var actualFile = filePath + ".actual";
 
@@ -180,8 +185,8 @@ class Program {
 
 // (<any>WScript).StdIn.ReadLine();
 var program = new Program();
-program.runAllTests(Environment);
 var start = new Date().getTime();
+program.runAllTests(Environment);
 program.run(Environment);
 var end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));
