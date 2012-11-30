@@ -97,7 +97,7 @@ class Parser {
     private scannedTokens: ISyntaxToken[] = [];
 
     // The number of valud tokens in the scannedTokens array.
-    private tokenCount: number = 0;
+    private scannedTokensCount: number = 0;
 
     // The *absolute* index in the *full* array of tokens the *scannedTokens* array starts at.  i.e.
     // if there were 100 tokens, and scannedTokens contains tokens [70, 80), then this value would be
@@ -168,7 +168,7 @@ class Parser {
         var relativeTokenIndex = point.absoluteIndex - this.scannedTokensAbsoluteStartIndex;
 
         // Make sure we haven't screwed anything up.
-        Debug.assert(relativeTokenIndex >= 0 && relativeTokenIndex < this.tokenCount);
+        Debug.assert(relativeTokenIndex >= 0 && relativeTokenIndex < this.scannedTokensCount);
 
         // Set ourselves back to that point.
         this.currentReletiveTokenIndex = relativeTokenIndex;
@@ -206,7 +206,7 @@ class Parser {
     }
 
     private fetchCurrentToken(): ISyntaxToken {
-        if (this.currentReletiveTokenIndex >= this.tokenCount) {
+        if (this.currentReletiveTokenIndex >= this.scannedTokensCount) {
             this.addNewToken();
         }
 
@@ -219,12 +219,12 @@ class Parser {
 
     private addScannedToken(token: ISyntaxToken): void {
         Debug.assert(token !== null);
-        if (this.tokenCount >= this.scannedTokens.length) {
+        if (this.scannedTokensCount >= this.scannedTokens.length) {
             this.tryShiftScannedTokens();
         }
 
-        this.scannedTokens[this.tokenCount] = token;
-        this.tokenCount++;
+        this.scannedTokens[this.scannedTokensCount] = token;
+        this.scannedTokensCount++;
     }
 
     private tryShiftScannedTokens(): void {
@@ -233,14 +233,14 @@ class Parser {
         if (this.currentReletiveTokenIndex > (this.scannedTokens.length >> 1)
             && (this.firstRewindAbsoluteIndex == -1 || this.firstRewindAbsoluteIndex > this.scannedTokensAbsoluteStartIndex)) {
             var shiftOffset = (this.firstRewindAbsoluteIndex == -1) ? this.currentReletiveTokenIndex : this.firstRewindAbsoluteIndex - this.scannedTokensAbsoluteStartIndex;
-            var shiftCount = this.tokenCount - shiftOffset;
+            var shiftCount = this.scannedTokensCount - shiftOffset;
             Debug.assert(shiftOffset > 0);
             if (shiftCount > 0) {
                 ArrayUtilities.copy(this.scannedTokens, shiftOffset, this.scannedTokens, 0, shiftCount);
             }
 
             this.scannedTokensAbsoluteStartIndex += shiftOffset;
-            this.tokenCount -= shiftOffset;
+            this.scannedTokensCount -= shiftOffset;
             this.currentReletiveTokenIndex -= shiftOffset;
         }
         else {
@@ -251,7 +251,7 @@ class Parser {
 
     private peekTokenN(n: number): ISyntaxToken {
         Debug.assert(n >= 0);
-        while (this.currentReletiveTokenIndex + n >= this.tokenCount) {
+        while (this.currentReletiveTokenIndex + n >= this.scannedTokensCount) {
             this.addNewToken();
         }
 

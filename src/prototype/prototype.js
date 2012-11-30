@@ -559,7 +559,7 @@ var Parser = (function () {
     function Parser(scanner, oldTree, changes, options) {
         this.options = null;
         this.scannedTokens = [];
-        this.tokenCount = 0;
+        this.scannedTokensCount = 0;
         this.scannedTokensAbsoluteStartIndex = 0;
         this.currentReletiveTokenIndex = 0;
         this.outstandingRewindPoints = 0;
@@ -583,7 +583,7 @@ var Parser = (function () {
     };
     Parser.prototype.rewind = function (point) {
         var relativeTokenIndex = point.absoluteIndex - this.scannedTokensAbsoluteStartIndex;
-        Debug.assert(relativeTokenIndex >= 0 && relativeTokenIndex < this.tokenCount);
+        Debug.assert(relativeTokenIndex >= 0 && relativeTokenIndex < this.scannedTokensCount);
         this.currentReletiveTokenIndex = relativeTokenIndex;
         this._currentToken = null;
         this.previousToken = point.previousToken;
@@ -605,7 +605,7 @@ var Parser = (function () {
         return result;
     };
     Parser.prototype.fetchCurrentToken = function () {
-        if(this.currentReletiveTokenIndex >= this.tokenCount) {
+        if(this.currentReletiveTokenIndex >= this.scannedTokensCount) {
             this.addNewToken();
         }
         return this.scannedTokens[this.currentReletiveTokenIndex];
@@ -615,22 +615,22 @@ var Parser = (function () {
     };
     Parser.prototype.addScannedToken = function (token) {
         Debug.assert(token !== null);
-        if(this.tokenCount >= this.scannedTokens.length) {
+        if(this.scannedTokensCount >= this.scannedTokens.length) {
             this.tryShiftScannedTokens();
         }
-        this.scannedTokens[this.tokenCount] = token;
-        this.tokenCount++;
+        this.scannedTokens[this.scannedTokensCount] = token;
+        this.scannedTokensCount++;
     };
     Parser.prototype.tryShiftScannedTokens = function () {
         if(this.currentReletiveTokenIndex > (this.scannedTokens.length >> 1) && (this.firstRewindAbsoluteIndex == -1 || this.firstRewindAbsoluteIndex > this.scannedTokensAbsoluteStartIndex)) {
             var shiftOffset = (this.firstRewindAbsoluteIndex == -1) ? this.currentReletiveTokenIndex : this.firstRewindAbsoluteIndex - this.scannedTokensAbsoluteStartIndex;
-            var shiftCount = this.tokenCount - shiftOffset;
+            var shiftCount = this.scannedTokensCount - shiftOffset;
             Debug.assert(shiftOffset > 0);
             if(shiftCount > 0) {
                 ArrayUtilities.copy(this.scannedTokens, shiftOffset, this.scannedTokens, 0, shiftCount);
             }
             this.scannedTokensAbsoluteStartIndex += shiftOffset;
-            this.tokenCount -= shiftOffset;
+            this.scannedTokensCount -= shiftOffset;
             this.currentReletiveTokenIndex -= shiftOffset;
         } else {
             this.scannedTokens[this.scannedTokens.length * 2 - 1] = null;
@@ -638,7 +638,7 @@ var Parser = (function () {
     };
     Parser.prototype.peekTokenN = function (n) {
         Debug.assert(n >= 0);
-        while(this.currentReletiveTokenIndex + n >= this.tokenCount) {
+        while(this.currentReletiveTokenIndex + n >= this.scannedTokensCount) {
             this.addNewToken();
         }
         return this.scannedTokens[this.currentReletiveTokenIndex + n];
