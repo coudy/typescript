@@ -8,8 +8,10 @@ class ParserRewindPoint {
                 // We don't need actually need it.  But we can use it to assert certain invariants.
                 public resetCount: number,
                 
-                // The index in the scanned tokens array that we want to rewind back to.
-                public tokenIndex: number,
+                // The index in the scanned tokens array that we want to rewind back to.  Note:
+                // this is an absolute index. i.e. this is *not* the index in the scanned  tokens
+                // window.  It is the index into the virtual array of all tokens.
+                public absoluteTokenIndex: number,
 
                 // The previous token when we were created.
                 public previousToken: ISyntaxToken,
@@ -101,7 +103,10 @@ class Parser {
     // The number of valud tokens in the scannedTokens array.
     private tokenCount: number = 0;
 
+
     private firstToken: number = 0;
+
+    // The offset in the scanned tokens array that we're at. 
     private tokenOffset: number = 0;
 
     private isInStrictMode: bool;
@@ -144,7 +149,7 @@ class Parser {
     }
 
     private rewind(point: ParserRewindPoint): void {
-        var offset = point.tokenIndex - this.firstToken;
+        var offset = point.absoluteTokenIndex - this.firstToken;
         Debug.assert(offset >= 0 && offset < this.tokenCount);
         this.tokenOffset = offset;
 

@@ -528,9 +528,9 @@ var ParseOptions = (function () {
     return ParseOptions;
 })();
 var ParserRewindPoint = (function () {
-    function ParserRewindPoint(resetCount, tokenIndex, previousToken, isInStrictMode) {
+    function ParserRewindPoint(resetCount, absoluteTokenIndex, previousToken, isInStrictMode) {
         this.resetCount = resetCount;
-        this.tokenIndex = tokenIndex;
+        this.absoluteTokenIndex = absoluteTokenIndex;
         this.previousToken = previousToken;
         this.isInStrictMode = isInStrictMode;
     }
@@ -582,7 +582,7 @@ var Parser = (function () {
         return new ParserRewindPoint(this.outstandingRewindPoints, pos, this.previousToken, this.isInStrictMode);
     };
     Parser.prototype.rewind = function (point) {
-        var offset = point.tokenIndex - this.firstToken;
+        var offset = point.absoluteTokenIndex - this.firstToken;
         Debug.assert(offset >= 0 && offset < this.tokenCount);
         this.tokenOffset = offset;
         this._currentToken = null;
