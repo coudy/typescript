@@ -2038,8 +2038,8 @@ var Parser = (function () {
             }
         }
     };
-    Parser.prototype.parseTerm = function (allowInvocation, allowType) {
-        var term = this.parseTermWorker(allowType);
+    Parser.prototype.parseTerm = function (allowInvocation, insideObjectCreation) {
+        var term = this.parseTermWorker(insideObjectCreation);
         if(term.isMissing()) {
             return term;
         }
@@ -2120,10 +2120,12 @@ var Parser = (function () {
         var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
         return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken);
     };
-    Parser.prototype.parseTermWorker = function (allowType) {
+    Parser.prototype.parseTermWorker = function (insideObjectCreation) {
         var currentToken = this.currentToken();
-        if(allowType && this.isType()) {
-            return this.parseType(true);
+        if(insideObjectCreation) {
+            if(this.isType(false, false)) {
+                return this.parseType(true);
+            }
         }
         if(this.isIdentifier(currentToken)) {
             if(this.isSimpleArrowFunctionExpression()) {
@@ -2555,8 +2557,8 @@ var Parser = (function () {
         var type = this.parseType(false);
         return new TypeAnnotationSyntax(colonToken, type);
     };
-    Parser.prototype.isType = function () {
-        return this.isPredefinedType() || this.isTypeLiteral() || this.isName();
+    Parser.prototype.isType = function (allowFunctionType, allowConstructorType) {
+        return this.isPredefinedType() || this.isTypeLiteral(allowFunctionType, allowConstructorType) || this.isName();
     };
     Parser.prototype.parseType = function (requireCompleteArraySuffix) {
         var type = this.parseNonArrayType();
@@ -2574,7 +2576,7 @@ var Parser = (function () {
         if(this.isPredefinedType()) {
             return this.parsePredefinedType();
         } else {
-            if(this.isTypeLiteral()) {
+            if(this.isTypeLiteral(true, true)) {
                 return this.parseTypeLiteral();
             } else {
                 return this.parseName();
@@ -2582,7 +2584,7 @@ var Parser = (function () {
         }
     };
     Parser.prototype.parseTypeLiteral = function () {
-        Debug.assert(this.isTypeLiteral());
+        Debug.assert(this.isTypeLiteral(true, true));
         if(this.isObjectType()) {
             return this.parseObjectType();
         } else {
@@ -2612,8 +2614,17 @@ var Parser = (function () {
         var type = this.parseType(false);
         return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type);
     };
-    Parser.prototype.isTypeLiteral = function () {
-        return this.isObjectType() || this.isFunctionType() || this.isConstructorType();
+    Parser.prototype.isTypeLiteral = function (allowFunctionType, allowConstructorType) {
+        if(this.isObjectType()) {
+            return true;
+        }
+        if(allowFunctionType && this.isFunctionType()) {
+            return true;
+        }
+        if(allowConstructorType && this.isConstructorType()) {
+            return true;
+        }
+        return false;
     };
     Parser.prototype.isObjectType = function () {
         return this.currentToken().kind() === SyntaxKind.OpenBraceToken;
@@ -33989,7 +34000,7 @@ var Program = (function () {
         if(filePath.indexOf("RealSource") >= 0) {
             return;
         }
-        if(filePath.indexOf("small") < 0) {
+        if(filePath.indexOf("fileServices") < 0) {
         }
         environment.standardOut.WriteLine("Running Parser: " + filePath);
         var contents = environment.readFile(filePath);
@@ -34015,30 +34026,50 @@ var Program = (function () {
             }
         }
     };
-    Program.prototype.runScannerTest = function (environment, filePath, languageVersion, useTypeScript) {
-        if (typeof useTypeScript === "undefined") { useTypeScript = false; }
+    Program.prototype.runScanner = function (environment, filePath, languageVersion, useTypeScript, verify) {
         if(!StringUtilities.endsWith(filePath, ".ts")) {
             return;
         }
-        environment.standardOut.WriteLine("Testing Scanner: " + filePath);
+        if(!useTypeScript) {
+            return;
+        }
+        environment.standardOut.WriteLine("Running Scanner: " + filePath);
         var contents = environment.readFile(filePath);
         var text = new StringText(contents);
         var scanner = Scanner.create(text, languageVersion);
         var tokens = [];
+        var textArray = [];
         while(true) {
             var token = scanner.scan();
             tokens.push(token);
+            if(verify) {
+                if(token.diagnostics()) {
+                    throw new Error("Error parsing!");
+                }
+                var tokenText = token.text();
+                var tokenFullText = token.fullText(text);
+                textArray.push(tokenFullText);
+                if(tokenFullText.substr(token.start() - token.fullStart(), token.width()) !== tokenText) {
+                    throw new Error("Token invariant broken!");
+                }
+            }
             if(token.kind() === SyntaxKind.EndOfFileToken) {
                 break;
             }
         }
-        var actualResult = JSON2.stringify(tokens, null, 4);
-        var expectedFile = filePath + ".expected";
-        var actualFile = filePath + ".actual";
-        var expectedResult = environment.readFile(expectedFile);
-        if(expectedResult !== actualResult) {
-            environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
-            environment.writeFile(actualFile, actualResult);
+        if(verify) {
+            var fullText = textArray.join("");
+            if(contents !== fullText) {
+                throw new Error("Full text didn't match!");
+            }
+            var actualResult = JSON2.stringify(tokens, null, 4);
+            var expectedFile = filePath + ".expected";
+            var actualFile = filePath + ".actual";
+            var expectedResult = environment.readFile(expectedFile);
+            if(expectedResult !== actualResult) {
+                environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
+                environment.writeFile(actualFile, actualResult);
+            }
         }
     };
     Program.prototype.run = function (environment, useTypeScript, verify) {
@@ -34055,36 +34086,6 @@ var Program = (function () {
             }
         }
     };
-    Program.prototype.runScanner = function (environment, contents, languageVersion, useTypeScript, verify) {
-        if(true) {
-            return;
-        }
-        var text = new StringText(contents);
-        var scanner = Scanner.create(text, languageVersion);
-        var tokens = [];
-        var textArray = [];
-        while(true) {
-            var token = scanner.scan();
-            tokens.push(token);
-            if(token.diagnostics()) {
-                throw new Error("Error parsing!");
-            }
-            var tokenText = token.text();
-            var tokenFullText = token.fullText(text);
-            textArray.push(tokenFullText);
-            if(tokenFullText.substr(token.start() - token.fullStart(), token.width()) !== tokenText) {
-                throw new Error("Token invariant broken!");
-            }
-            if(token.kind() === SyntaxKind.EndOfFileToken) {
-                break;
-            }
-        }
-        environment.standardOut.WriteLine("Token Count: " + tokens.length);
-        var fullText = textArray.join("");
-        if(contents !== fullText) {
-            throw new Error("Full text didn't match!");
-        }
-    };
     return Program;
 })();
 var totalSize = 0;
@@ -34096,8 +34097,3 @@ program.run(Environment, false, false);
 end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));
 Environment.standardOut.WriteLine("Total size: " + totalSize);
-start = new Date().getTime();
-program.runAllTests(Environment, true, false);
-program.run(Environment, true, false);
-end = new Date().getTime();
-Environment.standardOut.WriteLine("Total time: " + (end - start));

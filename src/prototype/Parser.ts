@@ -1975,7 +1975,7 @@ class Parser {
             return new PrefixUnaryExpressionSyntax(operatorKind, operatorToken, operand);
         }
         else {
-            return this.parseTerm(/*allowInvocation*/ true, /*allowType:*/ false);
+            return this.parseTerm(/*allowInvocation*/ true, /*insideObjectCreation:*/ false);
         }
     }
 
@@ -2074,8 +2074,12 @@ class Parser {
         }
     }
 
-    private parseTerm(allowInvocation: bool, allowType: bool): UnaryExpressionSyntax {
-        var term = this.parseTermWorker(allowType);
+    private parseTerm(allowInvocation: bool, insideObjectCreation: bool): UnaryExpressionSyntax {
+        // NOTE: allowInvocation and insideObjectCreation are always the negation of the other.
+        // We could remove one of them and just use the other.  However, i think this is much
+        // easier to read and understand in this form.
+
+        var term = this.parseTermWorker(insideObjectCreation);
         if (term.isMissing()) {
             return term;
         }
@@ -2175,16 +2179,34 @@ class Parser {
         return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken);
     }
 
-    private parseTermWorker(allowType: bool): UnaryExpressionSyntax {
+    private parseTermWorker(insideObjectCreation: bool): UnaryExpressionSyntax {
         var currentToken = this.currentToken();
 
-        if (allowType && this.isType()) {
-            // There's a lot of ambiguity in the language between typescript arrays, and javascript
-            // indexing.  For example, you can say: "new Foo[]".  In which case that new's up a foo 
-            // array.  Or you can say "new Foo[i]".  which accesses the i'th element of Foo and calls
-            // the construct operator on it. So, in this case, if we're parsing a 'new', we do allow
-            // seeing brackets, but only if they're *complete*.  
-            return this.parseType(/*requireCompleteArraySuffix:*/ true);
+        if (insideObjectCreation) {
+            // Note: if we have "new (expr..." then we want to parse that as "new (parenthesized expr)"
+            // not as "new FunctionType".  This is because "new FunctionType" would look like:
+            //
+            //      new (Paramters) => type
+            //
+            // And this is just too confusing.  Plus, it is easy to work around.  They can just type:
+            // "new { (Parameters): type }" instead
+            //
+            // Also, we disallow a ConstructorType inside an object creation expression.  Otherwise
+            // we'd end up allowing: 
+            //
+            //      new new (Parameters) => Type.
+            //
+            // And this is just too confusing.  Plus, it is easy to work around.  They can just type:
+            // "new { new (Parameters): ReturnType }" instead.
+
+            if (this.isType(/*allowFunctionType:*/ false, /*allowConstructorType:*/ false)) {
+                // There's a lot of ambiguity in the language between typescript arrays, and javascript
+                // indexing.  For example, you can say: "new Foo[]".  In which case that new's up a foo 
+                // array.  Or you can say "new Foo[i]".  which accesses the i'th element of Foo and calls
+                // the construct operator on it. So, in this case, if we're parsing a 'new', we do allow
+                // seeing brackets, but only if they're *complete*.  
+                return this.parseType(/*requireCompleteArraySuffix:*/ true);
+            }
         }
 
         if (this.isIdentifier(currentToken)) {
@@ -2316,7 +2338,7 @@ class Parser {
 
         // While parsing the sub term we don't want to allow invocations to be parsed.  that's because
         // we want "new Foo()" to parse as "new Foo()" (one node), not "new (Foo())".
-        var expression = this.parseTerm(/*allowInvocation:*/ false, /*allowType:*/ true);
+        var expression = this.parseTerm(/*allowInvocation:*/ false, /*insideObjectCreation:*/ true);
 
         var argumentList: ArgumentListSyntax = null;
         if (this.isArgumentList()) {
@@ -2806,9 +2828,9 @@ class Parser {
         return new TypeAnnotationSyntax(colonToken, type);
     }
 
-    private isType(): bool {
+    private isType(allowFunctionType: bool, allowConstructorType: bool): bool {
         return this.isPredefinedType() ||
-               this.isTypeLiteral() ||
+               this.isTypeLiteral(allowFunctionType, allowConstructorType) ||
                this.isName();
     }
 
@@ -2833,7 +2855,7 @@ class Parser {
         if (this.isPredefinedType()) {
             return this.parsePredefinedType();
         }
-        else if (this.isTypeLiteral()) {
+        else if (this.isTypeLiteral(/*allowFunctionType:*/ true, /*allowConstructorType:*/ true)) {
             return this.parseTypeLiteral();
         }
         else {
@@ -2842,7 +2864,7 @@ class Parser {
     }
 
     private parseTypeLiteral(): TypeSyntax {
-        Debug.assert(this.isTypeLiteral());
+        Debug.assert(this.isTypeLiteral(/*allowFunctionType:*/ true, /*allowConstructorType:*/ true));
         if (this.isObjectType()) {
             return this.parseObjectType();
         }
@@ -2878,10 +2900,20 @@ class Parser {
         return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type);
     }
 
-    private isTypeLiteral(): bool {
-        return this.isObjectType() ||
-               this.isFunctionType() ||
-               this.isConstructorType();
+    private isTypeLiteral(allowFunctionType: bool, allowConstructorType: bool): bool {
+        if (this.isObjectType()) {
+            return true;
+        }
+
+        if (allowFunctionType && this.isFunctionType()) {
+            return true;
+        }
+
+        if (allowConstructorType && this.isConstructorType()) {
+            return true;
+        }
+
+        return false;
     }
 
     private isObjectType(): bool {

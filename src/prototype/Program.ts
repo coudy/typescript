@@ -50,7 +50,7 @@ class Program {
             return;
         }
 
-        if (filePath.indexOf("small") < 0) {
+        if (filePath.indexOf("fileServices") < 0) {
             // return;
         }
 
