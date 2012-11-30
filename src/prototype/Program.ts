@@ -1,21 +1,24 @@
 ///<reference path='References.ts' />
+///<reference path='..\compiler\parser.ts' />
 
 class Program {
-    runAllTests(environment: IEnvironment): void {
+    runAllTests(environment: IEnvironment, useTypeScript: bool, verify: bool): void {
         environment.standardOut.WriteLine("");
 
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
-            filePath => this.runScannerTest(environment, filePath, LanguageVersion.EcmaScript5));
+            filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify));
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript3",
-            filePath => this.runScannerTest(environment, filePath, LanguageVersion.EcmaScript3));
+            filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript3, useTypeScript, verify));
 
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
-            filePath => this.runParserTest(environment, filePath, LanguageVersion.EcmaScript5));
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify));
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript3",
-            filePath => this.runParserTest(environment, filePath, LanguageVersion.EcmaScript3));
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript3, useTypeScript, verify));
             
-        this.runTests(environment, "C:\\temp\\monoco-files",
-            filePath => this.runParserTest(environment, filePath, LanguageVersion.EcmaScript5, false));
+        if (!verify) {
+            this.runTests(environment, "C:\\temp\\monoco-files",
+                filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify));
+        }
 
         environment.standardOut.WriteLine("");
     }
@@ -38,7 +41,7 @@ class Program {
         }
     }
 
-    runParserTest(environment: IEnvironment, filePath: string, languageVersion: LanguageVersion, verify? = true): void {
+    runParser(environment: IEnvironment, filePath: string, languageVersion: LanguageVersion, useTypeScript: bool, verify: bool): void {
         if (!StringUtilities.endsWith(filePath, ".ts")) {
             return;
         }
@@ -51,17 +54,87 @@ class Program {
             // return;
         }
 
-        environment.standardOut.WriteLine("Testing Parser: " + filePath);
+        environment.standardOut.WriteLine("Running Parser: " + filePath);
+        var contents = environment.readFile(filePath);
+        totalSize += contents.length;
+
+        if (useTypeScript) {
+            var text1 = new TypeScript.StringSourceText(contents);
+            var parser1 = new TypeScript.Parser(); 
+            var unit1 = parser1.parse(text1, filePath, 0);
+        }
+        else {
+            var text = new StringText(contents);
+            var scanner = Scanner.create(text, languageVersion);
+            var parser = new Parser(scanner);
+            var unit = parser.parseSourceUnit();
+            // var json = JSON2.stringify(unit);
+            
+            if (verify) {
+                var actualResult = JSON2.stringify(unit, null, 4);
+                var expectedFile = filePath + ".expected";
+                var actualFile = filePath + ".actual";
+
+                var expectedResult = environment.readFile(expectedFile);
+
+                if (expectedResult !== actualResult) {
+                    environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
+                    environment.writeFile(actualFile, actualResult);
+                }
+            }
+        }
+    }
+
+    runScanner(environment: IEnvironment, filePath: string, languageVersion: LanguageVersion, useTypeScript: bool, verify: bool): void {
+        if (!StringUtilities.endsWith(filePath, ".ts")) {
+            return;
+        }
+
+        if (!useTypeScript) {
+            return;
+        }
+
+        environment.standardOut.WriteLine("Running Scanner: " + filePath);
 
         var contents = environment.readFile(filePath);
         var text = new StringText(contents);
         var scanner = Scanner.create(text, languageVersion);
-        var parser = new Parser(scanner);
 
-        var sourceUnit = parser.parseSourceUnit();
+        var tokens: ISyntaxToken[] = [];
+        var textArray: string[] = [];
+
+        while (true) {
+            var token = scanner.scan();
+            tokens.push(token);
+            
+            if (verify) {
+                if (token.diagnostics()) {
+                    throw new Error("Error parsing!");
+                }
+
+                var tokenText = token.text();
+                var tokenFullText = token.fullText(text);
+
+                textArray.push(tokenFullText);
+
+                if (tokenFullText.substr(token.start() - token.fullStart(), token.width()) !== tokenText) {
+                    throw new Error("Token invariant broken!");
+                }
+            }
+
+            if (token.kind() === SyntaxKind.EndOfFileToken) {
+                break;
+            }
+        }
 
         if (verify) {
-            var actualResult = JSON2.stringify(sourceUnit, null, 4);
+            var fullText = textArray.join("");
+
+            if (contents !== fullText) {
+                throw new Error("Full text didn't match!");
+            }
+        
+            var actualResult = JSON2.stringify(tokens, null, 4);
             var expectedFile = filePath + ".expected";
             var actualFile = filePath + ".actual";
 
@@ -74,119 +147,39 @@ class Program {
         }
     }
 
-    runScannerTest(environment: IEnvironment, filePath: string, languageVersion: LanguageVersion): void {
-        if (!StringUtilities.endsWith(filePath, ".ts")) {
-            return;
-        }
-
-        environment.standardOut.WriteLine("Testing Scanner: " + filePath);
-
-        var contents = environment.readFile(filePath);
-        var text = new StringText(contents);
-        var scanner = Scanner.create(text, languageVersion);
-
-        var tokens = [];
-        while (true) {
-            var token = scanner.scan();
-
-            tokens.push(token);
-            if (token.kind() === SyntaxKind.EndOfFileToken) {
-                break;
-            }
-        }
-
-        var actualResult = JSON2.stringify(tokens, null, 4);
-        var expectedFile = filePath + ".expected";
-        var actualFile = filePath + ".actual";
-
-        var expectedResult = environment.readFile(expectedFile);
-
-        if (expectedResult !== actualResult) {
-            environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
-            environment.writeFile(actualFile, actualResult);
-        }
-    }
-
-    run(environment: IEnvironment): void {
+    run(environment: IEnvironment, useTypeScript: bool, verify: bool): void {
         if (true) {
             for (var index in environment.arguments) {
                 var filePath: string = environment.arguments[index];
-                environment.standardOut.WriteLine("Parsing: " + filePath);
 
-                this.runParser(environment, environment.readFile(filePath), filePath);
+                this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify);
             }
         }
 
         if (false) {
             for (var index in environment.arguments) {
                 var filePath: string = environment.arguments[index];
-                environment.standardOut.WriteLine("Tokenizing: " + filePath);
 
-                this.runScanner(environment, environment.readFile(filePath));
+                this.runScanner(environment, environment.readFile(filePath), LanguageVersion.EcmaScript5,  useTypeScript, verify);
             }
-        }
-    }
-
-    runParser(environment: IEnvironment, contents: string, filePath: string): void {
-        if (filePath.indexOf("harness") < 0) {
-            // return;
-        }
-
-        var text = new StringText(contents);
-        var scanner = Scanner.create(text, LanguageVersion.EcmaScript5);
-        var parser = new Parser(scanner);
-
-        if (StringUtilities.endsWith(filePath, ".ts")) {
-            var unit = parser.parseSourceUnit();
-            // var json = JSON2.stringify(unit);
-        }
-        else {
-            environment.standardOut.WriteLine("skipping unknown file file.");
-        }
-    }
-
-    runScanner(environment: IEnvironment, contents: string): void {
-        var text = new StringText(contents);
-        var scanner = Scanner.create(text, LanguageVersion.EcmaScript5);
-
-        var tokens: ISyntaxToken[] = [];
-        var textArray: string[] = [];
-
-        while (true) {
-            var token = scanner.scan();
-            tokens.push(token);
-
-            if (token.diagnostics()) {
-                throw new Error("Error parsing!");
-            }
-
-            var tokenText = token.text();
-            var tokenFullText = token.fullText(text);
-
-            textArray.push(tokenFullText);
-
-            if (tokenFullText.substr(token.start() - token.fullStart(), token.width()) !== tokenText) {
-                throw new Error("Token invariant broken!");
-            }
-
-            if (token.kind() === SyntaxKind.EndOfFileToken) {
-                break;
-            }
-        }
-
-        environment.standardOut.WriteLine("Token Count: " + tokens.length);
-        var fullText = textArray.join("");
-
-        if (contents !== fullText) {
-            throw new Error("Full text didn't match!");
         }
     }
 }
 
 // (<any>WScript).StdIn.ReadLine();
+var totalSize = 0;
 var program = new Program();
-var start = new Date().getTime();
-program.runAllTests(Environment);
-program.run(Environment);
-var end = new Date().getTime();
+var start: number, end: number;
+
+start = new Date().getTime();
+program.runAllTests(Environment, false, false);
+program.run(Environment, false, false);
+end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));
+Environment.standardOut.WriteLine("Total size: " + totalSize);
+
+//start = new Date().getTime();
+//program.runAllTests(Environment, true, false);
+//program.run(Environment, true, false);
+//end = new Date().getTime();
+//Environment.standardOut.WriteLine("Total time: " + (end - start));
