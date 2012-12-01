@@ -3697,7 +3697,6 @@ var SlidingTextWindow = (function () {
         this.currentRelativeCharacterIndex = 0;
         this._characterWindowStart = 0;
         this.characterWindowAbsoluteStartIndex = 0;
-        this.stringTable = null;
         Debug.assert(stringTable !== null);
         this.text = text;
         this.stringTable = stringTable;

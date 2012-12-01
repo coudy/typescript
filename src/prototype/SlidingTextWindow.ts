@@ -3,6 +3,7 @@
 class SlidingTextWindow {
     // Underlying text that we're streaming over.
     private text: IText;
+    private stringTable: StringTable;
     
     // A window of characters that has been read in from the text.
     private characterWindow: number[]; 
@@ -21,8 +22,6 @@ class SlidingTextWindow {
     // if there were 100 chars, and characterWindow contains tokens [70, 80), then this value would be
     // 70.
     private characterWindowAbsoluteStartIndex: number = 0;
-
-    private stringTable: StringTable = null;
 
     constructor(text: IText, stringTable: StringTable) {
         Debug.assert(stringTable !== null);
