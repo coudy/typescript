@@ -3837,7 +3837,9 @@ var SlidingWindow = (function () {
         }
         this.tryShiftOrGrowTokenWindow();
         var spaceAvailable = this.window.length - this.windowCount;
-        this.fetchMoreItems(this.windowAbsoluteStartIndex + this.windowCount, this.window, this.windowCount, spaceAvailable);
+        var amountFetched = this.fetchMoreItems(this.windowAbsoluteStartIndex + this.windowCount, this.window, this.windowCount, spaceAvailable);
+        Debug.assert(amountFetched > 0);
+        this.windowCount += amountFetched;
         return true;
     };
     SlidingWindow.prototype.fetchMoreItems = function (sourceIndex, window, destinationIndex, count) {
