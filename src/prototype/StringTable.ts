@@ -14,29 +14,17 @@ class StringTableEntry {
 }
 
 class StringTable {
-    // private nested: StringTable = null;
-
     private entries: StringTableEntry[] = [];
     private count: number = 0;
-    private mask: number;
 
-    constructor(mask: number = 255, nested: StringTable = null) {
-        this.mask = mask;
-        this.entries = ArrayUtilities.createArray(mask + 1);
-
-        // nested table is supposed to be freezed and readonly.
-        // this.nested = nested;
+    constructor(capacity: number = 256, nested: StringTable = null) {
+        var size = Hash.getPrime(capacity);
+        this.entries = ArrayUtilities.createArray(size);
     }
 
     public addCharArray(key: number[], start: number, len: number): string {
-        var hashCode = StringTable.computeCharArrayHashCode(key, start, len);
-
-        //if (this.nested !== null) {
-        //    var exist = this.nested.findCharArrayEntry(key, start, len, hashCode);
-        //    if (exist !== null) {
-        //        return exist.Text;
-        //    }
-        //}
+        // Compute the hash for this key.  Also ensure that it's non negative.
+        var hashCode = Hash.computeMurmur2CharArrayHashCode(key, start, len) % 0x7FFFFFFF;
 
         var entry = this.findCharArrayEntry(key, start, len, hashCode);
         if (entry !== null) {
@@ -48,7 +36,7 @@ class StringTable {
     }
 
     private findCharArrayEntry(key: number[], start: number, len: number, hashCode: number): StringTableEntry {
-        for (var e = this.entries[hashCode & this.mask]; e !== null; e = e.Next) {
+        for (var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
             if (e.HashCode === hashCode && StringTable.textCharArrayEquals(e.Text, key, start, len)) {
                 return e;
             }
@@ -57,27 +45,13 @@ class StringTable {
         return null;
     }
 
-    // This table uses FNV1a as a string hash
-    private static FNV_BASE = 2166136261;
-    private static FNV_PRIME = 16777619;
-
-    private static computeCharArrayHashCode(text: number[], start: number, len: number): number {
-        var hashCode = FNV_BASE;
-        var end = start + len;
-
-        for (var i = start; i < end; i++) {
-            hashCode = (hashCode ^ text[i]) * FNV_PRIME;
-        }
-
-        return hashCode;
-    }
-
     private addEntry(text: string, hashCode: number): string {
-        var index = hashCode & this.mask;
+        var index = hashCode %  this.entries.length;
+
         var e = new StringTableEntry(text, hashCode, this.entries[index]);
 
         this.entries[index] = e;
-        if (this.count === this.mask) {
+        if (this.count === this.entries.length) {
             this.grow();
         }
 
@@ -106,17 +80,19 @@ class StringTable {
     }
     
     private grow(): void {
-        this.dumpStats();
+        // this.dumpStats();
 
-        var newMask = this.mask * 2 + 1;
+        var newSize = Hash.expandPrime(this.entries.length);
+
         var oldEntries = this.entries;
-        var newEntries: StringTableEntry[] = ArrayUtilities.createArray(newMask + 1);
+        var newEntries: StringTableEntry[] = ArrayUtilities.createArray(newSize);
 
-        // use oldEntries.Length to eliminate the rangecheck            
+        this.entries = newEntries;
+
         for (var i = 0; i < oldEntries.length; i++) {
             var e = oldEntries[i];
             while (e !== null) {
-                var newIndex = e.HashCode & newMask;
+                var newIndex = e.HashCode % newSize;
                 var tmp = e.Next;
                 e.Next = newEntries[newIndex];
                 newEntries[newIndex] = e;
@@ -124,10 +100,7 @@ class StringTable {
             }
         }
 
-        this.entries = newEntries;
-        this.mask = newMask;
-
-        this.dumpStats();
+        // this.dumpStats();
     }
 
     private static textCharArrayEquals(array: string, text: number[], start: number, length: number): bool {
