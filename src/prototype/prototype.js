@@ -2086,7 +2086,6 @@ var Parser = (function () {
             }
             if(this.currentToken().kind() == 72 /* CommaToken */ ) {
                 var commaToken = this.eatToken(72 /* CommaToken */ );
-                arguments = arguments || [];
                 arguments.push(commaToken);
                 var argument = this.parseAssignmentExpression(true);
                 arguments.push(argument);

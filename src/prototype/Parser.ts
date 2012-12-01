@@ -2240,8 +2240,6 @@ class Parser {
 
             if (this.currentToken().kind() == SyntaxKind.CommaToken) {
                 var commaToken = this.eatToken(SyntaxKind.CommaToken);
-
-                arguments = arguments || [];
                 arguments.push(commaToken);
 
                 var argument = this.parseAssignmentExpression(/*allowIn:*/ true);
