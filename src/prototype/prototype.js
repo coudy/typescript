@@ -582,6 +582,7 @@ var Parser = (function () {
         return new ParserRewindPoint(this.outstandingRewindPoints, absoluteIndex, this.previousToken, this.isInStrictMode);
     };
     Parser.prototype.rewind = function (point) {
+        Debug.assert(this.outstandingRewindPoints == point.resetCount);
         var relativeTokenIndex = point.absoluteIndex - this.scannedTokensAbsoluteStartIndex;
         Debug.assert(relativeTokenIndex >= 0 && relativeTokenIndex < this.scannedTokensCount);
         this.currentReletiveTokenIndex = relativeTokenIndex;
@@ -616,12 +617,12 @@ var Parser = (function () {
     Parser.prototype.addScannedToken = function (token) {
         Debug.assert(token !== null);
         if(this.scannedTokensCount >= this.scannedTokens.length) {
-            this.tryShiftScannedTokens();
+            this.tryShiftOrGrowScannedTokens();
         }
         this.scannedTokens[this.scannedTokensCount] = token;
         this.scannedTokensCount++;
     };
-    Parser.prototype.tryShiftScannedTokens = function () {
+    Parser.prototype.tryShiftOrGrowScannedTokens = function () {
         if(this.currentReletiveTokenIndex > (this.scannedTokens.length >> 1) && (this.firstRewindAbsoluteIndex == -1 || this.firstRewindAbsoluteIndex > this.scannedTokensAbsoluteStartIndex)) {
             var shiftOffset = (this.firstRewindAbsoluteIndex == -1) ? this.currentReletiveTokenIndex : this.firstRewindAbsoluteIndex - this.scannedTokensAbsoluteStartIndex;
             var shiftCount = this.scannedTokensCount - shiftOffset;

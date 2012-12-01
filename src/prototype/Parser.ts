@@ -163,6 +163,9 @@ class Parser {
     }
 
     private rewind(point: ParserRewindPoint): void {
+        // Ensure that these are rewound in the right order.
+        Debug.assert(this.outstandingRewindPoints == point.resetCount);
+
         // The rewind point shows which absolute token we want to rewind to.  Get the relative 
         // index in the actual array that we want to point to.
         var relativeTokenIndex = point.absoluteIndex - this.scannedTokensAbsoluteStartIndex;
@@ -219,15 +222,18 @@ class Parser {
 
     private addScannedToken(token: ISyntaxToken): void {
         Debug.assert(token !== null);
+
+        // We're trying to add this token to our list of tokens.  If there is no more room, then
+        // try to either shift the existing tokens over to make room, or grow the array to fit more.
         if (this.scannedTokensCount >= this.scannedTokens.length) {
-            this.tryShiftScannedTokens();
+            this.tryShiftOrGrowScannedTokens();
         }
 
         this.scannedTokens[this.scannedTokensCount] = token;
         this.scannedTokensCount++;
     }
 
-    private tryShiftScannedTokens(): void {
+    private tryShiftOrGrowScannedTokens(): void {
         // shift tokens to left if we are far to the right
         // don't shift if reset points have fixed locked tge starting point at the token in the window
         if (this.currentReletiveTokenIndex > (this.scannedTokens.length >> 1)
