@@ -26,6 +26,7 @@
 ///<reference path='Scanner.ts' />
 ///<reference path='SeparatedSyntaxList.ts' />
 ///<reference path='SlidingTextWindow.ts' />
+///<reference path='SlidingWindow.ts' />
 
 ///<reference path='TextBase.ts' />
 

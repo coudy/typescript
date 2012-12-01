@@ -3777,6 +3777,96 @@ var SlidingTextWindow = (function () {
     };
     return SlidingTextWindow;
 })();
+var SlidingWindow = (function () {
+    function SlidingWindow(defaultValue) {
+        this.window = [];
+        this.windowCount = 0;
+        this.windowAbsoluteStartIndex = 0;
+        this.currentRelativeItemIndex = 0;
+        this.outstandingRewindPoints = 0;
+        this.firstRewindAbsoluteIndex = -1;
+        this.rewindPoints = [];
+        this.defaultValue = defaultValue;
+    }
+    SlidingWindow.prototype.getRewindPoint = function () {
+        var absoluteIndex = this.windowAbsoluteStartIndex + this.currentRelativeItemIndex;
+        if(this.outstandingRewindPoints === 0) {
+            this.firstRewindAbsoluteIndex = absoluteIndex;
+        }
+        this.outstandingRewindPoints++;
+        var rewindPoint = this.rewindPoints.length === 0 ? {
+        } : this.rewindPoints.pop();
+        rewindPoint.rewindPoints = this.outstandingRewindPoints;
+        rewindPoint.absoluteIndex = absoluteIndex;
+        this.storeAdditionalRewindData(rewindPoint);
+        return rewindPoint;
+    };
+    SlidingWindow.prototype.storeAdditionalRewindData = function (rewindPoint) {
+        throw Errors.notYetImplemented();
+    };
+    SlidingWindow.prototype.rewind = function (rewindPoint) {
+        Debug.assert(this.outstandingRewindPoints === rewindPoint.resetCount);
+        var relativeIndex = rewindPoint.absoluteIndex - this.windowAbsoluteStartIndex;
+        Debug.assert(relativeIndex >= 0 && relativeIndex < this.windowCount);
+        this.currentRelativeItemIndex = relativeIndex;
+        this.restoreState(rewindPoint);
+    };
+    SlidingWindow.prototype.restoreState = function (rewindPoint) {
+        throw Errors.notYetImplemented();
+    };
+    SlidingWindow.prototype.releaseRewindPoint = function (rewindPoint) {
+        Debug.assert(this.outstandingRewindPoints == rewindPoint.resetCount);
+        this.outstandingRewindPoints--;
+        if(this.outstandingRewindPoints == 0) {
+            this.firstRewindAbsoluteIndex = -1;
+        }
+        this.rewindPoints.push(rewindPoint);
+    };
+    SlidingWindow.prototype.currentItem = function () {
+        if(this.currentRelativeItemIndex >= this.windowCount) {
+            if(!this.addMoreItemsToWindow()) {
+                return this.defaultValue;
+            }
+        }
+        return this.window[this.currentRelativeItemIndex];
+    };
+    SlidingWindow.prototype.addMoreItemsToWindow = function () {
+        Debug.assert(this.currentRelativeItemIndex >= this.windowCount);
+        if(this.isPastSourceEnd()) {
+            return false;
+        }
+        this.tryShiftOrGrowTokenWindow();
+        var spaceAvailable = this.window.length - this.windowCount;
+        this.fetchMoreItems(this.windowAbsoluteStartIndex + this.windowCount, this.window, this.windowCount, spaceAvailable);
+        return true;
+    };
+    SlidingWindow.prototype.fetchMoreItems = function (sourceIndex, window, destinationIndex, count) {
+        throw Errors.notYetImplemented();
+    };
+    SlidingWindow.prototype.isPastSourceEnd = function () {
+        throw Errors.notYetImplemented();
+    };
+    SlidingWindow.prototype.tryShiftOrGrowTokenWindow = function () {
+        Debug.assert(this.currentRelativeItemIndex >= this.windowCount);
+        var currentIndexIsPastWindowHalfwayPoint = this.currentRelativeItemIndex > (this.window.length >> 1);
+        var isAllowedToShift = this.firstRewindAbsoluteIndex === -1 || this.firstRewindAbsoluteIndex > this.windowAbsoluteStartIndex;
+        if(currentIndexIsPastWindowHalfwayPoint && isAllowedToShift) {
+            var shiftStartIndex = this.firstRewindAbsoluteIndex === -1 ? this.currentRelativeItemIndex : this.firstRewindAbsoluteIndex - this.windowAbsoluteStartIndex;
+            var shiftCount = this.windowCount - shiftStartIndex;
+            Debug.assert(shiftStartIndex > 0);
+            Debug.assert(shiftCount > 0);
+            if(shiftCount > 0) {
+                ArrayUtilities.copy(this.window, shiftStartIndex, this.window, 0, shiftCount);
+            }
+            this.windowAbsoluteStartIndex += shiftStartIndex;
+            this.windowCount -= shiftStartIndex;
+            this.currentRelativeItemIndex -= shiftStartIndex;
+        } else {
+            this.window[this.window.length * 2 - 1] = this.defaultValue;
+        }
+    };
+    return SlidingWindow;
+})();
 var TextBase = (function () {
     function TextBase() {
         this.lazyLineStarts = null;
