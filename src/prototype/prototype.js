@@ -645,7 +645,8 @@ var SeparatedSyntaxList = (function () {
     return SeparatedSyntaxList;
 })();
 var SlidingWindow = (function () {
-    function SlidingWindow(defaultWindowSize, defaultValue) {
+    function SlidingWindow(defaultWindowSize, defaultValue, sourceLength) {
+        if (typeof sourceLength === "undefined") { sourceLength = -1; }
         this.window = [];
         this.windowCount = 0;
         this.windowAbsoluteStartIndex = 0;
@@ -656,19 +657,17 @@ var SlidingWindow = (function () {
         this.poolCount = 0;
         this.defaultValue = defaultValue;
         this.window = ArrayUtilities.createArray(defaultWindowSize, defaultValue);
+        this.sourceLength = sourceLength;
     }
     SlidingWindow.prototype.storeAdditionalRewindState = function (rewindPoint) {
     };
     SlidingWindow.prototype.restoreStateFromRewindPoint = function (rewindPoint) {
     };
-    SlidingWindow.prototype.isPastSourceEnd = function () {
-        return false;
-    };
     SlidingWindow.prototype.fetchMoreItems = function (sourceIndex, window, destinationIndex, spaceAvailable) {
         throw Errors.notYetImplemented();
     };
     SlidingWindow.prototype.addMoreItemsToWindow = function () {
-        if(this.isPastSourceEnd()) {
+        if(this.sourceLength >= 0 && this.absoluteIndex() >= this.sourceLength) {
             return false;
         }
         if(this.windowCount >= this.window.length) {
@@ -2870,7 +2869,7 @@ var ScannerTriviaInfo = (function () {
 var Scanner = (function (_super) {
     __extends(Scanner, _super);
     function Scanner(text, languageVersion, stringTable) {
-        _super.call(this, 2048, 0);
+        _super.call(this, 2048, 0, text.length());
         this.text = null;
         this.builder = [];
         this.errors = [];
@@ -2886,9 +2885,6 @@ var Scanner = (function (_super) {
     Scanner.create = function create(text, languageVersion) {
         return new Scanner(text, languageVersion, new StringTable());
     }
-    Scanner.prototype.isPastSourceEnd = function () {
-        return this.absoluteIndex() >= this.text.length();
-    };
     Scanner.prototype.fetchMoreItems = function (sourceIndex, window, destinationIndex, spaceAvailable) {
         var charactersRemaining = this.text.length() - sourceIndex;
         var amountToRead = MathPrototype.min(charactersRemaining, spaceAvailable);

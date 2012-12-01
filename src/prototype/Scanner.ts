@@ -24,15 +24,11 @@ class Scanner extends SlidingWindow {
     }
 
     constructor(text: IText, languageVersion: LanguageVersion, stringTable: StringTable) {
-        super(2048, 0);
+        super(2048, 0, text.length());
 
         this.text = text;
         this.stringTable = stringTable;
         this.languageVersion = languageVersion;
-    }
-
-    private isPastSourceEnd(): bool {
-        return this.absoluteIndex() >= this.text.length();
     }
 
     private fetchMoreItems(sourceIndex: number, window: number[], destinationIndex: number, spaceAvailable: number): number {

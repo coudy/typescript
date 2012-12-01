@@ -38,9 +38,12 @@ class SlidingWindow {
     // The default value to return when there are no more items left in the window.
     private defaultValue: any;
 
-    constructor(defaultWindowSize: number, defaultValue: any) {
+    private sourceLength: number;
+
+    constructor(defaultWindowSize: number, defaultValue: any, sourceLength = -1) {
         this.defaultValue = defaultValue;
         this.window = ArrayUtilities.createArray(defaultWindowSize, defaultValue);
+        this.sourceLength = sourceLength;
     }
 
     private storeAdditionalRewindState(rewindPoint: IRewindPoint): void {
@@ -49,16 +52,12 @@ class SlidingWindow {
     private restoreStateFromRewindPoint(rewindPoint: IRewindPoint): void {
     }
 
-    private isPastSourceEnd(): bool {
-        return false;
-    }
-
     private fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
         throw Errors.notYetImplemented();
     }
 
     private addMoreItemsToWindow(): bool {
-        if (this.isPastSourceEnd()) {
+        if (this.sourceLength >= 0 && this.absoluteIndex() >= this.sourceLength) {
             return false;
         }
 
