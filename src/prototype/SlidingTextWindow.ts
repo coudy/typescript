@@ -38,9 +38,9 @@ class SlidingTextWindow {
         return this.currentRelativeCharacterIndex + this.characterWindowAbsoluteStartIndex;
     }
 
-    public startPosition(): number {
-        return this._characterWindowStart + this.characterWindowAbsoluteStartIndex;
-    }
+    //public startPosition(): number {
+    //    return this._characterWindowStart + this.characterWindowAbsoluteStartIndex;
+    //}
 
     public start(): void {
         this._characterWindowStart = this.currentRelativeCharacterIndex;
@@ -128,13 +128,12 @@ class SlidingTextWindow {
         return this.stringTable.addCharArray(array, start, length);
     }
 
-    public getText(intern: bool): string {
-        var width = this.currentRelativeCharacterIndex - this._characterWindowStart;
-        return this.getSubstringText(this.startPosition(), width, intern);
+    public substring(start: number, end: number, intern: bool): string {
+        return this.substr(start, end - start, intern);
     }
 
-    private getSubstringText(position: number, length: number, intern: bool): string {
-        var offset = position - this.characterWindowAbsoluteStartIndex;
+    public substr(start: number, length: number, intern: bool): string {
+        var offset = start - this.characterWindowAbsoluteStartIndex;
         if (intern) {
             return this.internCharArray(this.characterWindow, offset, length);
         }

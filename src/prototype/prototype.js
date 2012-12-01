@@ -2720,13 +2720,6 @@ var Scanner = (function () {
     Scanner.prototype.text = function () {
         return this._text;
     };
-    Scanner.prototype.addComplexDiagnosticInfo = function (position, width, code) {
-        var args = [];
-        for (var _i = 0; _i < (arguments.length - 3); _i++) {
-            args[_i] = arguments[_i + 3];
-        }
-        this.addDiagnosticInfo(this.makeComplexDiagnosticInfo(position, width, code, args));
-    };
     Scanner.prototype.addSimpleDiagnosticInfo = function (code) {
         var args = [];
         for (var _i = 0; _i < (arguments.length - 1); _i++) {
@@ -2739,14 +2732,6 @@ var Scanner = (function () {
             this.errors = [];
         }
         this.errors.push(error);
-    };
-    Scanner.prototype.makeComplexDiagnosticInfo = function (position, width, code) {
-        var args = [];
-        for (var _i = 0; _i < (arguments.length - 3); _i++) {
-            args[_i] = arguments[_i + 3];
-        }
-        var offset = position >= this.textWindow.startPosition() ? position - this.textWindow.startPosition() : position;
-        return new SyntaxDiagnosticInfo(offset, width, code, args);
     };
     Scanner.prototype.makeSimpleDiagnosticInfo = function (code, args) {
         return SyntaxDiagnosticInfo.create(code, args);
@@ -3027,6 +3012,7 @@ var Scanner = (function () {
         }
     };
     Scanner.prototype.scanDecimalNumericLiteral = function () {
+        var start = this.textWindow.position();
         while(CharacterInfo.isDecimalDigit(this.textWindow.peekCharAtPosition())) {
             this.textWindow.advanceChar1();
         }
@@ -3049,17 +3035,20 @@ var Scanner = (function () {
         while(CharacterInfo.isDecimalDigit(this.textWindow.peekCharAtPosition())) {
             this.textWindow.advanceChar1();
         }
-        this.tokenInfo.Text = this.textWindow.getText(false);
+        var end = this.textWindow.position();
+        this.tokenInfo.Text = this.textWindow.substring(start, end, false);
         this.tokenInfo.Kind = 7 /* NumericLiteral */ ;
     };
     Scanner.prototype.scanHexNumericLiteral = function () {
+        var start = this.textWindow.position();
         Debug.assert(this.isHexNumericLiteral());
         this.textWindow.advanceChar1();
         this.textWindow.advanceChar1();
         while(CharacterInfo.isHexDigit(this.textWindow.peekCharAtPosition())) {
             this.textWindow.advanceChar1();
         }
-        this.tokenInfo.Text = this.textWindow.getText(false);
+        var end = this.textWindow.position();
+        this.tokenInfo.Text = this.textWindow.substring(start, end, false);
         this.tokenInfo.Kind = 7 /* NumericLiteral */ ;
     };
     Scanner.prototype.isHexNumericLiteral = function () {
@@ -3076,10 +3065,12 @@ var Scanner = (function () {
         return this.isDotPrefixedNumericLiteral();
     };
     Scanner.prototype.scanIdentifier = function () {
+        var start = this.textWindow.position();
         while(this.isIdentifierPart()) {
             this.scanCharOrUnicodeEscape(this.errors);
         }
-        this.tokenInfo.Text = this.textWindow.getText(true);
+        var end = this.textWindow.position();
+        this.tokenInfo.Text = this.textWindow.substring(start, end, true);
         this.tokenInfo.Kind = 5 /* IdentifierNameToken */ ;
     };
     Scanner.prototype.isIdentifierStart_Fast = function (character) {
@@ -3366,8 +3357,9 @@ var Scanner = (function () {
         while(this.isIdentifierPart()) {
             this.scanCharOrUnicodeEscape(this.errors);
         }
+        var end = this.textWindow.position();
         this.tokenInfo.Kind = 6 /* RegularExpressionLiteral */ ;
-        this.tokenInfo.Text = this.textWindow.getText(false);
+        this.tokenInfo.Text = this.textWindow.substring(start, end, false);
         return true;
     };
     Scanner.prototype.scanExclamationToken = function () {
@@ -3385,8 +3377,9 @@ var Scanner = (function () {
         }
     };
     Scanner.prototype.scanDefaultCharacter = function (character, isEscaped) {
+        var start = this.textWindow.position();
         this.textWindow.advanceChar1();
-        this.tokenInfo.Text = this.textWindow.getText(true);
+        this.tokenInfo.Text = this.textWindow.substring(start, start + 1, true);
         this.tokenInfo.Kind = 113 /* ErrorToken */ ;
         this.addSimpleDiagnosticInfo(1 /* Unexpected_character_0 */ , this.tokenInfo.Text);
     };
@@ -3460,6 +3453,7 @@ var Scanner = (function () {
     Scanner.prototype.scanStringLiteral = function () {
         var quoteCharacter = this.textWindow.peekCharAtPosition();
         Debug.assert(quoteCharacter === 39 /* singleQuote */  || quoteCharacter === 34 /* doubleQuote */ );
+        var start = this.textWindow.position();
         this.textWindow.advanceChar1();
         while(true) {
             var ch = this.textWindow.peekCharAtPosition();
@@ -3479,7 +3473,8 @@ var Scanner = (function () {
                 }
             }
         }
-        this.tokenInfo.Text = this.textWindow.getText(true);
+        var end = this.textWindow.position();
+        this.tokenInfo.Text = this.textWindow.substring(start, end, true);
         this.tokenInfo.Kind = 8 /* StringLiteral */ ;
     };
     Scanner.prototype.isUnicodeOrHexEscape = function () {
@@ -3559,7 +3554,8 @@ var Scanner = (function () {
             var ch2 = this.textWindow.peekCharAtPosition();
             if(!CharacterInfo.isHexDigit(ch2)) {
                 if(errors !== null) {
-                    var info = this.createIllegalEscapeDiagnostic(start);
+                    var end = this.textWindow.position();
+                    var info = this.createIllegalEscapeDiagnostic(start, end);
                     errors.push(info);
                 }
                 break;
@@ -3569,8 +3565,8 @@ var Scanner = (function () {
         }
         return intChar;
     };
-    Scanner.prototype.createIllegalEscapeDiagnostic = function (start) {
-        return new SyntaxDiagnosticInfo(start - this.textWindow.startPosition(), this.textWindow.position() - start, 0 /* Unrecognized_escape_sequence */ );
+    Scanner.prototype.createIllegalEscapeDiagnostic = function (start, end) {
+        return new SyntaxDiagnosticInfo(start, end - start, 0 /* Unrecognized_escape_sequence */ );
     };
     return Scanner;
 })();
@@ -3706,9 +3702,6 @@ var SlidingTextWindow = (function () {
     SlidingTextWindow.prototype.position = function () {
         return this.currentRelativeCharacterIndex + this.characterWindowAbsoluteStartIndex;
     };
-    SlidingTextWindow.prototype.startPosition = function () {
-        return this._characterWindowStart + this.characterWindowAbsoluteStartIndex;
-    };
     SlidingTextWindow.prototype.start = function () {
         this._characterWindowStart = this.currentRelativeCharacterIndex;
     };
@@ -3774,12 +3767,11 @@ var SlidingTextWindow = (function () {
     SlidingTextWindow.prototype.internCharArray = function (array, start, length) {
         return this.stringTable.addCharArray(array, start, length);
     };
-    SlidingTextWindow.prototype.getText = function (intern) {
-        var width = this.currentRelativeCharacterIndex - this._characterWindowStart;
-        return this.getSubstringText(this.startPosition(), width, intern);
+    SlidingTextWindow.prototype.substring = function (start, end, intern) {
+        return this.substr(start, end - start, intern);
     };
-    SlidingTextWindow.prototype.getSubstringText = function (position, length, intern) {
-        var offset = position - this.characterWindowAbsoluteStartIndex;
+    SlidingTextWindow.prototype.substr = function (start, length, intern) {
+        var offset = start - this.characterWindowAbsoluteStartIndex;
         if(intern) {
             return this.internCharArray(this.characterWindow, offset, length);
         } else {

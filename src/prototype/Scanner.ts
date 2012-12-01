@@ -40,9 +40,9 @@ class Scanner {
         return this._text;
     }
 
-    private addComplexDiagnosticInfo(position: number, width: number, code: DiagnosticCode, ...args: any[]): void {
-        this.addDiagnosticInfo(this.makeComplexDiagnosticInfo(position, width, code, args));
-    }
+    //private addComplexDiagnosticInfo(position: number, width: number, code: DiagnosticCode, ...args: any[]): void {
+    //    this.addDiagnosticInfo(this.makeComplexDiagnosticInfo(position, width, code, args));
+    //}
 
     private addSimpleDiagnosticInfo(code: DiagnosticCode, ...args: any[]): void {
         this.addDiagnosticInfo(this.makeSimpleDiagnosticInfo(code, args));
@@ -56,10 +56,10 @@ class Scanner {
         this.errors.push(error);
     }
 
-    private makeComplexDiagnosticInfo(position: number, width: number, code: DiagnosticCode, ...args: any[]): SyntaxDiagnosticInfo {
-        var offset = position >= this.textWindow.startPosition() ? position - this.textWindow.startPosition() : position;
-        return new SyntaxDiagnosticInfo(offset, width, code, args);
-    }
+    //private makeComplexDiagnosticInfo(position: number, width: number, code: DiagnosticCode, ...args: any[]): SyntaxDiagnosticInfo {
+    //    var offset = position >= this.textWindow.startPosition() ? position - this.textWindow.startPosition() : position;
+    //    return new SyntaxDiagnosticInfo(offset, width, code, args);
+    //}
 
     private makeSimpleDiagnosticInfo(code: DiagnosticCode, args: any[]): SyntaxDiagnosticInfo {
         return SyntaxDiagnosticInfo.create(code, args);
@@ -353,6 +353,8 @@ class Scanner {
     }
 
     private scanDecimalNumericLiteral(): void {
+        var start = this.textWindow.position();
+
         while (CharacterInfo.isDecimalDigit(this.textWindow.peekCharAtPosition())) {
             this.textWindow.advanceChar1();
         }
@@ -381,11 +383,15 @@ class Scanner {
             this.textWindow.advanceChar1();
         }
 
-        this.tokenInfo.Text = this.textWindow.getText(/*intern:*/ false);
+        var end = this.textWindow.position();
+
+        this.tokenInfo.Text = this.textWindow.substring(start, end, /*intern:*/ false);
         this.tokenInfo.Kind = SyntaxKind.NumericLiteral;
     }
 
     private scanHexNumericLiteral(): void {
+        var start = this.textWindow.position();
+
         Debug.assert(this.isHexNumericLiteral());
         this.textWindow.advanceChar1();
         this.textWindow.advanceChar1();
@@ -394,7 +400,8 @@ class Scanner {
             this.textWindow.advanceChar1();
         }
 
-        this.tokenInfo.Text = this.textWindow.getText(/*intern:*/ false);
+        var end = this.textWindow.position();
+        this.tokenInfo.Text = this.textWindow.substring(start, end, /*intern:*/ false);
         this.tokenInfo.Kind = SyntaxKind.NumericLiteral;
     }
 
@@ -416,11 +423,14 @@ class Scanner {
     }
 
     private scanIdentifier(): void {
+        var start = this.textWindow.position();
+
         while (this.isIdentifierPart()) {
             this.scanCharOrUnicodeEscape(this.errors);
         }
 
-        this.tokenInfo.Text = this.textWindow.getText(/*intern:*/ true);
+        var end = this.textWindow.position();
+        this.tokenInfo.Text = this.textWindow.substring(start, end, /*intern:*/ true);
         this.tokenInfo.Kind = SyntaxKind.IdentifierNameToken;
     }
 
@@ -760,8 +770,9 @@ class Scanner {
             this.scanCharOrUnicodeEscape(this.errors);
         }
 
+        var end = this.textWindow.position();
         this.tokenInfo.Kind = SyntaxKind.RegularExpressionLiteral;
-        this.tokenInfo.Text = this.textWindow.getText(/*intern:*/ false);
+        this.tokenInfo.Text = this.textWindow.substring(start, end, /*intern:*/ false);
         return true;
     }
 
@@ -785,8 +796,9 @@ class Scanner {
     }
 
     private scanDefaultCharacter(character: number, isEscaped: bool): void {
+        var start = this.textWindow.position();
         this.textWindow.advanceChar1();
-        this.tokenInfo.Text = this.textWindow.getText(/*intern:*/ true);
+        this.tokenInfo.Text = this.textWindow.substring(start, start + 1, /*intern:*/ true);
         this.tokenInfo.Kind = SyntaxKind.ErrorToken;
         this.addSimpleDiagnosticInfo(DiagnosticCode.Unexpected_character_0, this.tokenInfo.Text);
     }
@@ -869,6 +881,7 @@ class Scanner {
 
         Debug.assert(quoteCharacter === CharacterCodes.singleQuote || quoteCharacter === CharacterCodes.doubleQuote);
 
+        var start = this.textWindow.position();
         this.textWindow.advanceChar1();
 
         while (true) {
@@ -889,7 +902,8 @@ class Scanner {
             }
         }
 
-        this.tokenInfo.Text = this.textWindow.getText(true);
+        var end = this.textWindow.position();
+        this.tokenInfo.Text = this.textWindow.substring(start, end, true);
         this.tokenInfo.Kind = SyntaxKind.StringLiteral;
     }
 
@@ -990,7 +1004,8 @@ class Scanner {
             var ch2 = this.textWindow.peekCharAtPosition();
             if (!CharacterInfo.isHexDigit(ch2)) {
                 if (errors !== null) {
-                    var info = this.createIllegalEscapeDiagnostic(start);
+                    var end = this.textWindow.position();
+                    var info = this.createIllegalEscapeDiagnostic(start, end);
                     errors.push(info);
                 }
 
@@ -1004,10 +1019,8 @@ class Scanner {
         return intChar;
     }
 
-    private createIllegalEscapeDiagnostic(start: number): SyntaxDiagnosticInfo {
-        return new SyntaxDiagnosticInfo(
-            start - this.textWindow.startPosition(),
-            this.textWindow.position() - start,
+    private createIllegalEscapeDiagnostic(start: number, end: number): SyntaxDiagnosticInfo {
+        return new SyntaxDiagnosticInfo(start, end - start,
             DiagnosticCode.Unrecognized_escape_sequence);
     }
 }
