@@ -106,7 +106,7 @@ class Parser {
 
     // The index in the token window array that we're at. i.e. if there 100 tokens and 
     // tokenWindow contains tokens [70, 80), and we're on token 75, then this value would be '5'.
-    // Note: it is not absolute.  It is relative to the start of the tokenWwindow.
+    // Note: it is not absolute.  It is relative to the start of the tokenWindow.
     private currentRelativeTokenIndex: number = 0;
 
     // The number of outstanding rewind points there are.  As long as there is at least one 

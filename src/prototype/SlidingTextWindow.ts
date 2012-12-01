@@ -8,14 +8,17 @@ class SlidingTextWindow {
 
     private characterWindow: number[]; // moveable window of chars from source text
     private characterWindowCount: number = 0; // # of valid characters in characterWindow
+    
+    // The index in the character window array that we're at. i.e. if there 100 chars and 
+    // characterWindow contains chars [70, 80), and we're on char 75, then this value would be '5'.
+    // Note: it is not absolute.  It is relative to the start of the characterWindow.
+    private currentRelativeCharacterIndex: number = 0;
 
     private _characterWindowStart: number = 0; // start of current lexeme within chars buffer
 
     // The position within text that the characterWindow is starting at.
     private basis: number = 0;
 
-    // Offset we're currently at in _characterWindow.
-    private offset: number = 0;
     private stringTable: StringTable = null;
 
     constructor(text: IText, stringTable: StringTable) {
@@ -29,7 +32,7 @@ class SlidingTextWindow {
     }
 
     public position(): number {
-        return this.offset + this.basis;
+        return this.currentRelativeCharacterIndex + this.basis;
     }
 
     public startPosition(): number {
@@ -37,14 +40,14 @@ class SlidingTextWindow {
     }
 
     public start(): void {
-        this._characterWindowStart = this.offset;
+        this._characterWindowStart = this.currentRelativeCharacterIndex;
     }
 
     public reset(position: number): void {
         // if position is within already read character range then just use what we have
         var relative = position - this.basis;
         if (relative >= 0 && relative <= this.characterWindowCount) {
-            this.offset = relative;
+            this.currentRelativeCharacterIndex = relative;
         }
         else {
             // we need to reread text buffer
@@ -55,15 +58,15 @@ class SlidingTextWindow {
             }
 
             this._characterWindowStart = 0;
-            this.offset = 0;
+            this.currentRelativeCharacterIndex = 0;
             this.basis = position;
             this.characterWindowCount = amountToRead;
         }
     }
 
     private moreChars(): bool {
-        if (this.offset >= this.characterWindowCount) {
-            if (this.offset + this.basis >= this.text.length()) {
+        if (this.currentRelativeCharacterIndex >= this.characterWindowCount) {
+            if (this.currentRelativeCharacterIndex + this.basis >= this.text.length()) {
                 return false;
             }
 
@@ -71,7 +74,7 @@ class SlidingTextWindow {
             if (this._characterWindowStart > (this.characterWindowCount >> 2)) {
                 ArrayUtilities.copy(this.characterWindow, this._characterWindowStart, this.characterWindow, 0, this.characterWindowCount - this._characterWindowStart);
                 this.characterWindowCount -= this._characterWindowStart;
-                this.offset -= this._characterWindowStart;
+                this.currentRelativeCharacterIndex -= this._characterWindowStart;
                 this.basis += this._characterWindowStart;
                 this._characterWindowStart = 0;
             }
@@ -91,21 +94,21 @@ class SlidingTextWindow {
     }
 
     public advanceChar1(): void {
-        this.offset++;
+        this.currentRelativeCharacterIndex++;
     }
 
     public advanceCharN(n: number): void {
-        this.offset += n;
+        this.currentRelativeCharacterIndex += n;
     }
 
     public peekCharAtPosition(): number {
-        if (this.offset >= this.characterWindowCount) {
+        if (this.currentRelativeCharacterIndex >= this.characterWindowCount) {
             if (!this.moreChars()) {
                 return CharacterCodes.nullCharacter;
             }
         }
 
-        return this.characterWindow[this.offset];
+        return this.characterWindow[this.currentRelativeCharacterIndex];
     }
 
     public peekCharN(delta: number): number {
@@ -123,7 +126,7 @@ class SlidingTextWindow {
     }
 
     public getText(intern: bool): string {
-        var width = this.offset - this._characterWindowStart;
+        var width = this.currentRelativeCharacterIndex - this._characterWindowStart;
         return this.getSubstringText(this.startPosition(), width, intern);
     }
 
