@@ -170,7 +170,7 @@ class SlidingWindow {
 
     public releaseRewindPoint(rewindPoint: IRewindPoint): void {
         this.outstandingRewindPoints--;
-        if (this.outstandingRewindPoints == 0) {
+        if (this.outstandingRewindPoints === 0) {
             // If we just released the last outstanding rewind point, then we no longer need to 
             // 'fix' the token window so it can't move forward.  Set the index to -1 so that we
             // can shift things over the next time we read past the end of the array.

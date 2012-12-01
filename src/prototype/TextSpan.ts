@@ -34,7 +34,7 @@ class TextSpan {
     }
 
     isEmpty(): bool {
-        return this._length == 0;
+        return this._length === 0;
     }
 
     /// <summary>

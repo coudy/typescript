@@ -14,7 +14,7 @@ enum DiagnosticCode {
 class DiagnosticMessages {
     private static codeToFormatString: string[] = [];
     private static initializeStaticData(): void {
-        if (codeToFormatString.length == 0) {
+        if (codeToFormatString.length === 0) {
             codeToFormatString[DiagnosticCode.Unrecognized_escape_sequence] = "Unrecognized escape sequence.";
             codeToFormatString[DiagnosticCode.Unexpected_character_0] = "Unexpected character '{0}'.";
             codeToFormatString[DiagnosticCode.Missing_closing_quote_character] = "Missing close quote character.";

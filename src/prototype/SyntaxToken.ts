@@ -24,17 +24,17 @@ module SyntaxTokenFactory {
             kind: (<any>SyntaxKind)._map[token.kind()]
         };
 
-        if (token.keywordKind() != SyntaxKind.None) {
+        if (token.keywordKind() !== SyntaxKind.None) {
             result.keywordKind = (<any>SyntaxKind)._map[token.keywordKind()];
         }
 
         result.start = token.start();
-        if (token.fullStart() != token.start()) {
+        if (token.fullStart() !== token.start()) {
             result.fullStart = token.fullStart();
         }
 
         result.width = token.width();
-        if (token.fullWidth() != token.width()) {
+        if (token.fullWidth() !== token.width()) {
             result.fullWidth = token.fullWidth();
         }
 

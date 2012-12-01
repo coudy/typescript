@@ -107,7 +107,7 @@ class SyntaxFacts {
 
     private static kindToText: string[] = [];
     private static initializeStaticData() {
-        if (SyntaxFacts.kindToText.length == 0) {
+        if (SyntaxFacts.kindToText.length === 0) {
             for (var name in SyntaxFacts.textToKeywordKind) {
                 if (SyntaxFacts.textToKeywordKind.hasOwnProperty(name)) {
                     Debug.assert(kindToText[SyntaxFacts.textToKeywordKind[name]] === undefined);
@@ -156,7 +156,7 @@ class SyntaxFacts {
     }
 
     public static isPrefixUnaryExpressionOperatorToken(tokenKind: SyntaxKind): bool {
-        return getPrefixUnaryExpression(tokenKind) != SyntaxKind.None;
+        return getPrefixUnaryExpression(tokenKind) !== SyntaxKind.None;
     }
 
     public static getPrefixUnaryExpression(tokenKind: SyntaxKind): SyntaxKind {

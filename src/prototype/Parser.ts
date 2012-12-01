@@ -104,7 +104,7 @@ class Parser extends SlidingWindow {
     }
 
     private isIncremental(): bool {
-        return this.oldTree != null;
+        return this.oldTree !== null;
     }
 
     public storeAdditionalRewindState(rewindPoint: IParserRewindPoint): void {
@@ -1674,7 +1674,7 @@ class Parser extends SlidingWindow {
         var statements: StatementSyntax[] = null;
 
         while (true) {
-            if (this.isSwitchClause() || this.currentToken().kind() == SyntaxKind.EndOfFileToken || this.currentToken().kind() === SyntaxKind.CloseBraceToken) {
+            if (this.isSwitchClause() || this.currentToken().kind() === SyntaxKind.EndOfFileToken || this.currentToken().kind() === SyntaxKind.CloseBraceToken) {
                 break;
             }
 
@@ -2010,7 +2010,7 @@ class Parser extends SlidingWindow {
             }
 
             // Same precedence, but not right-associative -- deal with this higher up in our stack "later"
-            if (newPrecedence == precedence && !this.isRightAssociative(binaryExpressionKind)) {
+            if (newPrecedence === precedence && !this.isRightAssociative(binaryExpressionKind)) {
                 break;
             }
 
@@ -2118,7 +2118,7 @@ class Parser extends SlidingWindow {
                 break;
             }
 
-            if (this.currentToken().kind() == SyntaxKind.CommaToken) {
+            if (this.currentToken().kind() === SyntaxKind.CommaToken) {
                 var commaToken = this.eatToken(SyntaxKind.CommaToken);
                 arguments.push(commaToken);
 
@@ -2769,10 +2769,10 @@ class Parser extends SlidingWindow {
                     break;
                 }
 
-                if (this.currentToken().kind() == SyntaxKind.CommaToken) {
+                if (this.currentToken().kind() === SyntaxKind.CommaToken) {
                     var commaToken = this.eatToken(SyntaxKind.CommaToken);
 
-                    parameters = parameters == null ? [] : parameters;
+                    parameters = parameters || [];
                     parameters.push(commaToken);
 
                     var parameter = this.parseParameter();

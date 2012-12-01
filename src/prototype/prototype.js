@@ -262,7 +262,7 @@ var DiagnosticMessages = (function () {
     function DiagnosticMessages() { }
     DiagnosticMessages.codeToFormatString = [];
     DiagnosticMessages.initializeStaticData = function initializeStaticData() {
-        if(DiagnosticMessages.codeToFormatString.length == 0) {
+        if(DiagnosticMessages.codeToFormatString.length === 0) {
             DiagnosticMessages.codeToFormatString[0 /* Unrecognized_escape_sequence */ ] = "Unrecognized escape sequence.";
             DiagnosticMessages.codeToFormatString[1 /* Unexpected_character_0 */ ] = "Unexpected character '{0}'.";
             DiagnosticMessages.codeToFormatString[2 /* Missing_closing_quote_character */ ] = "Missing close quote character.";
@@ -725,7 +725,7 @@ var SlidingWindow = (function () {
     };
     SlidingWindow.prototype.releaseRewindPoint = function (rewindPoint) {
         this.outstandingRewindPoints--;
-        if(this.outstandingRewindPoints == 0) {
+        if(this.outstandingRewindPoints === 0) {
             this.firstRewindAbsoluteIndex = -1;
         }
         this.pool[this.poolCount] = rewindPoint;
@@ -789,7 +789,7 @@ var Parser = (function (_super) {
         this.options = options || new ParseOptions();
     }
     Parser.prototype.isIncremental = function () {
-        return this.oldTree != null;
+        return this.oldTree !== null;
     };
     Parser.prototype.storeAdditionalRewindState = function (rewindPoint) {
         rewindPoint.previousToken = this.previousToken;
@@ -1937,7 +1937,7 @@ var Parser = (function (_super) {
     Parser.prototype.parseSwitchClauseStatements = function () {
         var statements = null;
         while(true) {
-            if(this.isSwitchClause() || this.currentToken().kind() == 114 /* EndOfFileToken */  || this.currentToken().kind() === 64 /* CloseBraceToken */ ) {
+            if(this.isSwitchClause() || this.currentToken().kind() === 114 /* EndOfFileToken */  || this.currentToken().kind() === 64 /* CloseBraceToken */ ) {
                 break;
             }
             var statement = this.parseStatement(false);
@@ -2179,7 +2179,7 @@ var Parser = (function (_super) {
             if(newPrecedence < precedence) {
                 break;
             }
-            if(newPrecedence == precedence && !this.isRightAssociative(binaryExpressionKind)) {
+            if(newPrecedence === precedence && !this.isRightAssociative(binaryExpressionKind)) {
                 break;
             }
             var operatorToken = this.eatAnyToken();
@@ -2272,7 +2272,7 @@ var Parser = (function (_super) {
             if(this.currentToken().kind() === 66 /* CloseParenToken */  || this.currentToken().kind() === 114 /* EndOfFileToken */ ) {
                 break;
             }
-            if(this.currentToken().kind() == 72 /* CommaToken */ ) {
+            if(this.currentToken().kind() === 72 /* CommaToken */ ) {
                 var commaToken = this.eatToken(72 /* CommaToken */ );
                 arguments.push(commaToken);
                 var argument = this.parseAssignmentExpression(true);
@@ -2710,9 +2710,9 @@ var Parser = (function (_super) {
                 if(this.currentToken().kind() === 66 /* CloseParenToken */  || this.currentToken().kind() === 114 /* EndOfFileToken */ ) {
                     break;
                 }
-                if(this.currentToken().kind() == 72 /* CommaToken */ ) {
+                if(this.currentToken().kind() === 72 /* CommaToken */ ) {
                     var commaToken = this.eatToken(72 /* CommaToken */ );
-                    parameters = parameters == null ? [] : parameters;
+                    parameters = parameters || [];
                     parameters.push(commaToken);
                     var parameter = this.parseParameter();
                     parameters.push(parameter);
@@ -2921,7 +2921,7 @@ var Scanner = (function (_super) {
         }
     };
     Scanner.prototype.createToken = function (start) {
-        return SyntaxTokenFactory.create(start, this.leadingTriviaInfo, this.tokenInfo, this.trailingTriviaInfo, this.errors.length == 0 ? null : this.errors);
+        return SyntaxTokenFactory.create(start, this.leadingTriviaInfo, this.tokenInfo, this.trailingTriviaInfo, this.errors.length === 0 ? null : this.errors);
     };
     Scanner.prototype.scanTriviaInfo = function (afterFirstToken, isTrailing, triviaInfo) {
         triviaInfo.Width = 0;
@@ -3277,7 +3277,7 @@ var Scanner = (function (_super) {
     Scanner.prototype.scanIdentifierOrKeyword = function () {
         this.scanIdentifier();
         var kind = SyntaxFacts.getTokenKind(this.tokenInfo.Text);
-        if(kind != 0 /* None */ ) {
+        if(kind !== 0 /* None */ ) {
             this.tokenInfo.KeywordKind = kind;
         }
     };
@@ -3484,7 +3484,7 @@ var Scanner = (function (_super) {
     Scanner.prototype.tryScanRegularExpressionToken = function () {
         switch(this.previousTokenKind) {
             case 5 /* IdentifierNameToken */ : {
-                if(this.previousTokenKeywordKind == 0 /* None */ ) {
+                if(this.previousTokenKeywordKind === 0 /* None */ ) {
                     return false;
                 }
                 break;
@@ -3879,7 +3879,7 @@ var TextBase = (function () {
                     }
                 }
             }
-            if(0 == lineBreakLength) {
+            if(0 === lineBreakLength) {
                 index++;
             } else {
                 arrayBuilder.push(position);
@@ -4149,7 +4149,7 @@ var StringText = (function (_super) {
             span = new TextSpan(0, this.length());
         }
         this.checkSubSpan(span);
-        if(span.start() == 0 && span.length() == this.length()) {
+        if(span.start() === 0 && span.length() === this.length()) {
             return this.source;
         }
         return this.source.substr(span.start(), span.length());
@@ -4789,7 +4789,7 @@ var SyntaxFacts = (function () {
     };
     SyntaxFacts.kindToText = [];
     SyntaxFacts.initializeStaticData = function initializeStaticData() {
-        if(SyntaxFacts.kindToText.length == 0) {
+        if(SyntaxFacts.kindToText.length === 0) {
             for(var name in SyntaxFacts.textToKeywordKind) {
                 if(SyntaxFacts.textToKeywordKind.hasOwnProperty(name)) {
                     Debug.assert(SyntaxFacts.kindToText[SyntaxFacts.textToKeywordKind[name]] === undefined);
@@ -4828,7 +4828,7 @@ var SyntaxFacts = (function () {
         return kind >= SyntaxKind.FirstPunctuation && kind <= SyntaxKind.LastPunctuation;
     }
     SyntaxFacts.isPrefixUnaryExpressionOperatorToken = function isPrefixUnaryExpressionOperatorToken(tokenKind) {
-        return SyntaxFacts.getPrefixUnaryExpression(tokenKind) != 0 /* None */ ;
+        return SyntaxFacts.getPrefixUnaryExpression(tokenKind) !== 0 /* None */ ;
     }
     SyntaxFacts.getPrefixUnaryExpression = function getPrefixUnaryExpression(tokenKind) {
         switch(tokenKind) {
@@ -5429,10 +5429,10 @@ var ModuleDeclarationSyntax = (function (_super) {
     __extends(ModuleDeclarationSyntax, _super);
     function ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken) {
         _super.call(this);
-        if(exportKeyword != null && exportKeyword.keywordKind() !== 41 /* ExportKeyword */ ) {
+        if(exportKeyword !== null && exportKeyword.keywordKind() !== 41 /* ExportKeyword */ ) {
             throw Errors.argument("exportKeyword");
         }
-        if(declareKeyword != null && declareKeyword.keywordKind() !== 57 /* DeclareKeyword */ ) {
+        if(declareKeyword !== null && declareKeyword.keywordKind() !== 57 /* DeclareKeyword */ ) {
             throw Errors.argument("declareKeyword");
         }
         if(moduleKeyword.keywordKind() !== 59 /* ModuleKeyword */ ) {
@@ -6106,16 +6106,16 @@ var ParameterSyntax = (function (_super) {
     __extends(ParameterSyntax, _super);
     function ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause) {
         _super.call(this);
-        if(dotDotDotToken != null && dotDotDotToken.kind() !== 70 /* DotDotDotToken */ ) {
+        if(dotDotDotToken !== null && dotDotDotToken.kind() !== 70 /* DotDotDotToken */ ) {
             throw Errors.argument("dotDotDotToken");
         }
-        if(publicOrPrivateKeyword != null && publicOrPrivateKeyword.keywordKind() !== 51 /* PublicKeyword */  && publicOrPrivateKeyword.keywordKind() !== 49 /* PrivateKeyword */ ) {
+        if(publicOrPrivateKeyword !== null && publicOrPrivateKeyword.keywordKind() !== 51 /* PublicKeyword */  && publicOrPrivateKeyword.keywordKind() !== 49 /* PrivateKeyword */ ) {
             throw Errors.argument("publicOrPrivateKeyword");
         }
         if(identifier.kind() !== 5 /* IdentifierNameToken */ ) {
             throw Errors.argument("identifier");
         }
-        if(questionToken != null && questionToken.kind() !== 98 /* QuestionToken */ ) {
+        if(questionToken !== null && questionToken.kind() !== 98 /* QuestionToken */ ) {
             throw Errors.argument("questionToken");
         }
         this._dotDotDotToken = dotDotDotToken;
@@ -7727,15 +7727,15 @@ var SyntaxTokenFactory;
         var result = {
             kind: (SyntaxKind)._map[token.kind()]
         };
-        if(token.keywordKind() != 0 /* None */ ) {
+        if(token.keywordKind() !== 0 /* None */ ) {
             result.keywordKind = (SyntaxKind)._map[token.keywordKind()];
         }
         result.start = token.start();
-        if(token.fullStart() != token.start()) {
+        if(token.fullStart() !== token.start()) {
             result.fullStart = token.fullStart();
         }
         result.width = token.width();
-        if(token.fullWidth() != token.width()) {
+        if(token.fullWidth() !== token.width()) {
             result.fullWidth = token.fullWidth();
         }
         if(token.isMissing()) {
@@ -8991,7 +8991,7 @@ var TextSpan = (function () {
         return this._start + this._length;
     };
     TextSpan.prototype.isEmpty = function () {
-        return this._length == 0;
+        return this._length === 0;
     };
     TextSpan.prototype.containsPosition = function (position) {
         return position >= this._start && position < this.end();

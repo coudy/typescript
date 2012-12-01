@@ -191,7 +191,7 @@ class TextBase implements IText {
                 lineBreakLength = TextUtilities.getLengthOfLineBreak(this, index);
             }
 
-            if (0 == lineBreakLength) {
+            if (0 === lineBreakLength) {
                 index++;
             }
             else {

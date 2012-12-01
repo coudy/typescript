@@ -59,7 +59,7 @@ class StringText extends TextBase {
 
         this.checkSubSpan(span);
 
-        if (span.start() == 0 && span.length() == this.length()) {
+        if (span.start() === 0 && span.length() === this.length()) {
             return this.source;
         }
 

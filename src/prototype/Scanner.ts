@@ -84,7 +84,7 @@ class Scanner extends SlidingWindow {
 
     private createToken(start: number): ISyntaxToken {
         return SyntaxTokenFactory.create(start, this.leadingTriviaInfo, this.tokenInfo, this.trailingTriviaInfo,
-            this.errors.length == 0 ? null : this.errors);
+            this.errors.length === 0 ? null : this.errors);
     }
 
     private scanTriviaInfo(afterFirstToken: bool, isTrailing: bool, triviaInfo: ScannerTriviaInfo): void {
@@ -474,7 +474,7 @@ class Scanner extends SlidingWindow {
         this.scanIdentifier();
 
         var kind = SyntaxFacts.getTokenKind(this.tokenInfo.Text);
-        if (kind != SyntaxKind.None) {
+        if (kind !== SyntaxKind.None) {
             this.tokenInfo.KeywordKind = kind;
         }
     }
@@ -717,7 +717,7 @@ class Scanner extends SlidingWindow {
     private tryScanRegularExpressionToken(): bool {
         switch (this.previousTokenKind) {
             case SyntaxKind.IdentifierNameToken:
-                if (this.previousTokenKeywordKind == SyntaxKind.None) {
+                if (this.previousTokenKeywordKind === SyntaxKind.None) {
                     return false;
                 }
                 break;

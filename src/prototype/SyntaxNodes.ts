@@ -427,11 +427,11 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
                  closeBraceToken: ISyntaxToken) {
         super();
 
-        if (exportKeyword != null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
+        if (exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
             throw Errors.argument("exportKeyword");
         }
 
-        if (declareKeyword != null && declareKeyword.keywordKind() !== SyntaxKind.DeclareKeyword) {
+        if (declareKeyword !== null && declareKeyword.keywordKind() !== SyntaxKind.DeclareKeyword) {
             throw Errors.argument("declareKeyword");
         }
 
@@ -1346,11 +1346,11 @@ class ParameterSyntax extends SyntaxNode {
                  equalsValueClause: EqualsValueClauseSyntax) {
         super();
 
-        if (dotDotDotToken != null && dotDotDotToken.kind() !== SyntaxKind.DotDotDotToken) {
+        if (dotDotDotToken !== null && dotDotDotToken.kind() !== SyntaxKind.DotDotDotToken) {
             throw Errors.argument("dotDotDotToken");
         }
 
-        if (publicOrPrivateKeyword != null &&
+        if (publicOrPrivateKeyword !== null &&
             publicOrPrivateKeyword.keywordKind() !== SyntaxKind.PublicKeyword &&
             publicOrPrivateKeyword.keywordKind() !== SyntaxKind.PrivateKeyword) {
             throw Errors.argument("publicOrPrivateKeyword");
@@ -1360,7 +1360,7 @@ class ParameterSyntax extends SyntaxNode {
             throw Errors.argument("identifier");
         }
 
-        if (questionToken != null && questionToken.kind() !== SyntaxKind.QuestionToken) {
+        if (questionToken !== null && questionToken.kind() !== SyntaxKind.QuestionToken) {
             throw Errors.argument("questionToken");
         }
 
