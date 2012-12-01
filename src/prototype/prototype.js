@@ -2717,9 +2717,6 @@ var Scanner = (function () {
     Scanner.create = function create(text, languageVersion) {
         return new Scanner(text, languageVersion, new StringTable());
     }
-    Scanner.prototype.text = function () {
-        return this._text;
-    };
     Scanner.prototype.addSimpleDiagnosticInfo = function (code) {
         var args = [];
         for (var _i = 0; _i < (arguments.length - 1); _i++) {

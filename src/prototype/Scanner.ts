@@ -36,14 +36,6 @@ class Scanner {
         this.languageVersion = languageVersion;
     }
 
-    public text(): IText {
-        return this._text;
-    }
-
-    //private addComplexDiagnosticInfo(position: number, width: number, code: DiagnosticCode, ...args: any[]): void {
-    //    this.addDiagnosticInfo(this.makeComplexDiagnosticInfo(position, width, code, args));
-    //}
-
     private addSimpleDiagnosticInfo(code: DiagnosticCode, ...args: any[]): void {
         this.addDiagnosticInfo(this.makeSimpleDiagnosticInfo(code, args));
     }
@@ -55,11 +47,6 @@ class Scanner {
 
         this.errors.push(error);
     }
-
-    //private makeComplexDiagnosticInfo(position: number, width: number, code: DiagnosticCode, ...args: any[]): SyntaxDiagnosticInfo {
-    //    var offset = position >= this.textWindow.startPosition() ? position - this.textWindow.startPosition() : position;
-    //    return new SyntaxDiagnosticInfo(offset, width, code, args);
-    //}
 
     private makeSimpleDiagnosticInfo(code: DiagnosticCode, args: any[]): SyntaxDiagnosticInfo {
         return SyntaxDiagnosticInfo.create(code, args);
