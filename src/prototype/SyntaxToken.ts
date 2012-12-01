@@ -408,16 +408,6 @@ module SyntaxTokenFactory {
         public trailingTrivia(text: IText): ISyntaxTriviaList { throw Errors.notYetImplemented(); }
     }
 
-
-
-
-
-
-
-
-
-    
-
     class VariableWidthTokenWithNoTrivia implements ISyntaxToken {
         private _kind: SyntaxKind;
         private _fullStart: number;
@@ -572,21 +562,6 @@ module SyntaxTokenFactory {
         public trailingTrivia(text: IText): ISyntaxTriviaList { throw Errors.notYetImplemented(); }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     class FullToken implements ISyntaxToken {
         private _kind: SyntaxKind;
         private _keywordKind: SyntaxKind;
@@ -681,12 +656,14 @@ module SyntaxTokenFactory {
         leadingTriviaInfo: ScannerTriviaInfo,
         kind: SyntaxKind,
         trailingTriviaInfo: ScannerTriviaInfo): ISyntaxToken {
-        
-        if (leadingTriviaInfo.Width === 0 && trailingTriviaInfo.Width === 0) {
-            return new FixedWidthTokenWithNoTrivia(kind, fullStart);
-        }
-        else if (leadingTriviaInfo.Width === 0) {
-            return new FixedWidthTokenWithTrailingTrivia(kind, fullStart, getTriviaInfo(trailingTriviaInfo));
+
+        if (leadingTriviaInfo.Width === 0) {
+            if (trailingTriviaInfo.Width === 0) {
+                return new FixedWidthTokenWithNoTrivia(kind, fullStart);
+            }
+            else {
+                return new FixedWidthTokenWithTrailingTrivia(kind, fullStart, getTriviaInfo(trailingTriviaInfo));
+            }
         }
         else if (trailingTriviaInfo.Width === 0) {
             return new FixedWidthTokenWithLeadingTrivia(kind, fullStart, getTriviaInfo(leadingTriviaInfo));
@@ -703,11 +680,13 @@ module SyntaxTokenFactory {
         
         var kind = tokenInfo.Kind;
         var text = tokenInfo.Text === null ? SyntaxFacts.getText(kind) : tokenInfo.Text;
-        if (leadingTriviaInfo.Width === 0 && trailingTriviaInfo.Width === 0) {
-            return new VariableWidthTokenWithNoTrivia(kind, fullStart, text);
-        }
-        else if (leadingTriviaInfo.Width === 0) {
-            return new VariableWidthTokenWithTrailingTrivia(kind, fullStart, text, getTriviaInfo(trailingTriviaInfo));
+        if (leadingTriviaInfo.Width === 0) {
+            if (trailingTriviaInfo.Width === 0) {
+                return new VariableWidthTokenWithNoTrivia(kind, fullStart, text);
+            }
+            else {
+                return new VariableWidthTokenWithTrailingTrivia(kind, fullStart, text, getTriviaInfo(trailingTriviaInfo));
+            }
         }
         else if (trailingTriviaInfo.Width === 0) {
             return new VariableWidthTokenWithLeadingTrivia(kind, fullStart, text, getTriviaInfo(leadingTriviaInfo));
@@ -721,12 +700,14 @@ module SyntaxTokenFactory {
         leadingTriviaInfo: ScannerTriviaInfo,
         keywordKind: SyntaxKind,
         trailingTriviaInfo: ScannerTriviaInfo): ISyntaxToken {
-        
-        if (leadingTriviaInfo.Width === 0 && trailingTriviaInfo.Width === 0) {
-            return new FixedWidthKeywordWithNoTrivia(keywordKind, fullStart);
-        }
-        else if (leadingTriviaInfo.Width === 0) {
-            return new FixedWidthKeywordWithTrailingTrivia(keywordKind, fullStart, getTriviaInfo(trailingTriviaInfo));
+
+        if (leadingTriviaInfo.Width === 0) {
+            if (trailingTriviaInfo.Width === 0) {
+                return new FixedWidthKeywordWithNoTrivia(keywordKind, fullStart);
+            }
+            else {
+                return new FixedWidthKeywordWithTrailingTrivia(keywordKind, fullStart, getTriviaInfo(trailingTriviaInfo));
+            }
         }
         else if (trailingTriviaInfo.Width === 0) {
             return new FixedWidthKeywordWithLeadingTrivia(keywordKind, fullStart, getTriviaInfo(leadingTriviaInfo));

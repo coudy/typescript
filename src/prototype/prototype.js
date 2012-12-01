@@ -8793,49 +8793,49 @@ var SyntaxTokenFactory;
     }
     SyntaxTokenFactory.create = create;
     function createFixedWidthToken(fullStart, leadingTriviaInfo, kind, trailingTriviaInfo) {
-        if(leadingTriviaInfo.Width === 0 && trailingTriviaInfo.Width === 0) {
-            return new FixedWidthTokenWithNoTrivia(kind, fullStart);
-        } else {
-            if(leadingTriviaInfo.Width === 0) {
-                return new FixedWidthTokenWithTrailingTrivia(kind, fullStart, getTriviaInfo(trailingTriviaInfo));
+        if(leadingTriviaInfo.Width === 0) {
+            if(trailingTriviaInfo.Width === 0) {
+                return new FixedWidthTokenWithNoTrivia(kind, fullStart);
             } else {
-                if(trailingTriviaInfo.Width === 0) {
-                    return new FixedWidthTokenWithLeadingTrivia(kind, fullStart, getTriviaInfo(leadingTriviaInfo));
-                } else {
-                    return new FixedWidthTokenWithLeadingAndTrailingTrivia(kind, fullStart, getTriviaInfo(leadingTriviaInfo), getTriviaInfo(trailingTriviaInfo));
-                }
+                return new FixedWidthTokenWithTrailingTrivia(kind, fullStart, getTriviaInfo(trailingTriviaInfo));
+            }
+        } else {
+            if(trailingTriviaInfo.Width === 0) {
+                return new FixedWidthTokenWithLeadingTrivia(kind, fullStart, getTriviaInfo(leadingTriviaInfo));
+            } else {
+                return new FixedWidthTokenWithLeadingAndTrailingTrivia(kind, fullStart, getTriviaInfo(leadingTriviaInfo), getTriviaInfo(trailingTriviaInfo));
             }
         }
     }
     function createVariableWidthToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo) {
         var kind = tokenInfo.Kind;
         var text = tokenInfo.Text === null ? SyntaxFacts.getText(kind) : tokenInfo.Text;
-        if(leadingTriviaInfo.Width === 0 && trailingTriviaInfo.Width === 0) {
-            return new VariableWidthTokenWithNoTrivia(kind, fullStart, text);
-        } else {
-            if(leadingTriviaInfo.Width === 0) {
-                return new VariableWidthTokenWithTrailingTrivia(kind, fullStart, text, getTriviaInfo(trailingTriviaInfo));
+        if(leadingTriviaInfo.Width === 0) {
+            if(trailingTriviaInfo.Width === 0) {
+                return new VariableWidthTokenWithNoTrivia(kind, fullStart, text);
             } else {
-                if(trailingTriviaInfo.Width === 0) {
-                    return new VariableWidthTokenWithLeadingTrivia(kind, fullStart, text, getTriviaInfo(leadingTriviaInfo));
-                } else {
-                    return new VariableWidthTokenWithLeadingAndTrailingTrivia(kind, fullStart, text, getTriviaInfo(leadingTriviaInfo), getTriviaInfo(trailingTriviaInfo));
-                }
+                return new VariableWidthTokenWithTrailingTrivia(kind, fullStart, text, getTriviaInfo(trailingTriviaInfo));
+            }
+        } else {
+            if(trailingTriviaInfo.Width === 0) {
+                return new VariableWidthTokenWithLeadingTrivia(kind, fullStart, text, getTriviaInfo(leadingTriviaInfo));
+            } else {
+                return new VariableWidthTokenWithLeadingAndTrailingTrivia(kind, fullStart, text, getTriviaInfo(leadingTriviaInfo), getTriviaInfo(trailingTriviaInfo));
             }
         }
     }
     function createFixedWidthKeyword(fullStart, leadingTriviaInfo, keywordKind, trailingTriviaInfo) {
-        if(leadingTriviaInfo.Width === 0 && trailingTriviaInfo.Width === 0) {
-            return new FixedWidthKeywordWithNoTrivia(keywordKind, fullStart);
-        } else {
-            if(leadingTriviaInfo.Width === 0) {
-                return new FixedWidthKeywordWithTrailingTrivia(keywordKind, fullStart, getTriviaInfo(trailingTriviaInfo));
+        if(leadingTriviaInfo.Width === 0) {
+            if(trailingTriviaInfo.Width === 0) {
+                return new FixedWidthKeywordWithNoTrivia(keywordKind, fullStart);
             } else {
-                if(trailingTriviaInfo.Width === 0) {
-                    return new FixedWidthKeywordWithLeadingTrivia(keywordKind, fullStart, getTriviaInfo(leadingTriviaInfo));
-                } else {
-                    return new FixedWidthKeywordWithLeadingAndTrailingTrivia(keywordKind, fullStart, getTriviaInfo(leadingTriviaInfo), getTriviaInfo(trailingTriviaInfo));
-                }
+                return new FixedWidthKeywordWithTrailingTrivia(keywordKind, fullStart, getTriviaInfo(trailingTriviaInfo));
+            }
+        } else {
+            if(trailingTriviaInfo.Width === 0) {
+                return new FixedWidthKeywordWithLeadingTrivia(keywordKind, fullStart, getTriviaInfo(leadingTriviaInfo));
+            } else {
+                return new FixedWidthKeywordWithLeadingAndTrailingTrivia(keywordKind, fullStart, getTriviaInfo(leadingTriviaInfo), getTriviaInfo(trailingTriviaInfo));
             }
         }
     }
