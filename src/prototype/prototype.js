@@ -34983,17 +34983,9 @@ var Program = (function () {
         }
     };
     Program.prototype.run = function (environment, useTypeScript, verify) {
-        if(false) {
-            for(var index in environment.arguments) {
-                var filePath = environment.arguments[index];
-                this.runScanner(environment, environment.readFile(filePath), 1 /* EcmaScript5 */ , useTypeScript, verify);
-            }
-        }
-        if(true) {
-            for(var index in environment.arguments) {
-                var filePath = environment.arguments[index];
-                this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify);
-            }
+        for(var index in environment.arguments) {
+            var filePath = environment.arguments[index];
+            this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify);
         }
     };
     return Program;
@@ -35002,8 +34994,13 @@ var totalSize = 0;
 var program = new Program();
 var start, end;
 start = new Date().getTime();
-program.runAllTests(Environment, false, true);
+program.runAllTests(Environment, false, false);
 program.run(Environment, false, false);
 end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));
 Environment.standardOut.WriteLine("Total size: " + totalSize);
+start = new Date().getTime();
+program.runAllTests(Environment, true, false);
+program.run(Environment, true, false);
+end = new Date().getTime();
+Environment.standardOut.WriteLine("Total time: " + (end - start));
