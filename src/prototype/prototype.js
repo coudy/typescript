@@ -778,7 +778,7 @@ var Parser = (function () {
         }
         throw Errors.notYetImplemented();
     };
-    Parser.prototype.getPrecedence = function (expressionKind) {
+    Parser.getPrecedence = function getPrecedence(expressionKind) {
         switch(expressionKind) {
             case 160 /* CommaExpression */ : {
                 return 1 /* CommaExpressionPrecedence */ ;
@@ -870,13 +870,31 @@ var Parser = (function () {
             }
         }
         throw Errors.invalidOperation();
-    };
+    }
+    Parser.isUseStrictDirective = function isUseStrictDirective(node) {
+        if(node.kind() === 133 /* ExpressionStatement */ ) {
+            var expressionStatement = node;
+            var expression = expressionStatement.expression();
+            if(expression.kind() === 159 /* StringLiteralExpression */ ) {
+                var stringLiteralExpression = expression;
+                var stringLiteral = stringLiteralExpression.literalToken();
+                var text = stringLiteral.text();
+                return text === '"use strict"' || text === "'use strict'";
+            }
+        }
+        return false;
+    }
     Parser.prototype.parseSourceUnit = function () {
         var moduleElements = [];
+        var savedIsInStrictMode = this.isInStrictMode;
         while(this.currentToken().kind() !== 114 /* EndOfFileToken */ ) {
             var moduleElement = this.parseModuleElement();
             moduleElements.push(moduleElement);
+            if(!this.isInStrictMode) {
+                this.isInStrictMode = Parser.isUseStrictDirective(moduleElement);
+            }
         }
+        this.isInStrictMode = savedIsInStrictMode;
         return new SourceUnitSyntax(SyntaxNodeList.create(moduleElements), this.currentToken());
     };
     Parser.prototype.parseModuleElement = function () {
@@ -1986,7 +2004,7 @@ var Parser = (function () {
                 break;
             }
             var binaryExpressionKind = SyntaxFacts.getBinaryExpressionFromOperatorToken(currentTokenKind);
-            var newPrecedence = this.getPrecedence(binaryExpressionKind);
+            var newPrecedence = Parser.getPrecedence(binaryExpressionKind);
             Debug.assert(newPrecedence > 0);
             if(newPrecedence < precedence) {
                 break;
@@ -2484,6 +2502,7 @@ var Parser = (function () {
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
         var statements = null;
         if(!openBraceToken.isMissing()) {
+            var savedIsInStrictMode = this.isInStrictMode;
             while(true) {
                 if(this.currentToken().kind() === 64 /* CloseBraceToken */  || this.currentToken().kind() === 114 /* EndOfFileToken */ ) {
                     break;
@@ -2491,7 +2510,11 @@ var Parser = (function () {
                 var statement = this.parseStatement(allowFunctionDeclaration);
                 statements = statements || [];
                 statements.push(statement);
+                if(!this.isInStrictMode) {
+                    this.isInStrictMode = Parser.isUseStrictDirective(statement);
+                }
             }
+            this.isInStrictMode = savedIsInStrictMode;
         }
         var closeBraceToken = this.eatToken(64 /* CloseBraceToken */ );
         return new BlockSyntax(openBraceToken, SyntaxNodeList.create(statements), closeBraceToken);

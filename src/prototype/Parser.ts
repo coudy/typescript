@@ -516,7 +516,7 @@ class Parser {
         throw Errors.notYetImplemented();
     }
 
-    private getPrecedence(expressionKind: SyntaxKind): ParserExpressionPrecedence {
+    private static getPrecedence(expressionKind: SyntaxKind): ParserExpressionPrecedence {
         switch (expressionKind) {
             case SyntaxKind.CommaExpression:
                 return ParserExpressionPrecedence.CommaExpressionPrecedence;
@@ -596,13 +596,41 @@ class Parser {
         throw Errors.invalidOperation();
     }
 
+    private static isUseStrictDirective(node: SyntaxNode) {
+        if (node.kind() === SyntaxKind.ExpressionStatement) {
+            var expressionStatement = <ExpressionStatementSyntax>node;
+            var expression = expressionStatement.expression();
+
+            if (expression.kind() === SyntaxKind.StringLiteralExpression) {
+                var stringLiteralExpression = <LiteralExpressionSyntax>expression;
+                var stringLiteral = stringLiteralExpression.literalToken();
+
+                var text = stringLiteral.text();
+                return text === '"use strict"' || text === "'use strict'";
+            }
+        }
+
+        return false;
+    }
+
     public parseSourceUnit(): SourceUnitSyntax {
         var moduleElements: ModuleElementSyntax[] = [];
+
+        // Note: technically we don't need to save and restore this here.  After all, thisi the top
+        // level parsing entrypoint.  So it will always start as false and be reset to false when the
+        // loop ends.  However, for sake of symmetry and consistancy we do this.
+        var savedIsInStrictMode = this.isInStrictMode;
 
         while (this.currentToken().kind() !== SyntaxKind.EndOfFileToken) {
             var moduleElement = this.parseModuleElement();
             moduleElements.push(moduleElement);
+
+            if (!this.isInStrictMode) {
+                this.isInStrictMode = Parser.isUseStrictDirective(moduleElement);
+            }
         }
+
+        this.isInStrictMode = savedIsInStrictMode;
 
         return new SourceUnitSyntax(SyntaxNodeList.create(moduleElements), this.currentToken());
     }
@@ -2119,7 +2147,7 @@ class Parser {
             }
 
             var binaryExpressionKind = SyntaxFacts.getBinaryExpressionFromOperatorToken(currentTokenKind);
-            var newPrecedence = this.getPrecedence(binaryExpressionKind);
+            var newPrecedence = Parser.getPrecedence(binaryExpressionKind);
 
                   // All binary operators must have precedence > 0!
             Debug.assert(newPrecedence > 0);
@@ -2835,6 +2863,8 @@ class Parser {
         var statements: StatementSyntax[] = null;
 
         if (!openBraceToken.isMissing()) {
+            var savedIsInStrictMode = this.isInStrictMode;
+
             while (true) {
                 if (this.currentToken().kind() === SyntaxKind.CloseBraceToken ||
                     this.currentToken().kind() === SyntaxKind.EndOfFileToken) {
@@ -2846,7 +2876,13 @@ class Parser {
 
                 statements = statements || [];
                 statements.push(statement);
+
+                if (!this.isInStrictMode) {
+                    this.isInStrictMode = Parser.isUseStrictDirective(statement);
+                }
             }
+
+            this.isInStrictMode = savedIsInStrictMode;
         }
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
