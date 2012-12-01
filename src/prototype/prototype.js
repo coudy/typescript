@@ -623,16 +623,18 @@ var Parser = (function () {
         this.scannedTokensCount++;
     };
     Parser.prototype.tryShiftOrGrowScannedTokens = function () {
-        if(this.currentReletiveTokenIndex > (this.scannedTokens.length >> 1) && (this.firstRewindAbsoluteIndex == -1 || this.firstRewindAbsoluteIndex > this.scannedTokensAbsoluteStartIndex)) {
-            var shiftOffset = (this.firstRewindAbsoluteIndex == -1) ? this.currentReletiveTokenIndex : this.firstRewindAbsoluteIndex - this.scannedTokensAbsoluteStartIndex;
-            var shiftCount = this.scannedTokensCount - shiftOffset;
-            Debug.assert(shiftOffset > 0);
+        var currentIndexIsPastWindowHalfwayPoint = this.currentReletiveTokenIndex > (this.scannedTokens.length >> 1);
+        var isAllowedToShift = this.firstRewindAbsoluteIndex === -1 || this.firstRewindAbsoluteIndex > this.scannedTokensAbsoluteStartIndex;
+        if(currentIndexIsPastWindowHalfwayPoint && isAllowedToShift) {
+            var shiftStartIndex = this.firstRewindAbsoluteIndex === -1 ? this.currentReletiveTokenIndex : this.firstRewindAbsoluteIndex - this.scannedTokensAbsoluteStartIndex;
+            var shiftCount = this.scannedTokensCount - shiftStartIndex;
+            Debug.assert(shiftStartIndex > 0);
             if(shiftCount > 0) {
-                ArrayUtilities.copy(this.scannedTokens, shiftOffset, this.scannedTokens, 0, shiftCount);
+                ArrayUtilities.copy(this.scannedTokens, shiftStartIndex, this.scannedTokens, 0, shiftCount);
             }
-            this.scannedTokensAbsoluteStartIndex += shiftOffset;
-            this.scannedTokensCount -= shiftOffset;
-            this.currentReletiveTokenIndex -= shiftOffset;
+            this.scannedTokensAbsoluteStartIndex += shiftStartIndex;
+            this.scannedTokensCount -= shiftStartIndex;
+            this.currentReletiveTokenIndex -= shiftStartIndex;
         } else {
             this.scannedTokens[this.scannedTokens.length * 2 - 1] = null;
         }
