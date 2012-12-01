@@ -1,26 +1,36 @@
 ///<reference path='References.ts' />
 
-// Represents a point in the tokenWindow array that we can rewind to if we are performing 
-// lookahead and decide we need to back track.  There can be many of these outstanding at a
-// time.  That way you can do speculative parsing while already in speculative parsing.
-class ParserRewindPoint {
-    constructor(// For debugging purposes, keep track of the reset count when we were created.  
-                // We don't need actually need it.  But we can use it to assert certain invariants.
-                public resetCount: number,
-                
-                // The index in all the tokens we've scanned that we want to rewind back to.  Note:
-                // this is an absolute index. i.e. this is *not* the index in the tokenWindow It is 
-                // the index into the virtual array of all tokens.
-                public absoluteIndex: number,
-
-                // The previous token when we were created.
-                public previousToken: ISyntaxToken,
-
-                // Th state of strict mode when we were created.
-                public isInStrictMode: bool) {
-    }
+interface IParserRewindPoint extends IRewindPoint {
+    previousToken: ISyntaxToken;
+    isInStrictMode: bool;
 }
 
+class SlidingTokenWindow extends SlidingWindow {
+    private parser: Parser;
+
+    constructor(parser: Parser) {
+        super(null, 32);
+
+        this.parser = parser;
+    }
+
+    private isPastSourceEnd(): bool {
+        // No way to tell this with the scanner.
+        return false;
+    }
+
+    private storeAdditionalRewindState(rewindPoint: IParserRewindPoint): void {
+        this.parser.storeAdditionalRewindState(rewindPoint);
+    }
+
+    private restoreStateFromRewindPoint(rewindPoint: IParserRewindPoint): void {
+        this.parser.restoreStateFromRewindPoint(rewindPoint);
+    }
+
+    private fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, count: number): number {
+        return this.parser.fetchMoreItems(sourceIndex, window, destinationIndex, count);
+    }
+}
 
 // The precedence of expressions in typescript.  While we're parsing an expression, we will 
 // continue to consume and form new trees, if the precedence is greater than our current
@@ -93,31 +103,8 @@ class Parser {
     // Parsing options.
     private options: ParseOptions = null;
 
-    // A window of tokens that has been read in from the scanner.
-    private tokenWindow: ISyntaxToken[] = [];
-
-    // The number of valod tokens in tokenWindow.
-    private tokenWindowCount: number = 0;
-
-    // The *absolute* index in the *full* array of tokens the *tokenWindow* array starts at.  i.e.
-    // if there were 100 tokens, and tokenWindow contains tokens [70, 80), then this value would be
-    // 70.
-    private tokenWindowAbsoluteStartIndex: number = 0;
-
-    // The index in the token window array that we're at. i.e. if there 100 tokens and 
-    // tokenWindow contains tokens [70, 80), and we're on token 75, then this value would be '5'.
-    // Note: it is not absolute.  It is relative to the start of the tokenWindow.
-    private currentRelativeTokenIndex: number = 0;
-
-    // The number of outstanding rewind points there are.  As long as there is at least one 
-    // outstanding rewind point, we will not advance the start of the tokenWindow array past
-    // token marked by the first rewind point.
-    private outstandingRewindPoints: number = 0;
-
-    // If there are any outstanding rewind points, this is index in the fill array of tokens
-    // that the first rewind point points to.  If this is not -1, then we will not shift the
-    // start of the tokens array past this point.
-    private firstRewindAbsoluteIndex: number = -1;
+    // The window of tokens we're looking at.
+    private tokenWindow: SlidingTokenWindow;
 
     // Current state of the parser.  If we need to rewind we will store and reset these values as
     // appropriate.
@@ -127,11 +114,11 @@ class Parser {
     private _currentToken: ISyntaxToken = null;
 
     // The previous token to the current token.  Set when we advance to the next token.
-    private previousToken: ISyntaxToken = null;
+    public previousToken: ISyntaxToken = null;
 
     // Whether or not we are in strict parsing mode.  All that changes in strict parsing mode is
     // that some tokens that would be considered identifiers may be considered keywords.
-    private isInStrictMode: bool;
+    public isInStrictMode: bool;
 
     constructor(
         scanner: Scanner,
@@ -140,6 +127,8 @@ class Parser {
         options?: ParseOptions) {
 
         this.scanner = scanner;
+        this.tokenWindow = new SlidingTokenWindow(this);
+
         this.oldTree = oldTree;
         this.options = options || new ParseOptions();
     }
@@ -148,143 +137,36 @@ class Parser {
         return this.oldTree != null;
     }
 
-    private getRewindPoint(): ParserRewindPoint {
-        // Find the absolute index of this rewind point.  i.e. it's the index as if we had an 
-        // array containing *all* tokens.  
-        var absoluteIndex = this.tokenWindowAbsoluteStartIndex + this.currentRelativeTokenIndex;
-        if (this.outstandingRewindPoints === 0) {
-            // If this is the first rewind point, then store off this index.  We will ensure that
-            // we never shift the token window past this point.
-            this.firstRewindAbsoluteIndex = absoluteIndex;
-        }
-
-        this.outstandingRewindPoints++;
-        return new ParserRewindPoint(this.outstandingRewindPoints, absoluteIndex, this.previousToken, this.isInStrictMode);
+    public storeAdditionalRewindState(rewindPoint: IParserRewindPoint): void {
+        rewindPoint.previousToken = this.previousToken;
+        rewindPoint.isInStrictMode = this.isInStrictMode;
     }
 
-    private rewind(point: ParserRewindPoint): void {
-        // Ensure that these are rewound in the right order.
-        Debug.assert(this.outstandingRewindPoints == point.resetCount);
-
-        // The rewind point shows which absolute token we want to rewind to.  Get the relative 
-        // index in the actual array that we want to point to.
-        var relativeTokenIndex = point.absoluteIndex - this.tokenWindowAbsoluteStartIndex;
-
-        // Make sure we haven't screwed anything up.
-        Debug.assert(relativeTokenIndex >= 0 && relativeTokenIndex < this.tokenWindowCount);
-
-        // Set ourselves back to that point.
-        this.currentRelativeTokenIndex = relativeTokenIndex;
-
-        // Clear out the current token.  We can retrieve it now from the tokenWindow.
-        // Restore the previous token and strict mode setting that we were at when this rewind
-        // point was created.
+    public restoreStateFromRewindPoint(rewindPoint: IParserRewindPoint): void {
         this._currentToken = null;
-        this.previousToken = point.previousToken;
-        this.isInStrictMode = point.isInStrictMode;
+        this.previousToken = rewindPoint.previousToken;
+        this.isInStrictMode = rewindPoint.isInStrictMode;
     }
 
-    private releaseRewindPoint(point: ParserRewindPoint): void {
-        // Ensure that these are released in the right order.
-        Debug.assert(this.outstandingRewindPoints == point.resetCount);
-
-        this.outstandingRewindPoints--;
-        if (this.outstandingRewindPoints == 0) {
-            // If we just released the last outstanding rewind point, then we no longer need to 
-            // 'fix' the token window so it can't move forward.  Set the index to -1 so that we
-            // can shift things over the next time we read past the end of the array.
-            this.firstRewindAbsoluteIndex = -1;
-        }
+    public fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, count: number): number {
+        Debug.assert(count > 0);
+        window[destinationIndex] = this.scanner.scan();
+        return 1;
     }
 
     private currentToken(): ISyntaxToken {
         var result = this._currentToken;
 
         if (result === null) {
-            result = this.fetchCurrentToken();
+            result = this.tokenWindow.currentItem();
             this._currentToken = result;
         }
 
         return result;
     }
 
-    private fetchCurrentToken(): ISyntaxToken {
-        if (this.currentRelativeTokenIndex >= this.tokenWindowCount) {
-            this.addNextTokenToWindow();
-        }
-
-        return this.tokenWindow[this.currentRelativeTokenIndex];
-    }
-
-    private addNextTokenToWindow(): void {
-        this.addTokenToWindow(this.scanner.scan());
-    }
-
-    private addTokenToWindow(token: ISyntaxToken): void {
-        Debug.assert(token !== null);
-
-        // We're trying to add this token to our list of tokens.  If there is no more room, then
-        // try to either shift the existing tokens over to make room, or grow the array to fit more.
-        if (this.tokenWindowCount >= this.tokenWindow.length) {
-            this.tryShiftOrGrowTokenWindow();
-        }
-
-        this.tokenWindow[this.tokenWindowCount] = token;
-        this.tokenWindowCount++;
-    }
-
-    private tryShiftOrGrowTokenWindow(): void {
-        // We want to shift if our current token is past the halfway point of the current token window.
-        var currentIndexIsPastWindowHalfwayPoint = this.currentRelativeTokenIndex > (this.tokenWindow.length >> 1);
-
-        // However, we can only shift if we have no outstanding rewind points.  Or, if we have an 
-        // outstanding rewind point, that it points to some point after the start of the token window.
-        var isAllowedToShift = 
-            this.firstRewindAbsoluteIndex === -1 ||
-            this.firstRewindAbsoluteIndex > this.tokenWindowAbsoluteStartIndex;
-
-        if (currentIndexIsPastWindowHalfwayPoint && isAllowedToShift) {
-            // Figure out where we're going to start shifting from. If we have no oustanding rewind 
-            // points, then we'll start shifting over all the tokens starting from the current 
-            // token we're point out.  Otherwise, we'll shift starting from the first token that 
-            // the rewind point is pointing at.
-            // 
-            // We'll call that point 'N' from now on. 
-            var shiftStartIndex = this.firstRewindAbsoluteIndex === -1
-                ? this.currentRelativeTokenIndex 
-                : this.firstRewindAbsoluteIndex - this.tokenWindowAbsoluteStartIndex;
-
-            // We have to shift the number of elements between the start index and the number of 
-            // tokens in the token window.
-            var shiftCount = this.tokenWindowCount - shiftStartIndex;
-
-            Debug.assert(shiftStartIndex > 0);
-            if (shiftCount > 0) {
-                ArrayUtilities.copy(this.tokenWindow, shiftStartIndex, this.tokenWindow, 0, shiftCount);
-            }
-
-            // The token window has now moved over to the right by N.
-            this.tokenWindowAbsoluteStartIndex += shiftStartIndex;
-
-            // The number of valid tokens in the window has now dsecreased by N.
-            this.tokenWindowCount -= shiftStartIndex;
-
-            // The current token now starts further to the left in the token window.
-            this.currentRelativeTokenIndex -= shiftStartIndex;
-        }
-        else {
-            // Grow the exisitng array.
-            this.tokenWindow[this.tokenWindow.length * 2 - 1] = null;
-        }
-    }
-
     private peekTokenN(n: number): ISyntaxToken {
-        Debug.assert(n >= 0);
-        while (this.currentRelativeTokenIndex + n >= this.tokenWindowCount) {
-            this.addNextTokenToWindow();
-        }
-
-        return this.tokenWindow[this.currentRelativeTokenIndex + n];
+        return this.tokenWindow.peekItemN(n);
     }
 
     //this method is called very frequently
@@ -299,7 +181,7 @@ class Parser {
         this.previousToken = this._currentToken;
         this._currentToken = null;
 
-        this.currentRelativeTokenIndex++;
+        this.tokenWindow.moveToNextItem();
     }
 
     private canEatAutomaticSemicolon(): bool {
@@ -860,7 +742,7 @@ class Parser {
     }
 
     private isMemberFunctionDeclaration(): bool {
-        var resetPoint = this.getRewindPoint();
+        var rewindPoint = this.tokenWindow.getRewindPoint();
         try {
             if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
                 this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
@@ -874,13 +756,13 @@ class Parser {
             return this.isFunctionSignature();
         }
         finally {
-            this.rewind(resetPoint);
-            this.releaseRewindPoint(resetPoint);
+            this.tokenWindow.rewind(rewindPoint);
+            this.tokenWindow.releaseRewindPoint(rewindPoint);
         }
     }
 
     private isMemberAccessorDeclaration(): bool {
-        var resetPoint = this.getRewindPoint();
+        var rewindPoint = this.tokenWindow.getRewindPoint();
         try {
             if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
                 this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
@@ -900,8 +782,8 @@ class Parser {
             return this.isIdentifier(this.currentToken());
         }
         finally {
-            this.rewind(resetPoint);
-            this.releaseRewindPoint(resetPoint);
+            this.tokenWindow.rewind(rewindPoint);
+            this.tokenWindow.releaseRewindPoint(rewindPoint);
         }
     }
 
@@ -2498,16 +2380,16 @@ class Parser {
         }
 
         // Then, try to actually parse it as a arrow function, and only return if we see an => 
-        var resetPoint = this.getRewindPoint();
+        var rewindPoint = this.tokenWindow.getRewindPoint();
         try {
             var arrowFunction = this.parseParenthesizedArrowFunctionExpression(/*requiresArrow:*/ true);
             if (arrowFunction === null) {
-                this.rewind(resetPoint);
+                this.tokenWindow.rewind(rewindPoint);
             }
             return arrowFunction;
         }
         finally {
-            this.releaseRewindPoint(resetPoint);
+            this.tokenWindow.releaseRewindPoint(rewindPoint);
         }
     }
 

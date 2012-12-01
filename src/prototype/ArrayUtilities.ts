@@ -23,14 +23,21 @@ class ArrayUtilities {
         return ~low;
     }
 
-    public static createArray(length: number): any[] {
+    public static createArray(length: number, defaultvalue = null): any[] {
         // return new Array(length);
         var result = [];
         for (var i = 0; i < length; i++) {
-            result.push(null);
+            result.push(defaultvalue);
         }
 
         return result;
+    }
+
+    public static grow(array: any[], length: number, defaultValue: any): void {
+        var count = length - array.length;
+        for (var i = 0; i < count; i++) {
+            array.push(defaultValue);
+        }
     }
 
     public static copy(sourceArray: any[], sourceIndex: number, destinationArray: any[], destinationIndex: number, length: number): void {

@@ -1,5 +1,10 @@
 ///<reference path='References.ts' />
 
+interface IRewindPoint {
+    rewindPoints: number;
+    absoluteIndex: number;
+}
+
 class SlidingWindow {
     // A window of items that has been read in from the underlying source.
     private window: any[] = [];
@@ -27,101 +32,41 @@ class SlidingWindow {
     // start of the items array past this point.
     private firstRewindAbsoluteIndex: number = -1;
 
-    private rewindPoints: any[] = [];
+    private rewindPoints: IRewindPoint[] = [];
 
     // The default value to return when there are no more items left in the window.
     private defaultValue: any;
 
-    constructor(defaultValue: any) {
+    constructor(defaultValue: any, defaultWindowSize: number) {
         this.defaultValue = defaultValue;
+        this.window = ArrayUtilities.createArray(defaultWindowSize, defaultValue);
     }
 
-    private getRewindPoint(): any {
-        // Find the absolute index of this rewind point.  i.e. it's the index as if we had an 
-        // array containing *all* tokens.  
-        var absoluteIndex = this.windowAbsoluteStartIndex + this.currentRelativeItemIndex;
-        if (this.outstandingRewindPoints === 0) {
-            // If this is the first rewind point, then store off this index.  We will ensure that
-            // we never shift the window past this point.
-            this.firstRewindAbsoluteIndex = absoluteIndex;
-        }
-
-        this.outstandingRewindPoints++;
-        var rewindPoint = this.rewindPoints.length === 0 ? {} : this.rewindPoints.pop();
-        rewindPoint.rewindPoints = this.outstandingRewindPoints;
-        rewindPoint.absoluteIndex = absoluteIndex;
-        this.storeAdditionalRewindData(rewindPoint);
-
-        return rewindPoint;
-        // return new ParserRewindPoint(this.outstandingRewindPoints, absoluteIndex, this.previousToken, this.isInStrictMode);
-    }
-
-    private storeAdditionalRewindData(rewindPoint: any): void {
+    private storeAdditionalRewindState(rewindPoint: IRewindPoint): void {
         throw Errors.notYetImplemented();
     }
 
-    private rewind(rewindPoint: any): void {
-        // Ensure that these are rewound in the right order.
-        Debug.assert(this.outstandingRewindPoints === rewindPoint.resetCount);
-
-        // The rewind point shows which absolute item we want to rewind to.  Get the relative 
-        // index in the actual array that we want to point to.
-        var relativeIndex = rewindPoint.absoluteIndex - this.windowAbsoluteStartIndex;
-
-        // Make sure we haven't screwed anything up.
-        Debug.assert(relativeIndex >= 0 && relativeIndex < this.windowCount);
-
-        // Set ourselves back to that point.
-        this.currentRelativeItemIndex = relativeIndex;
-
-        this.restoreState(rewindPoint);
-
-        // Clear out the current token.  We can retrieve it now from the tokenWindow.
-        // Restore the previous token and strict mode setting that we were at when this rewind
-        // point was created.
-        //this._currentToken = null;
-        //this.previousToken = point.previousToken;
-        //this.isInStrictMode = point.isInStrictMode;
-    }
-
-    private restoreState(rewindPoint: any) {
+    private restoreStateFromRewindPoint(rewindPoint: IRewindPoint): void {
         throw Errors.notYetImplemented();
     }
 
-    private releaseRewindPoint(rewindPoint: any): void {
-        // Ensure that these are released in the right order.
-        Debug.assert(this.outstandingRewindPoints == rewindPoint.resetCount);
-
-        this.outstandingRewindPoints--;
-        if (this.outstandingRewindPoints == 0) {
-            // If we just released the last outstanding rewind point, then we no longer need to 
-            // 'fix' the token window so it can't move forward.  Set the index to -1 so that we
-            // can shift things over the next time we read past the end of the array.
-            this.firstRewindAbsoluteIndex = -1;
-        }
-
-        this.rewindPoints.push(rewindPoint);
+    private isPastSourceEnd(): bool {
+        throw Errors.notYetImplemented();
     }
 
-    public currentItem(): any {
-        if (this.currentRelativeItemIndex >= this.windowCount) {
-            if (!this.addMoreItemsToWindow()) {
-                return this.defaultValue;
-            }
-        }
-
-        return this.window[this.currentRelativeItemIndex];
+    private fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, count: number): number {
+        throw Errors.notYetImplemented();
     }
 
     private addMoreItemsToWindow(): bool {
-        Debug.assert(this.currentRelativeItemIndex >= this.windowCount);
-
         if (this.isPastSourceEnd()) {
             return false;
         }
 
-        // First, make room for the new items.
-        this.tryShiftOrGrowTokenWindow();
+        // First, make room for the new items if we're out of room.
+        if (this.windowCount >= this.window.length) {
+            this.tryShiftOrGrowTokenWindow();
+        }
 
         var spaceAvailable = this.window.length - this.windowCount;
         var amountFetched = this.fetchMoreItems(this.windowAbsoluteStartIndex + this.windowCount, this.window, this.windowCount, spaceAvailable);
@@ -132,19 +77,9 @@ class SlidingWindow {
         return true;
     }
 
-    private fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, count: number): number {
-        throw Errors.notYetImplemented();
-    }
-
-    private isPastSourceEnd(): bool {
-        throw Errors.notYetImplemented();
-    }
-
     private tryShiftOrGrowTokenWindow(): void {
-        Debug.assert(this.currentRelativeItemIndex >= this.windowCount);
-
         // We want to shift if our current item is past the halfway point of the current item window.
-        var currentIndexIsPastWindowHalfwayPoint = this.currentRelativeItemIndex > (this.window.length >> 1);
+        var currentIndexIsPastWindowHalfwayPoint = this.currentRelativeItemIndex > (this.window.length >>> 1);
 
         // However, we can only shift if we have no outstanding rewind points.  Or, if we have an 
         // outstanding rewind point, that it points to some point after the start of the window.
@@ -168,7 +103,6 @@ class SlidingWindow {
             var shiftCount = this.windowCount - shiftStartIndex;
 
             Debug.assert(shiftStartIndex > 0);
-            Debug.assert(shiftCount > 0);
             if (shiftCount > 0) {
                 ArrayUtilities.copy(this.window, shiftStartIndex, this.window, 0, shiftCount);
             }
@@ -184,7 +118,88 @@ class SlidingWindow {
         }
         else {
             // Grow the exisitng array.
-            this.window[this.window.length * 2 - 1] = this.defaultValue;
+            // this.window[this.window.length * 2 - 1] = this.defaultValue;
+            ArrayUtilities.grow(this.window, this.window.length * 2, this.defaultValue);
         }
+    }
+
+    public getRewindPoint(): any {
+        // Find the absolute index of this rewind point.  i.e. it's the index as if we had an 
+        // array containing *all* tokens.  
+        var absoluteIndex = this.windowAbsoluteStartIndex + this.currentRelativeItemIndex;
+        if (this.outstandingRewindPoints === 0) {
+            // If this is the first rewind point, then store off this index.  We will ensure that
+            // we never shift the window past this point.
+            this.firstRewindAbsoluteIndex = absoluteIndex;
+        }
+
+        this.outstandingRewindPoints++;
+        var rewindPoint = this.rewindPoints.length === 0
+            ? <IRewindPoint>{}
+            : this.rewindPoints.pop();
+
+        rewindPoint.rewindPoints = this.outstandingRewindPoints;
+        rewindPoint.absoluteIndex = absoluteIndex;
+
+        this.storeAdditionalRewindState(rewindPoint);
+
+        return rewindPoint;
+    }
+
+    public rewind(rewindPoint: IRewindPoint): void {
+        // Ensure that these are rewound in the right order.
+        Debug.assert(this.outstandingRewindPoints === rewindPoint.rewindPoints);
+
+        // The rewind point shows which absolute item we want to rewind to.  Get the relative 
+        // index in the actual array that we want to point to.
+        var relativeIndex = rewindPoint.absoluteIndex - this.windowAbsoluteStartIndex;
+
+        // Make sure we haven't screwed anything up.
+        Debug.assert(relativeIndex >= 0 && relativeIndex < this.windowCount);
+
+        // Set ourselves back to that point.
+        this.currentRelativeItemIndex = relativeIndex;
+
+        this.restoreStateFromRewindPoint(rewindPoint);
+    }
+
+    public releaseRewindPoint(rewindPoint: IRewindPoint): void {
+        // Ensure that these are released in the right order.
+        Debug.assert(this.outstandingRewindPoints == rewindPoint.rewindPoints);
+
+        this.outstandingRewindPoints--;
+        if (this.outstandingRewindPoints == 0) {
+            // If we just released the last outstanding rewind point, then we no longer need to 
+            // 'fix' the token window so it can't move forward.  Set the index to -1 so that we
+            // can shift things over the next time we read past the end of the array.
+            this.firstRewindAbsoluteIndex = -1;
+        }
+
+        this.rewindPoints.push(rewindPoint);
+    }
+
+    public currentItem(): any {
+        if (this.currentRelativeItemIndex >= this.windowCount) {
+            if (!this.addMoreItemsToWindow()) {
+                return this.defaultValue;
+            }
+        }
+
+        return this.window[this.currentRelativeItemIndex];
+    }
+
+    public peekItemN(n: number): any {
+        Debug.assert(n >= 0);
+        while (this.currentRelativeItemIndex + n >= this.windowCount) {
+            if (!this.addMoreItemsToWindow()) {
+                return this.defaultValue;
+            }
+        }
+        
+        return this.window[this.currentRelativeItemIndex + n];
+    }
+
+    public moveToNextItem(): void {
+        this.currentRelativeItemIndex++;
     }
 }

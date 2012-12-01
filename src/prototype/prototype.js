@@ -527,15 +527,1227 @@ var ParseOptions = (function () {
     };
     return ParseOptions;
 })();
-var ParserRewindPoint = (function () {
-    function ParserRewindPoint(resetCount, absoluteIndex, previousToken, isInStrictMode) {
-        this.resetCount = resetCount;
-        this.absoluteIndex = absoluteIndex;
-        this.previousToken = previousToken;
-        this.isInStrictMode = isInStrictMode;
-    }
-    return ParserRewindPoint;
+var ScannerTokenInfo = (function () {
+    function ScannerTokenInfo() { }
+    return ScannerTokenInfo;
 })();
+var ScannerTriviaInfo = (function () {
+    function ScannerTriviaInfo() { }
+    return ScannerTriviaInfo;
+})();
+var Scanner = (function () {
+    function Scanner(text, languageVersion, stringTable) {
+        this._text = null;
+        this.builder = [];
+        this.identifierBuffer = [];
+        this.identifierLength = 0;
+        this.stringTable = null;
+        this.errors = [];
+        this.textWindow = null;
+        this.previousTokenKind = 0 /* None */ ;
+        this.previousTokenKeywordKind = 0 /* None */ ;
+        this.tokenInfo = new ScannerTokenInfo();
+        this.leadingTriviaInfo = new ScannerTriviaInfo();
+        this.trailingTriviaInfo = new ScannerTriviaInfo();
+        Contract.throwIfNull(stringTable);
+        this._text = text;
+        this.identifierBuffer = ArrayUtilities.createArray(32);
+        this.stringTable = stringTable;
+        this.textWindow = new SlidingTextWindow(text, stringTable);
+        this.languageVersion = languageVersion;
+    }
+    Scanner.create = function create(text, languageVersion) {
+        return new Scanner(text, languageVersion, new StringTable());
+    }
+    Scanner.prototype.addSimpleDiagnosticInfo = function (code) {
+        var args = [];
+        for (var _i = 0; _i < (arguments.length - 1); _i++) {
+            args[_i] = arguments[_i + 1];
+        }
+        this.addDiagnosticInfo(this.makeSimpleDiagnosticInfo(code, args));
+    };
+    Scanner.prototype.addDiagnosticInfo = function (error) {
+        if(this.errors === null) {
+            this.errors = [];
+        }
+        this.errors.push(error);
+    };
+    Scanner.prototype.makeSimpleDiagnosticInfo = function (code, args) {
+        return SyntaxDiagnosticInfo.create(code, args);
+    };
+    Scanner.prototype.scan = function () {
+        if(this.errors.length > 0) {
+            this.errors = [];
+        }
+        var start = this.textWindow.position();
+        this.scanTriviaInfo(this.textWindow.position() > 0, false, this.leadingTriviaInfo);
+        this.scanSyntaxToken();
+        this.scanTriviaInfo(true, true, this.trailingTriviaInfo);
+        this.previousTokenKind = this.tokenInfo.Kind;
+        this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
+        return this.createToken(start);
+    };
+    Scanner.prototype.createToken = function (start) {
+        return SyntaxTokenFactory.create(start, this.leadingTriviaInfo, this.tokenInfo, this.trailingTriviaInfo, this.errors.length == 0 ? null : this.errors);
+    };
+    Scanner.prototype.scanTriviaInfo = function (afterFirstToken, isTrailing, triviaInfo) {
+        triviaInfo.Width = 0;
+        triviaInfo.HasComment = false;
+        triviaInfo.HasNewLine = false;
+        while(true) {
+            var ch = this.textWindow.peekCharAtPosition();
+            switch(ch) {
+                case 32 /* space */ :
+                case 9 /* tab */ :
+                case 11 /* verticalTab */ :
+                case 12 /* formFeed */ :
+                case 160 /* nonBreakingSpace */ :
+                case 65279 /* byteOrderMark */ : {
+                    this.textWindow.advanceChar1();
+                    triviaInfo.Width++;
+                    continue;
+
+                }
+            }
+            if(ch === 47 /* slash */ ) {
+                var ch2 = this.textWindow.peekCharN(1);
+                if(ch2 === 47 /* slash */ ) {
+                    this.textWindow.advanceChar1();
+                    this.textWindow.advanceChar1();
+                    triviaInfo.Width += 2;
+                    triviaInfo.HasComment = true;
+                    this.scanSingleLineCommentTrivia(triviaInfo);
+                    continue;
+                }
+                if(ch2 === 42 /* asterisk */ ) {
+                    this.textWindow.advanceChar1();
+                    this.textWindow.advanceChar1();
+                    triviaInfo.Width += 2;
+                    triviaInfo.HasComment = true;
+                    this.scanMultiLineCommentTrivia(triviaInfo);
+                    continue;
+                }
+                return;
+            }
+            if(this.isNewLineCharacter(ch)) {
+                triviaInfo.HasNewLine = true;
+                if(ch === 13 /* carriageReturn */ ) {
+                    this.textWindow.advanceChar1();
+                    triviaInfo.Width++;
+                }
+                ch = this.textWindow.peekCharAtPosition();
+                if(ch === 10 /* newLine */ ) {
+                    this.textWindow.advanceChar1();
+                    triviaInfo.Width++;
+                }
+                if(isTrailing) {
+                    return;
+                }
+                continue;
+            }
+            return;
+        }
+    };
+    Scanner.prototype.isNewLineCharacter = function (ch) {
+        switch(ch) {
+            case 13 /* carriageReturn */ :
+            case 10 /* newLine */ :
+            case 8233 /* paragraphSeparator */ :
+            case 8232 /* lineSeparator */ : {
+                return true;
+
+            }
+            default: {
+                return false;
+
+            }
+        }
+    };
+    Scanner.prototype.scanSingleLineCommentTrivia = function (triviaInfo) {
+        while(true) {
+            var ch = this.textWindow.peekCharAtPosition();
+            if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
+                return;
+            }
+            this.textWindow.advanceChar1();
+            triviaInfo.Width++;
+        }
+    };
+    Scanner.prototype.scanMultiLineCommentTrivia = function (triviaInfo) {
+        while(true) {
+            var ch = this.textWindow.peekCharAtPosition();
+            if(ch === 0 /* nullCharacter */ ) {
+                return;
+            }
+            if(ch === 42 /* asterisk */  && this.textWindow.peekCharN(1) === 47 /* slash */ ) {
+                this.textWindow.advanceChar1();
+                this.textWindow.advanceChar1();
+                triviaInfo.Width += 2;
+                return;
+            }
+            this.textWindow.advanceChar1();
+            triviaInfo.Width++;
+        }
+    };
+    Scanner.prototype.scanSyntaxToken = function () {
+        this.textWindow.start();
+        this.tokenInfo.Kind = 0 /* None */ ;
+        this.tokenInfo.KeywordKind = 0 /* None */ ;
+        this.tokenInfo.Text = null;
+        var character = this.textWindow.peekCharAtPosition();
+        switch(character) {
+            case 34 /* doubleQuote */ :
+            case 39 /* singleQuote */ : {
+                this.scanStringLiteral();
+                return;
+
+            }
+            case 47 /* slash */ : {
+                this.scanSlashToken();
+                return;
+
+            }
+            case 46 /* dot */ : {
+                this.scanDotToken();
+                return;
+
+            }
+            case 45 /* minus */ : {
+                this.scanMinusToken();
+                return;
+
+            }
+            case 33 /* exclamation */ : {
+                this.scanExclamationToken();
+                return;
+
+            }
+            case 61 /* equals */ : {
+                this.scanEqualsToken();
+                return;
+
+            }
+            case 124 /* bar */ : {
+                this.scanBarToken();
+                return;
+
+            }
+            case 42 /* asterisk */ : {
+                this.scanAsteriskToken();
+                return;
+
+            }
+            case 43 /* plus */ : {
+                this.scanPlusToken();
+                return;
+
+            }
+            case 37 /* percent */ : {
+                this.scanPercentToken();
+                return;
+
+            }
+            case 38 /* ampersand */ : {
+                this.scanAmpersandToken();
+                return;
+
+            }
+            case 94 /* caret */ : {
+                this.scanCaretToken();
+                return;
+
+            }
+            case 60 /* lessThan */ : {
+                this.scanLessThanToken();
+                return;
+
+            }
+            case 62 /* greaterThan */ : {
+                this.scanGreaterThanToken();
+                return;
+
+            }
+            case 44 /* comma */ : {
+                this.advanceAndSetTokenKind(72 /* CommaToken */ );
+                return;
+
+            }
+            case 58 /* colon */ : {
+                this.advanceAndSetTokenKind(99 /* ColonToken */ );
+                return;
+
+            }
+            case 59 /* semicolon */ : {
+                this.advanceAndSetTokenKind(71 /* SemicolonToken */ );
+                return;
+
+            }
+            case 126 /* tilde */ : {
+                this.advanceAndSetTokenKind(95 /* TildeToken */ );
+                return;
+
+            }
+            case 40 /* openParen */ : {
+                this.advanceAndSetTokenKind(65 /* OpenParenToken */ );
+                return;
+
+            }
+            case 41 /* closeParen */ : {
+                this.advanceAndSetTokenKind(66 /* CloseParenToken */ );
+                return;
+
+            }
+            case 123 /* openBrace */ : {
+                this.advanceAndSetTokenKind(63 /* OpenBraceToken */ );
+                return;
+
+            }
+            case 125 /* closeBrace */ : {
+                this.advanceAndSetTokenKind(64 /* CloseBraceToken */ );
+                return;
+
+            }
+            case 91 /* openBracket */ : {
+                this.advanceAndSetTokenKind(67 /* OpenBracketToken */ );
+                return;
+
+            }
+            case 93 /* closeBracket */ : {
+                this.advanceAndSetTokenKind(68 /* CloseBracketToken */ );
+                return;
+
+            }
+            case 63 /* question */ : {
+                this.advanceAndSetTokenKind(98 /* QuestionToken */ );
+                return;
+
+            }
+            case 0 /* nullCharacter */ : {
+                this.tokenInfo.Kind = 114 /* EndOfFileToken */ ;
+                this.tokenInfo.Text = "";
+                return;
+
+            }
+        }
+        if(character >= 97 /* a */  && character <= 122 /* z */ ) {
+            this.scanIdentifierOrKeyword();
+            return;
+        }
+        if(this.isIdentifierStart(character)) {
+            this.scanIdentifier();
+            return;
+        }
+        if(this.isNumericLiteralStart(character)) {
+            this.scanNumericLiteral();
+            return;
+        }
+        this.scanDefaultCharacter(character, false);
+    };
+    Scanner.prototype.scanNumericLiteral = function () {
+        if(this.isHexNumericLiteral()) {
+            this.scanHexNumericLiteral();
+        } else {
+            this.scanDecimalNumericLiteral();
+        }
+    };
+    Scanner.prototype.scanDecimalNumericLiteral = function () {
+        var start = this.textWindow.position();
+        while(CharacterInfo.isDecimalDigit(this.textWindow.peekCharAtPosition())) {
+            this.textWindow.advanceChar1();
+        }
+        if(this.textWindow.peekCharAtPosition() === 46 /* dot */ ) {
+            this.textWindow.advanceChar1();
+        }
+        while(CharacterInfo.isDecimalDigit(this.textWindow.peekCharAtPosition())) {
+            this.textWindow.advanceChar1();
+        }
+        var ch = this.textWindow.peekCharAtPosition();
+        if(ch === 101 /* e */  || ch === 69 /* E */ ) {
+            this.textWindow.advanceChar1();
+            ch = this.textWindow.peekCharAtPosition();
+            if(ch === 45 /* minus */  || ch === 43 /* plus */ ) {
+                if(CharacterInfo.isDecimalDigit(this.textWindow.peekCharN(1))) {
+                    this.textWindow.advanceChar1();
+                }
+            }
+        }
+        while(CharacterInfo.isDecimalDigit(this.textWindow.peekCharAtPosition())) {
+            this.textWindow.advanceChar1();
+        }
+        var end = this.textWindow.position();
+        this.tokenInfo.Text = this.textWindow.substring(start, end, false);
+        this.tokenInfo.Kind = 7 /* NumericLiteral */ ;
+    };
+    Scanner.prototype.scanHexNumericLiteral = function () {
+        var start = this.textWindow.position();
+        Debug.assert(this.isHexNumericLiteral());
+        this.textWindow.advanceChar1();
+        this.textWindow.advanceChar1();
+        while(CharacterInfo.isHexDigit(this.textWindow.peekCharAtPosition())) {
+            this.textWindow.advanceChar1();
+        }
+        var end = this.textWindow.position();
+        this.tokenInfo.Text = this.textWindow.substring(start, end, false);
+        this.tokenInfo.Kind = 7 /* NumericLiteral */ ;
+    };
+    Scanner.prototype.isHexNumericLiteral = function () {
+        if(this.textWindow.peekCharAtPosition() === 48 /* _0 */ ) {
+            var ch = this.textWindow.peekCharN(1);
+            return ch === 120 /* x */  || ch === 88 /* X */ ;
+        }
+        return false;
+    };
+    Scanner.prototype.isNumericLiteralStart = function (ch) {
+        if(CharacterInfo.isDecimalDigit(ch)) {
+            return true;
+        }
+        return this.isDotPrefixedNumericLiteral();
+    };
+    Scanner.prototype.scanIdentifier = function () {
+        var start = this.textWindow.position();
+        while(this.isIdentifierPart()) {
+            this.scanCharOrUnicodeEscape(this.errors);
+        }
+        var end = this.textWindow.position();
+        this.tokenInfo.Text = this.textWindow.substring(start, end, true);
+        this.tokenInfo.Kind = 5 /* IdentifierNameToken */ ;
+    };
+    Scanner.prototype.isIdentifierStart_Fast = function (character) {
+        if((character >= 97 /* a */  && character <= 122 /* z */ ) || (character >= 65 /* A */  && character <= 90 /* Z */ ) || character === 95 /* _ */  || character === 36 /* $ */ ) {
+            return true;
+        }
+        return false;
+    };
+    Scanner.prototype.isIdentifierStart_Slow = function () {
+        var ch = this.peekCharOrUnicodeEscape();
+        return Unicode.isIdentifierStart(ch, this.languageVersion);
+    };
+    Scanner.prototype.isIdentifierStart = function (character) {
+        return this.isIdentifierStart_Fast(character) || this.isIdentifierStart_Slow();
+    };
+    Scanner.prototype.isIdentifierPart_Fast = function () {
+        var character = this.textWindow.peekCharAtPosition();
+        if(this.isIdentifierStart_Fast(character)) {
+            return true;
+        }
+        return character >= 48 /* _0 */  && character <= 57 /* _9 */ ;
+    };
+    Scanner.prototype.isIdentifierPart_Slow = function () {
+        if(this.isIdentifierStart_Slow()) {
+            return true;
+        }
+        var ch = this.peekCharOrUnicodeEscape();
+        return Unicode.isIdentifierPart(ch, this.languageVersion);
+    };
+    Scanner.prototype.isIdentifierPart = function () {
+        return this.isIdentifierPart_Fast() || this.isIdentifierPart_Slow();
+    };
+    Scanner.prototype.scanIdentifierOrKeyword = function () {
+        this.scanIdentifier();
+        var kind = SyntaxFacts.getTokenKind(this.tokenInfo.Text);
+        if(kind != 0 /* None */ ) {
+            this.tokenInfo.KeywordKind = kind;
+        }
+    };
+    Scanner.prototype.advanceAndSetTokenKind = function (kind) {
+        this.textWindow.advanceChar1();
+        this.tokenInfo.Kind = kind;
+    };
+    Scanner.prototype.scanGreaterThanToken = function () {
+        this.textWindow.advanceChar1();
+        var character = this.textWindow.peekCharAtPosition();
+        if(character === 61 /* equals */ ) {
+            this.textWindow.advanceChar1();
+            this.tokenInfo.Kind = 76 /* GreaterThanEqualsToken */ ;
+        } else {
+            if(character === 62 /* greaterThan */ ) {
+                this.scanGreaterThanGreaterThanToken();
+            } else {
+                this.tokenInfo.Kind = 74 /* GreaterThanToken */ ;
+            }
+        }
+    };
+    Scanner.prototype.scanGreaterThanGreaterThanToken = function () {
+        this.textWindow.advanceChar1();
+        var character = this.textWindow.peekCharAtPosition();
+        if(character === 61 /* equals */ ) {
+            this.textWindow.advanceChar1();
+            this.tokenInfo.Kind = 106 /* GreaterThanGreaterThanEqualsToken */ ;
+        } else {
+            if(character === 62 /* greaterThan */ ) {
+                this.scanGreaterThanGreaterThanGreaterThanToken();
+            } else {
+                this.tokenInfo.Kind = 89 /* GreaterThanGreaterThanToken */ ;
+            }
+        }
+    };
+    Scanner.prototype.scanGreaterThanGreaterThanGreaterThanToken = function () {
+        this.textWindow.advanceChar1();
+        var character = this.textWindow.peekCharAtPosition();
+        if(character === 61 /* equals */ ) {
+            this.textWindow.advanceChar1();
+            this.tokenInfo.Kind = 107 /* GreaterThanGreaterThanGreaterThanEqualsToken */ ;
+        } else {
+            this.tokenInfo.Kind = 90 /* GreaterThanGreaterThanGreaterThanToken */ ;
+        }
+    };
+    Scanner.prototype.scanLessThanToken = function () {
+        this.textWindow.advanceChar1();
+        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
+            this.textWindow.advanceChar1();
+            this.tokenInfo.Kind = 75 /* LessThanEqualsToken */ ;
+        } else {
+            if(this.textWindow.peekCharAtPosition() === 60 /* lessThan */ ) {
+                this.textWindow.advanceChar1();
+                if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
+                    this.textWindow.advanceChar1();
+                    this.tokenInfo.Kind = 105 /* LessThanLessThanEqualsToken */ ;
+                } else {
+                    this.tokenInfo.Kind = 88 /* LessThanLessThanToken */ ;
+                }
+            } else {
+                this.tokenInfo.Kind = 73 /* LessThanToken */ ;
+            }
+        }
+    };
+    Scanner.prototype.scanBarToken = function () {
+        this.textWindow.advanceChar1();
+        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
+            this.textWindow.advanceChar1();
+            this.tokenInfo.Kind = 109 /* BarEqualsToken */ ;
+        } else {
+            if(this.textWindow.peekCharAtPosition() === 124 /* bar */ ) {
+                this.textWindow.advanceChar1();
+                this.tokenInfo.Kind = 97 /* BarBarToken */ ;
+            } else {
+                this.tokenInfo.Kind = 92 /* BarToken */ ;
+            }
+        }
+    };
+    Scanner.prototype.scanCaretToken = function () {
+        this.textWindow.advanceChar1();
+        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
+            this.textWindow.advanceChar1();
+            this.tokenInfo.Kind = 110 /* CaretEqualsToken */ ;
+        } else {
+            this.tokenInfo.Kind = 93 /* CaretToken */ ;
+        }
+    };
+    Scanner.prototype.scanAmpersandToken = function () {
+        this.textWindow.advanceChar1();
+        var character = this.textWindow.peekCharAtPosition();
+        if(character === 61 /* equals */ ) {
+            this.textWindow.advanceChar1();
+            this.tokenInfo.Kind = 108 /* AmpersandEqualsToken */ ;
+        } else {
+            if(this.textWindow.peekCharAtPosition() === 38 /* ampersand */ ) {
+                this.textWindow.advanceChar1();
+                this.tokenInfo.Kind = 96 /* AmpersandAmpersandToken */ ;
+            } else {
+                this.tokenInfo.Kind = 91 /* AmpersandToken */ ;
+            }
+        }
+    };
+    Scanner.prototype.scanPercentToken = function () {
+        this.textWindow.advanceChar1();
+        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
+            this.textWindow.advanceChar1();
+            this.tokenInfo.Kind = 104 /* PercentEqualsToken */ ;
+        } else {
+            this.tokenInfo.Kind = 85 /* PercentToken */ ;
+        }
+    };
+    Scanner.prototype.scanMinusToken = function () {
+        this.textWindow.advanceChar1();
+        var character = this.textWindow.peekCharAtPosition();
+        if(character === 61 /* equals */ ) {
+            this.textWindow.advanceChar1();
+            this.tokenInfo.Kind = 102 /* MinusEqualsToken */ ;
+        } else {
+            if(character === 45 /* minus */ ) {
+                this.textWindow.advanceChar1();
+                this.tokenInfo.Kind = 87 /* MinusMinusToken */ ;
+            } else {
+                this.tokenInfo.Kind = 83 /* MinusToken */ ;
+            }
+        }
+    };
+    Scanner.prototype.scanPlusToken = function () {
+        this.textWindow.advanceChar1();
+        var character = this.textWindow.peekCharAtPosition();
+        if(character === 61 /* equals */ ) {
+            this.textWindow.advanceChar1();
+            this.tokenInfo.Kind = 101 /* PlusEqualsToken */ ;
+        } else {
+            if(character === 43 /* plus */ ) {
+                this.textWindow.advanceChar1();
+                this.tokenInfo.Kind = 86 /* PlusPlusToken */ ;
+            } else {
+                this.tokenInfo.Kind = 82 /* PlusToken */ ;
+            }
+        }
+    };
+    Scanner.prototype.scanAsteriskToken = function () {
+        this.textWindow.advanceChar1();
+        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
+            this.textWindow.advanceChar1();
+            this.tokenInfo.Kind = 103 /* AsteriskEqualsToken */ ;
+        } else {
+            this.tokenInfo.Kind = 84 /* AsteriskToken */ ;
+        }
+    };
+    Scanner.prototype.scanEqualsToken = function () {
+        this.textWindow.advanceChar1();
+        var character = this.textWindow.peekCharAtPosition();
+        if(character === 61 /* equals */ ) {
+            this.textWindow.advanceChar1();
+            if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
+                this.textWindow.advanceChar1();
+                this.tokenInfo.Kind = 80 /* EqualsEqualsEqualsToken */ ;
+            } else {
+                this.tokenInfo.Kind = 77 /* EqualsEqualsToken */ ;
+            }
+        } else {
+            if(character === 62 /* greaterThan */ ) {
+                this.textWindow.advanceChar1();
+                this.tokenInfo.Kind = 78 /* EqualsGreaterThanToken */ ;
+            } else {
+                this.tokenInfo.Kind = 100 /* EqualsToken */ ;
+            }
+        }
+    };
+    Scanner.prototype.isDotPrefixedNumericLiteral = function () {
+        if(this.textWindow.peekCharAtPosition() === 46 /* dot */ ) {
+            var ch = this.textWindow.peekCharN(1);
+            return CharacterInfo.isDecimalDigit(ch);
+        }
+        return false;
+    };
+    Scanner.prototype.scanDotToken = function () {
+        if(this.isDotPrefixedNumericLiteral()) {
+            this.scanNumericLiteral();
+            return;
+        }
+        this.textWindow.advanceChar1();
+        if(this.textWindow.peekCharAtPosition() === 46 /* dot */  && this.textWindow.peekCharN(1) === 46 /* dot */ ) {
+            this.textWindow.advanceChar1();
+            this.textWindow.advanceChar1();
+            this.tokenInfo.Kind = 70 /* DotDotDotToken */ ;
+        } else {
+            this.tokenInfo.Kind = 69 /* DotToken */ ;
+        }
+    };
+    Scanner.prototype.scanSlashToken = function () {
+        if(this.tryScanRegularExpressionToken()) {
+            return;
+        }
+        this.textWindow.advanceChar1();
+        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
+            this.textWindow.advanceChar1();
+            this.tokenInfo.Kind = 112 /* SlashEqualsToken */ ;
+        } else {
+            this.tokenInfo.Kind = 111 /* SlashToken */ ;
+        }
+    };
+    Scanner.prototype.tryScanRegularExpressionToken = function () {
+        switch(this.previousTokenKind) {
+            case 5 /* IdentifierNameToken */ : {
+                if(this.previousTokenKeywordKind == 0 /* None */ ) {
+                    return false;
+                }
+                break;
+
+            }
+            case 8 /* StringLiteral */ :
+            case 6 /* RegularExpressionLiteral */ :
+            case 29 /* ThisKeyword */ :
+            case 86 /* PlusPlusToken */ :
+            case 87 /* MinusMinusToken */ :
+            case 66 /* CloseParenToken */ :
+            case 68 /* CloseBracketToken */ :
+            case 64 /* CloseBraceToken */ :
+            case 31 /* TrueKeyword */ :
+            case 18 /* FalseKeyword */ : {
+                return false;
+
+            }
+        }
+        Debug.assert(this.textWindow.peekCharAtPosition() === 47 /* slash */ );
+        var start = this.textWindow.position();
+        this.textWindow.advanceChar1();
+        var skipNextSlash = false;
+        while(true) {
+            var ch = this.textWindow.peekCharAtPosition();
+            if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
+                this.textWindow.reset(start);
+                return false;
+            }
+            this.textWindow.advanceChar1();
+            if(!skipNextSlash && ch === 47 /* slash */ ) {
+                break;
+            } else {
+                if(!skipNextSlash && ch === 92 /* backslash */ ) {
+                    skipNextSlash = true;
+                    continue;
+                }
+            }
+            skipNextSlash = false;
+        }
+        while(this.isIdentifierPart()) {
+            this.scanCharOrUnicodeEscape(this.errors);
+        }
+        var end = this.textWindow.position();
+        this.tokenInfo.Kind = 6 /* RegularExpressionLiteral */ ;
+        this.tokenInfo.Text = this.textWindow.substring(start, end, false);
+        return true;
+    };
+    Scanner.prototype.scanExclamationToken = function () {
+        this.textWindow.advanceChar1();
+        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
+            this.textWindow.advanceChar1();
+            if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
+                this.textWindow.advanceChar1();
+                this.tokenInfo.Kind = 81 /* ExclamationEqualsEqualsToken */ ;
+            } else {
+                this.tokenInfo.Kind = 79 /* ExclamationEqualsToken */ ;
+            }
+        } else {
+            this.tokenInfo.Kind = 94 /* ExclamationToken */ ;
+        }
+    };
+    Scanner.prototype.scanDefaultCharacter = function (character, isEscaped) {
+        var start = this.textWindow.position();
+        this.textWindow.advanceChar1();
+        this.tokenInfo.Text = this.textWindow.substring(start, start + 1, true);
+        this.tokenInfo.Kind = 113 /* ErrorToken */ ;
+        this.addSimpleDiagnosticInfo(1 /* Unexpected_character_0 */ , this.tokenInfo.Text);
+    };
+    Scanner.prototype.skipEscapeSequence = function () {
+        Debug.assert(this.textWindow.peekCharAtPosition() === 92 /* backslash */ );
+        var start = this.textWindow.position();
+        this.textWindow.advanceChar1();
+        var ch = this.textWindow.peekCharAtPosition();
+        this.textWindow.advanceChar1();
+        switch(ch) {
+            case 39 /* singleQuote */ :
+            case 34 /* doubleQuote */ :
+            case 92 /* backslash */ : {
+                return;
+
+            }
+            case 48 /* _0 */ : {
+                return;
+
+            }
+            case 98 /* b */ : {
+                return;
+
+            }
+            case 102 /* f */ : {
+                return;
+
+            }
+            case 110 /* n */ : {
+                return;
+
+            }
+            case 114 /* r */ : {
+                return;
+
+            }
+            case 116 /* t */ : {
+                return;
+
+            }
+            case 118 /* v */ : {
+                return;
+
+            }
+            case 120 /* x */ :
+            case 117 /* u */ : {
+                this.textWindow.reset(start);
+                var value = this.scanUnicodeOrHexEscape(this.errors);
+                return;
+
+            }
+            case 13 /* carriageReturn */ : {
+                if(this.textWindow.peekCharAtPosition() === 10 /* newLine */ ) {
+                    this.textWindow.advanceChar1();
+                }
+                return;
+
+            }
+            case 10 /* newLine */ :
+            case 8233 /* paragraphSeparator */ :
+            case 8232 /* lineSeparator */ : {
+                return;
+
+            }
+            default: {
+                return;
+
+            }
+        }
+    };
+    Scanner.prototype.scanStringLiteral = function () {
+        var quoteCharacter = this.textWindow.peekCharAtPosition();
+        Debug.assert(quoteCharacter === 39 /* singleQuote */  || quoteCharacter === 34 /* doubleQuote */ );
+        var start = this.textWindow.position();
+        this.textWindow.advanceChar1();
+        while(true) {
+            var ch = this.textWindow.peekCharAtPosition();
+            if(ch === 92 /* backslash */ ) {
+                this.skipEscapeSequence();
+            } else {
+                if(ch === quoteCharacter) {
+                    this.textWindow.advanceChar1();
+                    break;
+                } else {
+                    if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
+                        this.addSimpleDiagnosticInfo(2 /* Missing_closing_quote_character */ );
+                        break;
+                    } else {
+                        this.textWindow.advanceChar1();
+                    }
+                }
+            }
+        }
+        var end = this.textWindow.position();
+        this.tokenInfo.Text = this.textWindow.substring(start, end, true);
+        this.tokenInfo.Kind = 8 /* StringLiteral */ ;
+    };
+    Scanner.prototype.isUnicodeOrHexEscape = function () {
+        return this.isUnicodeEscape() || this.isHexEscape();
+    };
+    Scanner.prototype.isUnicodeEscape = function () {
+        if(this.textWindow.peekCharAtPosition() === 92 /* backslash */ ) {
+            var ch2 = this.textWindow.peekCharN(1);
+            if(ch2 === 117 /* u */ ) {
+                return true;
+            }
+        }
+        return false;
+    };
+    Scanner.prototype.isHexEscape = function () {
+        if(this.textWindow.peekCharAtPosition() === 92 /* backslash */ ) {
+            var ch2 = this.textWindow.peekCharN(1);
+            if(ch2 === 120 /* x */ ) {
+                return true;
+            }
+        }
+        return false;
+    };
+    Scanner.prototype.peekCharOrUnicodeOrHexEscape = function () {
+        if(this.isUnicodeOrHexEscape()) {
+            return this.peekUnicodeOrHexEscape();
+        } else {
+            return this.textWindow.peekCharAtPosition();
+        }
+    };
+    Scanner.prototype.peekCharOrUnicodeEscape = function () {
+        if(this.isUnicodeEscape()) {
+            return this.peekUnicodeOrHexEscape();
+        } else {
+            return this.textWindow.peekCharAtPosition();
+        }
+    };
+    Scanner.prototype.peekUnicodeOrHexEscape = function () {
+        var position = this.textWindow.position();
+        var ch = this.scanUnicodeOrHexEscape(null);
+        this.textWindow.reset(position);
+        return ch;
+    };
+    Scanner.prototype.scanCharOrUnicodeEscape = function (errors) {
+        var ch = this.textWindow.peekCharAtPosition();
+        if(ch === 92 /* backslash */ ) {
+            var ch2 = this.textWindow.peekCharN(1);
+            if(ch2 === 117 /* u */ ) {
+                return this.scanUnicodeOrHexEscape(errors);
+            }
+        }
+        this.textWindow.advanceChar1();
+        return ch;
+    };
+    Scanner.prototype.scanCharOrUnicodeOrHexEscape = function (errors) {
+        var ch = this.textWindow.peekCharAtPosition();
+        if(ch === 92 /* backslash */ ) {
+            var ch2 = this.textWindow.peekCharN(1);
+            if(ch2 === 117 /* u */  || ch2 === 120 /* x */ ) {
+                return this.scanUnicodeOrHexEscape(errors);
+            }
+        }
+        this.textWindow.advanceChar1();
+        return ch;
+    };
+    Scanner.prototype.scanUnicodeOrHexEscape = function (errors) {
+        var start = this.textWindow.position();
+        var character = this.textWindow.peekCharAtPosition();
+        Debug.assert(character === 92 /* backslash */ );
+        this.textWindow.advanceChar1();
+        character = this.textWindow.peekCharAtPosition();
+        Debug.assert(character === 117 /* u */  || character === 120 /* x */ );
+        var intChar = 0;
+        this.textWindow.advanceChar1();
+        var count = character === 117 /* u */  ? 4 : 2;
+        for(var i = 0; i < count; i++) {
+            var ch2 = this.textWindow.peekCharAtPosition();
+            if(!CharacterInfo.isHexDigit(ch2)) {
+                if(errors !== null) {
+                    var end = this.textWindow.position();
+                    var info = this.createIllegalEscapeDiagnostic(start, end);
+                    errors.push(info);
+                }
+                break;
+            }
+            intChar = (intChar << 4) + CharacterInfo.hexValue(ch2);
+            this.textWindow.advanceChar1();
+        }
+        return intChar;
+    };
+    Scanner.prototype.createIllegalEscapeDiagnostic = function (start, end) {
+        return new SyntaxDiagnosticInfo(start, end - start, 0 /* Unrecognized_escape_sequence */ );
+    };
+    return Scanner;
+})();
+var SeparatedSyntaxList = (function () {
+    function SeparatedSyntaxList() { }
+    SeparatedSyntaxList.empty = {
+        toJSON: function (key) {
+            return [];
+        },
+        count: function () {
+            return 0;
+        },
+        syntaxNodeCount: function () {
+            return 0;
+        },
+        separatorCount: function () {
+            return 0;
+        },
+        itemAt: function (index) {
+            throw Errors.argumentOutOfRange("index");
+        },
+        syntaxNodeAt: function (index) {
+            throw Errors.argumentOutOfRange("index");
+        },
+        separatorAt: function (index) {
+            throw Errors.argumentOutOfRange("index");
+        }
+    };
+    SeparatedSyntaxList.toJSON = function toJSON(list) {
+        var result = [];
+        for(var i = 0; i < list.count(); i++) {
+            result.push(list.itemAt(i));
+        }
+        return result;
+    }
+    SeparatedSyntaxList.create = function create(nodes) {
+        if(nodes === null || nodes.length === 0) {
+            return SeparatedSyntaxList.empty;
+        }
+        for(var i = 0; i < nodes.length; i++) {
+            var item = nodes[i];
+            if(i % 2 === 0) {
+                Debug.assert(!SyntaxFacts.isTokenKind(item.kind()));
+            } else {
+                Debug.assert(SyntaxFacts.isTokenKind(item.kind()));
+            }
+        }
+        if(nodes.length === 1) {
+            var item = nodes[0];
+            var list;
+            list = {
+                toJSON: function (key) {
+                    return SeparatedSyntaxList.toJSON(list);
+                },
+                count: function () {
+                    return 1;
+                },
+                syntaxNodeCount: function () {
+                    return 1;
+                },
+                separatorCount: function () {
+                    return 0;
+                },
+                itemAt: function (index) {
+                    if(index !== 0) {
+                        throw Errors.argumentOutOfRange("index");
+                    }
+                    return item;
+                },
+                syntaxNodeAt: function (index) {
+                    if(index !== 0) {
+                        throw Errors.argumentOutOfRange("index");
+                    }
+                    return item;
+                },
+                separatorAt: function (index) {
+                    throw Errors.argumentOutOfRange("index");
+                }
+            };
+            return list;
+        }
+        var list;
+        list = {
+            toJSON: function (key) {
+                return SeparatedSyntaxList.toJSON(list);
+            },
+            count: function () {
+                return nodes.length;
+            },
+            syntaxNodeCount: function () {
+                return IntegerUtilities.integerDivide(nodes.length + 1, 2);
+            },
+            separatorCount: function () {
+                return IntegerUtilities.integerDivide(nodes.length, 2);
+            },
+            itemAt: function (index) {
+                if(index < 0 || index >= nodes.length) {
+                    throw Errors.argumentOutOfRange("index");
+                }
+                return nodes[index];
+            },
+            syntaxNodeAt: function (index) {
+                var value = index * 2;
+                if(value < 0 || value >= nodes.length) {
+                    throw Errors.argumentOutOfRange("index");
+                }
+                return nodes[value];
+            },
+            separatorAt: function (index) {
+                var value = index * 2 + 1;
+                if(value < 0 || value >= nodes.length) {
+                    throw Errors.argumentOutOfRange("index");
+                }
+                return nodes[value];
+            }
+        };
+        return list;
+    }
+    return SeparatedSyntaxList;
+})();
+var SlidingTextWindow = (function () {
+    function SlidingTextWindow(text, stringTable) {
+        this.characterWindowCount = 0;
+        this.currentRelativeCharacterIndex = 0;
+        this._characterWindowStart = 0;
+        this.characterWindowAbsoluteStartIndex = 0;
+        Debug.assert(stringTable !== null);
+        this.text = text;
+        this.stringTable = stringTable;
+        this.characterWindow = ArrayUtilities.createArray(2048);
+        Debug.assert(this.characterWindow !== null);
+    }
+    SlidingTextWindow.prototype.position = function () {
+        return this.currentRelativeCharacterIndex + this.characterWindowAbsoluteStartIndex;
+    };
+    SlidingTextWindow.prototype.start = function () {
+        this._characterWindowStart = this.currentRelativeCharacterIndex;
+    };
+    SlidingTextWindow.prototype.reset = function (position) {
+        var relative = position - this.characterWindowAbsoluteStartIndex;
+        if(relative >= 0 && relative <= this.characterWindowCount) {
+            this.currentRelativeCharacterIndex = relative;
+        } else {
+            var amountToRead = MathPrototype.min(this.text.length(), position + this.characterWindow.length) - position;
+            amountToRead = MathPrototype.max(amountToRead, 0);
+            if(amountToRead > 0) {
+                this.text.copyTo(position, this.characterWindow, 0, amountToRead);
+            }
+            this._characterWindowStart = 0;
+            this.currentRelativeCharacterIndex = 0;
+            this.characterWindowAbsoluteStartIndex = position;
+            this.characterWindowCount = amountToRead;
+        }
+    };
+    SlidingTextWindow.prototype.moreChars = function () {
+        if(this.currentRelativeCharacterIndex >= this.characterWindowCount) {
+            if(this.currentRelativeCharacterIndex + this.characterWindowAbsoluteStartIndex >= this.text.length()) {
+                return false;
+            }
+            if(this._characterWindowStart > (this.characterWindowCount >> 2)) {
+                ArrayUtilities.copy(this.characterWindow, this._characterWindowStart, this.characterWindow, 0, this.characterWindowCount - this._characterWindowStart);
+                this.characterWindowCount -= this._characterWindowStart;
+                this.currentRelativeCharacterIndex -= this._characterWindowStart;
+                this.characterWindowAbsoluteStartIndex += this._characterWindowStart;
+                this._characterWindowStart = 0;
+            }
+            if(this.characterWindowCount >= this.characterWindow.length) {
+                this.characterWindow[this.characterWindow.length * 2 - 1] = 0 /* nullCharacter */ ;
+            }
+            var amountToRead = MathPrototype.min(this.text.length() - (this.characterWindowAbsoluteStartIndex + this.characterWindowCount), this.characterWindow.length - this.characterWindowCount);
+            this.text.copyTo(this.characterWindowAbsoluteStartIndex + this.characterWindowCount, this.characterWindow, this.characterWindowCount, amountToRead);
+            this.characterWindowCount += amountToRead;
+            return amountToRead > 0;
+        }
+        return true;
+    };
+    SlidingTextWindow.prototype.advanceChar1 = function () {
+        this.currentRelativeCharacterIndex++;
+    };
+    SlidingTextWindow.prototype.advanceCharN = function (n) {
+        this.currentRelativeCharacterIndex += n;
+    };
+    SlidingTextWindow.prototype.peekCharAtPosition = function () {
+        if(this.currentRelativeCharacterIndex >= this.characterWindowCount) {
+            if(!this.moreChars()) {
+                return 0 /* nullCharacter */ ;
+            }
+        }
+        return this.characterWindow[this.currentRelativeCharacterIndex];
+    };
+    SlidingTextWindow.prototype.peekCharN = function (delta) {
+        var position = this.position();
+        this.advanceCharN(delta);
+        var ch = this.peekCharAtPosition();
+        this.reset(position);
+        return ch;
+    };
+    SlidingTextWindow.prototype.internCharArray = function (array, start, length) {
+        return this.stringTable.addCharArray(array, start, length);
+    };
+    SlidingTextWindow.prototype.substring = function (start, end, intern) {
+        return this.substr(start, end - start, intern);
+    };
+    SlidingTextWindow.prototype.substr = function (start, length, intern) {
+        var offset = start - this.characterWindowAbsoluteStartIndex;
+        if(intern) {
+            return this.internCharArray(this.characterWindow, offset, length);
+        } else {
+            return StringUtilities.fromCharCodeArray(this.characterWindow.slice(offset, offset + length));
+        }
+    };
+    return SlidingTextWindow;
+})();
+var SlidingWindow = (function () {
+    function SlidingWindow(defaultValue, defaultWindowSize) {
+        this.window = [];
+        this.windowCount = 0;
+        this.windowAbsoluteStartIndex = 0;
+        this.currentRelativeItemIndex = 0;
+        this.outstandingRewindPoints = 0;
+        this.firstRewindAbsoluteIndex = -1;
+        this.rewindPoints = [];
+        this.defaultValue = defaultValue;
+        this.window = ArrayUtilities.createArray(defaultWindowSize, defaultValue);
+    }
+    SlidingWindow.prototype.storeAdditionalRewindState = function (rewindPoint) {
+        throw Errors.notYetImplemented();
+    };
+    SlidingWindow.prototype.restoreStateFromRewindPoint = function (rewindPoint) {
+        throw Errors.notYetImplemented();
+    };
+    SlidingWindow.prototype.isPastSourceEnd = function () {
+        throw Errors.notYetImplemented();
+    };
+    SlidingWindow.prototype.fetchMoreItems = function (sourceIndex, window, destinationIndex, count) {
+        throw Errors.notYetImplemented();
+    };
+    SlidingWindow.prototype.addMoreItemsToWindow = function () {
+        if(this.isPastSourceEnd()) {
+            return false;
+        }
+        if(this.windowCount >= this.window.length) {
+            this.tryShiftOrGrowTokenWindow();
+        }
+        var spaceAvailable = this.window.length - this.windowCount;
+        var amountFetched = this.fetchMoreItems(this.windowAbsoluteStartIndex + this.windowCount, this.window, this.windowCount, spaceAvailable);
+        Debug.assert(amountFetched > 0);
+        this.windowCount += amountFetched;
+        return true;
+    };
+    SlidingWindow.prototype.tryShiftOrGrowTokenWindow = function () {
+        var currentIndexIsPastWindowHalfwayPoint = this.currentRelativeItemIndex > (this.window.length >>> 1);
+        var isAllowedToShift = this.firstRewindAbsoluteIndex === -1 || this.firstRewindAbsoluteIndex > this.windowAbsoluteStartIndex;
+        if(currentIndexIsPastWindowHalfwayPoint && isAllowedToShift) {
+            var shiftStartIndex = this.firstRewindAbsoluteIndex === -1 ? this.currentRelativeItemIndex : this.firstRewindAbsoluteIndex - this.windowAbsoluteStartIndex;
+            var shiftCount = this.windowCount - shiftStartIndex;
+            Debug.assert(shiftStartIndex > 0);
+            if(shiftCount > 0) {
+                ArrayUtilities.copy(this.window, shiftStartIndex, this.window, 0, shiftCount);
+            }
+            this.windowAbsoluteStartIndex += shiftStartIndex;
+            this.windowCount -= shiftStartIndex;
+            this.currentRelativeItemIndex -= shiftStartIndex;
+        } else {
+            ArrayUtilities.grow(this.window, this.window.length * 2, this.defaultValue);
+        }
+    };
+    SlidingWindow.prototype.getRewindPoint = function () {
+        var absoluteIndex = this.windowAbsoluteStartIndex + this.currentRelativeItemIndex;
+        if(this.outstandingRewindPoints === 0) {
+            this.firstRewindAbsoluteIndex = absoluteIndex;
+        }
+        this.outstandingRewindPoints++;
+        var rewindPoint = this.rewindPoints.length === 0 ? {
+        } : this.rewindPoints.pop();
+        rewindPoint.rewindPoints = this.outstandingRewindPoints;
+        rewindPoint.absoluteIndex = absoluteIndex;
+        this.storeAdditionalRewindState(rewindPoint);
+        return rewindPoint;
+    };
+    SlidingWindow.prototype.rewind = function (rewindPoint) {
+        Debug.assert(this.outstandingRewindPoints === rewindPoint.rewindPoints);
+        var relativeIndex = rewindPoint.absoluteIndex - this.windowAbsoluteStartIndex;
+        Debug.assert(relativeIndex >= 0 && relativeIndex < this.windowCount);
+        this.currentRelativeItemIndex = relativeIndex;
+        this.restoreStateFromRewindPoint(rewindPoint);
+    };
+    SlidingWindow.prototype.releaseRewindPoint = function (rewindPoint) {
+        Debug.assert(this.outstandingRewindPoints == rewindPoint.rewindPoints);
+        this.outstandingRewindPoints--;
+        if(this.outstandingRewindPoints == 0) {
+            this.firstRewindAbsoluteIndex = -1;
+        }
+        this.rewindPoints.push(rewindPoint);
+    };
+    SlidingWindow.prototype.currentItem = function () {
+        if(this.currentRelativeItemIndex >= this.windowCount) {
+            if(!this.addMoreItemsToWindow()) {
+                return this.defaultValue;
+            }
+        }
+        return this.window[this.currentRelativeItemIndex];
+    };
+    SlidingWindow.prototype.peekItemN = function (n) {
+        Debug.assert(n >= 0);
+        while(this.currentRelativeItemIndex + n >= this.windowCount) {
+            if(!this.addMoreItemsToWindow()) {
+                return this.defaultValue;
+            }
+        }
+        return this.window[this.currentRelativeItemIndex + n];
+    };
+    SlidingWindow.prototype.moveToNextItem = function () {
+        this.currentRelativeItemIndex++;
+    };
+    return SlidingWindow;
+})();
+var __extends = this.__extends || function (d, b) {
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var SlidingTokenWindow = (function (_super) {
+    __extends(SlidingTokenWindow, _super);
+    function SlidingTokenWindow(parser) {
+        _super.call(this, null, 32);
+        this.parser = parser;
+    }
+    SlidingTokenWindow.prototype.isPastSourceEnd = function () {
+        return false;
+    };
+    SlidingTokenWindow.prototype.storeAdditionalRewindState = function (rewindPoint) {
+        this.parser.storeAdditionalRewindState(rewindPoint);
+    };
+    SlidingTokenWindow.prototype.restoreStateFromRewindPoint = function (rewindPoint) {
+        this.parser.restoreStateFromRewindPoint(rewindPoint);
+    };
+    SlidingTokenWindow.prototype.fetchMoreItems = function (sourceIndex, window, destinationIndex, count) {
+        return this.parser.fetchMoreItems(sourceIndex, window, destinationIndex, count);
+    };
+    return SlidingTokenWindow;
+})(SlidingWindow);
 var ParserExpressionPrecedence;
 (function (ParserExpressionPrecedence) {
     ParserExpressionPrecedence._map = [];
@@ -558,93 +1770,40 @@ var ParserExpressionPrecedence;
 var Parser = (function () {
     function Parser(scanner, oldTree, changes, options) {
         this.options = null;
-        this.tokenWindow = [];
-        this.tokenWindowCount = 0;
-        this.tokenWindowAbsoluteStartIndex = 0;
-        this.currentRelativeTokenIndex = 0;
-        this.outstandingRewindPoints = 0;
-        this.firstRewindAbsoluteIndex = -1;
         this._currentToken = null;
         this.previousToken = null;
         this.scanner = scanner;
+        this.tokenWindow = new SlidingTokenWindow(this);
         this.oldTree = oldTree;
         this.options = options || new ParseOptions();
     }
     Parser.prototype.isIncremental = function () {
         return this.oldTree != null;
     };
-    Parser.prototype.getRewindPoint = function () {
-        var absoluteIndex = this.tokenWindowAbsoluteStartIndex + this.currentRelativeTokenIndex;
-        if(this.outstandingRewindPoints === 0) {
-            this.firstRewindAbsoluteIndex = absoluteIndex;
-        }
-        this.outstandingRewindPoints++;
-        return new ParserRewindPoint(this.outstandingRewindPoints, absoluteIndex, this.previousToken, this.isInStrictMode);
+    Parser.prototype.storeAdditionalRewindState = function (rewindPoint) {
+        rewindPoint.previousToken = this.previousToken;
+        rewindPoint.isInStrictMode = this.isInStrictMode;
     };
-    Parser.prototype.rewind = function (point) {
-        Debug.assert(this.outstandingRewindPoints == point.resetCount);
-        var relativeTokenIndex = point.absoluteIndex - this.tokenWindowAbsoluteStartIndex;
-        Debug.assert(relativeTokenIndex >= 0 && relativeTokenIndex < this.tokenWindowCount);
-        this.currentRelativeTokenIndex = relativeTokenIndex;
+    Parser.prototype.restoreStateFromRewindPoint = function (rewindPoint) {
         this._currentToken = null;
-        this.previousToken = point.previousToken;
-        this.isInStrictMode = point.isInStrictMode;
+        this.previousToken = rewindPoint.previousToken;
+        this.isInStrictMode = rewindPoint.isInStrictMode;
     };
-    Parser.prototype.releaseRewindPoint = function (point) {
-        Debug.assert(this.outstandingRewindPoints == point.resetCount);
-        this.outstandingRewindPoints--;
-        if(this.outstandingRewindPoints == 0) {
-            this.firstRewindAbsoluteIndex = -1;
-        }
+    Parser.prototype.fetchMoreItems = function (sourceIndex, window, destinationIndex, count) {
+        Debug.assert(count > 0);
+        window[destinationIndex] = this.scanner.scan();
+        return 1;
     };
     Parser.prototype.currentToken = function () {
         var result = this._currentToken;
         if(result === null) {
-            result = this.fetchCurrentToken();
+            result = this.tokenWindow.currentItem();
             this._currentToken = result;
         }
         return result;
     };
-    Parser.prototype.fetchCurrentToken = function () {
-        if(this.currentRelativeTokenIndex >= this.tokenWindowCount) {
-            this.addNextTokenToWindow();
-        }
-        return this.tokenWindow[this.currentRelativeTokenIndex];
-    };
-    Parser.prototype.addNextTokenToWindow = function () {
-        this.addTokenToWindow(this.scanner.scan());
-    };
-    Parser.prototype.addTokenToWindow = function (token) {
-        Debug.assert(token !== null);
-        if(this.tokenWindowCount >= this.tokenWindow.length) {
-            this.tryShiftOrGrowTokenWindow();
-        }
-        this.tokenWindow[this.tokenWindowCount] = token;
-        this.tokenWindowCount++;
-    };
-    Parser.prototype.tryShiftOrGrowTokenWindow = function () {
-        var currentIndexIsPastWindowHalfwayPoint = this.currentRelativeTokenIndex > (this.tokenWindow.length >> 1);
-        var isAllowedToShift = this.firstRewindAbsoluteIndex === -1 || this.firstRewindAbsoluteIndex > this.tokenWindowAbsoluteStartIndex;
-        if(currentIndexIsPastWindowHalfwayPoint && isAllowedToShift) {
-            var shiftStartIndex = this.firstRewindAbsoluteIndex === -1 ? this.currentRelativeTokenIndex : this.firstRewindAbsoluteIndex - this.tokenWindowAbsoluteStartIndex;
-            var shiftCount = this.tokenWindowCount - shiftStartIndex;
-            Debug.assert(shiftStartIndex > 0);
-            if(shiftCount > 0) {
-                ArrayUtilities.copy(this.tokenWindow, shiftStartIndex, this.tokenWindow, 0, shiftCount);
-            }
-            this.tokenWindowAbsoluteStartIndex += shiftStartIndex;
-            this.tokenWindowCount -= shiftStartIndex;
-            this.currentRelativeTokenIndex -= shiftStartIndex;
-        } else {
-            this.tokenWindow[this.tokenWindow.length * 2 - 1] = null;
-        }
-    };
     Parser.prototype.peekTokenN = function (n) {
-        Debug.assert(n >= 0);
-        while(this.currentRelativeTokenIndex + n >= this.tokenWindowCount) {
-            this.addNextTokenToWindow();
-        }
-        return this.tokenWindow[this.currentRelativeTokenIndex + n];
+        return this.tokenWindow.peekItemN(n);
     };
     Parser.prototype.eatAnyToken = function () {
         var token = this.currentToken();
@@ -654,7 +1813,7 @@ var Parser = (function () {
     Parser.prototype.moveToNextToken = function () {
         this.previousToken = this._currentToken;
         this._currentToken = null;
-        this.currentRelativeTokenIndex++;
+        this.tokenWindow.moveToNextItem();
     };
     Parser.prototype.canEatAutomaticSemicolon = function () {
         var token = this.currentToken();
@@ -1061,7 +2220,7 @@ var Parser = (function () {
         return this.currentToken().keywordKind() === 56 /* ConstructorKeyword */ ;
     };
     Parser.prototype.isMemberFunctionDeclaration = function () {
-        var resetPoint = this.getRewindPoint();
+        var rewindPoint = this.tokenWindow.getRewindPoint();
         try  {
             if(this.currentToken().keywordKind() === 51 /* PublicKeyword */  || this.currentToken().keywordKind() === 49 /* PrivateKeyword */ ) {
                 this.eatAnyToken();
@@ -1071,12 +2230,12 @@ var Parser = (function () {
             }
             return this.isFunctionSignature();
         }finally {
-            this.rewind(resetPoint);
-            this.releaseRewindPoint(resetPoint);
+            this.tokenWindow.rewind(rewindPoint);
+            this.tokenWindow.releaseRewindPoint(rewindPoint);
         }
     };
     Parser.prototype.isMemberAccessorDeclaration = function () {
-        var resetPoint = this.getRewindPoint();
+        var rewindPoint = this.tokenWindow.getRewindPoint();
         try  {
             if(this.currentToken().keywordKind() === 51 /* PublicKeyword */  || this.currentToken().keywordKind() === 49 /* PrivateKeyword */ ) {
                 this.eatAnyToken();
@@ -1090,8 +2249,8 @@ var Parser = (function () {
             this.eatAnyToken();
             return this.isIdentifier(this.currentToken());
         }finally {
-            this.rewind(resetPoint);
-            this.releaseRewindPoint(resetPoint);
+            this.tokenWindow.rewind(rewindPoint);
+            this.tokenWindow.releaseRewindPoint(rewindPoint);
         }
     };
     Parser.prototype.isMemberVariableDeclaration = function () {
@@ -2273,15 +3432,15 @@ var Parser = (function () {
         if(!this.isPossiblyArrowFunctionExpression()) {
             return null;
         }
-        var resetPoint = this.getRewindPoint();
+        var rewindPoint = this.tokenWindow.getRewindPoint();
         try  {
             var arrowFunction = this.parseParenthesizedArrowFunctionExpression(true);
             if(arrowFunction === null) {
-                this.rewind(resetPoint);
+                this.tokenWindow.rewind(rewindPoint);
             }
             return arrowFunction;
         }finally {
-            this.releaseRewindPoint(resetPoint);
+            this.tokenWindow.releaseRewindPoint(rewindPoint);
         }
     };
     Parser.prototype.parseParenthesizedArrowFunctionExpression = function (requireArrow) {
@@ -2685,1190 +3844,6 @@ var Parser = (function () {
     };
     return Parser;
 })();
-var ScannerTokenInfo = (function () {
-    function ScannerTokenInfo() { }
-    return ScannerTokenInfo;
-})();
-var ScannerTriviaInfo = (function () {
-    function ScannerTriviaInfo() { }
-    return ScannerTriviaInfo;
-})();
-var Scanner = (function () {
-    function Scanner(text, languageVersion, stringTable) {
-        this._text = null;
-        this.builder = [];
-        this.identifierBuffer = [];
-        this.identifierLength = 0;
-        this.stringTable = null;
-        this.errors = [];
-        this.textWindow = null;
-        this.previousTokenKind = 0 /* None */ ;
-        this.previousTokenKeywordKind = 0 /* None */ ;
-        this.tokenInfo = new ScannerTokenInfo();
-        this.leadingTriviaInfo = new ScannerTriviaInfo();
-        this.trailingTriviaInfo = new ScannerTriviaInfo();
-        Contract.throwIfNull(stringTable);
-        this._text = text;
-        this.identifierBuffer = ArrayUtilities.createArray(32);
-        this.stringTable = stringTable;
-        this.textWindow = new SlidingTextWindow(text, stringTable);
-        this.languageVersion = languageVersion;
-    }
-    Scanner.create = function create(text, languageVersion) {
-        return new Scanner(text, languageVersion, new StringTable());
-    }
-    Scanner.prototype.addSimpleDiagnosticInfo = function (code) {
-        var args = [];
-        for (var _i = 0; _i < (arguments.length - 1); _i++) {
-            args[_i] = arguments[_i + 1];
-        }
-        this.addDiagnosticInfo(this.makeSimpleDiagnosticInfo(code, args));
-    };
-    Scanner.prototype.addDiagnosticInfo = function (error) {
-        if(this.errors === null) {
-            this.errors = [];
-        }
-        this.errors.push(error);
-    };
-    Scanner.prototype.makeSimpleDiagnosticInfo = function (code, args) {
-        return SyntaxDiagnosticInfo.create(code, args);
-    };
-    Scanner.prototype.scan = function () {
-        if(this.errors.length > 0) {
-            this.errors = [];
-        }
-        var start = this.textWindow.position();
-        this.scanTriviaInfo(this.textWindow.position() > 0, false, this.leadingTriviaInfo);
-        this.scanSyntaxToken();
-        this.scanTriviaInfo(true, true, this.trailingTriviaInfo);
-        this.previousTokenKind = this.tokenInfo.Kind;
-        this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
-        return this.createToken(start);
-    };
-    Scanner.prototype.createToken = function (start) {
-        return SyntaxTokenFactory.create(start, this.leadingTriviaInfo, this.tokenInfo, this.trailingTriviaInfo, this.errors.length == 0 ? null : this.errors);
-    };
-    Scanner.prototype.scanTriviaInfo = function (afterFirstToken, isTrailing, triviaInfo) {
-        triviaInfo.Width = 0;
-        triviaInfo.HasComment = false;
-        triviaInfo.HasNewLine = false;
-        while(true) {
-            var ch = this.textWindow.peekCharAtPosition();
-            switch(ch) {
-                case 32 /* space */ :
-                case 9 /* tab */ :
-                case 11 /* verticalTab */ :
-                case 12 /* formFeed */ :
-                case 160 /* nonBreakingSpace */ :
-                case 65279 /* byteOrderMark */ : {
-                    this.textWindow.advanceChar1();
-                    triviaInfo.Width++;
-                    continue;
-
-                }
-            }
-            if(ch === 47 /* slash */ ) {
-                var ch2 = this.textWindow.peekCharN(1);
-                if(ch2 === 47 /* slash */ ) {
-                    this.textWindow.advanceChar1();
-                    this.textWindow.advanceChar1();
-                    triviaInfo.Width += 2;
-                    triviaInfo.HasComment = true;
-                    this.scanSingleLineCommentTrivia(triviaInfo);
-                    continue;
-                }
-                if(ch2 === 42 /* asterisk */ ) {
-                    this.textWindow.advanceChar1();
-                    this.textWindow.advanceChar1();
-                    triviaInfo.Width += 2;
-                    triviaInfo.HasComment = true;
-                    this.scanMultiLineCommentTrivia(triviaInfo);
-                    continue;
-                }
-                return;
-            }
-            if(this.isNewLineCharacter(ch)) {
-                triviaInfo.HasNewLine = true;
-                if(ch === 13 /* carriageReturn */ ) {
-                    this.textWindow.advanceChar1();
-                    triviaInfo.Width++;
-                }
-                ch = this.textWindow.peekCharAtPosition();
-                if(ch === 10 /* newLine */ ) {
-                    this.textWindow.advanceChar1();
-                    triviaInfo.Width++;
-                }
-                if(isTrailing) {
-                    return;
-                }
-                continue;
-            }
-            return;
-        }
-    };
-    Scanner.prototype.isNewLineCharacter = function (ch) {
-        switch(ch) {
-            case 13 /* carriageReturn */ :
-            case 10 /* newLine */ :
-            case 8233 /* paragraphSeparator */ :
-            case 8232 /* lineSeparator */ : {
-                return true;
-
-            }
-            default: {
-                return false;
-
-            }
-        }
-    };
-    Scanner.prototype.scanSingleLineCommentTrivia = function (triviaInfo) {
-        while(true) {
-            var ch = this.textWindow.peekCharAtPosition();
-            if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
-                return;
-            }
-            this.textWindow.advanceChar1();
-            triviaInfo.Width++;
-        }
-    };
-    Scanner.prototype.scanMultiLineCommentTrivia = function (triviaInfo) {
-        while(true) {
-            var ch = this.textWindow.peekCharAtPosition();
-            if(ch === 0 /* nullCharacter */ ) {
-                return;
-            }
-            if(ch === 42 /* asterisk */  && this.textWindow.peekCharN(1) === 47 /* slash */ ) {
-                this.textWindow.advanceChar1();
-                this.textWindow.advanceChar1();
-                triviaInfo.Width += 2;
-                return;
-            }
-            this.textWindow.advanceChar1();
-            triviaInfo.Width++;
-        }
-    };
-    Scanner.prototype.scanSyntaxToken = function () {
-        this.textWindow.start();
-        this.tokenInfo.Kind = 0 /* None */ ;
-        this.tokenInfo.KeywordKind = 0 /* None */ ;
-        this.tokenInfo.Text = null;
-        var character = this.textWindow.peekCharAtPosition();
-        switch(character) {
-            case 34 /* doubleQuote */ :
-            case 39 /* singleQuote */ : {
-                this.scanStringLiteral();
-                return;
-
-            }
-            case 47 /* slash */ : {
-                this.scanSlashToken();
-                return;
-
-            }
-            case 46 /* dot */ : {
-                this.scanDotToken();
-                return;
-
-            }
-            case 45 /* minus */ : {
-                this.scanMinusToken();
-                return;
-
-            }
-            case 33 /* exclamation */ : {
-                this.scanExclamationToken();
-                return;
-
-            }
-            case 61 /* equals */ : {
-                this.scanEqualsToken();
-                return;
-
-            }
-            case 124 /* bar */ : {
-                this.scanBarToken();
-                return;
-
-            }
-            case 42 /* asterisk */ : {
-                this.scanAsteriskToken();
-                return;
-
-            }
-            case 43 /* plus */ : {
-                this.scanPlusToken();
-                return;
-
-            }
-            case 37 /* percent */ : {
-                this.scanPercentToken();
-                return;
-
-            }
-            case 38 /* ampersand */ : {
-                this.scanAmpersandToken();
-                return;
-
-            }
-            case 94 /* caret */ : {
-                this.scanCaretToken();
-                return;
-
-            }
-            case 60 /* lessThan */ : {
-                this.scanLessThanToken();
-                return;
-
-            }
-            case 62 /* greaterThan */ : {
-                this.scanGreaterThanToken();
-                return;
-
-            }
-            case 44 /* comma */ : {
-                this.advanceAndSetTokenKind(72 /* CommaToken */ );
-                return;
-
-            }
-            case 58 /* colon */ : {
-                this.advanceAndSetTokenKind(99 /* ColonToken */ );
-                return;
-
-            }
-            case 59 /* semicolon */ : {
-                this.advanceAndSetTokenKind(71 /* SemicolonToken */ );
-                return;
-
-            }
-            case 126 /* tilde */ : {
-                this.advanceAndSetTokenKind(95 /* TildeToken */ );
-                return;
-
-            }
-            case 40 /* openParen */ : {
-                this.advanceAndSetTokenKind(65 /* OpenParenToken */ );
-                return;
-
-            }
-            case 41 /* closeParen */ : {
-                this.advanceAndSetTokenKind(66 /* CloseParenToken */ );
-                return;
-
-            }
-            case 123 /* openBrace */ : {
-                this.advanceAndSetTokenKind(63 /* OpenBraceToken */ );
-                return;
-
-            }
-            case 125 /* closeBrace */ : {
-                this.advanceAndSetTokenKind(64 /* CloseBraceToken */ );
-                return;
-
-            }
-            case 91 /* openBracket */ : {
-                this.advanceAndSetTokenKind(67 /* OpenBracketToken */ );
-                return;
-
-            }
-            case 93 /* closeBracket */ : {
-                this.advanceAndSetTokenKind(68 /* CloseBracketToken */ );
-                return;
-
-            }
-            case 63 /* question */ : {
-                this.advanceAndSetTokenKind(98 /* QuestionToken */ );
-                return;
-
-            }
-            case 0 /* nullCharacter */ : {
-                this.tokenInfo.Kind = 114 /* EndOfFileToken */ ;
-                this.tokenInfo.Text = "";
-                return;
-
-            }
-        }
-        if(character >= 97 /* a */  && character <= 122 /* z */ ) {
-            this.scanIdentifierOrKeyword();
-            return;
-        }
-        if(this.isIdentifierStart(character)) {
-            this.scanIdentifier();
-            return;
-        }
-        if(this.isNumericLiteralStart(character)) {
-            this.scanNumericLiteral();
-            return;
-        }
-        this.scanDefaultCharacter(character, false);
-    };
-    Scanner.prototype.scanNumericLiteral = function () {
-        if(this.isHexNumericLiteral()) {
-            this.scanHexNumericLiteral();
-        } else {
-            this.scanDecimalNumericLiteral();
-        }
-    };
-    Scanner.prototype.scanDecimalNumericLiteral = function () {
-        var start = this.textWindow.position();
-        while(CharacterInfo.isDecimalDigit(this.textWindow.peekCharAtPosition())) {
-            this.textWindow.advanceChar1();
-        }
-        if(this.textWindow.peekCharAtPosition() === 46 /* dot */ ) {
-            this.textWindow.advanceChar1();
-        }
-        while(CharacterInfo.isDecimalDigit(this.textWindow.peekCharAtPosition())) {
-            this.textWindow.advanceChar1();
-        }
-        var ch = this.textWindow.peekCharAtPosition();
-        if(ch === 101 /* e */  || ch === 69 /* E */ ) {
-            this.textWindow.advanceChar1();
-            ch = this.textWindow.peekCharAtPosition();
-            if(ch === 45 /* minus */  || ch === 43 /* plus */ ) {
-                if(CharacterInfo.isDecimalDigit(this.textWindow.peekCharN(1))) {
-                    this.textWindow.advanceChar1();
-                }
-            }
-        }
-        while(CharacterInfo.isDecimalDigit(this.textWindow.peekCharAtPosition())) {
-            this.textWindow.advanceChar1();
-        }
-        var end = this.textWindow.position();
-        this.tokenInfo.Text = this.textWindow.substring(start, end, false);
-        this.tokenInfo.Kind = 7 /* NumericLiteral */ ;
-    };
-    Scanner.prototype.scanHexNumericLiteral = function () {
-        var start = this.textWindow.position();
-        Debug.assert(this.isHexNumericLiteral());
-        this.textWindow.advanceChar1();
-        this.textWindow.advanceChar1();
-        while(CharacterInfo.isHexDigit(this.textWindow.peekCharAtPosition())) {
-            this.textWindow.advanceChar1();
-        }
-        var end = this.textWindow.position();
-        this.tokenInfo.Text = this.textWindow.substring(start, end, false);
-        this.tokenInfo.Kind = 7 /* NumericLiteral */ ;
-    };
-    Scanner.prototype.isHexNumericLiteral = function () {
-        if(this.textWindow.peekCharAtPosition() === 48 /* _0 */ ) {
-            var ch = this.textWindow.peekCharN(1);
-            return ch === 120 /* x */  || ch === 88 /* X */ ;
-        }
-        return false;
-    };
-    Scanner.prototype.isNumericLiteralStart = function (ch) {
-        if(CharacterInfo.isDecimalDigit(ch)) {
-            return true;
-        }
-        return this.isDotPrefixedNumericLiteral();
-    };
-    Scanner.prototype.scanIdentifier = function () {
-        var start = this.textWindow.position();
-        while(this.isIdentifierPart()) {
-            this.scanCharOrUnicodeEscape(this.errors);
-        }
-        var end = this.textWindow.position();
-        this.tokenInfo.Text = this.textWindow.substring(start, end, true);
-        this.tokenInfo.Kind = 5 /* IdentifierNameToken */ ;
-    };
-    Scanner.prototype.isIdentifierStart_Fast = function (character) {
-        if((character >= 97 /* a */  && character <= 122 /* z */ ) || (character >= 65 /* A */  && character <= 90 /* Z */ ) || character === 95 /* _ */  || character === 36 /* $ */ ) {
-            return true;
-        }
-        return false;
-    };
-    Scanner.prototype.isIdentifierStart_Slow = function () {
-        var ch = this.peekCharOrUnicodeEscape();
-        return Unicode.isIdentifierStart(ch, this.languageVersion);
-    };
-    Scanner.prototype.isIdentifierStart = function (character) {
-        return this.isIdentifierStart_Fast(character) || this.isIdentifierStart_Slow();
-    };
-    Scanner.prototype.isIdentifierPart_Fast = function () {
-        var character = this.textWindow.peekCharAtPosition();
-        if(this.isIdentifierStart_Fast(character)) {
-            return true;
-        }
-        return character >= 48 /* _0 */  && character <= 57 /* _9 */ ;
-    };
-    Scanner.prototype.isIdentifierPart_Slow = function () {
-        if(this.isIdentifierStart_Slow()) {
-            return true;
-        }
-        var ch = this.peekCharOrUnicodeEscape();
-        return Unicode.isIdentifierPart(ch, this.languageVersion);
-    };
-    Scanner.prototype.isIdentifierPart = function () {
-        return this.isIdentifierPart_Fast() || this.isIdentifierPart_Slow();
-    };
-    Scanner.prototype.scanIdentifierOrKeyword = function () {
-        this.scanIdentifier();
-        var kind = SyntaxFacts.getTokenKind(this.tokenInfo.Text);
-        if(kind != 0 /* None */ ) {
-            this.tokenInfo.KeywordKind = kind;
-        }
-    };
-    Scanner.prototype.advanceAndSetTokenKind = function (kind) {
-        this.textWindow.advanceChar1();
-        this.tokenInfo.Kind = kind;
-    };
-    Scanner.prototype.scanGreaterThanToken = function () {
-        this.textWindow.advanceChar1();
-        var character = this.textWindow.peekCharAtPosition();
-        if(character === 61 /* equals */ ) {
-            this.textWindow.advanceChar1();
-            this.tokenInfo.Kind = 76 /* GreaterThanEqualsToken */ ;
-        } else {
-            if(character === 62 /* greaterThan */ ) {
-                this.scanGreaterThanGreaterThanToken();
-            } else {
-                this.tokenInfo.Kind = 74 /* GreaterThanToken */ ;
-            }
-        }
-    };
-    Scanner.prototype.scanGreaterThanGreaterThanToken = function () {
-        this.textWindow.advanceChar1();
-        var character = this.textWindow.peekCharAtPosition();
-        if(character === 61 /* equals */ ) {
-            this.textWindow.advanceChar1();
-            this.tokenInfo.Kind = 106 /* GreaterThanGreaterThanEqualsToken */ ;
-        } else {
-            if(character === 62 /* greaterThan */ ) {
-                this.scanGreaterThanGreaterThanGreaterThanToken();
-            } else {
-                this.tokenInfo.Kind = 89 /* GreaterThanGreaterThanToken */ ;
-            }
-        }
-    };
-    Scanner.prototype.scanGreaterThanGreaterThanGreaterThanToken = function () {
-        this.textWindow.advanceChar1();
-        var character = this.textWindow.peekCharAtPosition();
-        if(character === 61 /* equals */ ) {
-            this.textWindow.advanceChar1();
-            this.tokenInfo.Kind = 107 /* GreaterThanGreaterThanGreaterThanEqualsToken */ ;
-        } else {
-            this.tokenInfo.Kind = 90 /* GreaterThanGreaterThanGreaterThanToken */ ;
-        }
-    };
-    Scanner.prototype.scanLessThanToken = function () {
-        this.textWindow.advanceChar1();
-        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
-            this.textWindow.advanceChar1();
-            this.tokenInfo.Kind = 75 /* LessThanEqualsToken */ ;
-        } else {
-            if(this.textWindow.peekCharAtPosition() === 60 /* lessThan */ ) {
-                this.textWindow.advanceChar1();
-                if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
-                    this.textWindow.advanceChar1();
-                    this.tokenInfo.Kind = 105 /* LessThanLessThanEqualsToken */ ;
-                } else {
-                    this.tokenInfo.Kind = 88 /* LessThanLessThanToken */ ;
-                }
-            } else {
-                this.tokenInfo.Kind = 73 /* LessThanToken */ ;
-            }
-        }
-    };
-    Scanner.prototype.scanBarToken = function () {
-        this.textWindow.advanceChar1();
-        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
-            this.textWindow.advanceChar1();
-            this.tokenInfo.Kind = 109 /* BarEqualsToken */ ;
-        } else {
-            if(this.textWindow.peekCharAtPosition() === 124 /* bar */ ) {
-                this.textWindow.advanceChar1();
-                this.tokenInfo.Kind = 97 /* BarBarToken */ ;
-            } else {
-                this.tokenInfo.Kind = 92 /* BarToken */ ;
-            }
-        }
-    };
-    Scanner.prototype.scanCaretToken = function () {
-        this.textWindow.advanceChar1();
-        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
-            this.textWindow.advanceChar1();
-            this.tokenInfo.Kind = 110 /* CaretEqualsToken */ ;
-        } else {
-            this.tokenInfo.Kind = 93 /* CaretToken */ ;
-        }
-    };
-    Scanner.prototype.scanAmpersandToken = function () {
-        this.textWindow.advanceChar1();
-        var character = this.textWindow.peekCharAtPosition();
-        if(character === 61 /* equals */ ) {
-            this.textWindow.advanceChar1();
-            this.tokenInfo.Kind = 108 /* AmpersandEqualsToken */ ;
-        } else {
-            if(this.textWindow.peekCharAtPosition() === 38 /* ampersand */ ) {
-                this.textWindow.advanceChar1();
-                this.tokenInfo.Kind = 96 /* AmpersandAmpersandToken */ ;
-            } else {
-                this.tokenInfo.Kind = 91 /* AmpersandToken */ ;
-            }
-        }
-    };
-    Scanner.prototype.scanPercentToken = function () {
-        this.textWindow.advanceChar1();
-        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
-            this.textWindow.advanceChar1();
-            this.tokenInfo.Kind = 104 /* PercentEqualsToken */ ;
-        } else {
-            this.tokenInfo.Kind = 85 /* PercentToken */ ;
-        }
-    };
-    Scanner.prototype.scanMinusToken = function () {
-        this.textWindow.advanceChar1();
-        var character = this.textWindow.peekCharAtPosition();
-        if(character === 61 /* equals */ ) {
-            this.textWindow.advanceChar1();
-            this.tokenInfo.Kind = 102 /* MinusEqualsToken */ ;
-        } else {
-            if(character === 45 /* minus */ ) {
-                this.textWindow.advanceChar1();
-                this.tokenInfo.Kind = 87 /* MinusMinusToken */ ;
-            } else {
-                this.tokenInfo.Kind = 83 /* MinusToken */ ;
-            }
-        }
-    };
-    Scanner.prototype.scanPlusToken = function () {
-        this.textWindow.advanceChar1();
-        var character = this.textWindow.peekCharAtPosition();
-        if(character === 61 /* equals */ ) {
-            this.textWindow.advanceChar1();
-            this.tokenInfo.Kind = 101 /* PlusEqualsToken */ ;
-        } else {
-            if(character === 43 /* plus */ ) {
-                this.textWindow.advanceChar1();
-                this.tokenInfo.Kind = 86 /* PlusPlusToken */ ;
-            } else {
-                this.tokenInfo.Kind = 82 /* PlusToken */ ;
-            }
-        }
-    };
-    Scanner.prototype.scanAsteriskToken = function () {
-        this.textWindow.advanceChar1();
-        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
-            this.textWindow.advanceChar1();
-            this.tokenInfo.Kind = 103 /* AsteriskEqualsToken */ ;
-        } else {
-            this.tokenInfo.Kind = 84 /* AsteriskToken */ ;
-        }
-    };
-    Scanner.prototype.scanEqualsToken = function () {
-        this.textWindow.advanceChar1();
-        var character = this.textWindow.peekCharAtPosition();
-        if(character === 61 /* equals */ ) {
-            this.textWindow.advanceChar1();
-            if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
-                this.textWindow.advanceChar1();
-                this.tokenInfo.Kind = 80 /* EqualsEqualsEqualsToken */ ;
-            } else {
-                this.tokenInfo.Kind = 77 /* EqualsEqualsToken */ ;
-            }
-        } else {
-            if(character === 62 /* greaterThan */ ) {
-                this.textWindow.advanceChar1();
-                this.tokenInfo.Kind = 78 /* EqualsGreaterThanToken */ ;
-            } else {
-                this.tokenInfo.Kind = 100 /* EqualsToken */ ;
-            }
-        }
-    };
-    Scanner.prototype.isDotPrefixedNumericLiteral = function () {
-        if(this.textWindow.peekCharAtPosition() === 46 /* dot */ ) {
-            var ch = this.textWindow.peekCharN(1);
-            return CharacterInfo.isDecimalDigit(ch);
-        }
-        return false;
-    };
-    Scanner.prototype.scanDotToken = function () {
-        if(this.isDotPrefixedNumericLiteral()) {
-            this.scanNumericLiteral();
-            return;
-        }
-        this.textWindow.advanceChar1();
-        if(this.textWindow.peekCharAtPosition() === 46 /* dot */  && this.textWindow.peekCharN(1) === 46 /* dot */ ) {
-            this.textWindow.advanceChar1();
-            this.textWindow.advanceChar1();
-            this.tokenInfo.Kind = 70 /* DotDotDotToken */ ;
-        } else {
-            this.tokenInfo.Kind = 69 /* DotToken */ ;
-        }
-    };
-    Scanner.prototype.scanSlashToken = function () {
-        if(this.tryScanRegularExpressionToken()) {
-            return;
-        }
-        this.textWindow.advanceChar1();
-        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
-            this.textWindow.advanceChar1();
-            this.tokenInfo.Kind = 112 /* SlashEqualsToken */ ;
-        } else {
-            this.tokenInfo.Kind = 111 /* SlashToken */ ;
-        }
-    };
-    Scanner.prototype.tryScanRegularExpressionToken = function () {
-        switch(this.previousTokenKind) {
-            case 5 /* IdentifierNameToken */ : {
-                if(this.previousTokenKeywordKind == 0 /* None */ ) {
-                    return false;
-                }
-                break;
-
-            }
-            case 8 /* StringLiteral */ :
-            case 6 /* RegularExpressionLiteral */ :
-            case 29 /* ThisKeyword */ :
-            case 86 /* PlusPlusToken */ :
-            case 87 /* MinusMinusToken */ :
-            case 66 /* CloseParenToken */ :
-            case 68 /* CloseBracketToken */ :
-            case 64 /* CloseBraceToken */ :
-            case 31 /* TrueKeyword */ :
-            case 18 /* FalseKeyword */ : {
-                return false;
-
-            }
-        }
-        Debug.assert(this.textWindow.peekCharAtPosition() === 47 /* slash */ );
-        var start = this.textWindow.position();
-        this.textWindow.advanceChar1();
-        var skipNextSlash = false;
-        while(true) {
-            var ch = this.textWindow.peekCharAtPosition();
-            if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
-                this.textWindow.reset(start);
-                return false;
-            }
-            this.textWindow.advanceChar1();
-            if(!skipNextSlash && ch === 47 /* slash */ ) {
-                break;
-            } else {
-                if(!skipNextSlash && ch === 92 /* backslash */ ) {
-                    skipNextSlash = true;
-                    continue;
-                }
-            }
-            skipNextSlash = false;
-        }
-        while(this.isIdentifierPart()) {
-            this.scanCharOrUnicodeEscape(this.errors);
-        }
-        var end = this.textWindow.position();
-        this.tokenInfo.Kind = 6 /* RegularExpressionLiteral */ ;
-        this.tokenInfo.Text = this.textWindow.substring(start, end, false);
-        return true;
-    };
-    Scanner.prototype.scanExclamationToken = function () {
-        this.textWindow.advanceChar1();
-        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
-            this.textWindow.advanceChar1();
-            if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
-                this.textWindow.advanceChar1();
-                this.tokenInfo.Kind = 81 /* ExclamationEqualsEqualsToken */ ;
-            } else {
-                this.tokenInfo.Kind = 79 /* ExclamationEqualsToken */ ;
-            }
-        } else {
-            this.tokenInfo.Kind = 94 /* ExclamationToken */ ;
-        }
-    };
-    Scanner.prototype.scanDefaultCharacter = function (character, isEscaped) {
-        var start = this.textWindow.position();
-        this.textWindow.advanceChar1();
-        this.tokenInfo.Text = this.textWindow.substring(start, start + 1, true);
-        this.tokenInfo.Kind = 113 /* ErrorToken */ ;
-        this.addSimpleDiagnosticInfo(1 /* Unexpected_character_0 */ , this.tokenInfo.Text);
-    };
-    Scanner.prototype.skipEscapeSequence = function () {
-        Debug.assert(this.textWindow.peekCharAtPosition() === 92 /* backslash */ );
-        var start = this.textWindow.position();
-        this.textWindow.advanceChar1();
-        var ch = this.textWindow.peekCharAtPosition();
-        this.textWindow.advanceChar1();
-        switch(ch) {
-            case 39 /* singleQuote */ :
-            case 34 /* doubleQuote */ :
-            case 92 /* backslash */ : {
-                return;
-
-            }
-            case 48 /* _0 */ : {
-                return;
-
-            }
-            case 98 /* b */ : {
-                return;
-
-            }
-            case 102 /* f */ : {
-                return;
-
-            }
-            case 110 /* n */ : {
-                return;
-
-            }
-            case 114 /* r */ : {
-                return;
-
-            }
-            case 116 /* t */ : {
-                return;
-
-            }
-            case 118 /* v */ : {
-                return;
-
-            }
-            case 120 /* x */ :
-            case 117 /* u */ : {
-                this.textWindow.reset(start);
-                var value = this.scanUnicodeOrHexEscape(this.errors);
-                return;
-
-            }
-            case 13 /* carriageReturn */ : {
-                if(this.textWindow.peekCharAtPosition() === 10 /* newLine */ ) {
-                    this.textWindow.advanceChar1();
-                }
-                return;
-
-            }
-            case 10 /* newLine */ :
-            case 8233 /* paragraphSeparator */ :
-            case 8232 /* lineSeparator */ : {
-                return;
-
-            }
-            default: {
-                return;
-
-            }
-        }
-    };
-    Scanner.prototype.scanStringLiteral = function () {
-        var quoteCharacter = this.textWindow.peekCharAtPosition();
-        Debug.assert(quoteCharacter === 39 /* singleQuote */  || quoteCharacter === 34 /* doubleQuote */ );
-        var start = this.textWindow.position();
-        this.textWindow.advanceChar1();
-        while(true) {
-            var ch = this.textWindow.peekCharAtPosition();
-            if(ch === 92 /* backslash */ ) {
-                this.skipEscapeSequence();
-            } else {
-                if(ch === quoteCharacter) {
-                    this.textWindow.advanceChar1();
-                    break;
-                } else {
-                    if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
-                        this.addSimpleDiagnosticInfo(2 /* Missing_closing_quote_character */ );
-                        break;
-                    } else {
-                        this.textWindow.advanceChar1();
-                    }
-                }
-            }
-        }
-        var end = this.textWindow.position();
-        this.tokenInfo.Text = this.textWindow.substring(start, end, true);
-        this.tokenInfo.Kind = 8 /* StringLiteral */ ;
-    };
-    Scanner.prototype.isUnicodeOrHexEscape = function () {
-        return this.isUnicodeEscape() || this.isHexEscape();
-    };
-    Scanner.prototype.isUnicodeEscape = function () {
-        if(this.textWindow.peekCharAtPosition() === 92 /* backslash */ ) {
-            var ch2 = this.textWindow.peekCharN(1);
-            if(ch2 === 117 /* u */ ) {
-                return true;
-            }
-        }
-        return false;
-    };
-    Scanner.prototype.isHexEscape = function () {
-        if(this.textWindow.peekCharAtPosition() === 92 /* backslash */ ) {
-            var ch2 = this.textWindow.peekCharN(1);
-            if(ch2 === 120 /* x */ ) {
-                return true;
-            }
-        }
-        return false;
-    };
-    Scanner.prototype.peekCharOrUnicodeOrHexEscape = function () {
-        if(this.isUnicodeOrHexEscape()) {
-            return this.peekUnicodeOrHexEscape();
-        } else {
-            return this.textWindow.peekCharAtPosition();
-        }
-    };
-    Scanner.prototype.peekCharOrUnicodeEscape = function () {
-        if(this.isUnicodeEscape()) {
-            return this.peekUnicodeOrHexEscape();
-        } else {
-            return this.textWindow.peekCharAtPosition();
-        }
-    };
-    Scanner.prototype.peekUnicodeOrHexEscape = function () {
-        var position = this.textWindow.position();
-        var ch = this.scanUnicodeOrHexEscape(null);
-        this.textWindow.reset(position);
-        return ch;
-    };
-    Scanner.prototype.scanCharOrUnicodeEscape = function (errors) {
-        var ch = this.textWindow.peekCharAtPosition();
-        if(ch === 92 /* backslash */ ) {
-            var ch2 = this.textWindow.peekCharN(1);
-            if(ch2 === 117 /* u */ ) {
-                return this.scanUnicodeOrHexEscape(errors);
-            }
-        }
-        this.textWindow.advanceChar1();
-        return ch;
-    };
-    Scanner.prototype.scanCharOrUnicodeOrHexEscape = function (errors) {
-        var ch = this.textWindow.peekCharAtPosition();
-        if(ch === 92 /* backslash */ ) {
-            var ch2 = this.textWindow.peekCharN(1);
-            if(ch2 === 117 /* u */  || ch2 === 120 /* x */ ) {
-                return this.scanUnicodeOrHexEscape(errors);
-            }
-        }
-        this.textWindow.advanceChar1();
-        return ch;
-    };
-    Scanner.prototype.scanUnicodeOrHexEscape = function (errors) {
-        var start = this.textWindow.position();
-        var character = this.textWindow.peekCharAtPosition();
-        Debug.assert(character === 92 /* backslash */ );
-        this.textWindow.advanceChar1();
-        character = this.textWindow.peekCharAtPosition();
-        Debug.assert(character === 117 /* u */  || character === 120 /* x */ );
-        var intChar = 0;
-        this.textWindow.advanceChar1();
-        var count = character === 117 /* u */  ? 4 : 2;
-        for(var i = 0; i < count; i++) {
-            var ch2 = this.textWindow.peekCharAtPosition();
-            if(!CharacterInfo.isHexDigit(ch2)) {
-                if(errors !== null) {
-                    var end = this.textWindow.position();
-                    var info = this.createIllegalEscapeDiagnostic(start, end);
-                    errors.push(info);
-                }
-                break;
-            }
-            intChar = (intChar << 4) + CharacterInfo.hexValue(ch2);
-            this.textWindow.advanceChar1();
-        }
-        return intChar;
-    };
-    Scanner.prototype.createIllegalEscapeDiagnostic = function (start, end) {
-        return new SyntaxDiagnosticInfo(start, end - start, 0 /* Unrecognized_escape_sequence */ );
-    };
-    return Scanner;
-})();
-var SeparatedSyntaxList = (function () {
-    function SeparatedSyntaxList() { }
-    SeparatedSyntaxList.empty = {
-        toJSON: function (key) {
-            return [];
-        },
-        count: function () {
-            return 0;
-        },
-        syntaxNodeCount: function () {
-            return 0;
-        },
-        separatorCount: function () {
-            return 0;
-        },
-        itemAt: function (index) {
-            throw Errors.argumentOutOfRange("index");
-        },
-        syntaxNodeAt: function (index) {
-            throw Errors.argumentOutOfRange("index");
-        },
-        separatorAt: function (index) {
-            throw Errors.argumentOutOfRange("index");
-        }
-    };
-    SeparatedSyntaxList.toJSON = function toJSON(list) {
-        var result = [];
-        for(var i = 0; i < list.count(); i++) {
-            result.push(list.itemAt(i));
-        }
-        return result;
-    }
-    SeparatedSyntaxList.create = function create(nodes) {
-        if(nodes === null || nodes.length === 0) {
-            return SeparatedSyntaxList.empty;
-        }
-        for(var i = 0; i < nodes.length; i++) {
-            var item = nodes[i];
-            if(i % 2 === 0) {
-                Debug.assert(!SyntaxFacts.isTokenKind(item.kind()));
-            } else {
-                Debug.assert(SyntaxFacts.isTokenKind(item.kind()));
-            }
-        }
-        if(nodes.length === 1) {
-            var item = nodes[0];
-            var list;
-            list = {
-                toJSON: function (key) {
-                    return SeparatedSyntaxList.toJSON(list);
-                },
-                count: function () {
-                    return 1;
-                },
-                syntaxNodeCount: function () {
-                    return 1;
-                },
-                separatorCount: function () {
-                    return 0;
-                },
-                itemAt: function (index) {
-                    if(index !== 0) {
-                        throw Errors.argumentOutOfRange("index");
-                    }
-                    return item;
-                },
-                syntaxNodeAt: function (index) {
-                    if(index !== 0) {
-                        throw Errors.argumentOutOfRange("index");
-                    }
-                    return item;
-                },
-                separatorAt: function (index) {
-                    throw Errors.argumentOutOfRange("index");
-                }
-            };
-            return list;
-        }
-        var list;
-        list = {
-            toJSON: function (key) {
-                return SeparatedSyntaxList.toJSON(list);
-            },
-            count: function () {
-                return nodes.length;
-            },
-            syntaxNodeCount: function () {
-                return IntegerUtilities.integerDivide(nodes.length + 1, 2);
-            },
-            separatorCount: function () {
-                return IntegerUtilities.integerDivide(nodes.length, 2);
-            },
-            itemAt: function (index) {
-                if(index < 0 || index >= nodes.length) {
-                    throw Errors.argumentOutOfRange("index");
-                }
-                return nodes[index];
-            },
-            syntaxNodeAt: function (index) {
-                var value = index * 2;
-                if(value < 0 || value >= nodes.length) {
-                    throw Errors.argumentOutOfRange("index");
-                }
-                return nodes[value];
-            },
-            separatorAt: function (index) {
-                var value = index * 2 + 1;
-                if(value < 0 || value >= nodes.length) {
-                    throw Errors.argumentOutOfRange("index");
-                }
-                return nodes[value];
-            }
-        };
-        return list;
-    }
-    return SeparatedSyntaxList;
-})();
-var SlidingTextWindow = (function () {
-    function SlidingTextWindow(text, stringTable) {
-        this.characterWindowCount = 0;
-        this.currentRelativeCharacterIndex = 0;
-        this._characterWindowStart = 0;
-        this.characterWindowAbsoluteStartIndex = 0;
-        Debug.assert(stringTable !== null);
-        this.text = text;
-        this.stringTable = stringTable;
-        this.characterWindow = ArrayUtilities.createArray(2048);
-        Debug.assert(this.characterWindow !== null);
-    }
-    SlidingTextWindow.prototype.position = function () {
-        return this.currentRelativeCharacterIndex + this.characterWindowAbsoluteStartIndex;
-    };
-    SlidingTextWindow.prototype.start = function () {
-        this._characterWindowStart = this.currentRelativeCharacterIndex;
-    };
-    SlidingTextWindow.prototype.reset = function (position) {
-        var relative = position - this.characterWindowAbsoluteStartIndex;
-        if(relative >= 0 && relative <= this.characterWindowCount) {
-            this.currentRelativeCharacterIndex = relative;
-        } else {
-            var amountToRead = MathPrototype.min(this.text.length(), position + this.characterWindow.length) - position;
-            amountToRead = MathPrototype.max(amountToRead, 0);
-            if(amountToRead > 0) {
-                this.text.copyTo(position, this.characterWindow, 0, amountToRead);
-            }
-            this._characterWindowStart = 0;
-            this.currentRelativeCharacterIndex = 0;
-            this.characterWindowAbsoluteStartIndex = position;
-            this.characterWindowCount = amountToRead;
-        }
-    };
-    SlidingTextWindow.prototype.moreChars = function () {
-        if(this.currentRelativeCharacterIndex >= this.characterWindowCount) {
-            if(this.currentRelativeCharacterIndex + this.characterWindowAbsoluteStartIndex >= this.text.length()) {
-                return false;
-            }
-            if(this._characterWindowStart > (this.characterWindowCount >> 2)) {
-                ArrayUtilities.copy(this.characterWindow, this._characterWindowStart, this.characterWindow, 0, this.characterWindowCount - this._characterWindowStart);
-                this.characterWindowCount -= this._characterWindowStart;
-                this.currentRelativeCharacterIndex -= this._characterWindowStart;
-                this.characterWindowAbsoluteStartIndex += this._characterWindowStart;
-                this._characterWindowStart = 0;
-            }
-            if(this.characterWindowCount >= this.characterWindow.length) {
-                this.characterWindow[this.characterWindow.length * 2 - 1] = 0 /* nullCharacter */ ;
-            }
-            var amountToRead = MathPrototype.min(this.text.length() - (this.characterWindowAbsoluteStartIndex + this.characterWindowCount), this.characterWindow.length - this.characterWindowCount);
-            this.text.copyTo(this.characterWindowAbsoluteStartIndex + this.characterWindowCount, this.characterWindow, this.characterWindowCount, amountToRead);
-            this.characterWindowCount += amountToRead;
-            return amountToRead > 0;
-        }
-        return true;
-    };
-    SlidingTextWindow.prototype.advanceChar1 = function () {
-        this.currentRelativeCharacterIndex++;
-    };
-    SlidingTextWindow.prototype.advanceCharN = function (n) {
-        this.currentRelativeCharacterIndex += n;
-    };
-    SlidingTextWindow.prototype.peekCharAtPosition = function () {
-        if(this.currentRelativeCharacterIndex >= this.characterWindowCount) {
-            if(!this.moreChars()) {
-                return 0 /* nullCharacter */ ;
-            }
-        }
-        return this.characterWindow[this.currentRelativeCharacterIndex];
-    };
-    SlidingTextWindow.prototype.peekCharN = function (delta) {
-        var position = this.position();
-        this.advanceCharN(delta);
-        var ch = this.peekCharAtPosition();
-        this.reset(position);
-        return ch;
-    };
-    SlidingTextWindow.prototype.internCharArray = function (array, start, length) {
-        return this.stringTable.addCharArray(array, start, length);
-    };
-    SlidingTextWindow.prototype.substring = function (start, end, intern) {
-        return this.substr(start, end - start, intern);
-    };
-    SlidingTextWindow.prototype.substr = function (start, length, intern) {
-        var offset = start - this.characterWindowAbsoluteStartIndex;
-        if(intern) {
-            return this.internCharArray(this.characterWindow, offset, length);
-        } else {
-            return StringUtilities.fromCharCodeArray(this.characterWindow.slice(offset, offset + length));
-        }
-    };
-    return SlidingTextWindow;
-})();
-var SlidingWindow = (function () {
-    function SlidingWindow(defaultValue) {
-        this.window = [];
-        this.windowCount = 0;
-        this.windowAbsoluteStartIndex = 0;
-        this.currentRelativeItemIndex = 0;
-        this.outstandingRewindPoints = 0;
-        this.firstRewindAbsoluteIndex = -1;
-        this.rewindPoints = [];
-        this.defaultValue = defaultValue;
-    }
-    SlidingWindow.prototype.getRewindPoint = function () {
-        var absoluteIndex = this.windowAbsoluteStartIndex + this.currentRelativeItemIndex;
-        if(this.outstandingRewindPoints === 0) {
-            this.firstRewindAbsoluteIndex = absoluteIndex;
-        }
-        this.outstandingRewindPoints++;
-        var rewindPoint = this.rewindPoints.length === 0 ? {
-        } : this.rewindPoints.pop();
-        rewindPoint.rewindPoints = this.outstandingRewindPoints;
-        rewindPoint.absoluteIndex = absoluteIndex;
-        this.storeAdditionalRewindData(rewindPoint);
-        return rewindPoint;
-    };
-    SlidingWindow.prototype.storeAdditionalRewindData = function (rewindPoint) {
-        throw Errors.notYetImplemented();
-    };
-    SlidingWindow.prototype.rewind = function (rewindPoint) {
-        Debug.assert(this.outstandingRewindPoints === rewindPoint.resetCount);
-        var relativeIndex = rewindPoint.absoluteIndex - this.windowAbsoluteStartIndex;
-        Debug.assert(relativeIndex >= 0 && relativeIndex < this.windowCount);
-        this.currentRelativeItemIndex = relativeIndex;
-        this.restoreState(rewindPoint);
-    };
-    SlidingWindow.prototype.restoreState = function (rewindPoint) {
-        throw Errors.notYetImplemented();
-    };
-    SlidingWindow.prototype.releaseRewindPoint = function (rewindPoint) {
-        Debug.assert(this.outstandingRewindPoints == rewindPoint.resetCount);
-        this.outstandingRewindPoints--;
-        if(this.outstandingRewindPoints == 0) {
-            this.firstRewindAbsoluteIndex = -1;
-        }
-        this.rewindPoints.push(rewindPoint);
-    };
-    SlidingWindow.prototype.currentItem = function () {
-        if(this.currentRelativeItemIndex >= this.windowCount) {
-            if(!this.addMoreItemsToWindow()) {
-                return this.defaultValue;
-            }
-        }
-        return this.window[this.currentRelativeItemIndex];
-    };
-    SlidingWindow.prototype.addMoreItemsToWindow = function () {
-        Debug.assert(this.currentRelativeItemIndex >= this.windowCount);
-        if(this.isPastSourceEnd()) {
-            return false;
-        }
-        this.tryShiftOrGrowTokenWindow();
-        var spaceAvailable = this.window.length - this.windowCount;
-        var amountFetched = this.fetchMoreItems(this.windowAbsoluteStartIndex + this.windowCount, this.window, this.windowCount, spaceAvailable);
-        Debug.assert(amountFetched > 0);
-        this.windowCount += amountFetched;
-        return true;
-    };
-    SlidingWindow.prototype.fetchMoreItems = function (sourceIndex, window, destinationIndex, count) {
-        throw Errors.notYetImplemented();
-    };
-    SlidingWindow.prototype.isPastSourceEnd = function () {
-        throw Errors.notYetImplemented();
-    };
-    SlidingWindow.prototype.tryShiftOrGrowTokenWindow = function () {
-        Debug.assert(this.currentRelativeItemIndex >= this.windowCount);
-        var currentIndexIsPastWindowHalfwayPoint = this.currentRelativeItemIndex > (this.window.length >> 1);
-        var isAllowedToShift = this.firstRewindAbsoluteIndex === -1 || this.firstRewindAbsoluteIndex > this.windowAbsoluteStartIndex;
-        if(currentIndexIsPastWindowHalfwayPoint && isAllowedToShift) {
-            var shiftStartIndex = this.firstRewindAbsoluteIndex === -1 ? this.currentRelativeItemIndex : this.firstRewindAbsoluteIndex - this.windowAbsoluteStartIndex;
-            var shiftCount = this.windowCount - shiftStartIndex;
-            Debug.assert(shiftStartIndex > 0);
-            Debug.assert(shiftCount > 0);
-            if(shiftCount > 0) {
-                ArrayUtilities.copy(this.window, shiftStartIndex, this.window, 0, shiftCount);
-            }
-            this.windowAbsoluteStartIndex += shiftStartIndex;
-            this.windowCount -= shiftStartIndex;
-            this.currentRelativeItemIndex -= shiftStartIndex;
-        } else {
-            this.window[this.window.length * 2 - 1] = this.defaultValue;
-        }
-    };
-    return SlidingWindow;
-})();
 var TextBase = (function () {
     function TextBase() {
         this.lazyLineStarts = null;
@@ -4002,11 +3977,6 @@ var TextBase = (function () {
     };
     return TextBase;
 })();
-var __extends = this.__extends || function (d, b) {
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
 var SubText = (function (_super) {
     __extends(SubText, _super);
     function SubText(text, span) {
@@ -11223,12 +11193,19 @@ var ArrayUtilities = (function () {
         }
         return ~low;
     }
-    ArrayUtilities.createArray = function createArray(length) {
+    ArrayUtilities.createArray = function createArray(length, defaultvalue) {
+        if (typeof defaultvalue === "undefined") { defaultvalue = null; }
         var result = [];
         for(var i = 0; i < length; i++) {
-            result.push(null);
+            result.push(defaultvalue);
         }
         return result;
+    }
+    ArrayUtilities.grow = function grow(array, length, defaultValue) {
+        var count = length - array.length;
+        for(var i = 0; i < count; i++) {
+            array.push(defaultValue);
+        }
     }
     ArrayUtilities.copy = function copy(sourceArray, sourceIndex, destinationArray, destinationIndex, length) {
         for(var i = 0; i < length; i++) {
