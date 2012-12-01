@@ -44,6 +44,10 @@ class StringText extends TextBase {
         return this.source.charCodeAt(position);
     }
 
+    public substr(start: number, length: number) {
+        return this.source.substr(start, length);
+    }
+
     /// <summary>
     /// Provides a string representation of the StringText located within given span.
     /// </summary>

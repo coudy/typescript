@@ -44,6 +44,10 @@ class TextBase implements IText {
         return new SubText(this, span);
     }
 
+    public substr(start: number, length: number) {
+        throw Errors.abstract();
+    }
+
     /// <summary>
     /// Copy a range of characters from this IText to a destination array.
     /// </summary>

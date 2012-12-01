@@ -90,7 +90,7 @@ class Program {
             return;
         }
 
-        if (!useTypeScript) {
+        if (useTypeScript) {
             return;
         }
 
@@ -109,7 +109,7 @@ class Program {
             
             if (verify) {
                 if (token.diagnostics()) {
-                    throw new Error("Error parsing!");
+                    // throw new Error("Error parsing!");
                 }
 
                 var tokenText = token.text();
@@ -148,19 +148,19 @@ class Program {
     }
 
     run(environment: IEnvironment, useTypeScript: bool, verify: bool): void {
-        if (true) {
-            for (var index in environment.arguments) {
-                var filePath: string = environment.arguments[index];
-
-                this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify);
-            }
-        }
-
         if (false) {
             for (var index in environment.arguments) {
                 var filePath: string = environment.arguments[index];
 
                 this.runScanner(environment, environment.readFile(filePath), LanguageVersion.EcmaScript5,  useTypeScript, verify);
+            }
+        }
+
+        if (true) {
+            for (var index in environment.arguments) {
+                var filePath: string = environment.arguments[index];
+
+                this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify);
             }
         }
     }
@@ -172,7 +172,7 @@ var program = new Program();
 var start: number, end: number;
 
 start = new Date().getTime();
-program.runAllTests(Environment, false, false);
+program.runAllTests(Environment, false, true);
 program.run(Environment, false, false);
 end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));

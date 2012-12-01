@@ -71,13 +71,13 @@ enum SyntaxKind {
     // TypeScript keywords.
     AnyKeyword,
     BoolKeyword,
-    NumberKeyword,
-    StringKeyword,
     ConstructorKeyword,
-    ModuleKeyword,
-    GetKeyword,
-    SetKeyword,
     DeclareKeyword,
+    GetKeyword,
+    ModuleKeyword,
+    NumberKeyword,
+    SetKeyword,
+    StringKeyword,
 
     // Punctuators
     OpenBraceToken,
@@ -285,8 +285,11 @@ enum SyntaxKind {
     FirstFutureReservedStrictKeyword = ImplementsKeyword,
     LastFutureReservedStrictKeyword = YieldKeyword,
 
+    FirstTypeScriptKeyword = AnyKeyword,
+    LastTypeScriptKeyword = StringKeyword,
+
     FirstKeyword = FirstStandardKeyword,
-    LastKeyword = LastFutureReservedStrictKeyword,
+    LastKeyword = LastTypeScriptKeyword,
 
     FirstToken = IdentifierNameToken,
     LastToken = EndOfFileToken,

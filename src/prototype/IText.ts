@@ -55,6 +55,8 @@ interface IText {
     /// </summary>
     getSubText(span: TextSpan): IText;
 
+    substr(start: number, length: number);
+
     /// <summary>
     /// Copy the count contents of IText starting from sourceIndex to destination starting at
     /// destinationIndex.
