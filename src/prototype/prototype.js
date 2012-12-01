@@ -2871,7 +2871,6 @@ var Scanner = (function (_super) {
     function Scanner(text, languageVersion, stringTable) {
         _super.call(this, 2048, 0, text.length());
         this.text = null;
-        this.builder = [];
         this.errors = [];
         this.previousTokenKind = 0 /* None */ ;
         this.previousTokenKeywordKind = 0 /* None */ ;

@@ -23,7 +23,6 @@
 ///<reference path='MathPrototype.ts' />
 ///<reference path='ParseOptions.ts' />
 ///<reference path='SeparatedSyntaxList.ts' />
-///<reference path='SlidingTextWindow.ts' />
 ///<reference path='SlidingWindow.ts' />
 
 // Parser depends on SlidingWindow.

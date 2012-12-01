@@ -14,7 +14,6 @@ class ScannerTriviaInfo {
 
 class Scanner extends SlidingWindow {
     private text: IText = null;
-    private builder: number[] = [];
     private errors: SyntaxDiagnosticInfo[] = [];
     private stringTable: StringTable;
     private languageVersion: LanguageVersion;
