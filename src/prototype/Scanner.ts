@@ -949,7 +949,7 @@ class Scanner {
 
     private scanCharOrUnicodeEscape(errors: SyntaxDiagnosticInfo[]): number {
         var ch = this.textWindow.peekCharAtPosition();
-        if (ch === 92 /* CharacterCodes.backslash */) {
+        if (ch === CharacterCodes.backslash) {
             var ch2 = this.textWindow.peekCharN(1);
             if (ch2 === CharacterCodes.u) {
                 return this.scanUnicodeOrHexEscape(errors);

@@ -1,71 +1,71 @@
 ///<reference path='References.ts' />
 
-class CharacterCodes {
-    public static nullCharacter: number = 0;
+enum CharacterCodes {
+    nullCharacter = 0,
 
-    public static newLine: number = "\n".charCodeAt(0);
-    public static carriageReturn: number = "\r".charCodeAt(0);
-    public static nextLine: number = '\u0085'.charCodeAt(0);
-    public static lineSeparator: number = '\u2028'.charCodeAt(0);
-    public static paragraphSeparator: number = '\u2029'.charCodeAt(0);
-    public static space: number = " ".charCodeAt(0);
+    newLine = 10,                   // \n
+    carriageReturn = 13,            // \r
+    nextLine = 0x0085,
+    lineSeparator = 0x2028,
+    paragraphSeparator = 0x2029,
+    space = 32,                     // " "
 
-    public static _: number = "_".charCodeAt(0);
-    public static $: number = "$".charCodeAt(0);
+    _ = 95,
+    $ = 36,
 
-    public static _0: number = "0".charCodeAt(0);
-    public static _9: number = "9".charCodeAt(0);
+    _0 = 48,
+    _9 = 57,
 
-    public static a: number = "a".charCodeAt(0);
-    public static b: number = "b".charCodeAt(0);
-    public static e: number = "e".charCodeAt(0);
-    public static f: number = "f".charCodeAt(0);
-    public static n: number = "n".charCodeAt(0);
-    public static r: number = "r".charCodeAt(0);
-    public static t: number = "t".charCodeAt(0);
-    public static u: number = "u".charCodeAt(0);
-    public static v: number = "v".charCodeAt(0);
-    public static x: number = "x".charCodeAt(0);
-    public static z: number = "z".charCodeAt(0);
+    a = 97,
+    b = 98,
+    e = 101,
+    f = 102,
+    n = 110,
+    r = 114,
+    t = 116,
+    u = 117,
+    v = 118,
+    x = 120,
+    z = 122,
 
-    public static A: number = "A".charCodeAt(0);
-    public static E: number = "E".charCodeAt(0);
-    public static F: number = "F".charCodeAt(0);
-    public static X: number = "X".charCodeAt(0);
-    public static Z: number = "Z".charCodeAt(0);
+    A = 65,
+    E = 69,
+    F = 70,
+    X = 88,
+    Z = 90,
 
-    public static ampersand: number = "&".charCodeAt(0);
-    public static asterisk: number = "*".charCodeAt(0);
-    public static backslash: number = "\\".charCodeAt(0);
-    public static bar: number = "|".charCodeAt(0);
-    public static caret: number = "^".charCodeAt(0);
-    public static closeBrace: number = "}".charCodeAt(0);
-    public static closeBracket: number = "]".charCodeAt(0);
-    public static closeParen: number = ")".charCodeAt(0);
-    public static colon: number = ":".charCodeAt(0);
-    public static comma: number = ",".charCodeAt(0);
-    public static dot: number = ".".charCodeAt(0);
-    public static doubleQuote: number = '"'.charCodeAt(0);
-    public static equals: number = "=".charCodeAt(0);
-    public static exclamation: number = "!".charCodeAt(0);
-    public static greaterThan: number = ">".charCodeAt(0);
-    public static lessThan: number = "<".charCodeAt(0);
-    public static minus: number = "-".charCodeAt(0);
-    public static openBrace: number = "{".charCodeAt(0);
-    public static openBracket: number = "[".charCodeAt(0);
-    public static openParen: number = "(".charCodeAt(0);
-    public static percent: number = "%".charCodeAt(0);
-    public static plus: number = "+".charCodeAt(0);
-    public static question: number = "?".charCodeAt(0);
-    public static semicolon: number = ";".charCodeAt(0);
-    public static singleQuote: number = "'".charCodeAt(0);
-    public static slash: number = "/".charCodeAt(0);
-    public static tilde: number = "~".charCodeAt(0);
+    ampersand = 38,             // &
+    asterisk = 42,              // *
+    backslash = 92,             // \
+    bar = 124,                  // |
+    caret = 94,                 // ^
+    closeBrace = 125,           // }
+    closeBracket = 93,          // ]
+    closeParen = 41,            // )
+    colon = 58,                 // : 
+    comma = 44,                 // ,
+    dot = 46,                   // .
+    doubleQuote = 34,           // "
+    equals = 61,                // =
+    exclamation = 33,           // !
+    greaterThan = 62,           // >
+    lessThan = 60,              // <
+    minus = 45,                 // -
+    openBrace = 123,            // {
+    openBracket = 91,           // [
+    openParen = 40,             // (
+    percent = 37,               // %
+    plus = 43,                  // +
+    question = 63,              // ?
+    semicolon = 59,             // ;
+    singleQuote = 39,           // '
+    slash = 47,                 // /
+    tilde = 126,                // ~
 
-    public static backspace: number = "\b".charCodeAt(0);
-    public static formFeed: number = "\f".charCodeAt(0);
-    public static nonBreakingSpace: number = "\u00A0".charCodeAt(0);
-    public static byteOrderMark = "\uFEFF".charCodeAt(0);
-    public static tab: number = "\t".charCodeAt(0);
-    public static verticalTab: number = 11; // For some reason "\v".charCodeAt(0) doesn't work.
+    backspace = 8,              // \b
+    formFeed = 12,              // \f
+    nonBreakingSpace = 0x00A0,  //
+    byteOrderMark = 0xFEFF,
+    tab = 9,                    // \t
+    verticalTab = 11,           // \v
 }

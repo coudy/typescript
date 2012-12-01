@@ -154,81 +154,81 @@ var JSON2 = {
         };
     }
 })());
-var CharacterCodes = (function () {
-    function CharacterCodes() { }
+var CharacterCodes;
+(function (CharacterCodes) {
+    CharacterCodes._map = [];
     CharacterCodes.nullCharacter = 0;
-    CharacterCodes.newLine = "\n".charCodeAt(0);
-    CharacterCodes.carriageReturn = "\r".charCodeAt(0);
-    CharacterCodes.nextLine = '\u0085'.charCodeAt(0);
-    CharacterCodes.lineSeparator = '\u2028'.charCodeAt(0);
-    CharacterCodes.paragraphSeparator = '\u2029'.charCodeAt(0);
-    CharacterCodes.space = " ".charCodeAt(0);
-    CharacterCodes._ = "_".charCodeAt(0);
-    CharacterCodes.$ = "$".charCodeAt(0);
-    CharacterCodes._0 = "0".charCodeAt(0);
-    CharacterCodes._9 = "9".charCodeAt(0);
-    CharacterCodes.a = "a".charCodeAt(0);
-    CharacterCodes.b = "b".charCodeAt(0);
-    CharacterCodes.e = "e".charCodeAt(0);
-    CharacterCodes.f = "f".charCodeAt(0);
-    CharacterCodes.n = "n".charCodeAt(0);
-    CharacterCodes.r = "r".charCodeAt(0);
-    CharacterCodes.t = "t".charCodeAt(0);
-    CharacterCodes.u = "u".charCodeAt(0);
-    CharacterCodes.v = "v".charCodeAt(0);
-    CharacterCodes.x = "x".charCodeAt(0);
-    CharacterCodes.z = "z".charCodeAt(0);
-    CharacterCodes.A = "A".charCodeAt(0);
-    CharacterCodes.E = "E".charCodeAt(0);
-    CharacterCodes.F = "F".charCodeAt(0);
-    CharacterCodes.X = "X".charCodeAt(0);
-    CharacterCodes.Z = "Z".charCodeAt(0);
-    CharacterCodes.ampersand = "&".charCodeAt(0);
-    CharacterCodes.asterisk = "*".charCodeAt(0);
-    CharacterCodes.backslash = "\\".charCodeAt(0);
-    CharacterCodes.bar = "|".charCodeAt(0);
-    CharacterCodes.caret = "^".charCodeAt(0);
-    CharacterCodes.closeBrace = "}".charCodeAt(0);
-    CharacterCodes.closeBracket = "]".charCodeAt(0);
-    CharacterCodes.closeParen = ")".charCodeAt(0);
-    CharacterCodes.colon = ":".charCodeAt(0);
-    CharacterCodes.comma = ",".charCodeAt(0);
-    CharacterCodes.dot = ".".charCodeAt(0);
-    CharacterCodes.doubleQuote = '"'.charCodeAt(0);
-    CharacterCodes.equals = "=".charCodeAt(0);
-    CharacterCodes.exclamation = "!".charCodeAt(0);
-    CharacterCodes.greaterThan = ">".charCodeAt(0);
-    CharacterCodes.lessThan = "<".charCodeAt(0);
-    CharacterCodes.minus = "-".charCodeAt(0);
-    CharacterCodes.openBrace = "{".charCodeAt(0);
-    CharacterCodes.openBracket = "[".charCodeAt(0);
-    CharacterCodes.openParen = "(".charCodeAt(0);
-    CharacterCodes.percent = "%".charCodeAt(0);
-    CharacterCodes.plus = "+".charCodeAt(0);
-    CharacterCodes.question = "?".charCodeAt(0);
-    CharacterCodes.semicolon = ";".charCodeAt(0);
-    CharacterCodes.singleQuote = "'".charCodeAt(0);
-    CharacterCodes.slash = "/".charCodeAt(0);
-    CharacterCodes.tilde = "~".charCodeAt(0);
-    CharacterCodes.backspace = "\b".charCodeAt(0);
-    CharacterCodes.formFeed = "\f".charCodeAt(0);
-    CharacterCodes.nonBreakingSpace = "\u00A0".charCodeAt(0);
-    CharacterCodes.byteOrderMark = "\uFEFF".charCodeAt(0);
-    CharacterCodes.tab = "\t".charCodeAt(0);
+    CharacterCodes.newLine = 10;
+    CharacterCodes.carriageReturn = 13;
+    CharacterCodes.nextLine = 133;
+    CharacterCodes.lineSeparator = 8232;
+    CharacterCodes.paragraphSeparator = 8233;
+    CharacterCodes.space = 32;
+    CharacterCodes._ = 95;
+    CharacterCodes.$ = 36;
+    CharacterCodes._0 = 48;
+    CharacterCodes._9 = 57;
+    CharacterCodes.a = 97;
+    CharacterCodes.b = 98;
+    CharacterCodes.e = 101;
+    CharacterCodes.f = 102;
+    CharacterCodes.n = 110;
+    CharacterCodes.r = 114;
+    CharacterCodes.t = 116;
+    CharacterCodes.u = 117;
+    CharacterCodes.v = 118;
+    CharacterCodes.x = 120;
+    CharacterCodes.z = 122;
+    CharacterCodes.A = 65;
+    CharacterCodes.E = 69;
+    CharacterCodes.F = 70;
+    CharacterCodes.X = 88;
+    CharacterCodes.Z = 90;
+    CharacterCodes.ampersand = 38;
+    CharacterCodes.asterisk = 42;
+    CharacterCodes.backslash = 92;
+    CharacterCodes.bar = 124;
+    CharacterCodes.caret = 94;
+    CharacterCodes.closeBrace = 125;
+    CharacterCodes.closeBracket = 93;
+    CharacterCodes.closeParen = 41;
+    CharacterCodes.colon = 58;
+    CharacterCodes.comma = 44;
+    CharacterCodes.dot = 46;
+    CharacterCodes.doubleQuote = 34;
+    CharacterCodes.equals = 61;
+    CharacterCodes.exclamation = 33;
+    CharacterCodes.greaterThan = 62;
+    CharacterCodes.lessThan = 60;
+    CharacterCodes.minus = 45;
+    CharacterCodes.openBrace = 123;
+    CharacterCodes.openBracket = 91;
+    CharacterCodes.openParen = 40;
+    CharacterCodes.percent = 37;
+    CharacterCodes.plus = 43;
+    CharacterCodes.question = 63;
+    CharacterCodes.semicolon = 59;
+    CharacterCodes.singleQuote = 39;
+    CharacterCodes.slash = 47;
+    CharacterCodes.tilde = 126;
+    CharacterCodes.backspace = 8;
+    CharacterCodes.formFeed = 12;
+    CharacterCodes.nonBreakingSpace = 160;
+    CharacterCodes.byteOrderMark = 65279;
+    CharacterCodes.tab = 9;
     CharacterCodes.verticalTab = 11;
-    return CharacterCodes;
-})();
+})(CharacterCodes || (CharacterCodes = {}));
 var CharacterInfo = (function () {
     function CharacterInfo() { }
     CharacterInfo.isDecimalDigit = function isDecimalDigit(c) {
-        return c >= CharacterCodes._0 && c <= CharacterCodes._9;
+        return c >= 48 /* _0 */  && c <= 57 /* _9 */ ;
     }
     CharacterInfo.isHexDigit = function isHexDigit(c) {
-        return CharacterInfo.isDecimalDigit(c) || (c >= CharacterCodes.A && c <= CharacterCodes.F) || (c >= CharacterCodes.a && c <= CharacterCodes.f);
+        return CharacterInfo.isDecimalDigit(c) || (c >= 65 /* A */  && c <= 70 /* F */ ) || (c >= 97 /* a */  && c <= 102 /* f */ );
     }
     CharacterInfo.hexValue = function hexValue(c) {
         Debug.assert(CharacterInfo.isHexDigit(c));
-        return CharacterInfo.isDecimalDigit(c) ? (c - CharacterCodes._0) : (c >= CharacterCodes.A && c <= CharacterCodes.F) ? c - CharacterCodes.A + 10 : c - CharacterCodes.a + 10;
+        return CharacterInfo.isDecimalDigit(c) ? (c - 48 /* _0 */ ) : (c >= 65 /* A */  && c <= 70 /* F */ ) ? c - 65 /* A */  + 10 : c - 97 /* a */  + 10;
     }
     return CharacterInfo;
 })();
@@ -2752,21 +2752,21 @@ var Scanner = (function () {
         while(true) {
             var ch = this.textWindow.peekCharAtPosition();
             switch(ch) {
-                case CharacterCodes.space:
-                case CharacterCodes.tab:
-                case CharacterCodes.verticalTab:
-                case CharacterCodes.formFeed:
-                case CharacterCodes.nonBreakingSpace:
-                case CharacterCodes.byteOrderMark: {
+                case 32 /* space */ :
+                case 9 /* tab */ :
+                case 11 /* verticalTab */ :
+                case 12 /* formFeed */ :
+                case 160 /* nonBreakingSpace */ :
+                case 65279 /* byteOrderMark */ : {
                     this.textWindow.advanceChar1();
                     triviaInfo.Width++;
                     continue;
 
                 }
             }
-            if(ch === CharacterCodes.slash) {
+            if(ch === 47 /* slash */ ) {
                 var ch2 = this.textWindow.peekCharN(1);
-                if(ch2 === CharacterCodes.slash) {
+                if(ch2 === 47 /* slash */ ) {
                     this.textWindow.advanceChar1();
                     this.textWindow.advanceChar1();
                     triviaInfo.Width += 2;
@@ -2774,7 +2774,7 @@ var Scanner = (function () {
                     this.scanSingleLineCommentTrivia(triviaInfo);
                     continue;
                 }
-                if(ch2 === CharacterCodes.asterisk) {
+                if(ch2 === 42 /* asterisk */ ) {
                     this.textWindow.advanceChar1();
                     this.textWindow.advanceChar1();
                     triviaInfo.Width += 2;
@@ -2786,12 +2786,12 @@ var Scanner = (function () {
             }
             if(this.isNewLineCharacter(ch)) {
                 triviaInfo.HasNewLine = true;
-                if(ch === CharacterCodes.carriageReturn) {
+                if(ch === 13 /* carriageReturn */ ) {
                     this.textWindow.advanceChar1();
                     triviaInfo.Width++;
                 }
                 ch = this.textWindow.peekCharAtPosition();
-                if(ch === CharacterCodes.newLine) {
+                if(ch === 10 /* newLine */ ) {
                     this.textWindow.advanceChar1();
                     triviaInfo.Width++;
                 }
@@ -2805,10 +2805,10 @@ var Scanner = (function () {
     };
     Scanner.prototype.isNewLineCharacter = function (ch) {
         switch(ch) {
-            case CharacterCodes.carriageReturn:
-            case CharacterCodes.newLine:
-            case CharacterCodes.paragraphSeparator:
-            case CharacterCodes.lineSeparator: {
+            case 13 /* carriageReturn */ :
+            case 10 /* newLine */ :
+            case 8233 /* paragraphSeparator */ :
+            case 8232 /* lineSeparator */ : {
                 return true;
 
             }
@@ -2821,7 +2821,7 @@ var Scanner = (function () {
     Scanner.prototype.scanSingleLineCommentTrivia = function (triviaInfo) {
         while(true) {
             var ch = this.textWindow.peekCharAtPosition();
-            if(this.isNewLineCharacter(ch) || ch === CharacterCodes.nullCharacter) {
+            if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
                 return;
             }
             this.textWindow.advanceChar1();
@@ -2831,10 +2831,10 @@ var Scanner = (function () {
     Scanner.prototype.scanMultiLineCommentTrivia = function (triviaInfo) {
         while(true) {
             var ch = this.textWindow.peekCharAtPosition();
-            if(ch === CharacterCodes.nullCharacter) {
+            if(ch === 0 /* nullCharacter */ ) {
                 return;
             }
-            if(ch === CharacterCodes.asterisk && this.textWindow.peekCharN(1) === CharacterCodes.slash) {
+            if(ch === 42 /* asterisk */  && this.textWindow.peekCharN(1) === 47 /* slash */ ) {
                 this.textWindow.advanceChar1();
                 this.textWindow.advanceChar1();
                 triviaInfo.Width += 2;
@@ -2851,140 +2851,140 @@ var Scanner = (function () {
         this.tokenInfo.Text = null;
         var character = this.textWindow.peekCharAtPosition();
         switch(character) {
-            case CharacterCodes.doubleQuote:
-            case CharacterCodes.singleQuote: {
+            case 34 /* doubleQuote */ :
+            case 39 /* singleQuote */ : {
                 this.scanStringLiteral();
                 return;
 
             }
-            case CharacterCodes.slash: {
+            case 47 /* slash */ : {
                 this.scanSlashToken();
                 return;
 
             }
-            case CharacterCodes.dot: {
+            case 46 /* dot */ : {
                 this.scanDotToken();
                 return;
 
             }
-            case CharacterCodes.minus: {
+            case 45 /* minus */ : {
                 this.scanMinusToken();
                 return;
 
             }
-            case CharacterCodes.exclamation: {
+            case 33 /* exclamation */ : {
                 this.scanExclamationToken();
                 return;
 
             }
-            case CharacterCodes.equals: {
+            case 61 /* equals */ : {
                 this.scanEqualsToken();
                 return;
 
             }
-            case CharacterCodes.bar: {
+            case 124 /* bar */ : {
                 this.scanBarToken();
                 return;
 
             }
-            case CharacterCodes.asterisk: {
+            case 42 /* asterisk */ : {
                 this.scanAsteriskToken();
                 return;
 
             }
-            case CharacterCodes.plus: {
+            case 43 /* plus */ : {
                 this.scanPlusToken();
                 return;
 
             }
-            case CharacterCodes.percent: {
+            case 37 /* percent */ : {
                 this.scanPercentToken();
                 return;
 
             }
-            case CharacterCodes.ampersand: {
+            case 38 /* ampersand */ : {
                 this.scanAmpersandToken();
                 return;
 
             }
-            case CharacterCodes.caret: {
+            case 94 /* caret */ : {
                 this.scanCaretToken();
                 return;
 
             }
-            case CharacterCodes.lessThan: {
+            case 60 /* lessThan */ : {
                 this.scanLessThanToken();
                 return;
 
             }
-            case CharacterCodes.greaterThan: {
+            case 62 /* greaterThan */ : {
                 this.scanGreaterThanToken();
                 return;
 
             }
-            case CharacterCodes.comma: {
+            case 44 /* comma */ : {
                 this.advanceAndSetTokenKind(72 /* CommaToken */ );
                 return;
 
             }
-            case CharacterCodes.colon: {
+            case 58 /* colon */ : {
                 this.advanceAndSetTokenKind(99 /* ColonToken */ );
                 return;
 
             }
-            case CharacterCodes.semicolon: {
+            case 59 /* semicolon */ : {
                 this.advanceAndSetTokenKind(71 /* SemicolonToken */ );
                 return;
 
             }
-            case CharacterCodes.tilde: {
+            case 126 /* tilde */ : {
                 this.advanceAndSetTokenKind(95 /* TildeToken */ );
                 return;
 
             }
-            case CharacterCodes.openParen: {
+            case 40 /* openParen */ : {
                 this.advanceAndSetTokenKind(65 /* OpenParenToken */ );
                 return;
 
             }
-            case CharacterCodes.closeParen: {
+            case 41 /* closeParen */ : {
                 this.advanceAndSetTokenKind(66 /* CloseParenToken */ );
                 return;
 
             }
-            case CharacterCodes.openBrace: {
+            case 123 /* openBrace */ : {
                 this.advanceAndSetTokenKind(63 /* OpenBraceToken */ );
                 return;
 
             }
-            case CharacterCodes.closeBrace: {
+            case 125 /* closeBrace */ : {
                 this.advanceAndSetTokenKind(64 /* CloseBraceToken */ );
                 return;
 
             }
-            case CharacterCodes.openBracket: {
+            case 91 /* openBracket */ : {
                 this.advanceAndSetTokenKind(67 /* OpenBracketToken */ );
                 return;
 
             }
-            case CharacterCodes.closeBracket: {
+            case 93 /* closeBracket */ : {
                 this.advanceAndSetTokenKind(68 /* CloseBracketToken */ );
                 return;
 
             }
-            case CharacterCodes.question: {
+            case 63 /* question */ : {
                 this.advanceAndSetTokenKind(98 /* QuestionToken */ );
                 return;
 
             }
-            case CharacterCodes.nullCharacter: {
+            case 0 /* nullCharacter */ : {
                 this.tokenInfo.Kind = 114 /* EndOfFileToken */ ;
                 this.tokenInfo.Text = "";
                 return;
 
             }
         }
-        if(character >= CharacterCodes.a && character <= CharacterCodes.z) {
+        if(character >= 97 /* a */  && character <= 122 /* z */ ) {
             this.scanIdentifierOrKeyword();
             return;
         }
@@ -3009,17 +3009,17 @@ var Scanner = (function () {
         while(CharacterInfo.isDecimalDigit(this.textWindow.peekCharAtPosition())) {
             this.textWindow.advanceChar1();
         }
-        if(this.textWindow.peekCharAtPosition() === CharacterCodes.dot) {
+        if(this.textWindow.peekCharAtPosition() === 46 /* dot */ ) {
             this.textWindow.advanceChar1();
         }
         while(CharacterInfo.isDecimalDigit(this.textWindow.peekCharAtPosition())) {
             this.textWindow.advanceChar1();
         }
         var ch = this.textWindow.peekCharAtPosition();
-        if(ch === CharacterCodes.e || ch === CharacterCodes.E) {
+        if(ch === 101 /* e */  || ch === 69 /* E */ ) {
             this.textWindow.advanceChar1();
             ch = this.textWindow.peekCharAtPosition();
-            if(ch === CharacterCodes.minus || ch === CharacterCodes.plus) {
+            if(ch === 45 /* minus */  || ch === 43 /* plus */ ) {
                 if(CharacterInfo.isDecimalDigit(this.textWindow.peekCharN(1))) {
                     this.textWindow.advanceChar1();
                 }
@@ -3042,9 +3042,9 @@ var Scanner = (function () {
         this.tokenInfo.Kind = 7 /* NumericLiteral */ ;
     };
     Scanner.prototype.isHexNumericLiteral = function () {
-        if(this.textWindow.peekCharAtPosition() === CharacterCodes._0) {
+        if(this.textWindow.peekCharAtPosition() === 48 /* _0 */ ) {
             var ch = this.textWindow.peekCharN(1);
-            return ch === CharacterCodes.x || ch === CharacterCodes.X;
+            return ch === 120 /* x */  || ch === 88 /* X */ ;
         }
         return false;
     };
@@ -3062,7 +3062,7 @@ var Scanner = (function () {
         this.tokenInfo.Kind = 5 /* IdentifierNameToken */ ;
     };
     Scanner.prototype.isIdentifierStart_Fast = function (character) {
-        if((character >= CharacterCodes.a && character <= CharacterCodes.z) || (character >= CharacterCodes.A && character <= CharacterCodes.Z) || character === CharacterCodes._ || character === CharacterCodes.$) {
+        if((character >= 97 /* a */  && character <= 122 /* z */ ) || (character >= 65 /* A */  && character <= 90 /* Z */ ) || character === 95 /* _ */  || character === 36 /* $ */ ) {
             return true;
         }
         return false;
@@ -3079,7 +3079,7 @@ var Scanner = (function () {
         if(this.isIdentifierStart_Fast(character)) {
             return true;
         }
-        return character >= CharacterCodes._0 && character <= CharacterCodes._9;
+        return character >= 48 /* _0 */  && character <= 57 /* _9 */ ;
     };
     Scanner.prototype.isIdentifierPart_Slow = function () {
         if(this.isIdentifierStart_Slow()) {
@@ -3105,11 +3105,11 @@ var Scanner = (function () {
     Scanner.prototype.scanGreaterThanToken = function () {
         this.textWindow.advanceChar1();
         var character = this.textWindow.peekCharAtPosition();
-        if(character === CharacterCodes.equals) {
+        if(character === 61 /* equals */ ) {
             this.textWindow.advanceChar1();
             this.tokenInfo.Kind = 76 /* GreaterThanEqualsToken */ ;
         } else {
-            if(character === CharacterCodes.greaterThan) {
+            if(character === 62 /* greaterThan */ ) {
                 this.scanGreaterThanGreaterThanToken();
             } else {
                 this.tokenInfo.Kind = 74 /* GreaterThanToken */ ;
@@ -3119,11 +3119,11 @@ var Scanner = (function () {
     Scanner.prototype.scanGreaterThanGreaterThanToken = function () {
         this.textWindow.advanceChar1();
         var character = this.textWindow.peekCharAtPosition();
-        if(character === CharacterCodes.equals) {
+        if(character === 61 /* equals */ ) {
             this.textWindow.advanceChar1();
             this.tokenInfo.Kind = 106 /* GreaterThanGreaterThanEqualsToken */ ;
         } else {
-            if(character === CharacterCodes.greaterThan) {
+            if(character === 62 /* greaterThan */ ) {
                 this.scanGreaterThanGreaterThanGreaterThanToken();
             } else {
                 this.tokenInfo.Kind = 89 /* GreaterThanGreaterThanToken */ ;
@@ -3133,7 +3133,7 @@ var Scanner = (function () {
     Scanner.prototype.scanGreaterThanGreaterThanGreaterThanToken = function () {
         this.textWindow.advanceChar1();
         var character = this.textWindow.peekCharAtPosition();
-        if(character === CharacterCodes.equals) {
+        if(character === 61 /* equals */ ) {
             this.textWindow.advanceChar1();
             this.tokenInfo.Kind = 107 /* GreaterThanGreaterThanGreaterThanEqualsToken */ ;
         } else {
@@ -3142,13 +3142,13 @@ var Scanner = (function () {
     };
     Scanner.prototype.scanLessThanToken = function () {
         this.textWindow.advanceChar1();
-        if(this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
+        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
             this.textWindow.advanceChar1();
             this.tokenInfo.Kind = 75 /* LessThanEqualsToken */ ;
         } else {
-            if(this.textWindow.peekCharAtPosition() === CharacterCodes.lessThan) {
+            if(this.textWindow.peekCharAtPosition() === 60 /* lessThan */ ) {
                 this.textWindow.advanceChar1();
-                if(this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
+                if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
                     this.textWindow.advanceChar1();
                     this.tokenInfo.Kind = 105 /* LessThanLessThanEqualsToken */ ;
                 } else {
@@ -3161,11 +3161,11 @@ var Scanner = (function () {
     };
     Scanner.prototype.scanBarToken = function () {
         this.textWindow.advanceChar1();
-        if(this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
+        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
             this.textWindow.advanceChar1();
             this.tokenInfo.Kind = 109 /* BarEqualsToken */ ;
         } else {
-            if(this.textWindow.peekCharAtPosition() === CharacterCodes.bar) {
+            if(this.textWindow.peekCharAtPosition() === 124 /* bar */ ) {
                 this.textWindow.advanceChar1();
                 this.tokenInfo.Kind = 97 /* BarBarToken */ ;
             } else {
@@ -3175,7 +3175,7 @@ var Scanner = (function () {
     };
     Scanner.prototype.scanCaretToken = function () {
         this.textWindow.advanceChar1();
-        if(this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
+        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
             this.textWindow.advanceChar1();
             this.tokenInfo.Kind = 110 /* CaretEqualsToken */ ;
         } else {
@@ -3185,11 +3185,11 @@ var Scanner = (function () {
     Scanner.prototype.scanAmpersandToken = function () {
         this.textWindow.advanceChar1();
         var character = this.textWindow.peekCharAtPosition();
-        if(character === CharacterCodes.equals) {
+        if(character === 61 /* equals */ ) {
             this.textWindow.advanceChar1();
             this.tokenInfo.Kind = 108 /* AmpersandEqualsToken */ ;
         } else {
-            if(this.textWindow.peekCharAtPosition() === CharacterCodes.ampersand) {
+            if(this.textWindow.peekCharAtPosition() === 38 /* ampersand */ ) {
                 this.textWindow.advanceChar1();
                 this.tokenInfo.Kind = 96 /* AmpersandAmpersandToken */ ;
             } else {
@@ -3199,7 +3199,7 @@ var Scanner = (function () {
     };
     Scanner.prototype.scanPercentToken = function () {
         this.textWindow.advanceChar1();
-        if(this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
+        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
             this.textWindow.advanceChar1();
             this.tokenInfo.Kind = 104 /* PercentEqualsToken */ ;
         } else {
@@ -3209,11 +3209,11 @@ var Scanner = (function () {
     Scanner.prototype.scanMinusToken = function () {
         this.textWindow.advanceChar1();
         var character = this.textWindow.peekCharAtPosition();
-        if(character === CharacterCodes.equals) {
+        if(character === 61 /* equals */ ) {
             this.textWindow.advanceChar1();
             this.tokenInfo.Kind = 102 /* MinusEqualsToken */ ;
         } else {
-            if(character === CharacterCodes.minus) {
+            if(character === 45 /* minus */ ) {
                 this.textWindow.advanceChar1();
                 this.tokenInfo.Kind = 87 /* MinusMinusToken */ ;
             } else {
@@ -3224,11 +3224,11 @@ var Scanner = (function () {
     Scanner.prototype.scanPlusToken = function () {
         this.textWindow.advanceChar1();
         var character = this.textWindow.peekCharAtPosition();
-        if(character === CharacterCodes.equals) {
+        if(character === 61 /* equals */ ) {
             this.textWindow.advanceChar1();
             this.tokenInfo.Kind = 101 /* PlusEqualsToken */ ;
         } else {
-            if(character === CharacterCodes.plus) {
+            if(character === 43 /* plus */ ) {
                 this.textWindow.advanceChar1();
                 this.tokenInfo.Kind = 86 /* PlusPlusToken */ ;
             } else {
@@ -3238,7 +3238,7 @@ var Scanner = (function () {
     };
     Scanner.prototype.scanAsteriskToken = function () {
         this.textWindow.advanceChar1();
-        if(this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
+        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
             this.textWindow.advanceChar1();
             this.tokenInfo.Kind = 103 /* AsteriskEqualsToken */ ;
         } else {
@@ -3248,16 +3248,16 @@ var Scanner = (function () {
     Scanner.prototype.scanEqualsToken = function () {
         this.textWindow.advanceChar1();
         var character = this.textWindow.peekCharAtPosition();
-        if(character === CharacterCodes.equals) {
+        if(character === 61 /* equals */ ) {
             this.textWindow.advanceChar1();
-            if(this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
+            if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
                 this.textWindow.advanceChar1();
                 this.tokenInfo.Kind = 80 /* EqualsEqualsEqualsToken */ ;
             } else {
                 this.tokenInfo.Kind = 77 /* EqualsEqualsToken */ ;
             }
         } else {
-            if(character === CharacterCodes.greaterThan) {
+            if(character === 62 /* greaterThan */ ) {
                 this.textWindow.advanceChar1();
                 this.tokenInfo.Kind = 78 /* EqualsGreaterThanToken */ ;
             } else {
@@ -3266,7 +3266,7 @@ var Scanner = (function () {
         }
     };
     Scanner.prototype.isDotPrefixedNumericLiteral = function () {
-        if(this.textWindow.peekCharAtPosition() === CharacterCodes.dot) {
+        if(this.textWindow.peekCharAtPosition() === 46 /* dot */ ) {
             var ch = this.textWindow.peekCharN(1);
             return CharacterInfo.isDecimalDigit(ch);
         }
@@ -3278,7 +3278,7 @@ var Scanner = (function () {
             return;
         }
         this.textWindow.advanceChar1();
-        if(this.textWindow.peekCharAtPosition() === CharacterCodes.dot && this.textWindow.peekCharN(1) === CharacterCodes.dot) {
+        if(this.textWindow.peekCharAtPosition() === 46 /* dot */  && this.textWindow.peekCharN(1) === 46 /* dot */ ) {
             this.textWindow.advanceChar1();
             this.textWindow.advanceChar1();
             this.tokenInfo.Kind = 70 /* DotDotDotToken */ ;
@@ -3291,7 +3291,7 @@ var Scanner = (function () {
             return;
         }
         this.textWindow.advanceChar1();
-        if(this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
+        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
             this.textWindow.advanceChar1();
             this.tokenInfo.Kind = 112 /* SlashEqualsToken */ ;
         } else {
@@ -3321,21 +3321,21 @@ var Scanner = (function () {
 
             }
         }
-        Debug.assert(this.textWindow.peekCharAtPosition() === CharacterCodes.slash);
+        Debug.assert(this.textWindow.peekCharAtPosition() === 47 /* slash */ );
         var start = this.textWindow.position();
         this.textWindow.advanceChar1();
         var skipNextSlash = false;
         while(true) {
             var ch = this.textWindow.peekCharAtPosition();
-            if(this.isNewLineCharacter(ch) || ch === CharacterCodes.nullCharacter) {
+            if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
                 this.textWindow.reset(start);
                 return false;
             }
             this.textWindow.advanceChar1();
-            if(!skipNextSlash && ch === CharacterCodes.slash) {
+            if(!skipNextSlash && ch === 47 /* slash */ ) {
                 break;
             } else {
-                if(!skipNextSlash && ch === CharacterCodes.backslash) {
+                if(!skipNextSlash && ch === 92 /* backslash */ ) {
                     skipNextSlash = true;
                     continue;
                 }
@@ -3351,9 +3351,9 @@ var Scanner = (function () {
     };
     Scanner.prototype.scanExclamationToken = function () {
         this.textWindow.advanceChar1();
-        if(this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
+        if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
             this.textWindow.advanceChar1();
-            if(this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
+            if(this.textWindow.peekCharAtPosition() === 61 /* equals */ ) {
                 this.textWindow.advanceChar1();
                 this.tokenInfo.Kind = 81 /* ExclamationEqualsEqualsToken */ ;
             } else {
@@ -3370,63 +3370,63 @@ var Scanner = (function () {
         this.addSimpleDiagnosticInfo(1 /* Unexpected_character_0 */ , this.tokenInfo.Text);
     };
     Scanner.prototype.skipEscapeSequence = function () {
-        Debug.assert(this.textWindow.peekCharAtPosition() === CharacterCodes.backslash);
+        Debug.assert(this.textWindow.peekCharAtPosition() === 92 /* backslash */ );
         var start = this.textWindow.position();
         this.textWindow.advanceChar1();
         var ch = this.textWindow.peekCharAtPosition();
         this.textWindow.advanceChar1();
         switch(ch) {
-            case CharacterCodes.singleQuote:
-            case CharacterCodes.doubleQuote:
-            case CharacterCodes.backslash: {
+            case 39 /* singleQuote */ :
+            case 34 /* doubleQuote */ :
+            case 92 /* backslash */ : {
                 return;
 
             }
-            case CharacterCodes._0: {
+            case 48 /* _0 */ : {
                 return;
 
             }
-            case CharacterCodes.b: {
+            case 98 /* b */ : {
                 return;
 
             }
-            case CharacterCodes.f: {
+            case 102 /* f */ : {
                 return;
 
             }
-            case CharacterCodes.n: {
+            case 110 /* n */ : {
                 return;
 
             }
-            case CharacterCodes.r: {
+            case 114 /* r */ : {
                 return;
 
             }
-            case CharacterCodes.t: {
+            case 116 /* t */ : {
                 return;
 
             }
-            case CharacterCodes.v: {
+            case 118 /* v */ : {
                 return;
 
             }
-            case CharacterCodes.x:
-            case CharacterCodes.u: {
+            case 120 /* x */ :
+            case 117 /* u */ : {
                 this.textWindow.reset(start);
                 var value = this.scanUnicodeOrHexEscape(this.errors);
                 return;
 
             }
-            case CharacterCodes.carriageReturn: {
-                if(this.textWindow.peekCharAtPosition() === CharacterCodes.newLine) {
+            case 13 /* carriageReturn */ : {
+                if(this.textWindow.peekCharAtPosition() === 10 /* newLine */ ) {
                     this.textWindow.advanceChar1();
                 }
                 return;
 
             }
-            case CharacterCodes.newLine:
-            case CharacterCodes.paragraphSeparator:
-            case CharacterCodes.lineSeparator: {
+            case 10 /* newLine */ :
+            case 8233 /* paragraphSeparator */ :
+            case 8232 /* lineSeparator */ : {
                 return;
 
             }
@@ -3438,18 +3438,18 @@ var Scanner = (function () {
     };
     Scanner.prototype.scanStringLiteral = function () {
         var quoteCharacter = this.textWindow.peekCharAtPosition();
-        Debug.assert(quoteCharacter === CharacterCodes.singleQuote || quoteCharacter === CharacterCodes.doubleQuote);
+        Debug.assert(quoteCharacter === 39 /* singleQuote */  || quoteCharacter === 34 /* doubleQuote */ );
         this.textWindow.advanceChar1();
         while(true) {
             var ch = this.textWindow.peekCharAtPosition();
-            if(ch === CharacterCodes.backslash) {
+            if(ch === 92 /* backslash */ ) {
                 this.skipEscapeSequence();
             } else {
                 if(ch === quoteCharacter) {
                     this.textWindow.advanceChar1();
                     break;
                 } else {
-                    if(this.isNewLineCharacter(ch) || ch === CharacterCodes.nullCharacter) {
+                    if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
                         this.addSimpleDiagnosticInfo(2 /* Missing_closing_quote_character */ );
                         break;
                     } else {
@@ -3465,18 +3465,18 @@ var Scanner = (function () {
         return this.isUnicodeEscape() || this.isHexEscape();
     };
     Scanner.prototype.isUnicodeEscape = function () {
-        if(this.textWindow.peekCharAtPosition() === CharacterCodes.backslash) {
+        if(this.textWindow.peekCharAtPosition() === 92 /* backslash */ ) {
             var ch2 = this.textWindow.peekCharN(1);
-            if(ch2 === CharacterCodes.u) {
+            if(ch2 === 117 /* u */ ) {
                 return true;
             }
         }
         return false;
     };
     Scanner.prototype.isHexEscape = function () {
-        if(this.textWindow.peekCharAtPosition() === CharacterCodes.backslash) {
+        if(this.textWindow.peekCharAtPosition() === 92 /* backslash */ ) {
             var ch2 = this.textWindow.peekCharN(1);
-            if(ch2 === CharacterCodes.x) {
+            if(ch2 === 120 /* x */ ) {
                 return true;
             }
         }
@@ -3504,9 +3504,9 @@ var Scanner = (function () {
     };
     Scanner.prototype.scanCharOrUnicodeEscape = function (errors) {
         var ch = this.textWindow.peekCharAtPosition();
-        if(ch === 92) {
+        if(ch === 92 /* backslash */ ) {
             var ch2 = this.textWindow.peekCharN(1);
-            if(ch2 === CharacterCodes.u) {
+            if(ch2 === 117 /* u */ ) {
                 return this.scanUnicodeOrHexEscape(errors);
             }
         }
@@ -3515,9 +3515,9 @@ var Scanner = (function () {
     };
     Scanner.prototype.scanCharOrUnicodeOrHexEscape = function (errors) {
         var ch = this.textWindow.peekCharAtPosition();
-        if(ch === CharacterCodes.backslash) {
+        if(ch === 92 /* backslash */ ) {
             var ch2 = this.textWindow.peekCharN(1);
-            if(ch2 === CharacterCodes.u || ch2 === CharacterCodes.x) {
+            if(ch2 === 117 /* u */  || ch2 === 120 /* x */ ) {
                 return this.scanUnicodeOrHexEscape(errors);
             }
         }
@@ -3527,13 +3527,13 @@ var Scanner = (function () {
     Scanner.prototype.scanUnicodeOrHexEscape = function (errors) {
         var start = this.textWindow.position();
         var character = this.textWindow.peekCharAtPosition();
-        Debug.assert(character === CharacterCodes.backslash);
+        Debug.assert(character === 92 /* backslash */ );
         this.textWindow.advanceChar1();
         character = this.textWindow.peekCharAtPosition();
-        Debug.assert(character === CharacterCodes.u || character === CharacterCodes.x);
+        Debug.assert(character === 117 /* u */  || character === 120 /* x */ );
         var intChar = 0;
         this.textWindow.advanceChar1();
-        var count = character === CharacterCodes.u ? 4 : 2;
+        var count = character === 117 /* u */  ? 4 : 2;
         for(var i = 0; i < count; i++) {
             var ch2 = this.textWindow.peekCharAtPosition();
             if(!CharacterInfo.isHexDigit(ch2)) {
@@ -3724,7 +3724,7 @@ var SlidingTextWindow = (function () {
                 this._characterWindowStart = 0;
             }
             if(this._characterWindowCount >= this.characterWindow.length) {
-                this.characterWindow[this.characterWindow.length * 2 - 1] = CharacterCodes.nullCharacter;
+                this.characterWindow[this.characterWindow.length * 2 - 1] = 0 /* nullCharacter */ ;
             }
             var amountToRead = MathPrototype.min(this.text.length() - (this.basis + this._characterWindowCount), this.characterWindow.length - this._characterWindowCount);
             this.text.copyTo(this.basis + this._characterWindowCount, this.characterWindow, this._characterWindowCount, amountToRead);
@@ -3742,7 +3742,7 @@ var SlidingTextWindow = (function () {
     SlidingTextWindow.prototype.peekCharAtPosition = function () {
         if(this.offset >= this._characterWindowCount) {
             if(!this.moreChars()) {
-                return CharacterCodes.nullCharacter;
+                return 0 /* nullCharacter */ ;
             }
         }
         return this.characterWindow[this.offset];
@@ -3873,14 +3873,14 @@ var TextBase = (function () {
         while(index < length) {
             var c = this.charCodeAt(0);
             var lineBreakLength;
-            if(c > CharacterCodes.carriageReturn && c <= 127) {
+            if(c > 13 /* carriageReturn */  && c <= 127) {
                 index++;
                 continue;
             } else {
-                if(c === CharacterCodes.carriageReturn && index + 1 < length && this.charCodeAt(index + 1) === CharacterCodes.newLine) {
+                if(c === 13 /* carriageReturn */  && index + 1 < length && this.charCodeAt(index + 1) === 10 /* newLine */ ) {
                     lineBreakLength = 2;
                 } else {
-                    if(c === CharacterCodes.newLine) {
+                    if(c === 10 /* newLine */ ) {
                         lineBreakLength = 1;
                     } else {
                         lineBreakLength = TextUtilities.getLengthOfLineBreak(this, index);
@@ -8745,8 +8745,8 @@ var TextUtilities = (function () {
     function TextUtilities() { }
     TextUtilities.getStartAndLengthOfLineBreakEndingAt = function getStartAndLengthOfLineBreakEndingAt(text, index, info) {
         var c = text.charCodeAt(index);
-        if(c === CharacterCodes.newLine) {
-            if(index > 0 && text.charCodeAt(index - 1) === CharacterCodes.carriageReturn) {
+        if(c === 10 /* newLine */ ) {
+            if(index > 0 && text.charCodeAt(index - 1) === 13 /* carriageReturn */ ) {
                 info.startPosition = index - 1;
                 info.length = 2;
             } else {
@@ -8764,19 +8764,19 @@ var TextUtilities = (function () {
         }
     }
     TextUtilities.isAnyLineBreakCharacter = function isAnyLineBreakCharacter(c) {
-        return c === CharacterCodes.newLine || c === CharacterCodes.carriageReturn || c === CharacterCodes.nextLine || c === CharacterCodes.lineSeparator || c === CharacterCodes.paragraphSeparator;
+        return c === 10 /* newLine */  || c === 13 /* carriageReturn */  || c === 133 /* nextLine */  || c === 8232 /* lineSeparator */  || c === 8233 /* paragraphSeparator */ ;
     }
     TextUtilities.getLengthOfLineBreak = function getLengthOfLineBreak(text, index) {
         var c = text.charCodeAt(index);
-        if(c > CharacterCodes.carriageReturn && c <= 127) {
+        if(c > 13 /* carriageReturn */  && c <= 127) {
             return 0;
         }
         return this.getLengthOfLineBreakSlow(text, index, c);
     }
     TextUtilities.getLengthOfLineBreakSlow = function getLengthOfLineBreakSlow(text, index, c) {
-        if(c === CharacterCodes.carriageReturn) {
+        if(c === 13 /* carriageReturn */ ) {
             var next = index + 1;
-            return (next < text.length()) && CharacterCodes.newLine === text.charCodeAt(next) ? 2 : 1;
+            return (next < text.length()) && 10 /* newLine */  === text.charCodeAt(next) ? 2 : 1;
         } else {
             if(TextUtilities.isAnyLineBreakCharacter(c)) {
                 return 1;
