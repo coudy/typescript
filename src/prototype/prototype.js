@@ -2767,7 +2767,6 @@ var Scanner = (function () {
         return SyntaxTokenFactory.create(start, this.leadingTriviaInfo, this.tokenInfo, this.trailingTriviaInfo, this.errors.length == 0 ? null : this.errors);
     };
     Scanner.prototype.scanTriviaInfo = function (afterFirstToken, isTrailing, triviaInfo) {
-        this.textWindow.start();
         triviaInfo.Width = 0;
         triviaInfo.HasComment = false;
         triviaInfo.HasNewLine = false;

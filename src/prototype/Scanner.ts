@@ -92,7 +92,6 @@ class Scanner {
     }
 
     private scanTriviaInfo(afterFirstToken: bool, isTrailing: bool, triviaInfo: ScannerTriviaInfo): void {
-        this.textWindow.start();
         triviaInfo.Width = 0;
         triviaInfo.HasComment = false;
         triviaInfo.HasNewLine = false;
