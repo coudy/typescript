@@ -471,6 +471,10 @@ var Contract = (function () {
     }
     return Contract;
 })();
+var Hash = (function () {
+    function Hash() { }
+    return Hash;
+})();
 var IntegerUtilities = (function () {
     function IntegerUtilities() { }
     IntegerUtilities.integerDivide = function integerDivide(numerator, denominator) {
@@ -3953,38 +3957,6 @@ var StringTable = (function () {
         this.mask = mask;
         this.entries = ArrayUtilities.createArray(mask + 1);
     }
-    StringTable.prototype.addString = function (key) {
-        var hashCode = StringTable.computeStringHashCode(key);
-        var entry = this.findStringEntry(key, hashCode);
-        if(entry !== null) {
-            return entry.Text;
-        }
-        return this.addEntry(key, hashCode);
-    };
-    StringTable.prototype.findStringEntry = function (key, hashCode) {
-        for(var e = this.entries[hashCode & this.mask]; e !== null; e = e.Next) {
-            if(e.HashCode === hashCode && e.Text === key) {
-                return e;
-            }
-        }
-        return null;
-    };
-    StringTable.prototype.addSubstring = function (text, keyStart, keyLength) {
-        var hashCode = StringTable.computeSubstringHashCode(text, keyStart, keyLength);
-        var entry = this.findSubstringEntry(text, keyStart, keyLength, hashCode);
-        if(entry !== null) {
-            return entry.Text;
-        }
-        return this.addEntry(text.substr(keyStart, keyLength), hashCode);
-    };
-    StringTable.prototype.findSubstringEntry = function (text, keyStart, keyLength, hashCode) {
-        for(var e = this.entries[hashCode & this.mask]; e !== null; e = e.Next) {
-            if(e.HashCode === hashCode && StringTable.textSubstringEquals(e.Text, text, keyStart, keyLength)) {
-                return e;
-            }
-        }
-        return null;
-    };
     StringTable.prototype.addCharArray = function (key, start, len) {
         var hashCode = StringTable.computeCharArrayHashCode(key, start, len);
         var entry = this.findCharArrayEntry(key, start, len, hashCode);
@@ -4002,44 +3974,8 @@ var StringTable = (function () {
         }
         return null;
     };
-    StringTable.prototype.addChar = function (key) {
-        var hashCode = StringTable.computeCharHashCode(key);
-        var entry = this.findCharEntry(key, hashCode);
-        if(entry !== null) {
-            return entry.Text;
-        }
-        return this.addEntry(String.fromCharCode(key), hashCode);
-    };
-    StringTable.prototype.findCharEntry = function (key, hashCode) {
-        for(var e = this.entries[hashCode & this.mask]; e !== null; e = e.Next) {
-            if(e.HashCode === hashCode && e.Text.length === 1 && e.Text.charCodeAt(0) === key) {
-                return e;
-            }
-        }
-        return null;
-    };
     StringTable.FNV_BASE = 2166136261;
     StringTable.FNV_PRIME = 16777619;
-    StringTable.computeStringHashCode = function computeStringHashCode(key) {
-        var hashCode = StringTable.FNV_BASE;
-        for(var i = 0; i < key.length; i++) {
-            hashCode = (hashCode ^ key[i]) * StringTable.FNV_PRIME;
-        }
-        return hashCode;
-    }
-    StringTable.computeSubstringHashCode = function computeSubstringHashCode(text, keyStart, keyLength) {
-        var hashCode = StringTable.FNV_BASE;
-        var end = keyStart + keyLength;
-        for(var i = keyStart; i < end; i++) {
-            hashCode = (hashCode ^ text.charCodeAt(i)) * StringTable.FNV_PRIME;
-        }
-        return hashCode;
-    }
-    StringTable.computeCharHashCode = function computeCharHashCode(ch) {
-        var hashCode = StringTable.FNV_BASE;
-        hashCode = (hashCode ^ ch) * StringTable.FNV_PRIME;
-        return hashCode;
-    }
     StringTable.computeCharArrayHashCode = function computeCharArrayHashCode(text, start, len) {
         var hashCode = StringTable.FNV_BASE;
         var end = start + len;
@@ -4075,6 +4011,7 @@ var StringTable = (function () {
         standardOut.WriteLine("----------------------");
     };
     StringTable.prototype.grow = function () {
+        this.dumpStats();
         var newMask = this.mask * 2 + 1;
         var oldEntries = this.entries;
         var newEntries = ArrayUtilities.createArray(newMask + 1);
@@ -4090,18 +4027,8 @@ var StringTable = (function () {
         }
         this.entries = newEntries;
         this.mask = newMask;
+        this.dumpStats();
     };
-    StringTable.textSubstringEquals = function textSubstringEquals(array, text, start, length) {
-        if(array.length !== length) {
-            return false;
-        }
-        for(var i = 0; i < array.length; i++) {
-            if(array.charCodeAt(i) !== text.charCodeAt(start + i)) {
-                return false;
-            }
-        }
-        return true;
-    }
     StringTable.textCharArrayEquals = function textCharArrayEquals(array, text, start, length) {
         return array.length === length && StringTable.textEqualsCore(array, text, start);
     }
