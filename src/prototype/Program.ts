@@ -1,6 +1,8 @@
 ///<reference path='References.ts' />
 ///<reference path='..\compiler\parser.ts' />
 
+var stringTable = new StringTable();
+
 class Program {
     runAllTests(environment: IEnvironment, useTypeScript: bool, verify: bool): void {
         environment.standardOut.WriteLine("");
@@ -9,7 +11,7 @@ class Program {
             filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify));
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript3",
             filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript3, useTypeScript, verify));
-
+            
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
             filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify));
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript3",
@@ -63,7 +65,7 @@ class Program {
         }
         else {
             var text = new StringText(contents);
-            var scanner = Scanner.create(text, languageVersion);
+            var scanner = new Scanner(text, languageVersion, /* new StringTable() */ stringTable);
             var parser = new Parser(scanner);
             var unit = parser.parseSourceUnit();
             // var json = JSON2.stringify(unit);

@@ -3946,22 +3946,15 @@ var StringTableEntry = (function () {
 })();
 var StringTable = (function () {
     function StringTable(mask, nested) {
-        if (typeof mask === "undefined") { mask = 31; }
+        if (typeof mask === "undefined") { mask = 255; }
         if (typeof nested === "undefined") { nested = null; }
-        this.nested = null;
         this.entries = [];
+        this.count = 0;
         this.mask = mask;
         this.entries = ArrayUtilities.createArray(mask + 1);
-        this.nested = nested;
     }
     StringTable.prototype.addString = function (key) {
         var hashCode = StringTable.computeStringHashCode(key);
-        if(this.nested !== null) {
-            var exist = this.nested.findStringEntry(key, hashCode);
-            if(exist !== null) {
-                return exist.Text;
-            }
-        }
         var entry = this.findStringEntry(key, hashCode);
         if(entry !== null) {
             return entry.Text;
@@ -3978,12 +3971,6 @@ var StringTable = (function () {
     };
     StringTable.prototype.addSubstring = function (text, keyStart, keyLength) {
         var hashCode = StringTable.computeSubstringHashCode(text, keyStart, keyLength);
-        if(this.nested !== null) {
-            var exist = this.nested.findSubstringEntry(text, keyStart, keyLength, hashCode);
-            if(exist !== null) {
-                return exist.Text;
-            }
-        }
         var entry = this.findSubstringEntry(text, keyStart, keyLength, hashCode);
         if(entry !== null) {
             return entry.Text;
@@ -4000,12 +3987,6 @@ var StringTable = (function () {
     };
     StringTable.prototype.addCharArray = function (key, start, len) {
         var hashCode = StringTable.computeCharArrayHashCode(key, start, len);
-        if(this.nested !== null) {
-            var exist = this.nested.findCharArrayEntry(key, start, len, hashCode);
-            if(exist !== null) {
-                return exist.Text;
-            }
-        }
         var entry = this.findCharArrayEntry(key, start, len, hashCode);
         if(entry !== null) {
             return entry.Text;
@@ -4023,12 +4004,6 @@ var StringTable = (function () {
     };
     StringTable.prototype.addChar = function (key) {
         var hashCode = StringTable.computeCharHashCode(key);
-        if(this.nested !== null) {
-            var exist = this.nested.findCharEntry(key, hashCode);
-            if(exist !== null) {
-                return exist.Text;
-            }
-        }
         var entry = this.findCharEntry(key, hashCode);
         if(entry !== null) {
             return entry.Text;
@@ -4077,10 +4052,27 @@ var StringTable = (function () {
         var index = hashCode & this.mask;
         var e = new StringTableEntry(text, hashCode, this.entries[index]);
         this.entries[index] = e;
-        if(this.count++ === this.mask) {
+        if(this.count === this.mask) {
             this.grow();
         }
+        this.count++;
         return e.Text;
+    };
+    StringTable.prototype.dumpStats = function () {
+        var standardOut = Environment.standardOut;
+        standardOut.WriteLine("----------------------");
+        standardOut.WriteLine("String table stats");
+        standardOut.WriteLine("Count            : " + this.count);
+        standardOut.WriteLine("Entries Length   : " + this.entries.length);
+        var occupiedSlots = 0;
+        for(var i = 0; i < this.entries.length; i++) {
+            if(this.entries[i] !== null) {
+                occupiedSlots++;
+            }
+        }
+        standardOut.WriteLine("Occupied slots   : " + occupiedSlots);
+        standardOut.WriteLine("Avg Length/Slot  : " + (this.count / occupiedSlots));
+        standardOut.WriteLine("----------------------");
     };
     StringTable.prototype.grow = function () {
         var newMask = this.mask * 2 + 1;
@@ -34863,6 +34855,7 @@ var TypeScript;
     }
     TypeScript.quickParse = quickParse;
 })(TypeScript || (TypeScript = {}));
+var stringTable = new StringTable();
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {
@@ -34916,7 +34909,7 @@ var Program = (function () {
             var unit1 = parser1.parse(text1, filePath, 0);
         } else {
             var text = new StringText(contents);
-            var scanner = Scanner.create(text, languageVersion);
+            var scanner = new Scanner(text, languageVersion, stringTable);
             var parser = new Parser(scanner);
             var unit = parser.parseSourceUnit();
             if(verify) {

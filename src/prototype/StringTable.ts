@@ -14,29 +14,29 @@ class StringTableEntry {
 }
 
 class StringTable {
-    private nested: StringTable = null;
+    // private nested: StringTable = null;
 
     private entries: StringTableEntry[] = [];
-    private count: number;
+    private count: number = 0;
     private mask: number;
 
-    constructor(mask: number = 31, nested: StringTable = null) {
+    constructor(mask: number = 255, nested: StringTable = null) {
         this.mask = mask;
         this.entries = ArrayUtilities.createArray(mask + 1);
 
         // nested table is supposed to be freezed and readonly.
-        this.nested = nested;
+        // this.nested = nested;
     }
 
     public addString(key: string): string {
         var hashCode = StringTable.computeStringHashCode(key);
 
-        if (this.nested !== null) {
-            var exist = this.nested.findStringEntry(key, hashCode);
-            if (exist !== null) {
-                return exist.Text;
-            }
-        }
+        //if (this.nested !== null) {
+        //    var exist = this.nested.findStringEntry(key, hashCode);
+        //    if (exist !== null) {
+        //        return exist.Text;
+        //    }
+        //}
 
         var entry = this.findStringEntry(key, hashCode);
         if (entry !== null) {
@@ -59,12 +59,12 @@ class StringTable {
     public addSubstring(text: string, keyStart: number, keyLength: number): string {
         var hashCode = StringTable.computeSubstringHashCode(text, keyStart, keyLength);
 
-        if (this.nested !== null) {
-            var exist = this.nested.findSubstringEntry(text, keyStart, keyLength, hashCode);
-            if (exist !== null) {
-                return exist.Text;
-            }
-        }
+        //if (this.nested !== null) {
+        //    var exist = this.nested.findSubstringEntry(text, keyStart, keyLength, hashCode);
+        //    if (exist !== null) {
+        //        return exist.Text;
+        //    }
+        //}
 
         var entry = this.findSubstringEntry(text, keyStart, keyLength, hashCode);
         if (entry !== null) {
@@ -87,12 +87,12 @@ class StringTable {
     public addCharArray(key: number[], start: number, len: number): string {
         var hashCode = StringTable.computeCharArrayHashCode(key, start, len);
 
-        if (this.nested !== null) {
-            var exist = this.nested.findCharArrayEntry(key, start, len, hashCode);
-            if (exist !== null) {
-                return exist.Text;
-            }
-        }
+        //if (this.nested !== null) {
+        //    var exist = this.nested.findCharArrayEntry(key, start, len, hashCode);
+        //    if (exist !== null) {
+        //        return exist.Text;
+        //    }
+        //}
 
         var entry = this.findCharArrayEntry(key, start, len, hashCode);
         if (entry !== null) {
@@ -116,12 +116,12 @@ class StringTable {
     public addChar(key: number): string {
         var hashCode = StringTable.computeCharHashCode(key);
 
-        if (this.nested !== null) {
-            var exist = this.nested.findCharEntry(key, hashCode);
-            if (exist !== null) {
-                return exist.Text;
-            }
-        }
+        //if (this.nested !== null) {
+        //    var exist = this.nested.findCharEntry(key, hashCode);
+        //    if (exist !== null) {
+        //        return exist.Text;
+        //    }
+        //}
 
         var entry = this.findCharEntry(key, hashCode);
         if (entry !== null) {
@@ -189,14 +189,37 @@ class StringTable {
         var e = new StringTableEntry(text, hashCode, this.entries[index]);
 
         this.entries[index] = e;
-        if (this.count++ === this.mask) {
+        if (this.count === this.mask) {
             this.grow();
         }
 
+        this.count++;
         return e.Text;
     }
 
+    private dumpStats() {
+        var standardOut = Environment.standardOut;
+        
+        standardOut.WriteLine("----------------------")
+        standardOut.WriteLine("String table stats");
+        standardOut.WriteLine("Count            : " + this.count);
+        standardOut.WriteLine("Entries Length   : " + this.entries.length);
+
+        var occupiedSlots = 0;
+        for (var i = 0; i < this.entries.length; i++) {
+            if (this.entries[i] !== null) {
+                occupiedSlots++;
+            }
+        }
+        
+        standardOut.WriteLine("Occupied slots   : " + occupiedSlots);
+        standardOut.WriteLine("Avg Length/Slot  : " + (this.count / occupiedSlots));
+        standardOut.WriteLine("----------------------");
+    }
+    
     private grow(): void {
+        // this.dumpStats();
+
         var newMask = this.mask * 2 + 1;
         var oldEntries = this.entries;
         var newEntries: StringTableEntry[] = ArrayUtilities.createArray(newMask + 1);
@@ -215,6 +238,8 @@ class StringTable {
 
         this.entries = newEntries;
         this.mask = newMask;
+
+        // this.dumpStats();
     }
 
     private static textSubstringEquals(array: string, text: string, start: number, length: number): bool {
