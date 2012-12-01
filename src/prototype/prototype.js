@@ -762,26 +762,6 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var SlidingTokenWindow = (function (_super) {
-    __extends(SlidingTokenWindow, _super);
-    function SlidingTokenWindow(parser) {
-        _super.call(this, 32, null);
-        this.parser = parser;
-    }
-    SlidingTokenWindow.prototype.isPastSourceEnd = function () {
-        return false;
-    };
-    SlidingTokenWindow.prototype.storeAdditionalRewindState = function (rewindPoint) {
-        this.parser.storeAdditionalRewindState(rewindPoint);
-    };
-    SlidingTokenWindow.prototype.restoreStateFromRewindPoint = function (rewindPoint) {
-        this.parser.restoreStateFromRewindPoint(rewindPoint);
-    };
-    SlidingTokenWindow.prototype.fetchMoreItems = function (sourceIndex, window, destinationIndex, spaceAvailable) {
-        return this.parser.fetchMoreItems(sourceIndex, window, destinationIndex, spaceAvailable);
-    };
-    return SlidingTokenWindow;
-})(SlidingWindow);
 var ParserExpressionPrecedence;
 (function (ParserExpressionPrecedence) {
     ParserExpressionPrecedence._map = [];
@@ -801,13 +781,14 @@ var ParserExpressionPrecedence;
     ParserExpressionPrecedence.MultiplicativeExpressionPrecedence = 14;
     ParserExpressionPrecedence.UnaryExpressionPrecedence = 15;
 })(ParserExpressionPrecedence || (ParserExpressionPrecedence = {}));
-var Parser = (function () {
+var Parser = (function (_super) {
+    __extends(Parser, _super);
     function Parser(scanner, oldTree, changes, options) {
+        _super.call(this, 32, null);
         this.options = null;
         this._currentToken = null;
         this.previousToken = null;
         this.scanner = scanner;
-        this.tokenWindow = new SlidingTokenWindow(this);
         this.oldTree = oldTree;
         this.options = options || new ParseOptions();
     }
@@ -831,13 +812,13 @@ var Parser = (function () {
     Parser.prototype.currentToken = function () {
         var result = this._currentToken;
         if(result === null) {
-            result = this.tokenWindow.currentItem();
+            result = this.currentItem();
             this._currentToken = result;
         }
         return result;
     };
     Parser.prototype.peekTokenN = function (n) {
-        return this.tokenWindow.peekItemN(n);
+        return this.peekItemN(n);
     };
     Parser.prototype.eatAnyToken = function () {
         var token = this.currentToken();
@@ -847,7 +828,7 @@ var Parser = (function () {
     Parser.prototype.moveToNextToken = function () {
         this.previousToken = this._currentToken;
         this._currentToken = null;
-        this.tokenWindow.moveToNextItem();
+        this.moveToNextItem();
     };
     Parser.prototype.canEatAutomaticSemicolon = function () {
         var token = this.currentToken();
@@ -1254,7 +1235,7 @@ var Parser = (function () {
         return this.currentToken().keywordKind() === 56 /* ConstructorKeyword */ ;
     };
     Parser.prototype.isMemberFunctionDeclaration = function () {
-        var rewindPoint = this.tokenWindow.getRewindPoint();
+        var rewindPoint = this.getRewindPoint();
         try  {
             if(this.currentToken().keywordKind() === 51 /* PublicKeyword */  || this.currentToken().keywordKind() === 49 /* PrivateKeyword */ ) {
                 this.eatAnyToken();
@@ -1264,12 +1245,12 @@ var Parser = (function () {
             }
             return this.isFunctionSignature();
         }finally {
-            this.tokenWindow.rewind(rewindPoint);
-            this.tokenWindow.releaseRewindPoint(rewindPoint);
+            this.rewind(rewindPoint);
+            this.releaseRewindPoint(rewindPoint);
         }
     };
     Parser.prototype.isMemberAccessorDeclaration = function () {
-        var rewindPoint = this.tokenWindow.getRewindPoint();
+        var rewindPoint = this.getRewindPoint();
         try  {
             if(this.currentToken().keywordKind() === 51 /* PublicKeyword */  || this.currentToken().keywordKind() === 49 /* PrivateKeyword */ ) {
                 this.eatAnyToken();
@@ -1283,8 +1264,8 @@ var Parser = (function () {
             this.eatAnyToken();
             return this.isIdentifier(this.currentToken());
         }finally {
-            this.tokenWindow.rewind(rewindPoint);
-            this.tokenWindow.releaseRewindPoint(rewindPoint);
+            this.rewind(rewindPoint);
+            this.releaseRewindPoint(rewindPoint);
         }
     };
     Parser.prototype.isMemberVariableDeclaration = function () {
@@ -2466,15 +2447,15 @@ var Parser = (function () {
         if(!this.isPossiblyArrowFunctionExpression()) {
             return null;
         }
-        var rewindPoint = this.tokenWindow.getRewindPoint();
+        var rewindPoint = this.getRewindPoint();
         try  {
             var arrowFunction = this.parseParenthesizedArrowFunctionExpression(true);
             if(arrowFunction === null) {
-                this.tokenWindow.rewind(rewindPoint);
+                this.rewind(rewindPoint);
             }
             return arrowFunction;
         }finally {
-            this.tokenWindow.releaseRewindPoint(rewindPoint);
+            this.releaseRewindPoint(rewindPoint);
         }
     };
     Parser.prototype.parseParenthesizedArrowFunctionExpression = function (requireArrow) {
@@ -2877,7 +2858,7 @@ var Parser = (function () {
         return new ParameterSyntax(dotDotDotToken, publicOrPrivateToken, identifier, questionToken, typeAnnotation, equalsValueClause);
     };
     return Parser;
-})();
+})(SlidingWindow);
 var ScannerTokenInfo = (function () {
     function ScannerTokenInfo() { }
     return ScannerTokenInfo;

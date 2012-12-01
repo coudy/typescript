@@ -5,33 +5,6 @@ interface IParserRewindPoint extends IRewindPoint {
     isInStrictMode: bool;
 }
 
-class SlidingTokenWindow extends SlidingWindow {
-    private parser: Parser;
-
-    constructor(parser: Parser) {
-        super(32, null);
-
-        this.parser = parser;
-    }
-
-    private isPastSourceEnd(): bool {
-        // No way to tell this with the scanner.
-        return false;
-    }
-
-    private storeAdditionalRewindState(rewindPoint: IParserRewindPoint): void {
-        this.parser.storeAdditionalRewindState(rewindPoint);
-    }
-
-    private restoreStateFromRewindPoint(rewindPoint: IParserRewindPoint): void {
-        this.parser.restoreStateFromRewindPoint(rewindPoint);
-    }
-
-    private fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
-        return this.parser.fetchMoreItems(sourceIndex, window, destinationIndex, spaceAvailable);
-    }
-}
-
 // The precedence of expressions in typescript.  While we're parsing an expression, we will 
 // continue to consume and form new trees, if the precedence is greater than our current
 // precedence.  For example, if we have: a + b * c, we will first parse 'a' with precedence 0. We
@@ -92,7 +65,7 @@ enum ParserExpressionPrecedence {
     UnaryExpressionPrecedence= 15,
 }
 
-class Parser {
+class Parser extends SlidingWindow {
     // The scanner we're pulling tokens from.
     private scanner: Scanner;
 
@@ -102,9 +75,6 @@ class Parser {
 
     // Parsing options.
     private options: ParseOptions = null;
-
-    // The window of tokens we're looking at.
-    private tokenWindow: SlidingTokenWindow;
 
     // Current state of the parser.  If we need to rewind we will store and reset these values as
     // appropriate.
@@ -125,9 +95,9 @@ class Parser {
         oldTree?: SyntaxTree,
         changes?: TextChangeRange[],
         options?: ParseOptions) {
+        super(32, null);
 
         this.scanner = scanner;
-        this.tokenWindow = new SlidingTokenWindow(this);
 
         this.oldTree = oldTree;
         this.options = options || new ParseOptions();
@@ -158,7 +128,7 @@ class Parser {
         var result = this._currentToken;
 
         if (result === null) {
-            result = this.tokenWindow.currentItem();
+            result = this.currentItem();
             this._currentToken = result;
         }
 
@@ -166,7 +136,7 @@ class Parser {
     }
 
     private peekTokenN(n: number): ISyntaxToken {
-        return this.tokenWindow.peekItemN(n);
+        return this.peekItemN(n);
     }
 
     //this method is called very frequently
@@ -181,7 +151,7 @@ class Parser {
         this.previousToken = this._currentToken;
         this._currentToken = null;
 
-        this.tokenWindow.moveToNextItem();
+        this.moveToNextItem();
     }
 
     private canEatAutomaticSemicolon(): bool {
@@ -742,7 +712,7 @@ class Parser {
     }
 
     private isMemberFunctionDeclaration(): bool {
-        var rewindPoint = this.tokenWindow.getRewindPoint();
+        var rewindPoint = this.getRewindPoint();
         try {
             if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
                 this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
@@ -756,13 +726,13 @@ class Parser {
             return this.isFunctionSignature();
         }
         finally {
-            this.tokenWindow.rewind(rewindPoint);
-            this.tokenWindow.releaseRewindPoint(rewindPoint);
+            this.rewind(rewindPoint);
+            this.releaseRewindPoint(rewindPoint);
         }
     }
 
     private isMemberAccessorDeclaration(): bool {
-        var rewindPoint = this.tokenWindow.getRewindPoint();
+        var rewindPoint = this.getRewindPoint();
         try {
             if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
                 this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
@@ -782,8 +752,8 @@ class Parser {
             return this.isIdentifier(this.currentToken());
         }
         finally {
-            this.tokenWindow.rewind(rewindPoint);
-            this.tokenWindow.releaseRewindPoint(rewindPoint);
+            this.rewind(rewindPoint);
+            this.releaseRewindPoint(rewindPoint);
         }
     }
 
@@ -2380,16 +2350,16 @@ class Parser {
         }
 
         // Then, try to actually parse it as a arrow function, and only return if we see an => 
-        var rewindPoint = this.tokenWindow.getRewindPoint();
+        var rewindPoint = this.getRewindPoint();
         try {
             var arrowFunction = this.parseParenthesizedArrowFunctionExpression(/*requiresArrow:*/ true);
             if (arrowFunction === null) {
-                this.tokenWindow.rewind(rewindPoint);
+                this.rewind(rewindPoint);
             }
             return arrowFunction;
         }
         finally {
-            this.tokenWindow.releaseRewindPoint(rewindPoint);
+            this.releaseRewindPoint(rewindPoint);
         }
     }
 
