@@ -4,7 +4,10 @@ class SlidingTextWindow {
     private DefaultWindowLength: number = 2048;
 
     // Underlying text that we're streaming over.
-    private text: IText = null;
+    private text: IText;
+
+    private characterWindow: number[]; // moveable window of chars from source text
+    private characterWindowCount: number = 0; // # of valid characters in characterWindow
 
     private _characterWindowStart: number = 0; // start of current lexeme within chars buffer
 
@@ -13,8 +16,6 @@ class SlidingTextWindow {
 
     // Offset we're currently at in _characterWindow.
     private offset: number = 0;
-    private characterWindow: number[] = null; // moveable window of chars from source text
-    private _characterWindowCount: number = 0; // # of valid characters in _characterWindow
     private stringTable: StringTable = null;
 
     constructor(text: IText, stringTable: StringTable) {
@@ -42,7 +43,7 @@ class SlidingTextWindow {
     public reset(position: number): void {
         // if position is within already read character range then just use what we have
         var relative = position - this.basis;
-        if (relative >= 0 && relative <= this._characterWindowCount) {
+        if (relative >= 0 && relative <= this.characterWindowCount) {
             this.offset = relative;
         }
         else {
@@ -56,33 +57,33 @@ class SlidingTextWindow {
             this._characterWindowStart = 0;
             this.offset = 0;
             this.basis = position;
-            this._characterWindowCount = amountToRead;
+            this.characterWindowCount = amountToRead;
         }
     }
 
     private moreChars(): bool {
-        if (this.offset >= this._characterWindowCount) {
+        if (this.offset >= this.characterWindowCount) {
             if (this.offset + this.basis >= this.text.length()) {
                 return false;
             }
 
             // if we are sufficiently into the char buffer, then shift chars to the left
-            if (this._characterWindowStart > (this._characterWindowCount >> 2)) {
-                ArrayUtilities.copy(this.characterWindow, this._characterWindowStart, this.characterWindow, 0, this._characterWindowCount - this._characterWindowStart);
-                this._characterWindowCount -= this._characterWindowStart;
+            if (this._characterWindowStart > (this.characterWindowCount >> 2)) {
+                ArrayUtilities.copy(this.characterWindow, this._characterWindowStart, this.characterWindow, 0, this.characterWindowCount - this._characterWindowStart);
+                this.characterWindowCount -= this._characterWindowStart;
                 this.offset -= this._characterWindowStart;
                 this.basis += this._characterWindowStart;
                 this._characterWindowStart = 0;
             }
 
-            if (this._characterWindowCount >= this.characterWindow.length) {
+            if (this.characterWindowCount >= this.characterWindow.length) {
                 // grow char array, since we need more contiguous space
                 this.characterWindow[this.characterWindow.length * 2 - 1] = CharacterCodes.nullCharacter;
             }
 
-            var amountToRead = MathPrototype.min(this.text.length() - (this.basis + this._characterWindowCount), this.characterWindow.length - this._characterWindowCount);
-            this.text.copyTo(this.basis + this._characterWindowCount, this.characterWindow, this._characterWindowCount, amountToRead);
-            this._characterWindowCount += amountToRead;
+            var amountToRead = MathPrototype.min(this.text.length() - (this.basis + this.characterWindowCount), this.characterWindow.length - this.characterWindowCount);
+            this.text.copyTo(this.basis + this.characterWindowCount, this.characterWindow, this.characterWindowCount, amountToRead);
+            this.characterWindowCount += amountToRead;
             return amountToRead > 0;
         }
 
@@ -98,7 +99,7 @@ class SlidingTextWindow {
     }
 
     public peekCharAtPosition(): number {
-        if (this.offset >= this._characterWindowCount) {
+        if (this.offset >= this.characterWindowCount) {
             if (!this.moreChars()) {
                 return CharacterCodes.nullCharacter;
             }

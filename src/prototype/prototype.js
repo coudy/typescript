@@ -3694,12 +3694,10 @@ var SeparatedSyntaxList = (function () {
 var SlidingTextWindow = (function () {
     function SlidingTextWindow(text, stringTable) {
         this.DefaultWindowLength = 2048;
-        this.text = null;
+        this.characterWindowCount = 0;
         this._characterWindowStart = 0;
         this.basis = 0;
         this.offset = 0;
-        this.characterWindow = null;
-        this._characterWindowCount = 0;
         this.stringTable = null;
         Debug.assert(stringTable !== null);
         this.text = text;
@@ -3718,7 +3716,7 @@ var SlidingTextWindow = (function () {
     };
     SlidingTextWindow.prototype.reset = function (position) {
         var relative = position - this.basis;
-        if(relative >= 0 && relative <= this._characterWindowCount) {
+        if(relative >= 0 && relative <= this.characterWindowCount) {
             this.offset = relative;
         } else {
             var amountToRead = MathPrototype.min(this.text.length(), position + this.characterWindow.length) - position;
@@ -3729,27 +3727,27 @@ var SlidingTextWindow = (function () {
             this._characterWindowStart = 0;
             this.offset = 0;
             this.basis = position;
-            this._characterWindowCount = amountToRead;
+            this.characterWindowCount = amountToRead;
         }
     };
     SlidingTextWindow.prototype.moreChars = function () {
-        if(this.offset >= this._characterWindowCount) {
+        if(this.offset >= this.characterWindowCount) {
             if(this.offset + this.basis >= this.text.length()) {
                 return false;
             }
-            if(this._characterWindowStart > (this._characterWindowCount >> 2)) {
-                ArrayUtilities.copy(this.characterWindow, this._characterWindowStart, this.characterWindow, 0, this._characterWindowCount - this._characterWindowStart);
-                this._characterWindowCount -= this._characterWindowStart;
+            if(this._characterWindowStart > (this.characterWindowCount >> 2)) {
+                ArrayUtilities.copy(this.characterWindow, this._characterWindowStart, this.characterWindow, 0, this.characterWindowCount - this._characterWindowStart);
+                this.characterWindowCount -= this._characterWindowStart;
                 this.offset -= this._characterWindowStart;
                 this.basis += this._characterWindowStart;
                 this._characterWindowStart = 0;
             }
-            if(this._characterWindowCount >= this.characterWindow.length) {
+            if(this.characterWindowCount >= this.characterWindow.length) {
                 this.characterWindow[this.characterWindow.length * 2 - 1] = 0 /* nullCharacter */ ;
             }
-            var amountToRead = MathPrototype.min(this.text.length() - (this.basis + this._characterWindowCount), this.characterWindow.length - this._characterWindowCount);
-            this.text.copyTo(this.basis + this._characterWindowCount, this.characterWindow, this._characterWindowCount, amountToRead);
-            this._characterWindowCount += amountToRead;
+            var amountToRead = MathPrototype.min(this.text.length() - (this.basis + this.characterWindowCount), this.characterWindow.length - this.characterWindowCount);
+            this.text.copyTo(this.basis + this.characterWindowCount, this.characterWindow, this.characterWindowCount, amountToRead);
+            this.characterWindowCount += amountToRead;
             return amountToRead > 0;
         }
         return true;
@@ -3761,7 +3759,7 @@ var SlidingTextWindow = (function () {
         this.offset += n;
     };
     SlidingTextWindow.prototype.peekCharAtPosition = function () {
-        if(this.offset >= this._characterWindowCount) {
+        if(this.offset >= this.characterWindowCount) {
             if(!this.moreChars()) {
                 return 0 /* nullCharacter */ ;
             }
