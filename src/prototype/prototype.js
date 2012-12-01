@@ -558,10 +558,10 @@ var ParserExpressionPrecedence;
 var Parser = (function () {
     function Parser(scanner, oldTree, changes, options) {
         this.options = null;
-        this.scannedTokens = [];
-        this.scannedTokensCount = 0;
-        this.scannedTokensAbsoluteStartIndex = 0;
-        this.currentReletiveTokenIndex = 0;
+        this.tokenWindow = [];
+        this.tokenWindowCount = 0;
+        this.tokenWindowAbsoluteStartIndex = 0;
+        this.currentRelativeTokenIndex = 0;
         this.outstandingRewindPoints = 0;
         this.firstRewindAbsoluteIndex = -1;
         this._currentToken = null;
@@ -574,7 +574,7 @@ var Parser = (function () {
         return this.oldTree != null;
     };
     Parser.prototype.getRewindPoint = function () {
-        var absoluteIndex = this.scannedTokensAbsoluteStartIndex + this.currentReletiveTokenIndex;
+        var absoluteIndex = this.tokenWindowAbsoluteStartIndex + this.currentRelativeTokenIndex;
         if(this.outstandingRewindPoints === 0) {
             this.firstRewindAbsoluteIndex = absoluteIndex;
         }
@@ -583,9 +583,9 @@ var Parser = (function () {
     };
     Parser.prototype.rewind = function (point) {
         Debug.assert(this.outstandingRewindPoints == point.resetCount);
-        var relativeTokenIndex = point.absoluteIndex - this.scannedTokensAbsoluteStartIndex;
-        Debug.assert(relativeTokenIndex >= 0 && relativeTokenIndex < this.scannedTokensCount);
-        this.currentReletiveTokenIndex = relativeTokenIndex;
+        var relativeTokenIndex = point.absoluteIndex - this.tokenWindowAbsoluteStartIndex;
+        Debug.assert(relativeTokenIndex >= 0 && relativeTokenIndex < this.tokenWindowCount);
+        this.currentRelativeTokenIndex = relativeTokenIndex;
         this._currentToken = null;
         this.previousToken = point.previousToken;
         this.isInStrictMode = point.isInStrictMode;
@@ -606,45 +606,45 @@ var Parser = (function () {
         return result;
     };
     Parser.prototype.fetchCurrentToken = function () {
-        if(this.currentReletiveTokenIndex >= this.scannedTokensCount) {
-            this.addNewToken();
+        if(this.currentRelativeTokenIndex >= this.tokenWindowCount) {
+            this.addNextTokenToWindow();
         }
-        return this.scannedTokens[this.currentReletiveTokenIndex];
+        return this.tokenWindow[this.currentRelativeTokenIndex];
     };
-    Parser.prototype.addNewToken = function () {
-        this.addScannedToken(this.scanner.scan());
+    Parser.prototype.addNextTokenToWindow = function () {
+        this.addTokenToWindow(this.scanner.scan());
     };
-    Parser.prototype.addScannedToken = function (token) {
+    Parser.prototype.addTokenToWindow = function (token) {
         Debug.assert(token !== null);
-        if(this.scannedTokensCount >= this.scannedTokens.length) {
-            this.tryShiftOrGrowScannedTokens();
+        if(this.tokenWindowCount >= this.tokenWindow.length) {
+            this.tryShiftOrGrowTokenWindow();
         }
-        this.scannedTokens[this.scannedTokensCount] = token;
-        this.scannedTokensCount++;
+        this.tokenWindow[this.tokenWindowCount] = token;
+        this.tokenWindowCount++;
     };
-    Parser.prototype.tryShiftOrGrowScannedTokens = function () {
-        var currentIndexIsPastWindowHalfwayPoint = this.currentReletiveTokenIndex > (this.scannedTokens.length >> 1);
-        var isAllowedToShift = this.firstRewindAbsoluteIndex === -1 || this.firstRewindAbsoluteIndex > this.scannedTokensAbsoluteStartIndex;
+    Parser.prototype.tryShiftOrGrowTokenWindow = function () {
+        var currentIndexIsPastWindowHalfwayPoint = this.currentRelativeTokenIndex > (this.tokenWindow.length >> 1);
+        var isAllowedToShift = this.firstRewindAbsoluteIndex === -1 || this.firstRewindAbsoluteIndex > this.tokenWindowAbsoluteStartIndex;
         if(currentIndexIsPastWindowHalfwayPoint && isAllowedToShift) {
-            var shiftStartIndex = this.firstRewindAbsoluteIndex === -1 ? this.currentReletiveTokenIndex : this.firstRewindAbsoluteIndex - this.scannedTokensAbsoluteStartIndex;
-            var shiftCount = this.scannedTokensCount - shiftStartIndex;
+            var shiftStartIndex = this.firstRewindAbsoluteIndex === -1 ? this.currentRelativeTokenIndex : this.firstRewindAbsoluteIndex - this.tokenWindowAbsoluteStartIndex;
+            var shiftCount = this.tokenWindowCount - shiftStartIndex;
             Debug.assert(shiftStartIndex > 0);
             if(shiftCount > 0) {
-                ArrayUtilities.copy(this.scannedTokens, shiftStartIndex, this.scannedTokens, 0, shiftCount);
+                ArrayUtilities.copy(this.tokenWindow, shiftStartIndex, this.tokenWindow, 0, shiftCount);
             }
-            this.scannedTokensAbsoluteStartIndex += shiftStartIndex;
-            this.scannedTokensCount -= shiftStartIndex;
-            this.currentReletiveTokenIndex -= shiftStartIndex;
+            this.tokenWindowAbsoluteStartIndex += shiftStartIndex;
+            this.tokenWindowCount -= shiftStartIndex;
+            this.currentRelativeTokenIndex -= shiftStartIndex;
         } else {
-            this.scannedTokens[this.scannedTokens.length * 2 - 1] = null;
+            this.tokenWindow[this.tokenWindow.length * 2 - 1] = null;
         }
     };
     Parser.prototype.peekTokenN = function (n) {
         Debug.assert(n >= 0);
-        while(this.currentReletiveTokenIndex + n >= this.scannedTokensCount) {
-            this.addNewToken();
+        while(this.currentRelativeTokenIndex + n >= this.tokenWindowCount) {
+            this.addNextTokenToWindow();
         }
-        return this.scannedTokens[this.currentReletiveTokenIndex + n];
+        return this.tokenWindow[this.currentRelativeTokenIndex + n];
     };
     Parser.prototype.eatAnyToken = function () {
         var token = this.currentToken();
@@ -654,7 +654,7 @@ var Parser = (function () {
     Parser.prototype.moveToNextToken = function () {
         this.previousToken = this._currentToken;
         this._currentToken = null;
-        this.currentReletiveTokenIndex++;
+        this.currentRelativeTokenIndex++;
     };
     Parser.prototype.canEatAutomaticSemicolon = function () {
         var token = this.currentToken();
