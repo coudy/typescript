@@ -22,13 +22,15 @@
 ///<reference path='LinePosition.ts' />
 ///<reference path='MathPrototype.ts' />
 ///<reference path='ParseOptions.ts' />
-///<reference path='Scanner.ts' />
 ///<reference path='SeparatedSyntaxList.ts' />
 ///<reference path='SlidingTextWindow.ts' />
 ///<reference path='SlidingWindow.ts' />
 
 // Parser depends on SlidingWindow.
 ///<reference path='Parser.ts' />
+
+// Scanner depends on SlidingWindow.
+///<reference path='Scanner.ts' />
 
 ///<reference path='TextBase.ts' />
 

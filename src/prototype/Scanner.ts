@@ -12,27 +12,50 @@ class ScannerTriviaInfo {
     public HasNewLine: bool;
 }
 
-//class SlidingTextWindow extends SlidingWindow {
-//    constructor() {
-//        super(2048, 0);
-//    }
+class SlidingTextWindow extends SlidingWindow {
+    private text: IText;
+    private stringTable: StringTable;
 
-//    private storeAdditionalRewindState(rewindPoint: IRewindPoint): void {
-//        // Nothing additional to store.
-//    }
+    constructor(text: IText, stringTable: StringTable) {
+        super(2048, 0);
 
-//    private restoreStateFromRewindPoint(rewindPoint: IRewindPoint): void {
-//        // Nothing additional to restore.
-//    }
+        this.text = text;
+        this.stringTable = stringTable;
+    }
 
-//    private isPastSourceEnd(): bool {
+    //private storeAdditionalRewindState(rewindPoint: IRewindPoint): void {
+    //    // Nothing additional to store.
+    //}
 
-//    }
+    //private restoreStateFromRewindPoint(rewindPoint: IRewindPoint): void {
+    //    // Nothing additional to restore.
+    //}
 
-//    private fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, count: number): number {
-//        throw Errors.notYetImplemented();
-//    }
-//}
+    private isPastSourceEnd(): bool {
+        return this.absoluteIndex() >= this.text.length();
+    }
+
+    private fetchMoreItems(sourceIndex: number, window: number[], destinationIndex: number, spaceAvailable: number): number {
+        var charactersRemaining = this.text.length() - sourceIndex;
+        var amountToRead = MathPrototype.min(charactersRemaining, spaceAvailable);
+        this.text.copyTo(sourceIndex, window, destinationIndex, amountToRead);
+        return amountToRead;
+    }
+
+    public substring(start: number, end: number, intern: bool): string {
+        return this.substr(start, end - start, intern);
+    }
+
+    public substr(start: number, length: number, intern: bool): string {
+        var offset = start - this.windowAbsoluteStartIndex;
+        if (intern) {
+            return this.stringTable.addCharArray(this.window, offset, length);
+        }
+        else {
+            return StringUtilities.fromCharCodeArray(this.window.slice(offset, offset + length));
+        }
+    }
+}
 
 class Scanner {
     private text: IText = null;
@@ -80,14 +103,22 @@ class Scanner {
             this.errors = [];
         }
 
-        var start = this.textWindow.position();
-        this.scanTriviaInfo(/*afterFirstToken: */ this.textWindow.position() > 0, /*isTrailing: */ false, this.leadingTriviaInfo);
-        this.scanSyntaxToken();
-        this.scanTriviaInfo(/* afterFirstToken: */ true, /*isTrailing: */true, this.trailingTriviaInfo);
+        // Get a rewind point in the text window.  this will 'fix' it enabling us to extract any
+        // text we need for a token.
+        var rewindPoint = this.textWindow.getRewindPoint();
+        try {
+            var start = this.textWindow.absoluteIndex();
+            this.scanTriviaInfo(/*afterFirstToken: */ this.textWindow.absoluteIndex() > 0, /*isTrailing: */ false, this.leadingTriviaInfo);
+            this.scanSyntaxToken();
+            this.scanTriviaInfo(/* afterFirstToken: */ true, /*isTrailing: */true, this.trailingTriviaInfo);
 
-        this.previousTokenKind = this.tokenInfo.Kind;
-        this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
-        return this.createToken(start);
+            this.previousTokenKind = this.tokenInfo.Kind;
+            this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
+            return this.createToken(start);
+        }
+        finally {
+            this.textWindow.releaseRewindPoint(rewindPoint);
+        }
     }
 
     private createToken(start: number): ISyntaxToken {
@@ -101,7 +132,7 @@ class Scanner {
         triviaInfo.HasNewLine = false;
 
         while (true) {
-            var ch = this.textWindow.peekCharAtPosition();
+            var ch = this.textWindow.currentItem();
 
             switch (ch) {
                 case CharacterCodes.space:
@@ -110,17 +141,17 @@ class Scanner {
                 case CharacterCodes.formFeed:
                 case CharacterCodes.nonBreakingSpace:
                 case CharacterCodes.byteOrderMark:
-                    this.textWindow.advanceChar1();
+                    this.textWindow.moveToNextItem();
                     triviaInfo.Width++;
                     continue;
             }
 
             // TODO: Handle unicode space characters.
             if (ch === CharacterCodes.slash) {
-                var ch2 = this.textWindow.peekCharN(1);
+                var ch2 = this.textWindow.peekItemN(1);
                 if (ch2 === CharacterCodes.slash) {
-                    this.textWindow.advanceChar1();
-                    this.textWindow.advanceChar1();
+                    this.textWindow.moveToNextItem();
+                    this.textWindow.moveToNextItem();
                     triviaInfo.Width += 2;
                     triviaInfo.HasComment = true;
 
@@ -129,8 +160,8 @@ class Scanner {
                 }
 
                 if (ch2 === CharacterCodes.asterisk) {
-                    this.textWindow.advanceChar1();
-                    this.textWindow.advanceChar1();
+                    this.textWindow.moveToNextItem();
+                    this.textWindow.moveToNextItem();
                     triviaInfo.Width += 2;
                     triviaInfo.HasComment = true;
 
@@ -145,13 +176,13 @@ class Scanner {
                 triviaInfo.HasNewLine = true;
 
                 if (ch === CharacterCodes.carriageReturn) {
-                    this.textWindow.advanceChar1();
+                    this.textWindow.moveToNextItem();
                     triviaInfo.Width++;
                 }
 
-                ch = this.textWindow.peekCharAtPosition();
+                ch = this.textWindow.currentItem();
                 if (ch === CharacterCodes.newLine) {
-                    this.textWindow.advanceChar1();
+                    this.textWindow.moveToNextItem();
                     triviaInfo.Width++;
                 }
 
@@ -180,43 +211,41 @@ class Scanner {
 
     private scanSingleLineCommentTrivia(triviaInfo: ScannerTriviaInfo): void {
         while (true) {
-            var ch = this.textWindow.peekCharAtPosition();
+            var ch = this.textWindow.currentItem();
             if (this.isNewLineCharacter(ch) || ch === CharacterCodes.nullCharacter) {
                 return;
             }
 
-            this.textWindow.advanceChar1();
+            this.textWindow.moveToNextItem();
             triviaInfo.Width++;
         }
     }
 
     private scanMultiLineCommentTrivia(triviaInfo: ScannerTriviaInfo): void {
         while (true) {
-            var ch = this.textWindow.peekCharAtPosition();
+            var ch = this.textWindow.currentItem();
             if (ch === CharacterCodes.nullCharacter) {
                 return;
             }
 
-            if (ch === CharacterCodes.asterisk && this.textWindow.peekCharN(1) === CharacterCodes.slash) {
-                this.textWindow.advanceChar1();
-                this.textWindow.advanceChar1();
+            if (ch === CharacterCodes.asterisk && this.textWindow.peekItemN(1) === CharacterCodes.slash) {
+                this.textWindow.moveToNextItem();
+                this.textWindow.moveToNextItem();
                 triviaInfo.Width += 2;
                 return;
             }
 
-            this.textWindow.advanceChar1();
+            this.textWindow.moveToNextItem();
             triviaInfo.Width++;
         }
     }
 
     private scanSyntaxToken(): void {
-        this.textWindow.start();
-
         this.tokenInfo.Kind = SyntaxKind.None;
         this.tokenInfo.KeywordKind = SyntaxKind.None;
         this.tokenInfo.Text = null;
 
-        var character = this.textWindow.peekCharAtPosition();
+        var character = this.textWindow.currentItem();
         switch (character) {
             case CharacterCodes.doubleQuote:
             case CharacterCodes.singleQuote:
@@ -357,61 +386,61 @@ class Scanner {
     }
 
     private scanDecimalNumericLiteral(): void {
-        var start = this.textWindow.position();
+        var start = this.textWindow.absoluteIndex();
 
-        while (CharacterInfo.isDecimalDigit(this.textWindow.peekCharAtPosition())) {
-            this.textWindow.advanceChar1();
+        while (CharacterInfo.isDecimalDigit(this.textWindow.currentItem())) {
+            this.textWindow.moveToNextItem();
         }
 
-        if (this.textWindow.peekCharAtPosition() === CharacterCodes.dot) {
-            this.textWindow.advanceChar1();
+        if (this.textWindow.currentItem() === CharacterCodes.dot) {
+            this.textWindow.moveToNextItem();
         }
 
-        while (CharacterInfo.isDecimalDigit(this.textWindow.peekCharAtPosition())) {
-            this.textWindow.advanceChar1();
+        while (CharacterInfo.isDecimalDigit(this.textWindow.currentItem())) {
+            this.textWindow.moveToNextItem();
         }
 
-        var ch = this.textWindow.peekCharAtPosition();
+        var ch = this.textWindow.currentItem();
         if (ch === CharacterCodes.e || ch === CharacterCodes.E) {
-            this.textWindow.advanceChar1();
+            this.textWindow.moveToNextItem();
 
-            ch = this.textWindow.peekCharAtPosition();
+            ch = this.textWindow.currentItem();
             if (ch === CharacterCodes.minus || ch === CharacterCodes.plus) {
-                if (CharacterInfo.isDecimalDigit(this.textWindow.peekCharN(1))) {
-                    this.textWindow.advanceChar1();
+                if (CharacterInfo.isDecimalDigit(this.textWindow.peekItemN(1))) {
+                    this.textWindow.moveToNextItem();
                 }
             }
         }
 
-        while (CharacterInfo.isDecimalDigit(this.textWindow.peekCharAtPosition())) {
-            this.textWindow.advanceChar1();
+        while (CharacterInfo.isDecimalDigit(this.textWindow.currentItem())) {
+            this.textWindow.moveToNextItem();
         }
 
-        var end = this.textWindow.position();
+        var end = this.textWindow.absoluteIndex();
 
         this.tokenInfo.Text = this.textWindow.substring(start, end, /*intern:*/ false);
         this.tokenInfo.Kind = SyntaxKind.NumericLiteral;
     }
 
     private scanHexNumericLiteral(): void {
-        var start = this.textWindow.position();
+        var start = this.textWindow.absoluteIndex();
 
         Debug.assert(this.isHexNumericLiteral());
-        this.textWindow.advanceChar1();
-        this.textWindow.advanceChar1();
+        this.textWindow.moveToNextItem();
+        this.textWindow.moveToNextItem();
 
-        while (CharacterInfo.isHexDigit(this.textWindow.peekCharAtPosition())) {
-            this.textWindow.advanceChar1();
+        while (CharacterInfo.isHexDigit(this.textWindow.currentItem())) {
+            this.textWindow.moveToNextItem();
         }
 
-        var end = this.textWindow.position();
+        var end = this.textWindow.absoluteIndex();
         this.tokenInfo.Text = this.textWindow.substring(start, end, /*intern:*/ false);
         this.tokenInfo.Kind = SyntaxKind.NumericLiteral;
     }
 
     private isHexNumericLiteral(): bool {
-        if (this.textWindow.peekCharAtPosition() === CharacterCodes._0) {
-            var ch = this.textWindow.peekCharN(1);
+        if (this.textWindow.currentItem() === CharacterCodes._0) {
+            var ch = this.textWindow.peekItemN(1);
             return ch === CharacterCodes.x || ch === CharacterCodes.X;
         }
 
@@ -427,13 +456,13 @@ class Scanner {
     }
 
     private scanIdentifier(): void {
-        var start = this.textWindow.position();
+        var start = this.textWindow.absoluteIndex();
 
         while (this.isIdentifierPart()) {
             this.scanCharOrUnicodeEscape(this.errors);
         }
 
-        var end = this.textWindow.position();
+        var end = this.textWindow.absoluteIndex();
         this.tokenInfo.Text = this.textWindow.substring(start, end, /*intern:*/ true);
         this.tokenInfo.Kind = SyntaxKind.IdentifierNameToken;
     }
@@ -459,7 +488,7 @@ class Scanner {
     }
 
     private isIdentifierPart_Fast(): bool {
-        var character = this.textWindow.peekCharAtPosition();
+        var character = this.textWindow.currentItem();
         if (this.isIdentifierStart_Fast(character)) {
             return true;
         }
@@ -490,17 +519,17 @@ class Scanner {
     }
 
     private advanceAndSetTokenKind(kind: SyntaxKind): void {
-        this.textWindow.advanceChar1();
+        this.textWindow.moveToNextItem();
         this.tokenInfo.Kind = kind;
     }
 
     private scanGreaterThanToken(): void {
         // NOTE(cyrusn): If we want to support generics, we will likely have to stop lexing
         // the >> and >>> constructs here and instead construct those in the parser.
-        this.textWindow.advanceChar1();
-        var character = this.textWindow.peekCharAtPosition();
+        this.textWindow.moveToNextItem();
+        var character = this.textWindow.currentItem();
         if (character === CharacterCodes.equals) {
-            this.textWindow.advanceChar1();
+            this.textWindow.moveToNextItem();
             this.tokenInfo.Kind = SyntaxKind.GreaterThanEqualsToken;
         }
         else if (character === CharacterCodes.greaterThan) {
@@ -511,11 +540,11 @@ class Scanner {
     }
 
     private scanGreaterThanGreaterThanToken(): void {
-        this.textWindow.advanceChar1();
-        var character = this.textWindow.peekCharAtPosition();
+        this.textWindow.moveToNextItem();
+        var character = this.textWindow.currentItem();
 
         if (character === CharacterCodes.equals) {
-            this.textWindow.advanceChar1();
+            this.textWindow.moveToNextItem();
             this.tokenInfo.Kind = SyntaxKind.GreaterThanGreaterThanEqualsToken;
         }
         else if (character === CharacterCodes.greaterThan) {
@@ -527,11 +556,11 @@ class Scanner {
     }
 
     private scanGreaterThanGreaterThanGreaterThanToken(): void {
-        this.textWindow.advanceChar1();
-        var character = this.textWindow.peekCharAtPosition();
+        this.textWindow.moveToNextItem();
+        var character = this.textWindow.currentItem();
 
         if (character === CharacterCodes.equals) {
-            this.textWindow.advanceChar1();
+            this.textWindow.moveToNextItem();
             this.tokenInfo.Kind = SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken;
         }
         else {
@@ -540,15 +569,15 @@ class Scanner {
     }
 
     private scanLessThanToken(): void {
-        this.textWindow.advanceChar1();
-        if (this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
-            this.textWindow.advanceChar1();
+        this.textWindow.moveToNextItem();
+        if (this.textWindow.currentItem() === CharacterCodes.equals) {
+            this.textWindow.moveToNextItem();
             this.tokenInfo.Kind = SyntaxKind.LessThanEqualsToken;
         }
-        else if (this.textWindow.peekCharAtPosition() === CharacterCodes.lessThan) {
-            this.textWindow.advanceChar1();
-            if (this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
-                this.textWindow.advanceChar1();
+        else if (this.textWindow.currentItem() === CharacterCodes.lessThan) {
+            this.textWindow.moveToNextItem();
+            if (this.textWindow.currentItem() === CharacterCodes.equals) {
+                this.textWindow.moveToNextItem();
                 this.tokenInfo.Kind = SyntaxKind.LessThanLessThanEqualsToken;
             }
             else {
@@ -561,13 +590,13 @@ class Scanner {
     }
 
     private scanBarToken(): void {
-        this.textWindow.advanceChar1();
-        if (this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
-            this.textWindow.advanceChar1();
+        this.textWindow.moveToNextItem();
+        if (this.textWindow.currentItem() === CharacterCodes.equals) {
+            this.textWindow.moveToNextItem();
             this.tokenInfo.Kind = SyntaxKind.BarEqualsToken;
         }
-        else if (this.textWindow.peekCharAtPosition() === CharacterCodes.bar) {
-            this.textWindow.advanceChar1();
+        else if (this.textWindow.currentItem() === CharacterCodes.bar) {
+            this.textWindow.moveToNextItem();
             this.tokenInfo.Kind = SyntaxKind.BarBarToken;
         }
         else {
@@ -576,9 +605,9 @@ class Scanner {
     }
 
     private scanCaretToken(): void {
-        this.textWindow.advanceChar1();
-        if (this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
-            this.textWindow.advanceChar1();
+        this.textWindow.moveToNextItem();
+        if (this.textWindow.currentItem() === CharacterCodes.equals) {
+            this.textWindow.moveToNextItem();
             this.tokenInfo.Kind = SyntaxKind.CaretEqualsToken;
         }
         else {
@@ -587,14 +616,14 @@ class Scanner {
     }
 
     private scanAmpersandToken(): void {
-        this.textWindow.advanceChar1();
-        var character = this.textWindow.peekCharAtPosition();
+        this.textWindow.moveToNextItem();
+        var character = this.textWindow.currentItem();
         if (character === CharacterCodes.equals) {
-            this.textWindow.advanceChar1();
+            this.textWindow.moveToNextItem();
             this.tokenInfo.Kind = SyntaxKind.AmpersandEqualsToken;
         }
-        else if (this.textWindow.peekCharAtPosition() === CharacterCodes.ampersand) {
-            this.textWindow.advanceChar1();
+        else if (this.textWindow.currentItem() === CharacterCodes.ampersand) {
+            this.textWindow.moveToNextItem();
             this.tokenInfo.Kind = SyntaxKind.AmpersandAmpersandToken;
         }
         else {
@@ -603,9 +632,9 @@ class Scanner {
     }
 
     private scanPercentToken(): void {
-        this.textWindow.advanceChar1();
-        if (this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
-            this.textWindow.advanceChar1();
+        this.textWindow.moveToNextItem();
+        if (this.textWindow.currentItem() === CharacterCodes.equals) {
+            this.textWindow.moveToNextItem();
             this.tokenInfo.Kind = SyntaxKind.PercentEqualsToken;
         }
         else {
@@ -614,15 +643,15 @@ class Scanner {
     }
 
     private scanMinusToken(): void {
-        this.textWindow.advanceChar1();
-        var character = this.textWindow.peekCharAtPosition();
+        this.textWindow.moveToNextItem();
+        var character = this.textWindow.currentItem();
 
         if (character === CharacterCodes.equals) {
-            this.textWindow.advanceChar1();
+            this.textWindow.moveToNextItem();
             this.tokenInfo.Kind = SyntaxKind.MinusEqualsToken;
         }
         else if (character === CharacterCodes.minus) {
-            this.textWindow.advanceChar1();
+            this.textWindow.moveToNextItem();
             this.tokenInfo.Kind = SyntaxKind.MinusMinusToken;
         }
         else {
@@ -631,14 +660,14 @@ class Scanner {
     }
 
     private scanPlusToken(): void {
-        this.textWindow.advanceChar1();
-        var character = this.textWindow.peekCharAtPosition();
+        this.textWindow.moveToNextItem();
+        var character = this.textWindow.currentItem();
         if (character === CharacterCodes.equals) {
-            this.textWindow.advanceChar1();
+            this.textWindow.moveToNextItem();
             this.tokenInfo.Kind = SyntaxKind.PlusEqualsToken;
         }
         else if (character === CharacterCodes.plus) {
-            this.textWindow.advanceChar1();
+            this.textWindow.moveToNextItem();
             this.tokenInfo.Kind = SyntaxKind.PlusPlusToken;
         }
         else {
@@ -647,9 +676,9 @@ class Scanner {
     }
 
     private scanAsteriskToken(): void {
-        this.textWindow.advanceChar1();
-        if (this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
-            this.textWindow.advanceChar1();
+        this.textWindow.moveToNextItem();
+        if (this.textWindow.currentItem() === CharacterCodes.equals) {
+            this.textWindow.moveToNextItem();
             this.tokenInfo.Kind = SyntaxKind.AsteriskEqualsToken;
         }
         else {
@@ -658,13 +687,13 @@ class Scanner {
     }
 
     private scanEqualsToken(): void {
-        this.textWindow.advanceChar1();
-        var character = this.textWindow.peekCharAtPosition()
+        this.textWindow.moveToNextItem();
+        var character = this.textWindow.currentItem()
         if (character === CharacterCodes.equals) {
-            this.textWindow.advanceChar1();
+            this.textWindow.moveToNextItem();
 
-            if (this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
-                this.textWindow.advanceChar1();
+            if (this.textWindow.currentItem() === CharacterCodes.equals) {
+                this.textWindow.moveToNextItem();
 
                 this.tokenInfo.Kind = SyntaxKind.EqualsEqualsEqualsToken;
             }
@@ -673,7 +702,7 @@ class Scanner {
             }
         }
         else if (character === CharacterCodes.greaterThan) {
-            this.textWindow.advanceChar1();
+            this.textWindow.moveToNextItem();
             this.tokenInfo.Kind = SyntaxKind.EqualsGreaterThanToken;
         }
         else {
@@ -682,8 +711,8 @@ class Scanner {
     }
 
     private isDotPrefixedNumericLiteral(): bool {
-        if (this.textWindow.peekCharAtPosition() === CharacterCodes.dot) {
-            var ch = this.textWindow.peekCharN(1);
+        if (this.textWindow.currentItem() === CharacterCodes.dot) {
+            var ch = this.textWindow.peekItemN(1);
             return CharacterInfo.isDecimalDigit(ch);
         }
 
@@ -696,12 +725,12 @@ class Scanner {
             return;
         }
 
-        this.textWindow.advanceChar1();
-        if (this.textWindow.peekCharAtPosition() === CharacterCodes.dot &&
-            this.textWindow.peekCharN(1) === CharacterCodes.dot) {
+        this.textWindow.moveToNextItem();
+        if (this.textWindow.currentItem() === CharacterCodes.dot &&
+            this.textWindow.peekItemN(1) === CharacterCodes.dot) {
 
-            this.textWindow.advanceChar1();
-            this.textWindow.advanceChar1();
+            this.textWindow.moveToNextItem();
+            this.textWindow.moveToNextItem();
             this.tokenInfo.Kind = SyntaxKind.DotDotDotToken;
         }
         else {
@@ -714,9 +743,9 @@ class Scanner {
             return;
         }
 
-        this.textWindow.advanceChar1();
-        if (this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
-            this.textWindow.advanceChar1();
+        this.textWindow.moveToNextItem();
+        if (this.textWindow.currentItem() === CharacterCodes.equals) {
+            this.textWindow.moveToNextItem();
             this.tokenInfo.Kind = SyntaxKind.SlashEqualsToken;
         }
         else {
@@ -745,48 +774,54 @@ class Scanner {
                 return false;
         }
 
-        Debug.assert(this.textWindow.peekCharAtPosition() === CharacterCodes.slash);
-        var start = this.textWindow.position();
+        Debug.assert(this.textWindow.currentItem() === CharacterCodes.slash);
 
-        this.textWindow.advanceChar1();
+        var start = this.textWindow.absoluteIndex();
+        var rewindPoint = this.textWindow.getRewindPoint();
+        try {
+            this.textWindow.moveToNextItem();
 
-        var skipNextSlash = false;
-        while (true) {
-            var ch = this.textWindow.peekCharAtPosition();
-            if (this.isNewLineCharacter(ch) || ch === CharacterCodes.nullCharacter) {
-                this.textWindow.reset(start);
-                return false;
+            var skipNextSlash = false;
+            while (true) {
+                var ch = this.textWindow.currentItem();
+                if (this.isNewLineCharacter(ch) || ch === CharacterCodes.nullCharacter) {
+                    this.textWindow.rewind(rewindPoint);
+                    return false;
+                }
+
+                this.textWindow.moveToNextItem();
+                if (!skipNextSlash && ch === CharacterCodes.slash) {
+                    break;
+                }
+                else if (!skipNextSlash && ch === CharacterCodes.backslash) {
+                    skipNextSlash = true;
+                    continue;
+                }
+
+                skipNextSlash = false;
             }
 
-            this.textWindow.advanceChar1();
-            if (!skipNextSlash && ch === CharacterCodes.slash) {
-                break;
-            }
-            else if (!skipNextSlash && ch === CharacterCodes.backslash) {
-                skipNextSlash = true;
-                continue;
+            while (this.isIdentifierPart()) {
+                this.scanCharOrUnicodeEscape(this.errors);
             }
 
-            skipNextSlash = false;
+            var end = this.textWindow.absoluteIndex();
+            this.tokenInfo.Kind = SyntaxKind.RegularExpressionLiteral;
+            this.tokenInfo.Text = this.textWindow.substring(start, end, /*intern:*/ false);
+            return true;
         }
-
-        while (this.isIdentifierPart()) {
-            this.scanCharOrUnicodeEscape(this.errors);
+        finally {
+            this.textWindow.releaseRewindPoint(rewindPoint);
         }
-
-        var end = this.textWindow.position();
-        this.tokenInfo.Kind = SyntaxKind.RegularExpressionLiteral;
-        this.tokenInfo.Text = this.textWindow.substring(start, end, /*intern:*/ false);
-        return true;
     }
 
     private scanExclamationToken(): void {
-        this.textWindow.advanceChar1();
-        if (this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
-            this.textWindow.advanceChar1();
+        this.textWindow.moveToNextItem();
+        if (this.textWindow.currentItem() === CharacterCodes.equals) {
+            this.textWindow.moveToNextItem();
 
-            if (this.textWindow.peekCharAtPosition() === CharacterCodes.equals) {
-                this.textWindow.advanceChar1();
+            if (this.textWindow.currentItem() === CharacterCodes.equals) {
+                this.textWindow.moveToNextItem();
 
                 this.tokenInfo.Kind = SyntaxKind.ExclamationEqualsEqualsToken;
             }
@@ -800,101 +835,105 @@ class Scanner {
     }
 
     private scanDefaultCharacter(character: number, isEscaped: bool): void {
-        var start = this.textWindow.position();
-        this.textWindow.advanceChar1();
+        var start = this.textWindow.absoluteIndex();
+        this.textWindow.moveToNextItem();
         this.tokenInfo.Text = this.textWindow.substring(start, start + 1, /*intern:*/ true);
         this.tokenInfo.Kind = SyntaxKind.ErrorToken;
         this.addSimpleDiagnosticInfo(DiagnosticCode.Unexpected_character_0, this.tokenInfo.Text);
     }
 
     private skipEscapeSequence(): void {
-        Debug.assert(this.textWindow.peekCharAtPosition() === CharacterCodes.backslash);
+        Debug.assert(this.textWindow.currentItem() === CharacterCodes.backslash);
 
-        var start = this.textWindow.position();
-
+        var rewindPoint = this.textWindow.getRewindPoint();
+        try {
         // Consume the backslash.
-        this.textWindow.advanceChar1();
+            this.textWindow.moveToNextItem();
 
         // Get the char after the backslash
-        var ch = this.textWindow.peekCharAtPosition();
-        this.textWindow.advanceChar1();
-        switch (ch) {
-            case CharacterCodes.singleQuote:
-            case CharacterCodes.doubleQuote:
-            case CharacterCodes.backslash:
-                // value is ch itself;
-                return;
+            var ch = this.textWindow.currentItem();
+            this.textWindow.moveToNextItem();
+            switch (ch) {
+                case CharacterCodes.singleQuote:
+                case CharacterCodes.doubleQuote:
+                case CharacterCodes.backslash:
+                    // value is ch itself;
+                    return;
 
-            case CharacterCodes._0:
-                // TODO: Deal with this part of the spec rule: 0 [lookahead ∉DecimalDigit]
-                // value is CharacterCodes.nullCharacter;
-                return;
+                case CharacterCodes._0:
+                    // TODO: Deal with this part of the spec rule: 0 [lookahead ∉DecimalDigit]
+                    // value is CharacterCodes.nullCharacter;
+                    return;
 
-            case CharacterCodes.b:
-                // value is CharacterCodes.backspace;
-                return;
+                case CharacterCodes.b:
+                    // value is CharacterCodes.backspace;
+                    return;
 
-            case CharacterCodes.f:
-                // value is CharacterCodes.formFeed;
-                return;
+                case CharacterCodes.f:
+                    // value is CharacterCodes.formFeed;
+                    return;
 
-            case CharacterCodes.n:
-                // value is CharacterCodes.newLine;
-                return;
+                case CharacterCodes.n:
+                    // value is CharacterCodes.newLine;
+                    return;
 
-            case CharacterCodes.r:
-                // value is CharacterCodes.carriageReturn;
-                return;
+                case CharacterCodes.r:
+                    // value is CharacterCodes.carriageReturn;
+                    return;
 
-            case CharacterCodes.t:
-                // value is CharacterCodes.tab;
-                return;
+                case CharacterCodes.t:
+                    // value is CharacterCodes.tab;
+                    return;
 
-            case CharacterCodes.v:
-                // value is CharacterCodes.verticalTab;
-                return;
+                case CharacterCodes.v:
+                    // value is CharacterCodes.verticalTab;
+                    return;
 
-            case CharacterCodes.x:
-            case CharacterCodes.u:
-                this.textWindow.reset(start);
-                var value = this.scanUnicodeOrHexEscape(this.errors);
-                return;
+                case CharacterCodes.x:
+                case CharacterCodes.u:
+                    this.textWindow.rewind(rewindPoint);
+                    var value = this.scanUnicodeOrHexEscape(this.errors);
+                    return;
 
-            case CharacterCodes.carriageReturn:
-                // If it's \r\n then consume both characters.
-                if (this.textWindow.peekCharAtPosition() === CharacterCodes.newLine) {
-                    this.textWindow.advanceChar1();
-                }
-                return;
-            case CharacterCodes.newLine:
-            case CharacterCodes.paragraphSeparator:
-            case CharacterCodes.lineSeparator:
-                return;
+                case CharacterCodes.carriageReturn:
+                    // If it's \r\n then consume both characters.
+                    if (this.textWindow.currentItem() === CharacterCodes.newLine) {
+                        this.textWindow.moveToNextItem();
+                    }
+                    return;
+                case CharacterCodes.newLine:
+                case CharacterCodes.paragraphSeparator:
+                case CharacterCodes.lineSeparator:
+                    return;
 
-            default:
-                // Any other character is ok as well.  As per rule:
-                // EscapeSequence :: CharacterEscapeSequence
-                // CharacterEscapeSequence :: NonEscapeCharacter
-                // NonEscapeCharacter :: SourceCharacter but notEscapeCharacter or LineTerminator
-                return;
+                default:
+                    // Any other character is ok as well.  As per rule:
+                    // EscapeSequence :: CharacterEscapeSequence
+                    // CharacterEscapeSequence :: NonEscapeCharacter
+                    // NonEscapeCharacter :: SourceCharacter but notEscapeCharacter or LineTerminator
+                    return;
+            }
+        }
+        finally {
+            this.textWindow.releaseRewindPoint(rewindPoint);
         }
     }
 
     private scanStringLiteral(): void {
-        var quoteCharacter = this.textWindow.peekCharAtPosition();
+        var quoteCharacter = this.textWindow.currentItem();
 
         Debug.assert(quoteCharacter === CharacterCodes.singleQuote || quoteCharacter === CharacterCodes.doubleQuote);
 
-        var start = this.textWindow.position();
-        this.textWindow.advanceChar1();
+        var start = this.textWindow.absoluteIndex();
+        this.textWindow.moveToNextItem();
 
         while (true) {
-            var ch = this.textWindow.peekCharAtPosition();
+            var ch = this.textWindow.currentItem();
             if (ch === CharacterCodes.backslash) {
                 this.skipEscapeSequence();
             }
             else if (ch === quoteCharacter) {
-                this.textWindow.advanceChar1();
+                this.textWindow.moveToNextItem();
                 break;
             }
             else if (this.isNewLineCharacter(ch) || ch === CharacterCodes.nullCharacter) {
@@ -902,11 +941,11 @@ class Scanner {
                 break;
             }
             else {
-                this.textWindow.advanceChar1();
+                this.textWindow.moveToNextItem();
             }
         }
 
-        var end = this.textWindow.position();
+        var end = this.textWindow.absoluteIndex();
         this.tokenInfo.Text = this.textWindow.substring(start, end, true);
         this.tokenInfo.Kind = SyntaxKind.StringLiteral;
     }
@@ -916,8 +955,8 @@ class Scanner {
     }
 
     private isUnicodeEscape(): bool {
-        if (this.textWindow.peekCharAtPosition() === CharacterCodes.backslash) {
-            var ch2 = this.textWindow.peekCharN(1);
+        if (this.textWindow.currentItem() === CharacterCodes.backslash) {
+            var ch2 = this.textWindow.peekItemN(1);
             if (ch2 === CharacterCodes.u) {
                 return true;
             }
@@ -927,8 +966,8 @@ class Scanner {
     }
 
     private isHexEscape(): bool {
-        if (this.textWindow.peekCharAtPosition() === CharacterCodes.backslash) {
-            var ch2 = this.textWindow.peekCharN(1);
+        if (this.textWindow.currentItem() === CharacterCodes.backslash) {
+            var ch2 = this.textWindow.peekItemN(1);
             if (ch2 === CharacterCodes.x) {
                 return true;
             }
@@ -942,7 +981,7 @@ class Scanner {
             return this.peekUnicodeOrHexEscape();
         }
         else {
-            return this.textWindow.peekCharAtPosition();
+            return this.textWindow.currentItem();
         }
     }
 
@@ -951,64 +990,65 @@ class Scanner {
             return this.peekUnicodeOrHexEscape();
         }
         else {
-            return this.textWindow.peekCharAtPosition();
+            return this.textWindow.currentItem();
         }
     }
 
     private peekUnicodeOrHexEscape(): number {
-        var position = this.textWindow.position();
+        var rewindPoint = this.textWindow.getRewindPoint();
 
         // if we're peeking, then we don't want to change the position
         var ch = this.scanUnicodeOrHexEscape(/*errors:*/ null);
-        this.textWindow.reset(position);
+        this.textWindow.rewind(rewindPoint);
+        this.textWindow.releaseRewindPoint(rewindPoint);
         return ch;
     }
 
     private scanCharOrUnicodeEscape(errors: SyntaxDiagnosticInfo[]): number {
-        var ch = this.textWindow.peekCharAtPosition();
+        var ch = this.textWindow.currentItem();
         if (ch === CharacterCodes.backslash) {
-            var ch2 = this.textWindow.peekCharN(1);
+            var ch2 = this.textWindow.peekItemN(1);
             if (ch2 === CharacterCodes.u) {
                 return this.scanUnicodeOrHexEscape(errors);
             }
         }
 
-        this.textWindow.advanceChar1();
+        this.textWindow.moveToNextItem();
         return ch;
     }
 
     private scanCharOrUnicodeOrHexEscape(errors: SyntaxDiagnosticInfo[]): number {
-        var ch = this.textWindow.peekCharAtPosition();
+        var ch = this.textWindow.currentItem();
         if (ch === CharacterCodes.backslash) {
-            var ch2 = this.textWindow.peekCharN(1);
+            var ch2 = this.textWindow.peekItemN(1);
             if (ch2 === CharacterCodes.u || ch2 === CharacterCodes.x) {
                 return this.scanUnicodeOrHexEscape(errors);
             }
         }
 
-        this.textWindow.advanceChar1();
+        this.textWindow.moveToNextItem();
         return ch;
     }
 
     private scanUnicodeOrHexEscape(errors: SyntaxDiagnosticInfo[]): number {
-        var start = this.textWindow.position();
-        var character = this.textWindow.peekCharAtPosition();
+        var start = this.textWindow.absoluteIndex();
+        var character = this.textWindow.currentItem();
         Debug.assert(character === CharacterCodes.backslash);
-        this.textWindow.advanceChar1();
+        this.textWindow.moveToNextItem();
 
-        character = this.textWindow.peekCharAtPosition();
+        character = this.textWindow.currentItem();
         Debug.assert(character === CharacterCodes.u || character === CharacterCodes.x);
 
         var intChar = 0;
-        this.textWindow.advanceChar1();
+        this.textWindow.moveToNextItem();
 
         var count = character === CharacterCodes.u ? 4 : 2;
 
         for (var i = 0; i < count; i++) {
-            var ch2 = this.textWindow.peekCharAtPosition();
+            var ch2 = this.textWindow.currentItem();
             if (!CharacterInfo.isHexDigit(ch2)) {
                 if (errors !== null) {
-                    var end = this.textWindow.position();
+                    var end = this.textWindow.absoluteIndex();
                     var info = this.createIllegalEscapeDiagnostic(start, end);
                     errors.push(info);
                 }
@@ -1017,7 +1057,7 @@ class Scanner {
             }
 
             intChar = (intChar << 4) + CharacterInfo.hexValue(ch2);
-            this.textWindow.advanceChar1();
+            this.textWindow.moveToNextItem();
         }
 
         return intChar;

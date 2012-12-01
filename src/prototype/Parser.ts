@@ -9,7 +9,7 @@ class SlidingTokenWindow extends SlidingWindow {
     private parser: Parser;
 
     constructor(parser: Parser) {
-        super(null, 32);
+        super(32, null);
 
         this.parser = parser;
     }
@@ -27,8 +27,8 @@ class SlidingTokenWindow extends SlidingWindow {
         this.parser.restoreStateFromRewindPoint(rewindPoint);
     }
 
-    private fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, count: number): number {
-        return this.parser.fetchMoreItems(sourceIndex, window, destinationIndex, count);
+    private fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
+        return this.parser.fetchMoreItems(sourceIndex, window, destinationIndex, spaceAvailable);
     }
 }
 
@@ -148,8 +148,8 @@ class Parser {
         this.isInStrictMode = rewindPoint.isInStrictMode;
     }
 
-    public fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, count: number): number {
-        Debug.assert(count > 0);
+    public fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
+        Debug.assert(spaceAvailable > 0);
         window[destinationIndex] = this.scanner.scan();
         return 1;
     }

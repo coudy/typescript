@@ -7,7 +7,7 @@ interface IRewindPoint {
 
 class SlidingWindow {
     // A window of items that has been read in from the underlying source.
-    private window: any[] = [];
+    public window: any[] = [];
 
     // The number of valid items in window.
     private windowCount: number = 0;
@@ -15,7 +15,7 @@ class SlidingWindow {
     // The *absolute* index in the *full* array of items the *window* array starts at.  i.e.
     // if there were 100 items, and window contains tokens [70, 80), then this value would be
     // 70.
-    private windowAbsoluteStartIndex: number = 0;
+    public windowAbsoluteStartIndex: number = 0;
 
     // The index in the window array that we're at. i.e. if there 100 items and 
     // window contains tokens [70, 80), and we're on item 75, then this value would be '5'.
@@ -32,29 +32,28 @@ class SlidingWindow {
     // start of the items array past this point.
     private firstRewindAbsoluteIndex: number = -1;
 
-    private rewindPoints: IRewindPoint[] = [];
+    private pool: IRewindPoint[] = [];
+    private poolCount = 0;
 
     // The default value to return when there are no more items left in the window.
     private defaultValue: any;
 
-    constructor(defaultValue: any, defaultWindowSize: number) {
+    constructor(defaultWindowSize: number, defaultValue: any) {
         this.defaultValue = defaultValue;
         this.window = ArrayUtilities.createArray(defaultWindowSize, defaultValue);
     }
 
     private storeAdditionalRewindState(rewindPoint: IRewindPoint): void {
-        throw Errors.notYetImplemented();
     }
 
     private restoreStateFromRewindPoint(rewindPoint: IRewindPoint): void {
-        throw Errors.notYetImplemented();
     }
 
     private isPastSourceEnd(): bool {
-        throw Errors.notYetImplemented();
+        return false;
     }
 
-    private fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, count: number): number {
+    private fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
         throw Errors.notYetImplemented();
     }
 
@@ -123,10 +122,14 @@ class SlidingWindow {
         }
     }
 
+    public absoluteIndex(): number {
+        return this.windowAbsoluteStartIndex + this.currentRelativeItemIndex;
+    }
+
     public getRewindPoint(): any {
         // Find the absolute index of this rewind point.  i.e. it's the index as if we had an 
         // array containing *all* tokens.  
-        var absoluteIndex = this.windowAbsoluteStartIndex + this.currentRelativeItemIndex;
+        var absoluteIndex = this.absoluteIndex();
         if (this.outstandingRewindPoints === 0) {
             // If this is the first rewind point, then store off this index.  We will ensure that
             // we never shift the window past this point.
@@ -134,9 +137,9 @@ class SlidingWindow {
         }
 
         this.outstandingRewindPoints++;
-        var rewindPoint = this.rewindPoints.length === 0
+        var rewindPoint = this.poolCount === 0
             ? <IRewindPoint>{}
-            : this.rewindPoints.pop();
+            : this.pop();
 
         rewindPoint.rewindPoints = this.outstandingRewindPoints;
         rewindPoint.absoluteIndex = absoluteIndex;
@@ -144,6 +147,13 @@ class SlidingWindow {
         this.storeAdditionalRewindState(rewindPoint);
 
         return rewindPoint;
+    }
+
+    private pop(): IRewindPoint {
+        this.poolCount--;
+        var result = this.pool[this.poolCount];
+        this.pool[this.poolCount] = null;
+        return result;
     }
 
     public rewind(rewindPoint: IRewindPoint): void {
@@ -175,7 +185,9 @@ class SlidingWindow {
             this.firstRewindAbsoluteIndex = -1;
         }
 
-        this.rewindPoints.push(rewindPoint);
+        // this.rewindPoints.push(rewindPoint);
+        this.pool[this.poolCount] = rewindPoint;
+        this.poolCount++;
     }
 
     public currentItem(): any {
