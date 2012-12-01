@@ -707,7 +707,6 @@ var SlidingWindow = (function () {
         this.outstandingRewindPoints++;
         var rewindPoint = this.poolCount === 0 ? {
         } : this.pop();
-        rewindPoint.rewindPoints = this.outstandingRewindPoints;
         rewindPoint.absoluteIndex = absoluteIndex;
         this.storeAdditionalRewindState(rewindPoint);
         return rewindPoint;
@@ -719,14 +718,12 @@ var SlidingWindow = (function () {
         return result;
     };
     SlidingWindow.prototype.rewind = function (rewindPoint) {
-        Debug.assert(this.outstandingRewindPoints === rewindPoint.rewindPoints);
         var relativeIndex = rewindPoint.absoluteIndex - this.windowAbsoluteStartIndex;
         Debug.assert(relativeIndex >= 0 && relativeIndex < this.windowCount);
         this.currentRelativeItemIndex = relativeIndex;
         this.restoreStateFromRewindPoint(rewindPoint);
     };
     SlidingWindow.prototype.releaseRewindPoint = function (rewindPoint) {
-        Debug.assert(this.outstandingRewindPoints == rewindPoint.rewindPoints);
         this.outstandingRewindPoints--;
         if(this.outstandingRewindPoints == 0) {
             this.firstRewindAbsoluteIndex = -1;

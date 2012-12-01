@@ -1,7 +1,6 @@
 ///<reference path='References.ts' />
 
 interface IRewindPoint {
-    rewindPoints: number;
     absoluteIndex: number;
 }
 
@@ -140,7 +139,6 @@ class SlidingWindow {
             ? <IRewindPoint>{}
             : this.pop();
 
-        rewindPoint.rewindPoints = this.outstandingRewindPoints;
         rewindPoint.absoluteIndex = absoluteIndex;
 
         this.storeAdditionalRewindState(rewindPoint);
@@ -156,8 +154,6 @@ class SlidingWindow {
     }
 
     public rewind(rewindPoint: IRewindPoint): void {
-        // Ensure that these are rewound in the right order.
-        Debug.assert(this.outstandingRewindPoints === rewindPoint.rewindPoints);
 
         // The rewind point shows which absolute item we want to rewind to.  Get the relative 
         // index in the actual array that we want to point to.
@@ -173,9 +169,6 @@ class SlidingWindow {
     }
 
     public releaseRewindPoint(rewindPoint: IRewindPoint): void {
-        // Ensure that these are released in the right order.
-        Debug.assert(this.outstandingRewindPoints == rewindPoint.rewindPoints);
-
         this.outstandingRewindPoints--;
         if (this.outstandingRewindPoints == 0) {
             // If we just released the last outstanding rewind point, then we no longer need to 
