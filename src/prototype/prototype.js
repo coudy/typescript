@@ -2867,54 +2867,34 @@ var ScannerTriviaInfo = (function () {
     function ScannerTriviaInfo() { }
     return ScannerTriviaInfo;
 })();
-var SlidingTextWindow = (function (_super) {
-    __extends(SlidingTextWindow, _super);
-    function SlidingTextWindow(text, stringTable) {
-        _super.call(this, 2048, 0);
-        this.text = text;
-        this.stringTable = stringTable;
-    }
-    SlidingTextWindow.prototype.isPastSourceEnd = function () {
-        return this.absoluteIndex() >= this.text.length();
-    };
-    SlidingTextWindow.prototype.fetchMoreItems = function (sourceIndex, window, destinationIndex, spaceAvailable) {
-        var charactersRemaining = this.text.length() - sourceIndex;
-        var amountToRead = MathPrototype.min(charactersRemaining, spaceAvailable);
-        this.text.copyTo(sourceIndex, window, destinationIndex, amountToRead);
-        return amountToRead;
-    };
-    SlidingTextWindow.prototype.substring = function (start, end, intern) {
-        return this.substr(start, end - start, intern);
-    };
-    SlidingTextWindow.prototype.substr = function (start, length, intern) {
-        var offset = start - this.windowAbsoluteStartIndex;
-        if(intern) {
-            return this.stringTable.addCharArray(this.window, offset, length);
-        } else {
-            return StringUtilities.fromCharCodeArray(this.window.slice(offset, offset + length));
-        }
-    };
-    return SlidingTextWindow;
-})(SlidingWindow);
-var Scanner = (function () {
+var Scanner = (function (_super) {
+    __extends(Scanner, _super);
     function Scanner(text, languageVersion, stringTable) {
+        _super.call(this, 2048, 0);
         this.text = null;
         this.builder = [];
         this.errors = [];
-        this.textWindow = null;
         this.previousTokenKind = 0 /* None */ ;
         this.previousTokenKeywordKind = 0 /* None */ ;
         this.tokenInfo = new ScannerTokenInfo();
         this.leadingTriviaInfo = new ScannerTriviaInfo();
         this.trailingTriviaInfo = new ScannerTriviaInfo();
-        Contract.throwIfNull(stringTable);
         this.text = text;
-        this.textWindow = new SlidingTextWindow(text, stringTable);
+        this.stringTable = stringTable;
         this.languageVersion = languageVersion;
     }
     Scanner.create = function create(text, languageVersion) {
         return new Scanner(text, languageVersion, new StringTable());
     }
+    Scanner.prototype.isPastSourceEnd = function () {
+        return this.absoluteIndex() >= this.text.length();
+    };
+    Scanner.prototype.fetchMoreItems = function (sourceIndex, window, destinationIndex, spaceAvailable) {
+        var charactersRemaining = this.text.length() - sourceIndex;
+        var amountToRead = MathPrototype.min(charactersRemaining, spaceAvailable);
+        this.text.copyTo(sourceIndex, window, destinationIndex, amountToRead);
+        return amountToRead;
+    };
     Scanner.prototype.addSimpleDiagnosticInfo = function (code) {
         var args = [];
         for (var _i = 0; _i < (arguments.length - 1); _i++) {
@@ -2935,17 +2915,17 @@ var Scanner = (function () {
         if(this.errors.length > 0) {
             this.errors = [];
         }
-        var rewindPoint = this.textWindow.getRewindPoint();
+        var rewindPoint = this.getRewindPoint();
         try  {
-            var start = this.textWindow.absoluteIndex();
-            this.scanTriviaInfo(this.textWindow.absoluteIndex() > 0, false, this.leadingTriviaInfo);
+            var start = this.absoluteIndex();
+            this.scanTriviaInfo(this.absoluteIndex() > 0, false, this.leadingTriviaInfo);
             this.scanSyntaxToken();
             this.scanTriviaInfo(true, true, this.trailingTriviaInfo);
             this.previousTokenKind = this.tokenInfo.Kind;
             this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
             return this.createToken(start);
         }finally {
-            this.textWindow.releaseRewindPoint(rewindPoint);
+            this.releaseRewindPoint(rewindPoint);
         }
     };
     Scanner.prototype.createToken = function (start) {
@@ -2956,7 +2936,7 @@ var Scanner = (function () {
         triviaInfo.HasComment = false;
         triviaInfo.HasNewLine = false;
         while(true) {
-            var ch = this.textWindow.currentItem();
+            var ch = this.currentItem();
             switch(ch) {
                 case 32 /* space */ :
                 case 9 /* tab */ :
@@ -2964,25 +2944,25 @@ var Scanner = (function () {
                 case 12 /* formFeed */ :
                 case 160 /* nonBreakingSpace */ :
                 case 65279 /* byteOrderMark */ : {
-                    this.textWindow.moveToNextItem();
+                    this.moveToNextItem();
                     triviaInfo.Width++;
                     continue;
 
                 }
             }
             if(ch === 47 /* slash */ ) {
-                var ch2 = this.textWindow.peekItemN(1);
+                var ch2 = this.peekItemN(1);
                 if(ch2 === 47 /* slash */ ) {
-                    this.textWindow.moveToNextItem();
-                    this.textWindow.moveToNextItem();
+                    this.moveToNextItem();
+                    this.moveToNextItem();
                     triviaInfo.Width += 2;
                     triviaInfo.HasComment = true;
                     this.scanSingleLineCommentTrivia(triviaInfo);
                     continue;
                 }
                 if(ch2 === 42 /* asterisk */ ) {
-                    this.textWindow.moveToNextItem();
-                    this.textWindow.moveToNextItem();
+                    this.moveToNextItem();
+                    this.moveToNextItem();
                     triviaInfo.Width += 2;
                     triviaInfo.HasComment = true;
                     this.scanMultiLineCommentTrivia(triviaInfo);
@@ -2993,12 +2973,12 @@ var Scanner = (function () {
             if(this.isNewLineCharacter(ch)) {
                 triviaInfo.HasNewLine = true;
                 if(ch === 13 /* carriageReturn */ ) {
-                    this.textWindow.moveToNextItem();
+                    this.moveToNextItem();
                     triviaInfo.Width++;
                 }
-                ch = this.textWindow.currentItem();
+                ch = this.currentItem();
                 if(ch === 10 /* newLine */ ) {
-                    this.textWindow.moveToNextItem();
+                    this.moveToNextItem();
                     triviaInfo.Width++;
                 }
                 if(isTrailing) {
@@ -3026,27 +3006,27 @@ var Scanner = (function () {
     };
     Scanner.prototype.scanSingleLineCommentTrivia = function (triviaInfo) {
         while(true) {
-            var ch = this.textWindow.currentItem();
+            var ch = this.currentItem();
             if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
                 return;
             }
-            this.textWindow.moveToNextItem();
+            this.moveToNextItem();
             triviaInfo.Width++;
         }
     };
     Scanner.prototype.scanMultiLineCommentTrivia = function (triviaInfo) {
         while(true) {
-            var ch = this.textWindow.currentItem();
+            var ch = this.currentItem();
             if(ch === 0 /* nullCharacter */ ) {
                 return;
             }
-            if(ch === 42 /* asterisk */  && this.textWindow.peekItemN(1) === 47 /* slash */ ) {
-                this.textWindow.moveToNextItem();
-                this.textWindow.moveToNextItem();
+            if(ch === 42 /* asterisk */  && this.peekItemN(1) === 47 /* slash */ ) {
+                this.moveToNextItem();
+                this.moveToNextItem();
                 triviaInfo.Width += 2;
                 return;
             }
-            this.textWindow.moveToNextItem();
+            this.moveToNextItem();
             triviaInfo.Width++;
         }
     };
@@ -3054,7 +3034,7 @@ var Scanner = (function () {
         this.tokenInfo.Kind = 0 /* None */ ;
         this.tokenInfo.KeywordKind = 0 /* None */ ;
         this.tokenInfo.Text = null;
-        var character = this.textWindow.currentItem();
+        var character = this.currentItem();
         switch(character) {
             case 34 /* doubleQuote */ :
             case 39 /* singleQuote */ : {
@@ -3211,48 +3191,48 @@ var Scanner = (function () {
         }
     };
     Scanner.prototype.scanDecimalNumericLiteral = function () {
-        var start = this.textWindow.absoluteIndex();
-        while(CharacterInfo.isDecimalDigit(this.textWindow.currentItem())) {
-            this.textWindow.moveToNextItem();
+        var start = this.absoluteIndex();
+        while(CharacterInfo.isDecimalDigit(this.currentItem())) {
+            this.moveToNextItem();
         }
-        if(this.textWindow.currentItem() === 46 /* dot */ ) {
-            this.textWindow.moveToNextItem();
+        if(this.currentItem() === 46 /* dot */ ) {
+            this.moveToNextItem();
         }
-        while(CharacterInfo.isDecimalDigit(this.textWindow.currentItem())) {
-            this.textWindow.moveToNextItem();
+        while(CharacterInfo.isDecimalDigit(this.currentItem())) {
+            this.moveToNextItem();
         }
-        var ch = this.textWindow.currentItem();
+        var ch = this.currentItem();
         if(ch === 101 /* e */  || ch === 69 /* E */ ) {
-            this.textWindow.moveToNextItem();
-            ch = this.textWindow.currentItem();
+            this.moveToNextItem();
+            ch = this.currentItem();
             if(ch === 45 /* minus */  || ch === 43 /* plus */ ) {
-                if(CharacterInfo.isDecimalDigit(this.textWindow.peekItemN(1))) {
-                    this.textWindow.moveToNextItem();
+                if(CharacterInfo.isDecimalDigit(this.peekItemN(1))) {
+                    this.moveToNextItem();
                 }
             }
         }
-        while(CharacterInfo.isDecimalDigit(this.textWindow.currentItem())) {
-            this.textWindow.moveToNextItem();
+        while(CharacterInfo.isDecimalDigit(this.currentItem())) {
+            this.moveToNextItem();
         }
-        var end = this.textWindow.absoluteIndex();
-        this.tokenInfo.Text = this.textWindow.substring(start, end, false);
+        var end = this.absoluteIndex();
+        this.tokenInfo.Text = this.substring(start, end, false);
         this.tokenInfo.Kind = 7 /* NumericLiteral */ ;
     };
     Scanner.prototype.scanHexNumericLiteral = function () {
-        var start = this.textWindow.absoluteIndex();
+        var start = this.absoluteIndex();
         Debug.assert(this.isHexNumericLiteral());
-        this.textWindow.moveToNextItem();
-        this.textWindow.moveToNextItem();
-        while(CharacterInfo.isHexDigit(this.textWindow.currentItem())) {
-            this.textWindow.moveToNextItem();
+        this.moveToNextItem();
+        this.moveToNextItem();
+        while(CharacterInfo.isHexDigit(this.currentItem())) {
+            this.moveToNextItem();
         }
-        var end = this.textWindow.absoluteIndex();
-        this.tokenInfo.Text = this.textWindow.substring(start, end, false);
+        var end = this.absoluteIndex();
+        this.tokenInfo.Text = this.substring(start, end, false);
         this.tokenInfo.Kind = 7 /* NumericLiteral */ ;
     };
     Scanner.prototype.isHexNumericLiteral = function () {
-        if(this.textWindow.currentItem() === 48 /* _0 */ ) {
-            var ch = this.textWindow.peekItemN(1);
+        if(this.currentItem() === 48 /* _0 */ ) {
+            var ch = this.peekItemN(1);
             return ch === 120 /* x */  || ch === 88 /* X */ ;
         }
         return false;
@@ -3264,12 +3244,12 @@ var Scanner = (function () {
         return this.isDotPrefixedNumericLiteral();
     };
     Scanner.prototype.scanIdentifier = function () {
-        var start = this.textWindow.absoluteIndex();
+        var start = this.absoluteIndex();
         while(this.isIdentifierPart()) {
             this.scanCharOrUnicodeEscape(this.errors);
         }
-        var end = this.textWindow.absoluteIndex();
-        this.tokenInfo.Text = this.textWindow.substring(start, end, true);
+        var end = this.absoluteIndex();
+        this.tokenInfo.Text = this.substring(start, end, true);
         this.tokenInfo.Kind = 5 /* IdentifierNameToken */ ;
     };
     Scanner.prototype.isIdentifierStart_Fast = function (character) {
@@ -3286,7 +3266,7 @@ var Scanner = (function () {
         return this.isIdentifierStart_Fast(character) || this.isIdentifierStart_Slow();
     };
     Scanner.prototype.isIdentifierPart_Fast = function () {
-        var character = this.textWindow.currentItem();
+        var character = this.currentItem();
         if(this.isIdentifierStart_Fast(character)) {
             return true;
         }
@@ -3310,14 +3290,14 @@ var Scanner = (function () {
         }
     };
     Scanner.prototype.advanceAndSetTokenKind = function (kind) {
-        this.textWindow.moveToNextItem();
+        this.moveToNextItem();
         this.tokenInfo.Kind = kind;
     };
     Scanner.prototype.scanGreaterThanToken = function () {
-        this.textWindow.moveToNextItem();
-        var character = this.textWindow.currentItem();
+        this.moveToNextItem();
+        var character = this.currentItem();
         if(character === 61 /* equals */ ) {
-            this.textWindow.moveToNextItem();
+            this.moveToNextItem();
             this.tokenInfo.Kind = 76 /* GreaterThanEqualsToken */ ;
         } else {
             if(character === 62 /* greaterThan */ ) {
@@ -3328,10 +3308,10 @@ var Scanner = (function () {
         }
     };
     Scanner.prototype.scanGreaterThanGreaterThanToken = function () {
-        this.textWindow.moveToNextItem();
-        var character = this.textWindow.currentItem();
+        this.moveToNextItem();
+        var character = this.currentItem();
         if(character === 61 /* equals */ ) {
-            this.textWindow.moveToNextItem();
+            this.moveToNextItem();
             this.tokenInfo.Kind = 106 /* GreaterThanGreaterThanEqualsToken */ ;
         } else {
             if(character === 62 /* greaterThan */ ) {
@@ -3342,25 +3322,25 @@ var Scanner = (function () {
         }
     };
     Scanner.prototype.scanGreaterThanGreaterThanGreaterThanToken = function () {
-        this.textWindow.moveToNextItem();
-        var character = this.textWindow.currentItem();
+        this.moveToNextItem();
+        var character = this.currentItem();
         if(character === 61 /* equals */ ) {
-            this.textWindow.moveToNextItem();
+            this.moveToNextItem();
             this.tokenInfo.Kind = 107 /* GreaterThanGreaterThanGreaterThanEqualsToken */ ;
         } else {
             this.tokenInfo.Kind = 90 /* GreaterThanGreaterThanGreaterThanToken */ ;
         }
     };
     Scanner.prototype.scanLessThanToken = function () {
-        this.textWindow.moveToNextItem();
-        if(this.textWindow.currentItem() === 61 /* equals */ ) {
-            this.textWindow.moveToNextItem();
+        this.moveToNextItem();
+        if(this.currentItem() === 61 /* equals */ ) {
+            this.moveToNextItem();
             this.tokenInfo.Kind = 75 /* LessThanEqualsToken */ ;
         } else {
-            if(this.textWindow.currentItem() === 60 /* lessThan */ ) {
-                this.textWindow.moveToNextItem();
-                if(this.textWindow.currentItem() === 61 /* equals */ ) {
-                    this.textWindow.moveToNextItem();
+            if(this.currentItem() === 60 /* lessThan */ ) {
+                this.moveToNextItem();
+                if(this.currentItem() === 61 /* equals */ ) {
+                    this.moveToNextItem();
                     this.tokenInfo.Kind = 105 /* LessThanLessThanEqualsToken */ ;
                 } else {
                     this.tokenInfo.Kind = 88 /* LessThanLessThanToken */ ;
@@ -3371,13 +3351,13 @@ var Scanner = (function () {
         }
     };
     Scanner.prototype.scanBarToken = function () {
-        this.textWindow.moveToNextItem();
-        if(this.textWindow.currentItem() === 61 /* equals */ ) {
-            this.textWindow.moveToNextItem();
+        this.moveToNextItem();
+        if(this.currentItem() === 61 /* equals */ ) {
+            this.moveToNextItem();
             this.tokenInfo.Kind = 109 /* BarEqualsToken */ ;
         } else {
-            if(this.textWindow.currentItem() === 124 /* bar */ ) {
-                this.textWindow.moveToNextItem();
+            if(this.currentItem() === 124 /* bar */ ) {
+                this.moveToNextItem();
                 this.tokenInfo.Kind = 97 /* BarBarToken */ ;
             } else {
                 this.tokenInfo.Kind = 92 /* BarToken */ ;
@@ -3385,23 +3365,23 @@ var Scanner = (function () {
         }
     };
     Scanner.prototype.scanCaretToken = function () {
-        this.textWindow.moveToNextItem();
-        if(this.textWindow.currentItem() === 61 /* equals */ ) {
-            this.textWindow.moveToNextItem();
+        this.moveToNextItem();
+        if(this.currentItem() === 61 /* equals */ ) {
+            this.moveToNextItem();
             this.tokenInfo.Kind = 110 /* CaretEqualsToken */ ;
         } else {
             this.tokenInfo.Kind = 93 /* CaretToken */ ;
         }
     };
     Scanner.prototype.scanAmpersandToken = function () {
-        this.textWindow.moveToNextItem();
-        var character = this.textWindow.currentItem();
+        this.moveToNextItem();
+        var character = this.currentItem();
         if(character === 61 /* equals */ ) {
-            this.textWindow.moveToNextItem();
+            this.moveToNextItem();
             this.tokenInfo.Kind = 108 /* AmpersandEqualsToken */ ;
         } else {
-            if(this.textWindow.currentItem() === 38 /* ampersand */ ) {
-                this.textWindow.moveToNextItem();
+            if(this.currentItem() === 38 /* ampersand */ ) {
+                this.moveToNextItem();
                 this.tokenInfo.Kind = 96 /* AmpersandAmpersandToken */ ;
             } else {
                 this.tokenInfo.Kind = 91 /* AmpersandToken */ ;
@@ -3409,23 +3389,23 @@ var Scanner = (function () {
         }
     };
     Scanner.prototype.scanPercentToken = function () {
-        this.textWindow.moveToNextItem();
-        if(this.textWindow.currentItem() === 61 /* equals */ ) {
-            this.textWindow.moveToNextItem();
+        this.moveToNextItem();
+        if(this.currentItem() === 61 /* equals */ ) {
+            this.moveToNextItem();
             this.tokenInfo.Kind = 104 /* PercentEqualsToken */ ;
         } else {
             this.tokenInfo.Kind = 85 /* PercentToken */ ;
         }
     };
     Scanner.prototype.scanMinusToken = function () {
-        this.textWindow.moveToNextItem();
-        var character = this.textWindow.currentItem();
+        this.moveToNextItem();
+        var character = this.currentItem();
         if(character === 61 /* equals */ ) {
-            this.textWindow.moveToNextItem();
+            this.moveToNextItem();
             this.tokenInfo.Kind = 102 /* MinusEqualsToken */ ;
         } else {
             if(character === 45 /* minus */ ) {
-                this.textWindow.moveToNextItem();
+                this.moveToNextItem();
                 this.tokenInfo.Kind = 87 /* MinusMinusToken */ ;
             } else {
                 this.tokenInfo.Kind = 83 /* MinusToken */ ;
@@ -3433,14 +3413,14 @@ var Scanner = (function () {
         }
     };
     Scanner.prototype.scanPlusToken = function () {
-        this.textWindow.moveToNextItem();
-        var character = this.textWindow.currentItem();
+        this.moveToNextItem();
+        var character = this.currentItem();
         if(character === 61 /* equals */ ) {
-            this.textWindow.moveToNextItem();
+            this.moveToNextItem();
             this.tokenInfo.Kind = 101 /* PlusEqualsToken */ ;
         } else {
             if(character === 43 /* plus */ ) {
-                this.textWindow.moveToNextItem();
+                this.moveToNextItem();
                 this.tokenInfo.Kind = 86 /* PlusPlusToken */ ;
             } else {
                 this.tokenInfo.Kind = 82 /* PlusToken */ ;
@@ -3448,28 +3428,28 @@ var Scanner = (function () {
         }
     };
     Scanner.prototype.scanAsteriskToken = function () {
-        this.textWindow.moveToNextItem();
-        if(this.textWindow.currentItem() === 61 /* equals */ ) {
-            this.textWindow.moveToNextItem();
+        this.moveToNextItem();
+        if(this.currentItem() === 61 /* equals */ ) {
+            this.moveToNextItem();
             this.tokenInfo.Kind = 103 /* AsteriskEqualsToken */ ;
         } else {
             this.tokenInfo.Kind = 84 /* AsteriskToken */ ;
         }
     };
     Scanner.prototype.scanEqualsToken = function () {
-        this.textWindow.moveToNextItem();
-        var character = this.textWindow.currentItem();
+        this.moveToNextItem();
+        var character = this.currentItem();
         if(character === 61 /* equals */ ) {
-            this.textWindow.moveToNextItem();
-            if(this.textWindow.currentItem() === 61 /* equals */ ) {
-                this.textWindow.moveToNextItem();
+            this.moveToNextItem();
+            if(this.currentItem() === 61 /* equals */ ) {
+                this.moveToNextItem();
                 this.tokenInfo.Kind = 80 /* EqualsEqualsEqualsToken */ ;
             } else {
                 this.tokenInfo.Kind = 77 /* EqualsEqualsToken */ ;
             }
         } else {
             if(character === 62 /* greaterThan */ ) {
-                this.textWindow.moveToNextItem();
+                this.moveToNextItem();
                 this.tokenInfo.Kind = 78 /* EqualsGreaterThanToken */ ;
             } else {
                 this.tokenInfo.Kind = 100 /* EqualsToken */ ;
@@ -3477,8 +3457,8 @@ var Scanner = (function () {
         }
     };
     Scanner.prototype.isDotPrefixedNumericLiteral = function () {
-        if(this.textWindow.currentItem() === 46 /* dot */ ) {
-            var ch = this.textWindow.peekItemN(1);
+        if(this.currentItem() === 46 /* dot */ ) {
+            var ch = this.peekItemN(1);
             return CharacterInfo.isDecimalDigit(ch);
         }
         return false;
@@ -3488,10 +3468,10 @@ var Scanner = (function () {
             this.scanNumericLiteral();
             return;
         }
-        this.textWindow.moveToNextItem();
-        if(this.textWindow.currentItem() === 46 /* dot */  && this.textWindow.peekItemN(1) === 46 /* dot */ ) {
-            this.textWindow.moveToNextItem();
-            this.textWindow.moveToNextItem();
+        this.moveToNextItem();
+        if(this.currentItem() === 46 /* dot */  && this.peekItemN(1) === 46 /* dot */ ) {
+            this.moveToNextItem();
+            this.moveToNextItem();
             this.tokenInfo.Kind = 70 /* DotDotDotToken */ ;
         } else {
             this.tokenInfo.Kind = 69 /* DotToken */ ;
@@ -3501,9 +3481,9 @@ var Scanner = (function () {
         if(this.tryScanRegularExpressionToken()) {
             return;
         }
-        this.textWindow.moveToNextItem();
-        if(this.textWindow.currentItem() === 61 /* equals */ ) {
-            this.textWindow.moveToNextItem();
+        this.moveToNextItem();
+        if(this.currentItem() === 61 /* equals */ ) {
+            this.moveToNextItem();
             this.tokenInfo.Kind = 112 /* SlashEqualsToken */ ;
         } else {
             this.tokenInfo.Kind = 111 /* SlashToken */ ;
@@ -3532,19 +3512,19 @@ var Scanner = (function () {
 
             }
         }
-        Debug.assert(this.textWindow.currentItem() === 47 /* slash */ );
-        var start = this.textWindow.absoluteIndex();
-        var rewindPoint = this.textWindow.getRewindPoint();
+        Debug.assert(this.currentItem() === 47 /* slash */ );
+        var start = this.absoluteIndex();
+        var rewindPoint = this.getRewindPoint();
         try  {
-            this.textWindow.moveToNextItem();
+            this.moveToNextItem();
             var skipNextSlash = false;
             while(true) {
-                var ch = this.textWindow.currentItem();
+                var ch = this.currentItem();
                 if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
-                    this.textWindow.rewind(rewindPoint);
+                    this.rewind(rewindPoint);
                     return false;
                 }
-                this.textWindow.moveToNextItem();
+                this.moveToNextItem();
                 if(!skipNextSlash && ch === 47 /* slash */ ) {
                     break;
                 } else {
@@ -3558,20 +3538,20 @@ var Scanner = (function () {
             while(this.isIdentifierPart()) {
                 this.scanCharOrUnicodeEscape(this.errors);
             }
-            var end = this.textWindow.absoluteIndex();
+            var end = this.absoluteIndex();
             this.tokenInfo.Kind = 6 /* RegularExpressionLiteral */ ;
-            this.tokenInfo.Text = this.textWindow.substring(start, end, false);
+            this.tokenInfo.Text = this.substring(start, end, false);
             return true;
         }finally {
-            this.textWindow.releaseRewindPoint(rewindPoint);
+            this.releaseRewindPoint(rewindPoint);
         }
     };
     Scanner.prototype.scanExclamationToken = function () {
-        this.textWindow.moveToNextItem();
-        if(this.textWindow.currentItem() === 61 /* equals */ ) {
-            this.textWindow.moveToNextItem();
-            if(this.textWindow.currentItem() === 61 /* equals */ ) {
-                this.textWindow.moveToNextItem();
+        this.moveToNextItem();
+        if(this.currentItem() === 61 /* equals */ ) {
+            this.moveToNextItem();
+            if(this.currentItem() === 61 /* equals */ ) {
+                this.moveToNextItem();
                 this.tokenInfo.Kind = 81 /* ExclamationEqualsEqualsToken */ ;
             } else {
                 this.tokenInfo.Kind = 79 /* ExclamationEqualsToken */ ;
@@ -3581,19 +3561,19 @@ var Scanner = (function () {
         }
     };
     Scanner.prototype.scanDefaultCharacter = function (character, isEscaped) {
-        var start = this.textWindow.absoluteIndex();
-        this.textWindow.moveToNextItem();
-        this.tokenInfo.Text = this.textWindow.substring(start, start + 1, true);
+        var start = this.absoluteIndex();
+        this.moveToNextItem();
+        this.tokenInfo.Text = this.substring(start, start + 1, true);
         this.tokenInfo.Kind = 113 /* ErrorToken */ ;
         this.addSimpleDiagnosticInfo(1 /* Unexpected_character_0 */ , this.tokenInfo.Text);
     };
     Scanner.prototype.skipEscapeSequence = function () {
-        Debug.assert(this.textWindow.currentItem() === 92 /* backslash */ );
-        var rewindPoint = this.textWindow.getRewindPoint();
+        Debug.assert(this.currentItem() === 92 /* backslash */ );
+        var rewindPoint = this.getRewindPoint();
         try  {
-            this.textWindow.moveToNextItem();
-            var ch = this.textWindow.currentItem();
-            this.textWindow.moveToNextItem();
+            this.moveToNextItem();
+            var ch = this.currentItem();
+            this.moveToNextItem();
             switch(ch) {
                 case 39 /* singleQuote */ :
                 case 34 /* doubleQuote */ :
@@ -3631,14 +3611,14 @@ var Scanner = (function () {
                 }
                 case 120 /* x */ :
                 case 117 /* u */ : {
-                    this.textWindow.rewind(rewindPoint);
+                    this.rewind(rewindPoint);
                     var value = this.scanUnicodeOrHexEscape(this.errors);
                     return;
 
                 }
                 case 13 /* carriageReturn */ : {
-                    if(this.textWindow.currentItem() === 10 /* newLine */ ) {
-                        this.textWindow.moveToNextItem();
+                    if(this.currentItem() === 10 /* newLine */ ) {
+                        this.moveToNextItem();
                     }
                     return;
 
@@ -3655,42 +3635,42 @@ var Scanner = (function () {
                 }
             }
         }finally {
-            this.textWindow.releaseRewindPoint(rewindPoint);
+            this.releaseRewindPoint(rewindPoint);
         }
     };
     Scanner.prototype.scanStringLiteral = function () {
-        var quoteCharacter = this.textWindow.currentItem();
+        var quoteCharacter = this.currentItem();
         Debug.assert(quoteCharacter === 39 /* singleQuote */  || quoteCharacter === 34 /* doubleQuote */ );
-        var start = this.textWindow.absoluteIndex();
-        this.textWindow.moveToNextItem();
+        var start = this.absoluteIndex();
+        this.moveToNextItem();
         while(true) {
-            var ch = this.textWindow.currentItem();
+            var ch = this.currentItem();
             if(ch === 92 /* backslash */ ) {
                 this.skipEscapeSequence();
             } else {
                 if(ch === quoteCharacter) {
-                    this.textWindow.moveToNextItem();
+                    this.moveToNextItem();
                     break;
                 } else {
                     if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
                         this.addSimpleDiagnosticInfo(2 /* Missing_closing_quote_character */ );
                         break;
                     } else {
-                        this.textWindow.moveToNextItem();
+                        this.moveToNextItem();
                     }
                 }
             }
         }
-        var end = this.textWindow.absoluteIndex();
-        this.tokenInfo.Text = this.textWindow.substring(start, end, true);
+        var end = this.absoluteIndex();
+        this.tokenInfo.Text = this.substring(start, end, true);
         this.tokenInfo.Kind = 8 /* StringLiteral */ ;
     };
     Scanner.prototype.isUnicodeOrHexEscape = function () {
         return this.isUnicodeEscape() || this.isHexEscape();
     };
     Scanner.prototype.isUnicodeEscape = function () {
-        if(this.textWindow.currentItem() === 92 /* backslash */ ) {
-            var ch2 = this.textWindow.peekItemN(1);
+        if(this.currentItem() === 92 /* backslash */ ) {
+            var ch2 = this.peekItemN(1);
             if(ch2 === 117 /* u */ ) {
                 return true;
             }
@@ -3698,8 +3678,8 @@ var Scanner = (function () {
         return false;
     };
     Scanner.prototype.isHexEscape = function () {
-        if(this.textWindow.currentItem() === 92 /* backslash */ ) {
-            var ch2 = this.textWindow.peekItemN(1);
+        if(this.currentItem() === 92 /* backslash */ ) {
+            var ch2 = this.peekItemN(1);
             if(ch2 === 120 /* x */ ) {
                 return true;
             }
@@ -3710,75 +3690,84 @@ var Scanner = (function () {
         if(this.isUnicodeOrHexEscape()) {
             return this.peekUnicodeOrHexEscape();
         } else {
-            return this.textWindow.currentItem();
+            return this.currentItem();
         }
     };
     Scanner.prototype.peekCharOrUnicodeEscape = function () {
         if(this.isUnicodeEscape()) {
             return this.peekUnicodeOrHexEscape();
         } else {
-            return this.textWindow.currentItem();
+            return this.currentItem();
         }
     };
     Scanner.prototype.peekUnicodeOrHexEscape = function () {
-        var rewindPoint = this.textWindow.getRewindPoint();
+        var rewindPoint = this.getRewindPoint();
         var ch = this.scanUnicodeOrHexEscape(null);
-        this.textWindow.rewind(rewindPoint);
-        this.textWindow.releaseRewindPoint(rewindPoint);
+        this.rewind(rewindPoint);
+        this.releaseRewindPoint(rewindPoint);
         return ch;
     };
     Scanner.prototype.scanCharOrUnicodeEscape = function (errors) {
-        var ch = this.textWindow.currentItem();
+        var ch = this.currentItem();
         if(ch === 92 /* backslash */ ) {
-            var ch2 = this.textWindow.peekItemN(1);
+            var ch2 = this.peekItemN(1);
             if(ch2 === 117 /* u */ ) {
                 return this.scanUnicodeOrHexEscape(errors);
             }
         }
-        this.textWindow.moveToNextItem();
+        this.moveToNextItem();
         return ch;
     };
     Scanner.prototype.scanCharOrUnicodeOrHexEscape = function (errors) {
-        var ch = this.textWindow.currentItem();
+        var ch = this.currentItem();
         if(ch === 92 /* backslash */ ) {
-            var ch2 = this.textWindow.peekItemN(1);
+            var ch2 = this.peekItemN(1);
             if(ch2 === 117 /* u */  || ch2 === 120 /* x */ ) {
                 return this.scanUnicodeOrHexEscape(errors);
             }
         }
-        this.textWindow.moveToNextItem();
+        this.moveToNextItem();
         return ch;
     };
     Scanner.prototype.scanUnicodeOrHexEscape = function (errors) {
-        var start = this.textWindow.absoluteIndex();
-        var character = this.textWindow.currentItem();
+        var start = this.absoluteIndex();
+        var character = this.currentItem();
         Debug.assert(character === 92 /* backslash */ );
-        this.textWindow.moveToNextItem();
-        character = this.textWindow.currentItem();
+        this.moveToNextItem();
+        character = this.currentItem();
         Debug.assert(character === 117 /* u */  || character === 120 /* x */ );
         var intChar = 0;
-        this.textWindow.moveToNextItem();
+        this.moveToNextItem();
         var count = character === 117 /* u */  ? 4 : 2;
         for(var i = 0; i < count; i++) {
-            var ch2 = this.textWindow.currentItem();
+            var ch2 = this.currentItem();
             if(!CharacterInfo.isHexDigit(ch2)) {
                 if(errors !== null) {
-                    var end = this.textWindow.absoluteIndex();
+                    var end = this.absoluteIndex();
                     var info = this.createIllegalEscapeDiagnostic(start, end);
                     errors.push(info);
                 }
                 break;
             }
             intChar = (intChar << 4) + CharacterInfo.hexValue(ch2);
-            this.textWindow.moveToNextItem();
+            this.moveToNextItem();
         }
         return intChar;
     };
     Scanner.prototype.createIllegalEscapeDiagnostic = function (start, end) {
         return new SyntaxDiagnosticInfo(start, end - start, 0 /* Unrecognized_escape_sequence */ );
     };
+    Scanner.prototype.substring = function (start, end, intern) {
+        var length = end - start;
+        var offset = start - this.windowAbsoluteStartIndex;
+        if(intern) {
+            return this.stringTable.addCharArray(this.window, offset, length);
+        } else {
+            return StringUtilities.fromCharCodeArray(this.window.slice(offset, offset + length));
+        }
+    };
     return Scanner;
-})();
+})(SlidingWindow);
 var TextBase = (function () {
     function TextBase() {
         this.lazyLineStarts = null;
