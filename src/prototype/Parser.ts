@@ -114,11 +114,11 @@ class Parser {
     private _currentToken: ISyntaxToken = null;
 
     // The previous token to the current token.  Set when we advance to the next token.
-    public previousToken: ISyntaxToken = null;
+    private previousToken: ISyntaxToken = null;
 
     // Whether or not we are in strict parsing mode.  All that changes in strict parsing mode is
     // that some tokens that would be considered identifiers may be considered keywords.
-    public isInStrictMode: bool;
+    private isInStrictMode: bool;
 
     constructor(
         scanner: Scanner,

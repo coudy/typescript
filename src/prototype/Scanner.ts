@@ -12,12 +12,31 @@ class ScannerTriviaInfo {
     public HasNewLine: bool;
 }
 
+//class SlidingTextWindow extends SlidingWindow {
+//    constructor() {
+//        super(2048, 0);
+//    }
+
+//    private storeAdditionalRewindState(rewindPoint: IRewindPoint): void {
+//        // Nothing additional to store.
+//    }
+
+//    private restoreStateFromRewindPoint(rewindPoint: IRewindPoint): void {
+//        // Nothing additional to restore.
+//    }
+
+//    private isPastSourceEnd(): bool {
+
+//    }
+
+//    private fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, count: number): number {
+//        throw Errors.notYetImplemented();
+//    }
+//}
+
 class Scanner {
-    private _text: IText = null;
+    private text: IText = null;
     private builder: number[] = [];
-    private identifierBuffer: number[] = [];
-    private identifierLength = 0;
-    private stringTable: StringTable = null;
     private errors: SyntaxDiagnosticInfo[] = [];
     private textWindow: SlidingTextWindow = null;
     private languageVersion: LanguageVersion;
@@ -29,9 +48,7 @@ class Scanner {
     constructor(text: IText, languageVersion: LanguageVersion, stringTable: StringTable) {
         Contract.throwIfNull(stringTable);
 
-        this._text = text;
-        this.identifierBuffer = ArrayUtilities.createArray(32);
-        this.stringTable = stringTable;
+        this.text = text;
         this.textWindow = new SlidingTextWindow(text, stringTable);
         this.languageVersion = languageVersion;
     }

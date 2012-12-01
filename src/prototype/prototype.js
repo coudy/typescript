@@ -537,11 +537,8 @@ var ScannerTriviaInfo = (function () {
 })();
 var Scanner = (function () {
     function Scanner(text, languageVersion, stringTable) {
-        this._text = null;
+        this.text = null;
         this.builder = [];
-        this.identifierBuffer = [];
-        this.identifierLength = 0;
-        this.stringTable = null;
         this.errors = [];
         this.textWindow = null;
         this.previousTokenKind = 0 /* None */ ;
@@ -550,9 +547,7 @@ var Scanner = (function () {
         this.leadingTriviaInfo = new ScannerTriviaInfo();
         this.trailingTriviaInfo = new ScannerTriviaInfo();
         Contract.throwIfNull(stringTable);
-        this._text = text;
-        this.identifierBuffer = ArrayUtilities.createArray(32);
-        this.stringTable = stringTable;
+        this.text = text;
         this.textWindow = new SlidingTextWindow(text, stringTable);
         this.languageVersion = languageVersion;
     }
