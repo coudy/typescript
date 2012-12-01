@@ -21,15 +21,14 @@ class SlidingWindow {
     // Note: it is not absolute.  It is relative to the start of the window.
     private currentRelativeItemIndex: number = 0;
 
-    // The number of outstanding rewind points there are.  As long as there is at least one 
-    // outstanding rewind point, we will not advance the start of the window array past
-    // item marked by the first rewind point.
-    private outstandingRewindPoints: number = 0;
+    // The number of pinned points there are.  As long as there is at least one  pinned point, we 
+    // will not advance the start of the window array past the item marked by that pin point.
+    private pinCount: number = 0;
 
     // If there are any outstanding rewind points, this is index in the full array of items
     // that the first rewind point points to.  If this is not -1, then we will not shift the
     // start of the items array past this point.
-    private firstRewindAbsoluteIndex: number = -1;
+    private firstPinnedAbsoluteIndex: number = -1;
 
     private pool: IRewindPoint[] = [];
     private poolCount = 0;
@@ -81,8 +80,8 @@ class SlidingWindow {
         // However, we can only shift if we have no outstanding rewind points.  Or, if we have an 
         // outstanding rewind point, that it points to some point after the start of the window.
         var isAllowedToShift = 
-            this.firstRewindAbsoluteIndex === -1 ||
-            this.firstRewindAbsoluteIndex > this.windowAbsoluteStartIndex;
+            this.firstPinnedAbsoluteIndex === -1 ||
+            this.firstPinnedAbsoluteIndex > this.windowAbsoluteStartIndex;
 
         if (currentIndexIsPastWindowHalfwayPoint && isAllowedToShift) {
             // Figure out where we're going to start shifting from. If we have no oustanding rewind 
@@ -91,9 +90,9 @@ class SlidingWindow {
             // the rewind point is pointing at.
             // 
             // We'll call that point 'N' from now on. 
-            var shiftStartIndex = this.firstRewindAbsoluteIndex === -1
+            var shiftStartIndex = this.firstPinnedAbsoluteIndex === -1
                 ? this.currentRelativeItemIndex 
-                : this.firstRewindAbsoluteIndex - this.windowAbsoluteStartIndex;
+                : this.firstPinnedAbsoluteIndex - this.windowAbsoluteStartIndex;
 
             // We have to shift the number of elements between the start index and the number of 
             // items in the window.
@@ -124,17 +123,36 @@ class SlidingWindow {
         return this.windowAbsoluteStartIndex + this.currentRelativeItemIndex;
     }
 
+    public getAndPinAbsoluteIndex(): number {
+        // Find the absolute index of this pin point.  i.e. it's the index as if we had an 
+        // array containing *all* tokens.  
+        var absoluteIndex = this.absoluteIndex();
+        if (this.pinCount === 0) {
+            // If this is the first pinned point, then store off this index.  We will ensure that
+            // we never shift the window past this point.
+            this.firstPinnedAbsoluteIndex = absoluteIndex;
+        }
+
+        this.pinCount++;
+        return absoluteIndex;
+    }
+
+    public releaseAndUnpinAbsoluteIndex(absoluteIndex: number) {
+        this.pinCount--;
+        if (this.pinCount === 0) {
+            // If we just released the last outstanding pin, then we no longer need to 'fix' the 
+            // token window so it can't move forward.  Set the index to -1 so that we can shift 
+            // things over the next time we read past the end of the array.
+            this.firstPinnedAbsoluteIndex = -1;
+        }
+
+    }
+
     public getRewindPoint(): any {
         // Find the absolute index of this rewind point.  i.e. it's the index as if we had an 
         // array containing *all* tokens.  
-        var absoluteIndex = this.absoluteIndex();
-        if (this.outstandingRewindPoints === 0) {
-            // If this is the first rewind point, then store off this index.  We will ensure that
-            // we never shift the window past this point.
-            this.firstRewindAbsoluteIndex = absoluteIndex;
-        }
+        var absoluteIndex = this.getAndPinAbsoluteIndex();
 
-        this.outstandingRewindPoints++;
         var rewindPoint = this.poolCount === 0
             ? <IRewindPoint>{}
             : this.pop();
@@ -169,13 +187,7 @@ class SlidingWindow {
     }
 
     public releaseRewindPoint(rewindPoint: IRewindPoint): void {
-        this.outstandingRewindPoints--;
-        if (this.outstandingRewindPoints === 0) {
-            // If we just released the last outstanding rewind point, then we no longer need to 
-            // 'fix' the token window so it can't move forward.  Set the index to -1 so that we
-            // can shift things over the next time we read past the end of the array.
-            this.firstRewindAbsoluteIndex = -1;
-        }
+        this.releaseAndUnpinAbsoluteIndex(rewindPoint.absoluteIndex);
 
         // this.rewindPoints.push(rewindPoint);
         this.pool[this.poolCount] = rewindPoint;

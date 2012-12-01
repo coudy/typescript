@@ -64,22 +64,20 @@ class Scanner extends SlidingWindow {
             this.errors = [];
         }
 
-        // Get a rewind point in the text window.  this will 'fix' it enabling us to extract any
-        // text we need for a token.
-        var rewindPoint = this.getRewindPoint();
-        try {
-            var start = this.absoluteIndex();
-            this.scanTriviaInfo(/*afterFirstToken: */ this.absoluteIndex() > 0, /*isTrailing: */ false, this.leadingTriviaInfo);
-            this.scanSyntaxToken();
-            this.scanTriviaInfo(/* afterFirstToken: */ true, /*isTrailing: */true, this.trailingTriviaInfo);
+        var start = this.absoluteIndex();
+        this.scanTriviaInfo(/*afterFirstToken: */ this.absoluteIndex() > 0, /*isTrailing: */ false, this.leadingTriviaInfo);
 
-            this.previousTokenKind = this.tokenInfo.Kind;
-            this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
-            return this.createToken(start);
-        }
-        finally {
-            this.releaseRewindPoint(rewindPoint);
-        }
+        // Pin the window so it can't move past the start of the token.  This will enable us to 
+        // extract any text we need for the token.
+        var index = this.getAndPinAbsoluteIndex();
+        this.scanSyntaxToken();
+        this.releaseAndUnpinAbsoluteIndex(index);
+
+        this.scanTriviaInfo(/* afterFirstToken: */ true, /*isTrailing: */true, this.trailingTriviaInfo);
+
+        this.previousTokenKind = this.tokenInfo.Kind;
+        this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
+        return this.createToken(start);
     }
 
     private createToken(start: number): ISyntaxToken {

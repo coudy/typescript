@@ -651,8 +651,8 @@ var SlidingWindow = (function () {
         this.windowCount = 0;
         this.windowAbsoluteStartIndex = 0;
         this.currentRelativeItemIndex = 0;
-        this.outstandingRewindPoints = 0;
-        this.firstRewindAbsoluteIndex = -1;
+        this.pinCount = 0;
+        this.firstPinnedAbsoluteIndex = -1;
         this.pool = [];
         this.poolCount = 0;
         this.defaultValue = defaultValue;
@@ -681,9 +681,9 @@ var SlidingWindow = (function () {
     };
     SlidingWindow.prototype.tryShiftOrGrowTokenWindow = function () {
         var currentIndexIsPastWindowHalfwayPoint = this.currentRelativeItemIndex > (this.window.length >>> 1);
-        var isAllowedToShift = this.firstRewindAbsoluteIndex === -1 || this.firstRewindAbsoluteIndex > this.windowAbsoluteStartIndex;
+        var isAllowedToShift = this.firstPinnedAbsoluteIndex === -1 || this.firstPinnedAbsoluteIndex > this.windowAbsoluteStartIndex;
         if(currentIndexIsPastWindowHalfwayPoint && isAllowedToShift) {
-            var shiftStartIndex = this.firstRewindAbsoluteIndex === -1 ? this.currentRelativeItemIndex : this.firstRewindAbsoluteIndex - this.windowAbsoluteStartIndex;
+            var shiftStartIndex = this.firstPinnedAbsoluteIndex === -1 ? this.currentRelativeItemIndex : this.firstPinnedAbsoluteIndex - this.windowAbsoluteStartIndex;
             var shiftCount = this.windowCount - shiftStartIndex;
             Debug.assert(shiftStartIndex > 0);
             if(shiftCount > 0) {
@@ -699,12 +699,22 @@ var SlidingWindow = (function () {
     SlidingWindow.prototype.absoluteIndex = function () {
         return this.windowAbsoluteStartIndex + this.currentRelativeItemIndex;
     };
-    SlidingWindow.prototype.getRewindPoint = function () {
+    SlidingWindow.prototype.getAndPinAbsoluteIndex = function () {
         var absoluteIndex = this.absoluteIndex();
-        if(this.outstandingRewindPoints === 0) {
-            this.firstRewindAbsoluteIndex = absoluteIndex;
+        if(this.pinCount === 0) {
+            this.firstPinnedAbsoluteIndex = absoluteIndex;
         }
-        this.outstandingRewindPoints++;
+        this.pinCount++;
+        return absoluteIndex;
+    };
+    SlidingWindow.prototype.releaseAndUnpinAbsoluteIndex = function (absoluteIndex) {
+        this.pinCount--;
+        if(this.pinCount === 0) {
+            this.firstPinnedAbsoluteIndex = -1;
+        }
+    };
+    SlidingWindow.prototype.getRewindPoint = function () {
+        var absoluteIndex = this.getAndPinAbsoluteIndex();
         var rewindPoint = this.poolCount === 0 ? {
         } : this.pop();
         rewindPoint.absoluteIndex = absoluteIndex;
@@ -724,10 +734,7 @@ var SlidingWindow = (function () {
         this.restoreStateFromRewindPoint(rewindPoint);
     };
     SlidingWindow.prototype.releaseRewindPoint = function (rewindPoint) {
-        this.outstandingRewindPoints--;
-        if(this.outstandingRewindPoints === 0) {
-            this.firstRewindAbsoluteIndex = -1;
-        }
+        this.releaseAndUnpinAbsoluteIndex(rewindPoint.absoluteIndex);
         this.pool[this.poolCount] = rewindPoint;
         this.poolCount++;
     };
@@ -2907,18 +2914,15 @@ var Scanner = (function (_super) {
         if(this.errors.length > 0) {
             this.errors = [];
         }
-        var rewindPoint = this.getRewindPoint();
-        try  {
-            var start = this.absoluteIndex();
-            this.scanTriviaInfo(this.absoluteIndex() > 0, false, this.leadingTriviaInfo);
-            this.scanSyntaxToken();
-            this.scanTriviaInfo(true, true, this.trailingTriviaInfo);
-            this.previousTokenKind = this.tokenInfo.Kind;
-            this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
-            return this.createToken(start);
-        }finally {
-            this.releaseRewindPoint(rewindPoint);
-        }
+        var start = this.absoluteIndex();
+        this.scanTriviaInfo(this.absoluteIndex() > 0, false, this.leadingTriviaInfo);
+        var index = this.getAndPinAbsoluteIndex();
+        this.scanSyntaxToken();
+        this.releaseAndUnpinAbsoluteIndex(index);
+        this.scanTriviaInfo(true, true, this.trailingTriviaInfo);
+        this.previousTokenKind = this.tokenInfo.Kind;
+        this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
+        return this.createToken(start);
     };
     Scanner.prototype.createToken = function (start) {
         return SyntaxTokenFactory.create(start, this.leadingTriviaInfo, this.tokenInfo, this.trailingTriviaInfo, this.errors.length === 0 ? null : this.errors);
