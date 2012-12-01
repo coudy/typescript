@@ -6,8 +6,11 @@ class SlidingTextWindow {
     // Underlying text that we're streaming over.
     private text: IText;
 
-    private characterWindow: number[]; // moveable window of chars from source text
-    private characterWindowCount: number = 0; // # of valid characters in characterWindow
+    // moveable window of chars from source text
+    private characterWindow: number[]; 
+
+    // The number of valid characters in characterWindow.
+    private characterWindowCount: number = 0;
     
     // The index in the character window array that we're at. i.e. if there 100 chars and 
     // characterWindow contains chars [70, 80), and we're on char 75, then this value would be '5'.
