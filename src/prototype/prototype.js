@@ -3696,7 +3696,7 @@ var SlidingTextWindow = (function () {
         this.characterWindowCount = 0;
         this.currentRelativeCharacterIndex = 0;
         this._characterWindowStart = 0;
-        this.basis = 0;
+        this.characterWindowAbsoluteStartIndex = 0;
         this.stringTable = null;
         Debug.assert(stringTable !== null);
         this.text = text;
@@ -3705,16 +3705,16 @@ var SlidingTextWindow = (function () {
         Debug.assert(this.characterWindow !== null);
     }
     SlidingTextWindow.prototype.position = function () {
-        return this.currentRelativeCharacterIndex + this.basis;
+        return this.currentRelativeCharacterIndex + this.characterWindowAbsoluteStartIndex;
     };
     SlidingTextWindow.prototype.startPosition = function () {
-        return this._characterWindowStart + this.basis;
+        return this._characterWindowStart + this.characterWindowAbsoluteStartIndex;
     };
     SlidingTextWindow.prototype.start = function () {
         this._characterWindowStart = this.currentRelativeCharacterIndex;
     };
     SlidingTextWindow.prototype.reset = function (position) {
-        var relative = position - this.basis;
+        var relative = position - this.characterWindowAbsoluteStartIndex;
         if(relative >= 0 && relative <= this.characterWindowCount) {
             this.currentRelativeCharacterIndex = relative;
         } else {
@@ -3725,27 +3725,27 @@ var SlidingTextWindow = (function () {
             }
             this._characterWindowStart = 0;
             this.currentRelativeCharacterIndex = 0;
-            this.basis = position;
+            this.characterWindowAbsoluteStartIndex = position;
             this.characterWindowCount = amountToRead;
         }
     };
     SlidingTextWindow.prototype.moreChars = function () {
         if(this.currentRelativeCharacterIndex >= this.characterWindowCount) {
-            if(this.currentRelativeCharacterIndex + this.basis >= this.text.length()) {
+            if(this.currentRelativeCharacterIndex + this.characterWindowAbsoluteStartIndex >= this.text.length()) {
                 return false;
             }
             if(this._characterWindowStart > (this.characterWindowCount >> 2)) {
                 ArrayUtilities.copy(this.characterWindow, this._characterWindowStart, this.characterWindow, 0, this.characterWindowCount - this._characterWindowStart);
                 this.characterWindowCount -= this._characterWindowStart;
                 this.currentRelativeCharacterIndex -= this._characterWindowStart;
-                this.basis += this._characterWindowStart;
+                this.characterWindowAbsoluteStartIndex += this._characterWindowStart;
                 this._characterWindowStart = 0;
             }
             if(this.characterWindowCount >= this.characterWindow.length) {
                 this.characterWindow[this.characterWindow.length * 2 - 1] = 0 /* nullCharacter */ ;
             }
-            var amountToRead = MathPrototype.min(this.text.length() - (this.basis + this.characterWindowCount), this.characterWindow.length - this.characterWindowCount);
-            this.text.copyTo(this.basis + this.characterWindowCount, this.characterWindow, this.characterWindowCount, amountToRead);
+            var amountToRead = MathPrototype.min(this.text.length() - (this.characterWindowAbsoluteStartIndex + this.characterWindowCount), this.characterWindow.length - this.characterWindowCount);
+            this.text.copyTo(this.characterWindowAbsoluteStartIndex + this.characterWindowCount, this.characterWindow, this.characterWindowCount, amountToRead);
             this.characterWindowCount += amountToRead;
             return amountToRead > 0;
         }
@@ -3780,7 +3780,7 @@ var SlidingTextWindow = (function () {
         return this.getSubstringText(this.startPosition(), width, intern);
     };
     SlidingTextWindow.prototype.getSubstringText = function (position, length, intern) {
-        var offset = position - this.basis;
+        var offset = position - this.characterWindowAbsoluteStartIndex;
         if(intern) {
             return this.internCharArray(this.characterWindow, offset, length);
         } else {

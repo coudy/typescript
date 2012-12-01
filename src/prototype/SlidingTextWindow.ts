@@ -16,9 +16,11 @@ class SlidingTextWindow {
     private currentRelativeCharacterIndex: number = 0;
 
     private _characterWindowStart: number = 0; // start of current lexeme within chars buffer
-
-    // The position within text that the characterWindow is starting at.
-    private basis: number = 0;
+    
+    // The *absolute* index in the *full* array of characters the *characterWindow* array starts at.  i.e.
+    // if there were 100 chars, and characterWindow contains tokens [70, 80), then this value would be
+    // 70.
+    private characterWindowAbsoluteStartIndex: number = 0;
 
     private stringTable: StringTable = null;
 
@@ -34,11 +36,11 @@ class SlidingTextWindow {
     }
 
     public position(): number {
-        return this.currentRelativeCharacterIndex + this.basis;
+        return this.currentRelativeCharacterIndex + this.characterWindowAbsoluteStartIndex;
     }
 
     public startPosition(): number {
-        return this._characterWindowStart + this.basis;
+        return this._characterWindowStart + this.characterWindowAbsoluteStartIndex;
     }
 
     public start(): void {
@@ -47,7 +49,7 @@ class SlidingTextWindow {
 
     public reset(position: number): void {
         // if position is within already read character range then just use what we have
-        var relative = position - this.basis;
+        var relative = position - this.characterWindowAbsoluteStartIndex;
         if (relative >= 0 && relative <= this.characterWindowCount) {
             this.currentRelativeCharacterIndex = relative;
         }
@@ -61,14 +63,14 @@ class SlidingTextWindow {
 
             this._characterWindowStart = 0;
             this.currentRelativeCharacterIndex = 0;
-            this.basis = position;
+            this.characterWindowAbsoluteStartIndex = position;
             this.characterWindowCount = amountToRead;
         }
     }
 
     private moreChars(): bool {
         if (this.currentRelativeCharacterIndex >= this.characterWindowCount) {
-            if (this.currentRelativeCharacterIndex + this.basis >= this.text.length()) {
+            if (this.currentRelativeCharacterIndex + this.characterWindowAbsoluteStartIndex >= this.text.length()) {
                 return false;
             }
 
@@ -77,7 +79,7 @@ class SlidingTextWindow {
                 ArrayUtilities.copy(this.characterWindow, this._characterWindowStart, this.characterWindow, 0, this.characterWindowCount - this._characterWindowStart);
                 this.characterWindowCount -= this._characterWindowStart;
                 this.currentRelativeCharacterIndex -= this._characterWindowStart;
-                this.basis += this._characterWindowStart;
+                this.characterWindowAbsoluteStartIndex += this._characterWindowStart;
                 this._characterWindowStart = 0;
             }
 
@@ -86,8 +88,8 @@ class SlidingTextWindow {
                 this.characterWindow[this.characterWindow.length * 2 - 1] = CharacterCodes.nullCharacter;
             }
 
-            var amountToRead = MathPrototype.min(this.text.length() - (this.basis + this.characterWindowCount), this.characterWindow.length - this.characterWindowCount);
-            this.text.copyTo(this.basis + this.characterWindowCount, this.characterWindow, this.characterWindowCount, amountToRead);
+            var amountToRead = MathPrototype.min(this.text.length() - (this.characterWindowAbsoluteStartIndex + this.characterWindowCount), this.characterWindow.length - this.characterWindowCount);
+            this.text.copyTo(this.characterWindowAbsoluteStartIndex + this.characterWindowCount, this.characterWindow, this.characterWindowCount, amountToRead);
             this.characterWindowCount += amountToRead;
             return amountToRead > 0;
         }
@@ -133,7 +135,7 @@ class SlidingTextWindow {
     }
 
     private getSubstringText(position: number, length: number, intern: bool): string {
-        var offset = position - this.basis;
+        var offset = position - this.characterWindowAbsoluteStartIndex;
         if (intern) {
             return this.internCharArray(this.characterWindow, offset, length);
         }
