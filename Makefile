@@ -170,7 +170,7 @@ local: prebuild-local $(BUILT_LOCAL)\typescript.js $(BUILT_LOCAL)\tsc.js $(BUILT
 compiler: local
 
 prototype: $(PROTOTYPE_SOURCES)
-	$(STRC_LKG) $(PROTOTYPE_SOURCES) -out $(PSRC)\prototype.js
+	$(STRC_LKG) $(PROTOTYPE_SOURCES) -const -out $(PSRC)\prototype.js
 
 runprototype: prototype
 	$(DEBUG_HOST) $(PSRC)\prototype.js $(FRONTEND_SOURCES) $(SERVICES_SOURCES) $(BUILT_LOCALTEST)\typescriptServices.js $(HSRC)\harness.ts $(HSRC)\diff.ts $(HSRC)\exec.ts $(HSRC)\baselining.ts $(HSRC)\fourslash.ts $(HSRC)\dumpAST-baselining.ts $(HSRC)\external\json2.ts $(HSRC)\runner.ts
