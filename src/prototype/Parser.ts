@@ -93,7 +93,7 @@ class Parser {
     // Parsing options.
     private options: ParseOptions = null;
 
-    // A window of tokens that has been scanned.  
+    // A window of tokens that has been read in from the scanner.
     private tokenWindow: ISyntaxToken[] = [];
 
     // The number of valod tokens in tokenWindow.

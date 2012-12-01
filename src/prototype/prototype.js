@@ -3693,7 +3693,6 @@ var SeparatedSyntaxList = (function () {
 })();
 var SlidingTextWindow = (function () {
     function SlidingTextWindow(text, stringTable) {
-        this.DefaultWindowLength = 2048;
         this.characterWindowCount = 0;
         this.currentRelativeCharacterIndex = 0;
         this._characterWindowStart = 0;
@@ -3702,7 +3701,7 @@ var SlidingTextWindow = (function () {
         Debug.assert(stringTable !== null);
         this.text = text;
         this.stringTable = stringTable;
-        this.characterWindow = ArrayUtilities.createArray(this.DefaultWindowLength);
+        this.characterWindow = ArrayUtilities.createArray(2048);
         Debug.assert(this.characterWindow !== null);
     }
     SlidingTextWindow.prototype.position = function () {

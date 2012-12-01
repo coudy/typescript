@@ -1,12 +1,10 @@
 ///<reference path='References.ts' />
 
 class SlidingTextWindow {
-    private DefaultWindowLength: number = 2048;
-
     // Underlying text that we're streaming over.
     private text: IText;
-
-    // moveable window of chars from source text
+    
+    // A window of characters that has been read in from the text.
     private characterWindow: number[]; 
 
     // The number of valid characters in characterWindow.
@@ -29,7 +27,8 @@ class SlidingTextWindow {
         this.text = text;
         this.stringTable = stringTable;
 
-        this.characterWindow = ArrayUtilities.createArray(this.DefaultWindowLength);
+        // By default, start the window at 2k characters.
+        this.characterWindow = ArrayUtilities.createArray(2048);
 
         Debug.assert(this.characterWindow !== null);
     }
