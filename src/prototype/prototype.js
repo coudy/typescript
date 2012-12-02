@@ -3087,48 +3087,43 @@ var Scanner = (function (_super) {
                     continue;
 
                 }
-            }
-            if(ch === 47 /* slash */ ) {
-                var ch2 = this.peekItemN(1);
-                if(ch2 === 47 /* slash */ ) {
-                    this.moveToNextItem();
-                    this.moveToNextItem();
-                    width += 2;
-                    hasComment = true;
-                    width += this.scanSingleLineCommentTrivia();
-                    continue;
+                case 47 /* slash */ : {
+                    var ch2 = this.peekItemN(1);
+                    if(ch2 === 47 /* slash */ ) {
+                        this.moveToNextItem();
+                        this.moveToNextItem();
+                        hasComment = true;
+                        width += 2 + this.scanSingleLineCommentTrivia();
+                        continue;
+                    }
+                    if(ch2 === 42 /* asterisk */ ) {
+                        this.moveToNextItem();
+                        this.moveToNextItem();
+                        hasComment = true;
+                        width += 2 + this.scanMultiLineCommentTrivia();
+                        continue;
+                    }
+                    break;
+
                 }
-                if(ch2 === 42 /* asterisk */ ) {
-                    this.moveToNextItem();
-                    this.moveToNextItem();
-                    width += 2;
-                    hasComment = true;
-                    width += this.scanMultiLineCommentTrivia();
-                    continue;
-                }
-            } else {
-                if(this.isNewLineCharacter(ch)) {
+                case 13 /* carriageReturn */ :
+                case 10 /* newLine */ :
+                case 8233 /* paragraphSeparator */ :
+                case 8232 /* lineSeparator */ : {
                     hasNewLine = true;
-                    if(ch === 13 /* carriageReturn */ ) {
-                        this.moveToNextItem();
-                        width++;
+                    width += this.scanLineTerminatorSequence(ch);
+                    if(!isTrailing) {
+                        continue;
                     }
-                    ch = this.currentItem();
-                    if(ch === 10 /* newLine */ ) {
-                        this.moveToNextItem();
-                        width++;
-                    }
-                    if(isTrailing) {
-                        break;
-                    }
-                    continue;
+                    break;
+
                 }
             }
-            break;
+            triviaInfo.Width = width;
+            triviaInfo.HasComment = hasComment;
+            triviaInfo.HasNewLine = hasNewLine;
+            return;
         }
-        triviaInfo.Width = width;
-        triviaInfo.HasComment = hasComment;
-        triviaInfo.HasNewLine = hasNewLine;
     };
     Scanner.prototype.isNewLineCharacter = function (ch) {
         switch(ch) {
@@ -3171,6 +3166,15 @@ var Scanner = (function (_super) {
             }
             this.moveToNextItem();
             width++;
+        }
+    };
+    Scanner.prototype.scanLineTerminatorSequence = function (ch) {
+        this.moveToNextItem();
+        if(ch === 13 /* carriageReturn */  && this.currentItem() === 10 /* newLine */ ) {
+            this.moveToNextItem();
+            return 2;
+        } else {
+            return 1;
         }
     };
     Scanner.prototype.scanSyntaxToken = function () {
@@ -34990,7 +34994,7 @@ var totalSize = 0;
 var program = new Program();
 var start, end;
 start = new Date().getTime();
-program.runAllTests(Environment, false, true);
+program.runAllTests(Environment, false, false);
 program.run(Environment, false);
 end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));

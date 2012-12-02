@@ -117,61 +117,61 @@ class Scanner extends SlidingWindow {
                 case CharacterCodes.formFeed:
                 case CharacterCodes.nonBreakingSpace:
                 case CharacterCodes.byteOrderMark:
+                    // Normal whitespace.  Consume and continue.
                     this.moveToNextItem();
                     width++;
                     continue;
-            }
 
-            // TODO: Handle unicode space characters.
-            if (ch === CharacterCodes.slash) {
-                var ch2 = this.peekItemN(1);
-                if (ch2 === CharacterCodes.slash) {
-                    this.moveToNextItem();
-                    this.moveToNextItem();
-                    width += 2;
-                    hasComment = true;
+                case CharacterCodes.slash:
+                    // Potential comment.  Consume if so.  Otherwise, break out and return.
+                    var ch2 = this.peekItemN(1);
+                    if (ch2 === CharacterCodes.slash) {
+                        this.moveToNextItem();
+                        this.moveToNextItem();
 
-                    width += this.scanSingleLineCommentTrivia();
-                    continue;
-                }
+                        hasComment = true;
 
-                if (ch2 === CharacterCodes.asterisk) {
-                    this.moveToNextItem();
-                    this.moveToNextItem();
-                    width += 2;
-                    hasComment = true;
+                        // The '2' is for the "//" we consumed.
+                        width += 2 + this.scanSingleLineCommentTrivia();
+                        continue;
+                    }
 
-                    width += this.scanMultiLineCommentTrivia();
-                    continue;
-                }
-            }
-            else if (this.isNewLineCharacter(ch)) {
-                hasNewLine = true;
+                    if (ch2 === CharacterCodes.asterisk) {
+                        this.moveToNextItem();
+                        this.moveToNextItem();
 
-                if (ch === CharacterCodes.carriageReturn) {
-                    this.moveToNextItem();
-                    width++;
-                }
+                        hasComment = true;
 
-                ch = this.currentItem();
-                if (ch === CharacterCodes.newLine) {
-                    this.moveToNextItem();
-                    width++;
-                }
+                        // The '2' is for the "/*" we consumed.
+                        width += 2 + this.scanMultiLineCommentTrivia();
+                        continue;
+                    }
 
-                if (isTrailing) {
+                    // Not a comment.  Don't consume.
                     break;
-                }
 
-                continue;
+                case CharacterCodes.carriageReturn:
+                case CharacterCodes.newLine:
+                case CharacterCodes.paragraphSeparator:
+                case CharacterCodes.lineSeparator:
+                    hasNewLine = true;
+                    width += this.scanLineTerminatorSequence(ch);
+
+                    // If we're consuming leading trivia, then we will continue consuming more 
+                    // trivia (including newlines) up to the first token we see.  If we're 
+                    // consuming trailing trivia, then we break after the first newline we see.
+                    if (!isTrailing) {
+                        continue;
+                    }
+
+                    break;
             }
 
-            break;
+            triviaInfo.Width = width;
+            triviaInfo.HasComment = hasComment;
+            triviaInfo.HasNewLine = hasNewLine;
+            return;
         }
-
-        triviaInfo.Width = width;
-        triviaInfo.HasComment = hasComment;
-        triviaInfo.HasNewLine = hasNewLine;
     }
 
     private isNewLineCharacter(ch: number): bool {
@@ -216,6 +216,20 @@ class Scanner extends SlidingWindow {
 
             this.moveToNextItem();
             width++;
+        }
+    }
+
+    private scanLineTerminatorSequence(ch: number): number {
+        // Consume the first of the line terminator we saw.
+        this.moveToNextItem();
+
+        // If it happened to be a \r and there's a following \n, then consume both.
+        if (ch === CharacterCodes.carriageReturn && this.currentItem() === CharacterCodes.newLine) {
+            this.moveToNextItem();
+            return 2;
+        }
+        else {
+            return 1;
         }
     }
 
