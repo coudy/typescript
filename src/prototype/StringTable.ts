@@ -103,15 +103,15 @@ class StringTable {
         // this.dumpStats();
     }
 
-    private static textCharArrayEquals(array: string, text: number[], start: number, length: number): bool {
-        return array.length === length && textEqualsCore(array, text, start);
+    private static textCharArrayEquals(text: string, array: number[], start: number, length: number): bool {
+        return text.length === length && textEqualsCore(text, array, start);
     }
 
-    private static textEqualsCore(array: string, text: number[], start: number): bool {
+    private static textEqualsCore(text: string, array: number[], start: number): bool {
         // use array.Length to eliminate the rangecheck
         var s = start;
-        for (var i = 0; i < array.length; i++) {
-            if (array.charCodeAt(i) !== text[s]) {
+        for (var i = 0; i < text.length; i++) {
+            if (text.charCodeAt(i) !== array[s]) {
                 return false;
             }
 

@@ -4147,13 +4147,13 @@ var StringTable = (function () {
             }
         }
     };
-    StringTable.textCharArrayEquals = function textCharArrayEquals(array, text, start, length) {
-        return array.length === length && StringTable.textEqualsCore(array, text, start);
+    StringTable.textCharArrayEquals = function textCharArrayEquals(text, array, start, length) {
+        return text.length === length && StringTable.textEqualsCore(text, array, start);
     }
-    StringTable.textEqualsCore = function textEqualsCore(array, text, start) {
+    StringTable.textEqualsCore = function textEqualsCore(text, array, start) {
         var s = start;
-        for(var i = 0; i < array.length; i++) {
-            if(array.charCodeAt(i) !== text[s]) {
+        for(var i = 0; i < text.length; i++) {
+            if(text.charCodeAt(i) !== array[s]) {
                 return false;
             }
             s++;
