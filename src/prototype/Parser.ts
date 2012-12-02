@@ -67,6 +67,24 @@ enum ParserExpressionPrecedence {
     UnaryExpressionPrecedence= 15,
 }
 
+enum ErrorRecoveryState {
+    // We're currently parsing a source unit. etc. etc.
+    SourceUnit = 1 << 0,
+
+    ClassDeclaration = 1 << 1,
+    ModuleDeclaration = 1 << 2,
+    SwitchStatement = 1 << 3,
+    SwitchClause = 1 << 4,
+    Block = 1 << 5,
+    EnumDeclaration = 1 << 6,
+    ObjectType = 1 << 7,
+    TypeNameList = 1 << 8,
+    VariableDeclaration = 1 << 9,
+    ArgumentList = 1 << 10,
+    ObjectLiteral = 1 << 11,
+    ParameterList = 1 << 12
+}
+
 class Parser extends SlidingWindow {
     // The scanner we're pulling tokens from.
     private scanner: Scanner;
