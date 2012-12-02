@@ -1,20 +1,24 @@
 [
     {
         "kind": "IdentifierNameToken",
+        "keywordKind": "ClassKeyword",
         "start": 41,
         "fullStart": 0,
-        "width": 6,
+        "width": 5,
         "fullWidth": 47,
-        "text": "class ",
+        "text": "class",
         "hasLeadingTrivia": true,
         "hasLeadingCommentTrivia": true,
-        "hasLeadingNewLineTrivia": true
+        "hasLeadingNewLineTrivia": true,
+        "hasTrailingTrivia": true
     },
     {
         "kind": "IdentifierNameToken",
         "start": 47,
-        "width": 14,
-        "text": "CharacterInfo "
+        "width": 13,
+        "fullWidth": 14,
+        "text": "CharacterInfo",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "OpenBraceToken",
@@ -27,38 +31,62 @@
     },
     {
         "kind": "IdentifierNameToken",
+        "keywordKind": "PublicKeyword",
         "start": 68,
         "fullStart": 64,
-        "width": 7,
+        "width": 6,
         "fullWidth": 11,
-        "text": "public ",
-        "hasLeadingTrivia": true
-    },
-    {
-        "kind": "IdentifierNameToken",
-        "start": 75,
-        "width": 7,
-        "text": "static "
-    },
-    {
-        "kind": "IdentifierNameToken",
-        "start": 82,
-        "width": 15,
-        "text": "isDecimalDigit("
-    },
-    {
-        "kind": "IdentifierNameToken",
-        "start": 97,
-        "width": 2,
-        "fullWidth": 3,
-        "text": "c:",
+        "text": "public",
+        "hasLeadingTrivia": true,
         "hasTrailingTrivia": true
     },
     {
         "kind": "IdentifierNameToken",
+        "keywordKind": "StaticKeyword",
+        "start": 75,
+        "width": 6,
+        "fullWidth": 7,
+        "text": "static",
+        "hasTrailingTrivia": true
+    },
+    {
+        "kind": "IdentifierNameToken",
+        "start": 82,
+        "width": 14,
+        "text": "isDecimalDigit"
+    },
+    {
+        "kind": "OpenParenToken",
+        "start": 96,
+        "width": 1,
+        "text": "("
+    },
+    {
+        "kind": "IdentifierNameToken",
+        "start": 97,
+        "width": 1,
+        "text": "c"
+    },
+    {
+        "kind": "ColonToken",
+        "start": 98,
+        "width": 1,
+        "fullWidth": 2,
+        "text": ":",
+        "hasTrailingTrivia": true
+    },
+    {
+        "kind": "IdentifierNameToken",
+        "keywordKind": "NumberKeyword",
         "start": 100,
-        "width": 7,
-        "text": "number)"
+        "width": 6,
+        "text": "number"
+    },
+    {
+        "kind": "CloseParenToken",
+        "start": 106,
+        "width": 1,
+        "text": ")"
     },
     {
         "kind": "ColonToken",
@@ -70,9 +98,12 @@
     },
     {
         "kind": "IdentifierNameToken",
+        "keywordKind": "BoolKeyword",
         "start": 109,
-        "width": 5,
-        "text": "bool "
+        "width": 4,
+        "fullWidth": 5,
+        "text": "bool",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "OpenBraceToken",
@@ -85,18 +116,22 @@
     },
     {
         "kind": "IdentifierNameToken",
+        "keywordKind": "ReturnKeyword",
         "start": 125,
         "fullStart": 117,
-        "width": 7,
+        "width": 6,
         "fullWidth": 15,
-        "text": "return ",
-        "hasLeadingTrivia": true
+        "text": "return",
+        "hasLeadingTrivia": true,
+        "hasTrailingTrivia": true
     },
     {
         "kind": "IdentifierNameToken",
         "start": 132,
-        "width": 2,
-        "text": "c "
+        "width": 1,
+        "fullWidth": 2,
+        "text": "c",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "GreaterThanEqualsToken",
@@ -109,14 +144,22 @@
     {
         "kind": "IdentifierNameToken",
         "start": 137,
-        "width": 15,
-        "text": "CharacterCodes."
+        "width": 14,
+        "text": "CharacterCodes"
+    },
+    {
+        "kind": "DotToken",
+        "start": 151,
+        "width": 1,
+        "text": "."
     },
     {
         "kind": "IdentifierNameToken",
         "start": 152,
-        "width": 3,
-        "text": "_0 "
+        "width": 2,
+        "fullWidth": 3,
+        "text": "_0",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "AmpersandAmpersandToken",
@@ -129,8 +172,10 @@
     {
         "kind": "IdentifierNameToken",
         "start": 158,
-        "width": 2,
-        "text": "c "
+        "width": 1,
+        "fullWidth": 2,
+        "text": "c",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "LessThanEqualsToken",
@@ -143,15 +188,27 @@
     {
         "kind": "IdentifierNameToken",
         "start": 163,
-        "width": 15,
-        "text": "CharacterCodes."
+        "width": 14,
+        "text": "CharacterCodes"
+    },
+    {
+        "kind": "DotToken",
+        "start": 177,
+        "width": 1,
+        "text": "."
     },
     {
         "kind": "IdentifierNameToken",
         "start": 178,
-        "width": 3,
-        "fullWidth": 5,
-        "text": "_9;",
+        "width": 2,
+        "text": "_9"
+    },
+    {
+        "kind": "SemicolonToken",
+        "start": 180,
+        "width": 1,
+        "fullWidth": 3,
+        "text": ";",
         "hasTrailingTrivia": true,
         "hasTrailingNewLineTrivia": true
     },
@@ -168,39 +225,63 @@
     },
     {
         "kind": "IdentifierNameToken",
+        "keywordKind": "PublicKeyword",
         "start": 196,
         "fullStart": 190,
-        "width": 7,
+        "width": 6,
         "fullWidth": 13,
-        "text": "public ",
+        "text": "public",
         "hasLeadingTrivia": true,
-        "hasLeadingNewLineTrivia": true
-    },
-    {
-        "kind": "IdentifierNameToken",
-        "start": 203,
-        "width": 7,
-        "text": "static "
-    },
-    {
-        "kind": "IdentifierNameToken",
-        "start": 210,
-        "width": 11,
-        "text": "isHexDigit("
-    },
-    {
-        "kind": "IdentifierNameToken",
-        "start": 221,
-        "width": 2,
-        "fullWidth": 3,
-        "text": "c:",
+        "hasLeadingNewLineTrivia": true,
         "hasTrailingTrivia": true
     },
     {
         "kind": "IdentifierNameToken",
+        "keywordKind": "StaticKeyword",
+        "start": 203,
+        "width": 6,
+        "fullWidth": 7,
+        "text": "static",
+        "hasTrailingTrivia": true
+    },
+    {
+        "kind": "IdentifierNameToken",
+        "start": 210,
+        "width": 10,
+        "text": "isHexDigit"
+    },
+    {
+        "kind": "OpenParenToken",
+        "start": 220,
+        "width": 1,
+        "text": "("
+    },
+    {
+        "kind": "IdentifierNameToken",
+        "start": 221,
+        "width": 1,
+        "text": "c"
+    },
+    {
+        "kind": "ColonToken",
+        "start": 222,
+        "width": 1,
+        "fullWidth": 2,
+        "text": ":",
+        "hasTrailingTrivia": true
+    },
+    {
+        "kind": "IdentifierNameToken",
+        "keywordKind": "NumberKeyword",
         "start": 224,
-        "width": 7,
-        "text": "number)"
+        "width": 6,
+        "text": "number"
+    },
+    {
+        "kind": "CloseParenToken",
+        "start": 230,
+        "width": 1,
+        "text": ")"
     },
     {
         "kind": "ColonToken",
@@ -212,9 +293,12 @@
     },
     {
         "kind": "IdentifierNameToken",
+        "keywordKind": "BoolKeyword",
         "start": 233,
-        "width": 5,
-        "text": "bool "
+        "width": 4,
+        "fullWidth": 5,
+        "text": "bool",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "OpenBraceToken",
@@ -227,25 +311,39 @@
     },
     {
         "kind": "IdentifierNameToken",
+        "keywordKind": "ReturnKeyword",
         "start": 249,
         "fullStart": 241,
-        "width": 7,
+        "width": 6,
         "fullWidth": 15,
-        "text": "return ",
-        "hasLeadingTrivia": true
+        "text": "return",
+        "hasLeadingTrivia": true,
+        "hasTrailingTrivia": true
     },
     {
         "kind": "IdentifierNameToken",
         "start": 256,
-        "width": 15,
-        "text": "isDecimalDigit("
+        "width": 14,
+        "text": "isDecimalDigit"
+    },
+    {
+        "kind": "OpenParenToken",
+        "start": 270,
+        "width": 1,
+        "text": "("
     },
     {
         "kind": "IdentifierNameToken",
         "start": 271,
-        "width": 2,
-        "fullWidth": 3,
-        "text": "c)",
+        "width": 1,
+        "text": "c"
+    },
+    {
+        "kind": "CloseParenToken",
+        "start": 272,
+        "width": 1,
+        "fullWidth": 2,
+        "text": ")",
         "hasTrailingTrivia": true
     },
     {
@@ -269,8 +367,10 @@
     {
         "kind": "IdentifierNameToken",
         "start": 294,
-        "width": 2,
-        "text": "c "
+        "width": 1,
+        "fullWidth": 2,
+        "text": "c",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "GreaterThanEqualsToken",
@@ -283,14 +383,22 @@
     {
         "kind": "IdentifierNameToken",
         "start": 299,
-        "width": 15,
-        "text": "CharacterCodes."
+        "width": 14,
+        "text": "CharacterCodes"
+    },
+    {
+        "kind": "DotToken",
+        "start": 313,
+        "width": 1,
+        "text": "."
     },
     {
         "kind": "IdentifierNameToken",
         "start": 314,
-        "width": 2,
-        "text": "A "
+        "width": 1,
+        "fullWidth": 2,
+        "text": "A",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "AmpersandAmpersandToken",
@@ -303,8 +411,10 @@
     {
         "kind": "IdentifierNameToken",
         "start": 319,
-        "width": 2,
-        "text": "c "
+        "width": 1,
+        "fullWidth": 2,
+        "text": "c",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "LessThanEqualsToken",
@@ -317,15 +427,27 @@
     {
         "kind": "IdentifierNameToken",
         "start": 324,
-        "width": 15,
-        "text": "CharacterCodes."
+        "width": 14,
+        "text": "CharacterCodes"
+    },
+    {
+        "kind": "DotToken",
+        "start": 338,
+        "width": 1,
+        "text": "."
     },
     {
         "kind": "IdentifierNameToken",
         "start": 339,
-        "width": 2,
-        "fullWidth": 3,
-        "text": "F)",
+        "width": 1,
+        "text": "F"
+    },
+    {
+        "kind": "CloseParenToken",
+        "start": 340,
+        "width": 1,
+        "fullWidth": 2,
+        "text": ")",
         "hasTrailingTrivia": true
     },
     {
@@ -349,8 +471,10 @@
     {
         "kind": "IdentifierNameToken",
         "start": 362,
-        "width": 2,
-        "text": "c "
+        "width": 1,
+        "fullWidth": 2,
+        "text": "c",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "GreaterThanEqualsToken",
@@ -363,14 +487,22 @@
     {
         "kind": "IdentifierNameToken",
         "start": 367,
-        "width": 15,
-        "text": "CharacterCodes."
+        "width": 14,
+        "text": "CharacterCodes"
+    },
+    {
+        "kind": "DotToken",
+        "start": 381,
+        "width": 1,
+        "text": "."
     },
     {
         "kind": "IdentifierNameToken",
         "start": 382,
-        "width": 2,
-        "text": "a "
+        "width": 1,
+        "fullWidth": 2,
+        "text": "a",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "AmpersandAmpersandToken",
@@ -383,8 +515,10 @@
     {
         "kind": "IdentifierNameToken",
         "start": 387,
-        "width": 2,
-        "text": "c "
+        "width": 1,
+        "fullWidth": 2,
+        "text": "c",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "LessThanEqualsToken",
@@ -397,14 +531,26 @@
     {
         "kind": "IdentifierNameToken",
         "start": 392,
-        "width": 15,
-        "text": "CharacterCodes."
+        "width": 14,
+        "text": "CharacterCodes"
+    },
+    {
+        "kind": "DotToken",
+        "start": 406,
+        "width": 1,
+        "text": "."
     },
     {
         "kind": "IdentifierNameToken",
         "start": 407,
-        "width": 2,
-        "text": "f)"
+        "width": 1,
+        "text": "f"
+    },
+    {
+        "kind": "CloseParenToken",
+        "start": 408,
+        "width": 1,
+        "text": ")"
     },
     {
         "kind": "SemicolonToken",
@@ -428,39 +574,63 @@
     },
     {
         "kind": "IdentifierNameToken",
+        "keywordKind": "PublicKeyword",
         "start": 425,
         "fullStart": 419,
-        "width": 7,
+        "width": 6,
         "fullWidth": 13,
-        "text": "public ",
+        "text": "public",
         "hasLeadingTrivia": true,
-        "hasLeadingNewLineTrivia": true
-    },
-    {
-        "kind": "IdentifierNameToken",
-        "start": 432,
-        "width": 7,
-        "text": "static "
-    },
-    {
-        "kind": "IdentifierNameToken",
-        "start": 439,
-        "width": 9,
-        "text": "hexValue("
-    },
-    {
-        "kind": "IdentifierNameToken",
-        "start": 448,
-        "width": 2,
-        "fullWidth": 3,
-        "text": "c:",
+        "hasLeadingNewLineTrivia": true,
         "hasTrailingTrivia": true
     },
     {
         "kind": "IdentifierNameToken",
+        "keywordKind": "StaticKeyword",
+        "start": 432,
+        "width": 6,
+        "fullWidth": 7,
+        "text": "static",
+        "hasTrailingTrivia": true
+    },
+    {
+        "kind": "IdentifierNameToken",
+        "start": 439,
+        "width": 8,
+        "text": "hexValue"
+    },
+    {
+        "kind": "OpenParenToken",
+        "start": 447,
+        "width": 1,
+        "text": "("
+    },
+    {
+        "kind": "IdentifierNameToken",
+        "start": 448,
+        "width": 1,
+        "text": "c"
+    },
+    {
+        "kind": "ColonToken",
+        "start": 449,
+        "width": 1,
+        "fullWidth": 2,
+        "text": ":",
+        "hasTrailingTrivia": true
+    },
+    {
+        "kind": "IdentifierNameToken",
+        "keywordKind": "NumberKeyword",
         "start": 451,
-        "width": 7,
-        "text": "number)"
+        "width": 6,
+        "text": "number"
+    },
+    {
+        "kind": "CloseParenToken",
+        "start": 457,
+        "width": 1,
+        "text": ")"
     },
     {
         "kind": "ColonToken",
@@ -472,9 +642,12 @@
     },
     {
         "kind": "IdentifierNameToken",
+        "keywordKind": "NumberKeyword",
         "start": 460,
-        "width": 7,
-        "text": "number "
+        "width": 6,
+        "fullWidth": 7,
+        "text": "number",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "OpenBraceToken",
@@ -489,28 +662,52 @@
         "kind": "IdentifierNameToken",
         "start": 478,
         "fullStart": 470,
-        "width": 6,
-        "fullWidth": 14,
-        "text": "Debug.",
+        "width": 5,
+        "fullWidth": 13,
+        "text": "Debug",
         "hasLeadingTrivia": true
+    },
+    {
+        "kind": "DotToken",
+        "start": 483,
+        "width": 1,
+        "text": "."
     },
     {
         "kind": "IdentifierNameToken",
         "start": 484,
-        "width": 7,
-        "text": "assert("
+        "width": 6,
+        "text": "assert"
+    },
+    {
+        "kind": "OpenParenToken",
+        "start": 490,
+        "width": 1,
+        "text": "("
     },
     {
         "kind": "IdentifierNameToken",
         "start": 491,
-        "width": 11,
-        "text": "isHexDigit("
+        "width": 10,
+        "text": "isHexDigit"
+    },
+    {
+        "kind": "OpenParenToken",
+        "start": 501,
+        "width": 1,
+        "text": "("
     },
     {
         "kind": "IdentifierNameToken",
         "start": 502,
-        "width": 2,
-        "text": "c)"
+        "width": 1,
+        "text": "c"
+    },
+    {
+        "kind": "CloseParenToken",
+        "start": 503,
+        "width": 1,
+        "text": ")"
     },
     {
         "kind": "CloseParenToken",
@@ -529,25 +726,39 @@
     },
     {
         "kind": "IdentifierNameToken",
+        "keywordKind": "ReturnKeyword",
         "start": 516,
         "fullStart": 508,
-        "width": 7,
+        "width": 6,
         "fullWidth": 15,
-        "text": "return ",
-        "hasLeadingTrivia": true
+        "text": "return",
+        "hasLeadingTrivia": true,
+        "hasTrailingTrivia": true
     },
     {
         "kind": "IdentifierNameToken",
         "start": 523,
-        "width": 15,
-        "text": "isDecimalDigit("
+        "width": 14,
+        "text": "isDecimalDigit"
+    },
+    {
+        "kind": "OpenParenToken",
+        "start": 537,
+        "width": 1,
+        "text": "("
     },
     {
         "kind": "IdentifierNameToken",
         "start": 538,
-        "width": 2,
-        "fullWidth": 4,
-        "text": "c)",
+        "width": 1,
+        "text": "c"
+    },
+    {
+        "kind": "CloseParenToken",
+        "start": 539,
+        "width": 1,
+        "fullWidth": 3,
+        "text": ")",
         "hasTrailingTrivia": true,
         "hasTrailingNewLineTrivia": true
     },
@@ -570,8 +781,10 @@
     {
         "kind": "IdentifierNameToken",
         "start": 557,
-        "width": 2,
-        "text": "c "
+        "width": 1,
+        "fullWidth": 2,
+        "text": "c",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "MinusToken",
@@ -584,15 +797,27 @@
     {
         "kind": "IdentifierNameToken",
         "start": 561,
-        "width": 15,
-        "text": "CharacterCodes."
+        "width": 14,
+        "text": "CharacterCodes"
+    },
+    {
+        "kind": "DotToken",
+        "start": 575,
+        "width": 1,
+        "text": "."
     },
     {
         "kind": "IdentifierNameToken",
         "start": 576,
-        "width": 3,
-        "fullWidth": 5,
-        "text": "_0)",
+        "width": 2,
+        "text": "_0"
+    },
+    {
+        "kind": "CloseParenToken",
+        "start": 578,
+        "width": 1,
+        "fullWidth": 3,
+        "text": ")",
         "hasTrailingTrivia": true,
         "hasTrailingNewLineTrivia": true
     },
@@ -615,8 +840,10 @@
     {
         "kind": "IdentifierNameToken",
         "start": 596,
-        "width": 2,
-        "text": "c "
+        "width": 1,
+        "fullWidth": 2,
+        "text": "c",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "GreaterThanEqualsToken",
@@ -629,14 +856,22 @@
     {
         "kind": "IdentifierNameToken",
         "start": 601,
-        "width": 15,
-        "text": "CharacterCodes."
+        "width": 14,
+        "text": "CharacterCodes"
+    },
+    {
+        "kind": "DotToken",
+        "start": 615,
+        "width": 1,
+        "text": "."
     },
     {
         "kind": "IdentifierNameToken",
         "start": 616,
-        "width": 2,
-        "text": "A "
+        "width": 1,
+        "fullWidth": 2,
+        "text": "A",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "AmpersandAmpersandToken",
@@ -649,8 +884,10 @@
     {
         "kind": "IdentifierNameToken",
         "start": 621,
-        "width": 2,
-        "text": "c "
+        "width": 1,
+        "fullWidth": 2,
+        "text": "c",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "LessThanEqualsToken",
@@ -663,15 +900,27 @@
     {
         "kind": "IdentifierNameToken",
         "start": 626,
-        "width": 15,
-        "text": "CharacterCodes."
+        "width": 14,
+        "text": "CharacterCodes"
+    },
+    {
+        "kind": "DotToken",
+        "start": 640,
+        "width": 1,
+        "text": "."
     },
     {
         "kind": "IdentifierNameToken",
         "start": 641,
-        "width": 2,
-        "fullWidth": 4,
-        "text": "F)",
+        "width": 1,
+        "text": "F"
+    },
+    {
+        "kind": "CloseParenToken",
+        "start": 642,
+        "width": 1,
+        "fullWidth": 3,
+        "text": ")",
         "hasTrailingTrivia": true,
         "hasTrailingNewLineTrivia": true
     },
@@ -688,8 +937,10 @@
     {
         "kind": "IdentifierNameToken",
         "start": 663,
-        "width": 2,
-        "text": "c "
+        "width": 1,
+        "fullWidth": 2,
+        "text": "c",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "MinusToken",
@@ -702,14 +953,22 @@
     {
         "kind": "IdentifierNameToken",
         "start": 667,
-        "width": 15,
-        "text": "CharacterCodes."
+        "width": 14,
+        "text": "CharacterCodes"
+    },
+    {
+        "kind": "DotToken",
+        "start": 681,
+        "width": 1,
+        "text": "."
     },
     {
         "kind": "IdentifierNameToken",
         "start": 682,
-        "width": 2,
-        "text": "A "
+        "width": 1,
+        "fullWidth": 2,
+        "text": "A",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "PlusToken",
@@ -741,8 +1000,10 @@
     {
         "kind": "IdentifierNameToken",
         "start": 708,
-        "width": 2,
-        "text": "c "
+        "width": 1,
+        "fullWidth": 2,
+        "text": "c",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "MinusToken",
@@ -755,14 +1016,22 @@
     {
         "kind": "IdentifierNameToken",
         "start": 712,
-        "width": 15,
-        "text": "CharacterCodes."
+        "width": 14,
+        "text": "CharacterCodes"
+    },
+    {
+        "kind": "DotToken",
+        "start": 726,
+        "width": 1,
+        "text": "."
     },
     {
         "kind": "IdentifierNameToken",
         "start": 727,
-        "width": 2,
-        "text": "a "
+        "width": 1,
+        "fullWidth": 2,
+        "text": "a",
+        "hasTrailingTrivia": true
     },
     {
         "kind": "PlusToken",
