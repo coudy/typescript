@@ -1,22 +1,16 @@
 ///<reference path='References.ts' />
 
 module SyntaxTokenFactory {
-    function getTriviaInfo(info: ScannerTriviaInfo): number {
-        var comment = info.HasComment ? 1 : 0;
-        var newLine = info.HasNewLine ? 1 : 0;
-        return (info.Width << 2) | (comment << 1) | newLine;
-    }
-
     function getTriviaLength(value: number) {
-        return value >> 2;
+        return value & Constants.TriviaLengthMask;
     }
 
     function hasTriviaComment(value: number): bool {
-        return (value & (1 << 1)) !== 0;
+        return (value & Constants.TriviaCommentMask) !== 0;
     }
 
     function hasTriviaNewLine(value: number): bool {
-        return (value & 1) !== 0;
+        return (value & Constants.TriviaNewLineMask) !== 0;
     }
 
     function toJSON(token: ISyntaxToken) {
@@ -618,9 +612,9 @@ module SyntaxTokenFactory {
     }
 
     export function create(fullStart: number,
-                         leadingTriviaInfo: ScannerTriviaInfo,
+                         leadingTriviaInfo: number,
                          tokenInfo: ScannerTokenInfo,
-                         trailingTriviaInfo: ScannerTriviaInfo,
+                         trailingTriviaInfo: number,
                          diagnostics: DiagnosticInfo[]): ISyntaxToken {
         // if (false) {
             if (diagnostics === null || diagnostics.length === 0) {
@@ -643,79 +637,79 @@ module SyntaxTokenFactory {
     }
 
     function createFixedWidthToken(fullStart: number,
-        leadingTriviaInfo: ScannerTriviaInfo,
+        leadingTriviaInfo: number,
         kind: SyntaxKind,
-        trailingTriviaInfo: ScannerTriviaInfo): ISyntaxToken {
+        trailingTriviaInfo: number): ISyntaxToken {
 
-        if (leadingTriviaInfo.Width === 0) {
-            if (trailingTriviaInfo.Width === 0) {
+        if (leadingTriviaInfo === 0) {
+            if (trailingTriviaInfo === 0) {
                 return new FixedWidthTokenWithNoTrivia(kind, fullStart);
             }
             else {
-                return new FixedWidthTokenWithTrailingTrivia(kind, fullStart, getTriviaInfo(trailingTriviaInfo));
+                return new FixedWidthTokenWithTrailingTrivia(kind, fullStart, trailingTriviaInfo);
             }
         }
-        else if (trailingTriviaInfo.Width === 0) {
-            return new FixedWidthTokenWithLeadingTrivia(kind, fullStart, getTriviaInfo(leadingTriviaInfo));
+        else if (trailingTriviaInfo === 0) {
+            return new FixedWidthTokenWithLeadingTrivia(kind, fullStart, leadingTriviaInfo);
         }
         else {
-            return new FixedWidthTokenWithLeadingAndTrailingTrivia(kind, fullStart, getTriviaInfo(leadingTriviaInfo), getTriviaInfo(trailingTriviaInfo));
+            return new FixedWidthTokenWithLeadingAndTrailingTrivia(kind, fullStart, leadingTriviaInfo, trailingTriviaInfo);
         }
     }
 
     function createVariableWidthToken(fullStart: number,
-        leadingTriviaInfo: ScannerTriviaInfo,
+        leadingTriviaInfo: number,
         tokenInfo: ScannerTokenInfo,
-        trailingTriviaInfo: ScannerTriviaInfo): ISyntaxToken {
+        trailingTriviaInfo: number): ISyntaxToken {
         
         var kind = tokenInfo.Kind;
         var text = tokenInfo.Text === null ? SyntaxFacts.getText(kind) : tokenInfo.Text;
-        if (leadingTriviaInfo.Width === 0) {
-            if (trailingTriviaInfo.Width === 0) {
+        if (leadingTriviaInfo === 0) {
+            if (trailingTriviaInfo === 0) {
                 return new VariableWidthTokenWithNoTrivia(kind, fullStart, text);
             }
             else {
-                return new VariableWidthTokenWithTrailingTrivia(kind, fullStart, text, getTriviaInfo(trailingTriviaInfo));
+                return new VariableWidthTokenWithTrailingTrivia(kind, fullStart, text, trailingTriviaInfo);
             }
         }
-        else if (trailingTriviaInfo.Width === 0) {
-            return new VariableWidthTokenWithLeadingTrivia(kind, fullStart, text, getTriviaInfo(leadingTriviaInfo));
+        else if (trailingTriviaInfo === 0) {
+            return new VariableWidthTokenWithLeadingTrivia(kind, fullStart, text, leadingTriviaInfo);
         }
         else {
-            return new VariableWidthTokenWithLeadingAndTrailingTrivia(kind, fullStart, text, getTriviaInfo(leadingTriviaInfo), getTriviaInfo(trailingTriviaInfo));
+            return new VariableWidthTokenWithLeadingAndTrailingTrivia(kind, fullStart, text, leadingTriviaInfo, trailingTriviaInfo);
         }
     }
 
     function createFixedWidthKeyword(fullStart: number,
-        leadingTriviaInfo: ScannerTriviaInfo,
+        leadingTriviaInfo: number,
         keywordKind: SyntaxKind,
-        trailingTriviaInfo: ScannerTriviaInfo): ISyntaxToken {
+        trailingTriviaInfo: number): ISyntaxToken {
 
-        if (leadingTriviaInfo.Width === 0) {
-            if (trailingTriviaInfo.Width === 0) {
+        if (leadingTriviaInfo === 0) {
+            if (trailingTriviaInfo === 0) {
                 return new FixedWidthKeywordWithNoTrivia(keywordKind, fullStart);
             }
             else {
-                return new FixedWidthKeywordWithTrailingTrivia(keywordKind, fullStart, getTriviaInfo(trailingTriviaInfo));
+                return new FixedWidthKeywordWithTrailingTrivia(keywordKind, fullStart, trailingTriviaInfo);
             }
         }
-        else if (trailingTriviaInfo.Width === 0) {
-            return new FixedWidthKeywordWithLeadingTrivia(keywordKind, fullStart, getTriviaInfo(leadingTriviaInfo));
+        else if (trailingTriviaInfo === 0) {
+            return new FixedWidthKeywordWithLeadingTrivia(keywordKind, fullStart, leadingTriviaInfo);
         }
         else {
-            return new FixedWidthKeywordWithLeadingAndTrailingTrivia(keywordKind, fullStart, getTriviaInfo(leadingTriviaInfo), getTriviaInfo(trailingTriviaInfo));
+            return new FixedWidthKeywordWithLeadingAndTrailingTrivia(keywordKind, fullStart, leadingTriviaInfo, trailingTriviaInfo);
         }
     }
 
     function createFullToken(fullStart: number,
-                                      leadingTriviaInfo: ScannerTriviaInfo,
-                                      tokenInfo: ScannerTokenInfo,
-                                      trailingTriviaInfo: ScannerTriviaInfo,
-                                      diagnostics: DiagnosticInfo[]): ISyntaxToken {
+                             leadingTriviaInfo: number,
+                             tokenInfo: ScannerTokenInfo,
+                             trailingTriviaInfo: number,
+                             diagnostics: DiagnosticInfo[]): ISyntaxToken {
         // Debug.assert(tokenInfo.Text !== null);
         var text = tokenInfo.Text || SyntaxFacts.getText(tokenInfo.Kind);
         return new FullToken(tokenInfo.Kind, tokenInfo.KeywordKind, tokenInfo.Text, fullStart,
-            getTriviaInfo(leadingTriviaInfo), getTriviaInfo(trailingTriviaInfo), diagnostics);
+            leadingTriviaInfo, trailingTriviaInfo, diagnostics);
     }
     
     export function createEmptyToken(kind: SyntaxKind, keywordKind: SyntaxKind): ISyntaxToken {

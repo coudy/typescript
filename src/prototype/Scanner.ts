@@ -6,12 +6,6 @@ class ScannerTokenInfo {
     public Text: string;
 }
 
-class ScannerTriviaInfo {
-    public Width: number;
-    public HasComment: bool;
-    public HasNewLine: bool;
-}
-
 class Scanner extends SlidingWindow {
     private text: IText = null;
     private errors: SyntaxDiagnosticInfo[] = [];
@@ -79,8 +73,6 @@ class Scanner extends SlidingWindow {
     private previousTokenKind: SyntaxKind = SyntaxKind.None;
     private previousTokenKeywordKind: SyntaxKind = SyntaxKind.None;
     private tokenInfo: ScannerTokenInfo = new ScannerTokenInfo();
-    private leadingTriviaInfo = new ScannerTriviaInfo();
-    private trailingTriviaInfo = new ScannerTriviaInfo();
 
     public scan(): ISyntaxToken {
         if (this.errors.length > 0) {
@@ -88,17 +80,17 @@ class Scanner extends SlidingWindow {
         }
 
         var start = this.absoluteIndex();
-        this.scanTriviaInfo(/*isTrailing: */ false, this.leadingTriviaInfo);
+        var leadingTriviaInfo = this.scanTriviaInfo(/*isTrailing: */ false);
         this.scanSyntaxToken();
-        this.scanTriviaInfo(/*isTrailing: */true, this.trailingTriviaInfo);
+        var trailingTriviaInfo = this.scanTriviaInfo(/*isTrailing: */true);
 
         this.previousTokenKind = this.tokenInfo.Kind;
         this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
-        return SyntaxTokenFactory.create(start, this.leadingTriviaInfo, this.tokenInfo, this.trailingTriviaInfo,
+        return SyntaxTokenFactory.create(start, leadingTriviaInfo, this.tokenInfo, trailingTriviaInfo,
             this.errors.length === 0 ? null : this.errors);
     }
 
-    private scanTriviaInfo(isTrailing: bool, triviaInfo: ScannerTriviaInfo): void {
+    private scanTriviaInfo(isTrailing: bool): number {
         var width = 0;
         var hasComment = false;
         var hasNewLine = false;
@@ -163,10 +155,7 @@ class Scanner extends SlidingWindow {
                     break;
             }
 
-            triviaInfo.Width = width;
-            triviaInfo.HasComment = hasComment;
-            triviaInfo.HasNewLine = hasNewLine;
-            return;
+            return width | (hasComment ? Constants.TriviaCommentMask : 0) | (hasNewLine ? Constants.TriviaNewLineMask : 0);
         }
     }
 
