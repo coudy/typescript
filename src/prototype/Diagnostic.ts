@@ -1,6 +1,6 @@
 ///<reference path='References.ts' />
 
-class DiagnosticInfo {
+class Diagnostic {
     private _diagnosticCode: DiagnosticCode = 0;
     private arguments: any[] = null;
 

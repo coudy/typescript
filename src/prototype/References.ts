@@ -4,8 +4,8 @@
 ///<reference path='CharacterInfo.ts' />
 ///<reference path='Constants.ts' />
 ///<reference path='Debug.ts' />
+///<reference path='Diagnostic.ts' />
 ///<reference path='DiagnosticCode.ts' />
-///<reference path='DiagnosticInfo.ts' />
 ///<reference path='Environment.ts' />
 ///<reference path='Errors.ts' />
 ///<reference path='Contract.ts' />
@@ -39,7 +39,7 @@
 ///<reference path='StringTable.ts' />
 ///<reference path='StringText.ts' />
 ///<reference path='StringUtilities.ts' />
-///<reference path='SyntaxDiagnosticInfo.ts' />
+///<reference path='SyntaxDiagnostic.ts' />
 
 ///<reference path='SyntaxKind.ts' />
 
@@ -49,7 +49,7 @@
 ///<reference path='SyntaxNode.ts' />
 ///<reference path='SyntaxNodeList.ts' />
 ///<reference path='SyntaxNodes.ts' />
-///<reference path='SyntaxToken.ts' />
+///<reference path='SyntaxTokenFactory.ts' />
 ///<reference path='SyntaxTree.ts' />
 ///<reference path='SyntaxTriviaList.ts' />
 ///<reference path='TextChangeRange.ts' />

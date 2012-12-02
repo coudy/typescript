@@ -8,7 +8,7 @@ class ScannerTokenInfo {
 
 class Scanner extends SlidingWindow {
     private text: IText = null;
-    private errors: SyntaxDiagnosticInfo[] = [];
+    private errors: SyntaxDiagnostic[] = [];
     private stringTable: StringTable;
     private languageVersion: LanguageVersion;
 
@@ -963,7 +963,7 @@ class Scanner extends SlidingWindow {
         return ch;
     }
 
-    private scanCharOrUnicodeEscape(errors: SyntaxDiagnosticInfo[]): number {
+    private scanCharOrUnicodeEscape(errors: SyntaxDiagnostic[]): number {
         var ch = this.currentItem();
         if (ch === CharacterCodes.backslash) {
             var ch2 = this.peekItemN(1);
@@ -976,7 +976,7 @@ class Scanner extends SlidingWindow {
         return ch;
     }
 
-    private scanCharOrUnicodeOrHexEscape(errors: SyntaxDiagnosticInfo[]): number {
+    private scanCharOrUnicodeOrHexEscape(errors: SyntaxDiagnostic[]): number {
         var ch = this.currentItem();
         if (ch === CharacterCodes.backslash) {
             var ch2 = this.peekItemN(1);
@@ -989,7 +989,7 @@ class Scanner extends SlidingWindow {
         return ch;
     }
 
-    private scanUnicodeOrHexEscape(errors: SyntaxDiagnosticInfo[]): number {
+    private scanUnicodeOrHexEscape(errors: SyntaxDiagnostic[]): number {
         var start = this.absoluteIndex();
         var character = this.currentItem();
         Debug.assert(character === CharacterCodes.backslash);
@@ -1037,7 +1037,7 @@ class Scanner extends SlidingWindow {
         this.addDiagnosticInfo(this.makeSimpleDiagnosticInfo(code, args));
     }
 
-    private addDiagnosticInfo(error: SyntaxDiagnosticInfo): void {
+    private addDiagnosticInfo(error: SyntaxDiagnostic): void {
         if (this.errors === null) {
             this.errors = [];
         }
@@ -1045,12 +1045,12 @@ class Scanner extends SlidingWindow {
         this.errors.push(error);
     }
 
-    private makeSimpleDiagnosticInfo(code: DiagnosticCode, args: any[]): SyntaxDiagnosticInfo {
-        return SyntaxDiagnosticInfo.create(code, args);
+    private makeSimpleDiagnosticInfo(code: DiagnosticCode, args: any[]): SyntaxDiagnostic {
+        return SyntaxDiagnostic.create(code, args);
     }
 
-    private createIllegalEscapeDiagnostic(start: number, end: number): SyntaxDiagnosticInfo {
-        return new SyntaxDiagnosticInfo(start, end - start,
+    private createIllegalEscapeDiagnostic(start: number, end: number): SyntaxDiagnostic {
+        return new SyntaxDiagnostic(start, end - start,
             DiagnosticCode.Unrecognized_escape_sequence);
     }
 }

@@ -98,7 +98,7 @@ module SyntaxTokenFactory {
         public fullText(itext: IText): string { return ""; }
         public value() { return null; }
         public valueText() { return ""; }
-        public diagnostics(): SyntaxDiagnosticInfo[] { return []; }
+        public diagnostics(): SyntaxDiagnostic[] { return []; }
         public hasLeadingTrivia() { return false; }
         public hasLeadingCommentTrivia() { return false; }
         public hasLeadingNewLineTrivia() { return false; }
@@ -121,7 +121,7 @@ module SyntaxTokenFactory {
         public toJSON(key) { return toJSON(this); }
         
         public isMissing(): bool { return false; }
-        public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
+        public diagnostics(): SyntaxDiagnostic[] { return null; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return this.width(); }
@@ -155,7 +155,7 @@ module SyntaxTokenFactory {
         public toJSON(key) { return toJSON(this); }
 
         public isMissing(): bool { return false; }
-        public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
+        public diagnostics(): SyntaxDiagnostic[] { return null; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return getTriviaLength(this._leadingTriviaInfo) + this.width(); }
@@ -191,7 +191,7 @@ module SyntaxTokenFactory {
         public toJSON(key) { return toJSON(this); }
         
         public isMissing(): bool { return false; }
-        public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
+        public diagnostics(): SyntaxDiagnostic[] { return null; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return this.width() + getTriviaLength(this._trailingTriviaInfo); }
@@ -229,7 +229,7 @@ module SyntaxTokenFactory {
         public toJSON(key) { return toJSON(this); }
         
         public isMissing(): bool { return false; }
-        public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
+        public diagnostics(): SyntaxDiagnostic[] { return null; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return getTriviaLength(this._leadingTriviaInfo) + this.text().length + getTriviaLength(this._trailingTriviaInfo); }
@@ -263,7 +263,7 @@ module SyntaxTokenFactory {
         public toJSON(key) { return toJSON(this); }
         
         public isMissing(): bool { return false; }
-        public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
+        public diagnostics(): SyntaxDiagnostic[] { return null; }
         public kind: SyntaxKind = SyntaxKind.IdentifierNameToken;
         public keywordKind(): SyntaxKind { return this._keywordKind; }
         public fullStart(): number { return this._fullStart; }
@@ -298,7 +298,7 @@ module SyntaxTokenFactory {
         public toJSON(key) { return toJSON(this); }
 
         public isMissing(): bool { return false; }
-        public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
+        public diagnostics(): SyntaxDiagnostic[] { return null; }
         public kind: SyntaxKind = SyntaxKind.IdentifierNameToken;
         public keywordKind(): SyntaxKind { return this._keywordKind; }
         public fullStart(): number { return this._fullStart; }
@@ -335,7 +335,7 @@ module SyntaxTokenFactory {
         public toJSON(key) { return toJSON(this); }
         
         public isMissing(): bool { return false; }
-        public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
+        public diagnostics(): SyntaxDiagnostic[] { return null; }
         public kind: SyntaxKind = SyntaxKind.IdentifierNameToken;
         public keywordKind(): SyntaxKind { return this._keywordKind; }
         public fullStart(): number { return this._fullStart; }
@@ -374,7 +374,7 @@ module SyntaxTokenFactory {
         public toJSON(key) { return toJSON(this); }
         
         public isMissing(): bool { return false; }
-        public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
+        public diagnostics(): SyntaxDiagnostic[] { return null; }
         public kind: SyntaxKind = SyntaxKind.IdentifierNameToken;
         public keywordKind(): SyntaxKind { return this._keywordKind; }
         public fullStart(): number { return this._fullStart; }
@@ -411,7 +411,7 @@ module SyntaxTokenFactory {
         public toJSON(key) { return toJSON(this); }
         
         public isMissing(): bool { return false; }
-        public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
+        public diagnostics(): SyntaxDiagnostic[] { return null; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return this.width(); }
@@ -447,7 +447,7 @@ module SyntaxTokenFactory {
         public toJSON(key) { return toJSON(this); }
 
         public isMissing(): bool { return false; }
-        public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
+        public diagnostics(): SyntaxDiagnostic[] { return null; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return getTriviaLength(this._leadingTriviaInfo) + this.width(); }
@@ -485,7 +485,7 @@ module SyntaxTokenFactory {
         public toJSON(key) { return toJSON(this); }
         
         public isMissing(): bool { return false; }
-        public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
+        public diagnostics(): SyntaxDiagnostic[] { return null; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return this.width() + getTriviaLength(this._trailingTriviaInfo); }
@@ -525,7 +525,7 @@ module SyntaxTokenFactory {
         public toJSON(key) { return toJSON(this); }
         
         public isMissing(): bool { return false; }
-        public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
+        public diagnostics(): SyntaxDiagnostic[] { return null; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return getTriviaLength(this._leadingTriviaInfo) + this.text().length + getTriviaLength(this._trailingTriviaInfo); }
@@ -552,7 +552,7 @@ module SyntaxTokenFactory {
         private _keywordKind: SyntaxKind;
         private _fullStart: number;
         private _text: string;
-        private _diagnostics: DiagnosticInfo[];
+        private _diagnostics: Diagnostic[];
         private _leadingTriviaInfo: number;
         private _trailingTriviaInfo: number;
 
@@ -562,7 +562,7 @@ module SyntaxTokenFactory {
             fullStart: number,
             leadingTriviaInfo: number,
             trailingTriviaInfo: number,
-            diagnostics: DiagnosticInfo[]) {
+            diagnostics: Diagnostic[]) {
             this.kind = kind;
             this._keywordKind = keywordKind;
             this._text = text;
@@ -615,7 +615,7 @@ module SyntaxTokenFactory {
                          leadingTriviaInfo: number,
                          tokenInfo: ScannerTokenInfo,
                          trailingTriviaInfo: number,
-                         diagnostics: DiagnosticInfo[]): ISyntaxToken {
+                         diagnostics: Diagnostic[]): ISyntaxToken {
         // if (false) {
             if (diagnostics === null || diagnostics.length === 0) {
                 if (SyntaxFacts.isAnyPunctuation(tokenInfo.Kind)) {
@@ -705,7 +705,7 @@ module SyntaxTokenFactory {
                              leadingTriviaInfo: number,
                              tokenInfo: ScannerTokenInfo,
                              trailingTriviaInfo: number,
-                             diagnostics: DiagnosticInfo[]): ISyntaxToken {
+                             diagnostics: Diagnostic[]): ISyntaxToken {
         // Debug.assert(tokenInfo.Text !== null);
         var text = tokenInfo.Text || SyntaxFacts.getText(tokenInfo.Kind);
         return new FullToken(tokenInfo.Kind, tokenInfo.KeywordKind, tokenInfo.Text, fullStart,

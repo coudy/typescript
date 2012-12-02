@@ -250,6 +250,28 @@ var Debug = (function () {
     }
     return Debug;
 })();
+var Diagnostic = (function () {
+    function Diagnostic(diagnosticCode) {
+        var arguments = [];
+        for (var _i = 0; _i < (arguments.length - 1); _i++) {
+            arguments[_i] = arguments[_i + 1];
+        }
+        this._diagnosticCode = 0;
+        this.arguments = null;
+        this._diagnosticCode = diagnosticCode;
+        this.arguments = arguments;
+    }
+    Diagnostic.prototype.diagnosticCode = function () {
+        return this._diagnosticCode;
+    };
+    Diagnostic.prototype.additionalLocations = function () {
+        return [];
+    };
+    Diagnostic.prototype.getMessage = function () {
+        return DiagnosticMessages.getDiagnosticMessage(this._diagnosticCode, this.arguments);
+    };
+    return Diagnostic;
+})();
 var DiagnosticCode;
 (function (DiagnosticCode) {
     DiagnosticCode._map = [];
@@ -289,28 +311,6 @@ var DiagnosticMessages = (function () {
         return result;
     }
     return DiagnosticMessages;
-})();
-var DiagnosticInfo = (function () {
-    function DiagnosticInfo(diagnosticCode) {
-        var arguments = [];
-        for (var _i = 0; _i < (arguments.length - 1); _i++) {
-            arguments[_i] = arguments[_i + 1];
-        }
-        this._diagnosticCode = 0;
-        this.arguments = null;
-        this._diagnosticCode = diagnosticCode;
-        this.arguments = arguments;
-    }
-    DiagnosticInfo.prototype.diagnosticCode = function () {
-        return this._diagnosticCode;
-    };
-    DiagnosticInfo.prototype.additionalLocations = function () {
-        return [];
-    };
-    DiagnosticInfo.prototype.getMessage = function () {
-        return DiagnosticMessages.getDiagnosticMessage(this._diagnosticCode, this.arguments);
-    };
-    return DiagnosticInfo;
 })();
 
 var Environment = (function () {
@@ -993,7 +993,7 @@ var Parser = (function (_super) {
         if(this.canEatAutomaticSemicolon()) {
             var semicolonToken = SyntaxTokenFactory.createEmptyToken(71 /* SemicolonToken */ , 0 /* None */ );
             if(!this.options.allowAutomaticSemicolonInsertion()) {
-                semicolonToken = this.withAdditionalDiagnostics(semicolonToken, new DiagnosticInfo(7 /* AutomaticSemicolonInsertionNotAllowed */ ));
+                semicolonToken = this.withAdditionalDiagnostics(semicolonToken, new Diagnostic(7 /* AutomaticSemicolonInsertionNotAllowed */ ));
             }
             return semicolonToken;
         }
@@ -1061,17 +1061,17 @@ var Parser = (function (_super) {
         var width = span.length();
         if(expectedKind === 5 /* IdentifierNameToken */ ) {
             if(SyntaxFacts.isAnyKeyword(expectedKeywordKind)) {
-                return new SyntaxDiagnosticInfo(offset, width, 5 /* _0_expected */ , SyntaxFacts.getText(expectedKeywordKind));
+                return new SyntaxDiagnostic(offset, width, 5 /* _0_expected */ , SyntaxFacts.getText(expectedKeywordKind));
             } else {
                 if(actual !== null && SyntaxFacts.isAnyKeyword(actual.keywordKind())) {
-                    return new SyntaxDiagnosticInfo(offset, width, 6 /* Identifier_expected__0_is_a_keyword */ , SyntaxFacts.getText(actual.keywordKind()));
+                    return new SyntaxDiagnostic(offset, width, 6 /* Identifier_expected__0_is_a_keyword */ , SyntaxFacts.getText(actual.keywordKind()));
                 } else {
-                    return new SyntaxDiagnosticInfo(offset, width, 3 /* Identifier_expected */ );
+                    return new SyntaxDiagnostic(offset, width, 3 /* Identifier_expected */ );
                 }
             }
         }
         if(SyntaxFacts.isAnyPunctuation(expectedKind)) {
-            return new SyntaxDiagnosticInfo(offset, width, 5 /* _0_expected */ , SyntaxFacts.getText(expectedKind));
+            return new SyntaxDiagnostic(offset, width, 5 /* _0_expected */ , SyntaxFacts.getText(expectedKind));
         }
         throw Errors.notYetImplemented();
     };
@@ -3889,10 +3889,10 @@ var Scanner = (function (_super) {
         this.errors.push(error);
     };
     Scanner.prototype.makeSimpleDiagnosticInfo = function (code, args) {
-        return SyntaxDiagnosticInfo.create(code, args);
+        return SyntaxDiagnostic.create(code, args);
     };
     Scanner.prototype.createIllegalEscapeDiagnostic = function (start, end) {
-        return new SyntaxDiagnosticInfo(start, end - start, 0 /* Unrecognized_escape_sequence */ );
+        return new SyntaxDiagnostic(start, end - start, 0 /* Unrecognized_escape_sequence */ );
     };
     return Scanner;
 })(SlidingWindow);
@@ -4212,9 +4212,9 @@ var StringUtilities = (function () {
     }
     return StringUtilities;
 })();
-var SyntaxDiagnosticInfo = (function (_super) {
-    __extends(SyntaxDiagnosticInfo, _super);
-    function SyntaxDiagnosticInfo(offset, width, code) {
+var SyntaxDiagnostic = (function (_super) {
+    __extends(SyntaxDiagnostic, _super);
+    function SyntaxDiagnostic(offset, width, code) {
         var args = [];
         for (var _i = 0; _i < (arguments.length - 3); _i++) {
             args[_i] = arguments[_i + 3];
@@ -4228,15 +4228,15 @@ var SyntaxDiagnosticInfo = (function (_super) {
         this._offset = offset;
         this._width = width;
     }
-    SyntaxDiagnosticInfo.create = function create(code) {
+    SyntaxDiagnostic.create = function create(code) {
         var args = [];
         for (var _i = 0; _i < (arguments.length - 1); _i++) {
             args[_i] = arguments[_i + 1];
         }
-        return new SyntaxDiagnosticInfo(0, 0, code, args);
+        return new SyntaxDiagnostic(0, 0, code, args);
     }
-    return SyntaxDiagnosticInfo;
-})(DiagnosticInfo);
+    return SyntaxDiagnostic;
+})(Diagnostic);
 var SyntaxKind;
 (function (SyntaxKind) {
     SyntaxKind._map = [];

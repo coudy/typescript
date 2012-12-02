@@ -1,6 +1,6 @@
 ///<reference path='References.ts' />
 
-class SyntaxDiagnosticInfo extends DiagnosticInfo {
+class SyntaxDiagnostic extends Diagnostic {
     private _offset = 0;
     private _width = 0;
 
@@ -15,7 +15,7 @@ class SyntaxDiagnosticInfo extends DiagnosticInfo {
         this._width = width;
     }
 
-    public static create(code: DiagnosticCode, ...args: any[]): SyntaxDiagnosticInfo {
-        return new SyntaxDiagnosticInfo(0, 0, code, args);
+    public static create(code: DiagnosticCode, ...args: any[]): SyntaxDiagnostic {
+        return new SyntaxDiagnostic(0, 0, code, args);
     }
 }

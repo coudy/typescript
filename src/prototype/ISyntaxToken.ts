@@ -17,7 +17,7 @@ interface ISyntaxToken {
     value(): any;
     valueText(): string;
 
-    diagnostics(): DiagnosticInfo[];
+    diagnostics(): Diagnostic[];
 
     hasLeadingTrivia(): bool;
     hasLeadingCommentTrivia(): bool;

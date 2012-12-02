@@ -91,7 +91,7 @@ class Parser extends SlidingWindow {
     private isInStrictMode: bool;
 
     private skippedTokens: ISyntaxToken[] = [];
-    private diagnostics: DiagnosticInfo[] = [];
+    private diagnostics: Diagnostic[] = [];
 
     constructor(
         scanner: Scanner,
@@ -204,7 +204,7 @@ class Parser extends SlidingWindow {
             var semicolonToken = SyntaxTokenFactory.createEmptyToken(SyntaxKind.SemicolonToken, SyntaxKind.None);
 
             if (!this.options.allowAutomaticSemicolonInsertion()) {
-                semicolonToken = this.withAdditionalDiagnostics(semicolonToken, new DiagnosticInfo(DiagnosticCode.AutomaticSemicolonInsertionNotAllowed)); 
+                semicolonToken = this.withAdditionalDiagnostics(semicolonToken, new Diagnostic(DiagnosticCode.AutomaticSemicolonInsertionNotAllowed)); 
             }
 
             return semicolonToken;
@@ -312,7 +312,7 @@ class Parser extends SlidingWindow {
     //    return token;
     //}
 
-    private getExpectedTokenDiagnosticInfo(expectedKind: SyntaxKind, expectedKeywordKind: SyntaxKind, actual: ISyntaxToken): DiagnosticInfo {
+    private getExpectedTokenDiagnosticInfo(expectedKind: SyntaxKind, expectedKeywordKind: SyntaxKind, actual: ISyntaxToken): Diagnostic {
         var span = this.getDiagnosticSpanForMissingToken();
         var offset = span.start();
         var width = span.length();
@@ -320,24 +320,24 @@ class Parser extends SlidingWindow {
         if (expectedKind === SyntaxKind.IdentifierNameToken) {
             if (SyntaxFacts.isAnyKeyword(expectedKeywordKind)) {
                 // They wanted a keyword, just report that that keyword was missing.
-                return new SyntaxDiagnosticInfo(offset, width, DiagnosticCode._0_expected, SyntaxFacts.getText(expectedKeywordKind));
+                return new SyntaxDiagnostic(offset, width, DiagnosticCode._0_expected, SyntaxFacts.getText(expectedKeywordKind));
             }
             else {
                 // They wanted a real identifier.
 
                 // If the user supplied a keyword, give them a specialized message.
                 if (actual !== null && SyntaxFacts.isAnyKeyword(actual.keywordKind())) {
-                    return new SyntaxDiagnosticInfo(offset, width, DiagnosticCode.Identifier_expected__0_is_a_keyword, SyntaxFacts.getText(actual.keywordKind()));
+                    return new SyntaxDiagnostic(offset, width, DiagnosticCode.Identifier_expected__0_is_a_keyword, SyntaxFacts.getText(actual.keywordKind()));
                 }
                 else {
                     // Otherwise just report that an identifier was expected.
-                    return new SyntaxDiagnosticInfo(offset, width, DiagnosticCode.Identifier_expected);
+                    return new SyntaxDiagnostic(offset, width, DiagnosticCode.Identifier_expected);
                 }
             }
         }
 
         if (SyntaxFacts.isAnyPunctuation(expectedKind)) {
-            return new SyntaxDiagnosticInfo(offset, width, DiagnosticCode._0_expected, SyntaxFacts.getText(expectedKind));
+            return new SyntaxDiagnostic(offset, width, DiagnosticCode._0_expected, SyntaxFacts.getText(expectedKind));
         }
 
         throw Errors.notYetImplemented();
@@ -368,7 +368,7 @@ class Parser extends SlidingWindow {
         return new TextSpan(token.start(), token.width());
     }
 
-    private withAdditionalDiagnostics(token: ISyntaxToken, ...diagnostics: DiagnosticInfo[]): ISyntaxToken {
+    private withAdditionalDiagnostics(token: ISyntaxToken, ...diagnostics: Diagnostic[]): ISyntaxToken {
         // return node.WithDiagnostics(node.GetDiagnostics().Concat(diagnostics).ToArray());
         throw Errors.notYetImplemented();
     }
