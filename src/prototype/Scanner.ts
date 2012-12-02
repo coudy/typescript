@@ -332,21 +332,25 @@ class Scanner extends SlidingWindow {
             return;
         }
 
-        this.scanDefaultCharacter(character, /*isEscaped:*/ false);
+        this.scanDefaultCharacter(character);
     }
 
     private scanNumericLiteral(): void {
+        // Because we'll be pulling out the text of the numeric literal and storing it in the token
+        // we need to pin the underling sliding window.
+        var startIndex = this.getAndPinAbsoluteIndex();
+
         if (this.isHexNumericLiteral()) {
-            this.scanHexNumericLiteral();
+            this.scanHexNumericLiteral(startIndex);
         }
         else {
-            this.scanDecimalNumericLiteral();
+            this.scanDecimalNumericLiteral(startIndex);
         }
+
+        this.releaseAndUnpinAbsoluteIndex(startIndex);
     }
 
-    private scanDecimalNumericLiteral(): void {
-        var start = this.absoluteIndex();
-
+    private scanDecimalNumericLiteral(startIndex: number): void {
         while (CharacterInfo.isDecimalDigit(this.currentItem())) {
             this.moveToNextItem();
         }
@@ -375,15 +379,13 @@ class Scanner extends SlidingWindow {
             this.moveToNextItem();
         }
 
-        var end = this.absoluteIndex();
+        var endIndex = this.absoluteIndex();
 
-        this.tokenInfo.Text = this.substring(start, end, /*intern:*/ false);
+        this.tokenInfo.Text = this.substring(startIndex, endIndex, /*intern:*/ false);
         this.tokenInfo.Kind = SyntaxKind.NumericLiteral;
     }
 
-    private scanHexNumericLiteral(): void {
-        var start = this.absoluteIndex();
-
+    private scanHexNumericLiteral(start: number): void {
         Debug.assert(this.isHexNumericLiteral());
         this.moveToNextItem();
         this.moveToNextItem();
@@ -415,15 +417,17 @@ class Scanner extends SlidingWindow {
     }
 
     private scanIdentifier(): void {
-        var start = this.absoluteIndex();
+        var startIndex = this.getAndPinAbsoluteIndex();
 
         while (this.isIdentifierPart()) {
             this.scanCharOrUnicodeEscape(this.errors);
         }
 
-        var end = this.absoluteIndex();
-        this.tokenInfo.Text = this.substring(start, end, /*intern:*/ true);
+        var endIndex = this.absoluteIndex();
+        this.tokenInfo.Text = this.substring(startIndex, endIndex, /*intern:*/ true);
         this.tokenInfo.Kind = SyntaxKind.IdentifierNameToken;
+
+        this.releaseAndUnpinAbsoluteIndex(startIndex);
     }
 
     private isIdentifierStart_Fast(character: number): bool {
@@ -735,8 +739,7 @@ class Scanner extends SlidingWindow {
 
         Debug.assert(this.currentItem() === CharacterCodes.slash);
 
-        var start = this.absoluteIndex();
-        var rewindPoint = this.getRewindPoint();
+        var startIndex = this.getAndPinAbsoluteIndex();
         try {
             this.moveToNextItem();
 
@@ -744,7 +747,7 @@ class Scanner extends SlidingWindow {
             while (true) {
                 var ch = this.currentItem();
                 if (this.isNewLineCharacter(ch) || ch === CharacterCodes.nullCharacter) {
-                    this.rewind(rewindPoint);
+                    this.rewindToPinnedIndex(startIndex);
                     return false;
                 }
 
@@ -764,13 +767,13 @@ class Scanner extends SlidingWindow {
                 this.scanCharOrUnicodeEscape(this.errors);
             }
 
-            var end = this.absoluteIndex();
+            var endIndex = this.absoluteIndex();
             this.tokenInfo.Kind = SyntaxKind.RegularExpressionLiteral;
-            this.tokenInfo.Text = this.substring(start, end, /*intern:*/ false);
+            this.tokenInfo.Text = this.substring(startIndex, endIndex, /*intern:*/ false);
             return true;
         }
         finally {
-            this.releaseRewindPoint(rewindPoint);
+            this.releaseAndUnpinAbsoluteIndex(startIndex);
         }
     }
 
@@ -793,10 +796,9 @@ class Scanner extends SlidingWindow {
         }
     }
 
-    private scanDefaultCharacter(character: number, isEscaped: bool): void {
-        var start = this.absoluteIndex();
+    private scanDefaultCharacter(character: number): void {
         this.moveToNextItem();
-        this.tokenInfo.Text = this.substring(start, start + 1, /*intern:*/ true);
+        this.tokenInfo.Text = String.fromCharCode(character);
         this.tokenInfo.Kind = SyntaxKind.ErrorToken;
         this.addSimpleDiagnosticInfo(DiagnosticCode.Unexpected_character_0, this.tokenInfo.Text);
     }
@@ -883,7 +885,7 @@ class Scanner extends SlidingWindow {
 
         Debug.assert(quoteCharacter === CharacterCodes.singleQuote || quoteCharacter === CharacterCodes.doubleQuote);
 
-        var start = this.absoluteIndex();
+        var startIndex = this.getAndPinAbsoluteIndex();
         this.moveToNextItem();
 
         while (true) {
@@ -904,9 +906,11 @@ class Scanner extends SlidingWindow {
             }
         }
 
-        var end = this.absoluteIndex();
-        this.tokenInfo.Text = this.substring(start, end, true);
+        var endIndex = this.absoluteIndex();
+        this.tokenInfo.Text = this.substring(startIndex, endIndex, true);
         this.tokenInfo.Kind = SyntaxKind.StringLiteral;
+
+        this.releaseAndUnpinAbsoluteIndex(startIndex);
     }
 
     private isUnicodeOrHexEscape(): bool {
@@ -1026,8 +1030,6 @@ class Scanner extends SlidingWindow {
         return new SyntaxDiagnosticInfo(start, end - start,
             DiagnosticCode.Unrecognized_escape_sequence);
     }
-
-    
 
     public substring(start: number, end: number, intern: bool): string {
         var length = end - start;

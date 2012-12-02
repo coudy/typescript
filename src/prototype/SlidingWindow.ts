@@ -171,18 +171,20 @@ class SlidingWindow {
         return result;
     }
 
-    public rewind(rewindPoint: IRewindPoint): void {
-
+    public rewindToPinnedIndex(absoluteIndex: number): void {
         // The rewind point shows which absolute item we want to rewind to.  Get the relative 
         // index in the actual array that we want to point to.
-        var relativeIndex = rewindPoint.absoluteIndex - this.windowAbsoluteStartIndex;
+        var relativeIndex = absoluteIndex - this.windowAbsoluteStartIndex;
 
         // Make sure we haven't screwed anything up.
         Debug.assert(relativeIndex >= 0 && relativeIndex < this.windowCount);
 
         // Set ourselves back to that point.
         this.currentRelativeItemIndex = relativeIndex;
+    }
 
+    public rewind(rewindPoint: IRewindPoint): void {
+        this.rewindToPinnedIndex(rewindPoint.absoluteIndex);
         this.restoreStateFromRewindPoint(rewindPoint);
     }
 

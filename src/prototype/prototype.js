@@ -858,10 +858,13 @@ var SlidingWindow = (function () {
         this.pool[this.poolCount] = null;
         return result;
     };
-    SlidingWindow.prototype.rewind = function (rewindPoint) {
-        var relativeIndex = rewindPoint.absoluteIndex - this.windowAbsoluteStartIndex;
+    SlidingWindow.prototype.rewindToPinnedIndex = function (absoluteIndex) {
+        var relativeIndex = absoluteIndex - this.windowAbsoluteStartIndex;
         Debug.assert(relativeIndex >= 0 && relativeIndex < this.windowCount);
         this.currentRelativeItemIndex = relativeIndex;
+    };
+    SlidingWindow.prototype.rewind = function (rewindPoint) {
+        this.rewindToPinnedIndex(rewindPoint.absoluteIndex);
         this.restoreStateFromRewindPoint(rewindPoint);
     };
     SlidingWindow.prototype.releaseRewindPoint = function (rewindPoint) {
@@ -3308,17 +3311,18 @@ var Scanner = (function (_super) {
             this.scanNumericLiteral();
             return;
         }
-        this.scanDefaultCharacter(character, false);
+        this.scanDefaultCharacter(character);
     };
     Scanner.prototype.scanNumericLiteral = function () {
+        var startIndex = this.getAndPinAbsoluteIndex();
         if(this.isHexNumericLiteral()) {
-            this.scanHexNumericLiteral();
+            this.scanHexNumericLiteral(startIndex);
         } else {
-            this.scanDecimalNumericLiteral();
+            this.scanDecimalNumericLiteral(startIndex);
         }
+        this.releaseAndUnpinAbsoluteIndex(startIndex);
     };
-    Scanner.prototype.scanDecimalNumericLiteral = function () {
-        var start = this.absoluteIndex();
+    Scanner.prototype.scanDecimalNumericLiteral = function (startIndex) {
         while(CharacterInfo.isDecimalDigit(this.currentItem())) {
             this.moveToNextItem();
         }
@@ -3341,12 +3345,11 @@ var Scanner = (function (_super) {
         while(CharacterInfo.isDecimalDigit(this.currentItem())) {
             this.moveToNextItem();
         }
-        var end = this.absoluteIndex();
-        this.tokenInfo.Text = this.substring(start, end, false);
+        var endIndex = this.absoluteIndex();
+        this.tokenInfo.Text = this.substring(startIndex, endIndex, false);
         this.tokenInfo.Kind = 7 /* NumericLiteral */ ;
     };
-    Scanner.prototype.scanHexNumericLiteral = function () {
-        var start = this.absoluteIndex();
+    Scanner.prototype.scanHexNumericLiteral = function (start) {
         Debug.assert(this.isHexNumericLiteral());
         this.moveToNextItem();
         this.moveToNextItem();
@@ -3371,13 +3374,14 @@ var Scanner = (function (_super) {
         return this.isDotPrefixedNumericLiteral();
     };
     Scanner.prototype.scanIdentifier = function () {
-        var start = this.absoluteIndex();
+        var startIndex = this.getAndPinAbsoluteIndex();
         while(this.isIdentifierPart()) {
             this.scanCharOrUnicodeEscape(this.errors);
         }
-        var end = this.absoluteIndex();
-        this.tokenInfo.Text = this.substring(start, end, true);
+        var endIndex = this.absoluteIndex();
+        this.tokenInfo.Text = this.substring(startIndex, endIndex, true);
         this.tokenInfo.Kind = 5 /* IdentifierNameToken */ ;
+        this.releaseAndUnpinAbsoluteIndex(startIndex);
     };
     Scanner.prototype.isIdentifierStart_Fast = function (character) {
         if((character >= 97 /* a */  && character <= 122 /* z */ ) || (character >= 65 /* A */  && character <= 90 /* Z */ ) || character === 95 /* _ */  || character === 36 /* $ */ ) {
@@ -3640,15 +3644,14 @@ var Scanner = (function (_super) {
             }
         }
         Debug.assert(this.currentItem() === 47 /* slash */ );
-        var start = this.absoluteIndex();
-        var rewindPoint = this.getRewindPoint();
+        var startIndex = this.getAndPinAbsoluteIndex();
         try  {
             this.moveToNextItem();
             var skipNextSlash = false;
             while(true) {
                 var ch = this.currentItem();
                 if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
-                    this.rewind(rewindPoint);
+                    this.rewindToPinnedIndex(startIndex);
                     return false;
                 }
                 this.moveToNextItem();
@@ -3665,12 +3668,12 @@ var Scanner = (function (_super) {
             while(this.isIdentifierPart()) {
                 this.scanCharOrUnicodeEscape(this.errors);
             }
-            var end = this.absoluteIndex();
+            var endIndex = this.absoluteIndex();
             this.tokenInfo.Kind = 6 /* RegularExpressionLiteral */ ;
-            this.tokenInfo.Text = this.substring(start, end, false);
+            this.tokenInfo.Text = this.substring(startIndex, endIndex, false);
             return true;
         }finally {
-            this.releaseRewindPoint(rewindPoint);
+            this.releaseAndUnpinAbsoluteIndex(startIndex);
         }
     };
     Scanner.prototype.scanExclamationToken = function () {
@@ -3687,10 +3690,9 @@ var Scanner = (function (_super) {
             this.tokenInfo.Kind = 94 /* ExclamationToken */ ;
         }
     };
-    Scanner.prototype.scanDefaultCharacter = function (character, isEscaped) {
-        var start = this.absoluteIndex();
+    Scanner.prototype.scanDefaultCharacter = function (character) {
         this.moveToNextItem();
-        this.tokenInfo.Text = this.substring(start, start + 1, true);
+        this.tokenInfo.Text = String.fromCharCode(character);
         this.tokenInfo.Kind = 113 /* ErrorToken */ ;
         this.addSimpleDiagnosticInfo(1 /* Unexpected_character_0 */ , this.tokenInfo.Text);
     };
@@ -3768,7 +3770,7 @@ var Scanner = (function (_super) {
     Scanner.prototype.scanStringLiteral = function () {
         var quoteCharacter = this.currentItem();
         Debug.assert(quoteCharacter === 39 /* singleQuote */  || quoteCharacter === 34 /* doubleQuote */ );
-        var start = this.absoluteIndex();
+        var startIndex = this.getAndPinAbsoluteIndex();
         this.moveToNextItem();
         while(true) {
             var ch = this.currentItem();
@@ -3788,9 +3790,10 @@ var Scanner = (function (_super) {
                 }
             }
         }
-        var end = this.absoluteIndex();
-        this.tokenInfo.Text = this.substring(start, end, true);
+        var endIndex = this.absoluteIndex();
+        this.tokenInfo.Text = this.substring(startIndex, endIndex, true);
         this.tokenInfo.Kind = 8 /* StringLiteral */ ;
+        this.releaseAndUnpinAbsoluteIndex(startIndex);
     };
     Scanner.prototype.isUnicodeOrHexEscape = function () {
         return this.isUnicodeEscape() || this.isHexEscape();
