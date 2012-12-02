@@ -1217,20 +1217,21 @@ var Parser = (function (_super) {
         return false;
     }
     Parser.prototype.parseSourceUnit = function () {
-        var moduleElements = [];
         var savedIsInStrictMode = this.isInStrictMode;
         var savedListParsingState = this.listParsingState;
         this.listParsingState |= ListParsingState.SourceUnit_ModuleElements;
-        while(this.currentToken().kind !== 114 /* EndOfFileToken */ ) {
-            var moduleElement = this.parseModuleElement();
-            moduleElements.push(moduleElement);
-            if(!this.isInStrictMode) {
-                this.isInStrictMode = Parser.isUseStrictDirective(moduleElement);
-            }
-        }
+        var moduleElements = this.parseSyntaxNodeList(ListParsingState.SourceUnit_ModuleElements, this.processModuleElement);
         this.listParsingState = savedListParsingState;
         this.isInStrictMode = savedIsInStrictMode;
-        return new SourceUnitSyntax(SyntaxNodeList.create(moduleElements), this.currentToken());
+        return new SourceUnitSyntax(moduleElements, this.currentToken());
+    };
+    Parser.prototype.processModuleElement = function (moduleElement) {
+        if(!this.isInStrictMode) {
+            this.isInStrictMode = Parser.isUseStrictDirective(moduleElement);
+        }
+    };
+    Parser.prototype.isModuleElement = function () {
+        return this.isImportDeclaration() || this.isModuleDeclaration() || this.isInterfaceDeclaration() || this.isClassDeclaration() || this.isEnumDeclaration() || this.isStatement(true);
     };
     Parser.prototype.parseModuleElement = function () {
         if(this.isImportDeclaration()) {
@@ -1248,7 +1249,11 @@ var Parser = (function (_super) {
                         if(this.isEnumDeclaration()) {
                             return this.parseEnumDeclaration();
                         } else {
-                            return this.parseStatement(true);
+                            if(this.isStatement(true)) {
+                                return this.parseStatement(true);
+                            } else {
+                                throw Errors.invalidOperation();
+                            }
                         }
                     }
                 }
@@ -1797,6 +1802,9 @@ var Parser = (function (_super) {
         }
         this.listParsingState = savedListParsingState;
         return SeparatedSyntaxList.create(typeNames);
+    };
+    Parser.prototype.isStatement = function (allowFunctionDeclaration) {
+        return this.isVariableStatement() || this.isLabeledStatement() || (allowFunctionDeclaration && this.isFunctionDeclaration()) || this.isIfStatement() || this.isBlock() || this.isExpressionStatement() || this.isReturnStatement() || this.isSwitchStatement() || this.isThrowStatement() || this.isBreakStatement() || this.isContinueStatement() || this.isForOrForInStatement() || this.isEmptyStatement() || this.isWhileStatement() || this.isDoStatement() || this.isTryStatement();
     };
     Parser.prototype.parseStatement = function (allowFunctionDeclaration) {
         if(this.isVariableStatement()) {
@@ -3057,10 +3065,11 @@ var Parser = (function (_super) {
         }
         return new ParameterSyntax(dotDotDotToken, publicOrPrivateToken, identifier, questionToken, typeAnnotation, equalsValueClause);
     };
-    Parser.prototype.parseSyntaxNodeList = function (currentListType) {
+    Parser.prototype.parseSyntaxNodeList = function (currentListType, processItem) {
+        if (typeof processItem === "undefined") { processItem = null; }
         var items = null;
         while(true) {
-            if(this.isExpectedListTerminator(currentListType) || 114 /* EndOfFileToken */ ) {
+            if(this.isExpectedListTerminator(currentListType) || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
                 return SyntaxNodeList.create(items);
             }
             if(this.isExpectedListItem(currentListType)) {
@@ -3068,6 +3077,9 @@ var Parser = (function (_super) {
                 Debug.assert(item !== null);
                 items = items || [];
                 items.push(item);
+                if(processItem !== null) {
+                    processItem(item);
+                }
                 continue;
             }
             var token = this.currentToken();
@@ -3076,13 +3088,91 @@ var Parser = (function (_super) {
         }
     };
     Parser.prototype.isExpectedListTerminator = function (currentListType) {
-        throw Errors.notYetImplemented();
+        switch(currentListType) {
+            case ListParsingState.SourceUnit_ModuleElements: {
+                return this.isExpectedSourceUnit_ModuleElementsTerminator();
+
+            }
+            case ListParsingState.ClassDeclaration_ClassElements:
+            case ListParsingState.ModuleDeclaration_ModuleElements:
+            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.SwitchClause_Statements:
+            case ListParsingState.Block_Statements:
+            case ListParsingState.EnumDeclaration_VariableDeclarators:
+            case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.ArgumentList_AssignmentExpressions:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+            case ListParsingState.ParameterList_Parameters: {
+                throw Errors.notYetImplemented();
+
+            }
+            default: {
+                throw Errors.invalidOperation();
+
+            }
+        }
+    };
+    Parser.prototype.isExpectedSourceUnit_ModuleElementsTerminator = function () {
+        return this.currentToken().kind === 114 /* EndOfFileToken */ ;
     };
     Parser.prototype.isExpectedListItem = function (currentListType) {
-        throw Errors.notYetImplemented();
+        switch(currentListType) {
+            case ListParsingState.SourceUnit_ModuleElements: {
+                return this.isModuleElement();
+
+            }
+            case ListParsingState.ClassDeclaration_ClassElements:
+            case ListParsingState.ModuleDeclaration_ModuleElements:
+            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.SwitchClause_Statements:
+            case ListParsingState.Block_Statements:
+            case ListParsingState.EnumDeclaration_VariableDeclarators:
+            case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.ArgumentList_AssignmentExpressions:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+            case ListParsingState.ParameterList_Parameters: {
+                throw Errors.notYetImplemented();
+
+            }
+            default: {
+                throw Errors.invalidOperation();
+
+            }
+        }
     };
     Parser.prototype.parseExpectedListItem = function (currentListType) {
-        throw Errors.notYetImplemented();
+        switch(currentListType) {
+            case ListParsingState.SourceUnit_ModuleElements: {
+                return this.parseModuleElement();
+
+            }
+            case ListParsingState.ClassDeclaration_ClassElements:
+            case ListParsingState.ModuleDeclaration_ModuleElements:
+            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.SwitchClause_Statements:
+            case ListParsingState.Block_Statements:
+            case ListParsingState.EnumDeclaration_VariableDeclarators:
+            case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.ArgumentList_AssignmentExpressions:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+            case ListParsingState.ParameterList_Parameters: {
+                throw Errors.notYetImplemented();
+
+            }
+            default: {
+                throw Errors.invalidOperation();
+
+            }
+        }
     };
     Parser.prototype.getExpectedListElementType = function (currentListType) {
         throw Errors.notYetImplemented();

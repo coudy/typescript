@@ -96,9 +96,7 @@ enum ParserExpressionPrecedence {
 // the token and add it to our list of 'skipped tokens'.  We will then repeat the above algorithm
 // until we resynchronize at some point.
 enum ListParsingState {
-    // We're currently parsing a source unit. etc. etc.
     SourceUnit_ModuleElements = 1 << 0,
-
     ClassDeclaration_ClassElements = 1 << 1,
     ModuleDeclaration_ModuleElements = 1 << 2,
     SwitchStatement_SwitchClauses = 1 << 3,
@@ -525,8 +523,6 @@ class Parser extends SlidingWindow {
     }
 
     public parseSourceUnit(): SourceUnitSyntax {
-        var moduleElements: ModuleElementSyntax[] = [];
-
         // Note: technically we don't need to save and restore this here.  After all, thisi the top
         // level parsing entrypoint.  So it will always start as false and be reset to false when the
         // loop ends.  However, for sake of symmetry and consistancy we do this.
@@ -534,20 +530,27 @@ class Parser extends SlidingWindow {
 
         var savedListParsingState = this.listParsingState;
         this.listParsingState |= ListParsingState.SourceUnit_ModuleElements;
-
-        while (this.currentToken().kind !== SyntaxKind.EndOfFileToken) {
-            var moduleElement = this.parseModuleElement();
-            moduleElements.push(moduleElement);
-
-            if (!this.isInStrictMode) {
-                this.isInStrictMode = Parser.isUseStrictDirective(moduleElement);
-            }
-        }
-
+        var moduleElements = this.parseSyntaxNodeList(ListParsingState.SourceUnit_ModuleElements, this.processModuleElement);
         this.listParsingState = savedListParsingState;
+
         this.isInStrictMode = savedIsInStrictMode;
 
-        return new SourceUnitSyntax(SyntaxNodeList.create(moduleElements), this.currentToken());
+        return new SourceUnitSyntax(moduleElements, this.currentToken());
+    }
+
+    private processModuleElement(moduleElement: ModuleElementSyntax): void {
+        if (!this.isInStrictMode) {
+            this.isInStrictMode = Parser.isUseStrictDirective(moduleElement);
+        }
+    }
+
+    private isModuleElement(): bool {
+        return this.isImportDeclaration() ||
+               this.isModuleDeclaration() ||
+               this.isInterfaceDeclaration() ||
+               this.isClassDeclaration() ||
+               this.isEnumDeclaration() ||
+               this.isStatement(/*allowFunctionDeclaration:*/ true);
     }
 
     private parseModuleElement(): ModuleElementSyntax {
@@ -566,8 +569,11 @@ class Parser extends SlidingWindow {
         else if (this.isEnumDeclaration()) {
             return this.parseEnumDeclaration();
         }
-        else {
+        else if (this.isStatement(/*allowFunctionDeclaration:*/ true)) {
             return this.parseStatement(/*allowFunctionDeclaration:*/ true);
+        }
+        else {
+            throw Errors.invalidOperation();
         }
     }
 
@@ -1331,6 +1337,25 @@ class Parser extends SlidingWindow {
         this.listParsingState = savedListParsingState;
 
         return SeparatedSyntaxList.create(typeNames);
+    }
+
+    private isStatement(allowFunctionDeclaration: bool): bool {
+        return this.isVariableStatement() ||
+               this.isLabeledStatement() ||
+               (allowFunctionDeclaration && this.isFunctionDeclaration()) ||
+               this.isIfStatement() ||
+               this.isBlock() ||
+               this.isExpressionStatement() ||
+               this.isReturnStatement() ||
+               this.isSwitchStatement() ||
+               this.isThrowStatement() ||
+               this.isBreakStatement() ||
+               this.isContinueStatement() ||
+               this.isForOrForInStatement() ||
+               this.isEmptyStatement() ||
+               this.isWhileStatement() ||
+               this.isDoStatement() ||
+               this.isTryStatement();
     }
 
     private parseStatement(allowFunctionDeclaration: bool): StatementSyntax {
@@ -3078,5 +3103,126 @@ class Parser extends SlidingWindow {
         }
 
         return new ParameterSyntax(dotDotDotToken, publicOrPrivateToken, identifier, questionToken, typeAnnotation, equalsValueClause);
+    }
+
+    private parseSyntaxNodeList(currentListType: ListParsingState, processItem: (item: any) => void = null): ISyntaxNodeList {
+        var items: any[] = null;
+
+        while (true) {
+            // First check ifthe list is complete already.  If so, we're done.  Also, if we see an 
+            // EOF then definitely stop.  We'll report the error higher when our caller tries to
+            // consume the next token.
+            if (this.isExpectedListTerminator(currentListType) || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
+                return SyntaxNodeList.create(items);
+            }
+
+            if (this.isExpectedListItem(currentListType)) {
+                var item = this.parseExpectedListItem(currentListType);
+                Debug.assert(item !== null);
+
+                items = items || [];
+                items.push(item);
+
+                if (processItem !== null) {
+                    processItem(item);
+                }
+                continue;
+            }
+
+            // Ok.  It wasn't a terminator and it wasn't the start of an item in the list.  We'll 
+            // Need to definitely report an error for this token.  We'll decide which later on 
+            // below.
+
+            // Now, check if the token is the end of one our parent lists, or the start of an item 
+            // in one of our parent lists.  If so, we won't want to consume the token.  We'll simply
+            // just report that we expected a token and did not find it.
+
+            // Otherwise, if none of the lists we're in can capture this token, then we need to 
+            // unilaterally skip it and report an error that it was unexpected.
+            var token = this.currentToken();
+            var diagnostic = new Diagnostic(
+                DiagnosticCode.Unexpected_token__0_expected,
+                this.getExpectedListElementType(currentListType));
+
+            // Consume this token and move onto the next item in the list.
+            this.moveToNextToken();
+        }
+    }
+
+    private isExpectedListTerminator(currentListType: ListParsingState): bool {
+        switch (currentListType) {
+            case ListParsingState.SourceUnit_ModuleElements:
+                return this.isExpectedSourceUnit_ModuleElementsTerminator();
+            case ListParsingState.ClassDeclaration_ClassElements:
+            case ListParsingState.ModuleDeclaration_ModuleElements:
+            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.SwitchClause_Statements:
+            case ListParsingState.Block_Statements:
+            case ListParsingState.EnumDeclaration_VariableDeclarators:
+            case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.ArgumentList_AssignmentExpressions:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+            case ListParsingState.ParameterList_Parameters:
+                throw Errors.notYetImplemented();
+            default:
+                throw Errors.invalidOperation();
+        }
+    }
+
+    private isExpectedSourceUnit_ModuleElementsTerminator(): bool {
+        return this.currentToken().kind === SyntaxKind.EndOfFileToken;
+    }
+
+    private isExpectedListItem(currentListType: ListParsingState): any {
+        switch (currentListType) {
+            case ListParsingState.SourceUnit_ModuleElements:
+                return this.isModuleElement();
+            case ListParsingState.ClassDeclaration_ClassElements:
+            case ListParsingState.ModuleDeclaration_ModuleElements:
+            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.SwitchClause_Statements:
+            case ListParsingState.Block_Statements:
+            case ListParsingState.EnumDeclaration_VariableDeclarators:
+            case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.ArgumentList_AssignmentExpressions:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+            case ListParsingState.ParameterList_Parameters:
+                throw Errors.notYetImplemented();
+            default:
+                throw Errors.invalidOperation();
+        }
+    }
+
+    private parseExpectedListItem(currentListType: ListParsingState): any {
+        switch (currentListType) {
+            case ListParsingState.SourceUnit_ModuleElements:
+                return this.parseModuleElement();
+            case ListParsingState.ClassDeclaration_ClassElements:
+            case ListParsingState.ModuleDeclaration_ModuleElements:
+            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.SwitchClause_Statements:
+            case ListParsingState.Block_Statements:
+            case ListParsingState.EnumDeclaration_VariableDeclarators:
+            case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.ArgumentList_AssignmentExpressions:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+            case ListParsingState.ParameterList_Parameters:
+                throw Errors.notYetImplemented();
+            default:
+                throw Errors.invalidOperation();
+        }
+    }
+
+    private getExpectedListElementType(currentListType: ListParsingState): string {
+        throw Errors.notYetImplemented();
     }
 }
