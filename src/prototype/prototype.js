@@ -3019,12 +3019,14 @@ var Scanner = (function (_super) {
     Scanner.isKeywordStartCharacter = [];
     Scanner.isIdentifierStartCharacter = [];
     Scanner.isIdentifierPartCharacter = [];
+    Scanner.isNumericLiteralStart = [];
     Scanner.MaxAsciiCharacter = 127;
     Scanner.initializeStaticData = function initializeStaticData() {
         if(Scanner.isKeywordStartCharacter.length === 0) {
             Scanner.isKeywordStartCharacter = ArrayUtilities.createArray(Scanner.MaxAsciiCharacter, false);
             Scanner.isIdentifierStartCharacter = ArrayUtilities.createArray(Scanner.MaxAsciiCharacter, false);
             Scanner.isIdentifierPartCharacter = ArrayUtilities.createArray(Scanner.MaxAsciiCharacter, false);
+            Scanner.isNumericLiteralStart = ArrayUtilities.createArray(Scanner.MaxAsciiCharacter, false);
             for(var character = 0; character < Scanner.MaxAsciiCharacter; character++) {
                 if(character >= 97 /* a */  && character <= 122 /* z */ ) {
                     Scanner.isIdentifierStartCharacter[character] = true;
@@ -3036,10 +3038,12 @@ var Scanner = (function (_super) {
                     } else {
                         if(character >= 48 /* _0 */  && character <= 57 /* _9 */ ) {
                             Scanner.isIdentifierPartCharacter[character] = true;
+                            Scanner.isNumericLiteralStart[character] = true;
                         }
                     }
                 }
             }
+            Scanner.isNumericLiteralStart[46 /* dot */ ] = true;
             for(var keywordKind = SyntaxKind.FirstKeyword; keywordKind <= SyntaxKind.LastKeyword; keywordKind++) {
                 var keyword = SyntaxFacts.getText(keywordKind);
                 Scanner.isKeywordStartCharacter[keyword.charCodeAt(0)] = true;
@@ -3198,128 +3202,103 @@ var Scanner = (function (_super) {
         switch(character) {
             case 34 /* doubleQuote */ :
             case 39 /* singleQuote */ : {
-                this.scanStringLiteral();
-                return;
+                return this.scanStringLiteral();
 
             }
             case 47 /* slash */ : {
-                this.scanSlashToken();
-                return;
+                return this.scanSlashToken();
 
             }
             case 46 /* dot */ : {
-                this.scanDotToken();
-                return;
+                return this.scanDotToken();
 
             }
             case 45 /* minus */ : {
-                this.scanMinusToken();
-                return;
+                return this.scanMinusToken();
 
             }
             case 33 /* exclamation */ : {
-                this.scanExclamationToken();
-                return;
+                return this.scanExclamationToken();
 
             }
             case 61 /* equals */ : {
-                this.scanEqualsToken();
-                return;
+                return this.scanEqualsToken();
 
             }
             case 124 /* bar */ : {
-                this.scanBarToken();
-                return;
+                return this.scanBarToken();
 
             }
             case 42 /* asterisk */ : {
-                this.scanAsteriskToken();
-                return;
+                return this.scanAsteriskToken();
 
             }
             case 43 /* plus */ : {
-                this.scanPlusToken();
-                return;
+                return this.scanPlusToken();
 
             }
             case 37 /* percent */ : {
-                this.scanPercentToken();
-                return;
+                return this.scanPercentToken();
 
             }
             case 38 /* ampersand */ : {
-                this.scanAmpersandToken();
-                return;
+                return this.scanAmpersandToken();
 
             }
             case 94 /* caret */ : {
-                this.scanCaretToken();
-                return;
+                return this.scanCaretToken();
 
             }
             case 60 /* lessThan */ : {
-                this.scanLessThanToken();
-                return;
+                return this.scanLessThanToken();
 
             }
             case 62 /* greaterThan */ : {
-                this.scanGreaterThanToken();
-                return;
+                return this.scanGreaterThanToken();
 
             }
             case 44 /* comma */ : {
-                this.advanceAndSetTokenKind(72 /* CommaToken */ );
-                return;
+                return this.advanceAndSetTokenKind(72 /* CommaToken */ );
 
             }
             case 58 /* colon */ : {
-                this.advanceAndSetTokenKind(99 /* ColonToken */ );
-                return;
+                return this.advanceAndSetTokenKind(99 /* ColonToken */ );
 
             }
             case 59 /* semicolon */ : {
-                this.advanceAndSetTokenKind(71 /* SemicolonToken */ );
-                return;
+                return this.advanceAndSetTokenKind(71 /* SemicolonToken */ );
 
             }
             case 126 /* tilde */ : {
-                this.advanceAndSetTokenKind(95 /* TildeToken */ );
-                return;
+                return this.advanceAndSetTokenKind(95 /* TildeToken */ );
 
             }
             case 40 /* openParen */ : {
-                this.advanceAndSetTokenKind(65 /* OpenParenToken */ );
-                return;
+                return this.advanceAndSetTokenKind(65 /* OpenParenToken */ );
 
             }
             case 41 /* closeParen */ : {
-                this.advanceAndSetTokenKind(66 /* CloseParenToken */ );
-                return;
+                return this.advanceAndSetTokenKind(66 /* CloseParenToken */ );
 
             }
             case 123 /* openBrace */ : {
-                this.advanceAndSetTokenKind(63 /* OpenBraceToken */ );
-                return;
+                return this.advanceAndSetTokenKind(63 /* OpenBraceToken */ );
 
             }
             case 125 /* closeBrace */ : {
-                this.advanceAndSetTokenKind(64 /* CloseBraceToken */ );
-                return;
+                return this.advanceAndSetTokenKind(64 /* CloseBraceToken */ );
 
             }
             case 91 /* openBracket */ : {
-                this.advanceAndSetTokenKind(67 /* OpenBracketToken */ );
-                return;
+                return this.advanceAndSetTokenKind(67 /* OpenBracketToken */ );
 
             }
             case 93 /* closeBracket */ : {
-                this.advanceAndSetTokenKind(68 /* CloseBracketToken */ );
-                return;
+                return this.advanceAndSetTokenKind(68 /* CloseBracketToken */ );
 
             }
             case 63 /* question */ : {
-                this.advanceAndSetTokenKind(98 /* QuestionToken */ );
-                return;
+                return this.advanceAndSetTokenKind(98 /* QuestionToken */ );
 
             }
             case 0 /* nullCharacter */ : {
@@ -3329,12 +3308,12 @@ var Scanner = (function (_super) {
 
             }
         }
-        if(Scanner.isKeywordStartCharacter[character]) {
-            this.scanIdentifierOrKeyword();
+        if(Scanner.isNumericLiteralStart[character]) {
+            this.scanNumericLiteral();
             return;
         }
-        if(this.isNumericLiteralStart(character)) {
-            this.scanNumericLiteral();
+        if(Scanner.isKeywordStartCharacter[character]) {
+            this.scanIdentifierOrKeyword();
             return;
         }
         if(this.isIdentifierStart(this.peekCharOrUnicodeEscape())) {
@@ -3419,12 +3398,6 @@ var Scanner = (function (_super) {
             return ch === 120 /* x */  || ch === 88 /* X */ ;
         }
         return false;
-    };
-    Scanner.prototype.isNumericLiteralStart = function (ch) {
-        if(CharacterInfo.isDecimalDigit(ch)) {
-            return true;
-        }
-        return this.isDotPrefixedNumericLiteral();
     };
     Scanner.prototype.scanIdentifierOrKeyword = function () {
         this.scanIdentifier();
@@ -35004,7 +34977,7 @@ var totalSize = 0;
 var program = new Program();
 var start, end;
 start = new Date().getTime();
-program.runAllTests(Environment, false, true);
+program.runAllTests(Environment, false, false);
 program.run(Environment, false);
 end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));

@@ -21,6 +21,7 @@ class Scanner extends SlidingWindow {
     private static isKeywordStartCharacter: bool[] = [];
     private static isIdentifierStartCharacter: bool[] = [];
     private static isIdentifierPartCharacter: bool[] = [];
+    private static isNumericLiteralStart: bool[] = [];
     private static MaxAsciiCharacter = 127;
 
     private static initializeStaticData() {
@@ -28,6 +29,7 @@ class Scanner extends SlidingWindow {
             Scanner.isKeywordStartCharacter = ArrayUtilities.createArray(MaxAsciiCharacter, false);
             Scanner.isIdentifierStartCharacter = ArrayUtilities.createArray(MaxAsciiCharacter, false);
             Scanner.isIdentifierPartCharacter = ArrayUtilities.createArray(MaxAsciiCharacter, false);
+            Scanner.isNumericLiteralStart = ArrayUtilities.createArray(MaxAsciiCharacter, false);
 
             for (var character = 0; character < MaxAsciiCharacter; character++) {
                 if (character >= CharacterCodes.a && character <= CharacterCodes.z) {
@@ -42,8 +44,11 @@ class Scanner extends SlidingWindow {
                 }
                 else if (character >= CharacterCodes._0 && character <= CharacterCodes._9) {
                     Scanner.isIdentifierPartCharacter[character] = true;
+                    Scanner.isNumericLiteralStart[character] = true;
                 }
             }
+
+            Scanner.isNumericLiteralStart[CharacterCodes.dot] = true;
 
             for (var keywordKind = SyntaxKind.FirstKeyword; keywordKind <= SyntaxKind.LastKeyword; keywordKind++) {
                 var keyword = SyntaxFacts.getText(keywordKind);
@@ -241,107 +246,82 @@ class Scanner extends SlidingWindow {
         switch (character) {
             case CharacterCodes.doubleQuote:
             case CharacterCodes.singleQuote:
-                this.scanStringLiteral();
-                return;
+                return this.scanStringLiteral();
 
             // These are the set of variable width punctuation tokens.
             case CharacterCodes.slash:
-                this.scanSlashToken();
-                return;
+                return this.scanSlashToken();
 
             case CharacterCodes.dot:
-                this.scanDotToken();
-                return;
+                return this.scanDotToken();
 
             case CharacterCodes.minus:
-                this.scanMinusToken();
-                return;
+                return this.scanMinusToken();
 
             case CharacterCodes.exclamation:
-                this.scanExclamationToken();
-                return;
+                return this.scanExclamationToken();
 
             case CharacterCodes.equals:
-                this.scanEqualsToken();
-                return;
+                return this.scanEqualsToken();
 
             case CharacterCodes.bar:
-                this.scanBarToken();
-                return;
+                return this.scanBarToken();
 
             case CharacterCodes.asterisk:
-                this.scanAsteriskToken();
-                return;
+                return this.scanAsteriskToken();
 
             case CharacterCodes.plus:
-                this.scanPlusToken();
-                return;
+                return this.scanPlusToken();
 
             case CharacterCodes.percent:
-                this.scanPercentToken();
-                return;
+                return this.scanPercentToken();
 
             case CharacterCodes.ampersand:
-                this.scanAmpersandToken();
-                return;
+                return this.scanAmpersandToken();
 
             case CharacterCodes.caret:
-                this.scanCaretToken();
-                return;
+                return this.scanCaretToken();
 
             case CharacterCodes.lessThan:
-                this.scanLessThanToken();
-                return;
+                return this.scanLessThanToken();
 
             case CharacterCodes.greaterThan:
-                this.scanGreaterThanToken();
-                return;
+                return this.scanGreaterThanToken();
 
             // These are the set of fixed, single character length punctuation tokens.
             // The token kind does not depend on what follows.
             case CharacterCodes.comma:
-                this.advanceAndSetTokenKind(SyntaxKind.CommaToken);
-                return;
+                return this.advanceAndSetTokenKind(SyntaxKind.CommaToken);
 
             case CharacterCodes.colon:
-                this.advanceAndSetTokenKind(SyntaxKind.ColonToken);
-                return;
+                return this.advanceAndSetTokenKind(SyntaxKind.ColonToken);
 
             case CharacterCodes.semicolon:
-                this.advanceAndSetTokenKind(SyntaxKind.SemicolonToken);
-                return;
+                return this.advanceAndSetTokenKind(SyntaxKind.SemicolonToken);
 
             case CharacterCodes.tilde:
-                this.advanceAndSetTokenKind(SyntaxKind.TildeToken);
-                return;
+                return this.advanceAndSetTokenKind(SyntaxKind.TildeToken);
 
             case CharacterCodes.openParen:
-                this.advanceAndSetTokenKind(SyntaxKind.OpenParenToken);
-                return;
+                return this.advanceAndSetTokenKind(SyntaxKind.OpenParenToken);
 
             case CharacterCodes.closeParen:
-                this.advanceAndSetTokenKind(SyntaxKind.CloseParenToken);
-                return;
+                return  this.advanceAndSetTokenKind(SyntaxKind.CloseParenToken);
 
             case CharacterCodes.openBrace:
-                this.advanceAndSetTokenKind(SyntaxKind.OpenBraceToken);
-                return;
+                return this.advanceAndSetTokenKind(SyntaxKind.OpenBraceToken);
 
             case CharacterCodes.closeBrace:
-                this.advanceAndSetTokenKind(SyntaxKind.CloseBraceToken);
-                return;
+                return this.advanceAndSetTokenKind(SyntaxKind.CloseBraceToken);
 
             case CharacterCodes.openBracket:
-                this.advanceAndSetTokenKind(SyntaxKind.OpenBracketToken);
-                return;
+                return this.advanceAndSetTokenKind(SyntaxKind.OpenBracketToken);
 
             case CharacterCodes.closeBracket:
-                this.advanceAndSetTokenKind(SyntaxKind.CloseBracketToken);
-                return;
+                return this.advanceAndSetTokenKind(SyntaxKind.CloseBracketToken);
 
             case CharacterCodes.question:
-                this.advanceAndSetTokenKind(SyntaxKind.QuestionToken);
-                return;
+                return this.advanceAndSetTokenKind(SyntaxKind.QuestionToken);
 
             case CharacterCodes.nullCharacter:
                 // If we see a null character, we're done.
@@ -350,13 +330,13 @@ class Scanner extends SlidingWindow {
                 return;
         }
 
-        if (Scanner.isKeywordStartCharacter[character]) {
-            this.scanIdentifierOrKeyword();
+        if (Scanner.isNumericLiteralStart[character]) {
+            this.scanNumericLiteral();
             return;
         }
 
-        if (this.isNumericLiteralStart(character)) {
-            this.scanNumericLiteral();
+        if (Scanner.isKeywordStartCharacter[character]) {
+            this.scanIdentifierOrKeyword();
             return;
         }
 
@@ -471,14 +451,6 @@ class Scanner extends SlidingWindow {
         }
 
         return false;
-    }
-
-    private isNumericLiteralStart(ch: number): bool {
-        if (CharacterInfo.isDecimalDigit(ch)) {
-            return true;
-        }
-
-        return this.isDotPrefixedNumericLiteral();
     }
 
     private scanIdentifierOrKeyword(): void {
