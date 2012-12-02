@@ -915,6 +915,24 @@ var ParserExpressionPrecedence;
     ParserExpressionPrecedence.MultiplicativeExpressionPrecedence = 14;
     ParserExpressionPrecedence.UnaryExpressionPrecedence = 15;
 })(ParserExpressionPrecedence || (ParserExpressionPrecedence = {}));
+var ListParsingState;
+(function (ListParsingState) {
+    ListParsingState._map = [];
+    ListParsingState.SourceUnit_ModuleElements = 1 << 0;
+    ListParsingState.ClassDeclaration_ClassElements = 1 << 1;
+    ListParsingState.ModuleDeclaration_ModuleElements = 1 << 2;
+    ListParsingState.SwitchStatement_SwitchClauses = 1 << 3;
+    ListParsingState.SwitchClause_Statements = 1 << 4;
+    ListParsingState.Block_Statements = 1 << 5;
+    ListParsingState.EnumDeclaration_VariableDeclarators = 1 << 6;
+    ListParsingState.ObjectType_TypeMembers = 1 << 7;
+    ListParsingState.ExtendsOrImplementsClause_TypeNameList = 1 << 8;
+    ListParsingState.VariableDeclaration_VariableDeclarators = 1 << 9;
+    ListParsingState.ArgumentList_AssignmentExpressions = 1 << 10;
+    ListParsingState.ObjectLiteralExpression_PropertyAssignments = 1 << 11;
+    ListParsingState.ArrayLiteralExpression_AssignmentExpressions = 1 << 12;
+    ListParsingState.ParameterList_Parameters = 1 << 13;
+})(ListParsingState || (ListParsingState = {}));
 var Parser = (function (_super) {
     __extends(Parser, _super);
     function Parser(scanner, oldTree, changes, options) {
@@ -924,6 +942,7 @@ var Parser = (function (_super) {
         this.previousToken = null;
         this.skippedTokens = [];
         this.diagnostics = [];
+        this.listParsingState = 0;
         this.scanner = scanner;
         this.oldTree = oldTree;
         this.options = options || new ParseOptions();
@@ -1199,6 +1218,8 @@ var Parser = (function (_super) {
     Parser.prototype.parseSourceUnit = function () {
         var moduleElements = [];
         var savedIsInStrictMode = this.isInStrictMode;
+        var savedListParsingState = this.listParsingState;
+        this.listParsingState |= ListParsingState.SourceUnit_ModuleElements;
         while(this.currentToken().kind !== 114 /* EndOfFileToken */ ) {
             var moduleElement = this.parseModuleElement();
             moduleElements.push(moduleElement);
@@ -1206,6 +1227,7 @@ var Parser = (function (_super) {
                 this.isInStrictMode = Parser.isUseStrictDirective(moduleElement);
             }
         }
+        this.listParsingState = savedListParsingState;
         this.isInStrictMode = savedIsInStrictMode;
         return new SourceUnitSyntax(SyntaxNodeList.create(moduleElements), this.currentToken());
     };
@@ -1304,6 +1326,8 @@ var Parser = (function (_super) {
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
         var variableDeclarators = null;
         if(!openBraceToken.isMissing()) {
+            var savedListParsingState = this.listParsingState;
+            this.listParsingState |= ListParsingState.EnumDeclaration_VariableDeclarators;
             while(true) {
                 if(this.currentToken().kind === 64 /* CloseBraceToken */  || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
                     break;
@@ -1318,6 +1342,7 @@ var Parser = (function (_super) {
                 }
                 break;
             }
+            this.listParsingState = savedListParsingState;
         }
         var closeBraceToken = this.eatToken(64 /* CloseBraceToken */ );
         return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, SeparatedSyntaxList.create(variableDeclarators), closeBraceToken);
@@ -1357,6 +1382,8 @@ var Parser = (function (_super) {
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
         var classElements = null;
         if(!openBraceToken.isMissing()) {
+            var savedListParsingState = this.listParsingState;
+            this.listParsingState |= ListParsingState.ClassDeclaration_ClassElements;
             while(true) {
                 if(this.currentToken().kind === 64 /* CloseBraceToken */  || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
                     break;
@@ -1365,6 +1392,7 @@ var Parser = (function (_super) {
                 classElements = classElements || [];
                 classElements.push(classElement);
             }
+            this.listParsingState = savedListParsingState;
         }
         var closeBraceToken = this.eatToken(64 /* CloseBraceToken */ );
         return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, SyntaxNodeList.create(classElements), closeBraceToken);
@@ -1581,11 +1609,14 @@ var Parser = (function (_super) {
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
         var moduleElements = null;
         if(!openBraceToken.isMissing()) {
+            var savedListParsingState = this.listParsingState;
+            this.listParsingState |= ListParsingState.ModuleDeclaration_ModuleElements;
             while(this.currentToken().kind !== 64 /* CloseBraceToken */  && this.currentToken().kind !== 114 /* EndOfFileToken */ ) {
                 var element = this.parseModuleElement();
                 moduleElements = moduleElements || [];
                 moduleElements.push(element);
             }
+            this.listParsingState = savedListParsingState;
         }
         var closeBraceToken = this.eatToken(64 /* CloseBraceToken */ );
         return new ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, SyntaxNodeList.create(moduleElements), closeBraceToken);
@@ -1615,6 +1646,8 @@ var Parser = (function (_super) {
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
         var typeMembers = null;
         if(!openBraceToken.isMissing()) {
+            var savedListParsingState = this.listParsingState;
+            this.listParsingState |= ListParsingState.ObjectType_TypeMembers;
             while(true) {
                 if(this.currentToken().kind === 64 /* CloseBraceToken */  || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
                     break;
@@ -1629,6 +1662,7 @@ var Parser = (function (_super) {
                     break;
                 }
             }
+            this.listParsingState = savedListParsingState;
         }
         var closeBraceToken = this.eatToken(64 /* CloseBraceToken */ );
         return new ObjectTypeSyntax(openBraceToken, SeparatedSyntaxList.create(typeMembers), closeBraceToken);
@@ -1733,7 +1767,7 @@ var Parser = (function (_super) {
     Parser.prototype.parseExtendsClause = function () {
         Debug.assert(this.isExtendsClause());
         var extendsKeyword = this.eatKeyword(42 /* ExtendsKeyword */ );
-        var typeNames = this.parseTypeNameList();
+        var typeNames = this.parseExtendsOrImplementsClauseTypeNameList();
         return new ExtendsClauseSyntax(extendsKeyword, typeNames);
     };
     Parser.prototype.isImplementsClause = function () {
@@ -1742,11 +1776,13 @@ var Parser = (function (_super) {
     Parser.prototype.parseImplementsClause = function () {
         Debug.assert(this.isImplementsClause());
         var implementsKeyword = this.eatKeyword(45 /* ImplementsKeyword */ );
-        var typeNames = this.parseTypeNameList();
+        var typeNames = this.parseExtendsOrImplementsClauseTypeNameList();
         return new ImplementsClauseSyntax(implementsKeyword, typeNames);
     };
-    Parser.prototype.parseTypeNameList = function () {
+    Parser.prototype.parseExtendsOrImplementsClauseTypeNameList = function () {
         var typeNames = [];
+        var savedListParsingState = this.listParsingState;
+        this.listParsingState |= ListParsingState.ExtendsOrImplementsClause_TypeNameList;
         var typeName = this.parseName();
         typeNames.push(typeName);
         while(true) {
@@ -1758,6 +1794,7 @@ var Parser = (function (_super) {
             }
             break;
         }
+        this.listParsingState = savedListParsingState;
         return SeparatedSyntaxList.create(typeNames);
     };
     Parser.prototype.parseStatement = function (allowFunctionDeclaration) {
@@ -2021,6 +2058,8 @@ var Parser = (function (_super) {
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
         var switchClauses = null;
         if(!openBraceToken.isMissing()) {
+            var savedListParsingState = this.listParsingState;
+            this.listParsingState |= ListParsingState.SwitchStatement_SwitchClauses;
             while(true) {
                 if(this.currentToken().kind === 64 /* CloseBraceToken */  || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
                     break;
@@ -2033,6 +2072,7 @@ var Parser = (function (_super) {
                     break;
                 }
             }
+            this.listParsingState = savedListParsingState;
         }
         var closeBraceToken = this.eatToken(64 /* CloseBraceToken */ );
         return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, SyntaxNodeList.create(switchClauses), closeBraceToken);
@@ -2078,6 +2118,8 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseSwitchClauseStatements = function () {
         var statements = null;
+        var savedListParsingState = this.listParsingState;
+        this.listParsingState |= ListParsingState.SwitchClause_Statements;
         while(true) {
             if(this.isSwitchClause() || this.currentToken().kind === 114 /* EndOfFileToken */  || this.currentToken().kind === 64 /* CloseBraceToken */ ) {
                 break;
@@ -2086,6 +2128,7 @@ var Parser = (function (_super) {
             statements = statements || [];
             statements.push(statement);
         }
+        this.listParsingState = savedListParsingState;
         return SyntaxNodeList.create(statements);
     };
     Parser.prototype.isThrowStatement = function () {
@@ -2231,6 +2274,8 @@ var Parser = (function (_super) {
     Parser.prototype.parseVariableDeclaration = function (allowIn) {
         Debug.assert(this.currentToken().keywordKind() === 34 /* VarKeyword */ );
         var varKeyword = this.eatKeyword(34 /* VarKeyword */ );
+        var savedListParsingState = this.listParsingState;
+        this.listParsingState |= ListParsingState.VariableDeclaration_VariableDeclarators;
         var variableDeclarators = [];
         var variableDeclarator = this.parseVariableDeclarator(allowIn);
         variableDeclarators.push(variableDeclarator);
@@ -2243,6 +2288,7 @@ var Parser = (function (_super) {
             variableDeclarator = this.parseVariableDeclarator(allowIn);
             variableDeclarators.push(variableDeclarator);
         }
+        this.listParsingState = savedListParsingState;
         return new VariableDeclarationSyntax(varKeyword, SeparatedSyntaxList.create(variableDeclarators));
     };
     Parser.prototype.parseVariableDeclarator = function (allowIn) {
@@ -2404,6 +2450,8 @@ var Parser = (function (_super) {
     Parser.prototype.parseArgumentList = function () {
         Debug.assert(this.isArgumentList());
         var openParenToken = this.eatToken(65 /* OpenParenToken */ );
+        var savedListParsingState = this.listParsingState;
+        this.listParsingState |= ListParsingState.ArgumentList_AssignmentExpressions;
         var arguments = null;
         if(this.currentToken().kind !== 66 /* CloseParenToken */  && this.currentToken().kind !== 114 /* EndOfFileToken */ ) {
             var argument = this.parseAssignmentExpression(true);
@@ -2423,6 +2471,7 @@ var Parser = (function (_super) {
                 break;
             }
         }
+        this.listParsingState = savedListParsingState;
         var closeParenToken = this.eatToken(66 /* CloseParenToken */ );
         return new ArgumentListSyntax(openParenToken, SeparatedSyntaxList.create(arguments), closeParenToken);
     };
@@ -2680,6 +2729,8 @@ var Parser = (function (_super) {
         Debug.assert(this.currentToken().kind === 63 /* OpenBraceToken */ );
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
         var propertyAssignments = null;
+        var savedListParsingState = this.listParsingState;
+        this.listParsingState |= ListParsingState.ObjectLiteralExpression_PropertyAssignments;
         while(true) {
             if(this.currentToken().kind === 64 /* CloseBraceToken */  || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
                 break;
@@ -2696,6 +2747,7 @@ var Parser = (function (_super) {
             }
             break;
         }
+        this.listParsingState = savedListParsingState;
         var closeBraceToken = this.eatToken(64 /* CloseBraceToken */ );
         return new ObjectLiteralExpressionSyntax(openBraceToken, SeparatedSyntaxList.create(propertyAssignments), closeBraceToken);
     };
@@ -2771,6 +2823,8 @@ var Parser = (function (_super) {
         Debug.assert(this.currentToken().kind === 67 /* OpenBracketToken */ );
         var openBracketToken = this.eatToken(67 /* OpenBracketToken */ );
         var expressions = null;
+        var savedListParsingState = this.listParsingState;
+        this.listParsingState |= ListParsingState.ArrayLiteralExpression_AssignmentExpressions;
         var addOmittedExpression = true;
         while(true) {
             var currentTokenKind = this.currentToken().kind;
@@ -2798,6 +2852,7 @@ var Parser = (function (_super) {
                 break;
             }
         }
+        this.listParsingState = savedListParsingState;
         var closeBracketToken = this.eatToken(68 /* CloseBracketToken */ );
         return new ArrayLiteralExpressionSyntax(openBracketToken, SeparatedSyntaxList.create(expressions), closeBracketToken);
     };
@@ -2815,6 +2870,8 @@ var Parser = (function (_super) {
         var statements = null;
         if(!openBraceToken.isMissing()) {
             var savedIsInStrictMode = this.isInStrictMode;
+            var savedListParsingState = this.listParsingState;
+            this.listParsingState |= ListParsingState.Block_Statements;
             while(true) {
                 if(this.currentToken().kind === 64 /* CloseBraceToken */  || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
                     break;
@@ -2826,6 +2883,7 @@ var Parser = (function (_super) {
                     this.isInStrictMode = Parser.isUseStrictDirective(statement);
                 }
             }
+            this.listParsingState = savedListParsingState;
             this.isInStrictMode = savedIsInStrictMode;
         }
         var closeBraceToken = this.eatToken(64 /* CloseBraceToken */ );
@@ -2843,6 +2901,8 @@ var Parser = (function (_super) {
         var openParenToken = this.eatToken(65 /* OpenParenToken */ );
         var parameters = null;
         if(!openParenToken.isMissing()) {
+            var savedListParsingState = this.listParsingState;
+            this.listParsingState |= ListParsingState.ParameterList_Parameters;
             if(this.currentToken().kind !== 66 /* CloseParenToken */  && this.currentToken().kind !== 114 /* EndOfFileToken */ ) {
                 var parameter = this.parseParameter();
                 parameters = [];
@@ -2862,6 +2922,7 @@ var Parser = (function (_super) {
                     break;
                 }
             }
+            this.listParsingState = savedListParsingState;
         }
         var closeParenToken = this.eatToken(66 /* CloseParenToken */ );
         return new ParameterListSyntax(openParenToken, SeparatedSyntaxList.create(parameters), closeParenToken);

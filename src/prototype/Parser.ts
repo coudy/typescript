@@ -67,22 +67,51 @@ enum ParserExpressionPrecedence {
     UnaryExpressionPrecedence= 15,
 }
 
-enum ErrorRecoveryState {
+// The current state of the parser wrt to list parsing.  The way to read these is as:
+// CurrentProduction_SubList.  i.e. "Block_Statements" means "we're parsing a Block, and we're 
+// currently parsing list of statements within it".  This is used by the list parsing mechanism
+// to both the elements of the lists, and recover from errors we encounter when we run into 
+// unexpected code.
+// 
+// For example, when we are in ArgumentList_Arguments, we will continue trying to consume code as 
+// long as "isArgument" is true.  If we run into a token for which "isArgument" is not true we will
+// do the following:
+//
+// If the token is a StopToken for ArgumentList_Arguments then we will stop parsing the list of 
+// arguments with no error.
+//
+// Otherwise, we *do* report an error for this unexpected token.
+//
+// We then will attempt error recovery.  Error recovery will walk up the list of states we're in 
+// seeing if the token is a stop token for that construct *or* could start another element within
+// what construct.  For example, if the unexpected token was '}' then that would be a stop token
+// for Block_Statements.  Alternatively, if the unexpected token was 'return', then that would be
+// a start token for the next statment in Block_Statements.
+// 
+// If either of those cases are true, We will then return *without* consuming  that token. 
+// (Remember, we've already reported an error).  Now we're just letting the higher up parse 
+// constructs eventually try to consume that token.
+//
+// If none of the higher up states consider this a stop or start token, then we will simply consume
+// the token and add it to our list of 'skipped tokens'.  We will then repeat the above algorithm
+// until we resynchronize at some point.
+enum ListParsingState {
     // We're currently parsing a source unit. etc. etc.
-    SourceUnit = 1 << 0,
+    SourceUnit_ModuleElements = 1 << 0,
 
-    ClassDeclaration = 1 << 1,
-    ModuleDeclaration = 1 << 2,
-    SwitchStatement = 1 << 3,
-    SwitchClause = 1 << 4,
-    Block = 1 << 5,
-    EnumDeclaration = 1 << 6,
-    ObjectType = 1 << 7,
-    TypeNameList = 1 << 8,
-    VariableDeclaration = 1 << 9,
-    ArgumentList = 1 << 10,
-    ObjectLiteral = 1 << 11,
-    ParameterList = 1 << 12
+    ClassDeclaration_ClassElements = 1 << 1,
+    ModuleDeclaration_ModuleElements = 1 << 2,
+    SwitchStatement_SwitchClauses = 1 << 3,
+    SwitchClause_Statements = 1 << 4,
+    Block_Statements = 1 << 5,
+    EnumDeclaration_VariableDeclarators = 1 << 6,
+    ObjectType_TypeMembers = 1 << 7,
+    ExtendsOrImplementsClause_TypeNameList = 1 << 8,
+    VariableDeclaration_VariableDeclarators = 1 << 9,
+    ArgumentList_AssignmentExpressions = 1 << 10,
+    ObjectLiteralExpression_PropertyAssignments = 1 << 11,
+    ArrayLiteralExpression_AssignmentExpressions = 1 << 12,
+    ParameterList_Parameters = 1 << 13
 }
 
 class Parser extends SlidingWindow {
@@ -112,6 +141,7 @@ class Parser extends SlidingWindow {
 
     private skippedTokens: ISyntaxToken[] = [];
     private diagnostics: Diagnostic[] = [];
+    private listParsingState: ListParsingState = 0;
 
     constructor(
         scanner: Scanner,
@@ -502,6 +532,9 @@ class Parser extends SlidingWindow {
         // loop ends.  However, for sake of symmetry and consistancy we do this.
         var savedIsInStrictMode = this.isInStrictMode;
 
+        var savedListParsingState = this.listParsingState;
+        this.listParsingState |= ListParsingState.SourceUnit_ModuleElements;
+
         while (this.currentToken().kind !== SyntaxKind.EndOfFileToken) {
             var moduleElement = this.parseModuleElement();
             moduleElements.push(moduleElement);
@@ -511,6 +544,7 @@ class Parser extends SlidingWindow {
             }
         }
 
+        this.listParsingState = savedListParsingState;
         this.isInStrictMode = savedIsInStrictMode;
 
         return new SourceUnitSyntax(SyntaxNodeList.create(moduleElements), this.currentToken());
@@ -644,6 +678,9 @@ class Parser extends SlidingWindow {
         var variableDeclarators: any[] = null;
 
         if (!openBraceToken.isMissing()) {
+            var savedListParsingState = this.listParsingState;
+            this.listParsingState |= ListParsingState.EnumDeclaration_VariableDeclarators;
+
             while (true) {
                 if (this.currentToken().kind === SyntaxKind.CloseBraceToken || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
                     break;
@@ -663,6 +700,8 @@ class Parser extends SlidingWindow {
                 // TODO: error recovery.
                 break;
             }
+
+            this.listParsingState = savedListParsingState;
         }
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -718,6 +757,9 @@ class Parser extends SlidingWindow {
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
         var classElements: ClassElementSyntax[] = null;
         if (!openBraceToken.isMissing()) {
+            var savedListParsingState = this.listParsingState;
+            this.listParsingState |= ListParsingState.ClassDeclaration_ClassElements;
+
             while (true) {
                 if (this.currentToken().kind === SyntaxKind.CloseBraceToken || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
                     break;
@@ -728,6 +770,8 @@ class Parser extends SlidingWindow {
                 classElements = classElements || [];
                 classElements.push(classElement);
             }
+
+            this.listParsingState = savedListParsingState;
         }
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -1024,6 +1068,9 @@ class Parser extends SlidingWindow {
 
         var moduleElements: ModuleElementSyntax[] = null;
         if (!openBraceToken.isMissing()) {
+            var savedListParsingState = this.listParsingState;
+            this.listParsingState |= ListParsingState.ModuleDeclaration_ModuleElements;
+
             while (this.currentToken().kind !== SyntaxKind.CloseBraceToken &&
                    this.currentToken().kind !== SyntaxKind.EndOfFileToken) {
                 var element = this.parseModuleElement();
@@ -1031,6 +1078,8 @@ class Parser extends SlidingWindow {
                 moduleElements = moduleElements || [];
                 moduleElements.push(element);
             }
+
+            this.listParsingState = savedListParsingState;
         }
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -1078,6 +1127,9 @@ class Parser extends SlidingWindow {
 
         var typeMembers: any[] = null;
         if (!openBraceToken.isMissing()) {
+            var savedListParsingState = this.listParsingState;
+            this.listParsingState |= ListParsingState.ObjectType_TypeMembers;
+
             while (true) {
                 if (this.currentToken().kind === SyntaxKind.CloseBraceToken || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
                     break;
@@ -1097,6 +1149,8 @@ class Parser extends SlidingWindow {
                     break;
                 }
             }
+
+            this.listParsingState = savedListParsingState;
         }
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -1234,7 +1288,7 @@ class Parser extends SlidingWindow {
         Debug.assert(this.isExtendsClause());
 
         var extendsKeyword = this.eatKeyword(SyntaxKind.ExtendsKeyword);
-        var typeNames = this.parseTypeNameList();
+        var typeNames = this.parseExtendsOrImplementsClauseTypeNameList();
 
         return new ExtendsClauseSyntax(extendsKeyword, typeNames);
     }
@@ -1247,13 +1301,16 @@ class Parser extends SlidingWindow {
         Debug.assert(this.isImplementsClause());
 
         var implementsKeyword = this.eatKeyword(SyntaxKind.ImplementsKeyword);
-        var typeNames = this.parseTypeNameList();
+        var typeNames = this.parseExtendsOrImplementsClauseTypeNameList();
 
         return new ImplementsClauseSyntax(implementsKeyword, typeNames);
     }
 
-    private parseTypeNameList(): ISeparatedSyntaxList {
+    private parseExtendsOrImplementsClauseTypeNameList(): ISeparatedSyntaxList {
         var typeNames: any[] = [];
+
+        var savedListParsingState = this.listParsingState;
+        this.listParsingState |= ListParsingState.ExtendsOrImplementsClause_TypeNameList;
 
         var typeName = this.parseName();
         typeNames.push(typeName);
@@ -1270,6 +1327,8 @@ class Parser extends SlidingWindow {
             // TODO: error recovery.
             break;
         }
+
+        this.listParsingState = savedListParsingState;
 
         return SeparatedSyntaxList.create(typeNames);
     }
@@ -1626,6 +1685,9 @@ class Parser extends SlidingWindow {
 
         var switchClauses: SwitchClauseSyntax[] = null;
         if (!openBraceToken.isMissing()) {
+            var savedListParsingState = this.listParsingState;
+            this.listParsingState |= ListParsingState.SwitchStatement_SwitchClauses;
+
             while (true) {
                 if (this.currentToken().kind === SyntaxKind.CloseBraceToken || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
                     break;
@@ -1642,6 +1704,8 @@ class Parser extends SlidingWindow {
                     break;
                 }
             }
+
+            this.listParsingState = savedListParsingState;
         }
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -1702,6 +1766,9 @@ class Parser extends SlidingWindow {
     private parseSwitchClauseStatements(): ISyntaxNodeList {
         var statements: StatementSyntax[] = null;
 
+        var savedListParsingState = this.listParsingState;
+        this.listParsingState |= ListParsingState.SwitchClause_Statements;
+
         while (true) {
             if (this.isSwitchClause() || this.currentToken().kind === SyntaxKind.EndOfFileToken || this.currentToken().kind === SyntaxKind.CloseBraceToken) {
                 break;
@@ -1713,6 +1780,8 @@ class Parser extends SlidingWindow {
 
             // TODO: error recovery.
         }
+
+        this.listParsingState = savedListParsingState;
 
         return SyntaxNodeList.create(statements);
     }
@@ -1898,6 +1967,9 @@ class Parser extends SlidingWindow {
         Debug.assert(this.currentToken().keywordKind() === SyntaxKind.VarKeyword);
         var varKeyword = this.eatKeyword(SyntaxKind.VarKeyword);
 
+        var savedListParsingState = this.listParsingState;
+        this.listParsingState |= ListParsingState.VariableDeclaration_VariableDeclarators;
+
         var variableDeclarators = [];
 
         var variableDeclarator = this.parseVariableDeclarator(allowIn);
@@ -1914,6 +1986,8 @@ class Parser extends SlidingWindow {
             variableDeclarator = this.parseVariableDeclarator(allowIn);
             variableDeclarators.push(variableDeclarator);
         }
+
+        this.listParsingState = savedListParsingState;
 
         return new VariableDeclarationSyntax(varKeyword, SeparatedSyntaxList.create(variableDeclarators));
     }
@@ -2134,6 +2208,9 @@ class Parser extends SlidingWindow {
 
         var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
 
+        var savedListParsingState = this.listParsingState;
+        this.listParsingState |= ListParsingState.ArgumentList_AssignmentExpressions;
+
         var arguments: any[] = null;
 
         if (this.currentToken().kind !== SyntaxKind.CloseParenToken && this.currentToken().kind !== SyntaxKind.EndOfFileToken) {
@@ -2159,6 +2236,8 @@ class Parser extends SlidingWindow {
                 break;
             }
         }
+
+        this.listParsingState = savedListParsingState;
 
         var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
         return new ArgumentListSyntax(openParenToken, SeparatedSyntaxList.create(arguments), closeParenToken);
@@ -2567,6 +2646,9 @@ class Parser extends SlidingWindow {
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
         var propertyAssignments: any[] = null;
 
+        var savedListParsingState = this.listParsingState;
+        this.listParsingState |= ListParsingState.ObjectLiteralExpression_PropertyAssignments;
+
         while (true) {
             if (this.currentToken().kind === SyntaxKind.CloseBraceToken || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
                 break;
@@ -2588,6 +2670,8 @@ class Parser extends SlidingWindow {
             // TODO: error recovery
             break;
         }
+
+        this.listParsingState = savedListParsingState;
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
         return new ObjectLiteralExpressionSyntax(
@@ -2686,6 +2770,9 @@ class Parser extends SlidingWindow {
 
         var expressions: any[] = null;
 
+        var savedListParsingState = this.listParsingState;
+        this.listParsingState |= ListParsingState.ArrayLiteralExpression_AssignmentExpressions;
+
         var addOmittedExpression = true;
         while (true) {
             var currentTokenKind = this.currentToken().kind;
@@ -2721,6 +2808,8 @@ class Parser extends SlidingWindow {
             }
         }
 
+        this.listParsingState = savedListParsingState;
+
         var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
 
         return new ArrayLiteralExpressionSyntax(openBracketToken, SeparatedSyntaxList.create(expressions), closeBracketToken);
@@ -2746,6 +2835,9 @@ class Parser extends SlidingWindow {
         if (!openBraceToken.isMissing()) {
             var savedIsInStrictMode = this.isInStrictMode;
 
+            var savedListParsingState = this.listParsingState;
+            this.listParsingState |= ListParsingState.Block_Statements;
+
             while (true) {
                 if (this.currentToken().kind === SyntaxKind.CloseBraceToken ||
                     this.currentToken().kind === SyntaxKind.EndOfFileToken) {
@@ -2763,6 +2855,7 @@ class Parser extends SlidingWindow {
                 }
             }
 
+            this.listParsingState = savedListParsingState;
             this.isInStrictMode = savedIsInStrictMode;
         }
 
@@ -2787,6 +2880,9 @@ class Parser extends SlidingWindow {
         var parameters: any[] = null;
 
         if (!openParenToken.isMissing()) {
+            var savedListParsingState = this.listParsingState;
+            this.listParsingState |= ListParsingState.ParameterList_Parameters;
+
             if (this.currentToken().kind !== SyntaxKind.CloseParenToken && this.currentToken().kind !== SyntaxKind.EndOfFileToken) {
                 var parameter = this.parseParameter();
                 parameters = [];
@@ -2812,6 +2908,8 @@ class Parser extends SlidingWindow {
                     break;
                 }
             }
+
+            this.listParsingState = savedListParsingState;
         }
 
         var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
