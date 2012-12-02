@@ -104,10 +104,10 @@ class StringTable {
     }
 
     private static textCharArrayEquals(text: string, array: number[], start: number, length: number): bool {
-        return text.length === length && textEqualsCore(text, array, start);
-    }
+        if (text.length !== length) {
+            return false;
+        }
 
-    private static textEqualsCore(text: string, array: number[], start: number): bool {
         // use array.Length to eliminate the rangecheck
         var s = start;
         for (var i = 0; i < text.length; i++) {

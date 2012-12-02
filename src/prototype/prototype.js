@@ -4148,9 +4148,9 @@ var StringTable = (function () {
         }
     };
     StringTable.textCharArrayEquals = function textCharArrayEquals(text, array, start, length) {
-        return text.length === length && StringTable.textEqualsCore(text, array, start);
-    }
-    StringTable.textEqualsCore = function textEqualsCore(text, array, start) {
+        if(text.length !== length) {
+            return false;
+        }
         var s = start;
         for(var i = 0; i < text.length; i++) {
             if(text.charCodeAt(i) !== array[s]) {
