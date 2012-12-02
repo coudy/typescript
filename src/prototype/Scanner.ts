@@ -4,6 +4,7 @@ class ScannerTokenInfo {
     public Kind: SyntaxKind;
     public KeywordKind: SyntaxKind;
     public Text: string;
+    public Value: any;
 }
 
 class Scanner extends SlidingWindow {
@@ -222,6 +223,7 @@ class Scanner extends SlidingWindow {
         this.tokenInfo.Kind = SyntaxKind.None;
         this.tokenInfo.KeywordKind = SyntaxKind.None;
         this.tokenInfo.Text = null;
+        this.tokenInfo.Value = null;
 
         var character = this.currentItem();
 

@@ -3178,6 +3178,7 @@ var Scanner = (function (_super) {
         this.tokenInfo.Kind = 0 /* None */ ;
         this.tokenInfo.KeywordKind = 0 /* None */ ;
         this.tokenInfo.Text = null;
+        this.tokenInfo.Value = null;
         var character = this.currentItem();
         switch(character) {
             case 34 /* doubleQuote */ :
@@ -7141,6 +7142,9 @@ var SyntaxTokenFactory;
         }
         return result;
     }
+    function toValueString(value) {
+        return value === null ? null : typeof value === 'string' ? value : value.toString();
+    }
     var EmptyToken = (function () {
         function EmptyToken(kind, keywordKind) {
             this.kind = kind;
@@ -7177,7 +7181,7 @@ var SyntaxTokenFactory;
             return null;
         };
         EmptyToken.prototype.valueText = function () {
-            return "";
+            return toValueString(this.value());
         };
         EmptyToken.prototype.diagnostics = function () {
             return [];
@@ -7244,7 +7248,7 @@ var SyntaxTokenFactory;
             return null;
         };
         FixedWidthTokenWithNoTrivia.prototype.valueText = function () {
-            return null;
+            return toValueString(this.value());
         };
         FixedWidthTokenWithNoTrivia.prototype.fullText = function (text) {
             return this.text();
@@ -7312,7 +7316,7 @@ var SyntaxTokenFactory;
             return null;
         };
         FixedWidthTokenWithLeadingTrivia.prototype.valueText = function () {
-            return null;
+            return toValueString(this.value());
         };
         FixedWidthTokenWithLeadingTrivia.prototype.fullText = function (text) {
             return text.substr(this.fullStart(), this.fullWidth());
@@ -7380,7 +7384,7 @@ var SyntaxTokenFactory;
             return null;
         };
         FixedWidthTokenWithTrailingTrivia.prototype.valueText = function () {
-            return null;
+            return toValueString(this.value());
         };
         FixedWidthTokenWithTrailingTrivia.prototype.fullText = function (text) {
             return text.substr(this.fullStart(), this.fullWidth());
@@ -7449,7 +7453,7 @@ var SyntaxTokenFactory;
             return null;
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.valueText = function () {
-            return null;
+            return toValueString(this.value());
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.fullText = function (text) {
             return text.substr(this.fullStart(), this.fullWidth());
@@ -7517,7 +7521,7 @@ var SyntaxTokenFactory;
             return null;
         };
         FixedWidthKeywordWithNoTrivia.prototype.valueText = function () {
-            return null;
+            return toValueString(this.value());
         };
         FixedWidthKeywordWithNoTrivia.prototype.fullText = function (text) {
             return this.text();
@@ -7586,7 +7590,7 @@ var SyntaxTokenFactory;
             return null;
         };
         FixedWidthKeywordWithLeadingTrivia.prototype.valueText = function () {
-            return null;
+            return toValueString(this.value());
         };
         FixedWidthKeywordWithLeadingTrivia.prototype.fullText = function (text) {
             return text.substr(this.fullStart(), this.fullWidth());
@@ -7655,7 +7659,7 @@ var SyntaxTokenFactory;
             return null;
         };
         FixedWidthKeywordWithTrailingTrivia.prototype.valueText = function () {
-            return null;
+            return toValueString(this.value());
         };
         FixedWidthKeywordWithTrailingTrivia.prototype.fullText = function (text) {
             return text.substr(this.fullStart(), this.fullWidth());
@@ -7725,7 +7729,7 @@ var SyntaxTokenFactory;
             return null;
         };
         FixedWidthKeywordWithLeadingAndTrailingTrivia.prototype.valueText = function () {
-            return null;
+            return toValueString(this.value());
         };
         FixedWidthKeywordWithLeadingAndTrailingTrivia.prototype.fullText = function (text) {
             return text.substr(this.fullStart(), this.fullWidth());
@@ -7757,10 +7761,11 @@ var SyntaxTokenFactory;
         return FixedWidthKeywordWithLeadingAndTrailingTrivia;
     })();    
     var VariableWidthTokenWithNoTrivia = (function () {
-        function VariableWidthTokenWithNoTrivia(kind, fullStart, text) {
+        function VariableWidthTokenWithNoTrivia(kind, fullStart, text, value) {
             this.kind = kind;
             this._fullStart = fullStart;
             this._text = text;
+            this._value = value;
         }
         VariableWidthTokenWithNoTrivia.prototype.toJSON = function (key) {
             return toJSON(this);
@@ -7790,10 +7795,10 @@ var SyntaxTokenFactory;
             return this._text;
         };
         VariableWidthTokenWithNoTrivia.prototype.value = function () {
-            return null;
+            return this._value;
         };
         VariableWidthTokenWithNoTrivia.prototype.valueText = function () {
-            return null;
+            return toValueString(this.value());
         };
         VariableWidthTokenWithNoTrivia.prototype.fullText = function (text) {
             return this.text();
@@ -7825,11 +7830,12 @@ var SyntaxTokenFactory;
         return VariableWidthTokenWithNoTrivia;
     })();    
     var VariableWidthTokenWithLeadingTrivia = (function () {
-        function VariableWidthTokenWithLeadingTrivia(kind, fullStart, text, leadingTriviaInfo) {
+        function VariableWidthTokenWithLeadingTrivia(kind, fullStart, text, leadingTriviaInfo, value) {
             this.kind = kind;
             this._fullStart = fullStart;
             this._text = text;
             this._leadingTriviaInfo = leadingTriviaInfo;
+            this._value = value;
         }
         VariableWidthTokenWithLeadingTrivia.prototype.toJSON = function (key) {
             return toJSON(this);
@@ -7859,10 +7865,10 @@ var SyntaxTokenFactory;
             return this._text;
         };
         VariableWidthTokenWithLeadingTrivia.prototype.value = function () {
-            return null;
+            return this._value;
         };
         VariableWidthTokenWithLeadingTrivia.prototype.valueText = function () {
-            return null;
+            return toValueString(this.value());
         };
         VariableWidthTokenWithLeadingTrivia.prototype.fullText = function (text) {
             return text.substr(this.fullStart(), this.fullWidth());
@@ -7894,11 +7900,12 @@ var SyntaxTokenFactory;
         return VariableWidthTokenWithLeadingTrivia;
     })();    
     var VariableWidthTokenWithTrailingTrivia = (function () {
-        function VariableWidthTokenWithTrailingTrivia(kind, fullStart, text, trailingTriviaInfo) {
+        function VariableWidthTokenWithTrailingTrivia(kind, fullStart, text, trailingTriviaInfo, value) {
             this.kind = kind;
             this._fullStart = fullStart;
             this._text = text;
             this._trailingTriviaInfo = trailingTriviaInfo;
+            this._value = value;
         }
         VariableWidthTokenWithTrailingTrivia.prototype.toJSON = function (key) {
             return toJSON(this);
@@ -7928,10 +7935,10 @@ var SyntaxTokenFactory;
             return this._text;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.value = function () {
-            return null;
+            return this._value;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.valueText = function () {
-            return null;
+            return toValueString(this.value());
         };
         VariableWidthTokenWithTrailingTrivia.prototype.fullText = function (text) {
             return text.substr(this.fullStart(), this.fullWidth());
@@ -7963,12 +7970,13 @@ var SyntaxTokenFactory;
         return VariableWidthTokenWithTrailingTrivia;
     })();    
     var VariableWidthTokenWithLeadingAndTrailingTrivia = (function () {
-        function VariableWidthTokenWithLeadingAndTrailingTrivia(kind, fullStart, text, leadingTriviaInfo, trailingTriviaInfo) {
+        function VariableWidthTokenWithLeadingAndTrailingTrivia(kind, fullStart, text, leadingTriviaInfo, trailingTriviaInfo, value) {
             this.kind = kind;
             this._fullStart = fullStart;
             this._text = text;
             this._leadingTriviaInfo = leadingTriviaInfo;
             this._trailingTriviaInfo = trailingTriviaInfo;
+            this._value = value;
         }
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.toJSON = function (key) {
             return toJSON(this);
@@ -7998,10 +8006,10 @@ var SyntaxTokenFactory;
             return this._text;
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.value = function () {
-            return null;
+            return this._value;
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.valueText = function () {
-            return null;
+            return toValueString(this.value());
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.fullText = function (text) {
             return text.substr(this.fullStart(), this.fullWidth());
@@ -8073,7 +8081,7 @@ var SyntaxTokenFactory;
             return null;
         };
         FullToken.prototype.valueText = function () {
-            return null;
+            return toValueString(this.value());
         };
         FullToken.prototype.diagnostics = function () {
             return this._diagnostics;
@@ -8104,21 +8112,6 @@ var SyntaxTokenFactory;
         };
         return FullToken;
     })();    
-    function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
-        if(diagnostics === null || diagnostics.length === 0) {
-            if(SyntaxFacts.isAnyPunctuation(tokenInfo.Kind)) {
-                return createFixedWidthToken(fullStart, leadingTriviaInfo, tokenInfo.Kind, trailingTriviaInfo);
-            } else {
-                if(SyntaxFacts.isAnyKeyword(tokenInfo.KeywordKind)) {
-                    return createFixedWidthKeyword(fullStart, leadingTriviaInfo, tokenInfo.KeywordKind, trailingTriviaInfo);
-                } else {
-                    return createVariableWidthToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo);
-                }
-            }
-        }
-        return createFullToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics);
-    }
-    SyntaxTokenFactory.create = create;
     function createFixedWidthToken(fullStart, leadingTriviaInfo, kind, trailingTriviaInfo) {
         if(leadingTriviaInfo === 0) {
             if(trailingTriviaInfo === 0) {
@@ -8139,15 +8132,15 @@ var SyntaxTokenFactory;
         var text = tokenInfo.Text === null ? SyntaxFacts.getText(kind) : tokenInfo.Text;
         if(leadingTriviaInfo === 0) {
             if(trailingTriviaInfo === 0) {
-                return new VariableWidthTokenWithNoTrivia(kind, fullStart, text);
+                return new VariableWidthTokenWithNoTrivia(kind, fullStart, text, tokenInfo.Value);
             } else {
-                return new VariableWidthTokenWithTrailingTrivia(kind, fullStart, text, trailingTriviaInfo);
+                return new VariableWidthTokenWithTrailingTrivia(kind, fullStart, text, trailingTriviaInfo, tokenInfo.Value);
             }
         } else {
             if(trailingTriviaInfo === 0) {
-                return new VariableWidthTokenWithLeadingTrivia(kind, fullStart, text, leadingTriviaInfo);
+                return new VariableWidthTokenWithLeadingTrivia(kind, fullStart, text, leadingTriviaInfo, tokenInfo.Value);
             } else {
-                return new VariableWidthTokenWithLeadingAndTrailingTrivia(kind, fullStart, text, leadingTriviaInfo, trailingTriviaInfo);
+                return new VariableWidthTokenWithLeadingAndTrailingTrivia(kind, fullStart, text, leadingTriviaInfo, trailingTriviaInfo, tokenInfo.Value);
             }
         }
     }
@@ -8170,6 +8163,21 @@ var SyntaxTokenFactory;
         var text = tokenInfo.Text || SyntaxFacts.getText(tokenInfo.Kind);
         return new FullToken(tokenInfo.Kind, tokenInfo.KeywordKind, tokenInfo.Text, fullStart, leadingTriviaInfo, trailingTriviaInfo, diagnostics);
     }
+    function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
+        if(diagnostics === null || diagnostics.length === 0) {
+            if(SyntaxFacts.isAnyPunctuation(tokenInfo.Kind)) {
+                return createFixedWidthToken(fullStart, leadingTriviaInfo, tokenInfo.Kind, trailingTriviaInfo);
+            } else {
+                if(SyntaxFacts.isAnyKeyword(tokenInfo.KeywordKind)) {
+                    return createFixedWidthKeyword(fullStart, leadingTriviaInfo, tokenInfo.KeywordKind, trailingTriviaInfo);
+                } else {
+                    return createVariableWidthToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo);
+                }
+            }
+        }
+        return createFullToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics);
+    }
+    SyntaxTokenFactory.create = create;
     function createEmptyToken(kind, keywordKind) {
         return new EmptyToken(kind, keywordKind);
     }
@@ -34314,7 +34322,7 @@ var totalSize = 0;
 var program = new Program();
 var start, end;
 start = new Date().getTime();
-program.runAllTests(Environment, false, false);
+program.runAllTests(Environment, false, true);
 program.run(Environment, false);
 end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));
