@@ -3334,6 +3334,9 @@ var Scanner = (function (_super) {
                     if(Scanner.isKeywordStartCharacter[firstCharacter]) {
                         this.tokenInfo.KeywordKind = SyntaxFacts.getTokenKind(this.tokenInfo.Text);
                     }
+                    if(this.tokenInfo.KeywordKind === 0 /* None */ ) {
+                        this.tokenInfo.Value = this.tokenInfo.Text;
+                    }
                     this.releaseAndUnpinAbsoluteIndex(startIndex);
                     return true;
                 }
@@ -7113,7 +7116,7 @@ var SyntaxTokenFactory;
         }
         result.text = token.text();
         if(token.value() !== null) {
-            result.value() = token.value;
+            result.value = token.value;
         }
         if(token.valueText() !== null) {
             result.valueText = token.valueText();

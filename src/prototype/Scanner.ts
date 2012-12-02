@@ -378,6 +378,13 @@ class Scanner extends SlidingWindow {
                     this.tokenInfo.KeywordKind = SyntaxFacts.getTokenKind(this.tokenInfo.Text);
                 }
 
+                if (this.tokenInfo.KeywordKind === SyntaxKind.None) {
+                    // Because this was all simple ascii characters with no escapes in it, we can set
+                    // the value for this token right now.  Otherwise, we will defer computing the 
+                    // value till later.
+                    this.tokenInfo.Value = this.tokenInfo.Text;
+                }
+
                 this.releaseAndUnpinAbsoluteIndex(startIndex);
                 return true;
             }

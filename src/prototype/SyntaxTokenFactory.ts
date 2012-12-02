@@ -39,7 +39,7 @@ module SyntaxTokenFactory {
         result.text = token.text();
 
         if (token.value() !== null) {
-            result.value() = token.value;
+            result.value = token.value;
         }
 
         if (token.valueText() !== null) {
@@ -80,7 +80,8 @@ module SyntaxTokenFactory {
 
     function toValueString(token: ISyntaxToken): string {
         // TODO: specialize on IdentifierName token with null value.  In that case we need to 
-        // process the escape codes and make a real value for this token.
+        // process the escape codes and make a real value for this token.  Remember, don't do
+        // this for keywords.
 
         var value = token.value();
         return value === null
