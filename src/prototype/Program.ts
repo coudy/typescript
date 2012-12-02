@@ -36,7 +36,7 @@ class Program {
                 action(filePath);
             }
             catch (e) {
-                environment.standardOut.WriteLine("Exception occurred");
+                environment.standardOut.WriteLine("Exception: " + filePath);
             }
         }
     }
@@ -54,7 +54,7 @@ class Program {
             // return;
         }
 
-        environment.standardOut.WriteLine("Running Parser: " + filePath);
+        // environment.standardOut.WriteLine("Running Parser: " + filePath);
         var contents = environment.readFile(filePath);
         totalSize += contents.length;
 
@@ -94,7 +94,7 @@ class Program {
             return;
         }
 
-        environment.standardOut.WriteLine("Running Scanner: " + filePath);
+        // environment.standardOut.WriteLine("Running Scanner: " + filePath);
 
         var contents = environment.readFile(filePath);
         var text = new StringText(contents);
@@ -162,14 +162,14 @@ var program = new Program();
 var start: number, end: number;
 
 start = new Date().getTime();
-program.runAllTests(Environment, false, true);
+program.runAllTests(Environment, false, false);
 program.run(Environment, false);
 end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));
 Environment.standardOut.WriteLine("Total size: " + totalSize);
 
-//start = new Date().getTime();
-//program.runAllTests(Environment, true, false);
-//program.run(Environment, true, false);
-//end = new Date().getTime();
-//Environment.standardOut.WriteLine("Total time: " + (end - start));
+start = new Date().getTime();
+program.runAllTests(Environment, true, false);
+program.run(Environment, true);
+end = new Date().getTime();
+Environment.standardOut.WriteLine("Total time: " + (end - start));

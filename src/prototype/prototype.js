@@ -34896,7 +34896,7 @@ var Program = (function () {
             try  {
                 action(filePath);
             } catch (e) {
-                environment.standardOut.WriteLine("Exception occurred");
+                environment.standardOut.WriteLine("Exception: " + filePath);
             }
         }
     };
@@ -34909,7 +34909,6 @@ var Program = (function () {
         }
         if(filePath.indexOf("fileServices") < 0) {
         }
-        environment.standardOut.WriteLine("Running Parser: " + filePath);
         var contents = environment.readFile(filePath);
         totalSize += contents.length;
         if(useTypeScript) {
@@ -34940,7 +34939,6 @@ var Program = (function () {
         if(useTypeScript) {
             return;
         }
-        environment.standardOut.WriteLine("Running Scanner: " + filePath);
         var contents = environment.readFile(filePath);
         var text = new StringText(contents);
         var scanner = Scanner.create(text, languageVersion);
@@ -34990,8 +34988,13 @@ var totalSize = 0;
 var program = new Program();
 var start, end;
 start = new Date().getTime();
-program.runAllTests(Environment, false, true);
+program.runAllTests(Environment, false, false);
 program.run(Environment, false);
 end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));
 Environment.standardOut.WriteLine("Total size: " + totalSize);
+start = new Date().getTime();
+program.runAllTests(Environment, true, false);
+program.run(Environment, true);
+end = new Date().getTime();
+Environment.standardOut.WriteLine("Total time: " + (end - start));
