@@ -3024,7 +3024,6 @@ var Scanner = (function (_super) {
         if(Scanner.isKeywordStartCharacter.length === 0) {
             for(var character = 0; character < Scanner.MaxAsciiCharacter; character++) {
                 if(character >= 97 /* a */  && character <= 122 /* z */ ) {
-                    Scanner.isKeywordStartCharacter[character] = true;
                     Scanner.isIdentifierStartCharacter[character] = true;
                     Scanner.isIdentifierPartCharacter[character] = true;
                 } else {
@@ -3037,6 +3036,10 @@ var Scanner = (function (_super) {
                         }
                     }
                 }
+            }
+            for(var keywordKind = SyntaxKind.FirstKeyword; keywordKind <= SyntaxKind.LastKeyword; keywordKind++) {
+                var keyword = SyntaxFacts.getText(keywordKind);
+                Scanner.isKeywordStartCharacter[keyword.charCodeAt(0)] = true;
             }
         }
     }
@@ -4729,6 +4732,8 @@ var SyntaxKind;
 var SyntaxFacts = (function () {
     function SyntaxFacts() { }
     SyntaxFacts.textToKeywordKind = {
+        "any": 54 /* AnyKeyword */ ,
+        "bool": 55 /* BoolKeyword */ ,
         "break": 9 /* BreakKeyword */ ,
         "case": 10 /* CaseKeyword */ ,
         "catch": 11 /* CatchKeyword */ ,
@@ -4760,6 +4765,7 @@ var SyntaxFacts = (function () {
         "module": 59 /* ModuleKeyword */ ,
         "new": 25 /* NewKeyword */ ,
         "null": 26 /* NullKeyword */ ,
+        "number": 60 /* NumberKeyword */ ,
         "package": 48 /* PackageKeyword */ ,
         "private": 49 /* PrivateKeyword */ ,
         "protected": 50 /* ProtectedKeyword */ ,
@@ -4767,6 +4773,7 @@ var SyntaxFacts = (function () {
         "return": 27 /* ReturnKeyword */ ,
         "set": 61 /* SetKeyword */ ,
         "static": 52 /* StaticKeyword */ ,
+        "string": 62 /* StringKeyword */ ,
         "super": 44 /* SuperKeyword */ ,
         "switch": 28 /* SwitchKeyword */ ,
         "this": 29 /* ThisKeyword */ ,

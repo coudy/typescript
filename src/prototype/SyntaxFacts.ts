@@ -2,6 +2,8 @@
 
 class SyntaxFacts {
     private static textToKeywordKind: any = {
+        "any": SyntaxKind.AnyKeyword,
+        "bool": SyntaxKind.BoolKeyword,
         "break": SyntaxKind.BreakKeyword,
         "case": SyntaxKind.CaseKeyword,
         "catch": SyntaxKind.CatchKeyword,
@@ -33,6 +35,7 @@ class SyntaxFacts {
         "module": SyntaxKind.ModuleKeyword,
         "new": SyntaxKind.NewKeyword,
         "null": SyntaxKind.NullKeyword,
+        "number":SyntaxKind.NumberKeyword,
         "package": SyntaxKind.PackageKeyword,
         "private": SyntaxKind.PrivateKeyword,
         "protected": SyntaxKind.ProtectedKeyword,
@@ -40,6 +43,7 @@ class SyntaxFacts {
         "return": SyntaxKind.ReturnKeyword,
         "set": SyntaxKind.SetKeyword,
         "static": SyntaxKind.StaticKeyword,
+        "string": SyntaxKind.StringKeyword,
         "super": SyntaxKind.SuperKeyword,
         "switch": SyntaxKind.SwitchKeyword,
         "this": SyntaxKind.ThisKeyword,

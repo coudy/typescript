@@ -27,7 +27,6 @@ class Scanner extends SlidingWindow {
         if (Scanner.isKeywordStartCharacter.length === 0) {
             for (var character = 0; character < MaxAsciiCharacter; character++) {
                 if (character >= CharacterCodes.a && character <= CharacterCodes.z) {
-                    Scanner.isKeywordStartCharacter[character] = true;
                     Scanner.isIdentifierStartCharacter[character] = true;
                     Scanner.isIdentifierPartCharacter[character] = true;
                 }
@@ -40,6 +39,11 @@ class Scanner extends SlidingWindow {
                 else if (character >= CharacterCodes._0 && character <= CharacterCodes._9) {
                     Scanner.isIdentifierPartCharacter[character] = true;
                 }
+            }
+
+            for (var keywordKind = SyntaxKind.FirstKeyword; keywordKind <= SyntaxKind.LastKeyword; keywordKind++) {
+                var keyword = SyntaxFacts.getText(keywordKind);
+                Scanner.isKeywordStartCharacter[keyword.charCodeAt(0)] = true;
             }
         }
     }
