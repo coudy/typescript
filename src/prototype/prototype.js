@@ -3318,19 +3318,41 @@ var Scanner = (function (_super) {
 
             }
         }
-        if(character >= 97 /* a */  && character <= 122 /* z */ ) {
+        if(Scanner.isKeywordStartCharacter[character]) {
             this.scanIdentifierOrKeyword();
-            return;
-        }
-        if(this.isIdentifierStart(character)) {
-            this.scanIdentifier();
             return;
         }
         if(this.isNumericLiteralStart(character)) {
             this.scanNumericLiteral();
             return;
         }
+        if(this.isIdentifierStart(this.peekCharOrUnicodeEscape())) {
+            this.scanIdentifier();
+            return;
+        }
         this.scanDefaultCharacter(character);
+    };
+    Scanner.prototype.isIdentifierStart = function (interpretedChar) {
+        if(Scanner.isIdentifierStartCharacter[interpretedChar]) {
+            return true;
+        }
+        return interpretedChar > Scanner.MaxAsciiCharacter && Unicode.isIdentifierStart(interpretedChar, this.languageVersion);
+    };
+    Scanner.prototype.isIdentifierPart = function (interpretedChar) {
+        if(Scanner.isIdentifierPartCharacter[interpretedChar]) {
+            return true;
+        }
+        return interpretedChar > Scanner.MaxAsciiCharacter && Unicode.isIdentifierPart(interpretedChar, this.languageVersion);
+    };
+    Scanner.prototype.scanIdentifier = function () {
+        var startIndex = this.getAndPinAbsoluteIndex();
+        do {
+            this.scanCharOrUnicodeEscape(this.errors);
+        }while(this.isIdentifierPart(this.peekCharOrUnicodeEscape()))
+        var endIndex = this.absoluteIndex();
+        this.tokenInfo.Text = this.substring(startIndex, endIndex, true);
+        this.tokenInfo.Kind = 5 /* IdentifierNameToken */ ;
+        this.releaseAndUnpinAbsoluteIndex(startIndex);
     };
     Scanner.prototype.scanNumericLiteral = function () {
         var startIndex = this.getAndPinAbsoluteIndex();
@@ -3391,46 +3413,6 @@ var Scanner = (function (_super) {
             return true;
         }
         return this.isDotPrefixedNumericLiteral();
-    };
-    Scanner.prototype.scanIdentifier = function () {
-        var startIndex = this.getAndPinAbsoluteIndex();
-        while(this.isIdentifierPart()) {
-            this.scanCharOrUnicodeEscape(this.errors);
-        }
-        var endIndex = this.absoluteIndex();
-        this.tokenInfo.Text = this.substring(startIndex, endIndex, true);
-        this.tokenInfo.Kind = 5 /* IdentifierNameToken */ ;
-        this.releaseAndUnpinAbsoluteIndex(startIndex);
-    };
-    Scanner.prototype.isIdentifierStart_Fast = function (character) {
-        if((character >= 97 /* a */  && character <= 122 /* z */ ) || (character >= 65 /* A */  && character <= 90 /* Z */ ) || character === 95 /* _ */  || character === 36 /* $ */ ) {
-            return true;
-        }
-        return false;
-    };
-    Scanner.prototype.isIdentifierStart_Slow = function () {
-        var ch = this.peekCharOrUnicodeEscape();
-        return Unicode.isIdentifierStart(ch, this.languageVersion);
-    };
-    Scanner.prototype.isIdentifierStart = function (character) {
-        return this.isIdentifierStart_Fast(character) || this.isIdentifierStart_Slow();
-    };
-    Scanner.prototype.isIdentifierPart_Fast = function () {
-        var character = this.currentItem();
-        if(this.isIdentifierStart_Fast(character)) {
-            return true;
-        }
-        return character >= 48 /* _0 */  && character <= 57 /* _9 */ ;
-    };
-    Scanner.prototype.isIdentifierPart_Slow = function () {
-        if(this.isIdentifierStart_Slow()) {
-            return true;
-        }
-        var ch = this.peekCharOrUnicodeEscape();
-        return Unicode.isIdentifierPart(ch, this.languageVersion);
-    };
-    Scanner.prototype.isIdentifierPart = function () {
-        return this.isIdentifierPart_Fast() || this.isIdentifierPart_Slow();
     };
     Scanner.prototype.scanIdentifierOrKeyword = function () {
         this.scanIdentifier();
@@ -3684,8 +3666,8 @@ var Scanner = (function (_super) {
                 }
                 skipNextSlash = false;
             }
-            while(this.isIdentifierPart()) {
-                this.scanCharOrUnicodeEscape(this.errors);
+            while(Scanner.isIdentifierPartCharacter[this.currentItem()]) {
+                this.moveToNextItem();
             }
             var endIndex = this.absoluteIndex();
             this.tokenInfo.Kind = 6 /* RegularExpressionLiteral */ ;

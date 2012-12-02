@@ -226,7 +226,6 @@ class Scanner extends SlidingWindow {
         this.tokenInfo.Text = null;
 
         var character = this.currentItem();
-       
 
         switch (character) {
             case CharacterCodes.doubleQuote:
@@ -340,13 +339,8 @@ class Scanner extends SlidingWindow {
                 return;
         }
 
-        if (character >= CharacterCodes.a && character <= CharacterCodes.z) {
+        if (Scanner.isKeywordStartCharacter[character]) {
             this.scanIdentifierOrKeyword();
-            return;
-        }
-
-        if (this.isIdentifierStart(character)) {
-            this.scanIdentifier();
             return;
         }
 
@@ -355,7 +349,43 @@ class Scanner extends SlidingWindow {
             return;
         }
 
+        if (this.isIdentifierStart(this.peekCharOrUnicodeEscape())) {
+            this.scanIdentifier();
+            return;
+        }
+
         this.scanDefaultCharacter(character);
+    }
+
+    private isIdentifierStart(interpretedChar: number): bool {
+        if (Scanner.isIdentifierStartCharacter[interpretedChar]) {
+            return true;
+        }
+
+        return interpretedChar > Scanner.MaxAsciiCharacter && Unicode.isIdentifierStart(interpretedChar, this.languageVersion);
+    }
+
+    private isIdentifierPart(interpretedChar: number): bool {
+        if (Scanner.isIdentifierPartCharacter[interpretedChar]) {
+            return true;
+        }
+
+        return interpretedChar > Scanner.MaxAsciiCharacter && Unicode.isIdentifierPart(interpretedChar, this.languageVersion);
+    }
+
+    private scanIdentifier(): void {
+        var startIndex = this.getAndPinAbsoluteIndex();
+
+        do {
+            this.scanCharOrUnicodeEscape(this.errors);
+        }
+        while (this.isIdentifierPart(this.peekCharOrUnicodeEscape()));
+
+        var endIndex = this.absoluteIndex();
+        this.tokenInfo.Text = this.substring(startIndex, endIndex, /*intern:*/ true);
+        this.tokenInfo.Kind = SyntaxKind.IdentifierNameToken;
+
+        this.releaseAndUnpinAbsoluteIndex(startIndex);
     }
 
     private scanNumericLiteral(): void {
@@ -437,62 +467,6 @@ class Scanner extends SlidingWindow {
         }
 
         return this.isDotPrefixedNumericLiteral();
-    }
-
-    private scanIdentifier(): void {
-        var startIndex = this.getAndPinAbsoluteIndex();
-
-        while (this.isIdentifierPart()) {
-            this.scanCharOrUnicodeEscape(this.errors);
-        }
-
-        var endIndex = this.absoluteIndex();
-        this.tokenInfo.Text = this.substring(startIndex, endIndex, /*intern:*/ true);
-        this.tokenInfo.Kind = SyntaxKind.IdentifierNameToken;
-
-        this.releaseAndUnpinAbsoluteIndex(startIndex);
-    }
-
-    private isIdentifierStart_Fast(character: number): bool {
-        if ((character >= CharacterCodes.a && character <= CharacterCodes.z) ||
-            (character >= CharacterCodes.A && character <= CharacterCodes.Z) ||
-            character === CharacterCodes._ ||
-            character === CharacterCodes.$) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private isIdentifierStart_Slow(): bool {
-        var ch = this.peekCharOrUnicodeEscape();
-        return Unicode.isIdentifierStart(ch, this.languageVersion);
-    }
-
-    private isIdentifierStart(character: number): bool {
-        return this.isIdentifierStart_Fast(character) || this.isIdentifierStart_Slow();
-    }
-
-    private isIdentifierPart_Fast(): bool {
-        var character = this.currentItem();
-        if (this.isIdentifierStart_Fast(character)) {
-            return true;
-        }
-
-        return character >= CharacterCodes._0 && character <= CharacterCodes._9;
-    }
-
-    private isIdentifierPart_Slow(): bool {
-        if (this.isIdentifierStart_Slow()) {
-            return true;
-        }
-
-        var ch = this.peekCharOrUnicodeEscape();
-        return Unicode.isIdentifierPart(ch, this.languageVersion);
-    }
-
-    private isIdentifierPart(): bool {
-        return this.isIdentifierPart_Fast() || this.isIdentifierPart_Slow();
     }
 
     private scanIdentifierOrKeyword(): void {
@@ -786,8 +760,10 @@ class Scanner extends SlidingWindow {
                 skipNextSlash = false;
             }
 
-            while (this.isIdentifierPart()) {
-                this.scanCharOrUnicodeEscape(this.errors);
+            // TODO: The grammar says any identifier part is allowed here.  Do we need to support
+            // \u identifiers here?  The existing typescript parser does not.  
+            while (Scanner.isIdentifierPartCharacter[this.currentItem()]) {
+                this.moveToNextItem();
             }
 
             var endIndex = this.absoluteIndex();
