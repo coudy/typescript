@@ -5175,12 +5175,6 @@ var SourceUnitSyntax = (function (_super) {
     __extends(SourceUnitSyntax, _super);
     function SourceUnitSyntax(moduleElements, endOfFileToken) {
         _super.call(this);
-        if(moduleElements === null) {
-            throw Errors.argumentNull("moduleElements");
-        }
-        if(endOfFileToken.kind !== 114 /* EndOfFileToken */ ) {
-            throw Errors.argument("endOfFileToken");
-        }
         this._moduleElements = moduleElements;
         this._endOfFileToken = endOfFileToken;
     }
@@ -5215,18 +5209,6 @@ var ExternalModuleReferenceSyntax = (function (_super) {
     __extends(ExternalModuleReferenceSyntax, _super);
     function ExternalModuleReferenceSyntax(moduleKeyword, openParenToken, stringLiteral, closeParenToken) {
         _super.call(this);
-        if(moduleKeyword.keywordKind() !== 59 /* ModuleKeyword */ ) {
-            throw Errors.argument("moduleKeyword");
-        }
-        if(openParenToken.kind !== 65 /* OpenParenToken */ ) {
-            throw Errors.argument("openParenToken");
-        }
-        if(stringLiteral.kind !== 8 /* StringLiteral */ ) {
-            throw Errors.argument("stringLiteral");
-        }
-        if(closeParenToken.kind !== 66 /* CloseParenToken */ ) {
-            throw Errors.argument("closeParenToken");
-        }
         this._moduleKeyword = moduleKeyword;
         this._openParenToken = openParenToken;
         this._stringLiteral = stringLiteral;
@@ -5253,9 +5235,6 @@ var ModuleNameModuleReference = (function (_super) {
     __extends(ModuleNameModuleReference, _super);
     function ModuleNameModuleReference(moduleName) {
         _super.call(this);
-        if(moduleName === null) {
-            throw Errors.argumentNull("moduleName");
-        }
         this._moduleName = moduleName;
     }
     ModuleNameModuleReference.prototype.moduleName = function () {
@@ -5267,21 +5246,6 @@ var ImportDeclarationSyntax = (function (_super) {
     __extends(ImportDeclarationSyntax, _super);
     function ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken) {
         _super.call(this);
-        if(importKeyword.keywordKind() !== 43 /* ImportKeyword */ ) {
-            throw Errors.argument("importKeyword");
-        }
-        if(identifier.kind !== 5 /* IdentifierNameToken */ ) {
-            throw Errors.argument("identifier");
-        }
-        if(equalsToken.kind !== 100 /* EqualsToken */ ) {
-            throw Errors.argument("equalsToken");
-        }
-        if(moduleReference === null) {
-            throw Errors.argumentNull("moduleReference");
-        }
-        if(semicolonToken.kind !== 71 /* SemicolonToken */ ) {
-            throw Errors.argument("semicolonToken");
-        }
         this._importKeyword = importKeyword;
         this._identifier = identifier;
         this._equalsToken = equalsToken;
@@ -5312,27 +5276,6 @@ var ClassDeclarationSyntax = (function (_super) {
     __extends(ClassDeclarationSyntax, _super);
     function ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken) {
         _super.call(this);
-        if(exportKeyword !== null && exportKeyword.keywordKind() !== 41 /* ExportKeyword */ ) {
-            throw Errors.argument("exportKeyword");
-        }
-        if(declareKeyword !== null && declareKeyword.keywordKind() !== 57 /* DeclareKeyword */ ) {
-            throw Errors.argument("declareKeyword");
-        }
-        if(classKeyword.keywordKind() !== 38 /* ClassKeyword */ ) {
-            throw Errors.argument("classKeyword");
-        }
-        if(identifier.kind !== 5 /* IdentifierNameToken */ ) {
-            throw Errors.argument("identifier");
-        }
-        if(openBraceToken.kind !== 63 /* OpenBraceToken */ ) {
-            throw Errors.argument("openBraceToken");
-        }
-        if(classElements === null) {
-            throw Errors.argumentNull("classElements");
-        }
-        if(closeBraceToken.kind !== 64 /* CloseBraceToken */ ) {
-            throw Errors.argument("closeBraceToken");
-        }
         this._exportKeyword = exportKeyword;
         this._declareKeyword = declareKeyword;
         this._classKeyword = classKeyword;
@@ -5379,18 +5322,6 @@ var InterfaceDeclarationSyntax = (function (_super) {
     __extends(InterfaceDeclarationSyntax, _super);
     function InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, extendsClause, body) {
         _super.call(this);
-        if(exportKeyword !== null && exportKeyword.keywordKind() !== 41 /* ExportKeyword */ ) {
-            throw Errors.argument("exportKeyword");
-        }
-        if(interfaceKeyword.keywordKind() !== 46 /* InterfaceKeyword */ ) {
-            throw Errors.argument("interfaceKeyword");
-        }
-        if(identifier.kind !== 5 /* IdentifierNameToken */ ) {
-            throw Errors.argument("identifier");
-        }
-        if(body === null) {
-            throw Errors.argumentNull("body");
-        }
         this._exportKeyword = exportKeyword;
         this._interfaceKeyword = interfaceKeyword;
         this._identifier = identifier;
@@ -5421,12 +5352,6 @@ var ExtendsClauseSyntax = (function (_super) {
     __extends(ExtendsClauseSyntax, _super);
     function ExtendsClauseSyntax(extendsKeyword, typeNames) {
         _super.call(this);
-        if(extendsKeyword.keywordKind() !== 42 /* ExtendsKeyword */ ) {
-            throw Errors.argument("extendsKeyword");
-        }
-        if(typeNames === null) {
-            throw Errors.argumentNull("typeNames");
-        }
         this._extendsKeyword = extendsKeyword;
         this._typeNames = typeNames;
     }
@@ -5445,12 +5370,6 @@ var ImplementsClauseSyntax = (function (_super) {
     __extends(ImplementsClauseSyntax, _super);
     function ImplementsClauseSyntax(implementsKeyword, typeNames) {
         _super.call(this);
-        if(implementsKeyword.keywordKind() !== 45 /* ImplementsKeyword */ ) {
-            throw Errors.argument("extendsKimplementsKeywordeyword");
-        }
-        if(typeNames === null) {
-            throw Errors.argumentNull("typeNames");
-        }
         this._implementsKeyword = implementsKeyword;
         this._typeNames = typeNames;
     }
@@ -5469,27 +5388,6 @@ var ModuleDeclarationSyntax = (function (_super) {
     __extends(ModuleDeclarationSyntax, _super);
     function ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken) {
         _super.call(this);
-        if(exportKeyword !== null && exportKeyword.keywordKind() !== 41 /* ExportKeyword */ ) {
-            throw Errors.argument("exportKeyword");
-        }
-        if(declareKeyword !== null && declareKeyword.keywordKind() !== 57 /* DeclareKeyword */ ) {
-            throw Errors.argument("declareKeyword");
-        }
-        if(moduleKeyword.keywordKind() !== 59 /* ModuleKeyword */ ) {
-            throw Errors.argument("moduleKeyword");
-        }
-        if(stringLiteral !== null && stringLiteral.kind !== 8 /* StringLiteral */ ) {
-            throw Errors.argumentNull("stringLiteral");
-        }
-        if(openBraceToken.kind !== 63 /* OpenBraceToken */ ) {
-            throw Errors.argument("openBraceToken");
-        }
-        if(moduleElements === null) {
-            throw Errors.argumentNull("moduleElements");
-        }
-        if(closeBraceToken.kind !== 64 /* CloseBraceToken */ ) {
-            throw Errors.argument("closeBraceToken");
-        }
         this._moduleKeyword = moduleKeyword;
         this._declareKeyword = declareKeyword;
         this._moduleName = moduleName;
@@ -5532,21 +5430,6 @@ var FunctionDeclarationSyntax = (function (_super) {
     __extends(FunctionDeclarationSyntax, _super);
     function FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken) {
         _super.call(this);
-        if(exportKeyword !== null && exportKeyword.keywordKind() !== 41 /* ExportKeyword */ ) {
-            throw Errors.argument("exportKeyword");
-        }
-        if(declareKeyword !== null && declareKeyword.keywordKind() !== 57 /* DeclareKeyword */ ) {
-            throw Errors.argument("declareKeyword");
-        }
-        if(functionKeyword.keywordKind() !== 21 /* FunctionKeyword */ ) {
-            throw Errors.argument("functionKeyword");
-        }
-        if(functionSignature === null) {
-            throw Errors.argumentNull("functionSignature");
-        }
-        if(semicolonToken !== null && semicolonToken.kind !== 71 /* SemicolonToken */ ) {
-            throw Errors.argument("semicolonToken");
-        }
         this._exportKeyword = exportKeyword;
         this._declareKeyword = declareKeyword;
         this._functionKeyword = functionKeyword;
@@ -5581,18 +5464,6 @@ var VariableStatementSyntax = (function (_super) {
     __extends(VariableStatementSyntax, _super);
     function VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken) {
         _super.call(this);
-        if(exportKeyword !== null && exportKeyword.keywordKind() !== 41 /* ExportKeyword */ ) {
-            throw Errors.argument("exportKeyword");
-        }
-        if(declareKeyword !== null && declareKeyword.keywordKind() !== 57 /* DeclareKeyword */ ) {
-            throw Errors.argument("declareKeyword");
-        }
-        if(variableDeclaration === null) {
-            throw Errors.argumentNull("variableDeclaration");
-        }
-        if(semicolonToken.kind !== 71 /* SemicolonToken */ ) {
-            throw Errors.argument("semicolonToken");
-        }
         this._exportKeyword = exportKeyword;
         this._declareKeyword = declareKeyword;
         this._variableDeclaration = variableDeclaration;
@@ -5635,12 +5506,6 @@ var VariableDeclarationSyntax = (function (_super) {
     __extends(VariableDeclarationSyntax, _super);
     function VariableDeclarationSyntax(varKeyword, variableDeclarators) {
         _super.call(this);
-        if(varKeyword.keywordKind() !== 34 /* VarKeyword */ ) {
-            throw Errors.argument("varKeyword");
-        }
-        if(variableDeclarators === null) {
-            throw Errors.argumentNull("variableDeclarators");
-        }
         this._varKeyword = varKeyword;
         this._variableDeclarators = variableDeclarators;
     }
@@ -5659,9 +5524,6 @@ var VariableDeclaratorSyntax = (function (_super) {
     __extends(VariableDeclaratorSyntax, _super);
     function VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause) {
         _super.call(this);
-        if(identifier.kind !== 5 /* IdentifierNameToken */ ) {
-            throw Errors.argument("identifier");
-        }
         this._identifier = identifier;
         this._typeAnnotation = typeAnnotation;
         this._equalsValueClause = equalsValueClause;
@@ -5684,9 +5546,6 @@ var EqualsValueClauseSyntax = (function (_super) {
     __extends(EqualsValueClauseSyntax, _super);
     function EqualsValueClauseSyntax(equalsToken, value) {
         _super.call(this);
-        if(equalsToken.kind !== 100 /* EqualsToken */ ) {
-            throw Errors.argument("equalsToken");
-        }
         this._equalsToken = equalsToken;
         this._value = value;
     }
@@ -5706,9 +5565,6 @@ var PrefixUnaryExpressionSyntax = (function (_super) {
     function PrefixUnaryExpressionSyntax(kind, operatorToken, operand) {
         _super.call(this);
         this._kind = 0 /* None */ ;
-        if(operand === null) {
-            throw Errors.argumentNull("operand");
-        }
         this._kind = kind;
         this._operatorToken = operatorToken;
         this._operand = operand;
@@ -5728,9 +5584,6 @@ var ThisExpressionSyntax = (function (_super) {
     __extends(ThisExpressionSyntax, _super);
     function ThisExpressionSyntax(thisKeyword) {
         _super.call(this);
-        if(thisKeyword.keywordKind() !== 29 /* ThisKeyword */ ) {
-            throw Errors.argument("thisKeyword");
-        }
         this._thisKeyword = thisKeyword;
     }
     ThisExpressionSyntax.prototype.kind = function () {
@@ -5761,15 +5614,6 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
     __extends(ArrayLiteralExpressionSyntax, _super);
     function ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken) {
         _super.call(this);
-        if(openBracketToken.kind !== 67 /* OpenBracketToken */ ) {
-            throw Errors.argument("openBracketToken");
-        }
-        if(expressions === null) {
-            throw Errors.argumentNull("expressions");
-        }
-        if(closeBracketToken.kind !== 68 /* CloseBracketToken */ ) {
-            throw Errors.argument("closeBracketToken");
-        }
         this._openBracketToken = openBracketToken;
         this._expressions = expressions;
         this._closeBracketToken = closeBracketToken;
@@ -5799,15 +5643,6 @@ var ParenthesizedExpressionSyntax = (function (_super) {
     __extends(ParenthesizedExpressionSyntax, _super);
     function ParenthesizedExpressionSyntax(openParenToken, expression, closeParenToken) {
         _super.call(this);
-        if(openParenToken.kind !== 65 /* OpenParenToken */ ) {
-            throw Errors.argument("openParenToken");
-        }
-        if(expression === null) {
-            throw Errors.argumentNull("expression");
-        }
-        if(closeParenToken.kind !== 66 /* CloseParenToken */ ) {
-            throw Errors.argument("closeParenToken");
-        }
         this._openParenToken = openParenToken;
         this._expression = expression;
         this._closeParenToken = closeParenToken;
@@ -5830,12 +5665,6 @@ var ArrowFunctionExpressionSyntax = (function (_super) {
     __extends(ArrowFunctionExpressionSyntax, _super);
     function ArrowFunctionExpressionSyntax(equalsGreaterThanToken, body) {
         _super.call(this);
-        if(equalsGreaterThanToken.kind !== 78 /* EqualsGreaterThanToken */ ) {
-            throw Errors.argument("equalsGreaterThanToken");
-        }
-        if(body === null) {
-            throw Errors.argumentNull("body");
-        }
         this._equalsGreaterThanToken = equalsGreaterThanToken;
         this._body = body;
     }
@@ -5851,9 +5680,6 @@ var SimpleArrowFunctionExpression = (function (_super) {
     __extends(SimpleArrowFunctionExpression, _super);
     function SimpleArrowFunctionExpression(identifier, equalsGreaterThanToken, body) {
         _super.call(this, equalsGreaterThanToken, body);
-        if(identifier.kind !== 5 /* IdentifierNameToken */ ) {
-            throw Errors.argumentNull("identifier");
-        }
         this._identifier = identifier;
     }
     SimpleArrowFunctionExpression.prototype.kind = function () {
@@ -5868,9 +5694,6 @@ var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
     __extends(ParenthesizedArrowFunctionExpressionSyntax, _super);
     function ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body) {
         _super.call(this, equalsGreaterThanToken, body);
-        if(callSignature === null) {
-            throw Errors.argumentNull("callSignature");
-        }
         this._callSignature = callSignature;
     }
     ParenthesizedArrowFunctionExpressionSyntax.prototype.kind = function () {
@@ -5901,9 +5724,6 @@ var IdentifierNameSyntax = (function (_super) {
     __extends(IdentifierNameSyntax, _super);
     function IdentifierNameSyntax(identifier) {
         _super.call(this);
-        if(identifier.kind !== 5 /* IdentifierNameToken */ ) {
-            throw Errors.argument("identifier");
-        }
         this._identifier = identifier;
     }
     IdentifierNameSyntax.prototype.kind = function () {
@@ -5921,15 +5741,6 @@ var QualifiedNameSyntax = (function (_super) {
     __extends(QualifiedNameSyntax, _super);
     function QualifiedNameSyntax(left, dotToken, right) {
         _super.call(this);
-        if(left === null) {
-            throw Errors.argumentNull("left");
-        }
-        if(dotToken.kind !== 69 /* DotToken */ ) {
-            throw Errors.argument("dotToken");
-        }
-        if(right === null) {
-            throw Errors.argumentNull("right");
-        }
         this._left = left;
         this._dotToken = dotToken;
         this._right = right;
@@ -5952,18 +5763,6 @@ var ConstructorTypeSyntax = (function (_super) {
     __extends(ConstructorTypeSyntax, _super);
     function ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type) {
         _super.call(this);
-        if(newKeyword.keywordKind() !== 25 /* NewKeyword */ ) {
-            throw Errors.argument("newKeyword");
-        }
-        if(parameterList === null) {
-            throw Errors.argumentNull("parameterList");
-        }
-        if(equalsGreaterThanToken.kind !== 78 /* EqualsGreaterThanToken */ ) {
-            throw Errors.argument("equalsGreaterThanToken");
-        }
-        if(type === null) {
-            throw Errors.argumentNull("type");
-        }
         this._newKeyword = newKeyword;
         this._parameterList = parameterList;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
@@ -5987,15 +5786,6 @@ var FunctionTypeSyntax = (function (_super) {
     __extends(FunctionTypeSyntax, _super);
     function FunctionTypeSyntax(parameterList, equalsGreaterThanToken, type) {
         _super.call(this);
-        if(parameterList === null) {
-            throw Errors.argumentNull("parameterList");
-        }
-        if(equalsGreaterThanToken.kind !== 78 /* EqualsGreaterThanToken */ ) {
-            throw Errors.argument("equalsGreaterThanToken");
-        }
-        if(type === null) {
-            throw Errors.argumentNull("type");
-        }
         this._parameterList = parameterList;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
         this._type = type;
@@ -6018,15 +5808,6 @@ var ObjectTypeSyntax = (function (_super) {
     __extends(ObjectTypeSyntax, _super);
     function ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken) {
         _super.call(this);
-        if(openBraceToken.kind !== 63 /* OpenBraceToken */ ) {
-            throw Errors.argument("openBraceToken");
-        }
-        if(typeMembers === null) {
-            throw Errors.argumentNull("typeMembers");
-        }
-        if(closeBraceToken.kind !== 64 /* CloseBraceToken */ ) {
-            throw Errors.argument("closeBraceToken");
-        }
         this._openBraceToken = openBraceToken;
         this._typeMembers = typeMembers;
         this._closeBraceToken = closeBraceToken;
@@ -6049,12 +5830,6 @@ var ArrayTypeSyntax = (function (_super) {
     __extends(ArrayTypeSyntax, _super);
     function ArrayTypeSyntax(type, openBracketToken, closeBracketToken) {
         _super.call(this);
-        if(openBracketToken.kind !== 67 /* OpenBracketToken */ ) {
-            throw Errors.argument("openBracketToken");
-        }
-        if(closeBracketToken.kind !== 68 /* CloseBracketToken */ ) {
-            throw Errors.argument("closeBracketToken");
-        }
         this._type = type;
         this._openBracketToken = openBracketToken;
         this._closeBracketToken = closeBracketToken;
@@ -6091,12 +5866,6 @@ var TypeAnnotationSyntax = (function (_super) {
     __extends(TypeAnnotationSyntax, _super);
     function TypeAnnotationSyntax(colonToken, type) {
         _super.call(this);
-        if(colonToken.kind !== 99 /* ColonToken */ ) {
-            throw Errors.argument("colonToken");
-        }
-        if(type === null) {
-            throw Errors.argumentNull("type");
-        }
         this._colonToken = colonToken;
         this._type = type;
     }
@@ -6115,15 +5884,6 @@ var BlockSyntax = (function (_super) {
     __extends(BlockSyntax, _super);
     function BlockSyntax(openBraceToken, statements, closeBraceToken) {
         _super.call(this);
-        if(openBraceToken.kind !== 63 /* OpenBraceToken */ ) {
-            throw Errors.argument("openBraceToken");
-        }
-        if(statements === null) {
-            throw Errors.argumentNull("statements");
-        }
-        if(closeBraceToken.kind !== 64 /* CloseBraceToken */ ) {
-            throw Errors.argument("closeBraceToken");
-        }
         this._openBraceToken = openBraceToken;
         this._statements = statements;
         this._closeBraceToken = closeBraceToken;
@@ -6146,18 +5906,6 @@ var ParameterSyntax = (function (_super) {
     __extends(ParameterSyntax, _super);
     function ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause) {
         _super.call(this);
-        if(dotDotDotToken !== null && dotDotDotToken.kind !== 70 /* DotDotDotToken */ ) {
-            throw Errors.argument("dotDotDotToken");
-        }
-        if(publicOrPrivateKeyword !== null && publicOrPrivateKeyword.keywordKind() !== 51 /* PublicKeyword */  && publicOrPrivateKeyword.keywordKind() !== 49 /* PrivateKeyword */ ) {
-            throw Errors.argument("publicOrPrivateKeyword");
-        }
-        if(identifier.kind !== 5 /* IdentifierNameToken */ ) {
-            throw Errors.argument("identifier");
-        }
-        if(questionToken !== null && questionToken.kind !== 98 /* QuestionToken */ ) {
-            throw Errors.argument("questionToken");
-        }
         this._dotDotDotToken = dotDotDotToken;
         this._publicOrPrivateKeyword = publicOrPrivateKeyword;
         this._identifier = identifier;
@@ -6192,15 +5940,6 @@ var MemberAccessExpressionSyntax = (function (_super) {
     __extends(MemberAccessExpressionSyntax, _super);
     function MemberAccessExpressionSyntax(expression, dotToken, identifierName) {
         _super.call(this);
-        if(expression === null) {
-            throw Errors.argumentNull("expression");
-        }
-        if(dotToken.kind !== 69 /* DotToken */ ) {
-            throw Errors.argument("dotToken");
-        }
-        if(identifierName === null) {
-            throw Errors.argumentNull("identifierName");
-        }
         this._expression = expression;
         this._dotToken = dotToken;
         this._identifierName = identifierName;
@@ -6224,15 +5963,6 @@ var PostfixUnaryExpressionSyntax = (function (_super) {
     function PostfixUnaryExpressionSyntax(kind, operand, operatorToken) {
         _super.call(this);
         this._kind = 0 /* None */ ;
-        if(kind !== 197 /* PostIncrementExpression */  && kind !== 198 /* PostDecrementExpression */ ) {
-            throw Errors.argument("kind");
-        }
-        if(operand === null) {
-            throw Errors.argumentNull("operand");
-        }
-        if(operatorToken.kind !== 86 /* PlusPlusToken */  && operatorToken.kind !== 87 /* MinusMinusToken */ ) {
-            throw Errors.argument("operatorToken");
-        }
         this._kind = kind;
         this._operand = operand;
         this._operatorToken = operatorToken;
@@ -6252,18 +5982,6 @@ var ElementAccessExpressionSyntax = (function (_super) {
     __extends(ElementAccessExpressionSyntax, _super);
     function ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken) {
         _super.call(this);
-        if(expression === null) {
-            throw Errors.argumentNull("expression");
-        }
-        if(openBracketToken.kind !== 67 /* OpenBracketToken */ ) {
-            throw Errors.argument("openBracketToken");
-        }
-        if(argumentExpression === null) {
-            throw Errors.argumentNull("argumentExpression");
-        }
-        if(closeBracketToken.kind !== 68 /* CloseBracketToken */ ) {
-            throw Errors.argument("closeBracketToken");
-        }
         this._expression = expression;
         this._openBracketToken = openBracketToken;
         this._argumentExpression = argumentExpression;
@@ -6290,12 +6008,6 @@ var InvocationExpressionSyntax = (function (_super) {
     __extends(InvocationExpressionSyntax, _super);
     function InvocationExpressionSyntax(expression, argumentList) {
         _super.call(this);
-        if(expression === null) {
-            throw Errors.argument("expression");
-        }
-        if(argumentList === null) {
-            throw Errors.argument("argumentList");
-        }
         this._expression = expression;
         this._argumentList = argumentList;
     }
@@ -6314,15 +6026,6 @@ var ArgumentListSyntax = (function (_super) {
     __extends(ArgumentListSyntax, _super);
     function ArgumentListSyntax(openParenToken, arguments, closeParenToken) {
         _super.call(this);
-        if(openParenToken.kind !== 65 /* OpenParenToken */ ) {
-            throw Errors.argument("openParenToken");
-        }
-        if(arguments === null) {
-            throw Errors.argumentNull("arguments");
-        }
-        if(closeParenToken.kind !== 66 /* CloseParenToken */ ) {
-            throw Errors.argument("closeParenToken");
-        }
         this._openParenToken = openParenToken;
         this._arguments = arguments;
         this._closeParenToken = closeParenToken;
@@ -6346,12 +6049,6 @@ var BinaryExpressionSyntax = (function (_super) {
     function BinaryExpressionSyntax(kind, left, operatorToken, right) {
         _super.call(this);
         this._kind = 0 /* None */ ;
-        if(left === null) {
-            throw Errors.argumentNull("left");
-        }
-        if(right === null) {
-            throw Errors.argumentNull("right");
-        }
         this._kind = kind;
         this._left = left;
         this._operatorToken = operatorToken;
@@ -6375,21 +6072,6 @@ var ConditionalExpressionSyntax = (function (_super) {
     __extends(ConditionalExpressionSyntax, _super);
     function ConditionalExpressionSyntax(condition, questionToken, whenTrue, colonToken, whenFalse) {
         _super.call(this);
-        if(condition === null) {
-            throw Errors.argumentNull("condition");
-        }
-        if(questionToken.kind !== 98 /* QuestionToken */ ) {
-            throw Errors.argument("questionToken");
-        }
-        if(whenTrue === null) {
-            throw Errors.argumentNull("whenTrue");
-        }
-        if(colonToken.kind !== 99 /* ColonToken */ ) {
-            throw Errors.argument("colonToken");
-        }
-        if(whenFalse === null) {
-            throw Errors.argumentNull("whenFalse");
-        }
         this._condition = condition;
         this._questionToken = questionToken;
         this._whenTrue = whenTrue;
@@ -6431,12 +6113,6 @@ var ConstructSignatureSyntax = (function (_super) {
     __extends(ConstructSignatureSyntax, _super);
     function ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation) {
         _super.call(this, typeAnnotation);
-        if(newKeyword.keywordKind() !== 25 /* NewKeyword */ ) {
-            throw Errors.argument("newKeyword");
-        }
-        if(parameterList === null) {
-            throw Errors.argument("parameterList");
-        }
         this._newKeyword = newKeyword;
         this._parameterList = parameterList;
     }
@@ -6455,15 +6131,6 @@ var FunctionSignatureSyntax = (function (_super) {
     __extends(FunctionSignatureSyntax, _super);
     function FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation) {
         _super.call(this, typeAnnotation);
-        if(identifier.kind !== 5 /* IdentifierNameToken */ ) {
-            throw Errors.argument("identifier");
-        }
-        if(questionToken !== null && questionToken.kind !== 98 /* QuestionToken */ ) {
-            throw Errors.argument("questionToken");
-        }
-        if(parameterList === null) {
-            throw Errors.argumentNull("parameterList");
-        }
         this._identifier = identifier;
         this._questionToken = questionToken;
         this._parameterList = parameterList;
@@ -6486,15 +6153,6 @@ var IndexSignatureSyntax = (function (_super) {
     __extends(IndexSignatureSyntax, _super);
     function IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation) {
         _super.call(this, typeAnnotation);
-        if(openBracketToken.kind !== 67 /* OpenBracketToken */ ) {
-            throw Errors.argument("openBracketToken");
-        }
-        if(parameter === null) {
-            throw Errors.argumentNull("parameter");
-        }
-        if(closeBracketToken.kind !== 68 /* CloseBracketToken */ ) {
-            throw Errors.argument("closeBracketToken");
-        }
         this._openBracketToken = openBracketToken;
         this._parameter = parameter;
         this._closeBracketToken = closeBracketToken;
@@ -6517,9 +6175,6 @@ var PropertySignatureSyntax = (function (_super) {
     __extends(PropertySignatureSyntax, _super);
     function PropertySignatureSyntax(identifier, questionToken, typeAnnotation) {
         _super.call(this, typeAnnotation);
-        if(identifier.kind !== 5 /* IdentifierNameToken */ ) {
-            throw Errors.argument("identifier");
-        }
         this._identifier = identifier;
         this._questionToken = questionToken;
     }
@@ -6538,15 +6193,6 @@ var ParameterListSyntax = (function (_super) {
     __extends(ParameterListSyntax, _super);
     function ParameterListSyntax(openParenToken, parameters, closeParenToken) {
         _super.call(this);
-        if(openParenToken.kind !== 65 /* OpenParenToken */ ) {
-            throw Errors.argument("openParenToken");
-        }
-        if(parameters === null) {
-            throw Errors.argumentNull("parameters");
-        }
-        if(closeParenToken.kind !== 66 /* CloseParenToken */ ) {
-            throw Errors.argument("closeParenToken");
-        }
         this._openParenToken = openParenToken;
         this._parameters = parameters;
         this._closeParenToken = closeParenToken;
@@ -6569,9 +6215,6 @@ var CallSignatureSyntax = (function (_super) {
     __extends(CallSignatureSyntax, _super);
     function CallSignatureSyntax(parameterList, typeAnnotation) {
         _super.call(this, typeAnnotation);
-        if(parameterList === null) {
-            throw Errors.argumentNull("parameterList");
-        }
         this._parameterList = parameterList;
     }
     CallSignatureSyntax.prototype.kind = function () {
@@ -6586,12 +6229,6 @@ var ElseClauseSyntax = (function (_super) {
     __extends(ElseClauseSyntax, _super);
     function ElseClauseSyntax(elseKeyword, statement) {
         _super.call(this);
-        if(elseKeyword.keywordKind() !== 17 /* ElseKeyword */ ) {
-            throw Errors.argument("elseKeyword");
-        }
-        if(statement === null) {
-            throw Errors.argumentNull("statement");
-        }
         this._elseKeyword = elseKeyword;
         this._statement = statement;
     }
@@ -6610,21 +6247,6 @@ var IfStatementSyntax = (function (_super) {
     __extends(IfStatementSyntax, _super);
     function IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause) {
         _super.call(this);
-        if(ifKeyword.keywordKind() !== 22 /* IfKeyword */ ) {
-            throw Errors.argument("ifKeyword");
-        }
-        if(openParenToken.kind !== 65 /* OpenParenToken */ ) {
-            throw Errors.argument("openParenToken");
-        }
-        if(condition === null) {
-            throw Errors.argumentNull("condition");
-        }
-        if(closeParenToken.kind !== 66 /* CloseParenToken */ ) {
-            throw Errors.argument("closeParenToken");
-        }
-        if(statement === null) {
-            throw Errors.argumentNull("statement");
-        }
         this._ifKeyword = ifKeyword;
         this._openParenToken = openParenToken;
         this._condition = condition;
@@ -6659,12 +6281,6 @@ var ExpressionStatementSyntax = (function (_super) {
     __extends(ExpressionStatementSyntax, _super);
     function ExpressionStatementSyntax(expression, semicolonToken) {
         _super.call(this);
-        if(expression === null) {
-            throw Errors.argumentNull("expression");
-        }
-        if(semicolonToken.kind !== 71 /* SemicolonToken */ ) {
-            throw Errors.argument("semicolonToken");
-        }
         this._expression = expression;
         this._semicolonToken = semicolonToken;
     }
@@ -6691,15 +6307,6 @@ var ConstructorDeclarationSyntax = (function (_super) {
     __extends(ConstructorDeclarationSyntax, _super);
     function ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken) {
         _super.call(this);
-        if(constructorKeyword.keywordKind() !== 56 /* ConstructorKeyword */ ) {
-            throw Errors.argument("constructorKeyword");
-        }
-        if(parameterList === null) {
-            throw Errors.argumentNull("parameterList");
-        }
-        if(semicolonToken !== null && semicolonToken.kind !== 71 /* SemicolonToken */ ) {
-            throw Errors.argument("SemicolonToken");
-        }
         this._constructorKeyword = constructorKeyword;
         this._parameterList = parameterList;
         this._block = block;
@@ -6726,12 +6333,6 @@ var MemberDeclarationSyntax = (function (_super) {
     __extends(MemberDeclarationSyntax, _super);
     function MemberDeclarationSyntax(publicOrPrivateKeyword, staticKeyword) {
         _super.call(this);
-        if(publicOrPrivateKeyword !== null && publicOrPrivateKeyword.keywordKind() !== 51 /* PublicKeyword */  && publicOrPrivateKeyword.keywordKind() !== 49 /* PrivateKeyword */ ) {
-            throw Errors.argument("publicOrPrivateKeyword");
-        }
-        if(staticKeyword !== null && staticKeyword.keywordKind() !== 52 /* StaticKeyword */ ) {
-            throw Errors.argument("staticKeyword");
-        }
         this._publicOrPrivateKeyword = publicOrPrivateKeyword;
         this._staticKeyword = staticKeyword;
     }
@@ -6747,12 +6348,6 @@ var MemberFunctionDeclarationSyntax = (function (_super) {
     __extends(MemberFunctionDeclarationSyntax, _super);
     function MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken) {
         _super.call(this, publicOrPrivateKeyword, staticKeyword);
-        if(functionSignature === null) {
-            throw Errors.argumentNull("functionSignature");
-        }
-        if(semicolonToken !== null && semicolonToken.kind !== 71 /* SemicolonToken */ ) {
-            throw Errors.argument("semicolonToken");
-        }
         this._functionSignature = functionSignature;
         this._block = block;
         this._semicolonToken = semicolonToken;
@@ -6783,12 +6378,6 @@ var MemberVariableDeclarationSyntax = (function (_super) {
     __extends(MemberVariableDeclarationSyntax, _super);
     function MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolonToken) {
         _super.call(this, publicOrPrivateKeyword, staticKeyword);
-        if(variableDeclarator === null) {
-            throw Errors.argumentNull("variableDeclarator");
-        }
-        if(semicolonToken.kind !== 71 /* SemicolonToken */ ) {
-            throw Errors.argument("semicolonToken");
-        }
         this._variableDeclarator = variableDeclarator;
         this._semicolonToken = semicolonToken;
     }
@@ -6807,15 +6396,6 @@ var ThrowStatementSyntax = (function (_super) {
     __extends(ThrowStatementSyntax, _super);
     function ThrowStatementSyntax(throwKeyword, expression, semicolonToken) {
         _super.call(this);
-        if(throwKeyword.keywordKind() !== 30 /* ThrowKeyword */ ) {
-            throw Errors.argument("throwKeyword");
-        }
-        if(expression === null) {
-            throw Errors.argument("expression");
-        }
-        if(semicolonToken.kind !== 71 /* SemicolonToken */ ) {
-            throw Errors.argument("semicolonToken");
-        }
         this._throwKeyword = throwKeyword;
         this._expression = expression;
         this._semicolonToken = semicolonToken;
@@ -6838,12 +6418,6 @@ var ReturnStatementSyntax = (function (_super) {
     __extends(ReturnStatementSyntax, _super);
     function ReturnStatementSyntax(returnKeyword, expression, semicolonToken) {
         _super.call(this);
-        if(returnKeyword.keywordKind() !== 27 /* ReturnKeyword */ ) {
-            throw Errors.argument("returnKeyword");
-        }
-        if(semicolonToken.kind !== 71 /* SemicolonToken */ ) {
-            throw Errors.argument("semicolonToken");
-        }
         this._returnKeyword = returnKeyword;
         this._expression = expression;
         this._semicolonToken = semicolonToken;
@@ -6866,12 +6440,6 @@ var ObjectCreationExpressionSyntax = (function (_super) {
     __extends(ObjectCreationExpressionSyntax, _super);
     function ObjectCreationExpressionSyntax(newKeyword, expression, argumentList) {
         _super.call(this);
-        if(newKeyword.keywordKind() !== 25 /* NewKeyword */ ) {
-            throw Errors.argument("newKeyword");
-        }
-        if(expression === null) {
-            throw Errors.argumentNull("expression");
-        }
         this._newKeyword = newKeyword;
         this._expression = expression;
         this._argumentList = argumentList;
@@ -6894,27 +6462,6 @@ var SwitchStatementSyntax = (function (_super) {
     __extends(SwitchStatementSyntax, _super);
     function SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, caseClauses, closeBraceToken) {
         _super.call(this);
-        if(switchKeyword.keywordKind() !== 28 /* SwitchKeyword */ ) {
-            throw Errors.argument("switchKeyword");
-        }
-        if(openParenToken.kind !== 65 /* OpenParenToken */ ) {
-            throw Errors.argument("openParenToken");
-        }
-        if(expression === null) {
-            throw Errors.argumentNull("expression");
-        }
-        if(closeParenToken.kind !== 66 /* CloseParenToken */ ) {
-            throw Errors.argument("closeParenToken");
-        }
-        if(openBraceToken.kind !== 63 /* OpenBraceToken */ ) {
-            throw Errors.argument("openBraceToken");
-        }
-        if(caseClauses === null) {
-            throw Errors.argumentNull("caseClauses");
-        }
-        if(closeBraceToken.kind !== 64 /* CloseBraceToken */ ) {
-            throw Errors.argument("closeBraceToken");
-        }
         this._switchKeyword = switchKeyword;
         this._openParenToken = openParenToken;
         this._expression = expression;
@@ -6953,12 +6500,6 @@ var SwitchClauseSyntax = (function (_super) {
     __extends(SwitchClauseSyntax, _super);
     function SwitchClauseSyntax(colonToken, statements) {
         _super.call(this);
-        if(colonToken.kind !== 99 /* ColonToken */ ) {
-            throw Errors.argument("colonToken");
-        }
-        if(statements === null) {
-            throw Errors.argumentNull("statements");
-        }
         this._colonToken = colonToken;
         this._statements = statements;
     }
@@ -6974,12 +6515,6 @@ var CaseSwitchClauseSyntax = (function (_super) {
     __extends(CaseSwitchClauseSyntax, _super);
     function CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements) {
         _super.call(this, colonToken, statements);
-        if(caseKeyword.keywordKind() !== 10 /* CaseKeyword */ ) {
-            throw Errors.argument("caseKeyword");
-        }
-        if(expression === null) {
-            throw Errors.argumentNull("expression");
-        }
         this._caseKeyword = caseKeyword;
         this._expression = expression;
     }
@@ -6998,9 +6533,6 @@ var DefaultSwitchClauseSyntax = (function (_super) {
     __extends(DefaultSwitchClauseSyntax, _super);
     function DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements) {
         _super.call(this, colonToken, statements);
-        if(defaultKeyword.keywordKind() !== 14 /* DefaultKeyword */ ) {
-            throw Errors.argument("defaultKeyword");
-        }
         this._defaultKeyword = defaultKeyword;
     }
     DefaultSwitchClauseSyntax.prototype.kind = function () {
@@ -7015,15 +6547,6 @@ var BreakStatementSyntax = (function (_super) {
     __extends(BreakStatementSyntax, _super);
     function BreakStatementSyntax(breakKeyword, identifier, semicolonToken) {
         _super.call(this);
-        if(breakKeyword.keywordKind() !== 9 /* BreakKeyword */ ) {
-            throw Errors.argument("breakKeyword");
-        }
-        if(identifier !== null && identifier.kind !== 5 /* IdentifierNameToken */ ) {
-            throw Errors.argument("identifier");
-        }
-        if(semicolonToken.kind !== 71 /* SemicolonToken */ ) {
-            throw Errors.argument("semicolonToken");
-        }
         this._breakKeyword = breakKeyword;
         this._identifier = identifier;
         this._semicolonToken = semicolonToken;
@@ -7046,15 +6569,6 @@ var ContinueStatementSyntax = (function (_super) {
     __extends(ContinueStatementSyntax, _super);
     function ContinueStatementSyntax(continueKeyword, identifier, semicolonToken) {
         _super.call(this);
-        if(continueKeyword.keywordKind() !== 12 /* ContinueKeyword */ ) {
-            throw Errors.argument("continueKeyword");
-        }
-        if(identifier !== null && identifier.kind !== 5 /* IdentifierNameToken */ ) {
-            throw Errors.argument("identifier");
-        }
-        if(semicolonToken.kind !== 71 /* SemicolonToken */ ) {
-            throw Errors.argument("semicolonToken");
-        }
         this._continueKeyword = continueKeyword;
         this._identifier = identifier;
         this._semicolonToken = semicolonToken;
@@ -7077,9 +6591,6 @@ var IterationStatementSyntax = (function (_super) {
     __extends(IterationStatementSyntax, _super);
     function IterationStatementSyntax(statement) {
         _super.call(this);
-        if(statement === null) {
-            throw Errors.argumentNull("statement");
-        }
         this._statement = statement;
     }
     IterationStatementSyntax.prototype.statement = function () {
@@ -7091,15 +6602,6 @@ var BaseForStatementSyntax = (function (_super) {
     __extends(BaseForStatementSyntax, _super);
     function BaseForStatementSyntax(forKeyword, openParenToken, variableDeclaration, closeParenToken, statement) {
         _super.call(this, statement);
-        if(forKeyword.keywordKind() !== 20 /* ForKeyword */ ) {
-            throw Errors.argument("forKeyword");
-        }
-        if(openParenToken.kind !== 65 /* OpenParenToken */ ) {
-            throw Errors.argument("openParenToken");
-        }
-        if(closeParenToken.kind !== 66 /* CloseParenToken */ ) {
-            throw Errors.argument("closeParenToken");
-        }
         this._forKeyword = forKeyword;
         this._openParenToken = openParenToken;
         this._variableDeclaration = variableDeclaration;
@@ -7123,12 +6625,6 @@ var ForStatementSyntax = (function (_super) {
     __extends(ForStatementSyntax, _super);
     function ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement) {
         _super.call(this, forKeyword, openParenToken, variableDeclaration, closeParenToken, statement);
-        if(firstSemicolonToken.kind !== 71 /* SemicolonToken */ ) {
-            throw Errors.argument("firstSemicolonToken");
-        }
-        if(secondSemicolonToken.kind !== 71 /* SemicolonToken */ ) {
-            throw Errors.argument("secondSemicolonToken");
-        }
         this._initializer = initializer;
         this._firstSemicolonToken = firstSemicolonToken;
         this._condition = condition;
@@ -7159,12 +6655,6 @@ var ForInStatementSyntax = (function (_super) {
     __extends(ForInStatementSyntax, _super);
     function ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration, left, inKeyword, expression, closeParenToken, statement) {
         _super.call(this, forKeyword, openParenToken, variableDeclaration, closeParenToken, statement);
-        if(inKeyword.keywordKind() !== 23 /* InKeyword */ ) {
-            throw Errors.argument("inKeyword");
-        }
-        if(expression === null) {
-            throw Errors.argumentNull("expression");
-        }
         this._left = left;
         this._inKeyword = inKeyword;
         this._expression = expression;
@@ -7187,18 +6677,6 @@ var WhileStatementSyntax = (function (_super) {
     __extends(WhileStatementSyntax, _super);
     function WhileStatementSyntax(whileKeyword, openParenToken, condition, closeParenToken, statement) {
         _super.call(this, statement);
-        if(whileKeyword.keywordKind() !== 36 /* WhileKeyword */ ) {
-            throw Errors.argument("whileKeyword");
-        }
-        if(openParenToken.kind !== 65 /* OpenParenToken */ ) {
-            throw Errors.argument("openParenToken");
-        }
-        if(condition === null) {
-            throw Errors.argumentNull("condition");
-        }
-        if(closeParenToken.kind !== 66 /* CloseParenToken */ ) {
-            throw Errors.argument("closeParenToken");
-        }
         this._whileKeyword = whileKeyword;
         this._openParenToken = openParenToken;
         this._condition = condition;
@@ -7225,24 +6703,6 @@ var EnumDeclarationSyntax = (function (_super) {
     __extends(EnumDeclarationSyntax, _super);
     function EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken) {
         _super.call(this);
-        if(exportKeyword !== null && exportKeyword.keywordKind() !== 41 /* ExportKeyword */ ) {
-            throw Errors.argument("exportKeyword");
-        }
-        if(enumKeyword.keywordKind() !== 40 /* EnumKeyword */ ) {
-            throw Errors.argument("enumKeyword");
-        }
-        if(identifier.kind !== 5 /* IdentifierNameToken */ ) {
-            throw Errors.argument("identifier");
-        }
-        if(openBraceToken.kind !== 63 /* OpenBraceToken */ ) {
-            throw Errors.argument("openBraceToken");
-        }
-        if(variableDeclarators === null) {
-            throw Errors.argumentNull("variableDeclarators");
-        }
-        if(closeBraceToken.kind !== 64 /* CloseBraceToken */ ) {
-            throw Errors.argument("closeBraceToken");
-        }
         this._exportKeyword = exportKeyword;
         this._enumKeyword = enumKeyword;
         this._identifier = identifier;
@@ -7277,18 +6737,6 @@ var CastExpressionSyntax = (function (_super) {
     __extends(CastExpressionSyntax, _super);
     function CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression) {
         _super.call(this);
-        if(lessThanToken.kind !== 73 /* LessThanToken */ ) {
-            throw Errors.argument("lessThanToken");
-        }
-        if(type === null) {
-            throw Errors.argumentNull("null");
-        }
-        if(greaterThanToken.kind !== 74 /* GreaterThanToken */ ) {
-            throw Errors.argument("greaterThanToken");
-        }
-        if(expression === null) {
-            throw Errors.argumentNull("expression");
-        }
         this._lessThanToken = lessThanToken;
         this._type = type;
         this._greaterThanToken = greaterThanToken;
@@ -7315,15 +6763,6 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
     __extends(ObjectLiteralExpressionSyntax, _super);
     function ObjectLiteralExpressionSyntax(openBraceToken, propertyAssignments, closeBraceToken) {
         _super.call(this);
-        if(openBraceToken.kind !== 63 /* OpenBraceToken */ ) {
-            throw Errors.argument("openBraceToken");
-        }
-        if(propertyAssignments === null) {
-            throw Errors.argument("propertyAssignments");
-        }
-        if(closeBraceToken.kind !== 64 /* CloseBraceToken */ ) {
-            throw Errors.argument("closeBraceToken");
-        }
         this._openBraceToken = openBraceToken;
         this._propertyAssignments = propertyAssignments;
         this._closeBraceToken = closeBraceToken;
@@ -7346,9 +6785,6 @@ var PropertyAssignmentSyntax = (function (_super) {
     __extends(PropertyAssignmentSyntax, _super);
     function PropertyAssignmentSyntax(propertyName) {
         _super.call(this);
-        if(propertyName.kind !== 5 /* IdentifierNameToken */  && propertyName.kind !== 8 /* StringLiteral */  && propertyName.kind !== 7 /* NumericLiteral */ ) {
-            throw Errors.argument("propertyName");
-        }
         this._propertyName = propertyName;
     }
     PropertyAssignmentSyntax.prototype.propertyName = function () {
@@ -7360,12 +6796,6 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
     __extends(SimplePropertyAssignmentSyntax, _super);
     function SimplePropertyAssignmentSyntax(propertyName, colonToken, expression) {
         _super.call(this, propertyName);
-        if(colonToken.kind !== 99 /* ColonToken */ ) {
-            throw Errors.argument("colonToken");
-        }
-        if(expression === null) {
-            throw Errors.argumentNull("expression");
-        }
         this._colonToken = colonToken;
         this._expression = expression;
     }
@@ -7384,15 +6814,6 @@ var AccessorPropertyAssignmentSyntax = (function (_super) {
     __extends(AccessorPropertyAssignmentSyntax, _super);
     function AccessorPropertyAssignmentSyntax(propertyName, openParenToken, closeParenToken, block) {
         _super.call(this, propertyName);
-        if(openParenToken.kind !== 65 /* OpenParenToken */ ) {
-            throw Errors.argument("openParenToken");
-        }
-        if(closeParenToken.kind !== 66 /* CloseParenToken */ ) {
-            throw Errors.argument("closeParenToken");
-        }
-        if(block === null) {
-            throw Errors.argumentNull("block");
-        }
         this._openParenToken = openParenToken;
         this._closeParenToken = closeParenToken;
         this._block = block;
@@ -7412,9 +6833,6 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
     __extends(GetAccessorPropertyAssignmentSyntax, _super);
     function GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block) {
         _super.call(this, propertyName, openParenToken, closeParenToken, block);
-        if(getKeyword.keywordKind() !== 58 /* GetKeyword */ ) {
-            throw Errors.argument("getKeyword");
-        }
         this._getKeyword = getKeyword;
     }
     GetAccessorPropertyAssignmentSyntax.prototype.getKeyword = function () {
@@ -7426,12 +6844,6 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
     __extends(SetAccessorPropertyAssignmentSyntax, _super);
     function SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block) {
         _super.call(this, propertyName, openParenToken, closeParenToken, block);
-        if(setKeyword.keywordKind() !== 61 /* SetKeyword */ ) {
-            throw Errors.argument("setKeyword");
-        }
-        if(parameterName.kind !== 5 /* IdentifierNameToken */ ) {
-            throw Errors.argument("parameterName");
-        }
         this._setKeyword = setKeyword;
         this._parameterName = parameterName;
     }
@@ -7447,18 +6859,6 @@ var FunctionExpressionSyntax = (function (_super) {
     __extends(FunctionExpressionSyntax, _super);
     function FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block) {
         _super.call(this);
-        if(functionKeyword.keywordKind() !== 21 /* FunctionKeyword */ ) {
-            throw Errors.argument("functionKeyword");
-        }
-        if(identifier !== null && identifier.kind !== 5 /* IdentifierNameToken */ ) {
-            throw Errors.argument("identifier");
-        }
-        if(callSignature === null) {
-            throw Errors.argumentNull("callSignature");
-        }
-        if(block === null) {
-            throw Errors.argumentNull("block");
-        }
         this._functionKeyword = functionKeyword;
         this._identifier = identifier;
         this._callSignature = callSignature;
@@ -7485,9 +6885,6 @@ var EmptyStatementSyntax = (function (_super) {
     __extends(EmptyStatementSyntax, _super);
     function EmptyStatementSyntax(semicolonToken) {
         _super.call(this);
-        if(semicolonToken.kind !== 71 /* SemicolonToken */ ) {
-            throw Errors.argument("semicolonToken");
-        }
         this._semicolonToken = semicolonToken;
     }
     EmptyStatementSyntax.prototype.kind = function () {
@@ -7502,9 +6899,6 @@ var SuperExpressionSyntax = (function (_super) {
     __extends(SuperExpressionSyntax, _super);
     function SuperExpressionSyntax(superKeyword) {
         _super.call(this);
-        if(superKeyword.keywordKind() !== 44 /* SuperKeyword */ ) {
-            throw Errors.argument("superKeyword");
-        }
         this._superKeyword = superKeyword;
     }
     SuperExpressionSyntax.prototype.kind = function () {
@@ -7519,12 +6913,6 @@ var TryStatementSyntax = (function (_super) {
     __extends(TryStatementSyntax, _super);
     function TryStatementSyntax(tryKeyword, block, catchClause, finallyClause) {
         _super.call(this);
-        if(tryKeyword.keywordKind() !== 32 /* TryKeyword */ ) {
-            throw Errors.argument("tryKeyword");
-        }
-        if(block === null) {
-            throw Errors.argumentNull("block");
-        }
         this._tryKeyword = tryKeyword;
         this._block = block;
         this._catchClause = catchClause;
@@ -7551,21 +6939,6 @@ var CatchClauseSyntax = (function (_super) {
     __extends(CatchClauseSyntax, _super);
     function CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block) {
         _super.call(this);
-        if(catchKeyword.keywordKind() !== 11 /* CatchKeyword */ ) {
-            throw Errors.argument("catchKeyword");
-        }
-        if(openParenToken.kind !== 65 /* OpenParenToken */ ) {
-            throw Errors.argument("openParenToken");
-        }
-        if(identifier.kind !== 5 /* IdentifierNameToken */ ) {
-            throw Errors.argument("identifier");
-        }
-        if(closeParenToken.kind !== 66 /* CloseParenToken */ ) {
-            throw Errors.argument("closeParenToken");
-        }
-        if(block === null) {
-            throw Errors.argument("block");
-        }
         this._catchKeyword = catchKeyword;
         this._openParenToken = openParenToken;
         this._identifier = identifier;
@@ -7596,12 +6969,6 @@ var FinallyClauseSyntax = (function (_super) {
     __extends(FinallyClauseSyntax, _super);
     function FinallyClauseSyntax(finallyKeyword, block) {
         _super.call(this);
-        if(finallyKeyword.keywordKind() !== 19 /* FinallyKeyword */ ) {
-            throw Errors.argument("finallyKeyword");
-        }
-        if(block === null) {
-            throw Errors.argumentNull("block");
-        }
         this._finallyKeyword = finallyKeyword;
         this._block = block;
     }
@@ -7620,15 +6987,6 @@ var LabeledStatement = (function (_super) {
     __extends(LabeledStatement, _super);
     function LabeledStatement(identifier, colonToken, statement) {
         _super.call(this);
-        if(identifier.kind !== 5 /* IdentifierNameToken */ ) {
-            throw Errors.argument("identifier");
-        }
-        if(colonToken.kind !== 99 /* ColonToken */ ) {
-            throw Errors.argument("colonToken");
-        }
-        if(statement === null) {
-            throw Errors.argumentNull("statement");
-        }
         this._identifier = identifier;
         this._colonToken = colonToken;
         this._statement = statement;
@@ -7651,24 +7009,6 @@ var DoStatementSyntax = (function (_super) {
     __extends(DoStatementSyntax, _super);
     function DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken) {
         _super.call(this, statement);
-        if(doKeyword.keywordKind() !== 16 /* DoKeyword */ ) {
-            throw Errors.argument("doKeyword");
-        }
-        if(whileKeyword.keywordKind() !== 36 /* WhileKeyword */ ) {
-            throw Errors.argument("whileKeyword");
-        }
-        if(openParenToken.kind !== 65 /* OpenParenToken */ ) {
-            throw Errors.argument("openParenToken");
-        }
-        if(condition === null) {
-            throw Errors.argument("condition");
-        }
-        if(closeParenToken.kind !== 66 /* CloseParenToken */ ) {
-            throw Errors.argument("closeParenToken");
-        }
-        if(semicolonToken.kind !== 71 /* SemicolonToken */ ) {
-            throw Errors.argument("semicolonToken");
-        }
         this._doKeyword = doKeyword;
         this._whileKeyword = whileKeyword;
         this._openParenToken = openParenToken;
@@ -7703,12 +7043,6 @@ var TypeOfExpressionSyntax = (function (_super) {
     __extends(TypeOfExpressionSyntax, _super);
     function TypeOfExpressionSyntax(typeOfKeyword, expression) {
         _super.call(this);
-        if(typeOfKeyword.keywordKind() !== 33 /* TypeOfKeyword */ ) {
-            throw Errors.argument("typeOfKeyword");
-        }
-        if(expression === null) {
-            throw Errors.argumentNull("expression");
-        }
         this._typeOfKeyword = typeOfKeyword;
         this._expression = expression;
     }
@@ -7727,12 +7061,6 @@ var DeleteExpressionSyntax = (function (_super) {
     __extends(DeleteExpressionSyntax, _super);
     function DeleteExpressionSyntax(deleteKeyword, expression) {
         _super.call(this);
-        if(deleteKeyword.keywordKind() !== 15 /* DeleteKeyword */ ) {
-            throw Errors.argument("deleteKeyword");
-        }
-        if(expression === null) {
-            throw Errors.argumentNull("expression");
-        }
         this._deleteKeyword = deleteKeyword;
         this._expression = expression;
     }
@@ -34980,7 +34308,7 @@ var totalSize = 0;
 var program = new Program();
 var start, end;
 start = new Date().getTime();
-program.runAllTests(Environment, false, true);
+program.runAllTests(Environment, false, false);
 program.run(Environment, false);
 end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));
