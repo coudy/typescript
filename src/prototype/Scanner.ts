@@ -77,22 +77,6 @@ class Scanner extends SlidingWindow {
         return amountToRead;
     }
 
-    private addSimpleDiagnosticInfo(code: DiagnosticCode, ...args: any[]): void {
-        this.addDiagnosticInfo(this.makeSimpleDiagnosticInfo(code, args));
-    }
-
-    private addDiagnosticInfo(error: SyntaxDiagnosticInfo): void {
-        if (this.errors === null) {
-            this.errors = [];
-        }
-
-        this.errors.push(error);
-    }
-
-    private makeSimpleDiagnosticInfo(code: DiagnosticCode, args: any[]): SyntaxDiagnosticInfo {
-        return SyntaxDiagnosticInfo.create(code, args);
-    }
-
     private previousTokenKind: SyntaxKind = SyntaxKind.None;
     private previousTokenKeywordKind: SyntaxKind = SyntaxKind.None;
     private tokenInfo: ScannerTokenInfo = new ScannerTokenInfo();
@@ -335,13 +319,14 @@ class Scanner extends SlidingWindow {
             return;
         }
 
-        if (Scanner.isKeywordStartCharacter[character]) {
-            this.scanIdentifierOrKeyword();
-            return;
+        if (Scanner.isIdentifierStartCharacter[character]) {
+            if (this.tryFastScanIdentifierOrKeyword(character)) {
+                return;
+            }
         }
 
         if (this.isIdentifierStart(this.peekCharOrUnicodeEscape())) {
-            this.scanIdentifier();
+            this.slowScanIdentifier();
             return;
         }
 
@@ -364,7 +349,44 @@ class Scanner extends SlidingWindow {
         return interpretedChar > Scanner.MaxAsciiCharacter && Unicode.isIdentifierPart(interpretedChar, this.languageVersion);
     }
 
-    private scanIdentifier(): void {
+    private tryFastScanIdentifierOrKeyword(firstCharacter: number): bool {
+        var startIndex = this.getAndPinAbsoluteIndex();
+
+        while (true) {
+            var character = this.currentItem();
+            if (Scanner.isIdentifierPartCharacter[character]) {
+                // Still part of an identifier.  Move to the next caracter.
+                this.moveToNextItem();
+            }
+            else if (character === CharacterCodes.backslash || character > Scanner.MaxAsciiCharacter) {
+                // We saw a \ (which could start a unicode escape), or we saw a unicode character.
+                // This can't be scanned quickly.  Reset to the beginning and bail out.  We'll 
+                // go and try the slow path instead.
+                this.rewindToPinnedIndex(startIndex);
+                this.releaseAndUnpinAbsoluteIndex(startIndex);
+                return false;
+            }
+            else {
+                // Saw an ascii character that wasn't a backslash and wasn't an identifier 
+                // character.  This identifier is done.
+                var endIndex = this.absoluteIndex();
+                this.tokenInfo.Text = this.substring(startIndex, endIndex, /*intern:*/ true);
+                this.tokenInfo.Kind = SyntaxKind.IdentifierNameToken;
+
+                // Also check if it a keyword if it started with a lowercase letter.
+                if (Scanner.isKeywordStartCharacter[firstCharacter]) {
+                    this.tokenInfo.KeywordKind = SyntaxFacts.getTokenKind(this.tokenInfo.Text);
+                }
+
+                this.releaseAndUnpinAbsoluteIndex(startIndex);
+                return true;
+            }
+        }
+    }
+
+    // A slow path for scanning identifiers.  Called when we run into a unicode character or 
+    // escape sequence while processing the fast path.
+    private slowScanIdentifier(): void {
         var startIndex = this.getAndPinAbsoluteIndex();
 
         var errors = this.errors;
@@ -451,15 +473,6 @@ class Scanner extends SlidingWindow {
         }
 
         return false;
-    }
-
-    private scanIdentifierOrKeyword(): void {
-        this.scanIdentifier();
-
-        var kind = SyntaxFacts.getTokenKind(this.tokenInfo.Text);
-        if (kind !== SyntaxKind.None) {
-            this.tokenInfo.KeywordKind = kind;
-        }
     }
 
     private advanceAndSetTokenKind(kind: SyntaxKind): void {
@@ -1011,11 +1024,6 @@ class Scanner extends SlidingWindow {
         return intChar;
     }
 
-    private createIllegalEscapeDiagnostic(start: number, end: number): SyntaxDiagnosticInfo {
-        return new SyntaxDiagnosticInfo(start, end - start,
-            DiagnosticCode.Unrecognized_escape_sequence);
-    }
-
     public substring(start: number, end: number, intern: bool): string {
         var length = end - start;
         var offset = start - this.windowAbsoluteStartIndex;
@@ -1025,5 +1033,26 @@ class Scanner extends SlidingWindow {
         else {
             return StringUtilities.fromCharCodeArray(this.window.slice(offset, offset + length));
         }
+    }
+
+    private addSimpleDiagnosticInfo(code: DiagnosticCode, ...args: any[]): void {
+        this.addDiagnosticInfo(this.makeSimpleDiagnosticInfo(code, args));
+    }
+
+    private addDiagnosticInfo(error: SyntaxDiagnosticInfo): void {
+        if (this.errors === null) {
+            this.errors = [];
+        }
+
+        this.errors.push(error);
+    }
+
+    private makeSimpleDiagnosticInfo(code: DiagnosticCode, args: any[]): SyntaxDiagnosticInfo {
+        return SyntaxDiagnosticInfo.create(code, args);
+    }
+
+    private createIllegalEscapeDiagnostic(start: number, end: number): SyntaxDiagnosticInfo {
+        return new SyntaxDiagnosticInfo(start, end - start,
+            DiagnosticCode.Unrecognized_escape_sequence);
     }
 }
