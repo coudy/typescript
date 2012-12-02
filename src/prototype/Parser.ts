@@ -90,6 +90,9 @@ class Parser extends SlidingWindow {
     // that some tokens that would be considered identifiers may be considered keywords.
     private isInStrictMode: bool;
 
+    private skippedTokens: ISyntaxToken[] = [];
+    private diagnostics: DiagnosticInfo[] = [];
+
     constructor(
         scanner: Scanner,
         oldTree?: SyntaxTree,
