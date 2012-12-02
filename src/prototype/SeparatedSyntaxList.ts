@@ -43,7 +43,7 @@ class SeparatedSyntaxList {
                 Debug.assert(!SyntaxFacts.isTokenKind(item.kind()));
             }
             else {
-                Debug.assert(SyntaxFacts.isTokenKind(item.kind()));
+                Debug.assert(SyntaxFacts.isTokenKind(item.kind));
             }
         }
 

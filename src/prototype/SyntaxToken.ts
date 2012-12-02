@@ -21,7 +21,7 @@ module SyntaxTokenFactory {
 
     function toJSON(token: ISyntaxToken) {
         var result: any = {
-            kind: (<any>SyntaxKind)._map[token.kind()]
+            kind: (<any>SyntaxKind)._map[token.kind]
         };
 
         if (token.keywordKind() !== SyntaxKind.None) {
@@ -85,16 +85,15 @@ module SyntaxTokenFactory {
     }
 
     class EmptyToken implements ISyntaxToken {
-        private _kind: SyntaxKind;
+        public kind: SyntaxKind;
         private _keywordKind: SyntaxKind;
 
         constructor(kind: SyntaxKind, keywordKind: SyntaxKind) {
-            this._kind = kind;
+            this.kind = kind;
             this._keywordKind = keywordKind;
         }
         
         public toJSON(key) { return toJSON(this); }
-        public kind() { return this._kind; }
         public keywordKind() { return this._keywordKind; }
         public fullStart() { return 0; }
         public fullWidth() { return 0; }
@@ -117,11 +116,11 @@ module SyntaxTokenFactory {
     }
 
     class FixedWidthTokenWithNoTrivia implements ISyntaxToken {
-        private _kind: SyntaxKind;
+        public kind: SyntaxKind;
         private _fullStart: number;
 
         constructor(kind: SyntaxKind, fullStart: number) {
-            this._kind = kind;
+            this.kind = kind;
             this._fullStart = fullStart;
         }
 
@@ -129,13 +128,12 @@ module SyntaxTokenFactory {
         
         public isMissing(): bool { return false; }
         public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
-        public kind(): SyntaxKind { return this._kind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return this.width(); }
         public start(): number { return this.fullStart(); }
         public width(): number { return this.text().length; }
-        public text(): string { return SyntaxFacts.getText(this._kind); }
+        public text(): string { return SyntaxFacts.getText(this.kind); }
         public value(): any { return null; }
         public valueText(): string { return null; }
         public fullText(text: IText): string { return this.text(); }
@@ -150,12 +148,12 @@ module SyntaxTokenFactory {
     }
 
     class FixedWidthTokenWithLeadingTrivia implements ISyntaxToken {
-        private _kind: SyntaxKind;
+        public kind: SyntaxKind;
         private _fullStart: number;
         private _leadingTriviaInfo: number;
 
         constructor(kind: SyntaxKind, fullStart: number, leadingTriviaInfo: number) {
-            this._kind = kind;
+            this.kind = kind;
             this._fullStart = fullStart;
             this._leadingTriviaInfo = leadingTriviaInfo;
         }
@@ -164,13 +162,12 @@ module SyntaxTokenFactory {
 
         public isMissing(): bool { return false; }
         public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
-        public kind(): SyntaxKind { return this._kind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return getTriviaLength(this._leadingTriviaInfo) + this.width(); }
         public start(): number { return this.fullStart() + getTriviaLength(this._leadingTriviaInfo); }
         public width(): number { return this.text().length; }
-        public text(): string { return SyntaxFacts.getText(this._kind); }
+        public text(): string { return SyntaxFacts.getText(this.kind); }
         public value(): any { return null; }
         public valueText(): string { return null; }
         public fullText(text: IText): string { return text.substr(this.fullStart(), this.fullWidth()); }
@@ -187,12 +184,12 @@ module SyntaxTokenFactory {
     }
 
     class FixedWidthTokenWithTrailingTrivia implements ISyntaxToken {
-        private _kind: SyntaxKind;
+        public kind: SyntaxKind;
         private _fullStart: number;
         private _trailingTriviaInfo: number;
 
         constructor(kind: SyntaxKind, fullStart: number, trailingTriviaInfo: number) {
-            this._kind = kind;
+            this.kind = kind;
             this._fullStart = fullStart;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
@@ -201,13 +198,12 @@ module SyntaxTokenFactory {
         
         public isMissing(): bool { return false; }
         public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
-        public kind(): SyntaxKind { return this._kind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return this.width() + getTriviaLength(this._trailingTriviaInfo); }
         public start(): number { return this.fullStart(); }
         public width(): number { return this.text().length; }
-        public text(): string { return SyntaxFacts.getText(this._kind); }
+        public text(): string { return SyntaxFacts.getText(this.kind); }
         public value(): any { return null; }
         public valueText(): string { return null; }
         public fullText(text: IText): string { return text.substr(this.fullStart(), this.fullWidth()); }
@@ -224,13 +220,13 @@ module SyntaxTokenFactory {
     }
 
     class FixedWidthTokenWithLeadingAndTrailingTrivia implements ISyntaxToken {
-        private _kind: SyntaxKind;
+        public kind: SyntaxKind;
         private _fullStart: number;
         private _leadingTriviaInfo: number;
         private _trailingTriviaInfo: number;
 
         constructor(kind: SyntaxKind, fullStart: number, leadingTriviaInfo: number, trailingTriviaInfo: number) {
-            this._kind = kind;
+            this.kind = kind;
             this._fullStart = fullStart;
             this._leadingTriviaInfo = leadingTriviaInfo;
             this._trailingTriviaInfo = trailingTriviaInfo;
@@ -240,13 +236,12 @@ module SyntaxTokenFactory {
         
         public isMissing(): bool { return false; }
         public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
-        public kind(): SyntaxKind { return this._kind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return getTriviaLength(this._leadingTriviaInfo) + this.text().length + getTriviaLength(this._trailingTriviaInfo); }
         public start(): number { return this.fullStart() + getTriviaLength(this._leadingTriviaInfo); }
         public width(): number { return this.text().length; }
-        public text(): string { return SyntaxFacts.getText(this._kind); }
+        public text(): string { return SyntaxFacts.getText(this.kind); }
         public value(): any { return null; }
         public valueText(): string { return null; }
         public fullText(text: IText): string { return text.substr(this.fullStart(), this.fullWidth()); }
@@ -263,11 +258,11 @@ module SyntaxTokenFactory {
     }
 
     class FixedWidthKeywordWithNoTrivia implements ISyntaxToken {
-        private _kind: SyntaxKind;
+        private _keywordKind: SyntaxKind;
         private _fullStart: number;
 
         constructor(kind: SyntaxKind, fullStart: number) {
-            this._kind = kind;
+            this._keywordKind = kind;
             this._fullStart = fullStart;
         }
 
@@ -275,13 +270,13 @@ module SyntaxTokenFactory {
         
         public isMissing(): bool { return false; }
         public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
-        public kind(): SyntaxKind { return SyntaxKind.IdentifierNameToken; }
-        public keywordKind(): SyntaxKind { return this._kind; }
+        public kind: SyntaxKind = SyntaxKind.IdentifierNameToken;
+        public keywordKind(): SyntaxKind { return this._keywordKind; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return this.width(); }
         public start(): number { return this.fullStart(); }
         public width(): number { return this.text().length; }
-        public text(): string { return SyntaxFacts.getText(this._kind); }
+        public text(): string { return SyntaxFacts.getText(this._keywordKind); }
         public value(): any { return null; }
         public valueText(): string { return null; }
         public fullText(text: IText): string { return this.text(); }
@@ -296,12 +291,12 @@ module SyntaxTokenFactory {
     }
 
     class FixedWidthKeywordWithLeadingTrivia implements ISyntaxToken {
-        private _kind: SyntaxKind;
+        private _keywordKind: SyntaxKind;
         private _fullStart: number;
         private _leadingTriviaInfo: number;
 
         constructor(kind: SyntaxKind, fullStart: number, leadingTriviaInfo: number) {
-            this._kind = kind;
+            this._keywordKind = kind;
             this._fullStart = fullStart;
             this._leadingTriviaInfo = leadingTriviaInfo;
         }
@@ -310,13 +305,13 @@ module SyntaxTokenFactory {
 
         public isMissing(): bool { return false; }
         public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
-        public kind(): SyntaxKind { return SyntaxKind.IdentifierNameToken; }
-        public keywordKind(): SyntaxKind { return this._kind; }
+        public kind: SyntaxKind = SyntaxKind.IdentifierNameToken;
+        public keywordKind(): SyntaxKind { return this._keywordKind; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return getTriviaLength(this._leadingTriviaInfo) + this.width(); }
         public start(): number { return this.fullStart() + getTriviaLength(this._leadingTriviaInfo); }
         public width(): number { return this.text().length; }
-        public text(): string { return SyntaxFacts.getText(this._kind); }
+        public text(): string { return SyntaxFacts.getText(this._keywordKind); }
         public value(): any { return null; }
         public valueText(): string { return null; }
         public fullText(text: IText): string { return text.substr(this.fullStart(), this.fullWidth()); }
@@ -333,12 +328,12 @@ module SyntaxTokenFactory {
     }
 
     class FixedWidthKeywordWithTrailingTrivia implements ISyntaxToken {
-        private _kind: SyntaxKind;
+        private _keywordKind: SyntaxKind;
         private _fullStart: number;
         private _trailingTriviaInfo: number;
 
         constructor(kind: SyntaxKind, fullStart: number, trailingTriviaInfo: number) {
-            this._kind = kind;
+            this._keywordKind = kind;
             this._fullStart = fullStart;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
@@ -347,13 +342,13 @@ module SyntaxTokenFactory {
         
         public isMissing(): bool { return false; }
         public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
-        public kind(): SyntaxKind { return SyntaxKind.IdentifierNameToken; }
-        public keywordKind(): SyntaxKind { return this._kind; }
+        public kind: SyntaxKind = SyntaxKind.IdentifierNameToken;
+        public keywordKind(): SyntaxKind { return this._keywordKind; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return this.width() + getTriviaLength(this._trailingTriviaInfo); }
         public start(): number { return this.fullStart(); }
         public width(): number { return this.text().length; }
-        public text(): string { return SyntaxFacts.getText(this._kind); }
+        public text(): string { return SyntaxFacts.getText(this._keywordKind); }
         public value(): any { return null; }
         public valueText(): string { return null; }
         public fullText(text: IText): string { return text.substr(this.fullStart(), this.fullWidth()); }
@@ -370,13 +365,13 @@ module SyntaxTokenFactory {
     }
 
     class FixedWidthKeywordWithLeadingAndTrailingTrivia implements ISyntaxToken {
-        private _kind: SyntaxKind;
+        private _keywordKind: SyntaxKind;
         private _fullStart: number;
         private _leadingTriviaInfo: number;
         private _trailingTriviaInfo: number;
 
         constructor(kind: SyntaxKind, fullStart: number, leadingTriviaInfo: number, trailingTriviaInfo: number) {
-            this._kind = kind;
+            this._keywordKind = kind;
             this._fullStart = fullStart;
             this._leadingTriviaInfo = leadingTriviaInfo;
             this._trailingTriviaInfo = trailingTriviaInfo;
@@ -386,13 +381,13 @@ module SyntaxTokenFactory {
         
         public isMissing(): bool { return false; }
         public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
-        public kind(): SyntaxKind { return SyntaxKind.IdentifierNameToken; }
-        public keywordKind(): SyntaxKind { return this._kind; }
+        public kind: SyntaxKind = SyntaxKind.IdentifierNameToken;
+        public keywordKind(): SyntaxKind { return this._keywordKind; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return getTriviaLength(this._leadingTriviaInfo) + this.text().length + getTriviaLength(this._trailingTriviaInfo); }
         public start(): number { return this.fullStart() + getTriviaLength(this._leadingTriviaInfo); }
         public width(): number { return this.text().length; }
-        public text(): string { return SyntaxFacts.getText(this._kind); }
+        public text(): string { return SyntaxFacts.getText(this._keywordKind); }
         public value(): any { return null; }
         public valueText(): string { return null; }
         public fullText(text: IText): string { return text.substr(this.fullStart(), this.fullWidth()); }
@@ -409,12 +404,12 @@ module SyntaxTokenFactory {
     }
 
     class VariableWidthTokenWithNoTrivia implements ISyntaxToken {
-        private _kind: SyntaxKind;
+        public kind: SyntaxKind;
         private _fullStart: number;
         private _text: string;
 
         constructor(kind: SyntaxKind, fullStart: number, text: string) {
-            this._kind = kind;
+            this.kind = kind;
             this._fullStart = fullStart;
             this._text = text;
         }
@@ -423,7 +418,6 @@ module SyntaxTokenFactory {
         
         public isMissing(): bool { return false; }
         public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
-        public kind(): SyntaxKind { return this._kind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return this.width(); }
@@ -444,13 +438,13 @@ module SyntaxTokenFactory {
     }
 
     class VariableWidthTokenWithLeadingTrivia implements ISyntaxToken {
-        private _kind: SyntaxKind;
+        public kind: SyntaxKind;
         private _fullStart: number;
         private _text: string;
         private _leadingTriviaInfo: number;
 
         constructor(kind: SyntaxKind, fullStart: number, text: string, leadingTriviaInfo: number) {
-            this._kind = kind;
+            this.kind = kind;
             this._fullStart = fullStart;
             this._text = text;
             this._leadingTriviaInfo = leadingTriviaInfo;
@@ -460,7 +454,6 @@ module SyntaxTokenFactory {
 
         public isMissing(): bool { return false; }
         public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
-        public kind(): SyntaxKind { return this._kind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return getTriviaLength(this._leadingTriviaInfo) + this.width(); }
@@ -483,13 +476,13 @@ module SyntaxTokenFactory {
     }
 
     class VariableWidthTokenWithTrailingTrivia implements ISyntaxToken {
-        private _kind: SyntaxKind;
+        public kind: SyntaxKind;
         private _fullStart: number;
         private _text: string;
         private _trailingTriviaInfo: number;
 
         constructor(kind: SyntaxKind, fullStart: number, text: string, trailingTriviaInfo: number) {
-            this._kind = kind;
+            this.kind = kind;
             this._fullStart = fullStart;
             this._text = text;
             this._trailingTriviaInfo = trailingTriviaInfo;
@@ -499,7 +492,6 @@ module SyntaxTokenFactory {
         
         public isMissing(): bool { return false; }
         public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
-        public kind(): SyntaxKind { return this._kind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return this.width() + getTriviaLength(this._trailingTriviaInfo); }
@@ -522,14 +514,14 @@ module SyntaxTokenFactory {
     }
 
     class VariableWidthTokenWithLeadingAndTrailingTrivia implements ISyntaxToken {
-        private _kind: SyntaxKind;
+        public kind: SyntaxKind;
         private _fullStart: number;
         private _text: string;
         private _leadingTriviaInfo: number;
         private _trailingTriviaInfo: number;
 
         constructor(kind: SyntaxKind, fullStart: number, text: string, leadingTriviaInfo: number, trailingTriviaInfo: number) {
-            this._kind = kind;
+            this.kind = kind;
             this._fullStart = fullStart;
             this._text = text;
             this._leadingTriviaInfo = leadingTriviaInfo;
@@ -540,7 +532,6 @@ module SyntaxTokenFactory {
         
         public isMissing(): bool { return false; }
         public diagnostics(): SyntaxDiagnosticInfo[] { return null; }
-        public kind(): SyntaxKind { return this._kind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return getTriviaLength(this._leadingTriviaInfo) + this.text().length + getTriviaLength(this._trailingTriviaInfo); }
@@ -563,7 +554,7 @@ module SyntaxTokenFactory {
     }
 
     class FullToken implements ISyntaxToken {
-        private _kind: SyntaxKind;
+        public kind: SyntaxKind;
         private _keywordKind: SyntaxKind;
         private _fullStart: number;
         private _text: string;
@@ -578,7 +569,7 @@ module SyntaxTokenFactory {
             leadingTriviaInfo: number,
             trailingTriviaInfo: number,
             diagnostics: DiagnosticInfo[]) {
-            this._kind = kind;
+            this.kind = kind;
             this._keywordKind = keywordKind;
             this._text = text;
             this._fullStart = fullStart;
@@ -589,7 +580,6 @@ module SyntaxTokenFactory {
 
         public toJSON(key) { return toJSON(this); }
 
-        public kind() { return this._kind; }
         public keywordKind() { return this._keywordKind; }
 
         public fullStart() { return this._fullStart; }

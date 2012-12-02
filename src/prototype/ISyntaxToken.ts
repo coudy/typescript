@@ -1,7 +1,7 @@
 ///<reference path='References.ts' />
 
 interface ISyntaxToken {
-    kind(): SyntaxKind;
+    kind: SyntaxKind;
     keywordKind(): SyntaxKind;
 
     fullStart(): number;
