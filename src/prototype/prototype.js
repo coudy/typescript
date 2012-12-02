@@ -658,123 +658,118 @@ var ParseOptions = (function () {
     };
     return ParseOptions;
 })();
-var SeparatedSyntaxList = (function () {
-    function SeparatedSyntaxList() { }
-    SeparatedSyntaxList.empty = {
-        toJSON: function (key) {
+var SeparatedSyntaxList;
+(function (SeparatedSyntaxList) {
+    var EmptySeparatedSyntaxList = (function () {
+        function EmptySeparatedSyntaxList() { }
+        EmptySeparatedSyntaxList.prototype.toJSON = function (key) {
             return [];
-        },
-        count: function () {
+        };
+        EmptySeparatedSyntaxList.prototype.count = function () {
             return 0;
-        },
-        syntaxNodeCount: function () {
+        };
+        EmptySeparatedSyntaxList.prototype.syntaxNodeCount = function () {
             return 0;
-        },
-        separatorCount: function () {
+        };
+        EmptySeparatedSyntaxList.prototype.separatorCount = function () {
             return 0;
-        },
-        itemAt: function (index) {
+        };
+        EmptySeparatedSyntaxList.prototype.itemAt = function (index) {
             throw Errors.argumentOutOfRange("index");
-        },
-        syntaxNodeAt: function (index) {
+        };
+        EmptySeparatedSyntaxList.prototype.syntaxNodeAt = function (index) {
             throw Errors.argumentOutOfRange("index");
-        },
-        separatorAt: function (index) {
+        };
+        EmptySeparatedSyntaxList.prototype.separatorAt = function (index) {
             throw Errors.argumentOutOfRange("index");
+        };
+        return EmptySeparatedSyntaxList;
+    })();    
+    var SingletonSeparatedSyntaxList = (function () {
+        function SingletonSeparatedSyntaxList(item) {
+            this.item = item;
         }
-    };
-    SeparatedSyntaxList.toJSON = function toJSON(list) {
-        var result = [];
-        for(var i = 0; i < list.count(); i++) {
-            result.push(list.itemAt(i));
-        }
-        return result;
-    }
-    SeparatedSyntaxList.create = function create(nodes) {
-        if(nodes === null || nodes.length === 0) {
-            return SeparatedSyntaxList.empty;
-        }
-        for(var i = 0; i < nodes.length; i++) {
-            var item = nodes[i];
-            if(i % 2 === 0) {
-                Debug.assert(!SyntaxFacts.isTokenKind(item.kind()));
-            } else {
-                Debug.assert(SyntaxFacts.isTokenKind(item.kind));
+        SingletonSeparatedSyntaxList.prototype.toJSON = function (key) {
+            return [
+                this.item
+            ];
+        };
+        SingletonSeparatedSyntaxList.prototype.count = function () {
+            return 1;
+        };
+        SingletonSeparatedSyntaxList.prototype.syntaxNodeCount = function () {
+            return 1;
+        };
+        SingletonSeparatedSyntaxList.prototype.separatorCount = function () {
+            return 0;
+        };
+        SingletonSeparatedSyntaxList.prototype.itemAt = function (index) {
+            if(index !== 0) {
+                throw Errors.argumentOutOfRange("index");
             }
+            return this.item;
+        };
+        SingletonSeparatedSyntaxList.prototype.syntaxNodeAt = function (index) {
+            if(index !== 0) {
+                throw Errors.argumentOutOfRange("index");
+            }
+            return this.item;
+        };
+        SingletonSeparatedSyntaxList.prototype.separatorAt = function (index) {
+            throw Errors.argumentOutOfRange("index");
+        };
+        return SingletonSeparatedSyntaxList;
+    })();    
+    var NormalSeparatedSyntaxList = (function () {
+        function NormalSeparatedSyntaxList(nodes) {
+            this.nodes = nodes;
+        }
+        NormalSeparatedSyntaxList.prototype.toJSON = function (key) {
+            return this.nodes;
+        };
+        NormalSeparatedSyntaxList.prototype.count = function () {
+            return this.nodes.length;
+        };
+        NormalSeparatedSyntaxList.prototype.syntaxNodeCount = function () {
+            return IntegerUtilities.integerDivide(this.nodes.length + 1, 2);
+        };
+        NormalSeparatedSyntaxList.prototype.separatorCount = function () {
+            return IntegerUtilities.integerDivide(this.nodes.length, 2);
+        };
+        NormalSeparatedSyntaxList.prototype.itemAt = function (index) {
+            if(index < 0 || index >= this.nodes.length) {
+                throw Errors.argumentOutOfRange("index");
+            }
+            return this.nodes[index];
+        };
+        NormalSeparatedSyntaxList.prototype.syntaxNodeAt = function (index) {
+            var value = index * 2;
+            if(value < 0 || value >= this.nodes.length) {
+                throw Errors.argumentOutOfRange("index");
+            }
+            return this.nodes[value];
+        };
+        NormalSeparatedSyntaxList.prototype.separatorAt = function (index) {
+            var value = index * 2 + 1;
+            if(value < 0 || value >= this.nodes.length) {
+                throw Errors.argumentOutOfRange("index");
+            }
+            return this.nodes[value];
+        };
+        return NormalSeparatedSyntaxList;
+    })();    
+    var empty = new EmptySeparatedSyntaxList();
+    function create(nodes) {
+        if(nodes === null || nodes.length === 0) {
+            return empty;
         }
         if(nodes.length === 1) {
-            var item = nodes[0];
-            var list;
-            list = {
-                toJSON: function (key) {
-                    return SeparatedSyntaxList.toJSON(list);
-                },
-                count: function () {
-                    return 1;
-                },
-                syntaxNodeCount: function () {
-                    return 1;
-                },
-                separatorCount: function () {
-                    return 0;
-                },
-                itemAt: function (index) {
-                    if(index !== 0) {
-                        throw Errors.argumentOutOfRange("index");
-                    }
-                    return item;
-                },
-                syntaxNodeAt: function (index) {
-                    if(index !== 0) {
-                        throw Errors.argumentOutOfRange("index");
-                    }
-                    return item;
-                },
-                separatorAt: function (index) {
-                    throw Errors.argumentOutOfRange("index");
-                }
-            };
-            return list;
+            return new SingletonSeparatedSyntaxList(nodes[0]);
         }
-        var list;
-        list = {
-            toJSON: function (key) {
-                return SeparatedSyntaxList.toJSON(list);
-            },
-            count: function () {
-                return nodes.length;
-            },
-            syntaxNodeCount: function () {
-                return IntegerUtilities.integerDivide(nodes.length + 1, 2);
-            },
-            separatorCount: function () {
-                return IntegerUtilities.integerDivide(nodes.length, 2);
-            },
-            itemAt: function (index) {
-                if(index < 0 || index >= nodes.length) {
-                    throw Errors.argumentOutOfRange("index");
-                }
-                return nodes[index];
-            },
-            syntaxNodeAt: function (index) {
-                var value = index * 2;
-                if(value < 0 || value >= nodes.length) {
-                    throw Errors.argumentOutOfRange("index");
-                }
-                return nodes[value];
-            },
-            separatorAt: function (index) {
-                var value = index * 2 + 1;
-                if(value < 0 || value >= nodes.length) {
-                    throw Errors.argumentOutOfRange("index");
-                }
-                return nodes[value];
-            }
-        };
-        return list;
+        return new NormalSeparatedSyntaxList(nodes);
     }
-    return SeparatedSyntaxList;
-})();
+    SeparatedSyntaxList.create = create;
+})(SeparatedSyntaxList || (SeparatedSyntaxList = {}));
 var SlidingWindow = (function () {
     function SlidingWindow(defaultWindowSize, defaultValue, sourceLength) {
         if (typeof sourceLength === "undefined") { sourceLength = -1; }
