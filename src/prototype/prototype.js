@@ -283,6 +283,7 @@ var DiagnosticCode;
     DiagnosticCode._0_expected = 5;
     DiagnosticCode.Identifier_expected__0_is_a_keyword = 6;
     DiagnosticCode.AutomaticSemicolonInsertionNotAllowed = 7;
+    DiagnosticCode.Unexpected_token__0_expected = 8;
 })(DiagnosticCode || (DiagnosticCode = {}));
 var DiagnosticMessages = (function () {
     function DiagnosticMessages() { }
@@ -3055,6 +3056,36 @@ var Parser = (function (_super) {
             equalsValueClause = this.parseEqualsValuesClause(true);
         }
         return new ParameterSyntax(dotDotDotToken, publicOrPrivateToken, identifier, questionToken, typeAnnotation, equalsValueClause);
+    };
+    Parser.prototype.parseSyntaxNodeList = function (currentListType) {
+        var items = null;
+        while(true) {
+            if(this.isExpectedListTerminator(currentListType) || 114 /* EndOfFileToken */ ) {
+                return SyntaxNodeList.create(items);
+            }
+            if(this.isExpectedListItem(currentListType)) {
+                var item = this.parseExpectedListItem(currentListType);
+                Debug.assert(item !== null);
+                items = items || [];
+                items.push(item);
+                continue;
+            }
+            var token = this.currentToken();
+            var diagnostic = new Diagnostic(8 /* Unexpected_token__0_expected */ , this.getExpectedListElementType(currentListType));
+            this.moveToNextToken();
+        }
+    };
+    Parser.prototype.isExpectedListTerminator = function (currentListType) {
+        throw Errors.notYetImplemented();
+    };
+    Parser.prototype.isExpectedListItem = function (currentListType) {
+        throw Errors.notYetImplemented();
+    };
+    Parser.prototype.parseExpectedListItem = function (currentListType) {
+        throw Errors.notYetImplemented();
+    };
+    Parser.prototype.getExpectedListElementType = function (currentListType) {
+        throw Errors.notYetImplemented();
     };
     return Parser;
 })(SlidingWindow);

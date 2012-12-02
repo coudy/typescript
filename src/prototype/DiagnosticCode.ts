@@ -9,6 +9,7 @@ enum DiagnosticCode {
     _0_expected = 5,
     Identifier_expected__0_is_a_keyword = 6,
     AutomaticSemicolonInsertionNotAllowed = 7,
+    Unexpected_token__0_expected = 8,
 }
 
 class DiagnosticMessages {
