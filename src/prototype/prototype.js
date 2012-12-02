@@ -3011,9 +3011,34 @@ var Scanner = (function (_super) {
         this.tokenInfo = new ScannerTokenInfo();
         this.leadingTriviaInfo = new ScannerTriviaInfo();
         this.trailingTriviaInfo = new ScannerTriviaInfo();
+        Scanner.initializeStaticData();
         this.text = text;
         this.stringTable = stringTable;
         this.languageVersion = languageVersion;
+    }
+    Scanner.isKeywordStartCharacter = [];
+    Scanner.isIdentifierStartCharacter = [];
+    Scanner.isIdentifierPartCharacter = [];
+    Scanner.MaxAsciiCharacter = 127;
+    Scanner.initializeStaticData = function initializeStaticData() {
+        if(Scanner.isKeywordStartCharacter.length === 0) {
+            for(var character = 0; character < Scanner.MaxAsciiCharacter; character++) {
+                if(character >= 97 /* a */  && character <= 122 /* z */ ) {
+                    Scanner.isKeywordStartCharacter[character] = true;
+                    Scanner.isIdentifierStartCharacter[character] = true;
+                    Scanner.isIdentifierPartCharacter[character] = true;
+                } else {
+                    if((character >= 65 /* A */  && character <= 90 /* Z */ ) || character === 95 /* _ */  || character === 36 /* $ */ ) {
+                        Scanner.isIdentifierStartCharacter[character] = true;
+                        Scanner.isIdentifierPartCharacter[character] = true;
+                    } else {
+                        if(character >= 48 /* _0 */  && character <= 57 /* _9 */ ) {
+                            Scanner.isIdentifierPartCharacter[character] = true;
+                        }
+                    }
+                }
+            }
+        }
     }
     Scanner.create = function create(text, languageVersion) {
         return new Scanner(text, languageVersion, new StringTable());
@@ -3046,9 +3071,7 @@ var Scanner = (function (_super) {
         }
         var start = this.absoluteIndex();
         this.scanTriviaInfo(this.absoluteIndex() > 0, false, this.leadingTriviaInfo);
-        var index = this.getAndPinAbsoluteIndex();
         this.scanSyntaxToken();
-        this.releaseAndUnpinAbsoluteIndex(index);
         this.scanTriviaInfo(true, true, this.trailingTriviaInfo);
         this.previousTokenKind = this.tokenInfo.Kind;
         this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;

@@ -18,12 +18,39 @@ class Scanner extends SlidingWindow {
     private stringTable: StringTable;
     private languageVersion: LanguageVersion;
 
+    private static isKeywordStartCharacter: bool[] = [];
+    private static isIdentifierStartCharacter: bool[] = [];
+    private static isIdentifierPartCharacter: bool[] = [];
+    private static MaxAsciiCharacter = 127;
+
+    private static initializeStaticData() {
+        if (Scanner.isKeywordStartCharacter.length === 0) {
+            for (var character = 0; character < MaxAsciiCharacter; character++) {
+                if (character >= CharacterCodes.a && character <= CharacterCodes.z) {
+                    Scanner.isKeywordStartCharacter[character] = true;
+                    Scanner.isIdentifierStartCharacter[character] = true;
+                    Scanner.isIdentifierPartCharacter[character] = true;
+                }
+                else if ((character >= CharacterCodes.A && character <= CharacterCodes.Z) ||
+                         character === CharacterCodes._ ||
+                         character === CharacterCodes.$) {
+                    Scanner.isIdentifierStartCharacter[character] = true;
+                    Scanner.isIdentifierPartCharacter[character] = true;
+                }
+                else if (character >= CharacterCodes._0 && character <= CharacterCodes._9) {
+                    Scanner.isIdentifierPartCharacter[character] = true;
+                }
+            }
+        }
+    }
+
     public static create(text: IText, languageVersion: LanguageVersion): Scanner {
         return new Scanner(text, languageVersion, new StringTable());
     }
 
     constructor(text: IText, languageVersion: LanguageVersion, stringTable: StringTable) {
         super(2048, 0, text.length());
+        Scanner.initializeStaticData();
 
         this.text = text;
         this.stringTable = stringTable;
@@ -66,13 +93,7 @@ class Scanner extends SlidingWindow {
 
         var start = this.absoluteIndex();
         this.scanTriviaInfo(/*afterFirstToken: */ this.absoluteIndex() > 0, /*isTrailing: */ false, this.leadingTriviaInfo);
-
-        // Pin the window so it can't move past the start of the token.  This will enable us to 
-        // extract any text we need for the token.
-        var index = this.getAndPinAbsoluteIndex();
         this.scanSyntaxToken();
-        this.releaseAndUnpinAbsoluteIndex(index);
-
         this.scanTriviaInfo(/* afterFirstToken: */ true, /*isTrailing: */true, this.trailingTriviaInfo);
 
         this.previousTokenKind = this.tokenInfo.Kind;
@@ -205,6 +226,8 @@ class Scanner extends SlidingWindow {
         this.tokenInfo.Text = null;
 
         var character = this.currentItem();
+       
+
         switch (character) {
             case CharacterCodes.doubleQuote:
             case CharacterCodes.singleQuote:
