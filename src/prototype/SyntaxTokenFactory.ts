@@ -78,7 +78,11 @@ module SyntaxTokenFactory {
         return result;
     }
 
-    function toValueString(value: any): string {
+    function toValueString(token: ISyntaxToken): string {
+        // TODO: specialize on IdentifierName token with null value.  In that case we need to 
+        // process the escape codes and make a real value for this token.
+
+        var value = token.value();
         return value === null
             ? null
             : typeof value === 'string'
@@ -105,7 +109,7 @@ module SyntaxTokenFactory {
         public text() { return ""; }
         public fullText(itext: IText): string { return ""; }
         public value() { return null; }
-        public valueText(): string { return toValueString(this.value()); }
+        public valueText(): string { return toValueString(this); }
         public diagnostics(): SyntaxDiagnostic[] { return []; }
         public hasLeadingTrivia() { return false; }
         public hasLeadingCommentTrivia() { return false; }
@@ -137,7 +141,7 @@ module SyntaxTokenFactory {
         public width(): number { return this.text().length; }
         public text(): string { return SyntaxFacts.getText(this.kind); }
         public value(): any { return null; }
-        public valueText(): string { return toValueString(this.value()); }
+        public valueText(): string { return toValueString(this); }
         public fullText(text: IText): string { return this.text(); }
         public hasLeadingTrivia(): bool { return false; }
         public hasLeadingCommentTrivia(): bool { return false; }
@@ -171,7 +175,7 @@ module SyntaxTokenFactory {
         public width(): number { return this.text().length; }
         public text(): string { return SyntaxFacts.getText(this.kind); }
         public value(): any { return null; }
-        public valueText(): string { return toValueString(this.value()); }
+        public valueText(): string { return toValueString(this); }
         public fullText(text: IText): string { return text.substr(this.fullStart(), this.fullWidth()); }
 
         public hasLeadingTrivia(): bool { return true; }
@@ -207,7 +211,7 @@ module SyntaxTokenFactory {
         public width(): number { return this.text().length; }
         public text(): string { return SyntaxFacts.getText(this.kind); }
         public value(): any { return null; }
-        public valueText(): string { return toValueString(this.value()); }
+        public valueText(): string { return toValueString(this); }
         public fullText(text: IText): string { return text.substr(this.fullStart(), this.fullWidth()); }
 
         public hasLeadingTrivia(): bool { return false; }
@@ -245,7 +249,7 @@ module SyntaxTokenFactory {
         public width(): number { return this.text().length; }
         public text(): string { return SyntaxFacts.getText(this.kind); }
         public value(): any { return null; }
-        public valueText(): string { return toValueString(this.value()); }
+        public valueText(): string { return toValueString(this); }
         public fullText(text: IText): string { return text.substr(this.fullStart(), this.fullWidth()); }
 
         public hasLeadingTrivia(): bool { return true; }
@@ -280,7 +284,7 @@ module SyntaxTokenFactory {
         public width(): number { return this.text().length; }
         public text(): string { return SyntaxFacts.getText(this._keywordKind); }
         public value(): any { return null; }
-        public valueText(): string { return toValueString(this.value()); }
+        public valueText(): string { return toValueString(this); }
         public fullText(text: IText): string { return this.text(); }
         public hasLeadingTrivia(): bool { return false; }
         public hasLeadingCommentTrivia(): bool { return false; }
@@ -315,7 +319,7 @@ module SyntaxTokenFactory {
         public width(): number { return this.text().length; }
         public text(): string { return SyntaxFacts.getText(this._keywordKind); }
         public value(): any { return null; }
-        public valueText(): string { return toValueString(this.value()); }
+        public valueText(): string { return toValueString(this); }
         public fullText(text: IText): string { return text.substr(this.fullStart(), this.fullWidth()); }
 
         public hasLeadingTrivia(): bool { return true; }
@@ -352,7 +356,7 @@ module SyntaxTokenFactory {
         public width(): number { return this.text().length; }
         public text(): string { return SyntaxFacts.getText(this._keywordKind); }
         public value(): any { return null; }
-        public valueText(): string { return toValueString(this.value()); }
+        public valueText(): string { return toValueString(this); }
         public fullText(text: IText): string { return text.substr(this.fullStart(), this.fullWidth()); }
 
         public hasLeadingTrivia(): bool { return false; }
@@ -391,7 +395,7 @@ module SyntaxTokenFactory {
         public width(): number { return this.text().length; }
         public text(): string { return SyntaxFacts.getText(this._keywordKind); }
         public value(): any { return null; }
-        public valueText(): string { return toValueString(this.value()); }
+        public valueText(): string { return toValueString(this); }
         public fullText(text: IText): string { return text.substr(this.fullStart(), this.fullWidth()); }
 
         public hasLeadingTrivia(): bool { return true; }
@@ -429,7 +433,7 @@ module SyntaxTokenFactory {
         public width(): number { return this.text().length; }
         public text(): string { return this._text; }
         public value(): any { return this._value; }
-        public valueText(): string { return toValueString(this.value()); }
+        public valueText(): string { return toValueString(this); }
         public fullText(text: IText): string { return this.text(); }
         public hasLeadingTrivia(): bool { return false; }
         public hasLeadingCommentTrivia(): bool { return false; }
@@ -467,7 +471,7 @@ module SyntaxTokenFactory {
         public width(): number { return this.text().length; }
         public text(): string { return this._text; }
         public value(): any { return this._value; }
-        public valueText(): string { return toValueString(this.value()); }
+        public valueText(): string { return toValueString(this); }
         public fullText(text: IText): string { return text.substr(this.fullStart(), this.fullWidth()); }
 
         public hasLeadingTrivia(): bool { return true; }
@@ -507,7 +511,7 @@ module SyntaxTokenFactory {
         public width(): number { return this.text().length; }
         public text(): string { return this._text; }
         public value(): any { return this._value; }
-        public valueText(): string { return toValueString(this.value()); }
+        public valueText(): string { return toValueString(this); }
         public fullText(text: IText): string { return text.substr(this.fullStart(), this.fullWidth()); }
 
         public hasLeadingTrivia(): bool { return false; }
@@ -549,7 +553,7 @@ module SyntaxTokenFactory {
         public width(): number { return this.text().length; }
         public text(): string { return this._text; }
         public value(): any { return this._value; }
-        public valueText(): string { return toValueString(this.value()); }
+        public valueText(): string { return toValueString(this); }
         public fullText(text: IText): string { return text.substr(this.fullStart(), this.fullWidth()); }
 
         public hasLeadingTrivia(): bool { return true; }
@@ -607,7 +611,7 @@ module SyntaxTokenFactory {
             return null;
         }
 
-        public valueText(): string { return toValueString(this.value()); }
+        public valueText(): string { return toValueString(this); }
 
         public diagnostics() { return this._diagnostics; }
 

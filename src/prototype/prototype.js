@@ -7142,7 +7142,8 @@ var SyntaxTokenFactory;
         }
         return result;
     }
-    function toValueString(value) {
+    function toValueString(token) {
+        var value = token.value();
         return value === null ? null : typeof value === 'string' ? value : value.toString();
     }
     var EmptyToken = (function () {
@@ -7181,7 +7182,7 @@ var SyntaxTokenFactory;
             return null;
         };
         EmptyToken.prototype.valueText = function () {
-            return toValueString(this.value());
+            return toValueString(this);
         };
         EmptyToken.prototype.diagnostics = function () {
             return [];
@@ -7248,7 +7249,7 @@ var SyntaxTokenFactory;
             return null;
         };
         FixedWidthTokenWithNoTrivia.prototype.valueText = function () {
-            return toValueString(this.value());
+            return toValueString(this);
         };
         FixedWidthTokenWithNoTrivia.prototype.fullText = function (text) {
             return this.text();
@@ -7316,7 +7317,7 @@ var SyntaxTokenFactory;
             return null;
         };
         FixedWidthTokenWithLeadingTrivia.prototype.valueText = function () {
-            return toValueString(this.value());
+            return toValueString(this);
         };
         FixedWidthTokenWithLeadingTrivia.prototype.fullText = function (text) {
             return text.substr(this.fullStart(), this.fullWidth());
@@ -7384,7 +7385,7 @@ var SyntaxTokenFactory;
             return null;
         };
         FixedWidthTokenWithTrailingTrivia.prototype.valueText = function () {
-            return toValueString(this.value());
+            return toValueString(this);
         };
         FixedWidthTokenWithTrailingTrivia.prototype.fullText = function (text) {
             return text.substr(this.fullStart(), this.fullWidth());
@@ -7453,7 +7454,7 @@ var SyntaxTokenFactory;
             return null;
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.valueText = function () {
-            return toValueString(this.value());
+            return toValueString(this);
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.fullText = function (text) {
             return text.substr(this.fullStart(), this.fullWidth());
@@ -7521,7 +7522,7 @@ var SyntaxTokenFactory;
             return null;
         };
         FixedWidthKeywordWithNoTrivia.prototype.valueText = function () {
-            return toValueString(this.value());
+            return toValueString(this);
         };
         FixedWidthKeywordWithNoTrivia.prototype.fullText = function (text) {
             return this.text();
@@ -7590,7 +7591,7 @@ var SyntaxTokenFactory;
             return null;
         };
         FixedWidthKeywordWithLeadingTrivia.prototype.valueText = function () {
-            return toValueString(this.value());
+            return toValueString(this);
         };
         FixedWidthKeywordWithLeadingTrivia.prototype.fullText = function (text) {
             return text.substr(this.fullStart(), this.fullWidth());
@@ -7659,7 +7660,7 @@ var SyntaxTokenFactory;
             return null;
         };
         FixedWidthKeywordWithTrailingTrivia.prototype.valueText = function () {
-            return toValueString(this.value());
+            return toValueString(this);
         };
         FixedWidthKeywordWithTrailingTrivia.prototype.fullText = function (text) {
             return text.substr(this.fullStart(), this.fullWidth());
@@ -7729,7 +7730,7 @@ var SyntaxTokenFactory;
             return null;
         };
         FixedWidthKeywordWithLeadingAndTrailingTrivia.prototype.valueText = function () {
-            return toValueString(this.value());
+            return toValueString(this);
         };
         FixedWidthKeywordWithLeadingAndTrailingTrivia.prototype.fullText = function (text) {
             return text.substr(this.fullStart(), this.fullWidth());
@@ -7798,7 +7799,7 @@ var SyntaxTokenFactory;
             return this._value;
         };
         VariableWidthTokenWithNoTrivia.prototype.valueText = function () {
-            return toValueString(this.value());
+            return toValueString(this);
         };
         VariableWidthTokenWithNoTrivia.prototype.fullText = function (text) {
             return this.text();
@@ -7868,7 +7869,7 @@ var SyntaxTokenFactory;
             return this._value;
         };
         VariableWidthTokenWithLeadingTrivia.prototype.valueText = function () {
-            return toValueString(this.value());
+            return toValueString(this);
         };
         VariableWidthTokenWithLeadingTrivia.prototype.fullText = function (text) {
             return text.substr(this.fullStart(), this.fullWidth());
@@ -7938,7 +7939,7 @@ var SyntaxTokenFactory;
             return this._value;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.valueText = function () {
-            return toValueString(this.value());
+            return toValueString(this);
         };
         VariableWidthTokenWithTrailingTrivia.prototype.fullText = function (text) {
             return text.substr(this.fullStart(), this.fullWidth());
@@ -8009,7 +8010,7 @@ var SyntaxTokenFactory;
             return this._value;
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.valueText = function () {
-            return toValueString(this.value());
+            return toValueString(this);
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.fullText = function (text) {
             return text.substr(this.fullStart(), this.fullWidth());
@@ -8081,7 +8082,7 @@ var SyntaxTokenFactory;
             return null;
         };
         FullToken.prototype.valueText = function () {
-            return toValueString(this.value());
+            return toValueString(this);
         };
         FullToken.prototype.diagnostics = function () {
             return this._diagnostics;
