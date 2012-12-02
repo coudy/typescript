@@ -94,10 +94,6 @@ class Scanner extends SlidingWindow {
 
         this.previousTokenKind = this.tokenInfo.Kind;
         this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
-        return this.createToken(start);
-    }
-
-    private createToken(start: number): ISyntaxToken {
         return SyntaxTokenFactory.create(start, this.leadingTriviaInfo, this.tokenInfo, this.trailingTriviaInfo,
             this.errors.length === 0 ? null : this.errors);
     }

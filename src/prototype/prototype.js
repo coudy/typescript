@@ -233,11 +233,14 @@ var CharacterInfo = (function () {
     }
     return CharacterInfo;
 })();
-var Constants = (function () {
-    function Constants() { }
+var Constants;
+(function (Constants) {
+    Constants._map = [];
     Constants.MaxInteger = 4294967295;
-    return Constants;
-})();
+    Constants.TriviaNewLineMask = 134217728;
+    Constants.TriviaCommentMask = 67108864;
+    Constants.TriviaLengthMask = 67108863;
+})(Constants || (Constants = {}));
 var Debug = (function () {
     function Debug() { }
     Debug.assert = function assert(expression) {
@@ -3064,9 +3067,6 @@ var Scanner = (function (_super) {
         this.scanTriviaInfo(true, this.trailingTriviaInfo);
         this.previousTokenKind = this.tokenInfo.Kind;
         this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
-        return this.createToken(start);
-    };
-    Scanner.prototype.createToken = function (start) {
         return SyntaxTokenFactory.create(start, this.leadingTriviaInfo, this.tokenInfo, this.trailingTriviaInfo, this.errors.length === 0 ? null : this.errors);
     };
     Scanner.prototype.scanTriviaInfo = function (isTrailing, triviaInfo) {
@@ -8923,7 +8923,7 @@ var TextChangeRange = (function () {
     };
     TextChangeRange.collapse = function collapse(changes) {
         var diff = 0;
-        var start = Constants.MaxInteger;
+        var start = 4294967295 /* MaxInteger */ ;
         var end = 0;
         for(var i = 0; i < changes.length; i++) {
             var change = changes[i];
@@ -34994,7 +34994,7 @@ var totalSize = 0;
 var program = new Program();
 var start, end;
 start = new Date().getTime();
-program.runAllTests(Environment, false, false);
+program.runAllTests(Environment, false, true);
 program.run(Environment, false);
 end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));
