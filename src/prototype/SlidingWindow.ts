@@ -67,7 +67,8 @@ class SlidingWindow {
         var spaceAvailable = this.window.length - this.windowCount;
         var amountFetched = this.fetchMoreItems(this.windowAbsoluteStartIndex + this.windowCount, this.window, this.windowCount, spaceAvailable);
 
-        Debug.assert(amountFetched > 0);
+        // Assert disabled because it is actually expensive enugh to affect perf.
+        // Debug.assert(amountFetched > 0);
         this.windowCount += amountFetched;
 
         return true;
@@ -207,7 +208,8 @@ class SlidingWindow {
     }
 
     public peekItemN(n: number): any {
-        Debug.assert(n >= 0);
+        // Assert disabled because it is actually expensive enugh to affect perf.
+        // Debug.assert(n >= 0);
         while (this.currentRelativeItemIndex + n >= this.windowCount) {
             if (!this.addMoreItemsToWindow()) {
                 return this.defaultValue;

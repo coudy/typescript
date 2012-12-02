@@ -806,7 +806,6 @@ var SlidingWindow = (function () {
         }
         var spaceAvailable = this.window.length - this.windowCount;
         var amountFetched = this.fetchMoreItems(this.windowAbsoluteStartIndex + this.windowCount, this.window, this.windowCount, spaceAvailable);
-        Debug.assert(amountFetched > 0);
         this.windowCount += amountFetched;
         return true;
     };
@@ -881,7 +880,6 @@ var SlidingWindow = (function () {
         return this.window[this.currentRelativeItemIndex];
     };
     SlidingWindow.prototype.peekItemN = function (n) {
-        Debug.assert(n >= 0);
         while(this.currentRelativeItemIndex + n >= this.windowCount) {
             if(!this.addMoreItemsToWindow()) {
                 return this.defaultValue;
@@ -942,7 +940,6 @@ var Parser = (function (_super) {
         this.isInStrictMode = rewindPoint.isInStrictMode;
     };
     Parser.prototype.fetchMoreItems = function (sourceIndex, window, destinationIndex, spaceAvailable) {
-        Debug.assert(spaceAvailable > 0);
         window[destinationIndex] = this.scanner.scan();
         return 1;
     };
@@ -1002,7 +999,6 @@ var Parser = (function (_super) {
         return this.eatToken(71 /* SemicolonToken */ );
     };
     Parser.prototype.eatToken = function (kind) {
-        Debug.assert(SyntaxFacts.isTokenKind(kind));
         var token = this.currentToken();
         if(token.kind === kind) {
             this.moveToNextToken();

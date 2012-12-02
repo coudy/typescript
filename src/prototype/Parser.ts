@@ -119,7 +119,8 @@ class Parser extends SlidingWindow {
     }
 
     public fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
-        Debug.assert(spaceAvailable > 0);
+        // Assert disabled because it is actually expensive enugh to affect perf.
+        // Debug.assert(spaceAvailable > 0);
         window[destinationIndex] = this.scanner.scan();
         return 1;
     }
@@ -214,7 +215,8 @@ class Parser extends SlidingWindow {
     //this method is called very frequently
     //we should keep it simple so that it can be inlined.
     private eatToken(kind: SyntaxKind): ISyntaxToken {
-        Debug.assert(SyntaxFacts.isTokenKind(kind))
+        // Assert disabled because it is actually expensive enugh to affect perf.
+        // Debug.assert(SyntaxFacts.isTokenKind(kind))
 
         var token = this.currentToken();
         if (token.kind === kind) {
