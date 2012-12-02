@@ -22,16 +22,15 @@ class Scanner extends SlidingWindow {
     private static isIdentifierStartCharacter: bool[] = [];
     private static isIdentifierPartCharacter: bool[] = [];
     private static isNumericLiteralStart: bool[] = [];
-    private static MaxAsciiCharacter = 127;
 
     private static initializeStaticData() {
         if (Scanner.isKeywordStartCharacter.length === 0) {
-            Scanner.isKeywordStartCharacter = ArrayUtilities.createArray(MaxAsciiCharacter, false);
-            Scanner.isIdentifierStartCharacter = ArrayUtilities.createArray(MaxAsciiCharacter, false);
-            Scanner.isIdentifierPartCharacter = ArrayUtilities.createArray(MaxAsciiCharacter, false);
-            Scanner.isNumericLiteralStart = ArrayUtilities.createArray(MaxAsciiCharacter, false);
+            Scanner.isKeywordStartCharacter = ArrayUtilities.createArray(CharacterCodes.maxAsciiCharacter, false);
+            Scanner.isIdentifierStartCharacter = ArrayUtilities.createArray(CharacterCodes.maxAsciiCharacter, false);
+            Scanner.isIdentifierPartCharacter = ArrayUtilities.createArray(CharacterCodes.maxAsciiCharacter, false);
+            Scanner.isNumericLiteralStart = ArrayUtilities.createArray(CharacterCodes.maxAsciiCharacter, false);
 
-            for (var character = 0; character < MaxAsciiCharacter; character++) {
+            for (var character = 0; character < CharacterCodes.maxAsciiCharacter; character++) {
                 if (character >= CharacterCodes.a && character <= CharacterCodes.z) {
                     Scanner.isIdentifierStartCharacter[character] = true;
                     Scanner.isIdentifierPartCharacter[character] = true;
@@ -338,7 +337,7 @@ class Scanner extends SlidingWindow {
             return true;
         }
 
-        return interpretedChar > Scanner.MaxAsciiCharacter && Unicode.isIdentifierStart(interpretedChar, this.languageVersion);
+        return interpretedChar > CharacterCodes.maxAsciiCharacter && Unicode.isIdentifierStart(interpretedChar, this.languageVersion);
     }
 
     private isIdentifierPart(interpretedChar: number): bool {
@@ -346,7 +345,7 @@ class Scanner extends SlidingWindow {
             return true;
         }
 
-        return interpretedChar > Scanner.MaxAsciiCharacter && Unicode.isIdentifierPart(interpretedChar, this.languageVersion);
+        return interpretedChar > CharacterCodes.maxAsciiCharacter && Unicode.isIdentifierPart(interpretedChar, this.languageVersion);
     }
 
     private tryFastScanIdentifierOrKeyword(firstCharacter: number): bool {
@@ -358,7 +357,7 @@ class Scanner extends SlidingWindow {
                 // Still part of an identifier.  Move to the next caracter.
                 this.moveToNextItem();
             }
-            else if (character === CharacterCodes.backslash || character > Scanner.MaxAsciiCharacter) {
+            else if (character === CharacterCodes.backslash || character > CharacterCodes.maxAsciiCharacter) {
                 // We saw a \ (which could start a unicode escape), or we saw a unicode character.
                 // This can't be scanned quickly.  Reset to the beginning and bail out.  We'll 
                 // go and try the slow path instead.

@@ -158,6 +158,7 @@ var CharacterCodes;
 (function (CharacterCodes) {
     CharacterCodes._map = [];
     CharacterCodes.nullCharacter = 0;
+    CharacterCodes.maxAsciiCharacter = 127;
     CharacterCodes.newLine = 10;
     CharacterCodes.carriageReturn = 13;
     CharacterCodes.nextLine = 133;
@@ -3015,14 +3016,13 @@ var Scanner = (function (_super) {
     Scanner.isIdentifierStartCharacter = [];
     Scanner.isIdentifierPartCharacter = [];
     Scanner.isNumericLiteralStart = [];
-    Scanner.MaxAsciiCharacter = 127;
     Scanner.initializeStaticData = function initializeStaticData() {
         if(Scanner.isKeywordStartCharacter.length === 0) {
-            Scanner.isKeywordStartCharacter = ArrayUtilities.createArray(Scanner.MaxAsciiCharacter, false);
-            Scanner.isIdentifierStartCharacter = ArrayUtilities.createArray(Scanner.MaxAsciiCharacter, false);
-            Scanner.isIdentifierPartCharacter = ArrayUtilities.createArray(Scanner.MaxAsciiCharacter, false);
-            Scanner.isNumericLiteralStart = ArrayUtilities.createArray(Scanner.MaxAsciiCharacter, false);
-            for(var character = 0; character < Scanner.MaxAsciiCharacter; character++) {
+            Scanner.isKeywordStartCharacter = ArrayUtilities.createArray(127 /* maxAsciiCharacter */ , false);
+            Scanner.isIdentifierStartCharacter = ArrayUtilities.createArray(127 /* maxAsciiCharacter */ , false);
+            Scanner.isIdentifierPartCharacter = ArrayUtilities.createArray(127 /* maxAsciiCharacter */ , false);
+            Scanner.isNumericLiteralStart = ArrayUtilities.createArray(127 /* maxAsciiCharacter */ , false);
+            for(var character = 0; character < 127 /* maxAsciiCharacter */ ; character++) {
                 if(character >= 97 /* a */  && character <= 122 /* z */ ) {
                     Scanner.isIdentifierStartCharacter[character] = true;
                     Scanner.isIdentifierPartCharacter[character] = true;
@@ -3306,13 +3306,13 @@ var Scanner = (function (_super) {
         if(Scanner.isIdentifierStartCharacter[interpretedChar]) {
             return true;
         }
-        return interpretedChar > Scanner.MaxAsciiCharacter && Unicode.isIdentifierStart(interpretedChar, this.languageVersion);
+        return interpretedChar > 127 /* maxAsciiCharacter */  && Unicode.isIdentifierStart(interpretedChar, this.languageVersion);
     };
     Scanner.prototype.isIdentifierPart = function (interpretedChar) {
         if(Scanner.isIdentifierPartCharacter[interpretedChar]) {
             return true;
         }
-        return interpretedChar > Scanner.MaxAsciiCharacter && Unicode.isIdentifierPart(interpretedChar, this.languageVersion);
+        return interpretedChar > 127 /* maxAsciiCharacter */  && Unicode.isIdentifierPart(interpretedChar, this.languageVersion);
     };
     Scanner.prototype.tryFastScanIdentifierOrKeyword = function (firstCharacter) {
         var startIndex = this.getAndPinAbsoluteIndex();
@@ -3321,7 +3321,7 @@ var Scanner = (function (_super) {
             if(Scanner.isIdentifierPartCharacter[character]) {
                 this.moveToNextItem();
             } else {
-                if(character === 92 /* backslash */  || character > Scanner.MaxAsciiCharacter) {
+                if(character === 92 /* backslash */  || character > 127 /* maxAsciiCharacter */ ) {
                     this.rewindToPinnedIndex(startIndex);
                     this.releaseAndUnpinAbsoluteIndex(startIndex);
                     return false;

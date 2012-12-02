@@ -2,6 +2,7 @@
 
 enum CharacterCodes {
     nullCharacter = 0,
+    maxAsciiCharacter = 127,
 
     newLine = 10,                   // \n
     carriageReturn = 13,            // \r
