@@ -912,12 +912,12 @@ class Scanner extends SlidingWindow {
         this.releaseAndUnpinAbsoluteIndex(startIndex);
     }
 
-    private isUnicodeOrHexEscape(): bool {
-        return this.isUnicodeEscape() || this.isHexEscape();
+    private isUnicodeOrHexEscape(character: number): bool {
+        return this.isUnicodeEscape(character) || this.isHexEscape(character);
     }
 
-    private isUnicodeEscape(): bool {
-        if (this.currentItem() === CharacterCodes.backslash) {
+    private isUnicodeEscape(character: number): bool {
+        if (character === CharacterCodes.backslash) {
             var ch2 = this.peekItemN(1);
             if (ch2 === CharacterCodes.u) {
                 return true;
@@ -927,8 +927,8 @@ class Scanner extends SlidingWindow {
         return false;
     }
 
-    private isHexEscape(): bool {
-        if (this.currentItem() === CharacterCodes.backslash) {
+    private isHexEscape(character: number): bool {
+        if (character === CharacterCodes.backslash) {
             var ch2 = this.peekItemN(1);
             if (ch2 === CharacterCodes.x) {
                 return true;
@@ -939,20 +939,22 @@ class Scanner extends SlidingWindow {
     }
 
     private peekCharOrUnicodeOrHexEscape(): number {
-        if (this.isUnicodeOrHexEscape()) {
+        var character = this.currentItem();
+        if (this.isUnicodeOrHexEscape(character)) {
             return this.peekUnicodeOrHexEscape();
         }
         else {
-            return this.currentItem();
+            return character;
         }
     }
 
     private peekCharOrUnicodeEscape(): number {
-        if (this.isUnicodeEscape()) {
+        var character = this.currentItem();
+        if (this.isUnicodeEscape(character)) {
             return this.peekUnicodeOrHexEscape();
         }
         else {
-            return this.currentItem();
+            return character;
         }
     }
 

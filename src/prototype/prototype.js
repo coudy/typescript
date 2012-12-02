@@ -3796,11 +3796,11 @@ var Scanner = (function (_super) {
         this.tokenInfo.Kind = 8 /* StringLiteral */ ;
         this.releaseAndUnpinAbsoluteIndex(startIndex);
     };
-    Scanner.prototype.isUnicodeOrHexEscape = function () {
-        return this.isUnicodeEscape() || this.isHexEscape();
+    Scanner.prototype.isUnicodeOrHexEscape = function (character) {
+        return this.isUnicodeEscape(character) || this.isHexEscape(character);
     };
-    Scanner.prototype.isUnicodeEscape = function () {
-        if(this.currentItem() === 92 /* backslash */ ) {
+    Scanner.prototype.isUnicodeEscape = function (character) {
+        if(character === 92 /* backslash */ ) {
             var ch2 = this.peekItemN(1);
             if(ch2 === 117 /* u */ ) {
                 return true;
@@ -3808,8 +3808,8 @@ var Scanner = (function (_super) {
         }
         return false;
     };
-    Scanner.prototype.isHexEscape = function () {
-        if(this.currentItem() === 92 /* backslash */ ) {
+    Scanner.prototype.isHexEscape = function (character) {
+        if(character === 92 /* backslash */ ) {
             var ch2 = this.peekItemN(1);
             if(ch2 === 120 /* x */ ) {
                 return true;
@@ -3818,17 +3818,19 @@ var Scanner = (function (_super) {
         return false;
     };
     Scanner.prototype.peekCharOrUnicodeOrHexEscape = function () {
-        if(this.isUnicodeOrHexEscape()) {
+        var character = this.currentItem();
+        if(this.isUnicodeOrHexEscape(character)) {
             return this.peekUnicodeOrHexEscape();
         } else {
-            return this.currentItem();
+            return character;
         }
     };
     Scanner.prototype.peekCharOrUnicodeEscape = function () {
-        if(this.isUnicodeEscape()) {
+        var character = this.currentItem();
+        if(this.isUnicodeEscape(character)) {
             return this.peekUnicodeOrHexEscape();
         } else {
-            return this.currentItem();
+            return character;
         }
     };
     Scanner.prototype.peekUnicodeOrHexEscape = function () {
