@@ -3073,9 +3073,9 @@ var Scanner = (function (_super) {
             this.errors = [];
         }
         var start = this.absoluteIndex();
-        this.scanTriviaInfo(this.absoluteIndex() > 0, false, this.leadingTriviaInfo);
+        this.scanTriviaInfo(false, this.leadingTriviaInfo);
         this.scanSyntaxToken();
-        this.scanTriviaInfo(true, true, this.trailingTriviaInfo);
+        this.scanTriviaInfo(true, this.trailingTriviaInfo);
         this.previousTokenKind = this.tokenInfo.Kind;
         this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
         return this.createToken(start);
@@ -3083,10 +3083,10 @@ var Scanner = (function (_super) {
     Scanner.prototype.createToken = function (start) {
         return SyntaxTokenFactory.create(start, this.leadingTriviaInfo, this.tokenInfo, this.trailingTriviaInfo, this.errors.length === 0 ? null : this.errors);
     };
-    Scanner.prototype.scanTriviaInfo = function (afterFirstToken, isTrailing, triviaInfo) {
-        triviaInfo.Width = 0;
-        triviaInfo.HasComment = false;
-        triviaInfo.HasNewLine = false;
+    Scanner.prototype.scanTriviaInfo = function (isTrailing, triviaInfo) {
+        var width = 0;
+        var hasComment = false;
+        var hasNewLine = false;
         while(true) {
             var ch = this.currentItem();
             switch(ch) {
@@ -3097,7 +3097,7 @@ var Scanner = (function (_super) {
                 case 160 /* nonBreakingSpace */ :
                 case 65279 /* byteOrderMark */ : {
                     this.moveToNextItem();
-                    triviaInfo.Width++;
+                    width++;
                     continue;
 
                 }
@@ -3107,39 +3107,42 @@ var Scanner = (function (_super) {
                 if(ch2 === 47 /* slash */ ) {
                     this.moveToNextItem();
                     this.moveToNextItem();
-                    triviaInfo.Width += 2;
-                    triviaInfo.HasComment = true;
-                    this.scanSingleLineCommentTrivia(triviaInfo);
+                    width += 2;
+                    hasComment = true;
+                    width += this.scanSingleLineCommentTrivia();
                     continue;
                 }
                 if(ch2 === 42 /* asterisk */ ) {
                     this.moveToNextItem();
                     this.moveToNextItem();
-                    triviaInfo.Width += 2;
-                    triviaInfo.HasComment = true;
-                    this.scanMultiLineCommentTrivia(triviaInfo);
+                    width += 2;
+                    hasComment = true;
+                    width += this.scanMultiLineCommentTrivia();
                     continue;
                 }
-                return;
+            } else {
+                if(this.isNewLineCharacter(ch)) {
+                    hasNewLine = true;
+                    if(ch === 13 /* carriageReturn */ ) {
+                        this.moveToNextItem();
+                        width++;
+                    }
+                    ch = this.currentItem();
+                    if(ch === 10 /* newLine */ ) {
+                        this.moveToNextItem();
+                        width++;
+                    }
+                    if(isTrailing) {
+                        break;
+                    }
+                    continue;
+                }
             }
-            if(this.isNewLineCharacter(ch)) {
-                triviaInfo.HasNewLine = true;
-                if(ch === 13 /* carriageReturn */ ) {
-                    this.moveToNextItem();
-                    triviaInfo.Width++;
-                }
-                ch = this.currentItem();
-                if(ch === 10 /* newLine */ ) {
-                    this.moveToNextItem();
-                    triviaInfo.Width++;
-                }
-                if(isTrailing) {
-                    return;
-                }
-                continue;
-            }
-            return;
+            break;
         }
+        triviaInfo.Width = width;
+        triviaInfo.HasComment = hasComment;
+        triviaInfo.HasNewLine = hasNewLine;
     };
     Scanner.prototype.isNewLineCharacter = function (ch) {
         switch(ch) {
@@ -3156,30 +3159,32 @@ var Scanner = (function (_super) {
             }
         }
     };
-    Scanner.prototype.scanSingleLineCommentTrivia = function (triviaInfo) {
+    Scanner.prototype.scanSingleLineCommentTrivia = function () {
+        var width = 0;
         while(true) {
             var ch = this.currentItem();
             if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
-                return;
+                return width;
             }
             this.moveToNextItem();
-            triviaInfo.Width++;
+            width++;
         }
     };
-    Scanner.prototype.scanMultiLineCommentTrivia = function (triviaInfo) {
+    Scanner.prototype.scanMultiLineCommentTrivia = function () {
+        var width = 0;
         while(true) {
             var ch = this.currentItem();
             if(ch === 0 /* nullCharacter */ ) {
-                return;
+                return width;
             }
             if(ch === 42 /* asterisk */  && this.peekItemN(1) === 47 /* slash */ ) {
                 this.moveToNextItem();
                 this.moveToNextItem();
-                triviaInfo.Width += 2;
-                return;
+                width += 2;
+                return width;
             }
             this.moveToNextItem();
-            triviaInfo.Width++;
+            width++;
         }
     };
     Scanner.prototype.scanSyntaxToken = function () {

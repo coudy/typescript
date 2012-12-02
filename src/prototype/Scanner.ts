@@ -96,9 +96,9 @@ class Scanner extends SlidingWindow {
         }
 
         var start = this.absoluteIndex();
-        this.scanTriviaInfo(/*afterFirstToken: */ this.absoluteIndex() > 0, /*isTrailing: */ false, this.leadingTriviaInfo);
+        this.scanTriviaInfo(/*isTrailing: */ false, this.leadingTriviaInfo);
         this.scanSyntaxToken();
-        this.scanTriviaInfo(/* afterFirstToken: */ true, /*isTrailing: */true, this.trailingTriviaInfo);
+        this.scanTriviaInfo(/*isTrailing: */true, this.trailingTriviaInfo);
 
         this.previousTokenKind = this.tokenInfo.Kind;
         this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
@@ -110,10 +110,10 @@ class Scanner extends SlidingWindow {
             this.errors.length === 0 ? null : this.errors);
     }
 
-    private scanTriviaInfo(afterFirstToken: bool, isTrailing: bool, triviaInfo: ScannerTriviaInfo): void {
-        triviaInfo.Width = 0;
-        triviaInfo.HasComment = false;
-        triviaInfo.HasNewLine = false;
+    private scanTriviaInfo(isTrailing: bool, triviaInfo: ScannerTriviaInfo): void {
+        var width = 0;
+        var hasComment = false;
+        var hasNewLine = false;
 
         while (true) {
             var ch = this.currentItem();
@@ -126,7 +126,7 @@ class Scanner extends SlidingWindow {
                 case CharacterCodes.nonBreakingSpace:
                 case CharacterCodes.byteOrderMark:
                     this.moveToNextItem();
-                    triviaInfo.Width++;
+                    width++;
                     continue;
             }
 
@@ -136,49 +136,50 @@ class Scanner extends SlidingWindow {
                 if (ch2 === CharacterCodes.slash) {
                     this.moveToNextItem();
                     this.moveToNextItem();
-                    triviaInfo.Width += 2;
-                    triviaInfo.HasComment = true;
+                    width += 2;
+                    hasComment = true;
 
-                    this.scanSingleLineCommentTrivia(triviaInfo);
+                    width += this.scanSingleLineCommentTrivia();
                     continue;
                 }
 
                 if (ch2 === CharacterCodes.asterisk) {
                     this.moveToNextItem();
                     this.moveToNextItem();
-                    triviaInfo.Width += 2;
-                    triviaInfo.HasComment = true;
+                    width += 2;
+                    hasComment = true;
 
-                    this.scanMultiLineCommentTrivia(triviaInfo);
+                    width += this.scanMultiLineCommentTrivia();
                     continue;
                 }
-
-                return;
             }
-
-            if (this.isNewLineCharacter(ch)) {
-                triviaInfo.HasNewLine = true;
+            else if (this.isNewLineCharacter(ch)) {
+                hasNewLine = true;
 
                 if (ch === CharacterCodes.carriageReturn) {
                     this.moveToNextItem();
-                    triviaInfo.Width++;
+                    width++;
                 }
 
                 ch = this.currentItem();
                 if (ch === CharacterCodes.newLine) {
                     this.moveToNextItem();
-                    triviaInfo.Width++;
+                    width++;
                 }
 
                 if (isTrailing) {
-                    return;
+                    break;
                 }
 
                 continue;
             }
 
-            return;
+            break;
         }
+
+        triviaInfo.Width = width;
+        triviaInfo.HasComment = hasComment;
+        triviaInfo.HasNewLine = hasNewLine;
     }
 
     private isNewLineCharacter(ch: number): bool {
@@ -193,34 +194,36 @@ class Scanner extends SlidingWindow {
         }
     }
 
-    private scanSingleLineCommentTrivia(triviaInfo: ScannerTriviaInfo): void {
+    private scanSingleLineCommentTrivia(): number {
+        var width = 0;
         while (true) {
             var ch = this.currentItem();
             if (this.isNewLineCharacter(ch) || ch === CharacterCodes.nullCharacter) {
-                return;
+                return width;
             }
 
             this.moveToNextItem();
-            triviaInfo.Width++;
+            width++;
         }
     }
 
-    private scanMultiLineCommentTrivia(triviaInfo: ScannerTriviaInfo): void {
+    private scanMultiLineCommentTrivia(): number {
+        var width = 0;
         while (true) {
             var ch = this.currentItem();
             if (ch === CharacterCodes.nullCharacter) {
-                return;
+                return width;
             }
 
             if (ch === CharacterCodes.asterisk && this.peekItemN(1) === CharacterCodes.slash) {
                 this.moveToNextItem();
                 this.moveToNextItem();
-                triviaInfo.Width += 2;
-                return;
+                width += 2;
+                return width;
             }
 
             this.moveToNextItem();
-            triviaInfo.Width++;
+            width++;
         }
     }
 
