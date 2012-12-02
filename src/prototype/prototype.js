@@ -934,11 +934,15 @@ var Parser = (function (_super) {
     Parser.prototype.storeAdditionalRewindState = function (rewindPoint) {
         rewindPoint.previousToken = this.previousToken;
         rewindPoint.isInStrictMode = this.isInStrictMode;
+        rewindPoint.diagnosticsCount = this.diagnostics.length;
+        rewindPoint.skippedTokensCount = this.skippedTokens.length;
     };
     Parser.prototype.restoreStateFromRewindPoint = function (rewindPoint) {
         this._currentToken = null;
         this.previousToken = rewindPoint.previousToken;
         this.isInStrictMode = rewindPoint.isInStrictMode;
+        this.diagnostics.length = rewindPoint.diagnosticsCount;
+        this.skippedTokens.length = rewindPoint.skippedTokensCount;
     };
     Parser.prototype.fetchMoreItems = function (sourceIndex, window, destinationIndex, spaceAvailable) {
         window[destinationIndex] = this.scanner.scan();

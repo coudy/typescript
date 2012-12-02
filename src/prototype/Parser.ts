@@ -3,6 +3,8 @@
 interface IParserRewindPoint extends IRewindPoint {
     previousToken: ISyntaxToken;
     isInStrictMode: bool;
+    diagnosticsCount: number;
+    skippedTokensCount: number;
 }
 
 // The precedence of expressions in typescript.  While we're parsing an expression, we will 
@@ -113,12 +115,16 @@ class Parser extends SlidingWindow {
     public storeAdditionalRewindState(rewindPoint: IParserRewindPoint): void {
         rewindPoint.previousToken = this.previousToken;
         rewindPoint.isInStrictMode = this.isInStrictMode;
+        rewindPoint.diagnosticsCount = this.diagnostics.length;
+        rewindPoint.skippedTokensCount = this.skippedTokens.length;
     }
 
     public restoreStateFromRewindPoint(rewindPoint: IParserRewindPoint): void {
         this._currentToken = null;
         this.previousToken = rewindPoint.previousToken;
         this.isInStrictMode = rewindPoint.isInStrictMode;
+        this.diagnostics.length = rewindPoint.diagnosticsCount;
+        this.skippedTokens.length = rewindPoint.skippedTokensCount;
     }
 
     public fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
