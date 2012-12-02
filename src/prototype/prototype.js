@@ -3022,6 +3022,9 @@ var Scanner = (function (_super) {
     Scanner.MaxAsciiCharacter = 127;
     Scanner.initializeStaticData = function initializeStaticData() {
         if(Scanner.isKeywordStartCharacter.length === 0) {
+            Scanner.isKeywordStartCharacter = ArrayUtilities.createArray(Scanner.MaxAsciiCharacter, false);
+            Scanner.isIdentifierStartCharacter = ArrayUtilities.createArray(Scanner.MaxAsciiCharacter, false);
+            Scanner.isIdentifierPartCharacter = ArrayUtilities.createArray(Scanner.MaxAsciiCharacter, false);
             for(var character = 0; character < Scanner.MaxAsciiCharacter; character++) {
                 if(character >= 97 /* a */  && character <= 122 /* z */ ) {
                     Scanner.isIdentifierStartCharacter[character] = true;
@@ -3354,8 +3357,9 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.scanIdentifier = function () {
         var startIndex = this.getAndPinAbsoluteIndex();
+        var errors = this.errors;
         do {
-            this.scanCharOrUnicodeEscape(this.errors);
+            this.scanCharOrUnicodeEscape(errors);
         }while(this.isIdentifierPart(this.peekCharOrUnicodeEscape()))
         var endIndex = this.absoluteIndex();
         this.tokenInfo.Text = this.substring(startIndex, endIndex, true);

@@ -25,6 +25,10 @@ class Scanner extends SlidingWindow {
 
     private static initializeStaticData() {
         if (Scanner.isKeywordStartCharacter.length === 0) {
+            Scanner.isKeywordStartCharacter = ArrayUtilities.createArray(MaxAsciiCharacter, false);
+            Scanner.isIdentifierStartCharacter = ArrayUtilities.createArray(MaxAsciiCharacter, false);
+            Scanner.isIdentifierPartCharacter = ArrayUtilities.createArray(MaxAsciiCharacter, false);
+
             for (var character = 0; character < MaxAsciiCharacter; character++) {
                 if (character >= CharacterCodes.a && character <= CharacterCodes.z) {
                     Scanner.isIdentifierStartCharacter[character] = true;
@@ -383,8 +387,9 @@ class Scanner extends SlidingWindow {
     private scanIdentifier(): void {
         var startIndex = this.getAndPinAbsoluteIndex();
 
+        var errors = this.errors;
         do {
-            this.scanCharOrUnicodeEscape(this.errors);
+            this.scanCharOrUnicodeEscape(errors);
         }
         while (this.isIdentifierPart(this.peekCharOrUnicodeEscape()));
 
