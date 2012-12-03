@@ -106,11 +106,12 @@ enum ListParsingState {
     EnumDeclaration_VariableDeclarators = 1 << 7,
     ObjectType_TypeMembers = 1 << 8,
     ExtendsOrImplementsClause_TypeNameList = 1 << 9,
-    VariableDeclaration_VariableDeclarators = 1 << 10,
-    ArgumentList_AssignmentExpressions = 1 << 11,
-    ObjectLiteralExpression_PropertyAssignments = 1 << 12,
-    ArrayLiteralExpression_AssignmentExpressions = 1 << 13,
-    ParameterList_Parameters = 1 << 14,
+    VariableDeclaration_VariableDeclarators_AllowIn = 1 << 10,
+    VariableDeclaration_VariableDeclarators_DisallowIn = 1 << 11,
+    ArgumentList_AssignmentExpressions = 1 << 12,
+    ObjectLiteralExpression_PropertyAssignments = 1 << 13,
+    ArrayLiteralExpression_AssignmentExpressions = 1 << 14,
+    ParameterList_Parameters = 1 << 15,
 
     FirstListParsingState = SourceUnit_ModuleElements,
     LastListParsingState = ParameterList_Parameters,
@@ -1814,7 +1815,7 @@ class Parser extends SlidingWindow {
         var varKeyword = this.eatKeyword(SyntaxKind.VarKeyword);
 
         var savedListParsingState = this.listParsingState;
-        this.listParsingState |= ListParsingState.VariableDeclaration_VariableDeclarators;
+        this.listParsingState |= ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn;
 
         var variableDeclarators = [];
 
@@ -3046,7 +3047,8 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_Statements_AllowFunctionDeclarations:
             case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
-            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
@@ -3072,7 +3074,8 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_Statements_AllowFunctionDeclarations:
             case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
-            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
@@ -3098,7 +3101,8 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_Statements_AllowFunctionDeclarations:
             case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
-            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
@@ -3124,7 +3128,8 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_Statements_AllowFunctionDeclarations:
             case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
-            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
@@ -3188,8 +3193,9 @@ class Parser extends SlidingWindow {
 
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
                 return this.isExpectedExtendsOrImplementsClause_TypeNameListTerminator();
-
-            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            
+            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
@@ -3284,8 +3290,9 @@ class Parser extends SlidingWindow {
 
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
                 return this.isName();
-
-            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            
+            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
@@ -3330,7 +3337,8 @@ class Parser extends SlidingWindow {
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
                 return this.parseName();
 
-            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
@@ -3373,7 +3381,8 @@ class Parser extends SlidingWindow {
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
                 return Strings.type_name;
 
-            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
