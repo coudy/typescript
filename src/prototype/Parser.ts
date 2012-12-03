@@ -1693,7 +1693,7 @@ class Parser extends SlidingWindow {
         }
 
         var colonToken = this.eatToken(SyntaxKind.ColonToken);
-        var statements = this.parseSwitchClauseStatements();
+        var statements = this.parseSyntaxNodeList(ListParsingState.SwitchClause_Statements);
 
         return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements);
     }
@@ -1703,32 +1703,9 @@ class Parser extends SlidingWindow {
 
         var defaultKeyword = this.eatKeyword(SyntaxKind.DefaultKeyword);
         var colonToken = this.eatToken(SyntaxKind.ColonToken);
-        var statements = this.parseSwitchClauseStatements();
+        var statements = this.parseSyntaxNodeList(ListParsingState.SwitchClause_Statements);
 
         return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements);
-    }
-
-    private parseSwitchClauseStatements(): ISyntaxNodeList {
-        var statements: StatementSyntax[] = null;
-
-        var savedListParsingState = this.listParsingState;
-        this.listParsingState |= ListParsingState.SwitchClause_Statements;
-
-        while (true) {
-            if (this.isSwitchClause() || this.currentToken().kind === SyntaxKind.EndOfFileToken || this.currentToken().kind === SyntaxKind.CloseBraceToken) {
-                break;
-            }
-
-            var statement = this.parseStatement(/*allowFunctionDeclaration:*/ false);
-            statements = statements || [];
-            statements.push(statement);
-
-            // TODO: error recovery.
-        }
-
-        this.listParsingState = savedListParsingState;
-
-        return SyntaxNodeList.create(statements);
     }
 
     private isThrowStatement(): bool {
@@ -3104,7 +3081,7 @@ class Parser extends SlidingWindow {
                 return this.isExpectedSwitchStatement_SwitchClausesTerminator();
 
             case ListParsingState.SwitchClause_Statements:
-                throw Errors.notYetImplemented();
+                return this.isExpectedSwitchClause_StatementsTerminator();
 
             case ListParsingState.Block_StatementsWithFunctionDeclarations:     // Fall through
             case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
@@ -3140,6 +3117,11 @@ class Parser extends SlidingWindow {
         return this.currentToken().kind === SyntaxKind.CloseBraceToken;
     }
 
+    private isExpectedSwitchClause_StatementsTerminator(): bool {
+        return this.currentToken().kind === SyntaxKind.CloseBraceToken ||
+               this.isSwitchClause();
+    }
+
     private isExpectedBlock_StatementsTerminator(): bool {
         return this.currentToken().kind === SyntaxKind.CloseBraceToken;
     }
@@ -3159,7 +3141,7 @@ class Parser extends SlidingWindow {
                 return this.isSwitchClause();
 
             case ListParsingState.SwitchClause_Statements:
-                throw Errors.notYetImplemented();
+                return this.isStatement(/*allowFunctionDeclaration:*/ false);
             
             case ListParsingState.Block_StatementsWithFunctionDeclarations:
                 return this.isStatement(/*allowFunctionDeclaration:*/ true);
@@ -3196,7 +3178,7 @@ class Parser extends SlidingWindow {
                 return this.parseSwitchClause();
 
             case ListParsingState.SwitchClause_Statements:
-                throw Errors.notYetImplemented();
+                return this.parseStatement(/*allowFunctionDeclaration:*/ false);
 
             case ListParsingState.Block_StatementsWithFunctionDeclarations:
                 return this.parseStatement(/*allowFunctionDeclaration:*/ true);
@@ -3233,7 +3215,7 @@ class Parser extends SlidingWindow {
                 return Strings.case_or_default_clause;
 
             case ListParsingState.SwitchClause_Statements:
-                throw Errors.notYetImplemented();
+                return Strings.statement;
 
             case ListParsingState.Block_StatementsWithFunctionDeclarations:     // Fall through.
             case ListParsingState.Block_StatementsWithoutFunctionDeclarations:

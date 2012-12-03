@@ -2087,30 +2087,15 @@ var Parser = (function (_super) {
             expression = this.parseExpression(true);
         }
         var colonToken = this.eatToken(99 /* ColonToken */ );
-        var statements = this.parseSwitchClauseStatements();
+        var statements = this.parseSyntaxNodeList(ListParsingState.SwitchClause_Statements);
         return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements);
     };
     Parser.prototype.parseDefaultSwitchClause = function () {
         Debug.assert(this.isDefaultSwitchClause());
         var defaultKeyword = this.eatKeyword(14 /* DefaultKeyword */ );
         var colonToken = this.eatToken(99 /* ColonToken */ );
-        var statements = this.parseSwitchClauseStatements();
+        var statements = this.parseSyntaxNodeList(ListParsingState.SwitchClause_Statements);
         return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements);
-    };
-    Parser.prototype.parseSwitchClauseStatements = function () {
-        var statements = null;
-        var savedListParsingState = this.listParsingState;
-        this.listParsingState |= ListParsingState.SwitchClause_Statements;
-        while(true) {
-            if(this.isSwitchClause() || this.currentToken().kind === 114 /* EndOfFileToken */  || this.currentToken().kind === 64 /* CloseBraceToken */ ) {
-                break;
-            }
-            var statement = this.parseStatement(false);
-            statements = statements || [];
-            statements.push(statement);
-        }
-        this.listParsingState = savedListParsingState;
-        return SyntaxNodeList.create(statements);
     };
     Parser.prototype.isThrowStatement = function () {
         return this.currentToken().keywordKind() === 30 /* ThrowKeyword */ ;
@@ -3094,7 +3079,7 @@ var Parser = (function (_super) {
 
             }
             case ListParsingState.SwitchClause_Statements: {
-                throw Errors.notYetImplemented();
+                return this.isExpectedSwitchClause_StatementsTerminator();
 
             }
             case ListParsingState.Block_StatementsWithFunctionDeclarations:
@@ -3131,6 +3116,9 @@ var Parser = (function (_super) {
     Parser.prototype.isExpectedSwitchStatement_SwitchClausesTerminator = function () {
         return this.currentToken().kind === 64 /* CloseBraceToken */ ;
     };
+    Parser.prototype.isExpectedSwitchClause_StatementsTerminator = function () {
+        return this.currentToken().kind === 64 /* CloseBraceToken */  || this.isSwitchClause();
+    };
     Parser.prototype.isExpectedBlock_StatementsTerminator = function () {
         return this.currentToken().kind === 64 /* CloseBraceToken */ ;
     };
@@ -3153,7 +3141,7 @@ var Parser = (function (_super) {
 
             }
             case ListParsingState.SwitchClause_Statements: {
-                throw Errors.notYetImplemented();
+                return this.isStatement(false);
 
             }
             case ListParsingState.Block_StatementsWithFunctionDeclarations: {
@@ -3200,7 +3188,7 @@ var Parser = (function (_super) {
 
             }
             case ListParsingState.SwitchClause_Statements: {
-                throw Errors.notYetImplemented();
+                return this.parseStatement(false);
 
             }
             case ListParsingState.Block_StatementsWithFunctionDeclarations: {
@@ -3247,7 +3235,7 @@ var Parser = (function (_super) {
 
             }
             case ListParsingState.SwitchClause_Statements: {
-                throw Errors.notYetImplemented();
+                return Strings.statement;
 
             }
             case ListParsingState.Block_StatementsWithFunctionDeclarations:
