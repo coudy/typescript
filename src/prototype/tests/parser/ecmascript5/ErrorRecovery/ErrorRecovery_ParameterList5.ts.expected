@@ -1,26 +1,8 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "EqualsGreaterThanToken",
-            "start": 10,
-            "width": 2,
-            "fullWidth": 3,
-            "text": "=>",
-            "hasTrailingTrivia": true
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 10,
             "_width": 2,
-            "_diagnosticCode": "_0_expected",
-            "_arguments": [
-                ","
-            ]
-        },
-        {
-            "_position": 13,
-            "_width": 1,
             "_diagnosticCode": "_0_expected",
             "_arguments": [
                 ")"
@@ -36,10 +18,11 @@
                     "kind": "ParenthesizedArrowFunctionExpression",
                     "_equalsGreaterThanToken": {
                         "kind": "EqualsGreaterThanToken",
-                        "start": 13,
-                        "width": 0,
-                        "isMissing": true,
-                        "text": ""
+                        "start": 10,
+                        "width": 2,
+                        "fullWidth": 3,
+                        "text": "=>",
+                        "hasTrailingTrivia": true
                     },
                     "_body": {
                         "kind": "Block",
@@ -100,18 +83,11 @@
                                             }
                                         }
                                     }
-                                },
-                                {
-                                    "kind": "CommaToken",
-                                    "start": 10,
-                                    "width": 0,
-                                    "isMissing": true,
-                                    "text": ""
                                 }
                             ],
                             "_closeParenToken": {
                                 "kind": "CloseParenToken",
-                                "start": 13,
+                                "start": 10,
                                 "width": 0,
                                 "isMissing": true,
                                 "text": ""

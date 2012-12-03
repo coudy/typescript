@@ -3221,10 +3221,14 @@ var Parser = (function (_super) {
         return this.currentToken().kind === 64 /* CloseBraceToken */ ;
     };
     Parser.prototype.isExpectedParameterList_ParametersTerminator = function () {
-        if(this.currentToken().kind === 66 /* CloseParenToken */ ) {
+        var token = this.currentToken();
+        if(token.kind === 66 /* CloseParenToken */ ) {
             return true;
         }
-        if(this.currentToken().kind === 63 /* OpenBraceToken */ ) {
+        if(token.kind === 63 /* OpenBraceToken */ ) {
+            return true;
+        }
+        if(token.kind === 78 /* EqualsGreaterThanToken */ ) {
             return true;
         }
         return false;

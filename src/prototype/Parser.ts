@@ -3238,13 +3238,20 @@ class Parser extends SlidingWindow {
     }
 
     private isExpectedParameterList_ParametersTerminator(): bool {
-        if (this.currentToken().kind === SyntaxKind.CloseParenToken) {
+        var token = this.currentToken();
+        if (token.kind === SyntaxKind.CloseParenToken) {
             return true;
         }
 
         // We may also see a { in an error case.  i.e.:
         // function (a, b, c  {
-        if (this.currentToken().kind === SyntaxKind.OpenBraceToken) {
+        if (token.kind === SyntaxKind.OpenBraceToken) {
+            return true;
+        }
+
+        // We may also see a => in an error case.  i.e.:
+        // (f: number => { ... }
+        if (token.kind === SyntaxKind.EqualsGreaterThanToken) {
             return true;
         }
 
