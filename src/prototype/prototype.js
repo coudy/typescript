@@ -3049,6 +3049,7 @@ var Parser = (function (_super) {
     Parser.prototype.parseSeparatedSyntaxListWorker = function (currentListType) {
         var items = null;
         var allowTrailingSeparator = this.allowsTrailingSeparator(currentListType);
+        var allowAutomaticSemicolonInsertion = false && this.allowsAutomaticSemicolonInsertion(currentListType);
         var separatorKind = this.separatorKind(currentListType);
         var lastSeparator = null;
         while(true) {
@@ -3064,7 +3065,7 @@ var Parser = (function (_super) {
                 if(this.listIsTerminated(currentListType)) {
                     break;
                 }
-                lastSeparator = this.eatToken(separatorKind);
+                lastSeparator = allowAutomaticSemicolonInsertion ? this.eatExplicitOrAutomaticSemicolon() : this.eatToken(separatorKind);
                 items.push(lastSeparator);
                 continue;
             }
@@ -3080,6 +3081,35 @@ var Parser = (function (_super) {
             case ListParsingState.EnumDeclaration_VariableDeclarators:
             case ListParsingState.ObjectType_TypeMembers: {
                 return true;
+
+            }
+            case ListParsingState.SourceUnit_ModuleElements:
+            case ListParsingState.ClassDeclaration_ClassElements:
+            case ListParsingState.ModuleDeclaration_ModuleElements:
+            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.SwitchClause_Statements:
+            case ListParsingState.Block_StatementsWithFunctionDeclarations:
+            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.ArgumentList_AssignmentExpressions:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+            case ListParsingState.ParameterList_Parameters:
+            default: {
+                throw Errors.notYetImplemented();
+
+            }
+        }
+    };
+    Parser.prototype.allowsAutomaticSemicolonInsertion = function (currentListType) {
+        switch(currentListType) {
+            case ListParsingState.ObjectType_TypeMembers: {
+                return true;
+
+            }
+            case ListParsingState.EnumDeclaration_VariableDeclarators: {
+                return false;
 
             }
             case ListParsingState.SourceUnit_ModuleElements:

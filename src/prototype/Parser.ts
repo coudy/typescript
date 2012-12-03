@@ -3075,12 +3075,12 @@ class Parser extends SlidingWindow {
 
     private parseSeparatedSyntaxListWorker(currentListType: ListParsingState): ISeparatedSyntaxList {
         var items: any[] = null;
+
         var allowTrailingSeparator = this.allowsTrailingSeparator(currentListType);
+        var allowAutomaticSemicolonInsertion = false && this.allowsAutomaticSemicolonInsertion(currentListType);
         var separatorKind = this.separatorKind(currentListType);
+
         var lastSeparator: ISyntaxToken = null;
-
-        // TODO: Should we do automatic semicolon insertion here if separatorKind is a semicolon?
-
         while (true) {
             if (this.listIsTerminated(currentListType)) {
                 // We've reached the end of the list.  If there was a last separator and we don't 
@@ -3104,7 +3104,10 @@ class Parser extends SlidingWindow {
                 }
 
                 // We're not done. We need a separator token.
-                lastSeparator = this.eatToken(separatorKind);
+                lastSeparator = allowAutomaticSemicolonInsertion 
+                    ? this.eatExplicitOrAutomaticSemicolon()
+                    : this.eatToken(separatorKind);
+
                 items.push(lastSeparator);
                 continue;
             }
@@ -3124,6 +3127,32 @@ class Parser extends SlidingWindow {
             case ListParsingState.EnumDeclaration_VariableDeclarators:
             case ListParsingState.ObjectType_TypeMembers:
                 return true;
+
+            case ListParsingState.SourceUnit_ModuleElements:
+            case ListParsingState.ClassDeclaration_ClassElements:
+            case ListParsingState.ModuleDeclaration_ModuleElements:
+            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.SwitchClause_Statements:
+            case ListParsingState.Block_StatementsWithFunctionDeclarations:
+            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.ArgumentList_AssignmentExpressions:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+            case ListParsingState.ParameterList_Parameters:
+            default:
+                throw Errors.notYetImplemented();
+        }
+    }
+
+    private allowsAutomaticSemicolonInsertion(currentListType: ListParsingState): bool {
+        switch (currentListType) {
+            case ListParsingState.ObjectType_TypeMembers:
+                return true;
+
+            case ListParsingState.EnumDeclaration_VariableDeclarators:
+                return false;
 
             case ListParsingState.SourceUnit_ModuleElements:
             case ListParsingState.ClassDeclaration_ClassElements:
