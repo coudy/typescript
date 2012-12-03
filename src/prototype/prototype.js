@@ -1218,6 +1218,10 @@ var Parser = (function (_super) {
         }
         return false;
     }
+    Parser.prototype.parseSyntaxTree = function () {
+        var sourceUnit = this.parseSourceUnit();
+        return new SyntaxTree(sourceUnit, this.skippedTokens, this.diagnostics);
+    };
     Parser.prototype.parseSourceUnit = function () {
         var savedIsInStrictMode = this.isInStrictMode;
         var savedListParsingState = this.listParsingState;
@@ -8390,7 +8394,32 @@ var SyntaxTokenFactory;
     SyntaxTokenFactory.createEmptyToken = createEmptyToken;
 })(SyntaxTokenFactory || (SyntaxTokenFactory = {}));
 var SyntaxTree = (function () {
-    function SyntaxTree() { }
+    function SyntaxTree(sourceUnit, skippedTokens, diagnostics) {
+        this._sourceUnit = sourceUnit;
+        this._skippedTokens = skippedTokens;
+        this._diagnostics = diagnostics;
+    }
+    SyntaxTree.prototype.toJSON = function (key) {
+        var result = {
+            _sourceUnit: this._sourceUnit
+        };
+        if(this._skippedTokens.length > 0) {
+            result._skippedTokens = this._skippedTokens;
+        }
+        if(this._diagnostics.length > 0) {
+            result._diagnostics = this._diagnostics;
+        }
+        return result;
+    };
+    SyntaxTree.prototype.sourceUnit = function () {
+        return this._sourceUnit;
+    };
+    SyntaxTree.prototype.skippedTokens = function () {
+        return this._skippedTokens;
+    };
+    SyntaxTree.prototype.diagnostics = function () {
+        return this._diagnostics;
+    };
     return SyntaxTree;
 })();
 var SyntaxTriviaList = (function () {
@@ -34459,7 +34488,7 @@ var Program = (function () {
             var text = new StringText(contents);
             var scanner = new Scanner(text, languageVersion, stringTable);
             var parser = new Parser(scanner);
-            var unit = parser.parseSourceUnit();
+            var unit = parser.parseSyntaxTree();
             if(verify) {
                 var actualResult = JSON2.stringify(unit, null, 4);
                 var expectedFile = filePath + ".expected";

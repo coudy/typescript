@@ -525,7 +525,12 @@ class Parser extends SlidingWindow {
         return false;
     }
 
-    public parseSourceUnit(): SourceUnitSyntax {
+    public parseSyntaxTree(): SyntaxTree {
+        var sourceUnit = this.parseSourceUnit();
+        return new SyntaxTree(sourceUnit, this.skippedTokens, this.diagnostics);
+    }
+
+    private parseSourceUnit(): SourceUnitSyntax {
         // Note: technically we don't need to save and restore this here.  After all, thisi the top
         // level parsing entrypoint.  So it will always start as false and be reset to false when the
         // loop ends.  However, for sake of symmetry and consistancy we do this.

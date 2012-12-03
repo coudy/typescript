@@ -67,7 +67,7 @@ class Program {
             var text = new StringText(contents);
             var scanner = new Scanner(text, languageVersion, /* new StringTable() */ stringTable);
             var parser = new Parser(scanner);
-            var unit = parser.parseSourceUnit();
+            var unit = parser.parseSyntaxTree();
             // var json = JSON2.stringify(unit);
             
             if (verify) {
