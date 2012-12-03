@@ -1621,19 +1621,12 @@ var Parser = (function (_super) {
             }
         }
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
-        var moduleElements = null;
+        var moduleElements = SyntaxNodeList.empty;
         if(!openBraceToken.isMissing()) {
-            var savedListParsingState = this.listParsingState;
-            this.listParsingState |= ListParsingState.ModuleDeclaration_ModuleElements;
-            while(this.currentToken().kind !== 64 /* CloseBraceToken */  && this.currentToken().kind !== 114 /* EndOfFileToken */ ) {
-                var element = this.parseModuleElement();
-                moduleElements = moduleElements || [];
-                moduleElements.push(element);
-            }
-            this.listParsingState = savedListParsingState;
+            moduleElements = this.parseSyntaxNodeList(ListParsingState.ModuleDeclaration_ModuleElements);
         }
         var closeBraceToken = this.eatToken(64 /* CloseBraceToken */ );
-        return new ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, SyntaxNodeList.create(moduleElements), closeBraceToken);
+        return new ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken);
     };
     Parser.prototype.isInterfaceDeclaration = function () {
         if(this.currentToken().keywordKind() === 41 /* ExportKeyword */  && this.peekTokenN(1).keywordKind() === 46 /* InterfaceKeyword */ ) {
@@ -3108,7 +3101,7 @@ var Parser = (function (_super) {
 
             }
             case ListParsingState.ModuleDeclaration_ModuleElements: {
-                throw Errors.notYetImplemented();
+                return this.isExpectedModuleDeclaration_ModuleElementsTerminator();
 
             }
             case ListParsingState.SwitchStatement_SwitchClauses: {
@@ -3144,6 +3137,9 @@ var Parser = (function (_super) {
     Parser.prototype.isExpectedSourceUnit_ModuleElementsTerminator = function () {
         return this.currentToken().kind === 114 /* EndOfFileToken */ ;
     };
+    Parser.prototype.isExpectedModuleDeclaration_ModuleElementsTerminator = function () {
+        return this.currentToken().kind === 64 /* CloseBraceToken */ ;
+    };
     Parser.prototype.isExpectedClassDeclaration_ClassElementsTerminator = function () {
         return this.currentToken().kind === 64 /* CloseBraceToken */ ;
     };
@@ -3164,7 +3160,7 @@ var Parser = (function (_super) {
 
             }
             case ListParsingState.ModuleDeclaration_ModuleElements: {
-                throw Errors.notYetImplemented();
+                return this.isModuleElement();
 
             }
             case ListParsingState.SwitchStatement_SwitchClauses: {
@@ -3211,7 +3207,7 @@ var Parser = (function (_super) {
 
             }
             case ListParsingState.ModuleDeclaration_ModuleElements: {
-                throw Errors.notYetImplemented();
+                return this.parseModuleElement();
 
             }
             case ListParsingState.SwitchStatement_SwitchClauses: {
@@ -3258,7 +3254,7 @@ var Parser = (function (_super) {
 
             }
             case ListParsingState.ModuleDeclaration_ModuleElements: {
-                throw Errors.notYetImplemented();
+                return Strings.module__class__interface__enum__import_or_statement;
 
             }
             case ListParsingState.SwitchStatement_SwitchClauses: {

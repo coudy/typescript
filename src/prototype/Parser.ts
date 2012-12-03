@@ -1053,27 +1053,16 @@ class Parser extends SlidingWindow {
 
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
-        var moduleElements: ModuleElementSyntax[] = null;
+        var moduleElements: ISyntaxNodeList = SyntaxNodeList.empty;
         if (!openBraceToken.isMissing()) {
-            var savedListParsingState = this.listParsingState;
-            this.listParsingState |= ListParsingState.ModuleDeclaration_ModuleElements;
-
-            while (this.currentToken().kind !== SyntaxKind.CloseBraceToken &&
-                   this.currentToken().kind !== SyntaxKind.EndOfFileToken) {
-                var element = this.parseModuleElement();
-
-                moduleElements = moduleElements || [];
-                moduleElements.push(element);
-            }
-
-            this.listParsingState = savedListParsingState;
+            moduleElements = this.parseSyntaxNodeList(ListParsingState.ModuleDeclaration_ModuleElements);
         }
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
 
         return new ModuleDeclarationSyntax(
             exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral,
-            openBraceToken, SyntaxNodeList.create(moduleElements), closeBraceToken);
+            openBraceToken, moduleElements, closeBraceToken);
     }
 
     private isInterfaceDeclaration(): bool {
@@ -3139,7 +3128,7 @@ class Parser extends SlidingWindow {
                 return this.isExpectedClassDeclaration_ClassElementsTerminator();
 
             case ListParsingState.ModuleDeclaration_ModuleElements:
-                throw Errors.notYetImplemented();
+                return this.isExpectedModuleDeclaration_ModuleElementsTerminator();
 
             case ListParsingState.SwitchStatement_SwitchClauses:
                 return this.isExpectedSwitchStatement_SwitchClausesTerminator();
@@ -3169,6 +3158,10 @@ class Parser extends SlidingWindow {
         return this.currentToken().kind === SyntaxKind.EndOfFileToken;
     }
 
+    private isExpectedModuleDeclaration_ModuleElementsTerminator(): bool {
+        return this.currentToken().kind === SyntaxKind.CloseBraceToken;
+    }
+
     private isExpectedClassDeclaration_ClassElementsTerminator(): bool {
         return this.currentToken().kind === SyntaxKind.CloseBraceToken;
     }
@@ -3190,7 +3183,7 @@ class Parser extends SlidingWindow {
                 return this.isClassElement();
 
             case ListParsingState.ModuleDeclaration_ModuleElements:
-                throw Errors.notYetImplemented();
+                return this.isModuleElement();
 
             case ListParsingState.SwitchStatement_SwitchClauses:
                 return this.isSwitchClause();
@@ -3227,7 +3220,7 @@ class Parser extends SlidingWindow {
                 return this.parseClassElement();
 
             case ListParsingState.ModuleDeclaration_ModuleElements:
-                throw Errors.notYetImplemented();
+                return this.parseModuleElement();
 
             case ListParsingState.SwitchStatement_SwitchClauses:
                 return this.parseSwitchClause();
@@ -3264,7 +3257,7 @@ class Parser extends SlidingWindow {
                 return Strings.constructor__function__accessor_or_variable;
 
             case ListParsingState.ModuleDeclaration_ModuleElements:
-                throw Errors.notYetImplemented();
+                return Strings.module__class__interface__enum__import_or_statement;
 
             case ListParsingState.SwitchStatement_SwitchClauses:
                 return Strings.case_or_default_clause;
