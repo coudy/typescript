@@ -13,7 +13,7 @@
 ///<reference path='IntegerUtilities.ts' />
 ///<reference path='IEnvironment.ts' />
 ///<reference path='ISeparatedSyntaxList.ts' />
-///<reference path='ISyntaxNodeList.ts' />
+///<reference path='ISyntaxList.ts' />
 ///<reference path='ISyntaxToken.ts' />
 ///<reference path='ISyntaxTrivia.ts' />
 ///<reference path='ISyntaxTriviaList.ts' />
@@ -48,7 +48,7 @@
 ///<reference path='SyntaxFacts.ts' />
 
 ///<reference path='SyntaxNode.ts' />
-///<reference path='SyntaxNodeList.ts' />
+///<reference path='SyntaxList.ts' />
 ///<reference path='SyntaxNodes.ts' />
 ///<reference path='SyntaxTokenFactory.ts' />
 ///<reference path='SyntaxTree.ts' />
