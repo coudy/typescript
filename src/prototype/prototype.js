@@ -2983,10 +2983,17 @@ var Parser = (function (_super) {
             var itemsLength = items === null ? 0 : items.length;
             items = this.tryParseExpectedListItem(currentListType, items, null);
             if(items !== null && items.length > itemsLength) {
-                if(this.listIsTerminated(currentListType)) {
-                    break;
+                if(this.currentToken().kind !== separatorKind) {
+                    if(this.listIsTerminated(currentListType)) {
+                        break;
+                    }
+                    if(allowAutomaticSemicolonInsertion && this.canEatAutomaticSemicolon()) {
+                        lastSeparator = this.eatExplicitOrAutomaticSemicolon();
+                        items.push(lastSeparator);
+                        continue;
+                    }
                 }
-                lastSeparator = allowAutomaticSemicolonInsertion ? this.eatExplicitOrAutomaticSemicolon() : this.eatToken(separatorKind);
+                lastSeparator = this.eatToken(separatorKind);
                 items.push(lastSeparator);
                 continue;
             }
@@ -3221,9 +3228,6 @@ var Parser = (function (_super) {
         return false;
     };
     Parser.prototype.isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator = function () {
-        if(this.currentToken().kind === 72 /* CommaToken */ ) {
-            return false;
-        }
         if(this.previousToken.kind === 72 /* CommaToken */ ) {
             return false;
         }
@@ -34821,7 +34825,7 @@ var Program = (function () {
         if(filePath.indexOf("RealSource") >= 0) {
             return;
         }
-        if(filePath.indexOf("VariableDeclaration3.ts") < 0) {
+        if(filePath.indexOf("VariableDeclaration2.ts") < 0) {
         }
         var contents = environment.readFile(filePath);
         totalSize += contents.length;

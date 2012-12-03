@@ -55,7 +55,7 @@ class Program {
             return;
         }
 
-        if (filePath.indexOf("VariableDeclaration3.ts") < 0) {
+        if (filePath.indexOf("VariableDeclaration2.ts") < 0) {
             // return;
         }
 

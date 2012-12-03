@@ -2967,17 +2967,43 @@ class Parser extends SlidingWindow {
             var itemsLength = items === null ? 0 : items.length;
             items = this.tryParseExpectedListItem(currentListType, items, null);
             if (items !== null && items.length > itemsLength) {
-                // We got an item.  We may be done.  Check for that.
+                // We got an item and added it to our list.  If the next token is an explicit 
+                // separator, then add it to the list.
 
-                if (this.listIsTerminated(currentListType)) {
-                    break;
+                if (this.currentToken().kind !== separatorKind) {
+                    // We didn't see a separator.  There could be a few reasons for this.  First, 
+                    // we're at the terminator of the list and we're supposed to stop.  Or, second, 
+                    // the list allows for automatic semicolon insertion and we can east one here.
+
+                    // Note: this order is important.  Say we have:
+                    //      {
+                    //          a       // <-- just finished parsing 'a'
+                    //      }
+                    //
+                    // Automatic semicolon insertion rules state: "When, as the program is parsed from
+                    // left to right, a token (called the offending token) is encountered that is not 
+                    // allowed by any production of the grammar".  So we should only ever insert a 
+                    // semicolon if we couldn't consume something normally.  in the above case, we can
+                    // consume the '}' just fine.  So ASI doesn't apply.
+
+                    if (this.listIsTerminated(currentListType)) {
+                        // The list is done.  Return what we've got now.
+                        break;
+                    }
+
+                    if (allowAutomaticSemicolonInsertion && this.canEatAutomaticSemicolon()) {
+                        lastSeparator = this.eatExplicitOrAutomaticSemicolon();
+                        items.push(lastSeparator);
+                        continue;
+                    }
                 }
 
-                // We're not done. We need a separator token.
-                lastSeparator = allowAutomaticSemicolonInsertion 
-                    ? this.eatExplicitOrAutomaticSemicolon()
-                    : this.eatToken(separatorKind);
+                // We're either at a real separator already that we should parse out.  Or we weren't
+                // at one, but none of our fallback cases worked.  However, the list still requires
+                // a separator, so we need to parse it an error version here.
 
+                // Consume the last separator and continue.
+                lastSeparator = this.eatToken(separatorKind);
                 items.push(lastSeparator);
                 continue;
             }
@@ -3208,18 +3234,11 @@ class Parser extends SlidingWindow {
     }
 
     private isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator(): bool {
-        // This is the case when we're parsing variable declarations in a variable statement.
+        //// This is the case when we're parsing variable declarations in a variable statement.
 
-        // If we're looking at a comma, then we can't terminate this list. i.e.:
-        //      var a = bar    // <-- just consumed the 'foo' variable.
-        //        , b = baz;
-        if (this.currentToken().kind === SyntaxKind.CommaToken) {
-            return false;
-        }
-        
         // If we just parsed a comma, then we can't terminate this list.  i.e.:
         //      var a = bar, // <-- just consumed the  comma
-        //        , b = baz;
+        //          b = baz;
         if (this.previousToken.kind === SyntaxKind.CommaToken) {
             return false;
         }
