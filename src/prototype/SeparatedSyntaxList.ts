@@ -1,16 +1,6 @@
 ///<reference path='References.ts' />
 
 module SeparatedSyntaxList {
-    //private toJSON(list: ISeparatedSyntaxList) {
-    //    var result = [];
-
-    //    for (var i = 0; i < list.count(); i++) {
-    //        result.push(list.itemAt(i));
-    //    }
-
-    //    return result;
-    //}
-    
     class EmptySeparatedSyntaxList implements ISeparatedSyntaxList {
         public toJSON(key) { return []; }
 

@@ -1,64 +1,80 @@
 ///<reference path='References.ts' />
 
-class SyntaxList {
-    public static toJSON(list: ISyntaxList) {
-        var result = [];
-
-        for (var i = 0; i < list.count(); i++) {
-            result.push(list.syntaxNodeAt(i));
+module SyntaxList {
+    class EmptySyntaxList implements ISyntaxList {
+        public toJSON(key) {
+            return [];
         }
 
-        return result;
-    }
-
-    public static empty: ISyntaxList = {
-        toJSON: (key) => [],
-
-        count: () => 0,
-
-        syntaxNodeAt: (index: number): SyntaxNode => {
+        public count(): number {
+            return 0;
+        }
+        
+        public syntaxNodeAt(index: number): SyntaxNode {
             throw Errors.argumentOutOfRange("index");
         }
-    };
+    }
 
-    public static create(nodes: SyntaxNode[]): ISyntaxList {
+    export var empty: ISyntaxList = new EmptySyntaxList();
+
+    class SingletonSyntaxList implements ISyntaxList {
+        private _item: SyntaxNode;
+
+        constructor(item: SyntaxNode) {
+            this._item = item;
+        }
+
+        public toJSON(key) {
+            return [this._item];
+        }
+        
+        public count() {
+            return 1;
+        }
+        
+        public syntaxNodeAt(index: number) {
+            if (index !== 0) {
+                throw Errors.argumentOutOfRange("index");
+            }
+
+            return this._item;
+        }
+    }
+
+    class NormalSyntaxList implements ISyntaxList {
+        private nodes: SyntaxNode[];
+
+        constructor(nodes: SyntaxNode[]) {
+            this.nodes = nodes;
+        }
+
+        public toJSON(key) {
+            return this.nodes;
+        }
+
+        public count() {
+            return this.nodes.length;
+        }
+
+        public syntaxNodeAt(index: number) {
+            if (index < 0 || index >= this.nodes.length) {
+                throw Errors.argumentOutOfRange("index");
+            }
+
+            return this.nodes[index];
+        }
+    }
+
+    export function create(nodes: SyntaxNode[]): ISyntaxList {
         if (nodes === null || nodes.length === 0) {
-            return SyntaxList.empty;
+            return empty;
         }
 
         if (nodes.length === 1) {
             var item = nodes[0];
-            var list: ISyntaxList;
-            list = {
-                toJSON: (key) => toJSON(list),
-                count: () => 1,
-                syntaxNodeAt: (index: number) => {
-                    if (index !== 0) {
-                        throw Errors.argumentOutOfRange("index");
-                    }
-
-                    return item;
-                }
-            };
-
-            return list;
+            return new SingletonSyntaxList(item);
         }
 
-        var list: ISyntaxList;
-        list = {
-            toJSON: (key) => toJSON(list),
-
-            count: () => nodes.length,
-
-            syntaxNodeAt: (index: number) => {
-                if (index < 0 || index >= nodes.length) {
-                    throw Errors.argumentOutOfRange("index");
-                }
-
-                return nodes[index];
-            }
-        };
-
-        return list;
+        return new NormalSyntaxList(nodes);
     }
 }

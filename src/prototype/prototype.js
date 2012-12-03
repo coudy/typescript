@@ -5458,68 +5458,72 @@ var SyntaxNode = (function () {
     };
     return SyntaxNode;
 })();
-var SyntaxList = (function () {
-    function SyntaxList() { }
-    SyntaxList.toJSON = function toJSON(list) {
-        var result = [];
-        for(var i = 0; i < list.count(); i++) {
-            result.push(list.syntaxNodeAt(i));
-        }
-        return result;
-    }
-    SyntaxList.empty = {
-        toJSON: function (key) {
+var SyntaxList;
+(function (SyntaxList) {
+    var EmptySyntaxList = (function () {
+        function EmptySyntaxList() { }
+        EmptySyntaxList.prototype.toJSON = function (key) {
             return [];
-        },
-        count: function () {
+        };
+        EmptySyntaxList.prototype.count = function () {
             return 0;
-        },
-        syntaxNodeAt: function (index) {
+        };
+        EmptySyntaxList.prototype.syntaxNodeAt = function (index) {
             throw Errors.argumentOutOfRange("index");
+        };
+        return EmptySyntaxList;
+    })();    
+    SyntaxList.empty = new EmptySyntaxList();
+    var SingletonSyntaxList = (function () {
+        function SingletonSyntaxList(item) {
+            this._item = item;
         }
-    };
-    SyntaxList.create = function create(nodes) {
+        SingletonSyntaxList.prototype.toJSON = function (key) {
+            return [
+                this._item
+            ];
+        };
+        SingletonSyntaxList.prototype.count = function () {
+            return 1;
+        };
+        SingletonSyntaxList.prototype.syntaxNodeAt = function (index) {
+            if(index !== 0) {
+                throw Errors.argumentOutOfRange("index");
+            }
+            return this._item;
+        };
+        return SingletonSyntaxList;
+    })();    
+    var NormalSyntaxList = (function () {
+        function NormalSyntaxList(nodes) {
+            this.nodes = nodes;
+        }
+        NormalSyntaxList.prototype.toJSON = function (key) {
+            return this.nodes;
+        };
+        NormalSyntaxList.prototype.count = function () {
+            return this.nodes.length;
+        };
+        NormalSyntaxList.prototype.syntaxNodeAt = function (index) {
+            if(index < 0 || index >= this.nodes.length) {
+                throw Errors.argumentOutOfRange("index");
+            }
+            return this.nodes[index];
+        };
+        return NormalSyntaxList;
+    })();    
+    function create(nodes) {
         if(nodes === null || nodes.length === 0) {
             return SyntaxList.empty;
         }
         if(nodes.length === 1) {
             var item = nodes[0];
-            var list;
-            list = {
-                toJSON: function (key) {
-                    return SyntaxList.toJSON(list);
-                },
-                count: function () {
-                    return 1;
-                },
-                syntaxNodeAt: function (index) {
-                    if(index !== 0) {
-                        throw Errors.argumentOutOfRange("index");
-                    }
-                    return item;
-                }
-            };
-            return list;
+            return new SingletonSyntaxList(item);
         }
-        var list;
-        list = {
-            toJSON: function (key) {
-                return SyntaxList.toJSON(list);
-            },
-            count: function () {
-                return nodes.length;
-            },
-            syntaxNodeAt: function (index) {
-                if(index < 0 || index >= nodes.length) {
-                    throw Errors.argumentOutOfRange("index");
-                }
-                return nodes[index];
-            }
-        };
-        return list;
+        return new NormalSyntaxList(nodes);
     }
-    return SyntaxList;
-})();
+    SyntaxList.create = create;
+})(SyntaxList || (SyntaxList = {}));
 var SourceUnitSyntax = (function (_super) {
     __extends(SourceUnitSyntax, _super);
     function SourceUnitSyntax(moduleElements, endOfFileToken) {
