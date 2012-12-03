@@ -1043,6 +1043,12 @@ var Parser = (function (_super) {
         }
         return this.createMissingToken(kind, 0 /* None */ , token);
     };
+    Parser.prototype.tryEatKeyword = function (kind) {
+        if(this.currentToken().keywordKind() === kind) {
+            return this.eatKeyword(kind);
+        }
+        return null;
+    };
     Parser.prototype.eatKeyword = function (kind) {
         Debug.assert(SyntaxFacts.isTokenKind(kind));
         var token = this.currentToken();
@@ -1329,10 +1335,7 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseEnumDeclaration = function () {
         Debug.assert(this.isEnumDeclaration());
-        var exportKeyword = null;
-        if(this.currentToken().keywordKind() === 41 /* ExportKeyword */ ) {
-            exportKeyword = this.eatKeyword(41 /* ExportKeyword */ );
-        }
+        var exportKeyword = this.tryEatKeyword(41 /* ExportKeyword */ );
         var enumKeyword = this.eatKeyword(40 /* EnumKeyword */ );
         var identifier = this.eatIdentifierToken();
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
@@ -1356,15 +1359,8 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseClassDeclaration = function () {
         Debug.assert(this.isClassDeclaration());
-        var exportKeyword = null;
-        var declareKeyword = null;
-        if(this.currentToken().keywordKind() === 41 /* ExportKeyword */ ) {
-            exportKeyword = this.eatKeyword(41 /* ExportKeyword */ );
-        } else {
-            if(this.currentToken().keywordKind() === 57 /* DeclareKeyword */ ) {
-                declareKeyword = this.eatKeyword(57 /* DeclareKeyword */ );
-            }
-        }
+        var exportKeyword = this.tryEatKeyword(41 /* ExportKeyword */ );
+        var declareKeyword = this.tryEatKeyword(57 /* DeclareKeyword */ );
         var classKeyword = this.eatKeyword(38 /* ClassKeyword */ );
         var identifier = this.eatIdentifierToken();
         var extendsClause = null;
@@ -1454,10 +1450,7 @@ var Parser = (function (_super) {
         if(this.currentToken().keywordKind() === 51 /* PublicKeyword */  || this.currentToken().keywordKind() === 49 /* PrivateKeyword */ ) {
             publicOrPrivateKeyword = this.eatAnyToken();
         }
-        var staticKeyword = null;
-        if(this.currentToken().keywordKind() === 52 /* StaticKeyword */ ) {
-            staticKeyword = this.eatKeyword(52 /* StaticKeyword */ );
-        }
+        var staticKeyword = this.tryEatKeyword(52 /* StaticKeyword */ );
         var functionSignature = this.parseFunctionSignature();
         var block = null;
         var semicolon = null;
@@ -1477,10 +1470,7 @@ var Parser = (function (_super) {
         if(this.currentToken().keywordKind() === 51 /* PublicKeyword */  || this.currentToken().keywordKind() === 49 /* PrivateKeyword */ ) {
             publicOrPrivateKeyword = this.eatAnyToken();
         }
-        var staticKeyword = null;
-        if(this.currentToken().keywordKind() === 52 /* StaticKeyword */ ) {
-            staticKeyword = this.eatKeyword(52 /* StaticKeyword */ );
-        }
+        var staticKeyword = this.tryEatKeyword(52 /* StaticKeyword */ );
         var variableDeclarator = this.parseVariableDeclarator(true);
         var semicolon = this.eatExplicitOrAutomaticSemicolon();
         return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolon);
@@ -1526,15 +1516,8 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseFunctionDeclaration = function () {
         Debug.assert(this.isFunctionDeclaration());
-        var exportKeyword = null;
-        var declareKeyword = null;
-        if(this.currentToken().keywordKind() === 41 /* ExportKeyword */ ) {
-            exportKeyword = this.eatKeyword(41 /* ExportKeyword */ );
-        } else {
-            if(this.currentToken().keywordKind() === 57 /* DeclareKeyword */ ) {
-                declareKeyword = this.eatKeyword(57 /* DeclareKeyword */ );
-            }
-        }
+        var exportKeyword = this.tryEatKeyword(41 /* ExportKeyword */ );
+        var declareKeyword = this.tryEatKeyword(57 /* DeclareKeyword */ );
         var functionKeyword = this.eatKeyword(21 /* FunctionKeyword */ );
         var functionSignature = this.parseFunctionSignature();
         var semicolonToken = null;
@@ -1573,15 +1556,8 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseModuleDeclaration = function () {
         Debug.assert(this.isModuleDeclaration());
-        var exportKeyword = null;
-        var declareKeyword = null;
-        if(this.currentToken().keywordKind() === 41 /* ExportKeyword */ ) {
-            exportKeyword = this.eatKeyword(41 /* ExportKeyword */ );
-        } else {
-            if(this.currentToken().keywordKind() === 57 /* DeclareKeyword */ ) {
-                declareKeyword = this.eatKeyword(57 /* DeclareKeyword */ );
-            }
-        }
+        var exportKeyword = this.tryEatKeyword(41 /* ExportKeyword */ );
+        var declareKeyword = this.tryEatKeyword(57 /* DeclareKeyword */ );
         var moduleKeyword = this.eatKeyword(59 /* ModuleKeyword */ );
         var moduleName = null;
         var stringLiteral = null;
@@ -1608,10 +1584,7 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseInterfaceDeclaration = function () {
         Debug.assert(this.currentToken().keywordKind() === 41 /* ExportKeyword */  || this.currentToken().keywordKind() === 46 /* InterfaceKeyword */ );
-        var exportKeyword = null;
-        if(this.currentToken().keywordKind() === 41 /* ExportKeyword */ ) {
-            exportKeyword = this.eatKeyword(41 /* ExportKeyword */ );
-        }
+        var exportKeyword = this.tryEatKeyword(41 /* ExportKeyword */ );
         var interfaceKeyword = this.eatKeyword(46 /* InterfaceKeyword */ );
         var identifier = this.eatIdentifierToken();
         var extendsClause = null;
@@ -2198,15 +2171,8 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseVariableStatement = function () {
         Debug.assert(this.isVariableStatement());
-        var exportKeyword = null;
-        var declareKeyword = null;
-        if(this.currentToken().keywordKind() === 41 /* ExportKeyword */ ) {
-            exportKeyword = this.eatKeyword(41 /* ExportKeyword */ );
-        } else {
-            if(this.currentToken().keywordKind() === 57 /* DeclareKeyword */ ) {
-                declareKeyword = this.eatKeyword(57 /* DeclareKeyword */ );
-            }
-        }
+        var exportKeyword = this.tryEatKeyword(41 /* ExportKeyword */ );
+        var declareKeyword = this.tryEatKeyword(57 /* DeclareKeyword */ );
         var variableDeclaration = this.parseVariableDeclaration(true);
         var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
         return new VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken);

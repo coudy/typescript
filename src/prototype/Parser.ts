@@ -290,6 +290,15 @@ class Parser extends SlidingWindow {
         return this.createMissingToken(kind, SyntaxKind.None, token);
     }
 
+    // Eats the keyword if it is there.  Otherwise does nothing.  Will not report errors.
+    private tryEatKeyword(kind: SyntaxKind): ISyntaxToken {
+         if (this.currentToken().keywordKind() === kind) {
+            return this.eatKeyword(kind);
+        }
+
+         return null;
+    }
+
     private eatKeyword(kind: SyntaxKind): ISyntaxToken {
         Debug.assert(SyntaxFacts.isTokenKind(kind))
 
@@ -636,11 +645,7 @@ class Parser extends SlidingWindow {
     private parseEnumDeclaration(): EnumDeclarationSyntax {
         Debug.assert(this.isEnumDeclaration());
 
-        var exportKeyword: ISyntaxToken = null;
-        if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword) {
-            exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
-        }
-
+        var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
         var enumKeyword = this.eatKeyword(SyntaxKind.EnumKeyword);
         var identifier = this.eatIdentifierToken();
 
@@ -649,31 +654,6 @@ class Parser extends SlidingWindow {
 
         if (!openBraceToken.isMissing()) {
             variableDeclarators = this.parseSeparatedSyntaxList(ListParsingState.EnumDeclaration_VariableDeclarators);
-
-            //var savedListParsingState = this.listParsingState;
-            //this.listParsingState |= ;
-
-            //while (true) {
-            //    if (this.currentToken().kind === SyntaxKind.CloseBraceToken || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
-            //        break;
-            //    }
-
-            //    var variableDeclarator = this.parseVariableDeclarator(/*allowIn:*/ true);
-
-            //    variableDeclarators = variableDeclarators || [];
-            //    variableDeclarators.push(variableDeclarator);
-
-            //    if (this.currentToken().kind === SyntaxKind.CommaToken) {
-            //        var commaToken = this.eatToken(SyntaxKind.CommaToken);
-            //        variableDeclarators.push(commaToken);
-            //        continue;
-            //    }
-
-            //    // TODO: error recovery.
-            //    break;
-            //}
-
-            //this.listParsingState = savedListParsingState;
         }
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -703,15 +683,8 @@ class Parser extends SlidingWindow {
     private parseClassDeclaration(): ClassDeclarationSyntax {
         Debug.assert(this.isClassDeclaration());
 
-        var exportKeyword: ISyntaxToken = null;
-        var declareKeyword: ISyntaxToken = null;
-
-        if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword) {
-            exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
-        }
-        else if (this.currentToken().keywordKind() === SyntaxKind.DeclareKeyword) {
-            declareKeyword = this.eatKeyword(SyntaxKind.DeclareKeyword);
-        }
+        var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
+        var declareKeyword = this.tryEatKeyword(SyntaxKind.DeclareKeyword);
 
         var classKeyword = this.eatKeyword(SyntaxKind.ClassKeyword);
         var identifier = this.eatIdentifierToken();
@@ -841,11 +814,7 @@ class Parser extends SlidingWindow {
             publicOrPrivateKeyword = this.eatAnyToken();
         }
 
-        var staticKeyword: ISyntaxToken = null;
-        if (this.currentToken().keywordKind() === SyntaxKind.StaticKeyword) {
-            staticKeyword = this.eatKeyword(SyntaxKind.StaticKeyword);
-        }
-
+        var staticKeyword = this.tryEatKeyword(SyntaxKind.StaticKeyword);
         var functionSignature = this.parseFunctionSignature();
 
         var block: BlockSyntax = null;
@@ -874,11 +843,7 @@ class Parser extends SlidingWindow {
             publicOrPrivateKeyword = this.eatAnyToken();
         }
 
-        var staticKeyword: ISyntaxToken = null;
-        if (this.currentToken().keywordKind() === SyntaxKind.StaticKeyword) {
-            staticKeyword = this.eatKeyword(SyntaxKind.StaticKeyword);
-        }
-
+        var staticKeyword = this.tryEatKeyword(SyntaxKind.StaticKeyword);
         var variableDeclarator = this.parseVariableDeclarator(/*allowIn:*/ true);
         var semicolon = this.eatExplicitOrAutomaticSemicolon();
 
@@ -933,14 +898,8 @@ class Parser extends SlidingWindow {
     private parseFunctionDeclaration(): FunctionDeclarationSyntax {
         Debug.assert(this.isFunctionDeclaration());
 
-        var exportKeyword: ISyntaxToken = null;
-        var declareKeyword: ISyntaxToken = null;
-        if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword) {
-            exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
-        }
-        else if (this.currentToken().keywordKind() === SyntaxKind.DeclareKeyword) {
-            declareKeyword = this.eatKeyword(SyntaxKind.DeclareKeyword);
-        }
+        var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
+        var declareKeyword = this.tryEatKeyword(SyntaxKind.DeclareKeyword);
 
         var functionKeyword = this.eatKeyword(SyntaxKind.FunctionKeyword);
         var functionSignature = this.parseFunctionSignature();
@@ -1003,15 +962,8 @@ class Parser extends SlidingWindow {
     private parseModuleDeclaration(): ModuleDeclarationSyntax {
         Debug.assert(this.isModuleDeclaration());
 
-        var exportKeyword: ISyntaxToken = null;
-        var declareKeyword: ISyntaxToken = null;
-        if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword) {
-            exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
-        }
-        else if (this.currentToken().keywordKind() === SyntaxKind.DeclareKeyword) {
-            declareKeyword = this.eatKeyword(SyntaxKind.DeclareKeyword);
-        }
-
+        var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
+        var declareKeyword = this.tryEatKeyword(SyntaxKind.DeclareKeyword);
         var moduleKeyword = this.eatKeyword(SyntaxKind.ModuleKeyword);
 
         var moduleName: NameSyntax = null;
@@ -1053,11 +1005,7 @@ class Parser extends SlidingWindow {
         Debug.assert(this.currentToken().keywordKind() === SyntaxKind.ExportKeyword ||
                      this.currentToken().keywordKind() === SyntaxKind.InterfaceKeyword);
 
-        var exportKeyword: ISyntaxToken = null;
-        if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword) {
-            exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
-        }
-
+        var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
         var interfaceKeyword = this.eatKeyword(SyntaxKind.InterfaceKeyword);
         var identifier = this.eatIdentifierToken();
 
@@ -1857,14 +1805,8 @@ class Parser extends SlidingWindow {
     private parseVariableStatement(): VariableStatementSyntax {
         Debug.assert(this.isVariableStatement());
 
-        var exportKeyword: ISyntaxToken = null;
-        var declareKeyword: ISyntaxToken = null;
-        if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword) {
-            exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
-        }
-        else if (this.currentToken().keywordKind() === SyntaxKind.DeclareKeyword) {
-            declareKeyword = this.eatKeyword(SyntaxKind.DeclareKeyword);
-        }
+        var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
+        var declareKeyword = this.tryEatKeyword(SyntaxKind.DeclareKeyword);
 
         var variableDeclaration = this.parseVariableDeclaration(/*allowIn:*/ true);
         var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
