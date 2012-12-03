@@ -101,15 +101,16 @@ enum ListParsingState {
     ModuleDeclaration_ModuleElements = 1 << 2,
     SwitchStatement_SwitchClauses = 1 << 3,
     SwitchClause_Statements = 1 << 4,
-    Block_Statements = 1 << 5,
-    EnumDeclaration_VariableDeclarators = 1 << 6,
-    ObjectType_TypeMembers = 1 << 7,
-    ExtendsOrImplementsClause_TypeNameList = 1 << 8,
-    VariableDeclaration_VariableDeclarators = 1 << 9,
-    ArgumentList_AssignmentExpressions = 1 << 10,
-    ObjectLiteralExpression_PropertyAssignments = 1 << 11,
-    ArrayLiteralExpression_AssignmentExpressions = 1 << 12,
-    ParameterList_Parameters = 1 << 13,
+    Block_StatementsWithFunctionDeclarations = 1 << 5,
+    Block_StatementsWithoutFunctionDeclarations = 1 << 6,
+    EnumDeclaration_VariableDeclarators = 1 << 7,
+    ObjectType_TypeMembers = 1 << 8,
+    ExtendsOrImplementsClause_TypeNameList = 1 << 9,
+    VariableDeclaration_VariableDeclarators = 1 << 10,
+    ArgumentList_AssignmentExpressions = 1 << 11,
+    ObjectLiteralExpression_PropertyAssignments = 1 << 12,
+    ArrayLiteralExpression_AssignmentExpressions = 1 << 13,
+    ParameterList_Parameters = 1 << 14,
 
     FirstListParsingState = SourceUnit_ModuleElements,
     LastListParsingState = ParameterList_Parameters,
@@ -521,19 +522,17 @@ class Parser extends SlidingWindow {
     }
 
     private parseSourceUnit(): SourceUnitSyntax {
-        // Note: technically we don't need to save and restore this here.  After all, thisi the top
+        // Note: technically we don't need to save and restore this here.  After all, this the top
         // level parsing entrypoint.  So it will always start as false and be reset to false when the
         // loop ends.  However, for sake of symmetry and consistancy we do this.
         var savedIsInStrictMode = this.isInStrictMode;
-
-        var moduleElements = this.parseSyntaxNodeList(ListParsingState.SourceUnit_ModuleElements, this.processModuleElement);
-
+        var moduleElements = this.parseSyntaxNodeList(ListParsingState.SourceUnit_ModuleElements, this.updateStrictModeState);
         this.isInStrictMode = savedIsInStrictMode;
 
         return new SourceUnitSyntax(moduleElements, this.currentToken());
     }
 
-    private processModuleElement(moduleElement: ModuleElementSyntax): void {
+    private updateStrictModeState(moduleElement: ModuleElementSyntax): void {
         if (!this.isInStrictMode) {
             this.isInStrictMode = Parser.isUseStrictDirective(moduleElement);
         }
@@ -2352,11 +2351,6 @@ class Parser extends SlidingWindow {
                 return this.parseCastExpression();
         }
 
-        // Parse out a missing name here once code for all cases has been included.
-        if (true) {
-            throw Errors.notYetImplemented();
-        }
-
         // Nothing else worked, just try to consume an identifier so we report an error.
         return new IdentifierNameSyntax(this.eatIdentifierToken());
     }
@@ -2837,38 +2831,20 @@ class Parser extends SlidingWindow {
     private parseBlock(allowFunctionDeclaration: bool): BlockSyntax {
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
-        var statements: StatementSyntax[] = null;
+        var statements: ISyntaxNodeList = SyntaxNodeList.empty;
 
         if (!openBraceToken.isMissing()) {
             var savedIsInStrictMode = this.isInStrictMode;
-
-            var savedListParsingState = this.listParsingState;
-            this.listParsingState |= ListParsingState.Block_Statements;
-
-            while (true) {
-                if (this.currentToken().kind === SyntaxKind.CloseBraceToken ||
-                    this.currentToken().kind === SyntaxKind.EndOfFileToken) {
-                    break;
-                }
-
-                // REVIEW: add error tolerance here.
-                var statement = this.parseStatement(allowFunctionDeclaration);
-
-                statements = statements || [];
-                statements.push(statement);
-
-                if (!this.isInStrictMode) {
-                    this.isInStrictMode = Parser.isUseStrictDirective(statement);
-                }
-            }
-
-            this.listParsingState = savedListParsingState;
+            var listParsingMode = allowFunctionDeclaration
+                ? ListParsingState.Block_StatementsWithFunctionDeclarations
+                : ListParsingState.Block_StatementsWithoutFunctionDeclarations;
+            statements = this.parseSyntaxNodeList(listParsingMode, this.updateStrictModeState);
             this.isInStrictMode = savedIsInStrictMode;
         }
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
 
-        return new BlockSyntax(openBraceToken, SyntaxNodeList.create(statements), closeBraceToken);
+        return new BlockSyntax(openBraceToken, statements, closeBraceToken);
     }
 
     private parseCallSignature(): CallSignatureSyntax {
@@ -3178,12 +3154,19 @@ class Parser extends SlidingWindow {
         switch (currentListType) {
             case ListParsingState.SourceUnit_ModuleElements:
                 return this.isExpectedSourceUnit_ModuleElementsTerminator();
+
             case ListParsingState.ClassDeclaration_ClassElements:
                 return this.isExpectedClassDeclaration_ClassElementsTerminator();
+
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
-            case ListParsingState.Block_Statements:
+                throw Errors.notYetImplemented();
+
+            case ListParsingState.Block_StatementsWithFunctionDeclarations:     // Fall through
+            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+                return this.isExpectedBlock_StatementsTerminator();
+
             case ListParsingState.EnumDeclaration_VariableDeclarators:
             case ListParsingState.ObjectType_TypeMembers:
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
@@ -3206,16 +3189,29 @@ class Parser extends SlidingWindow {
         return this.currentToken().kind === SyntaxKind.CloseBraceToken;
     }
 
+    private isExpectedBlock_StatementsTerminator(): bool {
+        return this.currentToken().kind === SyntaxKind.CloseBraceToken;
+    }
+
     private isExpectedListItem(currentListType: ListParsingState): any {
         switch (currentListType) {
             case ListParsingState.SourceUnit_ModuleElements:
                 return this.isModuleElement();
+
             case ListParsingState.ClassDeclaration_ClassElements:
                 return this.isClassElement();
+
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
-            case ListParsingState.Block_Statements:
+                throw Errors.notYetImplemented();
+            
+            case ListParsingState.Block_StatementsWithFunctionDeclarations:
+                return this.isStatement(/*allowFunctionDeclaration:*/ true);
+
+            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+                return this.isStatement(/*allowFunctionDeclaration:*/ false);
+
             case ListParsingState.EnumDeclaration_VariableDeclarators:
             case ListParsingState.ObjectType_TypeMembers:
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
@@ -3234,12 +3230,21 @@ class Parser extends SlidingWindow {
         switch (currentListType) {
             case ListParsingState.SourceUnit_ModuleElements:
                 return this.parseModuleElement();
+
             case ListParsingState.ClassDeclaration_ClassElements:
                 return this.parseClassElement();
+
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
-            case ListParsingState.Block_Statements:
+                throw Errors.notYetImplemented();
+
+            case ListParsingState.Block_StatementsWithFunctionDeclarations:
+                return this.parseStatement(/*allowFunctionDeclaration:*/ true);
+
+            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+                return this.parseStatement(/*allowFunctionDeclaration:*/ false);
+
             case ListParsingState.EnumDeclaration_VariableDeclarators:
             case ListParsingState.ObjectType_TypeMembers:
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
@@ -3258,12 +3263,19 @@ class Parser extends SlidingWindow {
         switch (currentListType) {
             case ListParsingState.SourceUnit_ModuleElements:
                 return Strings.module_element;
+
             case ListParsingState.ClassDeclaration_ClassElements:
                 return Strings.class_element;
+
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
-            case ListParsingState.Block_Statements:
+                throw Errors.notYetImplemented();
+
+            case ListParsingState.Block_StatementsWithFunctionDeclarations:     // Fall through.
+            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+                return Strings.statement;
+
             case ListParsingState.EnumDeclaration_VariableDeclarators:
             case ListParsingState.ObjectType_TypeMembers:
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:

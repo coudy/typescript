@@ -107,7 +107,7 @@ module SeparatedSyntaxList {
         }
     }
     
-    var empty: ISeparatedSyntaxList = new EmptySeparatedSyntaxList();
+    export var empty: ISeparatedSyntaxList = new EmptySeparatedSyntaxList();
     export function create(nodes: any[]): ISeparatedSyntaxList {
         if (nodes === null || nodes.length === 0) {
             return empty;
