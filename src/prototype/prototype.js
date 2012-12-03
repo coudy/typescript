@@ -933,8 +933,8 @@ var ListParsingState;
     ListParsingState.ModuleDeclaration_ModuleElements = 1 << 2;
     ListParsingState.SwitchStatement_SwitchClauses = 1 << 3;
     ListParsingState.SwitchClause_Statements = 1 << 4;
-    ListParsingState.Block_StatementsWithFunctionDeclarations = 1 << 5;
-    ListParsingState.Block_StatementsWithoutFunctionDeclarations = 1 << 6;
+    ListParsingState.Block_Statements_AllowFunctionDeclarations = 1 << 5;
+    ListParsingState.Block_Statements_DisallowFunctionDeclarations = 1 << 6;
     ListParsingState.EnumDeclaration_VariableDeclarators = 1 << 7;
     ListParsingState.ObjectType_TypeMembers = 1 << 8;
     ListParsingState.ExtendsOrImplementsClause_TypeNameList = 1 << 9;
@@ -2757,7 +2757,7 @@ var Parser = (function (_super) {
         var statements = SyntaxList.empty;
         if(!openBraceToken.isMissing()) {
             var savedIsInStrictMode = this.isInStrictMode;
-            var listParsingMode = allowFunctionDeclaration ? ListParsingState.Block_StatementsWithFunctionDeclarations : ListParsingState.Block_StatementsWithoutFunctionDeclarations;
+            var listParsingMode = allowFunctionDeclaration ? ListParsingState.Block_Statements_AllowFunctionDeclarations : ListParsingState.Block_Statements_DisallowFunctionDeclarations;
             statements = this.parseSyntaxList(listParsingMode, this.updateStrictModeState);
             this.isInStrictMode = savedIsInStrictMode;
         }
@@ -3038,8 +3038,8 @@ var Parser = (function (_super) {
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
-            case ListParsingState.Block_StatementsWithFunctionDeclarations:
-            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.Block_Statements_AllowFunctionDeclarations:
+            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3067,8 +3067,8 @@ var Parser = (function (_super) {
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
-            case ListParsingState.Block_StatementsWithFunctionDeclarations:
-            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.Block_Statements_AllowFunctionDeclarations:
+            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3096,8 +3096,8 @@ var Parser = (function (_super) {
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
-            case ListParsingState.Block_StatementsWithFunctionDeclarations:
-            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.Block_Statements_AllowFunctionDeclarations:
+            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3125,8 +3125,8 @@ var Parser = (function (_super) {
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
-            case ListParsingState.Block_StatementsWithFunctionDeclarations:
-            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.Block_Statements_AllowFunctionDeclarations:
+            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3175,8 +3175,8 @@ var Parser = (function (_super) {
                 return this.isExpectedSwitchClause_StatementsTerminator();
 
             }
-            case ListParsingState.Block_StatementsWithFunctionDeclarations:
-            case ListParsingState.Block_StatementsWithoutFunctionDeclarations: {
+            case ListParsingState.Block_Statements_AllowFunctionDeclarations:
+            case ListParsingState.Block_Statements_DisallowFunctionDeclarations: {
                 return this.isExpectedBlock_StatementsTerminator();
 
             }
@@ -3267,11 +3267,11 @@ var Parser = (function (_super) {
                 return this.isStatement(false);
 
             }
-            case ListParsingState.Block_StatementsWithFunctionDeclarations: {
+            case ListParsingState.Block_Statements_AllowFunctionDeclarations: {
                 return this.isStatement(true);
 
             }
-            case ListParsingState.Block_StatementsWithoutFunctionDeclarations: {
+            case ListParsingState.Block_Statements_DisallowFunctionDeclarations: {
                 return this.isStatement(false);
 
             }
@@ -3326,11 +3326,11 @@ var Parser = (function (_super) {
                 return this.parseStatement(false);
 
             }
-            case ListParsingState.Block_StatementsWithFunctionDeclarations: {
+            case ListParsingState.Block_Statements_AllowFunctionDeclarations: {
                 return this.parseStatement(true);
 
             }
-            case ListParsingState.Block_StatementsWithoutFunctionDeclarations: {
+            case ListParsingState.Block_Statements_DisallowFunctionDeclarations: {
                 return this.parseStatement(false);
 
             }
@@ -3385,8 +3385,8 @@ var Parser = (function (_super) {
                 return Strings.statement;
 
             }
-            case ListParsingState.Block_StatementsWithFunctionDeclarations:
-            case ListParsingState.Block_StatementsWithoutFunctionDeclarations: {
+            case ListParsingState.Block_Statements_AllowFunctionDeclarations:
+            case ListParsingState.Block_Statements_DisallowFunctionDeclarations: {
                 return Strings.statement;
 
             }

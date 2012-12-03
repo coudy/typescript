@@ -101,8 +101,8 @@ enum ListParsingState {
     ModuleDeclaration_ModuleElements = 1 << 2,
     SwitchStatement_SwitchClauses = 1 << 3,
     SwitchClause_Statements = 1 << 4,
-    Block_StatementsWithFunctionDeclarations = 1 << 5,
-    Block_StatementsWithoutFunctionDeclarations = 1 << 6,
+    Block_Statements_AllowFunctionDeclarations = 1 << 5,
+    Block_Statements_DisallowFunctionDeclarations = 1 << 6,
     EnumDeclaration_VariableDeclarators = 1 << 7,
     ObjectType_TypeMembers = 1 << 8,
     ExtendsOrImplementsClause_TypeNameList = 1 << 9,
@@ -2650,8 +2650,8 @@ class Parser extends SlidingWindow {
         if (!openBraceToken.isMissing()) {
             var savedIsInStrictMode = this.isInStrictMode;
             var listParsingMode = allowFunctionDeclaration
-                ? ListParsingState.Block_StatementsWithFunctionDeclarations
-                : ListParsingState.Block_StatementsWithoutFunctionDeclarations;
+                ? ListParsingState.Block_Statements_AllowFunctionDeclarations
+                : ListParsingState.Block_Statements_DisallowFunctionDeclarations;
             statements = this.parseSyntaxList(listParsingMode, this.updateStrictModeState);
             this.isInStrictMode = savedIsInStrictMode;
         }
@@ -3044,8 +3044,8 @@ class Parser extends SlidingWindow {
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
-            case ListParsingState.Block_StatementsWithFunctionDeclarations:
-            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.Block_Statements_AllowFunctionDeclarations:
+            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3070,8 +3070,8 @@ class Parser extends SlidingWindow {
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
-            case ListParsingState.Block_StatementsWithFunctionDeclarations:
-            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.Block_Statements_AllowFunctionDeclarations:
+            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3096,8 +3096,8 @@ class Parser extends SlidingWindow {
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
-            case ListParsingState.Block_StatementsWithFunctionDeclarations:
-            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.Block_Statements_AllowFunctionDeclarations:
+            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3122,8 +3122,8 @@ class Parser extends SlidingWindow {
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
-            case ListParsingState.Block_StatementsWithFunctionDeclarations:
-            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.Block_Statements_AllowFunctionDeclarations:
+            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3173,8 +3173,8 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
                 return this.isExpectedSwitchClause_StatementsTerminator();
 
-            case ListParsingState.Block_StatementsWithFunctionDeclarations:     // Fall through
-            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.Block_Statements_AllowFunctionDeclarations:     // Fall through
+            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
                 return this.isExpectedBlock_StatementsTerminator();
 
             case ListParsingState.EnumDeclaration_VariableDeclarators:
@@ -3267,10 +3267,10 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
                 return this.isStatement(/*allowFunctionDeclaration:*/ false);
             
-            case ListParsingState.Block_StatementsWithFunctionDeclarations:
+            case ListParsingState.Block_Statements_AllowFunctionDeclarations:
                 return this.isStatement(/*allowFunctionDeclaration:*/ true);
 
-            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
                 return this.isStatement(/*allowFunctionDeclaration:*/ false);
 
             case ListParsingState.EnumDeclaration_VariableDeclarators:
@@ -3312,10 +3312,10 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
                 return this.parseStatement(/*allowFunctionDeclaration:*/ false);
 
-            case ListParsingState.Block_StatementsWithFunctionDeclarations:
+            case ListParsingState.Block_Statements_AllowFunctionDeclarations:
                 return this.parseStatement(/*allowFunctionDeclaration:*/ true);
 
-            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
                 return this.parseStatement(/*allowFunctionDeclaration:*/ false);
 
             case ListParsingState.EnumDeclaration_VariableDeclarators:
@@ -3357,8 +3357,8 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
                 return Strings.statement;
 
-            case ListParsingState.Block_StatementsWithFunctionDeclarations:     // Fall through.
-            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.Block_Statements_AllowFunctionDeclarations:     // Fall through.
+            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
                 return Strings.statement;
 
             case ListParsingState.EnumDeclaration_VariableDeclarators:
