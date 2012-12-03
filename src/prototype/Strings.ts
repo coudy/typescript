@@ -6,4 +6,5 @@ class Strings {
     public static constructor__function__accessor_or_variable: string = "constructor, function, accessor or variable";
     public static statement: string = "statement";
     public static case_or_default_clause: string = "case or default clause";
+    public static identifier: string = "identifier";
 }

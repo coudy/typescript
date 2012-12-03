@@ -645,39 +645,41 @@ class Parser extends SlidingWindow {
         var identifier = this.eatIdentifierToken();
 
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
-        var variableDeclarators: any[] = null;
+        var variableDeclarators: ISeparatedSyntaxList = SeparatedSyntaxList.empty;
 
         if (!openBraceToken.isMissing()) {
-            var savedListParsingState = this.listParsingState;
-            this.listParsingState |= ListParsingState.EnumDeclaration_VariableDeclarators;
+            variableDeclarators = this.parseSeparatedSyntaxList(ListParsingState.EnumDeclaration_VariableDeclarators);
 
-            while (true) {
-                if (this.currentToken().kind === SyntaxKind.CloseBraceToken || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
-                    break;
-                }
+            //var savedListParsingState = this.listParsingState;
+            //this.listParsingState |= ;
 
-                var variableDeclarator = this.parseVariableDeclarator(/*allowIn:*/ true);
+            //while (true) {
+            //    if (this.currentToken().kind === SyntaxKind.CloseBraceToken || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
+            //        break;
+            //    }
 
-                variableDeclarators = variableDeclarators || [];
-                variableDeclarators.push(variableDeclarator);
+            //    var variableDeclarator = this.parseVariableDeclarator(/*allowIn:*/ true);
 
-                if (this.currentToken().kind === SyntaxKind.CommaToken) {
-                    var commaToken = this.eatToken(SyntaxKind.CommaToken);
-                    variableDeclarators.push(commaToken);
-                    continue;
-                }
+            //    variableDeclarators = variableDeclarators || [];
+            //    variableDeclarators.push(variableDeclarator);
 
-                // TODO: error recovery.
-                break;
-            }
+            //    if (this.currentToken().kind === SyntaxKind.CommaToken) {
+            //        var commaToken = this.eatToken(SyntaxKind.CommaToken);
+            //        variableDeclarators.push(commaToken);
+            //        continue;
+            //    }
 
-            this.listParsingState = savedListParsingState;
+            //    // TODO: error recovery.
+            //    break;
+            //}
+
+            //this.listParsingState = savedListParsingState;
         }
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
 
         return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier,
-            openBraceToken, SeparatedSyntaxList.create(variableDeclarators), closeBraceToken);
+            openBraceToken, variableDeclarators, closeBraceToken);
     }
 
     private isClassDeclaration(): bool {
@@ -1914,6 +1916,10 @@ class Parser extends SlidingWindow {
         return new VariableDeclarationSyntax(varKeyword, SeparatedSyntaxList.create(variableDeclarators));
     }
 
+    private isVariableDeclarator(): bool {
+        return this.isIdentifier(this.currentToken());
+    }
+
     private parseVariableDeclarator(allowIn: bool): VariableDeclaratorSyntax {
         var identifier = this.eatIdentifierToken();
         var equalsValueClause: EqualsValueClauseSyntax = null;
@@ -3127,11 +3133,50 @@ class Parser extends SlidingWindow {
     }
 
     private allowsTrailingSeparator(currentListType: ListParsingState): bool {
-        throw Errors.notYetImplemented();
+        switch (currentListType) {
+            case ListParsingState.EnumDeclaration_VariableDeclarators:
+                return true;
+            case ListParsingState.SourceUnit_ModuleElements:
+            case ListParsingState.ClassDeclaration_ClassElements:
+            case ListParsingState.ModuleDeclaration_ModuleElements:
+            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.SwitchClause_Statements:
+            case ListParsingState.Block_StatementsWithFunctionDeclarations:
+            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.ArgumentList_AssignmentExpressions:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+            case ListParsingState.ParameterList_Parameters:
+            default:
+                throw Errors.notYetImplemented();
+        }
     }
 
     private separatorKind(currentListType: ListParsingState): SyntaxKind {
-        throw Errors.notYetImplemented();
+
+        switch (currentListType) {
+            case ListParsingState.EnumDeclaration_VariableDeclarators:
+                return SyntaxKind.CommaToken;
+            case ListParsingState.SourceUnit_ModuleElements:
+            case ListParsingState.ClassDeclaration_ClassElements:
+            case ListParsingState.ModuleDeclaration_ModuleElements:
+            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.SwitchClause_Statements:
+            case ListParsingState.Block_StatementsWithFunctionDeclarations:
+            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.ArgumentList_AssignmentExpressions:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+            case ListParsingState.ParameterList_Parameters:
+            default:
+                throw Errors.notYetImplemented();
+        }
     }
 
     private existingDiagnosticAtPosition(position: number): bool {
@@ -3179,6 +3224,8 @@ class Parser extends SlidingWindow {
                 return this.isExpectedBlock_StatementsTerminator();
 
             case ListParsingState.EnumDeclaration_VariableDeclarators:
+                return this.isExpectedEnumDeclaration_VariableDeclaratorsTerminator();
+
             case ListParsingState.ObjectType_TypeMembers:
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
@@ -3194,6 +3241,10 @@ class Parser extends SlidingWindow {
 
     private isExpectedSourceUnit_ModuleElementsTerminator(): bool {
         return this.currentToken().kind === SyntaxKind.EndOfFileToken;
+    }
+
+    private isExpectedEnumDeclaration_VariableDeclaratorsTerminator(): bool {
+        return this.currentToken().kind === SyntaxKind.CloseBraceToken;
     }
 
     private isExpectedModuleDeclaration_ModuleElementsTerminator(): bool {
@@ -3241,6 +3292,8 @@ class Parser extends SlidingWindow {
                 return this.isStatement(/*allowFunctionDeclaration:*/ false);
 
             case ListParsingState.EnumDeclaration_VariableDeclarators:
+                return this.isVariableDeclarator();
+
             case ListParsingState.ObjectType_TypeMembers:
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
@@ -3278,6 +3331,8 @@ class Parser extends SlidingWindow {
                 return this.parseStatement(/*allowFunctionDeclaration:*/ false);
 
             case ListParsingState.EnumDeclaration_VariableDeclarators:
+                return this.parseVariableDeclarator(/*allowIn:*/ true);
+            
             case ListParsingState.ObjectType_TypeMembers:
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
@@ -3313,6 +3368,8 @@ class Parser extends SlidingWindow {
                 return Strings.statement;
 
             case ListParsingState.EnumDeclaration_VariableDeclarators:
+                return Strings.identifier;
+
             case ListParsingState.ObjectType_TypeMembers:
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:

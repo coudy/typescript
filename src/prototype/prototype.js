@@ -1336,28 +1336,12 @@ var Parser = (function (_super) {
         var enumKeyword = this.eatKeyword(40 /* EnumKeyword */ );
         var identifier = this.eatIdentifierToken();
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
-        var variableDeclarators = null;
+        var variableDeclarators = SeparatedSyntaxList.empty;
         if(!openBraceToken.isMissing()) {
-            var savedListParsingState = this.listParsingState;
-            this.listParsingState |= ListParsingState.EnumDeclaration_VariableDeclarators;
-            while(true) {
-                if(this.currentToken().kind === 64 /* CloseBraceToken */  || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
-                    break;
-                }
-                var variableDeclarator = this.parseVariableDeclarator(true);
-                variableDeclarators = variableDeclarators || [];
-                variableDeclarators.push(variableDeclarator);
-                if(this.currentToken().kind === 72 /* CommaToken */ ) {
-                    var commaToken = this.eatToken(72 /* CommaToken */ );
-                    variableDeclarators.push(commaToken);
-                    continue;
-                }
-                break;
-            }
-            this.listParsingState = savedListParsingState;
+            variableDeclarators = this.parseSeparatedSyntaxList(ListParsingState.EnumDeclaration_VariableDeclarators);
         }
         var closeBraceToken = this.eatToken(64 /* CloseBraceToken */ );
-        return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, SeparatedSyntaxList.create(variableDeclarators), closeBraceToken);
+        return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken);
     };
     Parser.prototype.isClassDeclaration = function () {
         var token0 = this.currentToken();
@@ -2260,6 +2244,9 @@ var Parser = (function (_super) {
         this.listParsingState = savedListParsingState;
         return new VariableDeclarationSyntax(varKeyword, SeparatedSyntaxList.create(variableDeclarators));
     };
+    Parser.prototype.isVariableDeclarator = function () {
+        return this.isIdentifier(this.currentToken());
+    };
     Parser.prototype.parseVariableDeclarator = function (allowIn) {
         var identifier = this.eatIdentifierToken();
         var equalsValueClause = null;
@@ -3102,10 +3089,56 @@ var Parser = (function (_super) {
         return SeparatedSyntaxList.create(items);
     };
     Parser.prototype.allowsTrailingSeparator = function (currentListType) {
-        throw Errors.notYetImplemented();
+        switch(currentListType) {
+            case ListParsingState.EnumDeclaration_VariableDeclarators: {
+                return true;
+
+            }
+            case ListParsingState.SourceUnit_ModuleElements:
+            case ListParsingState.ClassDeclaration_ClassElements:
+            case ListParsingState.ModuleDeclaration_ModuleElements:
+            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.SwitchClause_Statements:
+            case ListParsingState.Block_StatementsWithFunctionDeclarations:
+            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.ArgumentList_AssignmentExpressions:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+            case ListParsingState.ParameterList_Parameters:
+            default: {
+                throw Errors.notYetImplemented();
+
+            }
+        }
     };
     Parser.prototype.separatorKind = function (currentListType) {
-        throw Errors.notYetImplemented();
+        switch(currentListType) {
+            case ListParsingState.EnumDeclaration_VariableDeclarators: {
+                return 72 /* CommaToken */ ;
+
+            }
+            case ListParsingState.SourceUnit_ModuleElements:
+            case ListParsingState.ClassDeclaration_ClassElements:
+            case ListParsingState.ModuleDeclaration_ModuleElements:
+            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.SwitchClause_Statements:
+            case ListParsingState.Block_StatementsWithFunctionDeclarations:
+            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.ArgumentList_AssignmentExpressions:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+            case ListParsingState.ParameterList_Parameters:
+            default: {
+                throw Errors.notYetImplemented();
+
+            }
+        }
     };
     Parser.prototype.existingDiagnosticAtPosition = function (position) {
         return this.diagnostics.length > 0 && this.diagnostics[this.diagnostics.length - 1].position() === position;
@@ -3150,7 +3183,10 @@ var Parser = (function (_super) {
                 return this.isExpectedBlock_StatementsTerminator();
 
             }
-            case ListParsingState.EnumDeclaration_VariableDeclarators:
+            case ListParsingState.EnumDeclaration_VariableDeclarators: {
+                return this.isExpectedEnumDeclaration_VariableDeclaratorsTerminator();
+
+            }
             case ListParsingState.ObjectType_TypeMembers:
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
@@ -3169,6 +3205,9 @@ var Parser = (function (_super) {
     };
     Parser.prototype.isExpectedSourceUnit_ModuleElementsTerminator = function () {
         return this.currentToken().kind === 114 /* EndOfFileToken */ ;
+    };
+    Parser.prototype.isExpectedEnumDeclaration_VariableDeclaratorsTerminator = function () {
+        return this.currentToken().kind === 64 /* CloseBraceToken */ ;
     };
     Parser.prototype.isExpectedModuleDeclaration_ModuleElementsTerminator = function () {
         return this.currentToken().kind === 64 /* CloseBraceToken */ ;
@@ -3215,7 +3254,10 @@ var Parser = (function (_super) {
                 return this.isStatement(false);
 
             }
-            case ListParsingState.EnumDeclaration_VariableDeclarators:
+            case ListParsingState.EnumDeclaration_VariableDeclarators: {
+                return this.isVariableDeclarator();
+
+            }
             case ListParsingState.ObjectType_TypeMembers:
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
@@ -3262,7 +3304,10 @@ var Parser = (function (_super) {
                 return this.parseStatement(false);
 
             }
-            case ListParsingState.EnumDeclaration_VariableDeclarators:
+            case ListParsingState.EnumDeclaration_VariableDeclarators: {
+                return this.parseVariableDeclarator(true);
+
+            }
             case ListParsingState.ObjectType_TypeMembers:
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
@@ -3306,7 +3351,10 @@ var Parser = (function (_super) {
                 return Strings.statement;
 
             }
-            case ListParsingState.EnumDeclaration_VariableDeclarators:
+            case ListParsingState.EnumDeclaration_VariableDeclarators: {
+                return Strings.identifier;
+
+            }
             case ListParsingState.ObjectType_TypeMembers:
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
@@ -4408,6 +4456,7 @@ var Strings = (function () {
     Strings.constructor__function__accessor_or_variable = "constructor, function, accessor or variable";
     Strings.statement = "statement";
     Strings.case_or_default_clause = "case or default clause";
+    Strings.identifier = "identifier";
     return Strings;
 })();
 var StringTableEntry = (function () {
