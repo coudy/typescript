@@ -3015,6 +3015,13 @@ var Parser = (function (_super) {
         this.listParsingState = savedListParsingState;
         return result;
     };
+    Parser.prototype.parseSeparatedSyntaxList = function (currentListType) {
+        var savedListParsingState = this.listParsingState;
+        this.listParsingState |= currentListType;
+        var result = this.parseSeparatedSyntaxListWorker(currentListType);
+        this.listParsingState = savedListParsingState;
+        return result;
+    };
     Parser.prototype.abortParsingListOrMoveToNextToken = function (currentListType) {
         this.reportUnexpectedTokenDiagnostic(currentListType);
         for(var state = ListParsingState.LastListParsingState; state >= ListParsingState.FirstListParsingState; state >>= 1) {
@@ -3029,20 +3036,27 @@ var Parser = (function (_super) {
         this.moveToNextToken();
         return false;
     };
+    Parser.prototype.tryParseExpectedListItem = function (currentListType, items, processItem) {
+        if(this.isExpectedListItem(currentListType)) {
+            var item = this.parseExpectedListItem(currentListType);
+            Debug.assert(item !== null);
+            items = items || [];
+            items.push(item);
+            if(processItem !== null) {
+                processItem(item);
+            }
+        }
+        return items;
+    };
     Parser.prototype.parseSyntaxListWorker = function (currentListType, processItem) {
         var items = null;
         while(true) {
             if(this.isExpectedListTerminator(currentListType) || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
                 return SyntaxList.create(items);
             }
-            if(this.isExpectedListItem(currentListType)) {
-                var item = this.parseExpectedListItem(currentListType);
-                Debug.assert(item !== null);
-                items = items || [];
-                items.push(item);
-                if(processItem !== null) {
-                    processItem(item);
-                }
+            var itemsLength = items === null ? 0 : items.length;
+            items = this.tryParseExpectedListItem(currentListType, items, processItem);
+            if(items !== null && items.length > itemsLength) {
                 continue;
             }
             var abort = this.abortParsingListOrMoveToNextToken(currentListType);
@@ -3050,6 +3064,49 @@ var Parser = (function (_super) {
                 return SyntaxList.create(items);
             }
         }
+    };
+    Parser.prototype.parseSeparatedSyntaxListWorker = function (currentListType) {
+        var items = null;
+        var allowTrailingSeparator = this.allowsTrailingSeparator(currentListType);
+        var separatorKind = this.separatorKind(currentListType);
+        while(true) {
+            if(items.length % 2 === 0) {
+                Debug.assert(items.length === 0 || items[items.length - 1].kind === separatorKind);
+                if(allowTrailingSeparator) {
+                    if(this.isExpectedListTerminator(currentListType) || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
+                        return SeparatedSyntaxList.create(items);
+                    }
+                }
+                if(this.isExpectedListItem(currentListType)) {
+                    var item = this.parseExpectedListItem(currentListType);
+                    Debug.assert(item !== null);
+                    items = items || [];
+                    items.push(item);
+                    continue;
+                }
+            }
+            if(this.isExpectedListTerminator(currentListType) || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
+                return SeparatedSyntaxList.create(items);
+            }
+            if(this.isExpectedListItem(currentListType)) {
+                var item = this.parseExpectedListItem(currentListType);
+                Debug.assert(item !== null);
+                items = items || [];
+                items.push(item);
+                var separator = this.eatToken(separatorKind);
+                continue;
+            }
+            var abort = this.abortParsingListOrMoveToNextToken(currentListType);
+            if(abort) {
+                return SeparatedSyntaxList.create(items);
+            }
+        }
+    };
+    Parser.prototype.allowsTrailingSeparator = function (currentListType) {
+        throw Errors.notYetImplemented();
+    };
+    Parser.prototype.separatorKind = function (currentListType) {
+        throw Errors.notYetImplemented();
     };
     Parser.prototype.existingDiagnosticAtPosition = function (position) {
         return this.diagnostics.length > 0 && this.diagnostics[this.diagnostics.length - 1].position() === position;
