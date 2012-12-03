@@ -1706,7 +1706,7 @@ var Parser = (function (_super) {
     Parser.prototype.parseExtendsClause = function () {
         Debug.assert(this.isExtendsClause());
         var extendsKeyword = this.eatKeyword(42 /* ExtendsKeyword */ );
-        var typeNames = this.parseExtendsOrImplementsClauseTypeNameList();
+        var typeNames = this.parseSeparatedSyntaxList(ListParsingState.ExtendsOrImplementsClause_TypeNameList);
         return new ExtendsClauseSyntax(extendsKeyword, typeNames);
     };
     Parser.prototype.isImplementsClause = function () {
@@ -1715,26 +1715,8 @@ var Parser = (function (_super) {
     Parser.prototype.parseImplementsClause = function () {
         Debug.assert(this.isImplementsClause());
         var implementsKeyword = this.eatKeyword(45 /* ImplementsKeyword */ );
-        var typeNames = this.parseExtendsOrImplementsClauseTypeNameList();
+        var typeNames = this.parseSeparatedSyntaxList(ListParsingState.ExtendsOrImplementsClause_TypeNameList);
         return new ImplementsClauseSyntax(implementsKeyword, typeNames);
-    };
-    Parser.prototype.parseExtendsOrImplementsClauseTypeNameList = function () {
-        var typeNames = [];
-        var savedListParsingState = this.listParsingState;
-        this.listParsingState |= ListParsingState.ExtendsOrImplementsClause_TypeNameList;
-        var typeName = this.parseName();
-        typeNames.push(typeName);
-        while(true) {
-            if(this.currentToken().kind === 72 /* CommaToken */ ) {
-                typeNames.push(this.eatToken(72 /* CommaToken */ ));
-                typeName = this.parseName();
-                typeNames.push(typeName);
-                continue;
-            }
-            break;
-        }
-        this.listParsingState = savedListParsingState;
-        return SeparatedSyntaxList.create(typeNames);
     };
     Parser.prototype.isStatement = function (allowFunctionDeclaration) {
         return this.isVariableStatement() || this.isLabeledStatement() || (allowFunctionDeclaration && this.isFunctionDeclaration()) || this.isIfStatement() || this.isBlock() || this.isExpressionStatement() || this.isReturnStatement() || this.isSwitchStatement() || this.isThrowStatement() || this.isBreakStatement() || this.isContinueStatement() || this.isForOrForInStatement() || this.isEmptyStatement() || this.isWhileStatement() || this.isDoStatement() || this.isTryStatement();
@@ -3009,6 +2991,7 @@ var Parser = (function (_super) {
         var items = null;
         var allowTrailingSeparator = this.allowsTrailingSeparator(currentListType);
         var allowAutomaticSemicolonInsertion = this.allowsAutomaticSemicolonInsertion(currentListType);
+        var requiresAtLeastOneItem = this.requiresAtLeastOneItem(currentListType);
         var separatorKind = this.separatorKind(currentListType);
         var lastSeparator = null;
         while(true) {
@@ -3033,6 +3016,9 @@ var Parser = (function (_super) {
                 break;
             }
         }
+        if(requiresAtLeastOneItem && (items === null || items.length === 0)) {
+            this.reportUnexpectedTokenDiagnostic(currentListType);
+        }
         return SeparatedSyntaxList.create(items);
     };
     Parser.prototype.allowsTrailingSeparator = function (currentListType) {
@@ -3042,6 +3028,7 @@ var Parser = (function (_super) {
                 return true;
 
             }
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.ArgumentList_AssignmentExpressions: {
                 return false;
 
@@ -3053,7 +3040,35 @@ var Parser = (function (_super) {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_StatementsWithFunctionDeclarations:
             case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
-            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+            case ListParsingState.ParameterList_Parameters:
+            default: {
+                throw Errors.notYetImplemented();
+
+            }
+        }
+    };
+    Parser.prototype.requiresAtLeastOneItem = function (currentListType) {
+        switch(currentListType) {
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList: {
+                return true;
+
+            }
+            case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.EnumDeclaration_VariableDeclarators:
+            case ListParsingState.ArgumentList_AssignmentExpressions: {
+                return false;
+
+            }
+            case ListParsingState.SourceUnit_ModuleElements:
+            case ListParsingState.ClassDeclaration_ClassElements:
+            case ListParsingState.ModuleDeclaration_ModuleElements:
+            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.SwitchClause_Statements:
+            case ListParsingState.Block_StatementsWithFunctionDeclarations:
+            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3070,6 +3085,7 @@ var Parser = (function (_super) {
                 return true;
 
             }
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.EnumDeclaration_VariableDeclarators:
             case ListParsingState.ArgumentList_AssignmentExpressions: {
                 return false;
@@ -3082,7 +3098,6 @@ var Parser = (function (_super) {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_StatementsWithFunctionDeclarations:
             case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
-            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3095,6 +3110,7 @@ var Parser = (function (_super) {
     };
     Parser.prototype.separatorKind = function (currentListType) {
         switch(currentListType) {
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.ArgumentList_AssignmentExpressions:
             case ListParsingState.EnumDeclaration_VariableDeclarators: {
                 return 72 /* CommaToken */ ;
@@ -3111,7 +3127,6 @@ var Parser = (function (_super) {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_StatementsWithFunctionDeclarations:
             case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
-            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3177,7 +3192,10 @@ var Parser = (function (_super) {
                 return this.isExpectedArgumentList_AssignmentExpressionsTerminator();
 
             }
-            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList: {
+                return this.isExpectedExtendsOrImplementsClause_TypeNameListTerminator();
+
+            }
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3202,6 +3220,15 @@ var Parser = (function (_super) {
     };
     Parser.prototype.isExpectedObjectType_TypeMembersTerminator = function () {
         return this.currentToken().kind === 64 /* CloseBraceToken */ ;
+    };
+    Parser.prototype.isExpectedExtendsOrImplementsClause_TypeNameListTerminator = function () {
+        if(this.currentToken().keywordKind() === 42 /* ExtendsKeyword */  || this.currentToken().keywordKind() === 45 /* ImplementsKeyword */ ) {
+            return true;
+        }
+        if(this.currentToken().kind === 63 /* OpenBraceToken */  || this.currentToken().kind === 64 /* CloseBraceToken */ ) {
+            return true;
+        }
+        return false;
     };
     Parser.prototype.isExpectedArgumentList_AssignmentExpressionsTerminator = function () {
         return this.currentToken().kind === 66 /* CloseParenToken */ ;
@@ -3260,7 +3287,10 @@ var Parser = (function (_super) {
                 return this.isExpression();
 
             }
-            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList: {
+                return this.isName();
+
+            }
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3316,7 +3346,10 @@ var Parser = (function (_super) {
                 return this.parseAssignmentExpression(true);
 
             }
-            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList: {
+                return this.parseName();
+
+            }
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3369,7 +3402,10 @@ var Parser = (function (_super) {
                 return Strings.expression;
 
             }
-            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList: {
+                return Strings.type_name;
+
+            }
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -4471,6 +4507,7 @@ var Strings = (function () {
     Strings.identifier = "identifier";
     Strings.call__construct__index__property_or_function_signature = "call, construct, index, property or function signature";
     Strings.expression = "expression";
+    Strings.type_name = "type name";
     return Strings;
 })();
 var StringTableEntry = (function () {

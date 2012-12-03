@@ -1171,7 +1171,7 @@ class Parser extends SlidingWindow {
         Debug.assert(this.isExtendsClause());
 
         var extendsKeyword = this.eatKeyword(SyntaxKind.ExtendsKeyword);
-        var typeNames = this.parseExtendsOrImplementsClauseTypeNameList();
+        var typeNames = this.parseSeparatedSyntaxList(ListParsingState.ExtendsOrImplementsClause_TypeNameList);
 
         return new ExtendsClauseSyntax(extendsKeyword, typeNames);
     }
@@ -1184,36 +1184,9 @@ class Parser extends SlidingWindow {
         Debug.assert(this.isImplementsClause());
 
         var implementsKeyword = this.eatKeyword(SyntaxKind.ImplementsKeyword);
-        var typeNames = this.parseExtendsOrImplementsClauseTypeNameList();
+        var typeNames = this.parseSeparatedSyntaxList(ListParsingState.ExtendsOrImplementsClause_TypeNameList);
 
         return new ImplementsClauseSyntax(implementsKeyword, typeNames);
-    }
-
-    private parseExtendsOrImplementsClauseTypeNameList(): ISeparatedSyntaxList {
-        var typeNames: any[] = [];
-
-        var savedListParsingState = this.listParsingState;
-        this.listParsingState |= ListParsingState.ExtendsOrImplementsClause_TypeNameList;
-
-        var typeName = this.parseName();
-        typeNames.push(typeName);
-
-        while (true) {
-            if (this.currentToken().kind === SyntaxKind.CommaToken) {
-                typeNames.push(this.eatToken(SyntaxKind.CommaToken));
-
-                typeName = this.parseName();
-                typeNames.push(typeName);
-                continue;
-            }
-
-            // TODO: error recovery.
-            break;
-        }
-
-        this.listParsingState = savedListParsingState;
-
-        return SeparatedSyntaxList.create(typeNames);
     }
 
     private isStatement(allowFunctionDeclaration: bool): bool {
@@ -3005,6 +2978,7 @@ class Parser extends SlidingWindow {
 
         var allowTrailingSeparator = this.allowsTrailingSeparator(currentListType);
         var allowAutomaticSemicolonInsertion = this.allowsAutomaticSemicolonInsertion(currentListType);
+        var requiresAtLeastOneItem = this.requiresAtLeastOneItem(currentListType);
         var separatorKind = this.separatorKind(currentListType);
 
         var lastSeparator: ISyntaxToken = null;
@@ -3046,6 +3020,12 @@ class Parser extends SlidingWindow {
             }
         }
 
+        // If this list requires at least one argument, then report an error if we haven't gotten
+        // any.
+        if (requiresAtLeastOneItem && (items === null || items.length === 0)) {
+            this.reportUnexpectedTokenDiagnostic(currentListType);
+        }
+
         return SeparatedSyntaxList.create(items);
     }
 
@@ -3054,7 +3034,8 @@ class Parser extends SlidingWindow {
             case ListParsingState.EnumDeclaration_VariableDeclarators:
             case ListParsingState.ObjectType_TypeMembers:
                 return true;
-
+            
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.ArgumentList_AssignmentExpressions:
                 return false;
 
@@ -3065,7 +3046,32 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_StatementsWithFunctionDeclarations:
             case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
+            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+            case ListParsingState.ParameterList_Parameters:
+            default:
+                throw Errors.notYetImplemented();
+        }
+    }
+
+    private requiresAtLeastOneItem(currentListType: ListParsingState): bool {
+        switch (currentListType) {
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                return true;
+            
+            case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.EnumDeclaration_VariableDeclarators:
+            case ListParsingState.ArgumentList_AssignmentExpressions:
+                return false;
+
+            case ListParsingState.SourceUnit_ModuleElements:
+            case ListParsingState.ClassDeclaration_ClassElements:
+            case ListParsingState.ModuleDeclaration_ModuleElements:
+            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.SwitchClause_Statements:
+            case ListParsingState.Block_StatementsWithFunctionDeclarations:
+            case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3079,7 +3085,8 @@ class Parser extends SlidingWindow {
         switch (currentListType) {
             case ListParsingState.ObjectType_TypeMembers:
                 return true;
-
+            
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.EnumDeclaration_VariableDeclarators:
             case ListParsingState.ArgumentList_AssignmentExpressions:
                 return false;
@@ -3091,7 +3098,6 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_StatementsWithFunctionDeclarations:
             case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
-            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3103,6 +3109,7 @@ class Parser extends SlidingWindow {
 
     private separatorKind(currentListType: ListParsingState): SyntaxKind {
         switch (currentListType) {
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.ArgumentList_AssignmentExpressions:
             case ListParsingState.EnumDeclaration_VariableDeclarators:
                 return SyntaxKind.CommaToken;
@@ -3117,7 +3124,6 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_StatementsWithFunctionDeclarations:
             case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
-            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3181,6 +3187,8 @@ class Parser extends SlidingWindow {
                 return this.isExpectedArgumentList_AssignmentExpressionsTerminator();
 
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                return this.isExpectedExtendsOrImplementsClause_TypeNameListTerminator();
+
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3205,6 +3213,20 @@ class Parser extends SlidingWindow {
 
     private isExpectedObjectType_TypeMembersTerminator(): bool {
         return this.currentToken().kind === SyntaxKind.CloseBraceToken;
+    }
+
+    private isExpectedExtendsOrImplementsClause_TypeNameListTerminator(): bool {
+        if (this.currentToken().keywordKind() === SyntaxKind.ExtendsKeyword ||
+            this.currentToken().keywordKind() === SyntaxKind.ImplementsKeyword) {
+            return true;
+        }
+
+        if (this.currentToken().kind === SyntaxKind.OpenBraceToken ||
+            this.currentToken().kind === SyntaxKind.CloseBraceToken) {
+            return true;
+        }
+
+        return false;
     }
 
     private isExpectedArgumentList_AssignmentExpressionsTerminator(): bool {
@@ -3261,6 +3283,8 @@ class Parser extends SlidingWindow {
                 return this.isExpression();
 
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                return this.isName();
+
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3304,6 +3328,8 @@ class Parser extends SlidingWindow {
                 return this.parseAssignmentExpression(/*allowIn:*/ true);
 
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                return this.parseName();
+
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -3345,6 +3371,8 @@ class Parser extends SlidingWindow {
                 return Strings.expression;
 
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                return Strings.type_name;
+
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
