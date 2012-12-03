@@ -4732,6 +4732,21 @@ var TypeScript;
                             this.writeToOutput(comment);
                             return true;
                         }
+
+                        if(boundDecl.init && (boundDecl.init.nodeType == TypeScript.NodeType.Lsh)) {
+                            var binop = boundDecl.init;
+                            if (binop.operand1.nodeType === TypeScript.NodeType.NumberLit &&
+                                binop.operand2.nodeType === TypeScript.NodeType.NumberLit) {
+                                var result = (binop.operand1).value << (binop.operand2).value;
+                                  
+                                this.writeToOutput(result.toString());
+                                var comment = " /* ";
+                                comment += propertyName.actualText;
+                                comment += " */ ";
+                                this.writeToOutput(comment);
+                                return true;
+                            }
+                        }
                     }
                 }
             }
@@ -6472,6 +6487,12 @@ var TypeScript;
                 member.varFlags |= (TypeScript.VarFlags.Readonly | TypeScript.VarFlags.Property);
                 if(memberValue.nodeType == TypeScript.NodeType.NumberLit) {
                     member.varFlags |= TypeScript.VarFlags.Constant;
+                }
+                if (memberValue.nodeType === TypeScript.NodeType.Lsh) {
+                    var binop = memberValue;
+                    if (binop.operand1.nodeType === TypeScript.NodeType.NumberLit && binop.operand2.nodeType === TypeScript.NodeType.NumberLit) {
+                        member.varFlags |= TypeScript.VarFlags.Constant;
+                    }
                 }
                 member.preComments = preComments;
                 members.append(member);

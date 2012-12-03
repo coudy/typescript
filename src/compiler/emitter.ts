@@ -259,14 +259,30 @@ module TypeScript {
                 if (hasFlag(propertyName.sym.flags, SymbolFlags.Constant)) {
                     if (propertyName.sym.declAST) {
                         var boundDecl = <BoundDecl>propertyName.sym.declAST;
-                        if (boundDecl.init && (boundDecl.init.nodeType == NodeType.NumberLit)) {
-                            var numLit = <NumberLiteral>boundDecl.init;
-                            this.writeToOutput(numLit.value.toString());
-                            var comment = " /* ";
-                            comment += propertyName.actualText;
-                            comment += " */ ";
-                            this.writeToOutput(comment);
-                            return true;
+                        if (boundDecl.init) {
+                            if (boundDecl.init.nodeType === NodeType.NumberLit) {
+                                var numLit = <NumberLiteral>boundDecl.init;
+                                this.writeToOutput(numLit.value.toString());
+                                var comment = " /* ";
+                                comment += propertyName.actualText;
+                                comment += " */ ";
+                                this.writeToOutput(comment);
+                                return true;
+                            }
+                            else if (boundDecl.init.nodeType === NodeType.Lsh) {
+                                var binop = <BinaryExpression>boundDecl.init;
+                                if (binop.operand1.nodeType === NodeType.NumberLit &&
+                                    binop.operand2.nodeType === NodeType.NumberLit) {
+                                    var result = (<NumberLiteral>binop.operand1).value << (<NumberLiteral>binop.operand2).value;
+                                    
+                                    this.writeToOutput(result.toString());
+                                    var comment = " /* ";
+                                    comment += propertyName.actualText;
+                                    comment += " */ ";
+                                    this.writeToOutput(comment);
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }

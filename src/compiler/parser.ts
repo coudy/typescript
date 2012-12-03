@@ -411,6 +411,12 @@ module TypeScript {
                 if (memberValue.nodeType == NodeType.NumberLit) {
                     member.varFlags |= VarFlags.Constant;
                 }
+                if (memberValue.nodeType === NodeType.Lsh) {
+                    var binop = <BinaryExpression>memberValue;
+                    if (binop.operand1.nodeType === NodeType.NumberLit && binop.operand2.nodeType === NodeType.NumberLit) {
+                        member.varFlags |= VarFlags.Constant;
+                    }
+                }
                 member.preComments = preComments;
                 members.append(member);
                 member.postComments = postComments;
