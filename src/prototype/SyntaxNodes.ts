@@ -854,6 +854,10 @@ class OmittedExpressionSyntax extends ExpressionSyntax {
     constructor () {
         super();
     }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.OmittedExpression;
+    }
 }
 
 class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {

@@ -244,6 +244,7 @@ enum SyntaxKind {
     ElementAccessExpression,
     FunctionExpression,
     SuperExpression,
+    OmittedExpression,
 
     // Variable declarations
     VariableDeclaration,

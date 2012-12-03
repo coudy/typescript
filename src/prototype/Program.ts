@@ -55,7 +55,7 @@ class Program {
             return;
         }
 
-        if (filePath.indexOf("ErrorRecovery_ObjectLiteral2.ts") < 0) {
+        if (filePath.indexOf("ArrayLiteralExpression2.ts") < 0) {
             // return;
         }
 
