@@ -289,6 +289,8 @@ var DiagnosticCode;
     DiagnosticCode.AutomaticSemicolonInsertionNotAllowed = 7;
     DiagnosticCode._map[8] = "Unexpected_token__0_expected";
     DiagnosticCode.Unexpected_token__0_expected = 8;
+    DiagnosticCode._map[9] = "Trailing_separator_not_allowed";
+    DiagnosticCode.Trailing_separator_not_allowed = 9;
 })(DiagnosticCode || (DiagnosticCode = {}));
 var DiagnosticMessages = (function () {
     function DiagnosticMessages() { }
@@ -304,6 +306,7 @@ var DiagnosticMessages = (function () {
             DiagnosticMessages.codeToFormatString[6 /* Identifier_expected__0_is_a_keyword */ ] = "Identifier expected; '{0}' is a keyword.";
             DiagnosticMessages.codeToFormatString[7 /* AutomaticSemicolonInsertionNotAllowed */ ] = "Automatic semicolon insertion not allowed.";
             DiagnosticMessages.codeToFormatString[8 /* Unexpected_token__0_expected */ ] = "Unexpected token; '{0}' expected.";
+            DiagnosticMessages.codeToFormatString[9 /* Trailing_separator_not_allowed */ ] = "Trailing separator not allowed.";
         }
     }
     DiagnosticMessages.getFormatString = function getFormatString(code) {
@@ -3048,11 +3051,14 @@ var Parser = (function (_super) {
         }
         return items;
     };
+    Parser.prototype.listIsTerminated = function (currentListType) {
+        return this.isExpectedListTerminator(currentListType) || this.currentToken().kind === 114 /* EndOfFileToken */ ;
+    };
     Parser.prototype.parseSyntaxListWorker = function (currentListType, processItem) {
         var items = null;
         while(true) {
-            if(this.isExpectedListTerminator(currentListType) || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
-                return SyntaxList.create(items);
+            if(this.listIsTerminated(currentListType)) {
+                break;
             }
             var itemsLength = items === null ? 0 : items.length;
             items = this.tryParseExpectedListItem(currentListType, items, processItem);
@@ -3061,46 +3067,39 @@ var Parser = (function (_super) {
             }
             var abort = this.abortParsingListOrMoveToNextToken(currentListType);
             if(abort) {
-                return SyntaxList.create(items);
+                break;
             }
         }
+        return SyntaxList.create(items);
     };
     Parser.prototype.parseSeparatedSyntaxListWorker = function (currentListType) {
         var items = null;
         var allowTrailingSeparator = this.allowsTrailingSeparator(currentListType);
         var separatorKind = this.separatorKind(currentListType);
+        var lastSeparator = null;
         while(true) {
-            if(items.length % 2 === 0) {
-                Debug.assert(items.length === 0 || items[items.length - 1].kind === separatorKind);
-                if(allowTrailingSeparator) {
-                    if(this.isExpectedListTerminator(currentListType) || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
-                        return SeparatedSyntaxList.create(items);
-                    }
+            if(this.listIsTerminated(currentListType)) {
+                if(lastSeparator !== null && !allowTrailingSeparator && !lastSeparator.isMissing()) {
+                    this.addDiagnostic(new SyntaxDiagnostic(lastSeparator.start(), lastSeparator.width(), 9 /* Trailing_separator_not_allowed */ , null));
                 }
-                if(this.isExpectedListItem(currentListType)) {
-                    var item = this.parseExpectedListItem(currentListType);
-                    Debug.assert(item !== null);
-                    items = items || [];
-                    items.push(item);
-                    continue;
+                break;
+            }
+            var itemsLength = items === null ? 0 : items.length;
+            items = this.tryParseExpectedListItem(currentListType, items, null);
+            if(items !== null && items.length > itemsLength) {
+                if(this.listIsTerminated(currentListType)) {
+                    break;
                 }
-            }
-            if(this.isExpectedListTerminator(currentListType) || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
-                return SeparatedSyntaxList.create(items);
-            }
-            if(this.isExpectedListItem(currentListType)) {
-                var item = this.parseExpectedListItem(currentListType);
-                Debug.assert(item !== null);
-                items = items || [];
-                items.push(item);
-                var separator = this.eatToken(separatorKind);
+                lastSeparator = this.eatToken(separatorKind);
+                items.push(lastSeparator);
                 continue;
             }
             var abort = this.abortParsingListOrMoveToNextToken(currentListType);
             if(abort) {
-                return SeparatedSyntaxList.create(items);
+                break;
             }
         }
+        return SeparatedSyntaxList.create(items);
     };
     Parser.prototype.allowsTrailingSeparator = function (currentListType) {
         throw Errors.notYetImplemented();

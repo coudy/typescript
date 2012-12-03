@@ -3048,6 +3048,10 @@ class Parser extends SlidingWindow {
         return items;
     }
 
+    private listIsTerminated(currentListType: ListParsingState): bool {
+        return this.isExpectedListTerminator(currentListType) || this.currentToken().kind === SyntaxKind.EndOfFileToken;
+    }
+
     private parseSyntaxListWorker(currentListType: ListParsingState, processItem: (item: any) => void): ISyntaxList {
         var items: any[] = null;
 
@@ -3055,8 +3059,8 @@ class Parser extends SlidingWindow {
             // First check ifthe list is complete already.  If so, we're done.  Also, if we see an 
             // EOF then definitely stop.  We'll report the error higher when our caller tries to
             // consume the next token.
-            if (this.isExpectedListTerminator(currentListType) || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
-                return SyntaxList.create(items);
+            if (this.listIsTerminated(currentListType)) {
+                break
             }
 
             // Try to parse an item of the list.  If we fail then decide if we need to abort or 
@@ -3069,70 +3073,57 @@ class Parser extends SlidingWindow {
 
             var abort = this.abortParsingListOrMoveToNextToken(currentListType);
             if (abort) {
-                return SyntaxList.create(items);
+                break;
             }
 
             // Continue parsing the list.
         }
+
+        return SyntaxList.create(items);
     }
 
     private parseSeparatedSyntaxListWorker(currentListType: ListParsingState): ISeparatedSyntaxList {
         var items: any[] = null;
         var allowTrailingSeparator = this.allowsTrailingSeparator(currentListType);
         var separatorKind = this.separatorKind(currentListType);
+        var lastSeparator: ISyntaxToken = null;
 
         while (true) {
-            if (items.length % 2 === 0) {
-                // Empty or we've seen a separator.
-                Debug.assert(items.length === 0 || items[items.length - 1].kind === separatorKind);
-
-                // If we're see the list terminator and we allow trailing separators, then we're done.
-                if (allowTrailingSeparator) {
-                    if (this.isExpectedListTerminator(currentListType) || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
-                        return SeparatedSyntaxList.create(items);
-                    }
+            if (this.listIsTerminated(currentListType)) {
+                // We've reached the end of the list.  If there was a last separator and we don't 
+                // allow trailing separators, then report an error.  But don't report an error if
+                // the separator is missing.  We'll have already reported it.
+                if (lastSeparator !== null && !allowTrailingSeparator && !lastSeparator.isMissing()) {
+                    this.addDiagnostic(new SyntaxDiagnostic(
+                        lastSeparator.start(), lastSeparator.width(), DiagnosticCode.Trailing_separator_not_allowed, null));
                 }
 
-                // We don't allow trailing separators, or we're not at the end of the list. Parse
-                // the next element.
-                if (this.isExpectedListItem(currentListType)) {
-                    var item = this.parseExpectedListItem(currentListType);
-                    Debug.assert(item !== null);
+                break;
+            }
 
-                    items = items || [];
-                    items.push(item);
-                    continue;
+            var itemsLength = items === null ? 0 : items.length;
+            items = this.tryParseExpectedListItem(currentListType, items, null);
+            if (items !== null && items.length > itemsLength) {
+                // We got an item.  We may be done.  Check for that.
+
+                if (this.listIsTerminated(currentListType)) {
+                    break;
                 }
 
-
-            }
-
-            // We've seen an item.
-
-            // First check if the list is complete already.  If so, we're done.  Also, if we see an 
-            // EOF then definitely stop.  We'll report the error higher when our caller tries to
-            // consume the next token.
-            if (this.isExpectedListTerminator(currentListType) || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
-                return SeparatedSyntaxList.create(items);
-            }
-
-            if (this.isExpectedListItem(currentListType)) {
-                var item = this.parseExpectedListItem(currentListType);
-                Debug.assert(item !== null);
-
-                items = items || [];
-                items.push(item);
-
-                var separator = this.eatToken(separatorKind);
-
+                // We're not done. We need a separator token.
+                lastSeparator = this.eatToken(separatorKind);
+                items.push(lastSeparator);
                 continue;
             }
 
+            // We failed to parse an item.  Decide if we need to abort, or move to the next token.
             var abort = this.abortParsingListOrMoveToNextToken(currentListType);
             if (abort) {
-                return SeparatedSyntaxList.create(items);
+                break;
             }
         }
+
+        return SeparatedSyntaxList.create(items);
     }
 
     private allowsTrailingSeparator(currentListType: ListParsingState): bool {

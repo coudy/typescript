@@ -10,6 +10,7 @@ enum DiagnosticCode {
     Identifier_expected__0_is_a_keyword,
     AutomaticSemicolonInsertionNotAllowed,
     Unexpected_token__0_expected,
+    Trailing_separator_not_allowed,
 }
 
 class DiagnosticMessages {
@@ -25,6 +26,7 @@ class DiagnosticMessages {
             codeToFormatString[DiagnosticCode.Identifier_expected__0_is_a_keyword] = "Identifier expected; '{0}' is a keyword.";
             codeToFormatString[DiagnosticCode.AutomaticSemicolonInsertionNotAllowed] = "Automatic semicolon insertion not allowed.";
             codeToFormatString[DiagnosticCode.Unexpected_token__0_expected] = "Unexpected token; '{0}' expected.";
+            codeToFormatString[DiagnosticCode.Trailing_separator_not_allowed] = "Trailing separator not allowed.";
         }
     }
 
