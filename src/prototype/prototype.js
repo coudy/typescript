@@ -34474,7 +34474,6 @@ var Program = (function () {
             return;
         }
         if(filePath.indexOf("RealSource") >= 0) {
-            return;
         }
         if(filePath.indexOf("fileServices") < 0) {
         }
