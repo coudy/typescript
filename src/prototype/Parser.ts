@@ -1689,34 +1689,14 @@ class Parser extends SlidingWindow {
 
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
-        var switchClauses: SwitchClauseSyntax[] = null;
+        var switchClauses: ISyntaxNodeList = SyntaxNodeList.empty;
         if (!openBraceToken.isMissing()) {
-            var savedListParsingState = this.listParsingState;
-            this.listParsingState |= ListParsingState.SwitchStatement_SwitchClauses;
-
-            while (true) {
-                if (this.currentToken().kind === SyntaxKind.CloseBraceToken || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
-                    break;
-                }
-
-                if (this.isSwitchClause()) {
-                    var switchClause = this.parseSwitchClause();
-
-                    switchClauses = switchClauses || [];
-                    switchClauses.push(switchClause);
-                }
-                else {
-                    // TODO: Error tolerance.
-                    break;
-                }
-            }
-
-            this.listParsingState = savedListParsingState;
+            switchClauses = this.parseSyntaxNodeList(ListParsingState.SwitchStatement_SwitchClauses);
         }
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
-        return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken,
-            openBraceToken, SyntaxNodeList.create(switchClauses), closeBraceToken);
+        return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, 
+            closeParenToken, openBraceToken, switchClauses, closeBraceToken);
     }
 
     private isCaseSwitchClause(): bool {
@@ -3159,7 +3139,11 @@ class Parser extends SlidingWindow {
                 return this.isExpectedClassDeclaration_ClassElementsTerminator();
 
             case ListParsingState.ModuleDeclaration_ModuleElements:
+                throw Errors.notYetImplemented();
+
             case ListParsingState.SwitchStatement_SwitchClauses:
+                return this.isExpectedSwitchStatement_SwitchClausesTerminator();
+
             case ListParsingState.SwitchClause_Statements:
                 throw Errors.notYetImplemented();
 
@@ -3189,6 +3173,10 @@ class Parser extends SlidingWindow {
         return this.currentToken().kind === SyntaxKind.CloseBraceToken;
     }
 
+    private isExpectedSwitchStatement_SwitchClausesTerminator(): bool {
+        return this.currentToken().kind === SyntaxKind.CloseBraceToken;
+    }
+
     private isExpectedBlock_StatementsTerminator(): bool {
         return this.currentToken().kind === SyntaxKind.CloseBraceToken;
     }
@@ -3202,7 +3190,11 @@ class Parser extends SlidingWindow {
                 return this.isClassElement();
 
             case ListParsingState.ModuleDeclaration_ModuleElements:
+                throw Errors.notYetImplemented();
+
             case ListParsingState.SwitchStatement_SwitchClauses:
+                return this.isSwitchClause();
+
             case ListParsingState.SwitchClause_Statements:
                 throw Errors.notYetImplemented();
             
@@ -3235,7 +3227,11 @@ class Parser extends SlidingWindow {
                 return this.parseClassElement();
 
             case ListParsingState.ModuleDeclaration_ModuleElements:
+                throw Errors.notYetImplemented();
+
             case ListParsingState.SwitchStatement_SwitchClauses:
+                return this.parseSwitchClause();
+
             case ListParsingState.SwitchClause_Statements:
                 throw Errors.notYetImplemented();
 
@@ -3262,13 +3258,17 @@ class Parser extends SlidingWindow {
     private getExpectedListElementType(currentListType: ListParsingState): string {
         switch (currentListType) {
             case ListParsingState.SourceUnit_ModuleElements:
-                return Strings.module_element;
+                return Strings.module__class__interface__enum__import_or_statement;
 
             case ListParsingState.ClassDeclaration_ClassElements:
-                return Strings.class_element;
+                return Strings.constructor__function__accessor_or_variable;
 
             case ListParsingState.ModuleDeclaration_ModuleElements:
+                throw Errors.notYetImplemented();
+
             case ListParsingState.SwitchStatement_SwitchClauses:
+                return Strings.case_or_default_clause;
+
             case ListParsingState.SwitchClause_Statements:
                 throw Errors.notYetImplemented();
 

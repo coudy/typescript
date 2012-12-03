@@ -2073,26 +2073,12 @@ var Parser = (function (_super) {
         var expression = this.parseExpression(true);
         var closeParenToken = this.eatToken(66 /* CloseParenToken */ );
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
-        var switchClauses = null;
+        var switchClauses = SyntaxNodeList.empty;
         if(!openBraceToken.isMissing()) {
-            var savedListParsingState = this.listParsingState;
-            this.listParsingState |= ListParsingState.SwitchStatement_SwitchClauses;
-            while(true) {
-                if(this.currentToken().kind === 64 /* CloseBraceToken */  || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
-                    break;
-                }
-                if(this.isSwitchClause()) {
-                    var switchClause = this.parseSwitchClause();
-                    switchClauses = switchClauses || [];
-                    switchClauses.push(switchClause);
-                } else {
-                    break;
-                }
-            }
-            this.listParsingState = savedListParsingState;
+            switchClauses = this.parseSyntaxNodeList(ListParsingState.SwitchStatement_SwitchClauses);
         }
         var closeBraceToken = this.eatToken(64 /* CloseBraceToken */ );
-        return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, SyntaxNodeList.create(switchClauses), closeBraceToken);
+        return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, switchClauses, closeBraceToken);
     };
     Parser.prototype.isCaseSwitchClause = function () {
         return this.currentToken().keywordKind() === 10 /* CaseKeyword */ ;
@@ -3121,8 +3107,14 @@ var Parser = (function (_super) {
                 return this.isExpectedClassDeclaration_ClassElementsTerminator();
 
             }
-            case ListParsingState.ModuleDeclaration_ModuleElements:
-            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.ModuleDeclaration_ModuleElements: {
+                throw Errors.notYetImplemented();
+
+            }
+            case ListParsingState.SwitchStatement_SwitchClauses: {
+                return this.isExpectedSwitchStatement_SwitchClausesTerminator();
+
+            }
             case ListParsingState.SwitchClause_Statements: {
                 throw Errors.notYetImplemented();
 
@@ -3155,6 +3147,9 @@ var Parser = (function (_super) {
     Parser.prototype.isExpectedClassDeclaration_ClassElementsTerminator = function () {
         return this.currentToken().kind === 64 /* CloseBraceToken */ ;
     };
+    Parser.prototype.isExpectedSwitchStatement_SwitchClausesTerminator = function () {
+        return this.currentToken().kind === 64 /* CloseBraceToken */ ;
+    };
     Parser.prototype.isExpectedBlock_StatementsTerminator = function () {
         return this.currentToken().kind === 64 /* CloseBraceToken */ ;
     };
@@ -3168,8 +3163,14 @@ var Parser = (function (_super) {
                 return this.isClassElement();
 
             }
-            case ListParsingState.ModuleDeclaration_ModuleElements:
-            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.ModuleDeclaration_ModuleElements: {
+                throw Errors.notYetImplemented();
+
+            }
+            case ListParsingState.SwitchStatement_SwitchClauses: {
+                return this.isSwitchClause();
+
+            }
             case ListParsingState.SwitchClause_Statements: {
                 throw Errors.notYetImplemented();
 
@@ -3209,8 +3210,14 @@ var Parser = (function (_super) {
                 return this.parseClassElement();
 
             }
-            case ListParsingState.ModuleDeclaration_ModuleElements:
-            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.ModuleDeclaration_ModuleElements: {
+                throw Errors.notYetImplemented();
+
+            }
+            case ListParsingState.SwitchStatement_SwitchClauses: {
+                return this.parseSwitchClause();
+
+            }
             case ListParsingState.SwitchClause_Statements: {
                 throw Errors.notYetImplemented();
 
@@ -3243,15 +3250,21 @@ var Parser = (function (_super) {
     Parser.prototype.getExpectedListElementType = function (currentListType) {
         switch(currentListType) {
             case ListParsingState.SourceUnit_ModuleElements: {
-                return Strings.module_element;
+                return Strings.module__class__interface__enum__import_or_statement;
 
             }
             case ListParsingState.ClassDeclaration_ClassElements: {
-                return Strings.class_element;
+                return Strings.constructor__function__accessor_or_variable;
 
             }
-            case ListParsingState.ModuleDeclaration_ModuleElements:
-            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.ModuleDeclaration_ModuleElements: {
+                throw Errors.notYetImplemented();
+
+            }
+            case ListParsingState.SwitchStatement_SwitchClauses: {
+                return Strings.case_or_default_clause;
+
+            }
             case ListParsingState.SwitchClause_Statements: {
                 throw Errors.notYetImplemented();
 
@@ -4359,9 +4372,10 @@ var SubText = (function (_super) {
 })(TextBase);
 var Strings = (function () {
     function Strings() { }
-    Strings.module_element = "module, class, interface, enum, import or statement";
-    Strings.class_element = "constructor, function, accessor or variable";
+    Strings.module__class__interface__enum__import_or_statement = "module, class, interface, enum, import or statement";
+    Strings.constructor__function__accessor_or_variable = "constructor, function, accessor or variable";
     Strings.statement = "statement";
+    Strings.case_or_default_clause = "case or default clause";
     return Strings;
 })();
 var StringTableEntry = (function () {
