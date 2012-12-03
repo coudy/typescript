@@ -8,4 +8,5 @@ class Strings {
     public static case_or_default_clause: string = "case or default clause";
     public static identifier: string = "identifier";
     public static call__construct__index__property_or_function_signature: string = "call, construct, index, property or function signature";
+    public static expression: string = "expression";
 }
