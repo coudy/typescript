@@ -2744,30 +2744,12 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseParameterList = function () {
         var openParenToken = this.eatToken(65 /* OpenParenToken */ );
-        var parameters = null;
+        var parameters = SeparatedSyntaxList.empty;
         if(!openParenToken.isMissing()) {
-            if(this.currentToken().kind !== 66 /* CloseParenToken */  && this.currentToken().kind !== 114 /* EndOfFileToken */ ) {
-                var parameter = this.parseParameter();
-                parameters = [];
-                parameters.push(parameter);
-            }
-            while(true) {
-                if(this.currentToken().kind === 66 /* CloseParenToken */  || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
-                    break;
-                }
-                if(this.currentToken().kind === 72 /* CommaToken */ ) {
-                    var commaToken = this.eatToken(72 /* CommaToken */ );
-                    parameters = parameters || [];
-                    parameters.push(commaToken);
-                    var parameter = this.parseParameter();
-                    parameters.push(parameter);
-                } else {
-                    break;
-                }
-            }
+            parameters = this.parseSeparatedSyntaxList(32768 /* ParameterList_Parameters */ );
         }
         var closeParenToken = this.eatToken(66 /* CloseParenToken */ );
-        return new ParameterListSyntax(openParenToken, SeparatedSyntaxList.create(parameters), closeParenToken);
+        return new ParameterListSyntax(openParenToken, parameters, closeParenToken);
     };
     Parser.prototype.isTypeAnnotation = function () {
         return this.currentToken().kind === 99 /* ColonToken */ ;
@@ -2873,6 +2855,16 @@ var Parser = (function (_super) {
             }
         }
         return false;
+    };
+    Parser.prototype.isParameter = function () {
+        var token = this.currentToken();
+        if(token.kind === 70 /* DotDotDotToken */ ) {
+            return true;
+        }
+        if(token.keywordKind() === 51 /* PublicKeyword */  || token.keywordKind() === 49 /* PrivateKeyword */ ) {
+            return true;
+        }
+        return this.isIdentifier(token);
     };
     Parser.prototype.parseParameter = function () {
         var dotDotDotToken = this.tryEatToken(70 /* DotDotDotToken */ );
@@ -3009,7 +3001,8 @@ var Parser = (function (_super) {
             case 512 /* ExtendsOrImplementsClause_TypeNameList */ :
             case 4096 /* ArgumentList_AssignmentExpressions */ :
             case 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
-            case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ : {
+            case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+            case 32768 /* ParameterList_Parameters */ : {
                 return false;
 
             }
@@ -3021,7 +3014,6 @@ var Parser = (function (_super) {
             case 32 /* Block_Statements_AllowFunctionDeclarations */ :
             case 64 /* Block_Statements_DisallowFunctionDeclarations */ :
             case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
-            case 32768 /* ParameterList_Parameters */ :
             default: {
                 throw Errors.notYetImplemented();
 
@@ -3039,7 +3031,8 @@ var Parser = (function (_super) {
             case 256 /* ObjectType_TypeMembers */ :
             case 128 /* EnumDeclaration_VariableDeclarators */ :
             case 4096 /* ArgumentList_AssignmentExpressions */ :
-            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ : {
+            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
+            case 32768 /* ParameterList_Parameters */ : {
                 return false;
 
             }
@@ -3051,7 +3044,6 @@ var Parser = (function (_super) {
             case 32 /* Block_Statements_AllowFunctionDeclarations */ :
             case 64 /* Block_Statements_DisallowFunctionDeclarations */ :
             case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
-            case 32768 /* ParameterList_Parameters */ :
             default: {
                 throw Errors.notYetImplemented();
 
@@ -3069,7 +3061,8 @@ var Parser = (function (_super) {
             case 4096 /* ArgumentList_AssignmentExpressions */ :
             case 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
             case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
-            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ : {
+            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
+            case 32768 /* ParameterList_Parameters */ : {
                 return false;
 
             }
@@ -3081,7 +3074,6 @@ var Parser = (function (_super) {
             case 32 /* Block_Statements_AllowFunctionDeclarations */ :
             case 64 /* Block_Statements_DisallowFunctionDeclarations */ :
             case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
-            case 32768 /* ParameterList_Parameters */ :
             default: {
                 throw Errors.notYetImplemented();
 
@@ -3095,7 +3087,8 @@ var Parser = (function (_super) {
             case 128 /* EnumDeclaration_VariableDeclarators */ :
             case 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
             case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
-            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ : {
+            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
+            case 32768 /* ParameterList_Parameters */ : {
                 return 72 /* CommaToken */ ;
 
             }
@@ -3111,7 +3104,6 @@ var Parser = (function (_super) {
             case 32 /* Block_Statements_AllowFunctionDeclarations */ :
             case 64 /* Block_Statements_DisallowFunctionDeclarations */ :
             case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
-            case 32768 /* ParameterList_Parameters */ :
             default: {
                 throw Errors.notYetImplemented();
 
@@ -3189,8 +3181,11 @@ var Parser = (function (_super) {
                 return this.isExpectedObjectLiteralExpression_PropertyAssignmentsTerminator();
 
             }
-            case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
             case 32768 /* ParameterList_Parameters */ : {
+                return this.isExpectedParameterList_ParametersTerminator();
+
+            }
+            case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ : {
                 throw Errors.notYetImplemented();
 
             }
@@ -3214,6 +3209,15 @@ var Parser = (function (_super) {
     };
     Parser.prototype.isExpectedObjectLiteralExpression_PropertyAssignmentsTerminator = function () {
         return this.currentToken().kind === 64 /* CloseBraceToken */ ;
+    };
+    Parser.prototype.isExpectedParameterList_ParametersTerminator = function () {
+        if(this.currentToken().kind === 66 /* CloseParenToken */ ) {
+            return true;
+        }
+        if(this.currentToken().kind === 63 /* OpenBraceToken */ ) {
+            return true;
+        }
+        return false;
     };
     Parser.prototype.isExpectedVariableDeclaration_VariableDeclarators_DisallowInTerminator = function () {
         if(this.currentToken().kind === 71 /* SemicolonToken */  || this.currentToken().kind === 66 /* CloseParenToken */ ) {
@@ -3306,8 +3310,11 @@ var Parser = (function (_super) {
                 return this.isPropertyAssignment(inErrorRecovery);
 
             }
-            case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
             case 32768 /* ParameterList_Parameters */ : {
+                return this.isParameter();
+
+            }
+            case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ : {
                 throw Errors.notYetImplemented();
 
             }
@@ -3375,9 +3382,12 @@ var Parser = (function (_super) {
                 return this.parsePropertyAssignment();
 
             }
-            case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
-            case 32768 /* ParameterList_Parameters */ : {
+            case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ : {
                 throw Errors.notYetImplemented();
+
+            }
+            case 32768 /* ParameterList_Parameters */ : {
+                return this.parseParameter();
 
             }
             default: {
@@ -3435,8 +3445,11 @@ var Parser = (function (_super) {
                 return Strings.property_or_accessor;
 
             }
-            case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
             case 32768 /* ParameterList_Parameters */ : {
+                return Strings.parameter;
+
+            }
+            case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ : {
                 throw Errors.notYetImplemented();
 
             }
@@ -4536,6 +4549,7 @@ var Strings = (function () {
     Strings.expression = "expression";
     Strings.type_name = "type name";
     Strings.property_or_accessor = "property or accessor";
+    Strings.parameter = "parameter";
     return Strings;
 })();
 var StringTableEntry = (function () {

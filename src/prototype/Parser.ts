@@ -2634,39 +2634,14 @@ class Parser extends SlidingWindow {
 
     private parseParameterList(): ParameterListSyntax {
         var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
-
-        var parameters: any[] = null;
-
+        var parameters: ISeparatedSyntaxList = SeparatedSyntaxList.empty;
+        
         if (!openParenToken.isMissing()) {
-            if (this.currentToken().kind !== SyntaxKind.CloseParenToken && this.currentToken().kind !== SyntaxKind.EndOfFileToken) {
-                var parameter = this.parseParameter();
-                parameters = [];
-                parameters.push(parameter);
-            }
-
-            while (true) {
-                if (this.currentToken().kind === SyntaxKind.CloseParenToken || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
-                    break;
-                }
-
-                if (this.currentToken().kind === SyntaxKind.CommaToken) {
-                    var commaToken = this.eatToken(SyntaxKind.CommaToken);
-
-                    parameters = parameters || [];
-                    parameters.push(commaToken);
-
-                    var parameter = this.parseParameter();
-                    parameters.push(parameter);
-                }
-                else {
-                    // TODO: add error tolerance here.
-                    break;
-                }
-            }
+            parameters = this.parseSeparatedSyntaxList(ListParsingState.ParameterList_Parameters);
         }
 
         var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-        return new ParameterListSyntax(openParenToken, SeparatedSyntaxList.create(parameters), closeParenToken);
+        return new ParameterListSyntax(openParenToken, parameters, closeParenToken);
     }
 
     private isTypeAnnotation(): bool {
@@ -2799,6 +2774,20 @@ class Parser extends SlidingWindow {
         }
 
         return false;
+    }
+
+    private isParameter(): bool {
+        var token = this.currentToken();
+        if (token.kind === SyntaxKind.DotDotDotToken) {
+            return true;
+        }
+
+        if (token.keywordKind() === SyntaxKind.PublicKeyword ||
+            token.keywordKind() === SyntaxKind.PrivateKeyword) {
+            return true;
+        }
+
+        return this.isIdentifier(token);
     }
 
     private parseParameter(): ParameterSyntax {
@@ -3040,6 +3029,8 @@ class Parser extends SlidingWindow {
             case ListParsingState.ArgumentList_AssignmentExpressions:
             case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
             case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
+            case ListParsingState.ParameterList_Parameters:
+                // TODO: It would be great to allow trailing separators for parameters.
                 return false;
 
             case ListParsingState.SourceUnit_ModuleElements:
@@ -3050,7 +3041,6 @@ class Parser extends SlidingWindow {
             case ListParsingState.Block_Statements_AllowFunctionDeclarations:
             case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
-            case ListParsingState.ParameterList_Parameters:
             default:
                 throw Errors.notYetImplemented();
         }
@@ -3067,6 +3057,7 @@ class Parser extends SlidingWindow {
             case ListParsingState.EnumDeclaration_VariableDeclarators:
             case ListParsingState.ArgumentList_AssignmentExpressions:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ParameterList_Parameters:
                 return false;
 
             case ListParsingState.SourceUnit_ModuleElements:
@@ -3077,7 +3068,6 @@ class Parser extends SlidingWindow {
             case ListParsingState.Block_Statements_AllowFunctionDeclarations:
             case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
-            case ListParsingState.ParameterList_Parameters:
             default:
                 throw Errors.notYetImplemented();
         }
@@ -3094,6 +3084,7 @@ class Parser extends SlidingWindow {
             case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
             case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ParameterList_Parameters:
                 return false;
 
             case ListParsingState.SourceUnit_ModuleElements:
@@ -3104,7 +3095,6 @@ class Parser extends SlidingWindow {
             case ListParsingState.Block_Statements_AllowFunctionDeclarations:
             case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
-            case ListParsingState.ParameterList_Parameters:
             default:
                 throw Errors.notYetImplemented();
         }
@@ -3118,6 +3108,7 @@ class Parser extends SlidingWindow {
             case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
             case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ParameterList_Parameters:
                 return SyntaxKind.CommaToken;
 
             case ListParsingState.ObjectType_TypeMembers:
@@ -3131,7 +3122,6 @@ class Parser extends SlidingWindow {
             case ListParsingState.Block_Statements_AllowFunctionDeclarations:
             case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
-            case ListParsingState.ParameterList_Parameters:
             default:
                 throw Errors.notYetImplemented();
         }
@@ -3201,9 +3191,11 @@ class Parser extends SlidingWindow {
 
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
                 return this.isExpectedObjectLiteralExpression_PropertyAssignmentsTerminator();
+            
+            case ListParsingState.ParameterList_Parameters:
+                return this.isExpectedParameterList_ParametersTerminator();
 
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
-            case ListParsingState.ParameterList_Parameters:
                 throw Errors.notYetImplemented();
             default:
                 throw Errors.invalidOperation();
@@ -3228,6 +3220,20 @@ class Parser extends SlidingWindow {
 
     private isExpectedObjectLiteralExpression_PropertyAssignmentsTerminator(): bool {
         return this.currentToken().kind === SyntaxKind.CloseBraceToken;
+    }
+
+    private isExpectedParameterList_ParametersTerminator(): bool {
+        if (this.currentToken().kind === SyntaxKind.CloseParenToken) {
+            return true;
+        }
+
+        // We may also see a { in an error case.  i.e.:
+        // function (a, b, c  {
+        if (this.currentToken().kind === SyntaxKind.OpenBraceToken) {
+            return true;
+        }
+
+        return false;
     }
 
     private isExpectedVariableDeclaration_VariableDeclarators_DisallowInTerminator(): bool {
@@ -3332,9 +3338,11 @@ class Parser extends SlidingWindow {
             
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
                 return this.isPropertyAssignment(inErrorRecovery);
+            
+            case ListParsingState.ParameterList_Parameters:
+                return this.isParameter();
 
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
-            case ListParsingState.ParameterList_Parameters:
                 throw Errors.notYetImplemented();
             default:
                 throw Errors.invalidOperation();
@@ -3386,8 +3394,11 @@ class Parser extends SlidingWindow {
                 return this.parsePropertyAssignment();
 
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
-            case ListParsingState.ParameterList_Parameters:
                 throw Errors.notYetImplemented();
+
+            case ListParsingState.ParameterList_Parameters:
+                return this.parseParameter();
+
             default:
                 throw Errors.invalidOperation();
         }
@@ -3431,8 +3442,10 @@ class Parser extends SlidingWindow {
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
                 return Strings.property_or_accessor;
 
-            case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
+                return Strings.parameter;
+
+            case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                 throw Errors.notYetImplemented();
             default:
                 throw Errors.invalidOperation();

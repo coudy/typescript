@@ -11,4 +11,5 @@ class Strings {
     public static expression: string = "expression";
     public static type_name: string = "type name";
     public static property_or_accessor: string = "property or accessor";
+    public static parameter: string = "parameter";
 }
