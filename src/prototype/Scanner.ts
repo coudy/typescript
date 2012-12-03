@@ -1061,6 +1061,6 @@ class Scanner extends SlidingWindow {
 
     private createIllegalEscapeDiagnostic(start: number, end: number): SyntaxDiagnostic {
         return new SyntaxDiagnostic(start, end - start,
-            DiagnosticCode.Unrecognized_escape_sequence);
+            DiagnosticCode.Unrecognized_escape_sequence, null);
     }
 }

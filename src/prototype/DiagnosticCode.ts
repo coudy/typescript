@@ -1,15 +1,15 @@
 ///<reference path='References.ts' />
 
 enum DiagnosticCode {
-    Unrecognized_escape_sequence = 0,
-    Unexpected_character_0 = 1,
-    Missing_closing_quote_character = 2,
-    Identifier_expected = 3,
-    _0_keyword_expected = 4,
-    _0_expected = 5,
-    Identifier_expected__0_is_a_keyword = 6,
-    AutomaticSemicolonInsertionNotAllowed = 7,
-    Unexpected_token__0_expected = 8,
+    Unrecognized_escape_sequence,
+    Unexpected_character_0,
+    Missing_closing_quote_character,
+    Identifier_expected,
+    _0_keyword_expected,
+    _0_expected,
+    Identifier_expected__0_is_a_keyword,
+    AutomaticSemicolonInsertionNotAllowed,
+    Unexpected_token__0_expected,
 }
 
 class DiagnosticMessages {
@@ -24,6 +24,7 @@ class DiagnosticMessages {
             codeToFormatString[DiagnosticCode._0_expected] = "'{0}' expected.";
             codeToFormatString[DiagnosticCode.Identifier_expected__0_is_a_keyword] = "Identifier expected; '{0}' is a keyword.";
             codeToFormatString[DiagnosticCode.AutomaticSemicolonInsertionNotAllowed] = "Automatic semicolon insertion not allowed.";
+            codeToFormatString[DiagnosticCode.Unexpected_token__0_expected] = "Unexpected token; '{0}' expected.";
         }
     }
 

@@ -251,15 +251,11 @@ var Debug = (function () {
     return Debug;
 })();
 var Diagnostic = (function () {
-    function Diagnostic(diagnosticCode) {
-        var arguments = [];
-        for (var _i = 0; _i < (arguments.length - 1); _i++) {
-            arguments[_i] = arguments[_i + 1];
-        }
+    function Diagnostic(diagnosticCode, arguments) {
         this._diagnosticCode = 0;
-        this.arguments = null;
+        this._arguments = null;
         this._diagnosticCode = diagnosticCode;
-        this.arguments = arguments;
+        this._arguments = (arguments && arguments.length > 0) ? arguments : null;
     }
     Diagnostic.prototype.diagnosticCode = function () {
         return this._diagnosticCode;
@@ -267,22 +263,31 @@ var Diagnostic = (function () {
     Diagnostic.prototype.additionalLocations = function () {
         return [];
     };
-    Diagnostic.prototype.getMessage = function () {
-        return DiagnosticMessages.getDiagnosticMessage(this._diagnosticCode, this.arguments);
+    Diagnostic.prototype.message = function () {
+        return DiagnosticMessages.getDiagnosticMessage(this._diagnosticCode, this._arguments);
     };
     return Diagnostic;
 })();
 var DiagnosticCode;
 (function (DiagnosticCode) {
     DiagnosticCode._map = [];
+    DiagnosticCode._map[0] = "Unrecognized_escape_sequence";
     DiagnosticCode.Unrecognized_escape_sequence = 0;
+    DiagnosticCode._map[1] = "Unexpected_character_0";
     DiagnosticCode.Unexpected_character_0 = 1;
+    DiagnosticCode._map[2] = "Missing_closing_quote_character";
     DiagnosticCode.Missing_closing_quote_character = 2;
+    DiagnosticCode._map[3] = "Identifier_expected";
     DiagnosticCode.Identifier_expected = 3;
+    DiagnosticCode._map[4] = "_0_keyword_expected";
     DiagnosticCode._0_keyword_expected = 4;
+    DiagnosticCode._map[5] = "_0_expected";
     DiagnosticCode._0_expected = 5;
+    DiagnosticCode._map[6] = "Identifier_expected__0_is_a_keyword";
     DiagnosticCode.Identifier_expected__0_is_a_keyword = 6;
+    DiagnosticCode._map[7] = "AutomaticSemicolonInsertionNotAllowed";
     DiagnosticCode.AutomaticSemicolonInsertionNotAllowed = 7;
+    DiagnosticCode._map[8] = "Unexpected_token__0_expected";
     DiagnosticCode.Unexpected_token__0_expected = 8;
 })(DiagnosticCode || (DiagnosticCode = {}));
 var DiagnosticMessages = (function () {
@@ -298,6 +303,7 @@ var DiagnosticMessages = (function () {
             DiagnosticMessages.codeToFormatString[5 /* _0_expected */ ] = "'{0}' expected.";
             DiagnosticMessages.codeToFormatString[6 /* Identifier_expected__0_is_a_keyword */ ] = "Identifier expected; '{0}' is a keyword.";
             DiagnosticMessages.codeToFormatString[7 /* AutomaticSemicolonInsertionNotAllowed */ ] = "Automatic semicolon insertion not allowed.";
+            DiagnosticMessages.codeToFormatString[8 /* Unexpected_token__0_expected */ ] = "Unexpected token; '{0}' expected.";
         }
     }
     DiagnosticMessages.getFormatString = function getFormatString(code) {
@@ -1019,7 +1025,7 @@ var Parser = (function (_super) {
         if(this.canEatAutomaticSemicolon()) {
             var semicolonToken = SyntaxTokenFactory.createEmptyToken(71 /* SemicolonToken */ , 0 /* None */ );
             if(!this.options.allowAutomaticSemicolonInsertion()) {
-                semicolonToken = this.withAdditionalDiagnostics(semicolonToken, new Diagnostic(7 /* AutomaticSemicolonInsertionNotAllowed */ ));
+                semicolonToken = this.withAdditionalDiagnostics(semicolonToken, new SyntaxDiagnostic(this.previousToken.start() + this.previousToken.width(), 1, 7 /* AutomaticSemicolonInsertionNotAllowed */ , null));
             }
             return semicolonToken;
         }
@@ -1087,17 +1093,23 @@ var Parser = (function (_super) {
         var width = span.length();
         if(expectedKind === 5 /* IdentifierNameToken */ ) {
             if(SyntaxFacts.isAnyKeyword(expectedKeywordKind)) {
-                return new SyntaxDiagnostic(offset, width, 5 /* _0_expected */ , SyntaxFacts.getText(expectedKeywordKind));
+                return new SyntaxDiagnostic(offset, width, 5 /* _0_expected */ , [
+                    SyntaxFacts.getText(expectedKeywordKind)
+                ]);
             } else {
                 if(actual !== null && SyntaxFacts.isAnyKeyword(actual.keywordKind())) {
-                    return new SyntaxDiagnostic(offset, width, 6 /* Identifier_expected__0_is_a_keyword */ , SyntaxFacts.getText(actual.keywordKind()));
+                    return new SyntaxDiagnostic(offset, width, 6 /* Identifier_expected__0_is_a_keyword */ , [
+                        SyntaxFacts.getText(actual.keywordKind())
+                    ]);
                 } else {
-                    return new SyntaxDiagnostic(offset, width, 3 /* Identifier_expected */ );
+                    return new SyntaxDiagnostic(offset, width, 3 /* Identifier_expected */ , null);
                 }
             }
         }
         if(SyntaxFacts.isAnyPunctuation(expectedKind)) {
-            return new SyntaxDiagnostic(offset, width, 5 /* _0_expected */ , SyntaxFacts.getText(expectedKind));
+            return new SyntaxDiagnostic(offset, width, 5 /* _0_expected */ , [
+                SyntaxFacts.getText(expectedKind)
+            ]);
         }
         throw Errors.notYetImplemented();
     };
@@ -3088,15 +3100,7 @@ var Parser = (function (_super) {
                 }
                 continue;
             }
-            if(this.diagnostics.length > 0) {
-                var lastDiagnostic = this.diagnostics[this.diagnostics.length - 1];
-                var token = this.currentToken();
-                var position = token.start();
-                if(lastDiagnostic.diagnosticCode() !== 8 /* Unexpected_token__0_expected */  || lastDiagnostic.position() !== position) {
-                    var diagnostic = new SyntaxDiagnostic(position, token.width(), 8 /* Unexpected_token__0_expected */ , this.getExpectedListElementType(currentListType));
-                    this.diagnostics.push(diagnostic);
-                }
-            }
+            this.reportUnexpectedTokenDiagnostic(currentListType);
             for(var state = ListParsingState.LastListParsingState; state >= ListParsingState.FirstListParsingState; state <<= 1) {
                 if((this.listParsingState & state) !== 0) {
                     if(this.isExpectedListTerminator(state) || this.isExpectedListItem(state)) {
@@ -3108,6 +3112,20 @@ var Parser = (function (_super) {
             this.skippedTokens.push(token);
             this.moveToNextToken();
         }
+    };
+    Parser.prototype.reportUnexpectedTokenDiagnostic = function (listType) {
+        var token = this.currentToken();
+        var position = token.start();
+        if(this.diagnostics.length > 0) {
+            var lastDiagnostic = this.diagnostics[this.diagnostics.length - 1];
+            if(lastDiagnostic.diagnosticCode() === 8 /* Unexpected_token__0_expected */  && lastDiagnostic.position() === position) {
+                return;
+            }
+        }
+        var diagnostic = new SyntaxDiagnostic(position, token.width(), 8 /* Unexpected_token__0_expected */ , [
+            this.getExpectedListElementType(listType)
+        ]);
+        this.diagnostics.push(diagnostic);
     };
     Parser.prototype.isExpectedListTerminator = function (currentListType) {
         switch(currentListType) {
@@ -3197,7 +3215,32 @@ var Parser = (function (_super) {
         }
     };
     Parser.prototype.getExpectedListElementType = function (currentListType) {
-        throw Errors.notYetImplemented();
+        switch(currentListType) {
+            case ListParsingState.SourceUnit_ModuleElements: {
+                return Strings.module_element;
+
+            }
+            case ListParsingState.ClassDeclaration_ClassElements:
+            case ListParsingState.ModuleDeclaration_ModuleElements:
+            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.SwitchClause_Statements:
+            case ListParsingState.Block_Statements:
+            case ListParsingState.EnumDeclaration_VariableDeclarators:
+            case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.ArgumentList_AssignmentExpressions:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+            case ListParsingState.ParameterList_Parameters: {
+                throw Errors.notYetImplemented();
+
+            }
+            default: {
+                throw Errors.invalidOperation();
+
+            }
+        }
     };
     return Parser;
 })(SlidingWindow);
@@ -4102,7 +4145,7 @@ var Scanner = (function (_super) {
         this.errors.push(error);
     };
     Scanner.prototype.createIllegalEscapeDiagnostic = function (start, end) {
-        return new SyntaxDiagnostic(start, end - start, 0 /* Unrecognized_escape_sequence */ );
+        return new SyntaxDiagnostic(start, end - start, 0 /* Unrecognized_escape_sequence */ , null);
     };
     return Scanner;
 })(SlidingWindow);
@@ -4278,6 +4321,11 @@ var SubText = (function (_super) {
     };
     return SubText;
 })(TextBase);
+var Strings = (function () {
+    function Strings() { }
+    Strings.module_element = "module element";
+    return Strings;
+})();
 var StringTableEntry = (function () {
     function StringTableEntry(text, hashCode, next) {
         this.Text = text;
@@ -4424,11 +4472,7 @@ var StringUtilities = (function () {
 })();
 var SyntaxDiagnostic = (function (_super) {
     __extends(SyntaxDiagnostic, _super);
-    function SyntaxDiagnostic(position, width, code) {
-        var args = [];
-        for (var _i = 0; _i < (arguments.length - 3); _i++) {
-            args[_i] = arguments[_i + 3];
-        }
+    function SyntaxDiagnostic(position, width, code, args) {
         _super.call(this, code, args);
         if(width < 0) {
             throw Errors.argumentOutOfRange("width");
@@ -4436,13 +4480,18 @@ var SyntaxDiagnostic = (function (_super) {
         this._position = position;
         this._width = width;
     }
-    SyntaxDiagnostic.create = function create(code) {
-        var args = [];
-        for (var _i = 0; _i < (arguments.length - 1); _i++) {
-            args[_i] = arguments[_i + 1];
+    SyntaxDiagnostic.prototype.toJSON = function (key) {
+        var result = {
+        };
+        result._position = this._position;
+        result._width = this._width;
+        result._diagnosticCode = (DiagnosticCode)._map[this.diagnosticCode()];
+        var arguments = (this)._arguments;
+        if(arguments && arguments.length > 0) {
+            result._arguments = arguments;
         }
-        return new SyntaxDiagnostic(0, 0, code, args);
-    }
+        return result;
+    };
     SyntaxDiagnostic.prototype.position = function () {
         return this._position;
     };
@@ -8401,7 +8450,6 @@ var SyntaxTree = (function () {
     }
     SyntaxTree.prototype.toJSON = function (key) {
         var result = {
-            _sourceUnit: this._sourceUnit
         };
         if(this._skippedTokens.length > 0) {
             result._skippedTokens = this._skippedTokens;
@@ -8409,6 +8457,7 @@ var SyntaxTree = (function () {
         if(this._diagnostics.length > 0) {
             result._diagnostics = this._diagnostics;
         }
+        result._sourceUnit = this._sourceUnit;
         return result;
     };
     SyntaxTree.prototype.sourceUnit = function () {
@@ -34474,6 +34523,7 @@ var Program = (function () {
             return;
         }
         if(filePath.indexOf("RealSource") >= 0) {
+            return;
         }
         if(filePath.indexOf("fileServices") < 0) {
         }

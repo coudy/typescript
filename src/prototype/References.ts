@@ -36,6 +36,7 @@
 
 // SubText depends on TextBase.
 ///<reference path='SubText.ts' />
+///<reference path='Strings.ts' />
 ///<reference path='StringTable.ts' />
 ///<reference path='StringText.ts' />
 ///<reference path='StringUtilities.ts' />

@@ -4,7 +4,7 @@ class SyntaxDiagnostic extends Diagnostic {
     private _position: number;
     private _width: number;
 
-    constructor(position: number, width: number, code: DiagnosticCode, ...args: any[]) {
+    constructor(position: number, width: number, code: DiagnosticCode, args: any[]) {
         super(code, args);
 
         if (width < 0) {
@@ -15,8 +15,18 @@ class SyntaxDiagnostic extends Diagnostic {
         this._width = width;
     }
 
-    public static create(code: DiagnosticCode, ...args: any[]): SyntaxDiagnostic {
-        return new SyntaxDiagnostic(0, 0, code, args);
+    public toJSON(key) {
+        var result: any = {};
+        result._position = this._position;
+        result._width = this._width;
+        result._diagnosticCode = (<any>DiagnosticCode)._map[this.diagnosticCode()];
+
+        var arguments = (<any>this)._arguments;
+        if (arguments && arguments.length > 0) {
+            result._arguments = arguments;
+        }
+
+        return result;
     }
 
     public position(): number {

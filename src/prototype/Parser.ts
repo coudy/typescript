@@ -259,7 +259,11 @@ class Parser extends SlidingWindow {
             var semicolonToken = SyntaxTokenFactory.createEmptyToken(SyntaxKind.SemicolonToken, SyntaxKind.None);
 
             if (!this.options.allowAutomaticSemicolonInsertion()) {
-                semicolonToken = this.withAdditionalDiagnostics(semicolonToken, new Diagnostic(DiagnosticCode.AutomaticSemicolonInsertionNotAllowed)); 
+                // TODO: get the right span for this token.  For now, we'll just use the end of the
+                // previous token.
+
+                semicolonToken = this.withAdditionalDiagnostics(semicolonToken,
+                    new SyntaxDiagnostic(this.previousToken.start() + this.previousToken.width(), 1, DiagnosticCode.AutomaticSemicolonInsertionNotAllowed, null)); 
             }
 
             return semicolonToken;
@@ -375,24 +379,24 @@ class Parser extends SlidingWindow {
         if (expectedKind === SyntaxKind.IdentifierNameToken) {
             if (SyntaxFacts.isAnyKeyword(expectedKeywordKind)) {
                 // They wanted a keyword, just report that that keyword was missing.
-                return new SyntaxDiagnostic(offset, width, DiagnosticCode._0_expected, SyntaxFacts.getText(expectedKeywordKind));
+                return new SyntaxDiagnostic(offset, width, DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKeywordKind)]);
             }
             else {
                 // They wanted a real identifier.
 
                 // If the user supplied a keyword, give them a specialized message.
                 if (actual !== null && SyntaxFacts.isAnyKeyword(actual.keywordKind())) {
-                    return new SyntaxDiagnostic(offset, width, DiagnosticCode.Identifier_expected__0_is_a_keyword, SyntaxFacts.getText(actual.keywordKind()));
+                    return new SyntaxDiagnostic(offset, width, DiagnosticCode.Identifier_expected__0_is_a_keyword, [SyntaxFacts.getText(actual.keywordKind())]);
                 }
                 else {
                     // Otherwise just report that an identifier was expected.
-                    return new SyntaxDiagnostic(offset, width, DiagnosticCode.Identifier_expected);
+                    return new SyntaxDiagnostic(offset, width, DiagnosticCode.Identifier_expected, null);
                 }
             }
         }
 
         if (SyntaxFacts.isAnyPunctuation(expectedKind)) {
-            return new SyntaxDiagnostic(offset, width, DiagnosticCode._0_expected, SyntaxFacts.getText(expectedKind));
+            return new SyntaxDiagnostic(offset, width, DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKind)]);
         }
 
         throw Errors.notYetImplemented();
@@ -3139,21 +3143,7 @@ class Parser extends SlidingWindow {
 
             // Ok.  It wasn't a terminator and it wasn't the start of an item in the list. 
             // Definitely report an error for this token.
-            
-            // Except: if there was already an unexpected token reported at this position.  If so,
-            // don't report another one.
-            if (this.diagnostics.length > 0) {
-                var lastDiagnostic = this.diagnostics[this.diagnostics.length - 1];
-                var token = this.currentToken();
-                var position = token.start();
-                
-                if (lastDiagnostic.diagnosticCode() !== DiagnosticCode.Unexpected_token__0_expected ||
-                    lastDiagnostic.position() !== position) {
-
-                    var diagnostic = new SyntaxDiagnostic(position, token.width(), DiagnosticCode.Unexpected_token__0_expected, this.getExpectedListElementType(currentListType));
-                    this.diagnostics.push(diagnostic);
-                }
-            }
+            this.reportUnexpectedTokenDiagnostic(currentListType);
 
             // Now, check if the token is the end of one our parent lists, or the start of an item 
             // in one of our parent lists.  If so, we won't want to consume the token.  We've 
@@ -3178,6 +3168,26 @@ class Parser extends SlidingWindow {
             // Consume this token and move onto the next item in the list.
             this.moveToNextToken();
         }
+    }
+
+    private reportUnexpectedTokenDiagnostic(listType: ListParsingState): void {
+        // Except: if there was already an unexpected token reported at this position.  If so,
+        // don't report another one.
+        var token = this.currentToken();
+        var position = token.start();
+
+        if (this.diagnostics.length > 0) {
+            var lastDiagnostic = this.diagnostics[this.diagnostics.length - 1];
+                
+            if (lastDiagnostic.diagnosticCode() === DiagnosticCode.Unexpected_token__0_expected &&
+                lastDiagnostic.position() === position) {
+                return;
+            }
+        }
+
+        var diagnostic = new SyntaxDiagnostic(
+            position, token.width(), DiagnosticCode.Unexpected_token__0_expected, [this.getExpectedListElementType(listType)]);
+        this.diagnostics.push(diagnostic);
     }
 
     private isExpectedListTerminator(currentListType: ListParsingState): bool {
@@ -3254,6 +3264,25 @@ class Parser extends SlidingWindow {
     }
 
     private getExpectedListElementType(currentListType: ListParsingState): string {
-        throw Errors.notYetImplemented();
+        switch (currentListType) {
+            case ListParsingState.SourceUnit_ModuleElements:
+                return Strings.module_element;
+            case ListParsingState.ClassDeclaration_ClassElements:
+            case ListParsingState.ModuleDeclaration_ModuleElements:
+            case ListParsingState.SwitchStatement_SwitchClauses:
+            case ListParsingState.SwitchClause_Statements:
+            case ListParsingState.Block_Statements:
+            case ListParsingState.EnumDeclaration_VariableDeclarators:
+            case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+            case ListParsingState.VariableDeclaration_VariableDeclarators:
+            case ListParsingState.ArgumentList_AssignmentExpressions:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+            case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+            case ListParsingState.ParameterList_Parameters:
+                throw Errors.notYetImplemented();
+            default:
+                throw Errors.invalidOperation();
+        }
     }
 }

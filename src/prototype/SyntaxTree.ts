@@ -14,7 +14,7 @@ class SyntaxTree {
     }
 
     public toJSON(key) {
-        var result: any = { _sourceUnit: this._sourceUnit };
+        var result: any = { };
         if (this._skippedTokens.length > 0) {
             result._skippedTokens = this._skippedTokens;
         }
@@ -23,6 +23,7 @@ class SyntaxTree {
             result._diagnostics = this._diagnostics;
         }
 
+        result._sourceUnit = this._sourceUnit;
         return result;
     }
 

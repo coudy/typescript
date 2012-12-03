@@ -2,12 +2,12 @@
 
 class Diagnostic {
     private _diagnosticCode: DiagnosticCode = 0;
-    private arguments: any[] = null;
+    private _arguments: any[] = null;
 
     // Only the compiler creates instances.
-    constructor(diagnosticCode: DiagnosticCode, ...arguments: any[]) {
+    constructor(diagnosticCode: DiagnosticCode, arguments: any[]) {
         this._diagnosticCode = diagnosticCode;
-        this.arguments = arguments;
+        this._arguments = (arguments && arguments.length > 0) ? arguments : null;
     }
 
     /// <summary>
@@ -29,7 +29,7 @@ class Diagnostic {
     /// <summary>
     /// Get the text of the message in the given language.
     /// </summary>
-    public getMessage(): string {
-        return DiagnosticMessages.getDiagnosticMessage(this._diagnosticCode, this.arguments);
+    public message(): string {
+        return DiagnosticMessages.getDiagnosticMessage(this._diagnosticCode, this._arguments);
     }
 }
