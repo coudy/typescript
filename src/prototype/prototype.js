@@ -1623,28 +1623,15 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseObjectType = function () {
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
-        var typeMembers = null;
+        var typeMembers = SeparatedSyntaxList.empty;
         if(!openBraceToken.isMissing()) {
-            var savedListParsingState = this.listParsingState;
-            this.listParsingState |= ListParsingState.ObjectType_TypeMembers;
-            while(true) {
-                if(this.currentToken().kind === 64 /* CloseBraceToken */  || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
-                    break;
-                }
-                var typeMember = this.parseTypeMember();
-                typeMembers = typeMembers || [];
-                typeMembers.push(typeMember);
-                if(this.currentToken().kind === 71 /* SemicolonToken */ ) {
-                    var semicolonToken = this.eatToken(71 /* SemicolonToken */ );
-                    typeMembers.push(semicolonToken);
-                } else {
-                    break;
-                }
-            }
-            this.listParsingState = savedListParsingState;
+            typeMembers = this.parseSeparatedSyntaxList(ListParsingState.ObjectType_TypeMembers);
         }
         var closeBraceToken = this.eatToken(64 /* CloseBraceToken */ );
-        return new ObjectTypeSyntax(openBraceToken, SeparatedSyntaxList.create(typeMembers), closeBraceToken);
+        return new ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken);
+    };
+    Parser.prototype.isTypeMember = function () {
+        return this.isCallSignature() || this.isConstructSignature() || this.isIndexSignature() || this.isFunctionSignature() || this.isPropertySignature();
     };
     Parser.prototype.parseTypeMember = function () {
         if(this.isCallSignature()) {
@@ -3090,7 +3077,8 @@ var Parser = (function (_super) {
     };
     Parser.prototype.allowsTrailingSeparator = function (currentListType) {
         switch(currentListType) {
-            case ListParsingState.EnumDeclaration_VariableDeclarators: {
+            case ListParsingState.EnumDeclaration_VariableDeclarators:
+            case ListParsingState.ObjectType_TypeMembers: {
                 return true;
 
             }
@@ -3101,7 +3089,6 @@ var Parser = (function (_super) {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_StatementsWithFunctionDeclarations:
             case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
-            case ListParsingState.ObjectType_TypeMembers:
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ArgumentList_AssignmentExpressions:
@@ -3120,6 +3107,10 @@ var Parser = (function (_super) {
                 return 72 /* CommaToken */ ;
 
             }
+            case ListParsingState.ObjectType_TypeMembers: {
+                return 71 /* SemicolonToken */ ;
+
+            }
             case ListParsingState.SourceUnit_ModuleElements:
             case ListParsingState.ClassDeclaration_ClassElements:
             case ListParsingState.ModuleDeclaration_ModuleElements:
@@ -3127,7 +3118,6 @@ var Parser = (function (_super) {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_StatementsWithFunctionDeclarations:
             case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
-            case ListParsingState.ObjectType_TypeMembers:
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ArgumentList_AssignmentExpressions:
@@ -3187,7 +3177,10 @@ var Parser = (function (_super) {
                 return this.isExpectedEnumDeclaration_VariableDeclaratorsTerminator();
 
             }
-            case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.ObjectType_TypeMembers: {
+                return this.isExpectedObjectType_TypeMembersTerminator();
+
+            }
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ArgumentList_AssignmentExpressions:
@@ -3210,6 +3203,9 @@ var Parser = (function (_super) {
         return this.currentToken().kind === 64 /* CloseBraceToken */ ;
     };
     Parser.prototype.isExpectedModuleDeclaration_ModuleElementsTerminator = function () {
+        return this.currentToken().kind === 64 /* CloseBraceToken */ ;
+    };
+    Parser.prototype.isExpectedObjectType_TypeMembersTerminator = function () {
         return this.currentToken().kind === 64 /* CloseBraceToken */ ;
     };
     Parser.prototype.isExpectedClassDeclaration_ClassElementsTerminator = function () {
@@ -3258,7 +3254,10 @@ var Parser = (function (_super) {
                 return this.isVariableDeclarator();
 
             }
-            case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.ObjectType_TypeMembers: {
+                return this.isTypeMember();
+
+            }
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ArgumentList_AssignmentExpressions:
@@ -3308,7 +3307,10 @@ var Parser = (function (_super) {
                 return this.parseVariableDeclarator(true);
 
             }
-            case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.ObjectType_TypeMembers: {
+                return this.parseTypeMember();
+
+            }
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ArgumentList_AssignmentExpressions:
@@ -3355,7 +3357,10 @@ var Parser = (function (_super) {
                 return Strings.identifier;
 
             }
-            case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.ObjectType_TypeMembers: {
+                return Strings.call__construct__index__property_or_function_signature;
+
+            }
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ArgumentList_AssignmentExpressions:
@@ -4457,6 +4462,7 @@ var Strings = (function () {
     Strings.statement = "statement";
     Strings.case_or_default_clause = "case or default clause";
     Strings.identifier = "identifier";
+    Strings.call__construct__index__property_or_function_signature = "call, construct, index, property or function signature";
     return Strings;
 })();
 var StringTableEntry = (function () {

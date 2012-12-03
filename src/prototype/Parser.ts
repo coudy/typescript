@@ -1073,36 +1073,21 @@ class Parser extends SlidingWindow {
     private parseObjectType(): ObjectTypeSyntax {
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
-        var typeMembers: any[] = null;
+        var typeMembers: ISeparatedSyntaxList = SeparatedSyntaxList.empty;
         if (!openBraceToken.isMissing()) {
-            var savedListParsingState = this.listParsingState;
-            this.listParsingState |= ListParsingState.ObjectType_TypeMembers;
-
-            while (true) {
-                if (this.currentToken().kind === SyntaxKind.CloseBraceToken || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
-                    break;
-                }
-
-                var typeMember = this.parseTypeMember();
-                typeMembers = typeMembers || [];
-                typeMembers.push(typeMember);
-
-                // TODO: Should we do automatic semicolon insertion here?
-                if (this.currentToken().kind === SyntaxKind.SemicolonToken) {
-                    var semicolonToken = this.eatToken(SyntaxKind.SemicolonToken);
-                    typeMembers.push(semicolonToken);
-                }
-                else {
-                    // TODO: Add error recovery.
-                    break;
-                }
-            }
-
-            this.listParsingState = savedListParsingState;
+            typeMembers = this.parseSeparatedSyntaxList(ListParsingState.ObjectType_TypeMembers);
         }
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
-        return new ObjectTypeSyntax(openBraceToken, SeparatedSyntaxList.create(typeMembers), closeBraceToken);
+        return new ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken);
+    }
+
+    private isTypeMember(): bool {
+        return this.isCallSignature() ||
+               this.isConstructSignature() ||
+               this.isIndexSignature() ||
+               this.isFunctionSignature() ||
+               this.isPropertySignature();
     }
 
     private parseTypeMember(): TypeMemberSyntax {
@@ -3094,6 +3079,8 @@ class Parser extends SlidingWindow {
         var separatorKind = this.separatorKind(currentListType);
         var lastSeparator: ISyntaxToken = null;
 
+        // TODO: Should we do automatic semicolon insertion here if separatorKind is a semicolon?
+
         while (true) {
             if (this.listIsTerminated(currentListType)) {
                 // We've reached the end of the list.  If there was a last separator and we don't 
@@ -3135,7 +3122,9 @@ class Parser extends SlidingWindow {
     private allowsTrailingSeparator(currentListType: ListParsingState): bool {
         switch (currentListType) {
             case ListParsingState.EnumDeclaration_VariableDeclarators:
+            case ListParsingState.ObjectType_TypeMembers:
                 return true;
+
             case ListParsingState.SourceUnit_ModuleElements:
             case ListParsingState.ClassDeclaration_ClassElements:
             case ListParsingState.ModuleDeclaration_ModuleElements:
@@ -3143,7 +3132,6 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_StatementsWithFunctionDeclarations:
             case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
-            case ListParsingState.ObjectType_TypeMembers:
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ArgumentList_AssignmentExpressions:
@@ -3156,10 +3144,13 @@ class Parser extends SlidingWindow {
     }
 
     private separatorKind(currentListType: ListParsingState): SyntaxKind {
-
         switch (currentListType) {
             case ListParsingState.EnumDeclaration_VariableDeclarators:
                 return SyntaxKind.CommaToken;
+
+            case ListParsingState.ObjectType_TypeMembers:
+                return SyntaxKind.SemicolonToken;
+
             case ListParsingState.SourceUnit_ModuleElements:
             case ListParsingState.ClassDeclaration_ClassElements:
             case ListParsingState.ModuleDeclaration_ModuleElements:
@@ -3167,7 +3158,6 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_StatementsWithFunctionDeclarations:
             case ListParsingState.Block_StatementsWithoutFunctionDeclarations:
-            case ListParsingState.ObjectType_TypeMembers:
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ArgumentList_AssignmentExpressions:
@@ -3227,6 +3217,8 @@ class Parser extends SlidingWindow {
                 return this.isExpectedEnumDeclaration_VariableDeclaratorsTerminator();
 
             case ListParsingState.ObjectType_TypeMembers:
+                return this.isExpectedObjectType_TypeMembersTerminator();
+
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ArgumentList_AssignmentExpressions:
@@ -3248,6 +3240,10 @@ class Parser extends SlidingWindow {
     }
 
     private isExpectedModuleDeclaration_ModuleElementsTerminator(): bool {
+        return this.currentToken().kind === SyntaxKind.CloseBraceToken;
+    }
+
+    private isExpectedObjectType_TypeMembersTerminator(): bool {
         return this.currentToken().kind === SyntaxKind.CloseBraceToken;
     }
 
@@ -3295,6 +3291,8 @@ class Parser extends SlidingWindow {
                 return this.isVariableDeclarator();
 
             case ListParsingState.ObjectType_TypeMembers:
+                return this.isTypeMember();
+
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ArgumentList_AssignmentExpressions:
@@ -3334,6 +3332,8 @@ class Parser extends SlidingWindow {
                 return this.parseVariableDeclarator(/*allowIn:*/ true);
             
             case ListParsingState.ObjectType_TypeMembers:
+                return this.parseTypeMember();
+
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ArgumentList_AssignmentExpressions:
@@ -3371,6 +3371,8 @@ class Parser extends SlidingWindow {
                 return Strings.identifier;
 
             case ListParsingState.ObjectType_TypeMembers:
+                return Strings.call__construct__index__property_or_function_signature;
+
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.VariableDeclaration_VariableDeclarators:
             case ListParsingState.ArgumentList_AssignmentExpressions:
