@@ -3049,7 +3049,7 @@ var Parser = (function (_super) {
     Parser.prototype.parseSeparatedSyntaxListWorker = function (currentListType) {
         var items = null;
         var allowTrailingSeparator = this.allowsTrailingSeparator(currentListType);
-        var allowAutomaticSemicolonInsertion = false && this.allowsAutomaticSemicolonInsertion(currentListType);
+        var allowAutomaticSemicolonInsertion = this.allowsAutomaticSemicolonInsertion(currentListType);
         var separatorKind = this.separatorKind(currentListType);
         var lastSeparator = null;
         while(true) {

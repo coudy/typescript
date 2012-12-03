@@ -3077,7 +3077,7 @@ class Parser extends SlidingWindow {
         var items: any[] = null;
 
         var allowTrailingSeparator = this.allowsTrailingSeparator(currentListType);
-        var allowAutomaticSemicolonInsertion = false && this.allowsAutomaticSemicolonInsertion(currentListType);
+        var allowAutomaticSemicolonInsertion = this.allowsAutomaticSemicolonInsertion(currentListType);
         var separatorKind = this.separatorKind(currentListType);
 
         var lastSeparator: ISyntaxToken = null;
