@@ -2990,6 +2990,48 @@ class Parser extends SlidingWindow {
         return result;
     }
 
+    //private parseSeparatedSyntaxList(currentListType: ListParsingState): ISeparatedSyntaxList {
+    //    var savedListParsingState = this.listParsingState;
+    //    this.listParsingState |= currentListType;
+
+    //    var result = this.parseSeparatedSyntaxListWorker(currentListType);
+
+    //    this.listParsingState = savedListParsingState;
+
+    //    return result;
+    //}
+
+    // Returns true if we should abort parsing the list.
+    private abortParsingListOrMoveToNextToken(currentListType: ListParsingState): bool {
+        // Ok.  It wasn't a terminator and it wasn't the start of an item in the list. 
+        // Definitely report an error for this token.
+        this.reportUnexpectedTokenDiagnostic(currentListType);
+
+        // Now, check if the token is the end of one our parent lists, or the start of an item 
+        // in one of our parent lists.  If so, we won't want to consume the token.  We've 
+        // already reported the error, so just return to our caller so that a higher up 
+        // production can consume it.
+        for (var state = ListParsingState.LastListParsingState;
+             state >= ListParsingState.FirstListParsingState;
+             state >>= 1) {
+
+            if ((this.listParsingState & state) !== 0) {
+                if (this.isExpectedListTerminator(state) || this.isExpectedListItem(state)) {
+                    return true;
+                }
+            }
+        }
+
+        // Otherwise, if none of the lists we're in can capture this token, then we need to 
+        // unilaterally skip it.  Note: we've already reported the error.
+        var token = this.currentToken();
+        this.skippedTokens.push(token);
+
+        // Consume this token and move onto the next item in the list.
+        this.moveToNextToken();
+        return false;
+    }
+
     private parseSyntaxListWorker(currentListType: ListParsingState, processItem: (item: any) => void): ISyntaxList {
         var items: any[] = null;
 
@@ -3014,34 +3056,63 @@ class Parser extends SlidingWindow {
                 continue;
             }
 
-            // Ok.  It wasn't a terminator and it wasn't the start of an item in the list. 
-            // Definitely report an error for this token.
-            this.reportUnexpectedTokenDiagnostic(currentListType);
-
-            // Now, check if the token is the end of one our parent lists, or the start of an item 
-            // in one of our parent lists.  If so, we won't want to consume the token.  We've 
-            // already reported the error, so just return to our caller so that a higher up 
-            // production can consume it.
-            for (var state = ListParsingState.LastListParsingState;
-                 state >= ListParsingState.FirstListParsingState;
-                 state >>= 1) {
-
-                if ((this.listParsingState & state) !== 0) {
-                    if (this.isExpectedListTerminator(state) || this.isExpectedListItem(state)) {
-                        return SyntaxList.create(items);
-                    }
-                }
+            var abort = this.abortParsingListOrMoveToNextToken(currentListType);
+            if (abort) {
+                return SyntaxList.create(items);
             }
 
-            // Otherwise, if none of the lists we're in can capture this token, then we need to 
-            // unilaterally skip it.  Note: we've already reported the error.
-            var token = this.currentToken();
-            this.skippedTokens.push(token);
-
-            // Consume this token and move onto the next item in the list.
-            this.moveToNextToken();
+            // Continue parsing the list.
         }
     }
+
+    //private parseSeparatedSyntaxListWorker(currentListType: ListParsingState): ISeparatedSyntaxList {
+    //    var items: any[] = null;
+
+    //    while (true) {
+    //        // First check ifthe list is complete already.  If so, we're done.  Also, if we see an 
+    //        // EOF then definitely stop.  We'll report the error higher when our caller tries to
+    //        // consume the next token.
+    //        if (this.isExpectedListTerminator(currentListType) || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
+    //            return SyntaxList.create(items);
+    //        }
+
+    //        if (this.isExpectedListItem(currentListType)) {
+    //            var item = this.parseExpectedListItem(currentListType);
+    //            Debug.assert(item !== null);
+
+    //            items = items || [];
+    //            items.push(item);
+    //            continue;
+    //        }
+
+    //        // Ok.  It wasn't a terminator and it wasn't the start of an item in the list. 
+    //        // Definitely report an error for this token.
+    //        this.reportUnexpectedTokenDiagnostic(currentListType);
+
+    //        // Now, check if the token is the end of one our parent lists, or the start of an item 
+    //        // in one of our parent lists.  If so, we won't want to consume the token.  We've 
+    //        // already reported the error, so just return to our caller so that a higher up 
+    //        // production can consume it.
+    //        for (var state = ListParsingState.LastListParsingState;
+    //             state >= ListParsingState.FirstListParsingState;
+    //             state >>= 1) {
+
+    //            if ((this.listParsingState & state) !== 0) {
+    //                if (this.isExpectedListTerminator(state) || this.isExpectedListItem(state)) {
+    //                    return SyntaxList.create(items);
+    //                }
+    //            }
+    //        }
+
+    //        // Otherwise, if none of the lists we're in can capture this token, then we need to 
+    //        // unilaterally skip it.  Note: we've already reported the error.
+    //        var token = this.currentToken();
+    //        this.skippedTokens.push(token);
+
+    //        // Consume this token and move onto the next item in the list.
+    //        this.moveToNextToken();
+    //    }
+    //}
 
     private existingDiagnosticAtPosition(position: number): bool {
         return this.diagnostics.length > 0 &&

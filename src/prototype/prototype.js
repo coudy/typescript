@@ -3015,6 +3015,20 @@ var Parser = (function (_super) {
         this.listParsingState = savedListParsingState;
         return result;
     };
+    Parser.prototype.abortParsingListOrMoveToNextToken = function (currentListType) {
+        this.reportUnexpectedTokenDiagnostic(currentListType);
+        for(var state = ListParsingState.LastListParsingState; state >= ListParsingState.FirstListParsingState; state >>= 1) {
+            if((this.listParsingState & state) !== 0) {
+                if(this.isExpectedListTerminator(state) || this.isExpectedListItem(state)) {
+                    return true;
+                }
+            }
+        }
+        var token = this.currentToken();
+        this.skippedTokens.push(token);
+        this.moveToNextToken();
+        return false;
+    };
     Parser.prototype.parseSyntaxListWorker = function (currentListType, processItem) {
         var items = null;
         while(true) {
@@ -3031,17 +3045,10 @@ var Parser = (function (_super) {
                 }
                 continue;
             }
-            this.reportUnexpectedTokenDiagnostic(currentListType);
-            for(var state = ListParsingState.LastListParsingState; state >= ListParsingState.FirstListParsingState; state >>= 1) {
-                if((this.listParsingState & state) !== 0) {
-                    if(this.isExpectedListTerminator(state) || this.isExpectedListItem(state)) {
-                        return SyntaxList.create(items);
-                    }
-                }
+            var abort = this.abortParsingListOrMoveToNextToken(currentListType);
+            if(abort) {
+                return SyntaxList.create(items);
             }
-            var token = this.currentToken();
-            this.skippedTokens.push(token);
-            this.moveToNextToken();
         }
     };
     Parser.prototype.existingDiagnosticAtPosition = function (position) {
