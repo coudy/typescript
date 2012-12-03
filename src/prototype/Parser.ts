@@ -290,6 +290,15 @@ class Parser extends SlidingWindow {
         return this.createMissingToken(kind, SyntaxKind.None, token);
     }
 
+    // Eats the token if it is there.  Otherwise does nothing.  Will not report errors.
+    private tryEatToken(kind: SyntaxKind): ISyntaxToken {
+         if (this.currentToken().kind === kind) {
+            return this.eatToken(kind);
+        }
+
+         return null;
+    }
+
     // Eats the keyword if it is there.  Otherwise does nothing.  Will not report errors.
     private tryEatKeyword(kind: SyntaxKind): ISyntaxToken {
          if (this.currentToken().keywordKind() === kind) {
@@ -1093,10 +1102,7 @@ class Parser extends SlidingWindow {
         Debug.assert(this.currentToken().kind === SyntaxKind.IdentifierNameToken);
 
         var identifier = this.eatIdentifierToken();
-        var questionToken: ISyntaxToken = null;
-        if (this.currentToken().kind === SyntaxKind.QuestionToken) {
-            questionToken = this.eatToken(SyntaxKind.QuestionToken);
-        }
+        var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
 
         var parameterList = this.parseParameterList();
         var typeAnnotation: TypeAnnotationSyntax = null;
@@ -1111,12 +1117,8 @@ class Parser extends SlidingWindow {
     private parsePropertySignature(): PropertySignatureSyntax {
         Debug.assert(this.isPropertySignature());
 
-        var identifier = this.eatIdentifierToken();
-        
-        var questionToken: ISyntaxToken = null;
-        if (this.currentToken().kind === SyntaxKind.QuestionToken) {
-            questionToken = this.eatToken(SyntaxKind.QuestionToken);
-        }
+        var identifier = this.eatIdentifierToken();        
+        var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
 
         var typeAnnotation: TypeAnnotationSyntax = null;
         if (this.isTypeAnnotation()) {
@@ -2881,10 +2883,7 @@ class Parser extends SlidingWindow {
     }
 
     private parseParameter(): ParameterSyntax {
-        var dotDotDotToken: ISyntaxToken = null;
-        if (this.currentToken().kind === SyntaxKind.DotDotDotToken) {
-            dotDotDotToken = this.eatToken(SyntaxKind.DotDotDotToken);
-        }
+        var dotDotDotToken = this.tryEatToken(SyntaxKind.DotDotDotToken);
 
         var publicOrPrivateToken: ISyntaxToken = null;
         if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
@@ -2893,11 +2892,7 @@ class Parser extends SlidingWindow {
         }
 
         var identifier = this.eatIdentifierToken();
-
-        var questionToken: ISyntaxToken = null;
-        if (this.currentToken().kind === SyntaxKind.QuestionToken) {
-            questionToken = this.eatToken(SyntaxKind.QuestionToken);
-        }
+        var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
 
         var typeAnnotation: TypeAnnotationSyntax = null;
         if (this.isTypeAnnotation()) {

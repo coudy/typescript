@@ -1043,6 +1043,12 @@ var Parser = (function (_super) {
         }
         return this.createMissingToken(kind, 0 /* None */ , token);
     };
+    Parser.prototype.tryEatToken = function (kind) {
+        if(this.currentToken().kind === kind) {
+            return this.eatToken(kind);
+        }
+        return null;
+    };
     Parser.prototype.tryEatKeyword = function (kind) {
         if(this.currentToken().keywordKind() === kind) {
             return this.eatKeyword(kind);
@@ -1653,10 +1659,7 @@ var Parser = (function (_super) {
     Parser.prototype.parseFunctionSignature = function () {
         Debug.assert(this.currentToken().kind === 5 /* IdentifierNameToken */ );
         var identifier = this.eatIdentifierToken();
-        var questionToken = null;
-        if(this.currentToken().kind === 98 /* QuestionToken */ ) {
-            questionToken = this.eatToken(98 /* QuestionToken */ );
-        }
+        var questionToken = this.tryEatToken(98 /* QuestionToken */ );
         var parameterList = this.parseParameterList();
         var typeAnnotation = null;
         if(this.isTypeAnnotation()) {
@@ -1667,10 +1670,7 @@ var Parser = (function (_super) {
     Parser.prototype.parsePropertySignature = function () {
         Debug.assert(this.isPropertySignature());
         var identifier = this.eatIdentifierToken();
-        var questionToken = null;
-        if(this.currentToken().kind === 98 /* QuestionToken */ ) {
-            questionToken = this.eatToken(98 /* QuestionToken */ );
-        }
+        var questionToken = this.tryEatToken(98 /* QuestionToken */ );
         var typeAnnotation = null;
         if(this.isTypeAnnotation()) {
             typeAnnotation = this.parseTypeAnnotation();
@@ -2927,19 +2927,13 @@ var Parser = (function (_super) {
         return false;
     };
     Parser.prototype.parseParameter = function () {
-        var dotDotDotToken = null;
-        if(this.currentToken().kind === 70 /* DotDotDotToken */ ) {
-            dotDotDotToken = this.eatToken(70 /* DotDotDotToken */ );
-        }
+        var dotDotDotToken = this.tryEatToken(70 /* DotDotDotToken */ );
         var publicOrPrivateToken = null;
         if(this.currentToken().keywordKind() === 51 /* PublicKeyword */  || this.currentToken().keywordKind() === 49 /* PrivateKeyword */ ) {
             publicOrPrivateToken = this.eatAnyToken();
         }
         var identifier = this.eatIdentifierToken();
-        var questionToken = null;
-        if(this.currentToken().kind === 98 /* QuestionToken */ ) {
-            questionToken = this.eatToken(98 /* QuestionToken */ );
-        }
+        var questionToken = this.tryEatToken(98 /* QuestionToken */ );
         var typeAnnotation = null;
         if(this.isTypeAnnotation()) {
             typeAnnotation = this.parseTypeAnnotation();
