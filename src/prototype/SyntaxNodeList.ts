@@ -1,7 +1,7 @@
 ///<reference path='References.ts' />
 
-class SyntaxNodeList {
-    public static toJSON(list: ISyntaxNodeList) {
+class SyntaxList {
+    public static toJSON(list: ISyntaxList) {
         var result = [];
 
         for (var i = 0; i < list.count(); i++) {
@@ -11,7 +11,7 @@ class SyntaxNodeList {
         return result;
     }
 
-    public static empty: ISyntaxNodeList = {
+    public static empty: ISyntaxList = {
         toJSON: (key) => [],
 
         count: () => 0,
@@ -21,14 +21,14 @@ class SyntaxNodeList {
         }
     };
 
-    public static create(nodes: SyntaxNode[]): ISyntaxNodeList {
+    public static create(nodes: SyntaxNode[]): ISyntaxList {
         if (nodes === null || nodes.length === 0) {
-            return SyntaxNodeList.empty;
+            return SyntaxList.empty;
         }
 
         if (nodes.length === 1) {
             var item = nodes[0];
-            var list: ISyntaxNodeList;
+            var list: ISyntaxList;
             list = {
                 toJSON: (key) => toJSON(list),
                 count: () => 1,

@@ -1,6 +1,6 @@
 ///<reference path='References.ts' />
 
-interface ISyntaxNodeList/*<T>*/ {
+interface ISyntaxList/*<T>*/ {
     count(): number;
     syntaxNodeAt(index: number): SyntaxNode;
 }

@@ -725,7 +725,7 @@ class Parser extends SlidingWindow {
         }
 
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
-        var classElements: ISyntaxNodeList = SyntaxNodeList.empty;
+        var classElements: ISyntaxList = SyntaxList.empty;
 
         if (!openBraceToken.isMissing()) {
             classElements = this.parseSyntaxNodeList(ListParsingState.ClassDeclaration_ClassElements);
@@ -1023,7 +1023,7 @@ class Parser extends SlidingWindow {
 
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
-        var moduleElements: ISyntaxNodeList = SyntaxNodeList.empty;
+        var moduleElements: ISyntaxList = SyntaxList.empty;
         if (!openBraceToken.isMissing()) {
             moduleElements = this.parseSyntaxNodeList(ListParsingState.ModuleDeclaration_ModuleElements);
         }
@@ -1648,7 +1648,7 @@ class Parser extends SlidingWindow {
 
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
-        var switchClauses: ISyntaxNodeList = SyntaxNodeList.empty;
+        var switchClauses: ISyntaxList = SyntaxList.empty;
         if (!openBraceToken.isMissing()) {
             switchClauses = this.parseSyntaxNodeList(ListParsingState.SwitchStatement_SwitchClauses);
         }
@@ -2747,7 +2747,7 @@ class Parser extends SlidingWindow {
     private parseBlock(allowFunctionDeclaration: bool): BlockSyntax {
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
-        var statements: ISyntaxNodeList = SyntaxNodeList.empty;
+        var statements: ISyntaxList = SyntaxList.empty;
 
         if (!openBraceToken.isMissing()) {
             var savedIsInStrictMode = this.isInStrictMode;
@@ -2979,7 +2979,7 @@ class Parser extends SlidingWindow {
         return new ParameterSyntax(dotDotDotToken, publicOrPrivateToken, identifier, questionToken, typeAnnotation, equalsValueClause);
     }
 
-    private parseSyntaxNodeList(currentListType: ListParsingState, processItem: (item: any) => void = null): ISyntaxNodeList {
+    private parseSyntaxNodeList(currentListType: ListParsingState, processItem: (item: any) => void = null): ISyntaxList {
         var savedListParsingState = this.listParsingState;
         this.listParsingState |= currentListType;
 
@@ -2990,7 +2990,7 @@ class Parser extends SlidingWindow {
         return result;
     }
 
-    private parseSyntaxNodeListWorker(currentListType: ListParsingState, processItem: (item: any) => void): ISyntaxNodeList {
+    private parseSyntaxNodeListWorker(currentListType: ListParsingState, processItem: (item: any) => void): ISyntaxList {
         var items: any[] = null;
 
         while (true) {
@@ -2998,7 +2998,7 @@ class Parser extends SlidingWindow {
             // EOF then definitely stop.  We'll report the error higher when our caller tries to
             // consume the next token.
             if (this.isExpectedListTerminator(currentListType) || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
-                return SyntaxNodeList.create(items);
+                return SyntaxList.create(items);
             }
 
             if (this.isExpectedListItem(currentListType)) {
@@ -3028,7 +3028,7 @@ class Parser extends SlidingWindow {
 
                 if ((this.listParsingState & state) !== 0) {
                     if (this.isExpectedListTerminator(state) || this.isExpectedListItem(state)) {
-                        return SyntaxNodeList.create(items);
+                        return SyntaxList.create(items);
                     }
                 }
             }

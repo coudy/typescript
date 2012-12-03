@@ -1,10 +1,10 @@
 ///<reference path='References.ts' />
 
 class SourceUnitSyntax extends SyntaxNode {
-    private _moduleElements: ISyntaxNodeList;
+    private _moduleElements: ISyntaxList;
     private _endOfFileToken: ISyntaxToken;
 
-    constructor (moduleElements: ISyntaxNodeList, endOfFileToken: ISyntaxToken) {
+    constructor (moduleElements: ISyntaxList, endOfFileToken: ISyntaxToken) {
         super();
 
         //if (moduleElements === null) {
@@ -23,7 +23,7 @@ class SourceUnitSyntax extends SyntaxNode {
         return SyntaxKind.SourceUnit;
     }
 
-    public moduleElements(): ISyntaxNodeList {
+    public moduleElements(): ISyntaxList {
         return this._moduleElements;
     }
 
@@ -185,7 +185,7 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
     private _extendsClause: ExtendsClauseSyntax;
     private _implementsClause: ImplementsClauseSyntax;
     private _openBraceToken: ISyntaxToken;
-    private _classElements: ISyntaxNodeList;
+    private _classElements: ISyntaxList;
     private _closeBraceToken: ISyntaxToken;
 
     constructor(exportKeyword: ISyntaxToken,
@@ -195,7 +195,7 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
                 extendsClause: ExtendsClauseSyntax,
                 implementsClause: ImplementsClauseSyntax,
                 openBraceToken: ISyntaxToken,
-                classElements: ISyntaxNodeList,
+                classElements: ISyntaxList,
                 closeBraceToken: ISyntaxToken) {
         super();
 
@@ -270,7 +270,7 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
         return this._openBraceToken;
     }
 
-    public classElements(): ISyntaxNodeList {
+    public classElements(): ISyntaxList {
         return this._classElements;
     }
 
@@ -414,7 +414,7 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
     private _moduleName: NameSyntax;
     private _stringLiteral: ISyntaxToken;
     private _openBraceToken: ISyntaxToken;
-    private _moduleElements: ISyntaxNodeList;
+    private _moduleElements: ISyntaxList;
     private _closeBraceToken: ISyntaxToken;
 
     constructor (exportKeyword: ISyntaxToken,
@@ -423,7 +423,7 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
                  moduleName: NameSyntax,
                  stringLiteral: ISyntaxToken,
                  openBraceToken: ISyntaxToken,
-                 moduleElements: ISyntaxNodeList,
+                 moduleElements: ISyntaxList,
                  closeBraceToken: ISyntaxToken) {
         super();
 
@@ -483,7 +483,7 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
         return this._openBraceToken;
     }
 
-    public moduleElements(): ISyntaxNodeList {
+    public moduleElements(): ISyntaxList {
         return this._moduleElements;
     }
 
@@ -1288,11 +1288,11 @@ class TypeAnnotationSyntax extends SyntaxNode {
 
 class BlockSyntax extends StatementSyntax {
     private _openBraceToken: ISyntaxToken;
-    private _statements: ISyntaxNodeList;
+    private _statements: ISyntaxList;
     private _closeBraceToken: ISyntaxToken;
 
     constructor (openBraceToken: ISyntaxToken,
-                 statements: ISyntaxNodeList,
+                 statements: ISyntaxList,
                  closeBraceToken: ISyntaxToken) {
         super();
 
@@ -1321,7 +1321,7 @@ class BlockSyntax extends StatementSyntax {
         return this._openBraceToken;
     }
 
-    public statements(): ISyntaxNodeList {
+    public statements(): ISyntaxList {
         return this._statements;
     }
 
@@ -2408,7 +2408,7 @@ class SwitchStatementSyntax extends StatementSyntax {
     private _expression: ExpressionSyntax;
     private _closeParenToken: ISyntaxToken;
     private _openBraceToken: ISyntaxToken;
-    private _caseClauses: ISyntaxNodeList;
+    private _caseClauses: ISyntaxList;
     private _closeBraceToken: ISyntaxToken;
 
     constructor(switchKeyword: ISyntaxToken,
@@ -2416,7 +2416,7 @@ class SwitchStatementSyntax extends StatementSyntax {
                 expression: ExpressionSyntax,
                 closeParenToken: ISyntaxToken,
                 openBraceToken: ISyntaxToken,
-                caseClauses: ISyntaxNodeList,
+                caseClauses: ISyntaxList,
                 closeBraceToken: ISyntaxToken) {
         super();
 
@@ -2481,7 +2481,7 @@ class SwitchStatementSyntax extends StatementSyntax {
         return this._openBraceToken;
     }
 
-    public caseClauses(): ISyntaxNodeList {
+    public caseClauses(): ISyntaxList {
         return this._caseClauses;
     }
 
@@ -2492,10 +2492,10 @@ class SwitchStatementSyntax extends StatementSyntax {
 
 class SwitchClauseSyntax extends SyntaxNode {
     private _colonToken: ISyntaxToken;
-    private _statements: ISyntaxNodeList;
+    private _statements: ISyntaxList;
 
     constructor(colonToken: ISyntaxToken,
-                statements: ISyntaxNodeList) {
+                statements: ISyntaxList) {
         super();
 
         //if (colonToken.kind !== SyntaxKind.ColonToken) {
@@ -2514,7 +2514,7 @@ class SwitchClauseSyntax extends SyntaxNode {
         return this._colonToken;
     }
 
-    public statements(): ISyntaxNodeList {
+    public statements(): ISyntaxList {
         return this._statements;
     }
 }
@@ -2526,7 +2526,7 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
     constructor(caseKeyword: ISyntaxToken,
                 expression: ExpressionSyntax,
                 colonToken: ISyntaxToken,
-                statements: ISyntaxNodeList) {
+                statements: ISyntaxList) {
         super(colonToken, statements);
 
         //if (caseKeyword.keywordKind() !== SyntaxKind.CaseKeyword) {
@@ -2559,7 +2559,7 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
 
     constructor(defaultKeyword: ISyntaxToken,
                 colonToken: ISyntaxToken,
-                statements: ISyntaxNodeList) {
+                statements: ISyntaxList) {
         super(colonToken, statements);
 
         //if (defaultKeyword.keywordKind() !== SyntaxKind.DefaultKeyword) {

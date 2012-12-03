@@ -1389,7 +1389,7 @@ var Parser = (function (_super) {
             implementsClause = this.parseImplementsClause();
         }
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
-        var classElements = SyntaxNodeList.empty;
+        var classElements = SyntaxList.empty;
         if(!openBraceToken.isMissing()) {
             classElements = this.parseSyntaxNodeList(ListParsingState.ClassDeclaration_ClassElements);
         }
@@ -1606,7 +1606,7 @@ var Parser = (function (_super) {
             }
         }
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
-        var moduleElements = SyntaxNodeList.empty;
+        var moduleElements = SyntaxList.empty;
         if(!openBraceToken.isMissing()) {
             moduleElements = this.parseSyntaxNodeList(ListParsingState.ModuleDeclaration_ModuleElements);
         }
@@ -2051,7 +2051,7 @@ var Parser = (function (_super) {
         var expression = this.parseExpression(true);
         var closeParenToken = this.eatToken(66 /* CloseParenToken */ );
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
-        var switchClauses = SyntaxNodeList.empty;
+        var switchClauses = SyntaxList.empty;
         if(!openBraceToken.isMissing()) {
             switchClauses = this.parseSyntaxNodeList(ListParsingState.SwitchStatement_SwitchClauses);
         }
@@ -2830,7 +2830,7 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseBlock = function (allowFunctionDeclaration) {
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
-        var statements = SyntaxNodeList.empty;
+        var statements = SyntaxList.empty;
         if(!openBraceToken.isMissing()) {
             var savedIsInStrictMode = this.isInStrictMode;
             var listParsingMode = allowFunctionDeclaration ? ListParsingState.Block_StatementsWithFunctionDeclarations : ListParsingState.Block_StatementsWithoutFunctionDeclarations;
@@ -3019,7 +3019,7 @@ var Parser = (function (_super) {
         var items = null;
         while(true) {
             if(this.isExpectedListTerminator(currentListType) || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
-                return SyntaxNodeList.create(items);
+                return SyntaxList.create(items);
             }
             if(this.isExpectedListItem(currentListType)) {
                 var item = this.parseExpectedListItem(currentListType);
@@ -3035,7 +3035,7 @@ var Parser = (function (_super) {
             for(var state = ListParsingState.LastListParsingState; state >= ListParsingState.FirstListParsingState; state >>= 1) {
                 if((this.listParsingState & state) !== 0) {
                     if(this.isExpectedListTerminator(state) || this.isExpectedListItem(state)) {
-                        return SyntaxNodeList.create(items);
+                        return SyntaxList.create(items);
                     }
                 }
             }
@@ -5395,16 +5395,16 @@ var SyntaxNode = (function () {
     };
     return SyntaxNode;
 })();
-var SyntaxNodeList = (function () {
-    function SyntaxNodeList() { }
-    SyntaxNodeList.toJSON = function toJSON(list) {
+var SyntaxList = (function () {
+    function SyntaxList() { }
+    SyntaxList.toJSON = function toJSON(list) {
         var result = [];
         for(var i = 0; i < list.count(); i++) {
             result.push(list.syntaxNodeAt(i));
         }
         return result;
     }
-    SyntaxNodeList.empty = {
+    SyntaxList.empty = {
         toJSON: function (key) {
             return [];
         },
@@ -5415,16 +5415,16 @@ var SyntaxNodeList = (function () {
             throw Errors.argumentOutOfRange("index");
         }
     };
-    SyntaxNodeList.create = function create(nodes) {
+    SyntaxList.create = function create(nodes) {
         if(nodes === null || nodes.length === 0) {
-            return SyntaxNodeList.empty;
+            return SyntaxList.empty;
         }
         if(nodes.length === 1) {
             var item = nodes[0];
             var list;
             list = {
                 toJSON: function (key) {
-                    return SyntaxNodeList.toJSON(list);
+                    return SyntaxList.toJSON(list);
                 },
                 count: function () {
                     return 1;
@@ -5441,7 +5441,7 @@ var SyntaxNodeList = (function () {
         var list;
         list = {
             toJSON: function (key) {
-                return SyntaxNodeList.toJSON(list);
+                return SyntaxList.toJSON(list);
             },
             count: function () {
                 return nodes.length;
@@ -5455,7 +5455,7 @@ var SyntaxNodeList = (function () {
         };
         return list;
     }
-    return SyntaxNodeList;
+    return SyntaxList;
 })();
 var SourceUnitSyntax = (function (_super) {
     __extends(SourceUnitSyntax, _super);
