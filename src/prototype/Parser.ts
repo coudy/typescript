@@ -2445,9 +2445,6 @@ class Parser extends SlidingWindow {
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
         var propertyAssignments: any[] = null;
 
-        //var savedListParsingState = this.listParsingState;
-        //this.listParsingState |= ListParsingState.ObjectLiteralExpression_PropertyAssignments;
-
         while (true) {
             if (this.currentToken().kind === SyntaxKind.CloseBraceToken || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
                 break;
@@ -2469,8 +2466,6 @@ class Parser extends SlidingWindow {
             // TODO: error recovery
             break;
         }
-
-        //this.listParsingState = savedListParsingState;
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
         return new ObjectLiteralExpressionSyntax(
@@ -2569,9 +2564,6 @@ class Parser extends SlidingWindow {
 
         var expressions: any[] = null;
 
-        //var savedListParsingState = this.listParsingState;
-        //this.listParsingState |= ListParsingState.ArrayLiteralExpression_AssignmentExpressions;
-
         var addOmittedExpression = true;
         while (true) {
             var currentTokenKind = this.currentToken().kind;
@@ -2606,8 +2598,6 @@ class Parser extends SlidingWindow {
                 break;
             }
         }
-
-        //this.listParsingState = savedListParsingState;
 
         var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
 
@@ -2661,9 +2651,6 @@ class Parser extends SlidingWindow {
         var parameters: any[] = null;
 
         if (!openParenToken.isMissing()) {
-            //var savedListParsingState = this.listParsingState;
-            //this.listParsingState |= ListParsingState.ParameterList_Parameters;
-
             if (this.currentToken().kind !== SyntaxKind.CloseParenToken && this.currentToken().kind !== SyntaxKind.EndOfFileToken) {
                 var parameter = this.parseParameter();
                 parameters = [];
@@ -2689,8 +2676,6 @@ class Parser extends SlidingWindow {
                     break;
                 }
             }
-
-            //this.listParsingState = savedListParsingState;
         }
 
         var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
