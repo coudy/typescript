@@ -1236,10 +1236,7 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseSourceUnit = function () {
         var savedIsInStrictMode = this.isInStrictMode;
-        var savedListParsingState = this.listParsingState;
-        this.listParsingState |= ListParsingState.SourceUnit_ModuleElements;
         var moduleElements = this.parseSyntaxNodeList(ListParsingState.SourceUnit_ModuleElements, this.processModuleElement);
-        this.listParsingState = savedListParsingState;
         this.isInStrictMode = savedIsInStrictMode;
         return new SourceUnitSyntax(moduleElements, this.currentToken());
     };
@@ -3085,6 +3082,13 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseSyntaxNodeList = function (currentListType, processItem) {
         if (typeof processItem === "undefined") { processItem = null; }
+        var savedListParsingState = this.listParsingState;
+        this.listParsingState |= currentListType;
+        var result = this.parseSyntaxNodeListWorker(currentListType, processItem);
+        this.listParsingState = savedListParsingState;
+        return result;
+    };
+    Parser.prototype.parseSyntaxNodeListWorker = function (currentListType, processItem) {
         var items = null;
         while(true) {
             if(this.isExpectedListTerminator(currentListType) || this.currentToken().kind === 114 /* EndOfFileToken */ ) {

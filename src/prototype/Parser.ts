@@ -540,10 +540,7 @@ class Parser extends SlidingWindow {
         // loop ends.  However, for sake of symmetry and consistancy we do this.
         var savedIsInStrictMode = this.isInStrictMode;
 
-        var savedListParsingState = this.listParsingState;
-        this.listParsingState |= ListParsingState.SourceUnit_ModuleElements;
         var moduleElements = this.parseSyntaxNodeList(ListParsingState.SourceUnit_ModuleElements, this.processModuleElement);
-        this.listParsingState = savedListParsingState;
 
         this.isInStrictMode = savedIsInStrictMode;
 
@@ -3118,6 +3115,17 @@ class Parser extends SlidingWindow {
     }
 
     private parseSyntaxNodeList(currentListType: ListParsingState, processItem: (item: any) => void = null): ISyntaxNodeList {
+        var savedListParsingState = this.listParsingState;
+        this.listParsingState |= currentListType;
+
+        var result = this.parseSyntaxNodeListWorker(currentListType, processItem);
+
+        this.listParsingState = savedListParsingState;
+
+        return result;
+    }
+
+    private parseSyntaxNodeListWorker(currentListType: ListParsingState, processItem: (item: any) => void): ISyntaxNodeList {
         var items: any[] = null;
 
         while (true) {
