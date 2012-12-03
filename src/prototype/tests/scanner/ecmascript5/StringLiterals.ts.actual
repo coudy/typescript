@@ -78,13 +78,29 @@
         "fullWidth": 35,
         "text": "\"Should error because of newline.",
         "hasTrailingTrivia": true,
-        "hasTrailingNewLineTrivia": true
+        "hasTrailingNewLineTrivia": true,
+        "diagnostics": [
+            {
+                "_diagnosticCode": 2,
+                "arguments": [],
+                "_position": 108,
+                "_width": 1
+            }
+        ]
     },
     {
         "kind": "StringLiteral",
         "start": 110,
         "width": 37,
-        "text": "\"Should error because of end of file."
+        "text": "\"Should error because of end of file.",
+        "diagnostics": [
+            {
+                "_diagnosticCode": 2,
+                "arguments": [],
+                "_position": 147,
+                "_width": 1
+            }
+        ]
     },
     {
         "kind": "EndOfFileToken",

@@ -109,7 +109,10 @@ enum ListParsingState {
     ArgumentList_AssignmentExpressions = 1 << 10,
     ObjectLiteralExpression_PropertyAssignments = 1 << 11,
     ArrayLiteralExpression_AssignmentExpressions = 1 << 12,
-    ParameterList_Parameters = 1 << 13
+    ParameterList_Parameters = 1 << 13,
+
+    FirstListParsingState = SourceUnit_ModuleElements,
+    LastListParsingState = ParameterList_Parameters,
 }
 
 class Parser extends SlidingWindow {
@@ -138,7 +141,7 @@ class Parser extends SlidingWindow {
     private isInStrictMode: bool;
 
     private skippedTokens: ISyntaxToken[] = [];
-    private diagnostics: Diagnostic[] = [];
+    private diagnostics: SyntaxDiagnostic[] = [];
     private listParsingState: ListParsingState = 0;
 
     constructor(
@@ -3129,20 +3132,43 @@ class Parser extends SlidingWindow {
                 continue;
             }
 
-            // Ok.  It wasn't a terminator and it wasn't the start of an item in the list.  We'll 
-            // Need to definitely report an error for this token.  We'll decide which later on 
-            // below.
+            // Ok.  It wasn't a terminator and it wasn't the start of an item in the list. 
+            // Definitely report an error for this token.
+            
+            // Except: if there was already an unexpected token reported at this position.  If so,
+            // don't report another one.
+            if (this.diagnostics.length > 0) {
+                var lastDiagnostic = this.diagnostics[this.diagnostics.length - 1];
+                var token = this.currentToken();
+                var position = token.start();
+                
+                if (lastDiagnostic.diagnosticCode() !== DiagnosticCode.Unexpected_token__0_expected ||
+                    lastDiagnostic.position() !== position) {
+
+                    var diagnostic = new SyntaxDiagnostic(position, token.width(), DiagnosticCode.Unexpected_token__0_expected, this.getExpectedListElementType(currentListType));
+                    this.diagnostics.push(diagnostic);
+                }
+            }
 
             // Now, check if the token is the end of one our parent lists, or the start of an item 
-            // in one of our parent lists.  If so, we won't want to consume the token.  We'll simply
-            // just report that we expected a token and did not find it.
+            // in one of our parent lists.  If so, we won't want to consume the token.  We've 
+            // already reported the error, so just return to our caller so that a higher up 
+            // production can consume it.
+            for (var state = ListParsingState.LastListParsingState;
+                 state >= ListParsingState.FirstListParsingState;
+                 state <<= 1) {
+
+                if ((this.listParsingState & state) !== 0) {
+                    if (this.isExpectedListTerminator(state) || this.isExpectedListItem(state)) {
+                        return SyntaxNodeList.create(items);
+                    }
+                }
+            }
 
             // Otherwise, if none of the lists we're in can capture this token, then we need to 
-            // unilaterally skip it and report an error that it was unexpected.
+            // unilaterally skip it.  Note: we've already reported the error.
             var token = this.currentToken();
-            var diagnostic = new Diagnostic(
-                DiagnosticCode.Unexpected_token__0_expected,
-                this.getExpectedListElementType(currentListType));
+            this.skippedTokens.push(token);
 
             // Consume this token and move onto the next item in the list.
             this.moveToNextToken();

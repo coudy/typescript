@@ -933,6 +933,8 @@ var ListParsingState;
     ListParsingState.ObjectLiteralExpression_PropertyAssignments = 1 << 11;
     ListParsingState.ArrayLiteralExpression_AssignmentExpressions = 1 << 12;
     ListParsingState.ParameterList_Parameters = 1 << 13;
+    ListParsingState.FirstListParsingState = ListParsingState.SourceUnit_ModuleElements;
+    ListParsingState.LastListParsingState = ListParsingState.ParameterList_Parameters;
 })(ListParsingState || (ListParsingState = {}));
 var Parser = (function (_super) {
     __extends(Parser, _super);
@@ -3082,8 +3084,24 @@ var Parser = (function (_super) {
                 }
                 continue;
             }
+            if(this.diagnostics.length > 0) {
+                var lastDiagnostic = this.diagnostics[this.diagnostics.length - 1];
+                var token = this.currentToken();
+                var position = token.start();
+                if(lastDiagnostic.diagnosticCode() !== 8 /* Unexpected_token__0_expected */  || lastDiagnostic.position() !== position) {
+                    var diagnostic = new SyntaxDiagnostic(position, token.width(), 8 /* Unexpected_token__0_expected */ , this.getExpectedListElementType(currentListType));
+                    this.diagnostics.push(diagnostic);
+                }
+            }
+            for(var state = ListParsingState.LastListParsingState; state >= ListParsingState.FirstListParsingState; state <<= 1) {
+                if((this.listParsingState & state) !== 0) {
+                    if(this.isExpectedListTerminator(state) || this.isExpectedListItem(state)) {
+                        return SyntaxNodeList.create(items);
+                    }
+                }
+            }
             var token = this.currentToken();
-            var diagnostic = new Diagnostic(8 /* Unexpected_token__0_expected */ , this.getExpectedListElementType(currentListType));
+            this.skippedTokens.push(token);
             this.moveToNextToken();
         }
     };
@@ -3861,10 +3879,11 @@ var Scanner = (function (_super) {
         }
     };
     Scanner.prototype.scanDefaultCharacter = function (character) {
+        var position = this.absoluteIndex();
         this.moveToNextItem();
         this.tokenInfo.Text = String.fromCharCode(character);
         this.tokenInfo.Kind = 113 /* ErrorToken */ ;
-        this.addSimpleDiagnosticInfo(1 /* Unexpected_character_0 */ , this.tokenInfo.Text);
+        this.addSimpleDiagnosticInfo(position, 1, 1 /* Unexpected_character_0 */ , this.tokenInfo.Text);
     };
     Scanner.prototype.skipEscapeSequence = function () {
         Debug.assert(this.currentItem() === 92 /* backslash */ );
@@ -3952,7 +3971,7 @@ var Scanner = (function (_super) {
                     break;
                 } else {
                     if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
-                        this.addSimpleDiagnosticInfo(2 /* Missing_closing_quote_character */ );
+                        this.addSimpleDiagnosticInfo(this.absoluteIndex(), 1, 2 /* Missing_closing_quote_character */ );
                         break;
                     } else {
                         this.moveToNextItem();
@@ -4065,21 +4084,18 @@ var Scanner = (function (_super) {
             return StringUtilities.fromCharCodeArray(this.window.slice(offset, offset + length));
         }
     };
-    Scanner.prototype.addSimpleDiagnosticInfo = function (code) {
+    Scanner.prototype.addSimpleDiagnosticInfo = function (position, width, code) {
         var args = [];
-        for (var _i = 0; _i < (arguments.length - 1); _i++) {
-            args[_i] = arguments[_i + 1];
+        for (var _i = 0; _i < (arguments.length - 3); _i++) {
+            args[_i] = arguments[_i + 3];
         }
-        this.addDiagnosticInfo(this.makeSimpleDiagnosticInfo(code, args));
+        this.addDiagnosticInfo(new SyntaxDiagnostic(position, width, code, args));
     };
     Scanner.prototype.addDiagnosticInfo = function (error) {
         if(this.errors === null) {
             this.errors = [];
         }
         this.errors.push(error);
-    };
-    Scanner.prototype.makeSimpleDiagnosticInfo = function (code, args) {
-        return SyntaxDiagnostic.create(code, args);
     };
     Scanner.prototype.createIllegalEscapeDiagnostic = function (start, end) {
         return new SyntaxDiagnostic(start, end - start, 0 /* Unrecognized_escape_sequence */ );
@@ -4404,18 +4420,16 @@ var StringUtilities = (function () {
 })();
 var SyntaxDiagnostic = (function (_super) {
     __extends(SyntaxDiagnostic, _super);
-    function SyntaxDiagnostic(offset, width, code) {
+    function SyntaxDiagnostic(position, width, code) {
         var args = [];
         for (var _i = 0; _i < (arguments.length - 3); _i++) {
             args[_i] = arguments[_i + 3];
         }
         _super.call(this, code, args);
-        this._offset = 0;
-        this._width = 0;
         if(width < 0) {
             throw Errors.argumentOutOfRange("width");
         }
-        this._offset = offset;
+        this._position = position;
         this._width = width;
     }
     SyntaxDiagnostic.create = function create(code) {
@@ -4425,6 +4439,12 @@ var SyntaxDiagnostic = (function (_super) {
         }
         return new SyntaxDiagnostic(0, 0, code, args);
     }
+    SyntaxDiagnostic.prototype.position = function () {
+        return this._position;
+    };
+    SyntaxDiagnostic.prototype.width = function () {
+        return this._width;
+    };
     return SyntaxDiagnostic;
 })(Diagnostic);
 var SyntaxKind;

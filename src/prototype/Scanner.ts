@@ -800,10 +800,11 @@ class Scanner extends SlidingWindow {
     }
 
     private scanDefaultCharacter(character: number): void {
+        var position = this.absoluteIndex();
         this.moveToNextItem();
         this.tokenInfo.Text = String.fromCharCode(character);
         this.tokenInfo.Kind = SyntaxKind.ErrorToken;
-        this.addSimpleDiagnosticInfo(DiagnosticCode.Unexpected_character_0, this.tokenInfo.Text);
+        this.addSimpleDiagnosticInfo(position, 1, DiagnosticCode.Unexpected_character_0, this.tokenInfo.Text);
     }
 
     private skipEscapeSequence(): void {
@@ -901,7 +902,7 @@ class Scanner extends SlidingWindow {
                 break;
             }
             else if (this.isNewLineCharacter(ch) || ch === CharacterCodes.nullCharacter) {
-                this.addSimpleDiagnosticInfo(DiagnosticCode.Missing_closing_quote_character);
+                this.addSimpleDiagnosticInfo(this.absoluteIndex(), 1, DiagnosticCode.Missing_closing_quote_character);
                 break;
             }
             else {
@@ -1042,8 +1043,8 @@ class Scanner extends SlidingWindow {
         }
     }
 
-    private addSimpleDiagnosticInfo(code: DiagnosticCode, ...args: any[]): void {
-        this.addDiagnosticInfo(this.makeSimpleDiagnosticInfo(code, args));
+    private addSimpleDiagnosticInfo(position: number, width: number, code: DiagnosticCode, ...args: any[]): void {
+        this.addDiagnosticInfo(new SyntaxDiagnostic(position, width, code, args));
     }
 
     private addDiagnosticInfo(error: SyntaxDiagnostic): void {
@@ -1054,9 +1055,9 @@ class Scanner extends SlidingWindow {
         this.errors.push(error);
     }
 
-    private makeSimpleDiagnosticInfo(code: DiagnosticCode, args: any[]): SyntaxDiagnostic {
-        return SyntaxDiagnostic.create(code, args);
-    }
+    //private makeSimpleDiagnosticInfo(position: number, widthcode: DiagnosticCode, args: any[]): SyntaxDiagnostic {
+    //    return SyntaxDiagnostic.create(code, args);
+    //}
 
     private createIllegalEscapeDiagnostic(start: number, end: number): SyntaxDiagnostic {
         return new SyntaxDiagnostic(start, end - start,
