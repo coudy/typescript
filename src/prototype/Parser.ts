@@ -1186,6 +1186,21 @@ class Parser extends SlidingWindow {
     }
 
     private isStatement(allowFunctionDeclaration: bool): bool {
+        switch (this.currentToken().keywordKind()) {
+            case SyntaxKind.PublicKeyword:
+            case SyntaxKind.PrivateKeyword:
+            case SyntaxKind.StaticKeyword:
+                // None of hte above are actually keywords.  And they might show up in a real
+                // statement (i.e. "public();").  However, if we can determine that they're
+                // parsable as a ClassElement then don't consider them a statement.  Note:
+                //
+                // It should not be possible for any class element that starts with public, private
+                // or static to be parsed as a statement.  So this is save to do.
+                if (this.isClassElement()) {
+                    return false;
+                }
+        }
+
         return this.isVariableStatement() ||
                this.isLabeledStatement() ||
                (allowFunctionDeclaration && this.isFunctionDeclaration()) ||

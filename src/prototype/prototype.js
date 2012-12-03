@@ -1717,6 +1717,16 @@ var Parser = (function (_super) {
         return new ImplementsClauseSyntax(implementsKeyword, typeNames);
     };
     Parser.prototype.isStatement = function (allowFunctionDeclaration) {
+        switch(this.currentToken().keywordKind()) {
+            case 51 /* PublicKeyword */ :
+            case 49 /* PrivateKeyword */ :
+            case 52 /* StaticKeyword */ : {
+                if(this.isClassElement()) {
+                    return false;
+                }
+
+            }
+        }
         return this.isVariableStatement() || this.isLabeledStatement() || (allowFunctionDeclaration && this.isFunctionDeclaration()) || this.isIfStatement() || this.isBlock() || this.isExpressionStatement() || this.isReturnStatement() || this.isSwitchStatement() || this.isThrowStatement() || this.isBreakStatement() || this.isContinueStatement() || this.isForOrForInStatement() || this.isEmptyStatement() || this.isWhileStatement() || this.isDoStatement() || this.isTryStatement();
     };
     Parser.prototype.parseStatement = function (allowFunctionDeclaration) {
