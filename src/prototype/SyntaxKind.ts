@@ -179,6 +179,7 @@ enum SyntaxKind {
     LabeledStatement,
     DoStatement,
     DebuggerStatement,
+    WithStatement,
 
     // Expressions
     PlusExpression,

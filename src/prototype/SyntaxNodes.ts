@@ -2978,6 +2978,72 @@ class WhileStatementSyntax extends IterationStatementSyntax {
     }
 }
 
+class WithStatementSyntax extends StatementSyntax {
+    private _withKeyword: ISyntaxToken;
+    private _openParenToken: ISyntaxToken;
+    private _condition: ExpressionSyntax;
+    private _closeParenToken: ISyntaxToken;
+    private _statement: StatementSyntax;
+
+    constructor(withKeyword: ISyntaxToken,
+                openParenToken: ISyntaxToken,
+                condition: ExpressionSyntax,
+                closeParenToken: ISyntaxToken,
+                statement: StatementSyntax) {
+        super();
+
+        //if (withKeyword.keywordKind() !== SyntaxKind.withKeyword) {
+        //    throw Errors.argument("withKeyword");
+        //}
+
+        //if (openParenToken.kind !== SyntaxKind.OpenParenToken) {
+        //    throw Errors.argument("openParenToken");
+        //}
+
+        //if (condition === null) {
+        //    throw Errors.argumentNull("condition");
+        //}
+
+        //if (closeParenToken.kind !== SyntaxKind.CloseParenToken) {
+        //    throw Errors.argument("closeParenToken");
+        //}
+
+        //if (statement === null) {
+        //    throw Errors.argumentNull("statement");
+        //}
+
+        this._withKeyword = withKeyword;
+        this._openParenToken = openParenToken;
+        this._condition = condition;
+        this._closeParenToken = closeParenToken;
+        this._statement = statement;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.WithStatement;
+    }
+
+    public withKeyword(): ISyntaxToken {
+        return this._withKeyword;
+    }
+
+    public openParenToken(): ISyntaxToken {
+        return this._openParenToken;
+    }
+
+    public condition(): ExpressionSyntax {
+        return this._condition;
+    }
+
+    public closeParenToken(): ISyntaxToken {
+        return this._closeParenToken;
+    }
+
+    public statement(): StatementSyntax {
+        return this._statement;
+    }
+}
+
 class EnumDeclarationSyntax extends ModuleElementSyntax {
     private _exportKeyword: ISyntaxToken;
     private _enumKeyword: ISyntaxToken;

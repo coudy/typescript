@@ -1232,6 +1232,7 @@ class Parser extends SlidingWindow {
                this.isForOrForInStatement() ||
                this.isEmptyStatement() ||
                this.isWhileStatement() ||
+               this.isWithStatement() ||
                this.isDoStatement() ||
                this.isTryStatement() ||
                this.isDebuggerStatement();
@@ -1279,6 +1280,9 @@ class Parser extends SlidingWindow {
         }
         else if (this.isWhileStatement()) {
             return this.parseWhileStatement();
+        }
+        else if (this.isWithStatement()) {
+            return this.parseWithStatement();
         }
         else if (this.isDoStatement()) {
             return this.parseDoStatement();
@@ -1392,6 +1396,22 @@ class Parser extends SlidingWindow {
         var block = this.parseBlock(/*allowFunctionDeclaration:*/ false);
 
         return new FinallyClauseSyntax(finallyKeyword, block);
+    }
+
+    private isWithStatement(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.WithKeyword;
+    }
+
+    private parseWithStatement(): WithStatementSyntax {
+        Debug.assert(this.isWithStatement());
+
+        var withKeyword = this.eatKeyword(SyntaxKind.WithKeyword);
+        var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
+        var condition = this.parseExpression(/*allowIn:*/ true);
+        var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
+        var statement = this.parseStatement(/*allowFunctionDeclaration:*/ false);
+
+        return new WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement);
     }
 
     private isWhileStatement(): bool {
