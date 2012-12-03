@@ -354,11 +354,6 @@ class Parser extends SlidingWindow {
         return token.kind === SyntaxKind.IdentifierNameToken && !this.isKeyword(token.keywordKind());
     }
 
-    private tokenIsKeyword(token: ISyntaxToken, kind: SyntaxKind): bool {
-        return token.keywordKind() === kind &&
-               this.isKeyword(kind);
-    }
-
     private isKeyword(kind: SyntaxKind): bool {
         if (SyntaxFacts.isStandardKeyword(kind) ||
             SyntaxFacts.isFutureReservedKeyword(kind)) {
@@ -2443,44 +2438,22 @@ class Parser extends SlidingWindow {
         Debug.assert(this.currentToken().kind === SyntaxKind.OpenBraceToken);
 
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
-        var propertyAssignments: any[] = null;
-
-        while (true) {
-            if (this.currentToken().kind === SyntaxKind.CloseBraceToken || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
-                break;
-            }
-
-            if (this.isPropertyAssignment()) {
-                var propertyAssignment = this.parsePropertyAssignment();
-
-                propertyAssignments = propertyAssignments || [];
-                propertyAssignments.push(propertyAssignment);
-
-                if (this.currentToken().kind === SyntaxKind.CommaToken) {
-                    var commaToken = this.eatToken(SyntaxKind.CommaToken);
-                    propertyAssignments.push(commaToken);
-                    continue;
-                }
-            }
-
-            // TODO: error recovery
-            break;
-        }
-
+        var propertyAssignments = this.parseSeparatedSyntaxList(ListParsingState.ObjectLiteralExpression_PropertyAssignments);
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
+
         return new ObjectLiteralExpressionSyntax(
-            openBraceToken, SeparatedSyntaxList.create(propertyAssignments), closeBraceToken);
+            openBraceToken, propertyAssignments, closeBraceToken);
     }
 
     private parsePropertyAssignment(): PropertyAssignmentSyntax {
-        Debug.assert(this.isPropertyAssignment());
+        Debug.assert(this.isPropertyAssignment(/*inErrorRecovery:*/ false));
         if (this.isGetAccessorPropertyAssignment()) {
             return this.parseGetAccessorPropertyAssignment();
         }
         else if (this.isSetAccessorPropertyAssignment()) {
             return this.parseSetAccessorPropertyAssignment();
         }
-        else if (this.isSimplePropertyAssignment()) {
+        else if (this.isSimplePropertyAssignment(/*inErrorRecovery:*/ false)) {
             return this.parseSimplePropertyAssignment();
         }
         else {
@@ -2488,15 +2461,15 @@ class Parser extends SlidingWindow {
         }
     }
 
-    private isPropertyAssignment(): bool {
+    private isPropertyAssignment(inErrorRecovery: bool): bool {
         return this.isGetAccessorPropertyAssignment() ||
                this.isSetAccessorPropertyAssignment() ||
-               this.isSimplePropertyAssignment();
+               this.isSimplePropertyAssignment(inErrorRecovery);
     }
 
     private isGetAccessorPropertyAssignment(): bool {
         return this.currentToken().keywordKind() === SyntaxKind.GetKeyword &&
-               this.isPropertyName(this.peekTokenN(1));
+               this.isPropertyName(this.peekTokenN(1), /*inErrorRecovery:*/ false);
     }
 
     private parseGetAccessorPropertyAssignment(): GetAccessorPropertyAssignmentSyntax {
@@ -2513,7 +2486,7 @@ class Parser extends SlidingWindow {
 
     private isSetAccessorPropertyAssignment(): bool {
         return this.currentToken().keywordKind() === SyntaxKind.SetKeyword &&
-               this.isPropertyName(this.peekTokenN(1));
+               this.isPropertyName(this.peekTokenN(1), /*inErrorRecovery:*/ false);
     }
 
     private parseSetAccessorPropertyAssignment(): SetAccessorPropertyAssignmentSyntax {
@@ -2529,12 +2502,12 @@ class Parser extends SlidingWindow {
         return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block);
     }
 
-    private isSimplePropertyAssignment(): bool {
-        return this.isPropertyName(this.currentToken());
+    private isSimplePropertyAssignment(inErrorRecovery: bool): bool {
+        return this.isPropertyName(this.currentToken(), inErrorRecovery);
     }
 
     private parseSimplePropertyAssignment(): SimplePropertyAssignmentSyntax {
-        Debug.assert(this.isSimplePropertyAssignment());
+        Debug.assert(this.isSimplePropertyAssignment(/*inErrorRecovery:*/ false));
 
         var propertyName = this.eatAnyToken();
         var colonToken = this.eatToken(SyntaxKind.ColonToken);
@@ -2543,11 +2516,25 @@ class Parser extends SlidingWindow {
         return new SimplePropertyAssignmentSyntax(propertyName, colonToken, expression);
     }
 
-    private isPropertyName(token: ISyntaxToken): bool {
+    private isPropertyName(token: ISyntaxToken, inErrorRecovery: bool): bool {
         // NOTE: we do *not* want to check "this.isIdentifier" here.  Any IdentifierNameToken is 
         // allowed here, even reserved words like keywords.
         switch (token.kind) {
             case SyntaxKind.IdentifierNameToken:
+                // Except: if we're in error recovery, then we don't want to consider keywords. 
+                // After all, if we have:
+                //
+                //      { a: 1
+                //      return
+                //
+                // we don't want consider 'return' to be the next property in the object literal.
+                if (inErrorRecovery) {
+                    return !this.isKeyword(token.keywordKind());
+                }
+                else {
+                    return true;
+                }
+
             case SyntaxKind.StringLiteral:
             case SyntaxKind.NumericLiteral:
                 return true;
@@ -2876,7 +2863,7 @@ class Parser extends SlidingWindow {
              state >>= 1) {
 
             if ((this.listParsingState & state) !== 0) {
-                if (this.isExpectedListTerminator(state) || this.isExpectedListItem(state)) {
+                if (this.isExpectedListTerminator(state) || this.isExpectedListItem(state, /*inErrorRecovery:*/ true)) {
                     return true;
                 }
             }
@@ -2892,8 +2879,11 @@ class Parser extends SlidingWindow {
         return false;
     }
 
-    private tryParseExpectedListItem(currentListType: ListParsingState, items: any[], processItem: (item: any) => void): any[] {
-        if (this.isExpectedListItem(currentListType)) {
+    private tryParseExpectedListItem(currentListType: ListParsingState,
+                                     inErrorRecovery: bool,
+                                     items: any[],
+                                     processItem: (item: any) => void): any[] {
+        if (this.isExpectedListItem(currentListType, inErrorRecovery)) {
             var item = this.parseExpectedListItem(currentListType);
             Debug.assert(item !== null);
 
@@ -2926,7 +2916,7 @@ class Parser extends SlidingWindow {
             // Try to parse an item of the list.  If we fail then decide if we need to abort or 
             // continue parsing.
             var itemsLength = items === null ? 0 : items.length;
-            items = this.tryParseExpectedListItem(currentListType, items, processItem);
+            items = this.tryParseExpectedListItem(currentListType, /*inErrorRecovery:*/ false, items, processItem);
             if (items !== null && items.length > itemsLength) {
                 continue;
             }
@@ -2951,6 +2941,7 @@ class Parser extends SlidingWindow {
         var separatorKind = this.separatorKind(currentListType);
 
         var lastSeparator: ISyntaxToken = null;
+        var inErrorRecovery = false;
         while (true) {
             if (this.listIsTerminated(currentListType)) {
                 // We've reached the end of the list.  If there was a last separator and we don't 
@@ -2965,7 +2956,9 @@ class Parser extends SlidingWindow {
             }
 
             var itemsLength = items === null ? 0 : items.length;
-            items = this.tryParseExpectedListItem(currentListType, items, null);
+            items = this.tryParseExpectedListItem(currentListType, inErrorRecovery, items, null);
+            inErrorRecovery = false;
+            
             if (items !== null && items.length > itemsLength) {
                 // We got an item and added it to our list.  If the next token is an explicit 
                 // separator, then add it to the list.
@@ -3005,6 +2998,18 @@ class Parser extends SlidingWindow {
                 // Consume the last separator and continue.
                 lastSeparator = this.eatToken(separatorKind);
                 items.push(lastSeparator);
+                
+                // Mark if we actually successfully consumed the separator or not.  If not then 
+                // we're in 'error recovery' mode and we make tweak some parsing rules as 
+                // appropriate.  For example, if we have:
+                //
+                //      var v = { a
+                //      return
+                //
+                // Then we'll be missing the comma.  As such, we want to parse 'return' in a less
+                // tolerant manner.  Normally 'return' could be a property in an object literal.
+                // However, in error recovery mode, we do *not* want it to be.
+                inErrorRecovery = lastSeparator.isMissing();
                 continue;
             }
 
@@ -3028,6 +3033,7 @@ class Parser extends SlidingWindow {
         switch (currentListType) {
             case ListParsingState.EnumDeclaration_VariableDeclarators:
             case ListParsingState.ObjectType_TypeMembers:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
                 return true;
             
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
@@ -3043,7 +3049,6 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_Statements_AllowFunctionDeclarations:
             case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
-            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
             default:
@@ -3061,6 +3066,7 @@ class Parser extends SlidingWindow {
             case ListParsingState.ObjectType_TypeMembers:
             case ListParsingState.EnumDeclaration_VariableDeclarators:
             case ListParsingState.ArgumentList_AssignmentExpressions:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
                 return false;
 
             case ListParsingState.SourceUnit_ModuleElements:
@@ -3070,7 +3076,6 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_Statements_AllowFunctionDeclarations:
             case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
-            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
             default:
@@ -3088,6 +3093,7 @@ class Parser extends SlidingWindow {
             case ListParsingState.ArgumentList_AssignmentExpressions:
             case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
             case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
                 return false;
 
             case ListParsingState.SourceUnit_ModuleElements:
@@ -3097,7 +3103,6 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_Statements_AllowFunctionDeclarations:
             case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
-            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
             default:
@@ -3112,6 +3117,7 @@ class Parser extends SlidingWindow {
             case ListParsingState.EnumDeclaration_VariableDeclarators:
             case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
             case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
+            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
                 return SyntaxKind.CommaToken;
 
             case ListParsingState.ObjectType_TypeMembers:
@@ -3124,7 +3130,6 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_Statements_AllowFunctionDeclarations:
             case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
-            case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
             default:
@@ -3195,6 +3200,8 @@ class Parser extends SlidingWindow {
                 return this.isExpectedVariableDeclaration_VariableDeclarators_DisallowInTerminator();
 
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+                return this.isExpectedObjectLiteralExpression_PropertyAssignmentsTerminator();
+
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
                 throw Errors.notYetImplemented();
@@ -3216,6 +3223,10 @@ class Parser extends SlidingWindow {
     }
 
     private isExpectedObjectType_TypeMembersTerminator(): bool {
+        return this.currentToken().kind === SyntaxKind.CloseBraceToken;
+    }
+
+    private isExpectedObjectLiteralExpression_PropertyAssignmentsTerminator(): bool {
         return this.currentToken().kind === SyntaxKind.CloseBraceToken;
     }
 
@@ -3282,7 +3293,7 @@ class Parser extends SlidingWindow {
         return this.currentToken().kind === SyntaxKind.CloseBraceToken;
     }
 
-    private isExpectedListItem(currentListType: ListParsingState): any {
+    private isExpectedListItem(currentListType: ListParsingState, inErrorRecovery: bool): any {
         switch (currentListType) {
             case ListParsingState.SourceUnit_ModuleElements:
                 return this.isModuleElement();
@@ -3320,6 +3331,8 @@ class Parser extends SlidingWindow {
                 return this.isName();
             
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+                return this.isPropertyAssignment(inErrorRecovery);
+
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
                 throw Errors.notYetImplemented();
@@ -3370,6 +3383,8 @@ class Parser extends SlidingWindow {
                 return this.parseVariableDeclarator(/*allowIn:*/ false);
 
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+                return this.parsePropertyAssignment();
+
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
                 throw Errors.notYetImplemented();
@@ -3414,6 +3429,8 @@ class Parser extends SlidingWindow {
                 return Strings.type_name;
 
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+                return Strings.property_or_accessor;
+
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
                 throw Errors.notYetImplemented();

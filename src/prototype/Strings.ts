@@ -10,4 +10,5 @@ class Strings {
     public static call__construct__index__property_or_function_signature: string = "call, construct, index, property or function signature";
     public static expression: string = "expression";
     public static type_name: string = "type name";
+    public static property_or_accessor: string = "property or accessor";
 }

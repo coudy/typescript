@@ -55,7 +55,7 @@ class Program {
             return;
         }
 
-        if (filePath.indexOf("VariableDeclaration2.ts") < 0) {
+        if (filePath.indexOf("ErrorRecovery_ObjectLiteral2.ts") < 0) {
             // return;
         }
 
@@ -175,7 +175,7 @@ var program = new Program();
 var start: number, end: number;
 
 start = new Date().getTime();
-program.runAllTests(Environment, false, false);
+program.runAllTests(Environment, false, true);
 program.run(Environment, false);
 end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));

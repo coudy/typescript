@@ -1087,9 +1087,6 @@ var Parser = (function (_super) {
     Parser.prototype.isIdentifier = function (token) {
         return token.kind === 5 /* IdentifierNameToken */  && !this.isKeyword(token.keywordKind());
     };
-    Parser.prototype.tokenIsKeyword = function (token, kind) {
-        return token.keywordKind() === kind && this.isKeyword(kind);
-    };
     Parser.prototype.isKeyword = function (kind) {
         if(SyntaxFacts.isStandardKeyword(kind) || SyntaxFacts.isFutureReservedKeyword(kind)) {
             return true;
@@ -2603,35 +2600,19 @@ var Parser = (function (_super) {
     Parser.prototype.parseObjectLiteralExpression = function () {
         Debug.assert(this.currentToken().kind === 63 /* OpenBraceToken */ );
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
-        var propertyAssignments = null;
-        while(true) {
-            if(this.currentToken().kind === 64 /* CloseBraceToken */  || this.currentToken().kind === 114 /* EndOfFileToken */ ) {
-                break;
-            }
-            if(this.isPropertyAssignment()) {
-                var propertyAssignment = this.parsePropertyAssignment();
-                propertyAssignments = propertyAssignments || [];
-                propertyAssignments.push(propertyAssignment);
-                if(this.currentToken().kind === 72 /* CommaToken */ ) {
-                    var commaToken = this.eatToken(72 /* CommaToken */ );
-                    propertyAssignments.push(commaToken);
-                    continue;
-                }
-            }
-            break;
-        }
+        var propertyAssignments = this.parseSeparatedSyntaxList(8192 /* ObjectLiteralExpression_PropertyAssignments */ );
         var closeBraceToken = this.eatToken(64 /* CloseBraceToken */ );
-        return new ObjectLiteralExpressionSyntax(openBraceToken, SeparatedSyntaxList.create(propertyAssignments), closeBraceToken);
+        return new ObjectLiteralExpressionSyntax(openBraceToken, propertyAssignments, closeBraceToken);
     };
     Parser.prototype.parsePropertyAssignment = function () {
-        Debug.assert(this.isPropertyAssignment());
+        Debug.assert(this.isPropertyAssignment(false));
         if(this.isGetAccessorPropertyAssignment()) {
             return this.parseGetAccessorPropertyAssignment();
         } else {
             if(this.isSetAccessorPropertyAssignment()) {
                 return this.parseSetAccessorPropertyAssignment();
             } else {
-                if(this.isSimplePropertyAssignment()) {
+                if(this.isSimplePropertyAssignment(false)) {
                     return this.parseSimplePropertyAssignment();
                 } else {
                     throw Errors.invalidOperation();
@@ -2639,11 +2620,11 @@ var Parser = (function (_super) {
             }
         }
     };
-    Parser.prototype.isPropertyAssignment = function () {
-        return this.isGetAccessorPropertyAssignment() || this.isSetAccessorPropertyAssignment() || this.isSimplePropertyAssignment();
+    Parser.prototype.isPropertyAssignment = function (inErrorRecovery) {
+        return this.isGetAccessorPropertyAssignment() || this.isSetAccessorPropertyAssignment() || this.isSimplePropertyAssignment(inErrorRecovery);
     };
     Parser.prototype.isGetAccessorPropertyAssignment = function () {
-        return this.currentToken().keywordKind() === 58 /* GetKeyword */  && this.isPropertyName(this.peekTokenN(1));
+        return this.currentToken().keywordKind() === 58 /* GetKeyword */  && this.isPropertyName(this.peekTokenN(1), false);
     };
     Parser.prototype.parseGetAccessorPropertyAssignment = function () {
         Debug.assert(this.isGetAccessorPropertyAssignment());
@@ -2655,7 +2636,7 @@ var Parser = (function (_super) {
         return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block);
     };
     Parser.prototype.isSetAccessorPropertyAssignment = function () {
-        return this.currentToken().keywordKind() === 61 /* SetKeyword */  && this.isPropertyName(this.peekTokenN(1));
+        return this.currentToken().keywordKind() === 61 /* SetKeyword */  && this.isPropertyName(this.peekTokenN(1), false);
     };
     Parser.prototype.parseSetAccessorPropertyAssignment = function () {
         Debug.assert(this.isSetAccessorPropertyAssignment());
@@ -2667,19 +2648,26 @@ var Parser = (function (_super) {
         var block = this.parseBlock(true);
         return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block);
     };
-    Parser.prototype.isSimplePropertyAssignment = function () {
-        return this.isPropertyName(this.currentToken());
+    Parser.prototype.isSimplePropertyAssignment = function (inErrorRecovery) {
+        return this.isPropertyName(this.currentToken(), inErrorRecovery);
     };
     Parser.prototype.parseSimplePropertyAssignment = function () {
-        Debug.assert(this.isSimplePropertyAssignment());
+        Debug.assert(this.isSimplePropertyAssignment(false));
         var propertyName = this.eatAnyToken();
         var colonToken = this.eatToken(99 /* ColonToken */ );
         var expression = this.parseAssignmentExpression(true);
         return new SimplePropertyAssignmentSyntax(propertyName, colonToken, expression);
     };
-    Parser.prototype.isPropertyName = function (token) {
+    Parser.prototype.isPropertyName = function (token, inErrorRecovery) {
         switch(token.kind) {
-            case 5 /* IdentifierNameToken */ :
+            case 5 /* IdentifierNameToken */ : {
+                if(inErrorRecovery) {
+                    return !this.isKeyword(token.keywordKind());
+                } else {
+                    return true;
+                }
+
+            }
             case 8 /* StringLiteral */ :
             case 7 /* NumericLiteral */ : {
                 return true;
@@ -2923,7 +2911,7 @@ var Parser = (function (_super) {
         this.reportUnexpectedTokenDiagnostic(currentListType);
         for(var state = ListParsingState.LastListParsingState; state >= ListParsingState.FirstListParsingState; state >>= 1) {
             if((this.listParsingState & state) !== 0) {
-                if(this.isExpectedListTerminator(state) || this.isExpectedListItem(state)) {
+                if(this.isExpectedListTerminator(state) || this.isExpectedListItem(state, true)) {
                     return true;
                 }
             }
@@ -2933,8 +2921,8 @@ var Parser = (function (_super) {
         this.moveToNextToken();
         return false;
     };
-    Parser.prototype.tryParseExpectedListItem = function (currentListType, items, processItem) {
-        if(this.isExpectedListItem(currentListType)) {
+    Parser.prototype.tryParseExpectedListItem = function (currentListType, inErrorRecovery, items, processItem) {
+        if(this.isExpectedListItem(currentListType, inErrorRecovery)) {
             var item = this.parseExpectedListItem(currentListType);
             Debug.assert(item !== null);
             items = items || [];
@@ -2955,7 +2943,7 @@ var Parser = (function (_super) {
                 break;
             }
             var itemsLength = items === null ? 0 : items.length;
-            items = this.tryParseExpectedListItem(currentListType, items, processItem);
+            items = this.tryParseExpectedListItem(currentListType, false, items, processItem);
             if(items !== null && items.length > itemsLength) {
                 continue;
             }
@@ -2973,6 +2961,7 @@ var Parser = (function (_super) {
         var requiresAtLeastOneItem = this.requiresAtLeastOneItem(currentListType);
         var separatorKind = this.separatorKind(currentListType);
         var lastSeparator = null;
+        var inErrorRecovery = false;
         while(true) {
             if(this.listIsTerminated(currentListType)) {
                 if(lastSeparator !== null && !allowTrailingSeparator && !lastSeparator.isMissing()) {
@@ -2981,7 +2970,8 @@ var Parser = (function (_super) {
                 break;
             }
             var itemsLength = items === null ? 0 : items.length;
-            items = this.tryParseExpectedListItem(currentListType, items, null);
+            items = this.tryParseExpectedListItem(currentListType, inErrorRecovery, items, null);
+            inErrorRecovery = false;
             if(items !== null && items.length > itemsLength) {
                 if(this.currentToken().kind !== separatorKind) {
                     if(this.listIsTerminated(currentListType)) {
@@ -2995,6 +2985,7 @@ var Parser = (function (_super) {
                 }
                 lastSeparator = this.eatToken(separatorKind);
                 items.push(lastSeparator);
+                inErrorRecovery = lastSeparator.isMissing();
                 continue;
             }
             var abort = this.abortParsingListOrMoveToNextToken(currentListType);
@@ -3010,7 +3001,8 @@ var Parser = (function (_super) {
     Parser.prototype.allowsTrailingSeparator = function (currentListType) {
         switch(currentListType) {
             case 128 /* EnumDeclaration_VariableDeclarators */ :
-            case 256 /* ObjectType_TypeMembers */ : {
+            case 256 /* ObjectType_TypeMembers */ :
+            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ : {
                 return true;
 
             }
@@ -3028,7 +3020,6 @@ var Parser = (function (_super) {
             case 16 /* SwitchClause_Statements */ :
             case 32 /* Block_Statements_AllowFunctionDeclarations */ :
             case 64 /* Block_Statements_DisallowFunctionDeclarations */ :
-            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
             case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
             case 32768 /* ParameterList_Parameters */ :
             default: {
@@ -3047,7 +3038,8 @@ var Parser = (function (_super) {
             }
             case 256 /* ObjectType_TypeMembers */ :
             case 128 /* EnumDeclaration_VariableDeclarators */ :
-            case 4096 /* ArgumentList_AssignmentExpressions */ : {
+            case 4096 /* ArgumentList_AssignmentExpressions */ :
+            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ : {
                 return false;
 
             }
@@ -3058,7 +3050,6 @@ var Parser = (function (_super) {
             case 16 /* SwitchClause_Statements */ :
             case 32 /* Block_Statements_AllowFunctionDeclarations */ :
             case 64 /* Block_Statements_DisallowFunctionDeclarations */ :
-            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
             case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
             case 32768 /* ParameterList_Parameters */ :
             default: {
@@ -3077,7 +3068,8 @@ var Parser = (function (_super) {
             case 128 /* EnumDeclaration_VariableDeclarators */ :
             case 4096 /* ArgumentList_AssignmentExpressions */ :
             case 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
-            case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ : {
+            case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ : {
                 return false;
 
             }
@@ -3088,7 +3080,6 @@ var Parser = (function (_super) {
             case 16 /* SwitchClause_Statements */ :
             case 32 /* Block_Statements_AllowFunctionDeclarations */ :
             case 64 /* Block_Statements_DisallowFunctionDeclarations */ :
-            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
             case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
             case 32768 /* ParameterList_Parameters */ :
             default: {
@@ -3103,7 +3094,8 @@ var Parser = (function (_super) {
             case 4096 /* ArgumentList_AssignmentExpressions */ :
             case 128 /* EnumDeclaration_VariableDeclarators */ :
             case 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
-            case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ : {
+            case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ : {
                 return 72 /* CommaToken */ ;
 
             }
@@ -3118,7 +3110,6 @@ var Parser = (function (_super) {
             case 16 /* SwitchClause_Statements */ :
             case 32 /* Block_Statements_AllowFunctionDeclarations */ :
             case 64 /* Block_Statements_DisallowFunctionDeclarations */ :
-            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
             case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
             case 32768 /* ParameterList_Parameters */ :
             default: {
@@ -3194,7 +3185,10 @@ var Parser = (function (_super) {
                 return this.isExpectedVariableDeclaration_VariableDeclarators_DisallowInTerminator();
 
             }
-            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
+            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ : {
+                return this.isExpectedObjectLiteralExpression_PropertyAssignmentsTerminator();
+
+            }
             case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
             case 32768 /* ParameterList_Parameters */ : {
                 throw Errors.notYetImplemented();
@@ -3216,6 +3210,9 @@ var Parser = (function (_super) {
         return this.currentToken().kind === 64 /* CloseBraceToken */ ;
     };
     Parser.prototype.isExpectedObjectType_TypeMembersTerminator = function () {
+        return this.currentToken().kind === 64 /* CloseBraceToken */ ;
+    };
+    Parser.prototype.isExpectedObjectLiteralExpression_PropertyAssignmentsTerminator = function () {
         return this.currentToken().kind === 64 /* CloseBraceToken */ ;
     };
     Parser.prototype.isExpectedVariableDeclaration_VariableDeclarators_DisallowInTerminator = function () {
@@ -3257,7 +3254,7 @@ var Parser = (function (_super) {
     Parser.prototype.isExpectedBlock_StatementsTerminator = function () {
         return this.currentToken().kind === 64 /* CloseBraceToken */ ;
     };
-    Parser.prototype.isExpectedListItem = function (currentListType) {
+    Parser.prototype.isExpectedListItem = function (currentListType, inErrorRecovery) {
         switch(currentListType) {
             case 1 /* SourceUnit_ModuleElements */ : {
                 return this.isModuleElement();
@@ -3305,7 +3302,10 @@ var Parser = (function (_super) {
                 return this.isName();
 
             }
-            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
+            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ : {
+                return this.isPropertyAssignment(inErrorRecovery);
+
+            }
             case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
             case 32768 /* ParameterList_Parameters */ : {
                 throw Errors.notYetImplemented();
@@ -3371,7 +3371,10 @@ var Parser = (function (_super) {
                 return this.parseVariableDeclarator(false);
 
             }
-            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
+            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ : {
+                return this.parsePropertyAssignment();
+
+            }
             case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
             case 32768 /* ParameterList_Parameters */ : {
                 throw Errors.notYetImplemented();
@@ -3428,7 +3431,10 @@ var Parser = (function (_super) {
                 return Strings.type_name;
 
             }
-            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
+            case 8192 /* ObjectLiteralExpression_PropertyAssignments */ : {
+                return Strings.property_or_accessor;
+
+            }
             case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
             case 32768 /* ParameterList_Parameters */ : {
                 throw Errors.notYetImplemented();
@@ -4529,6 +4535,7 @@ var Strings = (function () {
     Strings.call__construct__index__property_or_function_signature = "call, construct, index, property or function signature";
     Strings.expression = "expression";
     Strings.type_name = "type name";
+    Strings.property_or_accessor = "property or accessor";
     return Strings;
 })();
 var StringTableEntry = (function () {
@@ -34846,7 +34853,7 @@ var Program = (function () {
         if(filePath.indexOf("RealSource") >= 0) {
             return;
         }
-        if(filePath.indexOf("VariableDeclaration2.ts") < 0) {
+        if(filePath.indexOf("ErrorRecovery_ObjectLiteral2.ts") < 0) {
         }
         var contents = environment.readFile(filePath);
         totalSize += contents.length;
@@ -34933,7 +34940,7 @@ var totalSize = 0;
 var program = new Program();
 var start, end;
 start = new Date().getTime();
-program.runAllTests(Environment, false, false);
+program.runAllTests(Environment, false, true);
 program.run(Environment, false);
 end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));
