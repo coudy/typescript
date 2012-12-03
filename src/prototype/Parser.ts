@@ -829,16 +829,13 @@ class Parser extends SlidingWindow {
         return this.isIdentifier(this.currentToken());
     }
 
-    private isMemberDeclaration(): bool {
+    private isClassElement(): bool {
         // Note: the order of these calls is important.  Specifically, isMemberVariableDeclaration
-        // checks for a subset of the conditions of the other two.
-        return this.isMemberFunctionDeclaration() ||
+        // checks for a subset of the conditions of the previous two.
+        return this.isConstructorDeclaration() ||
+               this.isMemberFunctionDeclaration() ||
                this.isMemberAccessorDeclaration() ||
                this.isMemberVariableDeclaration();
-    }
-
-    private isClassElement(): bool {
-        return this.isConstructorDeclaration() || this.isMemberDeclaration();
     }
 
     private parseConstructorDeclaration(): ConstructorDeclarationSyntax {
@@ -900,9 +897,12 @@ class Parser extends SlidingWindow {
         return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolon);
     }
 
-    private parseMemberDeclaration(): MemberDeclarationSyntax {
-        Debug.assert(this.isMemberDeclaration());
-        if (this.isMemberFunctionDeclaration()) {
+    private parseClassElement(): ClassElementSyntax {
+        Debug.assert(this.isClassElement());
+        if (this.isConstructorDeclaration()) {
+            return this.parseConstructorDeclaration();
+        }
+        else if (this.isMemberFunctionDeclaration()) {
             return this.parseMemberFunctionDeclaration();
         }
         else if (this.isMemberAccessorDeclaration()) {
@@ -910,19 +910,6 @@ class Parser extends SlidingWindow {
         }
         else if (this.isMemberVariableDeclaration()) {
             return this.parseMemberVariableDeclaration();
-        }
-        else {
-            throw Errors.invalidOperation();
-        }
-    }
-
-    private parseClassElement(): ClassElementSyntax {
-        Debug.assert(this.isClassElement());
-        if (this.isConstructorDeclaration()) {
-            return this.parseConstructorDeclaration();
-        }
-        else if (this.isMemberDeclaration()) {
-            return this.parseMemberDeclaration();
         }
         else {
             throw Errors.invalidOperation();

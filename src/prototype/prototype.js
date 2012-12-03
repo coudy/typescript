@@ -1463,11 +1463,8 @@ var Parser = (function (_super) {
         }
         return this.isIdentifier(this.currentToken());
     };
-    Parser.prototype.isMemberDeclaration = function () {
-        return this.isMemberFunctionDeclaration() || this.isMemberAccessorDeclaration() || this.isMemberVariableDeclaration();
-    };
     Parser.prototype.isClassElement = function () {
-        return this.isConstructorDeclaration() || this.isMemberDeclaration();
+        return this.isConstructorDeclaration() || this.isMemberFunctionDeclaration() || this.isMemberAccessorDeclaration() || this.isMemberVariableDeclaration();
     };
     Parser.prototype.parseConstructorDeclaration = function () {
         Debug.assert(this.isConstructorDeclaration());
@@ -1510,31 +1507,23 @@ var Parser = (function (_super) {
         var semicolon = this.eatExplicitOrAutomaticSemicolon();
         return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolon);
     };
-    Parser.prototype.parseMemberDeclaration = function () {
-        Debug.assert(this.isMemberDeclaration());
-        if(this.isMemberFunctionDeclaration()) {
-            return this.parseMemberFunctionDeclaration();
-        } else {
-            if(this.isMemberAccessorDeclaration()) {
-                return this.parseMemberAccessorDeclaration();
-            } else {
-                if(this.isMemberVariableDeclaration()) {
-                    return this.parseMemberVariableDeclaration();
-                } else {
-                    throw Errors.invalidOperation();
-                }
-            }
-        }
-    };
     Parser.prototype.parseClassElement = function () {
         Debug.assert(this.isClassElement());
         if(this.isConstructorDeclaration()) {
             return this.parseConstructorDeclaration();
         } else {
-            if(this.isMemberDeclaration()) {
-                return this.parseMemberDeclaration();
+            if(this.isMemberFunctionDeclaration()) {
+                return this.parseMemberFunctionDeclaration();
             } else {
-                throw Errors.invalidOperation();
+                if(this.isMemberAccessorDeclaration()) {
+                    return this.parseMemberAccessorDeclaration();
+                } else {
+                    if(this.isMemberVariableDeclaration()) {
+                        return this.parseMemberVariableDeclaration();
+                    } else {
+                        throw Errors.invalidOperation();
+                    }
+                }
             }
         }
     };
