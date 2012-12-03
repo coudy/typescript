@@ -1026,7 +1026,7 @@ var Parser = (function (_super) {
         if(this.canEatAutomaticSemicolon()) {
             var semicolonToken = SyntaxTokenFactory.createEmptyToken(this.previousToken.end(), 71 /* SemicolonToken */ , 0 /* None */ );
             if(!this.options.allowAutomaticSemicolonInsertion()) {
-                semicolonToken = this.withAdditionalDiagnostics(semicolonToken, new SyntaxDiagnostic(this.previousToken.end(), 1, 7 /* AutomaticSemicolonInsertionNotAllowed */ , null));
+                this.addDiagnostic(new SyntaxDiagnostic(this.previousToken.end(), 0, 7 /* AutomaticSemicolonInsertionNotAllowed */ , null));
             }
             return semicolonToken;
         }
@@ -1089,41 +1089,26 @@ var Parser = (function (_super) {
         return SyntaxTokenFactory.createEmptyToken(diagnostic.position(), expectedKind, expectedKeywordKind);
     };
     Parser.prototype.getExpectedTokenDiagnostic = function (expectedKind, expectedKeywordKind, actual) {
-        var position;
-        var width;
-        if(this.previousToken !== null && this.previousToken.hasTrailingNewLineTrivia) {
-            position = this.previousToken.end();
-            width = 0;
-        } else {
-            position = this.currentToken().start();
-            width = this.currentToken().width();
-        }
+        var token = this.currentToken();
         if(expectedKind === 5 /* IdentifierNameToken */ ) {
             if(SyntaxFacts.isAnyKeyword(expectedKeywordKind)) {
-                return new SyntaxDiagnostic(position, width, 5 /* _0_expected */ , [
+                return new SyntaxDiagnostic(token.start(), token.width(), 5 /* _0_expected */ , [
                     SyntaxFacts.getText(expectedKeywordKind)
                 ]);
             } else {
                 if(actual !== null && SyntaxFacts.isAnyKeyword(actual.keywordKind())) {
-                    return new SyntaxDiagnostic(position, width, 6 /* Identifier_expected__0_is_a_keyword */ , [
+                    return new SyntaxDiagnostic(token.start(), token.width(), 6 /* Identifier_expected__0_is_a_keyword */ , [
                         SyntaxFacts.getText(actual.keywordKind())
                     ]);
                 } else {
-                    return new SyntaxDiagnostic(position, width, 3 /* Identifier_expected */ , null);
+                    return new SyntaxDiagnostic(token.start(), token.width(), 3 /* Identifier_expected */ , null);
                 }
             }
         }
         if(SyntaxFacts.isAnyPunctuation(expectedKind)) {
-            return new SyntaxDiagnostic(position, width, 5 /* _0_expected */ , [
+            return new SyntaxDiagnostic(token.start(), token.width(), 5 /* _0_expected */ , [
                 SyntaxFacts.getText(expectedKind)
             ]);
-        }
-        throw Errors.notYetImplemented();
-    };
-    Parser.prototype.withAdditionalDiagnostics = function (token) {
-        var diagnostics = [];
-        for (var _i = 0; _i < (arguments.length - 1); _i++) {
-            diagnostics[_i] = arguments[_i + 1];
         }
         throw Errors.notYetImplemented();
     };

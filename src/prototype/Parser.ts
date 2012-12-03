@@ -260,11 +260,10 @@ class Parser extends SlidingWindow {
             var semicolonToken = SyntaxTokenFactory.createEmptyToken(this.previousToken.end(), SyntaxKind.SemicolonToken, SyntaxKind.None);
 
             if (!this.options.allowAutomaticSemicolonInsertion()) {
-                // TODO: get the right span for this token.  For now, we'll just use the end of the
-                // previous token.
+                // Report the missing semicolon at the end of the *previous* token.
 
-                semicolonToken = this.withAdditionalDiagnostics(semicolonToken,
-                    new SyntaxDiagnostic(this.previousToken.end(), 1, DiagnosticCode.AutomaticSemicolonInsertionNotAllowed, null)); 
+                this.addDiagnostic(
+                    new SyntaxDiagnostic(this.previousToken.end(), 0, DiagnosticCode.AutomaticSemicolonInsertionNotAllowed, null)); 
             }
 
             return semicolonToken;
@@ -361,61 +360,32 @@ class Parser extends SlidingWindow {
         return SyntaxTokenFactory.createEmptyToken(diagnostic.position(), expectedKind, expectedKeywordKind);
     }
 
-    //private eatTokenWithPrejudice(kind: SyntaxKind): ISyntaxToken {
-    //    var token = this.currentToken();
-
-    //    Debug.assert(SyntaxFacts.isTokenKind(kind));
-    //    if (token.kind !== kind) {
-    //        token = this.withAdditionalDiagnostics(token, this.getExpectedTokenDiagnosticInfo(kind, token.kind));
-    //    }
-
-    //    this.moveToNextToken();
-    //    return token;
-    //}
-
     private getExpectedTokenDiagnostic(expectedKind: SyntaxKind, expectedKeywordKind: SyntaxKind, actual: ISyntaxToken): SyntaxDiagnostic {
-        // If there is a previous token, and it ends with a newline, then place the error at the 
-        // end of that token.  Otherwise it goes at the start of the next token.
-        var position: number;
-        var width: number;
-        
-        if (this.previousToken !== null && this.previousToken.hasTrailingNewLineTrivia) {
-            position = this.previousToken.end();
-            width = 0;
-        }
-        else {
-            position = this.currentToken().start();
-            width = this.currentToken().width();
-        }
-        
+        var token = this.currentToken();
+
         if (expectedKind === SyntaxKind.IdentifierNameToken) {
             if (SyntaxFacts.isAnyKeyword(expectedKeywordKind)) {
                 // They wanted a keyword, just report that that keyword was missing.
-                return new SyntaxDiagnostic(position, width, DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKeywordKind)]);
+                return new SyntaxDiagnostic(token.start(), token.width(), DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKeywordKind)]);
             }
             else {
                 // They wanted a real identifier.
 
                 // If the user supplied a keyword, give them a specialized message.
                 if (actual !== null && SyntaxFacts.isAnyKeyword(actual.keywordKind())) {
-                    return new SyntaxDiagnostic(position, width, DiagnosticCode.Identifier_expected__0_is_a_keyword, [SyntaxFacts.getText(actual.keywordKind())]);
+                    return new SyntaxDiagnostic(token.start(), token.width(), DiagnosticCode.Identifier_expected__0_is_a_keyword, [SyntaxFacts.getText(actual.keywordKind())]);
                 }
                 else {
                     // Otherwise just report that an identifier was expected.
-                    return new SyntaxDiagnostic(position, width, DiagnosticCode.Identifier_expected, null);
+                    return new SyntaxDiagnostic(token.start(), token.width(), DiagnosticCode.Identifier_expected, null);
                 }
             }
         }
 
         if (SyntaxFacts.isAnyPunctuation(expectedKind)) {
-            return new SyntaxDiagnostic(position, width, DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKind)]);
+            return new SyntaxDiagnostic(token.start(), token.width(), DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKind)]);
         }
 
-        throw Errors.notYetImplemented();
-    }
-
-    private withAdditionalDiagnostics(token: ISyntaxToken, ...diagnostics: Diagnostic[]): ISyntaxToken {
-        // return node.WithDiagnostics(node.GetDiagnostics().Concat(diagnostics).ToArray());
         throw Errors.notYetImplemented();
     }
 

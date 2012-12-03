@@ -1,0 +1,110 @@
+{
+    "_skippedTokens": [
+        {
+            "kind": "CloseBraceToken",
+            "start": 13,
+            "width": 1,
+            "fullWidth": 3,
+            "text": "}",
+            "hasTrailingTrivia": true,
+            "hasTrailingNewLineTrivia": true
+        },
+        {
+            "kind": "CloseBraceToken",
+            "start": 29,
+            "width": 1,
+            "text": "}"
+        }
+    ],
+    "_diagnostics": [
+        {
+            "_position": 11,
+            "_width": 0,
+            "_diagnosticCode": "Unexpected_token__0_expected",
+            "_arguments": [
+                "module, class, interface, enum, import or statement"
+            ]
+        },
+        {
+            "_position": 27,
+            "_width": 0,
+            "_diagnosticCode": "Unexpected_token__0_expected",
+            "_arguments": [
+                "module, class, interface, enum, import or statement"
+            ]
+        }
+    ],
+    "_sourceUnit": {
+        "kind": "SourceUnit",
+        "_moduleElements": [
+            {
+                "kind": "ReturnStatement",
+                "_returnKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "ReturnKeyword",
+                    "start": 0,
+                    "width": 6,
+                    "fullWidth": 7,
+                    "text": "return",
+                    "hasTrailingTrivia": true
+                },
+                "_expression": {
+                    "kind": "IdentifierName",
+                    "_identifier": {
+                        "kind": "IdentifierNameToken",
+                        "start": 7,
+                        "width": 3,
+                        "text": "foo",
+                        "valueText": "foo"
+                    }
+                },
+                "_semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "start": 10,
+                    "width": 1,
+                    "fullWidth": 3,
+                    "text": ";",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLineTrivia": true
+                }
+            },
+            {
+                "kind": "ReturnStatement",
+                "_returnKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "ReturnKeyword",
+                    "start": 16,
+                    "width": 6,
+                    "fullWidth": 7,
+                    "text": "return",
+                    "hasTrailingTrivia": true
+                },
+                "_expression": {
+                    "kind": "IdentifierName",
+                    "_identifier": {
+                        "kind": "IdentifierNameToken",
+                        "start": 23,
+                        "width": 3,
+                        "text": "bar",
+                        "valueText": "bar"
+                    }
+                },
+                "_semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "start": 26,
+                    "width": 1,
+                    "fullWidth": 3,
+                    "text": ";",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLineTrivia": true
+                }
+            }
+        ],
+        "_endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "start": 30,
+            "width": 0,
+            "text": ""
+        }
+    }
+}
