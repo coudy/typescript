@@ -6,8 +6,11 @@ interface ISyntaxToken {
 
     fullStart(): number;
     fullWidth(): number;
+    fullEnd(): number;
+
     start(): number;
     width(): number;
+    end(): number;
 
     isMissing(): bool;
 

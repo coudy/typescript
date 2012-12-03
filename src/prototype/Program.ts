@@ -13,12 +13,12 @@ class Program {
             filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript3, useTypeScript, verify));
             
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify));
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*allowErrors:*/ true));
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript3",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript3, useTypeScript, verify));
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript3, useTypeScript, verify, /*allowErrors:*/ true));
 
         this.runTests(environment, "C:\\temp\\monoco-files",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, false));
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ false));
 
         environment.standardOut.WriteLine("");
     }
@@ -41,7 +41,12 @@ class Program {
         }
     }
 
-    runParser(environment: IEnvironment, filePath: string, languageVersion: LanguageVersion, useTypeScript: bool, verify: bool): void {
+    runParser(environment: IEnvironment,
+              filePath: string,
+              languageVersion: LanguageVersion,
+              useTypeScript: bool,
+              verify: bool,
+              allowErrors: bool): void {
         if (!StringUtilities.endsWith(filePath, ".ts")) {
             return;
         }
@@ -50,7 +55,7 @@ class Program {
             return;
         }
 
-        if (filePath.indexOf("fileServices") < 0) {
+        if (filePath.indexOf("ErrorRecovery_ClassElement1.ts") < 0) {
             // return;
         }
 
@@ -61,6 +66,7 @@ class Program {
         if (useTypeScript) {
             var text1 = new TypeScript.StringSourceText(contents);
             var parser1 = new TypeScript.Parser(); 
+            parser1.errorRecovery = true;
             var unit1 = parser1.parse(text1, filePath, 0);
         }
         else {
@@ -68,6 +74,13 @@ class Program {
             var scanner = new Scanner(text, languageVersion, /* new StringTable() */ stringTable);
             var parser = new Parser(scanner);
             var unit = parser.parseSyntaxTree();
+
+            if (!allowErrors) {
+                if (unit.diagnostics() && unit.diagnostics().length) {
+                    throw new Error("File had unexpected error!");
+                }
+            }
+
             // var json = JSON2.stringify(unit);
             
             if (verify) {
@@ -151,7 +164,7 @@ class Program {
         for (var index in environment.arguments) {
             var filePath: string = environment.arguments[index];
 
-            this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false);
+            this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*allowErrors:*/ false);
         }
     }
 }

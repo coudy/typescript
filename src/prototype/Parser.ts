@@ -256,14 +256,14 @@ class Parser extends SlidingWindow {
         // user has the option set to error on automatic semicolons, then add an error to that
         // token as well.
         if (this.canEatAutomaticSemicolon()) {
-            var semicolonToken = SyntaxTokenFactory.createEmptyToken(SyntaxKind.SemicolonToken, SyntaxKind.None);
+            var semicolonToken = SyntaxTokenFactory.createEmptyToken(this.previousToken.end(), SyntaxKind.SemicolonToken, SyntaxKind.None);
 
             if (!this.options.allowAutomaticSemicolonInsertion()) {
                 // TODO: get the right span for this token.  For now, we'll just use the end of the
                 // previous token.
 
                 semicolonToken = this.withAdditionalDiagnostics(semicolonToken,
-                    new SyntaxDiagnostic(this.previousToken.start() + this.previousToken.width(), 1, DiagnosticCode.AutomaticSemicolonInsertionNotAllowed, null)); 
+                    new SyntaxDiagnostic(this.previousToken.end(), 1, DiagnosticCode.AutomaticSemicolonInsertionNotAllowed, null)); 
             }
 
             return semicolonToken;
@@ -354,9 +354,10 @@ class Parser extends SlidingWindow {
     }
 
     private createMissingToken(expectedKind: SyntaxKind, expectedKeywordKind: SyntaxKind, actual: ISyntaxToken): ISyntaxToken {
-        var token = SyntaxTokenFactory.createEmptyToken(expectedKind, expectedKeywordKind);
-        token = this.withAdditionalDiagnostics(token, this.getExpectedTokenDiagnosticInfo(expectedKind, expectedKeywordKind, actual));
-        return token;
+        var diagnostic = this.getExpectedTokenDiagnostic(expectedKind, expectedKeywordKind, actual);
+        this.addDiagnostic(diagnostic);
+
+        return SyntaxTokenFactory.createEmptyToken(diagnostic.position(), expectedKind, expectedKeywordKind);
     }
 
     //private eatTokenWithPrejudice(kind: SyntaxKind): ISyntaxToken {
@@ -371,60 +372,45 @@ class Parser extends SlidingWindow {
     //    return token;
     //}
 
-    private getExpectedTokenDiagnosticInfo(expectedKind: SyntaxKind, expectedKeywordKind: SyntaxKind, actual: ISyntaxToken): Diagnostic {
-        var span = this.getDiagnosticSpanForMissingToken();
-        var offset = span.start();
-        var width = span.length();
+    private getExpectedTokenDiagnostic(expectedKind: SyntaxKind, expectedKeywordKind: SyntaxKind, actual: ISyntaxToken): SyntaxDiagnostic {
+        // If there is a previous token, and it ends with a newline, then place the error at the 
+        // end of that token.  Otherwise it goes at the start of the next token.
+        var position: number;
+        var width: number;
+        
+        if (this.previousToken !== null && this.previousToken.hasTrailingNewLineTrivia) {
+            position = this.previousToken.end();
+            width = 0;
+        }
+        else {
+            position = this.currentToken().start();
+            width = this.currentToken().width();
+        }
         
         if (expectedKind === SyntaxKind.IdentifierNameToken) {
             if (SyntaxFacts.isAnyKeyword(expectedKeywordKind)) {
                 // They wanted a keyword, just report that that keyword was missing.
-                return new SyntaxDiagnostic(offset, width, DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKeywordKind)]);
+                return new SyntaxDiagnostic(position, width, DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKeywordKind)]);
             }
             else {
                 // They wanted a real identifier.
 
                 // If the user supplied a keyword, give them a specialized message.
                 if (actual !== null && SyntaxFacts.isAnyKeyword(actual.keywordKind())) {
-                    return new SyntaxDiagnostic(offset, width, DiagnosticCode.Identifier_expected__0_is_a_keyword, [SyntaxFacts.getText(actual.keywordKind())]);
+                    return new SyntaxDiagnostic(position, width, DiagnosticCode.Identifier_expected__0_is_a_keyword, [SyntaxFacts.getText(actual.keywordKind())]);
                 }
                 else {
                     // Otherwise just report that an identifier was expected.
-                    return new SyntaxDiagnostic(offset, width, DiagnosticCode.Identifier_expected, null);
+                    return new SyntaxDiagnostic(position, width, DiagnosticCode.Identifier_expected, null);
                 }
             }
         }
 
         if (SyntaxFacts.isAnyPunctuation(expectedKind)) {
-            return new SyntaxDiagnostic(offset, width, DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKind)]);
+            return new SyntaxDiagnostic(position, width, DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKind)]);
         }
 
         throw Errors.notYetImplemented();
-    }
-
-    private getDiagnosticSpanForMissingToken(): TextSpan {
-        // If the previous token has a trailing EndOfLineTrivia,
-        // the missing token diagnostic position is moved to the
-        // end of line containing the previous token and
-        // its width is set to zero.
-        // Otherwise the diagnostic offset and width is set
-        // to the corresponding values of the current token
-
-        //var trivia = this.prevTokenTrailingTrivia;
-        //if (trivia != null)
-        //{
-        //    SyntaxList<SyntaxNode> triviaList = new SyntaxList<SyntaxNode>(trivia);
-        //    bool prevTokenHasEndOfLineTrivia = triviaList.Any(SyntaxKind.EndOfLineTrivia);
-        //    if (prevTokenHasEndOfLineTrivia)
-        //    {
-        //        offset = -trivia.FullWidth;
-        //        width = 0;
-        //        return;
-        //    }
-        //}
-
-        var token = this.currentToken();
-        return new TextSpan(token.start(), token.width());
     }
 
     private withAdditionalDiagnostics(token: ISyntaxToken, ...diagnostics: Diagnostic[]): ISyntaxToken {
@@ -770,29 +756,16 @@ class Parser extends SlidingWindow {
         }
 
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
-        var classElements: ClassElementSyntax[] = null;
+        var classElements: ISyntaxNodeList = SyntaxNodeList.empty;
+
         if (!openBraceToken.isMissing()) {
-            var savedListParsingState = this.listParsingState;
-            this.listParsingState |= ListParsingState.ClassDeclaration_ClassElements;
-
-            while (true) {
-                if (this.currentToken().kind === SyntaxKind.CloseBraceToken || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
-                    break;
-                }
-
-                var classElement = this.parseClassElement();
-
-                classElements = classElements || [];
-                classElements.push(classElement);
-            }
-
-            this.listParsingState = savedListParsingState;
+            classElements = this.parseSyntaxNodeList(ListParsingState.ClassDeclaration_ClassElements);
         }
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
         return new ClassDeclarationSyntax(
-            exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause,
-            openBraceToken, SyntaxNodeList.create(classElements), closeBraceToken);
+            exportKeyword, declareKeyword, classKeyword, identifier, extendsClause,
+            implementsClause, openBraceToken, classElements, closeBraceToken);
     }
 
     private isConstructorDeclaration(): bool {
@@ -3159,7 +3132,7 @@ class Parser extends SlidingWindow {
             // production can consume it.
             for (var state = ListParsingState.LastListParsingState;
                  state >= ListParsingState.FirstListParsingState;
-                 state <<= 1) {
+                 state >>= 1) {
 
                 if ((this.listParsingState & state) !== 0) {
                     if (this.isExpectedListTerminator(state) || this.isExpectedListItem(state)) {
@@ -3178,23 +3151,26 @@ class Parser extends SlidingWindow {
         }
     }
 
-    private reportUnexpectedTokenDiagnostic(listType: ListParsingState): void {
-        // Except: if there was already an unexpected token reported at this position.  If so,
-        // don't report another one.
-        var token = this.currentToken();
-        var position = token.start();
+    private existingDiagnosticAtPosition(position: number): bool {
+        return this.diagnostics.length > 0 &&
+            this.diagnostics[this.diagnostics.length - 1].position() === position;
+    }
 
-        if (this.diagnostics.length > 0) {
-            var lastDiagnostic = this.diagnostics[this.diagnostics.length - 1];
-                
-            if (lastDiagnostic.diagnosticCode() === DiagnosticCode.Unexpected_token__0_expected &&
-                lastDiagnostic.position() === position) {
-                return;
-            }
-        }
+    private reportUnexpectedTokenDiagnostic(listType: ListParsingState): void {
+        var token = this.currentToken();
 
         var diagnostic = new SyntaxDiagnostic(
-            position, token.width(), DiagnosticCode.Unexpected_token__0_expected, [this.getExpectedListElementType(listType)]);
+            token.start(), token.width(), DiagnosticCode.Unexpected_token__0_expected, [this.getExpectedListElementType(listType)]);
+        this.addDiagnostic(diagnostic);
+    }
+
+    private addDiagnostic(diagnostic: SyntaxDiagnostic): void {
+        // Except: if we already have a diagnostic for this position, don't report another one.
+        if (this.diagnostics.length > 0 &&
+            this.diagnostics[this.diagnostics.length - 1].position() === diagnostic.position()) {
+            return;
+        }
+
         this.diagnostics.push(diagnostic);
     }
 
@@ -3203,6 +3179,7 @@ class Parser extends SlidingWindow {
             case ListParsingState.SourceUnit_ModuleElements:
                 return this.isExpectedSourceUnit_ModuleElementsTerminator();
             case ListParsingState.ClassDeclaration_ClassElements:
+                return this.isExpectedClassDeclaration_ClassElementsTerminator();
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
@@ -3225,11 +3202,16 @@ class Parser extends SlidingWindow {
         return this.currentToken().kind === SyntaxKind.EndOfFileToken;
     }
 
+    private isExpectedClassDeclaration_ClassElementsTerminator(): bool {
+        return this.currentToken().kind === SyntaxKind.CloseBraceToken;
+    }
+
     private isExpectedListItem(currentListType: ListParsingState): any {
         switch (currentListType) {
             case ListParsingState.SourceUnit_ModuleElements:
                 return this.isModuleElement();
             case ListParsingState.ClassDeclaration_ClassElements:
+                return this.isClassElement();
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
@@ -3253,6 +3235,7 @@ class Parser extends SlidingWindow {
             case ListParsingState.SourceUnit_ModuleElements:
                 return this.parseModuleElement();
             case ListParsingState.ClassDeclaration_ClassElements:
+                return this.parseClassElement();
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
@@ -3276,6 +3259,7 @@ class Parser extends SlidingWindow {
             case ListParsingState.SourceUnit_ModuleElements:
                 return Strings.module_element;
             case ListParsingState.ClassDeclaration_ClassElements:
+                return Strings.class_element;
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
