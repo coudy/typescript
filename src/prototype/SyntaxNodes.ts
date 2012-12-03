@@ -2242,6 +2242,86 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
 }
 
 class MemberAccessorDeclarationSyntax extends MemberDeclarationSyntax {
+    private _identifier: ISyntaxToken;
+    private _parameterList: ParameterListSyntax;
+    private _block: BlockSyntax;
+
+    constructor(publicOrPrivateKeyword: ISyntaxToken,
+                staticKeyword: ISyntaxToken,
+                identifier: ISyntaxToken,
+                parameterList: ParameterListSyntax,
+                block: BlockSyntax) {
+        super(publicOrPrivateKeyword, staticKeyword);
+
+        this._identifier = identifier;
+        this._parameterList = parameterList;
+        this._block = block;
+    }
+
+    public identifier(): ISyntaxToken {
+        return this._identifier;
+    }
+
+    public parameterList(): ParameterListSyntax {
+        return this._parameterList;
+    }
+
+    public block(): BlockSyntax {
+        return this._block;
+    }
+}
+
+class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax {
+    private _getKeyword: ISyntaxToken;
+    private _typeAnnotation: TypeAnnotationSyntax;
+
+    constructor(publicOrPrivateKeyword: ISyntaxToken,
+        staticKeyword: ISyntaxToken,
+        getKeyword: ISyntaxToken,
+        identifier: ISyntaxToken,
+        parameterList: ParameterListSyntax,
+        typeAnnotation: TypeAnnotationSyntax,
+        block: BlockSyntax) {
+        super(publicOrPrivateKeyword, staticKeyword, identifier, parameterList, block);
+
+        this._getKeyword = getKeyword;
+        this._typeAnnotation = typeAnnotation;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.GetMemberAccessorDeclaration;
+    }
+
+    public getKeyword(): ISyntaxToken {
+        return this._getKeyword;
+    }
+
+    public typeAnnotation(): TypeAnnotationSyntax {
+        return this._typeAnnotation;
+    }
+}
+
+class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax {
+    private _setKeyword: ISyntaxToken;
+
+    constructor(publicOrPrivateKeyword: ISyntaxToken,
+                staticKeyword: ISyntaxToken,
+                setKeyword: ISyntaxToken,
+                identifier: ISyntaxToken,
+                parameterList: ParameterListSyntax,
+                block: BlockSyntax) {
+        super(publicOrPrivateKeyword, staticKeyword, identifier, parameterList, block);
+
+        this._setKeyword = setKeyword;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.SetMemberAccessorDeclaration;
+    }
+
+    public setKeyword(): ISyntaxToken {
+        return this._setKeyword;
+    }
 }
 
 class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {

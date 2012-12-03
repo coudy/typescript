@@ -158,6 +158,8 @@ enum SyntaxKind {
     // ClassElements
     MemberFunctionDeclaration,
     ConstructorDeclaration,
+    GetMemberAccessorDeclaration,
+    SetMemberAccessorDeclaration,
 
     // Statements
     Block,

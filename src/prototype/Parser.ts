@@ -767,6 +767,55 @@ class Parser extends SlidingWindow {
         }
     }
 
+    private parseMemberAccessorDeclaration(): MemberAccessorDeclarationSyntax {
+        Debug.assert(this.isMemberAccessorDeclaration());
+
+        var publicOrPrivateKeyword: ISyntaxToken = null;
+        if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
+            this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
+            publicOrPrivateKeyword = this.eatAnyToken();
+        }
+
+        var staticKeyword = this.tryEatKeyword(SyntaxKind.StaticKeyword);
+
+        if (this.currentToken().keywordKind() === SyntaxKind.GetKeyword) {
+            return this.parseGetMemberAccessorDeclaration(publicOrPrivateKeyword, staticKeyword);
+        }
+        else if (this.currentToken().keywordKind() === SyntaxKind.SetKeyword) {
+            return this.parseSetMemberAccessorDeclaration(publicOrPrivateKeyword, staticKeyword);
+        }
+        else {
+            throw Errors.invalidOperation();
+        }
+    }
+    
+    private parseGetMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken, 
+                                              staticKeyword: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.GetKeyword);
+
+        var getKeyword = this.eatKeyword(SyntaxKind.GetKeyword);
+        var identifier = this.eatIdentifierToken();
+        var parameterList = this.parseParameterList();
+        var typeAnnotation = this.parseOptionalTypeAnnotation();
+        var block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
+
+        return new GetMemberAccessorDeclarationSyntax(
+            publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block);
+    }
+    
+    private parseSetMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken, 
+                                              staticKeyword: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.SetKeyword);
+
+        var setKeyword = this.eatKeyword(SyntaxKind.SetKeyword);
+        var identifier = this.eatIdentifierToken();
+        var parameterList = this.parseParameterList();
+        var block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
+
+        return new SetMemberAccessorDeclarationSyntax(
+            publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block);
+    }
+
     private isMemberVariableDeclaration(): bool {
         if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
             this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
@@ -833,10 +882,6 @@ class Parser extends SlidingWindow {
         }
 
         return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolon);
-    }
-
-    private parseMemberAccessorDeclaration(): MemberAccessorDeclarationSyntax {
-        throw Errors.notYetImplemented();
     }
 
     private parseMemberVariableDeclaration(): MemberVariableDeclarationSyntax {
@@ -1070,11 +1115,7 @@ class Parser extends SlidingWindow {
 
         var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
         var parameterList = this.parseParameterList();
-        var typeAnnotation: TypeAnnotationSyntax = null;
-
-        if (this.isTypeAnnotation()) {
-            typeAnnotation = this.parseTypeAnnotation();
-        }
+        var typeAnnotation = this.parseOptionalTypeAnnotation();
 
         return new ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation);
     }
@@ -1085,11 +1126,7 @@ class Parser extends SlidingWindow {
         var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
         var parameter = this.parseParameter();
         var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
-
-        var typeAnnotation: TypeAnnotationSyntax = null;
-        if (this.isTypeAnnotation()) {
-            typeAnnotation = this.parseTypeAnnotation();
-        }
+        var typeAnnotation = this.parseOptionalTypeAnnotation();
 
         return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation);
     }
@@ -1101,11 +1138,7 @@ class Parser extends SlidingWindow {
         var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
 
         var parameterList = this.parseParameterList();
-        var typeAnnotation: TypeAnnotationSyntax = null;
-
-        if (this.isTypeAnnotation()) {
-            typeAnnotation = this.parseTypeAnnotation();
-        }
+        var typeAnnotation = this.parseOptionalTypeAnnotation();
 
         return new FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation);
     }
@@ -1113,13 +1146,9 @@ class Parser extends SlidingWindow {
     private parsePropertySignature(): PropertySignatureSyntax {
         Debug.assert(this.isPropertySignature());
 
-        var identifier = this.eatIdentifierToken();        
+        var identifier = this.eatIdentifierToken();
         var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
-
-        var typeAnnotation: TypeAnnotationSyntax = null;
-        if (this.isTypeAnnotation()) {
-            typeAnnotation = this.parseTypeAnnotation();
-        }
+        var typeAnnotation = this.parseOptionalTypeAnnotation();
 
         return new PropertySignatureSyntax(identifier, questionToken, typeAnnotation);
     }
@@ -1860,9 +1889,7 @@ class Parser extends SlidingWindow {
         var typeAnnotation: TypeAnnotationSyntax = null;
 
         if (!identifier.isMissing()) {
-            if (this.isTypeAnnotation()) {
-                typeAnnotation = this.parseTypeAnnotation();
-            }
+            typeAnnotation = this.parseOptionalTypeAnnotation();
 
             if (this.isEqualsValueClause()) {
                 equalsValueClause = this.parseEqualsValuesClause(allowIn);
@@ -2620,10 +2647,7 @@ class Parser extends SlidingWindow {
 
     private parseCallSignature(): CallSignatureSyntax {
         var parameterList = this.parseParameterList();
-        var typeAnnotation: TypeAnnotationSyntax = null;
-        if (this.isTypeAnnotation()) {
-            typeAnnotation = this.parseTypeAnnotation();
-        }
+        var typeAnnotation = this.parseOptionalTypeAnnotation();
 
         return new CallSignatureSyntax(parameterList, typeAnnotation);
     }
@@ -2642,6 +2666,12 @@ class Parser extends SlidingWindow {
 
     private isTypeAnnotation(): bool {
         return this.currentToken().kind === SyntaxKind.ColonToken;
+    }
+
+    private parseOptionalTypeAnnotation(): TypeAnnotationSyntax {
+        return this.isTypeAnnotation()
+            ? this.parseTypeAnnotation()
+            : null;
     }
 
     private parseTypeAnnotation(): TypeAnnotationSyntax {
@@ -2796,12 +2826,8 @@ class Parser extends SlidingWindow {
         }
 
         var identifier = this.eatIdentifierToken();
-        var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
-
-        var typeAnnotation: TypeAnnotationSyntax = null;
-        if (this.isTypeAnnotation()) {
-            typeAnnotation = this.parseTypeAnnotation();
-        }
+        var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);        
+        var typeAnnotation = this.parseOptionalTypeAnnotation();
 
         var equalsValueClause: EqualsValueClauseSyntax = null;
         if (this.isEqualsValueClause()) {
