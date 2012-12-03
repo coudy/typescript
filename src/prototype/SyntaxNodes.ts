@@ -3736,3 +3736,28 @@ class DeleteExpressionSyntax extends UnaryExpressionSyntax {
         return this._expression;
     }
 }
+
+class DebuggerStatementSyntax extends StatementSyntax {
+    private _debuggerKeyword: ISyntaxToken;
+    private _semicolonToken: ISyntaxToken;
+
+    constructor(debuggerKeyword: ISyntaxToken,
+                semicolonToken: ISyntaxToken) {
+        super();
+
+        this._debuggerKeyword = debuggerKeyword;
+        this._semicolonToken = semicolonToken;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.DebuggerStatement;
+    }
+
+    public debuggerKeyword(): ISyntaxToken {
+        return this._debuggerKeyword;
+    }
+
+    public semicolonToken(): ISyntaxToken {
+        return this._semicolonToken;
+    }
+}

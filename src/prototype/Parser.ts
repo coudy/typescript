@@ -1087,13 +1087,14 @@ class Parser extends SlidingWindow {
         }
         else if (this.isFunctionSignature()) {
             // Note: it is important that isFunctionSignature is called before isPropertySignature.
+            // isPropertySignature checks for a subset of isFunctionSignature.
             return this.parseFunctionSignature();
         }
         else if (this.isPropertySignature()) {
             return this.parsePropertySignature();
         }
         else {
-            throw Errors.notYetImplemented();
+            throw Errors.invalidOperation();
         }
     }
 
@@ -1232,7 +1233,8 @@ class Parser extends SlidingWindow {
                this.isEmptyStatement() ||
                this.isWhileStatement() ||
                this.isDoStatement() ||
-               this.isTryStatement();
+               this.isTryStatement() ||
+               this.isDebuggerStatement();
     }
 
     private parseStatement(allowFunctionDeclaration: bool): StatementSyntax {
@@ -1284,9 +1286,25 @@ class Parser extends SlidingWindow {
         else if (this.isTryStatement()) {
             return this.parseTryStatement();
         }
+        else if (this.isDebuggerStatement()) {
+            return this.parseDebuggerStatement();
+        }
         else {
             throw Errors.notYetImplemented();
         }
+    }
+
+    private isDebuggerStatement(): bool {
+        return this.currentToken().keywordKind() === SyntaxKind.DebuggerKeyword;
+    }
+
+    private parseDebuggerStatement(): DebuggerStatementSyntax {
+        Debug.assert(this.isDebuggerStatement());
+
+        var debuggerKeyword = this.eatKeyword(SyntaxKind.DebuggerKeyword);
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+
+        return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken);
     }
 
     private isDoStatement(): bool {

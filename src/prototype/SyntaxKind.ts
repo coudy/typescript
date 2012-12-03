@@ -178,6 +178,7 @@ enum SyntaxKind {
     TryStatement,
     LabeledStatement,
     DoStatement,
+    DebuggerStatement,
 
     // Expressions
     PlusExpression,
