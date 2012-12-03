@@ -1814,29 +1814,12 @@ class Parser extends SlidingWindow {
         Debug.assert(this.currentToken().keywordKind() === SyntaxKind.VarKeyword);
         var varKeyword = this.eatKeyword(SyntaxKind.VarKeyword);
 
-        var savedListParsingState = this.listParsingState;
-        this.listParsingState |= ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn;
+        var listParsingState = allowIn 
+            ? ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn
+            : ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn;
 
-        var variableDeclarators = [];
-
-        var variableDeclarator = this.parseVariableDeclarator(allowIn);
-        variableDeclarators.push(variableDeclarator);
-
-        while (true) {
-            if (this.currentToken().kind !== SyntaxKind.CommaToken) {
-                break;
-            }
-
-            var commaToken = this.eatToken(SyntaxKind.CommaToken);
-            variableDeclarators.push(commaToken);
-
-            variableDeclarator = this.parseVariableDeclarator(allowIn);
-            variableDeclarators.push(variableDeclarator);
-        }
-
-        this.listParsingState = savedListParsingState;
-
-        return new VariableDeclarationSyntax(varKeyword, SeparatedSyntaxList.create(variableDeclarators));
+        var variableDeclarators = this.parseSeparatedSyntaxList(listParsingState);
+        return new VariableDeclarationSyntax(varKeyword, variableDeclarators);
     }
 
     private isVariableDeclarator(): bool {
@@ -2462,8 +2445,8 @@ class Parser extends SlidingWindow {
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
         var propertyAssignments: any[] = null;
 
-        var savedListParsingState = this.listParsingState;
-        this.listParsingState |= ListParsingState.ObjectLiteralExpression_PropertyAssignments;
+        //var savedListParsingState = this.listParsingState;
+        //this.listParsingState |= ListParsingState.ObjectLiteralExpression_PropertyAssignments;
 
         while (true) {
             if (this.currentToken().kind === SyntaxKind.CloseBraceToken || this.currentToken().kind === SyntaxKind.EndOfFileToken) {
@@ -2487,7 +2470,7 @@ class Parser extends SlidingWindow {
             break;
         }
 
-        this.listParsingState = savedListParsingState;
+        //this.listParsingState = savedListParsingState;
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
         return new ObjectLiteralExpressionSyntax(
@@ -2586,8 +2569,8 @@ class Parser extends SlidingWindow {
 
         var expressions: any[] = null;
 
-        var savedListParsingState = this.listParsingState;
-        this.listParsingState |= ListParsingState.ArrayLiteralExpression_AssignmentExpressions;
+        //var savedListParsingState = this.listParsingState;
+        //this.listParsingState |= ListParsingState.ArrayLiteralExpression_AssignmentExpressions;
 
         var addOmittedExpression = true;
         while (true) {
@@ -2624,7 +2607,7 @@ class Parser extends SlidingWindow {
             }
         }
 
-        this.listParsingState = savedListParsingState;
+        //this.listParsingState = savedListParsingState;
 
         var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
 
@@ -2678,8 +2661,8 @@ class Parser extends SlidingWindow {
         var parameters: any[] = null;
 
         if (!openParenToken.isMissing()) {
-            var savedListParsingState = this.listParsingState;
-            this.listParsingState |= ListParsingState.ParameterList_Parameters;
+            //var savedListParsingState = this.listParsingState;
+            //this.listParsingState |= ListParsingState.ParameterList_Parameters;
 
             if (this.currentToken().kind !== SyntaxKind.CloseParenToken && this.currentToken().kind !== SyntaxKind.EndOfFileToken) {
                 var parameter = this.parseParameter();
@@ -2707,7 +2690,7 @@ class Parser extends SlidingWindow {
                 }
             }
 
-            this.listParsingState = savedListParsingState;
+            //this.listParsingState = savedListParsingState;
         }
 
         var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
@@ -3038,6 +3021,8 @@ class Parser extends SlidingWindow {
             
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.ArgumentList_AssignmentExpressions:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
                 return false;
 
             case ListParsingState.SourceUnit_ModuleElements:
@@ -3047,8 +3032,6 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_Statements_AllowFunctionDeclarations:
             case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
-            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
-            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
@@ -3059,6 +3042,8 @@ class Parser extends SlidingWindow {
 
     private requiresAtLeastOneItem(currentListType: ListParsingState): bool {
         switch (currentListType) {
+            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
                 return true;
             
@@ -3074,8 +3059,6 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_Statements_AllowFunctionDeclarations:
             case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
-            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
-            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
@@ -3092,6 +3075,8 @@ class Parser extends SlidingWindow {
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.EnumDeclaration_VariableDeclarators:
             case ListParsingState.ArgumentList_AssignmentExpressions:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
                 return false;
 
             case ListParsingState.SourceUnit_ModuleElements:
@@ -3101,8 +3086,6 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_Statements_AllowFunctionDeclarations:
             case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
-            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
-            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
@@ -3116,6 +3099,8 @@ class Parser extends SlidingWindow {
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
             case ListParsingState.ArgumentList_AssignmentExpressions:
             case ListParsingState.EnumDeclaration_VariableDeclarators:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
                 return SyntaxKind.CommaToken;
 
             case ListParsingState.ObjectType_TypeMembers:
@@ -3128,8 +3113,6 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
             case ListParsingState.Block_Statements_AllowFunctionDeclarations:
             case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
-            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
-            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
@@ -3195,7 +3178,11 @@ class Parser extends SlidingWindow {
                 return this.isExpectedExtendsOrImplementsClause_TypeNameListTerminator();
             
             case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+                return this.isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator();
+
             case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
+                return this.isExpectedVariableDeclaration_VariableDeclarators_DisallowInTerminator();
+
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
@@ -3219,6 +3206,41 @@ class Parser extends SlidingWindow {
 
     private isExpectedObjectType_TypeMembersTerminator(): bool {
         return this.currentToken().kind === SyntaxKind.CloseBraceToken;
+    }
+
+    private isExpectedVariableDeclaration_VariableDeclarators_DisallowInTerminator(): bool {
+        // This is the case when we're parsing variable declarations in a for/for-in statement.
+        if (this.currentToken().kind === SyntaxKind.SemicolonToken ||
+            this.currentToken().kind === SyntaxKind.CloseParenToken) {
+            return true;
+        }
+
+        if (this.currentToken().keywordKind() === SyntaxKind.InKeyword) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator(): bool {
+        // This is the case when we're parsing variable declarations in a variable statement.
+
+        // If we're looking at a comma, then we can't terminate this list. i.e.:
+        //      var a = bar    // <-- just consumed the 'foo' variable.
+        //        , b = baz;
+        if (this.currentToken().kind === SyntaxKind.CommaToken) {
+            return false;
+        }
+        
+        // If we just parsed a comma, then we can't terminate this list.  i.e.:
+        //      var a = bar, // <-- just consumed the  comma
+        //        , b = baz;
+        if (this.previousToken.kind === SyntaxKind.CommaToken) {
+            return false;
+        }
+
+        // We're done when we can eat a semicolon.
+        return this.canEatExplicitOrAutomaticSemicolon();
     }
 
     private isExpectedExtendsOrImplementsClause_TypeNameListTerminator(): bool {
@@ -3280,6 +3302,8 @@ class Parser extends SlidingWindow {
                 return this.isStatement(/*allowFunctionDeclaration:*/ false);
 
             case ListParsingState.EnumDeclaration_VariableDeclarators:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
                 return this.isVariableDeclarator();
 
             case ListParsingState.ObjectType_TypeMembers:
@@ -3291,8 +3315,6 @@ class Parser extends SlidingWindow {
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
                 return this.isName();
             
-            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
-            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
@@ -3338,7 +3360,11 @@ class Parser extends SlidingWindow {
                 return this.parseName();
 
             case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+                return this.parseVariableDeclarator(/*allowIn:*/ true);
+
             case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
+                return this.parseVariableDeclarator(/*allowIn:*/ false);
+
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
@@ -3368,7 +3394,9 @@ class Parser extends SlidingWindow {
             case ListParsingState.Block_Statements_AllowFunctionDeclarations:     // Fall through.
             case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
                 return Strings.statement;
-
+            
+            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
             case ListParsingState.EnumDeclaration_VariableDeclarators:
                 return Strings.identifier;
 
@@ -3381,8 +3409,6 @@ class Parser extends SlidingWindow {
             case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
                 return Strings.type_name;
 
-            case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
-            case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
             case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
             case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
             case ListParsingState.ParameterList_Parameters:
