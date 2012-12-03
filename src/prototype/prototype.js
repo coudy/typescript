@@ -1224,7 +1224,7 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseSourceUnit = function () {
         var savedIsInStrictMode = this.isInStrictMode;
-        var moduleElements = this.parseSyntaxNodeList(ListParsingState.SourceUnit_ModuleElements, this.updateStrictModeState);
+        var moduleElements = this.parseSyntaxList(ListParsingState.SourceUnit_ModuleElements, this.updateStrictModeState);
         this.isInStrictMode = savedIsInStrictMode;
         return new SourceUnitSyntax(moduleElements, this.currentToken());
     };
@@ -1391,7 +1391,7 @@ var Parser = (function (_super) {
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
         var classElements = SyntaxList.empty;
         if(!openBraceToken.isMissing()) {
-            classElements = this.parseSyntaxNodeList(ListParsingState.ClassDeclaration_ClassElements);
+            classElements = this.parseSyntaxList(ListParsingState.ClassDeclaration_ClassElements);
         }
         var closeBraceToken = this.eatToken(64 /* CloseBraceToken */ );
         return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken);
@@ -1608,7 +1608,7 @@ var Parser = (function (_super) {
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
         var moduleElements = SyntaxList.empty;
         if(!openBraceToken.isMissing()) {
-            moduleElements = this.parseSyntaxNodeList(ListParsingState.ModuleDeclaration_ModuleElements);
+            moduleElements = this.parseSyntaxList(ListParsingState.ModuleDeclaration_ModuleElements);
         }
         var closeBraceToken = this.eatToken(64 /* CloseBraceToken */ );
         return new ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken);
@@ -2053,7 +2053,7 @@ var Parser = (function (_super) {
         var openBraceToken = this.eatToken(63 /* OpenBraceToken */ );
         var switchClauses = SyntaxList.empty;
         if(!openBraceToken.isMissing()) {
-            switchClauses = this.parseSyntaxNodeList(ListParsingState.SwitchStatement_SwitchClauses);
+            switchClauses = this.parseSyntaxList(ListParsingState.SwitchStatement_SwitchClauses);
         }
         var closeBraceToken = this.eatToken(64 /* CloseBraceToken */ );
         return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, switchClauses, closeBraceToken);
@@ -2087,14 +2087,14 @@ var Parser = (function (_super) {
             expression = this.parseExpression(true);
         }
         var colonToken = this.eatToken(99 /* ColonToken */ );
-        var statements = this.parseSyntaxNodeList(ListParsingState.SwitchClause_Statements);
+        var statements = this.parseSyntaxList(ListParsingState.SwitchClause_Statements);
         return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements);
     };
     Parser.prototype.parseDefaultSwitchClause = function () {
         Debug.assert(this.isDefaultSwitchClause());
         var defaultKeyword = this.eatKeyword(14 /* DefaultKeyword */ );
         var colonToken = this.eatToken(99 /* ColonToken */ );
-        var statements = this.parseSyntaxNodeList(ListParsingState.SwitchClause_Statements);
+        var statements = this.parseSyntaxList(ListParsingState.SwitchClause_Statements);
         return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements);
     };
     Parser.prototype.isThrowStatement = function () {
@@ -2834,7 +2834,7 @@ var Parser = (function (_super) {
         if(!openBraceToken.isMissing()) {
             var savedIsInStrictMode = this.isInStrictMode;
             var listParsingMode = allowFunctionDeclaration ? ListParsingState.Block_StatementsWithFunctionDeclarations : ListParsingState.Block_StatementsWithoutFunctionDeclarations;
-            statements = this.parseSyntaxNodeList(listParsingMode, this.updateStrictModeState);
+            statements = this.parseSyntaxList(listParsingMode, this.updateStrictModeState);
             this.isInStrictMode = savedIsInStrictMode;
         }
         var closeBraceToken = this.eatToken(64 /* CloseBraceToken */ );
@@ -3007,15 +3007,15 @@ var Parser = (function (_super) {
         }
         return new ParameterSyntax(dotDotDotToken, publicOrPrivateToken, identifier, questionToken, typeAnnotation, equalsValueClause);
     };
-    Parser.prototype.parseSyntaxNodeList = function (currentListType, processItem) {
+    Parser.prototype.parseSyntaxList = function (currentListType, processItem) {
         if (typeof processItem === "undefined") { processItem = null; }
         var savedListParsingState = this.listParsingState;
         this.listParsingState |= currentListType;
-        var result = this.parseSyntaxNodeListWorker(currentListType, processItem);
+        var result = this.parseSyntaxListWorker(currentListType, processItem);
         this.listParsingState = savedListParsingState;
         return result;
     };
-    Parser.prototype.parseSyntaxNodeListWorker = function (currentListType, processItem) {
+    Parser.prototype.parseSyntaxListWorker = function (currentListType, processItem) {
         var items = null;
         while(true) {
             if(this.isExpectedListTerminator(currentListType) || this.currentToken().kind === 114 /* EndOfFileToken */ ) {

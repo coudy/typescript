@@ -496,7 +496,7 @@ class Parser extends SlidingWindow {
         // level parsing entrypoint.  So it will always start as false and be reset to false when the
         // loop ends.  However, for sake of symmetry and consistancy we do this.
         var savedIsInStrictMode = this.isInStrictMode;
-        var moduleElements = this.parseSyntaxNodeList(ListParsingState.SourceUnit_ModuleElements, this.updateStrictModeState);
+        var moduleElements = this.parseSyntaxList(ListParsingState.SourceUnit_ModuleElements, this.updateStrictModeState);
         this.isInStrictMode = savedIsInStrictMode;
 
         return new SourceUnitSyntax(moduleElements, this.currentToken());
@@ -728,7 +728,7 @@ class Parser extends SlidingWindow {
         var classElements: ISyntaxList = SyntaxList.empty;
 
         if (!openBraceToken.isMissing()) {
-            classElements = this.parseSyntaxNodeList(ListParsingState.ClassDeclaration_ClassElements);
+            classElements = this.parseSyntaxList(ListParsingState.ClassDeclaration_ClassElements);
         }
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -1025,7 +1025,7 @@ class Parser extends SlidingWindow {
 
         var moduleElements: ISyntaxList = SyntaxList.empty;
         if (!openBraceToken.isMissing()) {
-            moduleElements = this.parseSyntaxNodeList(ListParsingState.ModuleDeclaration_ModuleElements);
+            moduleElements = this.parseSyntaxList(ListParsingState.ModuleDeclaration_ModuleElements);
         }
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -1650,7 +1650,7 @@ class Parser extends SlidingWindow {
 
         var switchClauses: ISyntaxList = SyntaxList.empty;
         if (!openBraceToken.isMissing()) {
-            switchClauses = this.parseSyntaxNodeList(ListParsingState.SwitchStatement_SwitchClauses);
+            switchClauses = this.parseSyntaxList(ListParsingState.SwitchStatement_SwitchClauses);
         }
 
         var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -1693,7 +1693,7 @@ class Parser extends SlidingWindow {
         }
 
         var colonToken = this.eatToken(SyntaxKind.ColonToken);
-        var statements = this.parseSyntaxNodeList(ListParsingState.SwitchClause_Statements);
+        var statements = this.parseSyntaxList(ListParsingState.SwitchClause_Statements);
 
         return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements);
     }
@@ -1703,7 +1703,7 @@ class Parser extends SlidingWindow {
 
         var defaultKeyword = this.eatKeyword(SyntaxKind.DefaultKeyword);
         var colonToken = this.eatToken(SyntaxKind.ColonToken);
-        var statements = this.parseSyntaxNodeList(ListParsingState.SwitchClause_Statements);
+        var statements = this.parseSyntaxList(ListParsingState.SwitchClause_Statements);
 
         return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements);
     }
@@ -2754,7 +2754,7 @@ class Parser extends SlidingWindow {
             var listParsingMode = allowFunctionDeclaration
                 ? ListParsingState.Block_StatementsWithFunctionDeclarations
                 : ListParsingState.Block_StatementsWithoutFunctionDeclarations;
-            statements = this.parseSyntaxNodeList(listParsingMode, this.updateStrictModeState);
+            statements = this.parseSyntaxList(listParsingMode, this.updateStrictModeState);
             this.isInStrictMode = savedIsInStrictMode;
         }
 
@@ -2979,18 +2979,18 @@ class Parser extends SlidingWindow {
         return new ParameterSyntax(dotDotDotToken, publicOrPrivateToken, identifier, questionToken, typeAnnotation, equalsValueClause);
     }
 
-    private parseSyntaxNodeList(currentListType: ListParsingState, processItem: (item: any) => void = null): ISyntaxList {
+    private parseSyntaxList(currentListType: ListParsingState, processItem: (item: any) => void = null): ISyntaxList {
         var savedListParsingState = this.listParsingState;
         this.listParsingState |= currentListType;
 
-        var result = this.parseSyntaxNodeListWorker(currentListType, processItem);
+        var result = this.parseSyntaxListWorker(currentListType, processItem);
 
         this.listParsingState = savedListParsingState;
 
         return result;
     }
 
-    private parseSyntaxNodeListWorker(currentListType: ListParsingState, processItem: (item: any) => void): ISyntaxList {
+    private parseSyntaxListWorker(currentListType: ListParsingState, processItem: (item: any) => void): ISyntaxList {
         var items: any[] = null;
 
         while (true) {

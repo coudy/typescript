@@ -44,7 +44,7 @@ class SyntaxList {
             return list;
         }
 
-        var list: ISyntaxNodeList;
+        var list: ISyntaxList;
         list = {
             toJSON: (key) => toJSON(list),
 
