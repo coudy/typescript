@@ -733,7 +733,7 @@ var totalSize = 0;
 var program = new Program();
 var start: number, end: number;
 
-if (true) {
+if (false) {
     start = new Date().getTime();
     program.runAllTests(Environment, false, true);
     program.run(Environment, false);

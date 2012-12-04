@@ -35508,7 +35508,7 @@ var Program = (function () {
 var totalSize = 0;
 var program = new Program();
 var start, end;
-if(true) {
+if(false) {
     start = new Date().getTime();
     program.runAllTests(Environment, false, true);
     program.run(Environment, false);
