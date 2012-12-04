@@ -1763,47 +1763,43 @@ var Parser = (function (_super) {
                         if(this.isBlock()) {
                             return this.parseBlock();
                         } else {
-                            if(this.isExpressionStatement()) {
-                                return this.parseExpressionStatement();
+                            if(this.isReturnStatement()) {
+                                return this.parseReturnStatement();
                             } else {
-                                if(this.isReturnStatement()) {
-                                    return this.parseReturnStatement();
+                                if(this.isSwitchStatement()) {
+                                    return this.parseSwitchStatement();
                                 } else {
-                                    if(this.isSwitchStatement()) {
-                                        return this.parseSwitchStatement();
+                                    if(this.isThrowStatement()) {
+                                        return this.parseThrowStatement();
                                     } else {
-                                        if(this.isThrowStatement()) {
-                                            return this.parseThrowStatement();
+                                        if(this.isBreakStatement()) {
+                                            return this.parseBreakStatement();
                                         } else {
-                                            if(this.isBreakStatement()) {
-                                                return this.parseBreakStatement();
+                                            if(this.isContinueStatement()) {
+                                                return this.parseContinueStatement();
                                             } else {
-                                                if(this.isContinueStatement()) {
-                                                    return this.parseContinueStatement();
+                                                if(this.isForOrForInStatement()) {
+                                                    return this.parseForOrForInStatement();
                                                 } else {
-                                                    if(this.isForOrForInStatement()) {
-                                                        return this.parseForOrForInStatement();
+                                                    if(this.isEmptyStatement()) {
+                                                        return this.parseEmptyStatement();
                                                     } else {
-                                                        if(this.isEmptyStatement()) {
-                                                            return this.parseEmptyStatement();
+                                                        if(this.isWhileStatement()) {
+                                                            return this.parseWhileStatement();
                                                         } else {
-                                                            if(this.isWhileStatement()) {
-                                                                return this.parseWhileStatement();
+                                                            if(this.isWithStatement()) {
+                                                                return this.parseWithStatement();
                                                             } else {
-                                                                if(this.isWithStatement()) {
-                                                                    return this.parseWithStatement();
+                                                                if(this.isDoStatement()) {
+                                                                    return this.parseDoStatement();
                                                                 } else {
-                                                                    if(this.isDoStatement()) {
-                                                                        return this.parseDoStatement();
+                                                                    if(this.isTryStatement()) {
+                                                                        return this.parseTryStatement();
                                                                     } else {
-                                                                        if(this.isTryStatement()) {
-                                                                            return this.parseTryStatement();
+                                                                        if(this.isDebuggerStatement()) {
+                                                                            return this.parseDebuggerStatement();
                                                                         } else {
-                                                                            if(this.isDebuggerStatement()) {
-                                                                                return this.parseDebuggerStatement();
-                                                                            } else {
-                                                                                throw Errors.notYetImplemented();
-                                                                            }
+                                                                            return this.parseExpressionStatement();
                                                                         }
                                                                     }
                                                                 }
@@ -1945,7 +1941,6 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseForOrForInStatementWithVariableDeclaration = function (forKeyword, openParenToken) {
         Debug.assert(forKeyword.keywordKind() === 20 /* ForKeyword */  && openParenToken.kind === 65 /* OpenParenToken */ );
-        Debug.assert(this.previousToken.kind === 65 /* OpenParenToken */ );
         Debug.assert(this.currentToken().keywordKind() === 34 /* VarKeyword */ );
         var variableDeclaration = this.parseVariableDeclaration(false);
         if(this.currentToken().keywordKind() === 23 /* InKeyword */ ) {
@@ -1963,7 +1958,6 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseForOrForInStatementWithInitializer = function (forKeyword, openParenToken) {
         Debug.assert(forKeyword.keywordKind() === 20 /* ForKeyword */  && openParenToken.kind === 65 /* OpenParenToken */ );
-        Debug.assert(this.previousToken.kind === 65 /* OpenParenToken */ );
         var initializer = this.parseExpression(false);
         if(this.currentToken().keywordKind() === 23 /* InKeyword */ ) {
             return this.parseForInStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, null, initializer);
@@ -1973,7 +1967,6 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseForStatement = function (forKeyword, openParenToken) {
         Debug.assert(forKeyword.keywordKind() === 20 /* ForKeyword */  && openParenToken.kind === 65 /* OpenParenToken */ );
-        Debug.assert(this.previousToken.kind === 65 /* OpenParenToken */ );
         var initializer = null;
         if(this.currentToken().kind !== 71 /* SemicolonToken */  && this.currentToken().kind !== 66 /* CloseParenToken */  && this.currentToken().kind !== 114 /* EndOfFileToken */ ) {
             initializer = this.parseExpression(false);
@@ -35644,7 +35637,7 @@ var Program = (function () {
 var totalSize = 0;
 var program = new Program();
 var start, end;
-if(false) {
+if(true) {
     start = new Date().getTime();
     program.runAllTests(Environment, false, true);
     program.run(Environment, false);

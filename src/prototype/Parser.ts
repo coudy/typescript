@@ -1255,9 +1255,6 @@ class Parser extends SlidingWindow {
         else if (this.isBlock()) {
             return this.parseBlock();
         }
-        else if (this.isExpressionStatement()) {
-            return this.parseExpressionStatement();
-        }
         else if (this.isReturnStatement()) {
             return this.parseReturnStatement();
         }
@@ -1295,7 +1292,8 @@ class Parser extends SlidingWindow {
             return this.parseDebuggerStatement();
         }
         else {
-            throw Errors.notYetImplemented();
+            // Fall back to parsing this as expression statement.
+            return this.parseExpressionStatement();
         }
     }
 
@@ -1477,7 +1475,6 @@ class Parser extends SlidingWindow {
     private parseForOrForInStatementWithVariableDeclaration(forKeyword: ISyntaxToken, openParenToken: ISyntaxToken): BaseForStatementSyntax {
         Debug.assert(forKeyword.keywordKind() === SyntaxKind.ForKeyword &&
                      openParenToken.kind === SyntaxKind.OpenParenToken);
-        Debug.assert(this.previousToken.kind === SyntaxKind.OpenParenToken);
         Debug.assert(this.currentToken().keywordKind() === SyntaxKind.VarKeyword);
 
         // for ( var VariableDeclarationListNoIn; Expressionopt ; Expressionopt ) Statement
@@ -1511,7 +1508,6 @@ class Parser extends SlidingWindow {
     private parseForOrForInStatementWithInitializer(forKeyword: ISyntaxToken, openParenToken: ISyntaxToken): BaseForStatementSyntax {
         Debug.assert(forKeyword.keywordKind() === SyntaxKind.ForKeyword &&
                      openParenToken.kind === SyntaxKind.OpenParenToken);
-        Debug.assert(this.previousToken.kind === SyntaxKind.OpenParenToken);
         
         // for ( ExpressionNoInopt; Expressionopt ; Expressionopt ) Statement
         // for ( LeftHandSideExpression in Expression ) Statement
@@ -1528,7 +1524,6 @@ class Parser extends SlidingWindow {
     private parseForStatement(forKeyword: ISyntaxToken, openParenToken: ISyntaxToken): ForStatementSyntax {
         Debug.assert(forKeyword.keywordKind() === SyntaxKind.ForKeyword &&
                      openParenToken.kind === SyntaxKind.OpenParenToken);
-        Debug.assert(this.previousToken.kind === SyntaxKind.OpenParenToken);
 
         // for ( ExpressionNoInopt; Expressionopt ; Expressionopt ) Statement
         var initializer: ExpressionSyntax = null;
