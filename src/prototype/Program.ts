@@ -167,7 +167,7 @@ var negative262ExpectedResults = {
     'S7.9_A4.js': false,
     'S7.9_A5.1_T1.js': false,
     'S7.9_A5.3_T1.js': false,
-    'S7.9_A5.7_T1.js': false,
+    'S7.9_A5.7_T1.js': true,
     'S7.9_A6.2_T1.js': false,
     'S7.9_A6.2_T10.js': false,
     'S7.9_A6.2_T2.js': false,
