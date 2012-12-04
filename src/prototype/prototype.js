@@ -34989,7 +34989,7 @@ var negative262ExpectedResults = {
     'S7.8.4_A3.2_T2.js': false,
     'S7.8.4_A4.3_T1.js': true,
     'S7.8.4_A4.3_T2.js': true,
-    'S7.8.4_A7.1_T4.js': true,
+    'S7.8.4_A7.1_T4.js': false,
     'S7.8.4_A7.2_T1.js': false,
     'S7.8.4_A7.2_T2.js': false,
     'S7.8.4_A7.2_T3.js': false,
