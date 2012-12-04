@@ -101,8 +101,7 @@ enum ListParsingState {
     ModuleDeclaration_ModuleElements = 1 << 2,
     SwitchStatement_SwitchClauses = 1 << 3,
     SwitchClause_Statements = 1 << 4,
-    Block_Statements_AllowFunctionDeclarations = 1 << 5,
-    Block_Statements_DisallowFunctionDeclarations = 1 << 6,
+    Block_Statements= 1 << 5,
     EnumDeclaration_VariableDeclarators = 1 << 7,
     ObjectType_TypeMembers = 1 << 8,
     ExtendsOrImplementsClause_TypeNameList = 1 << 9,
@@ -781,7 +780,7 @@ class Parser extends SlidingWindow {
         var identifier = this.eatIdentifierToken();
         var parameterList = this.parseParameterList();
         var typeAnnotation = this.parseOptionalTypeAnnotation();
-        var block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
+        var block = this.parseBlock();
 
         return new GetMemberAccessorDeclarationSyntax(
             publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block);
@@ -794,7 +793,7 @@ class Parser extends SlidingWindow {
         var setKeyword = this.eatKeyword(SyntaxKind.SetKeyword);
         var identifier = this.eatIdentifierToken();
         var parameterList = this.parseParameterList();
-        var block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
+        var block = this.parseBlock();
 
         return new SetMemberAccessorDeclarationSyntax(
             publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block);
@@ -832,7 +831,7 @@ class Parser extends SlidingWindow {
         var block: BlockSyntax = null;
 
         if (this.isBlock()) {
-            block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
+            block = this.parseBlock();
         }
         else {
             semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
@@ -876,7 +875,7 @@ class Parser extends SlidingWindow {
         var semicolon: ISyntaxToken = null;
 
         if (this.isBlock()) {
-            block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
+            block = this.parseBlock();
         }
         else {
             semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
@@ -949,7 +948,7 @@ class Parser extends SlidingWindow {
         var block: BlockSyntax = null;
 
         if (this.isBlock()) {
-            block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
+            block = this.parseBlock();
         }
         else {
             semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
@@ -1254,7 +1253,7 @@ class Parser extends SlidingWindow {
             return this.parseIfStatement();
         }
         else if (this.isBlock()) {
-            return this.parseBlock(/*allowFunctionDeclaration:*/ false);
+            return this.parseBlock();
         }
         else if (this.isExpressionStatement()) {
             return this.parseExpressionStatement();
@@ -1358,7 +1357,7 @@ class Parser extends SlidingWindow {
         Debug.assert(this.isTryStatement());
 
         var tryKeyword = this.eatKeyword(SyntaxKind.TryKeyword);
-        var block = this.parseBlock(/*allowFunctionDeclaration:*/ false);
+        var block = this.parseBlock();
 
         var catchClause: CatchClauseSyntax = null;
         if (this.isCatchClause()) {
@@ -1387,7 +1386,7 @@ class Parser extends SlidingWindow {
         var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
         var identifier = this.eatIdentifierToken();
         var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-        var block = this.parseBlock(/*allowFunctionDeclaration:*/ false);
+        var block = this.parseBlock();
 
         return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block);
     }
@@ -1400,7 +1399,7 @@ class Parser extends SlidingWindow {
         Debug.assert(this.isFinallyClause());
 
         var finallyKeyword = this.eatKeyword(SyntaxKind.FinallyKeyword);
-        var block = this.parseBlock(/*allowFunctionDeclaration:*/ false);
+        var block = this.parseBlock();
 
         return new FinallyClauseSyntax(finallyKeyword, block);
     }
@@ -2288,7 +2287,7 @@ class Parser extends SlidingWindow {
         }
 
         var callSignature = this.parseCallSignature();
-        var block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
+        var block = this.parseBlock();
 
         return new FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block);
     }
@@ -2388,7 +2387,7 @@ class Parser extends SlidingWindow {
         if (this.isBlock()) {
             // TODO: The spec says that function declarations are not allowed.  However, we have some
             // code that uses them.  So we allow them here.
-            return this.parseBlock(/*allowFunctionDeclaration:*/ true);
+            return this.parseBlock();
         }
         else {
             return this.parseAssignmentExpression(/*allowIn:*/ true); 
@@ -2583,7 +2582,7 @@ class Parser extends SlidingWindow {
         var propertyName = this.eatAnyToken();
         var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
         var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-        var block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
+        var block = this.parseBlock();
 
         return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block);
     }
@@ -2601,7 +2600,7 @@ class Parser extends SlidingWindow {
         var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
         var parameterName = this.eatIdentifierToken();
         var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-        var block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
+        var block = this.parseBlock();
 
         return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block);
     }
@@ -2670,17 +2669,14 @@ class Parser extends SlidingWindow {
         return new ThisExpressionSyntax(thisKeyword);
     }
 
-    private parseBlock(allowFunctionDeclaration: bool): BlockSyntax {
+    private parseBlock(): BlockSyntax {
         var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
         var statements: ISyntaxList = SyntaxList.empty;
 
         if (!openBraceToken.isMissing()) {
             var savedIsInStrictMode = this.isInStrictMode;
-            var listParsingMode = allowFunctionDeclaration
-                ? ListParsingState.Block_Statements_AllowFunctionDeclarations
-                : ListParsingState.Block_Statements_DisallowFunctionDeclarations;
-            statements = this.parseSyntaxList(listParsingMode, this.updateStrictModeState);
+            statements = this.parseSyntaxList(ListParsingState.Block_Statements, this.updateStrictModeState);
             this.isInStrictMode = savedIsInStrictMode;
         }
 
@@ -3106,8 +3102,7 @@ class Parser extends SlidingWindow {
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
-            case ListParsingState.Block_Statements_AllowFunctionDeclarations:
-            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
+            case ListParsingState.Block_Statements:
             default:
                 throw Errors.notYetImplemented();
         }
@@ -3133,8 +3128,7 @@ class Parser extends SlidingWindow {
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
-            case ListParsingState.Block_Statements_AllowFunctionDeclarations:
-            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
+            case ListParsingState.Block_Statements:
             default:
                 throw Errors.notYetImplemented();
         }
@@ -3160,8 +3154,7 @@ class Parser extends SlidingWindow {
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
-            case ListParsingState.Block_Statements_AllowFunctionDeclarations:
-            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
+            case ListParsingState.Block_Statements:
             default:
                 throw Errors.notYetImplemented();
         }
@@ -3187,8 +3180,7 @@ class Parser extends SlidingWindow {
             case ListParsingState.ModuleDeclaration_ModuleElements:
             case ListParsingState.SwitchStatement_SwitchClauses:
             case ListParsingState.SwitchClause_Statements:
-            case ListParsingState.Block_Statements_AllowFunctionDeclarations:
-            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
+            case ListParsingState.Block_Statements:
             default:
                 throw Errors.notYetImplemented();
         }
@@ -3234,8 +3226,7 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
                 return this.isExpectedSwitchClause_StatementsTerminator();
 
-            case ListParsingState.Block_Statements_AllowFunctionDeclarations:     // Fall through
-            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
+            case ListParsingState.Block_Statements:
                 return this.isExpectedBlock_StatementsTerminator();
 
             case ListParsingState.EnumDeclaration_VariableDeclarators:
@@ -3395,11 +3386,8 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
                 return this.isStatement(/*allowFunctionDeclaration:*/ false);
             
-            case ListParsingState.Block_Statements_AllowFunctionDeclarations:
+            case ListParsingState.Block_Statements:
                 return this.isStatement(/*allowFunctionDeclaration:*/ true);
-
-            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
-                return this.isStatement(/*allowFunctionDeclaration:*/ false);
 
             case ListParsingState.EnumDeclaration_VariableDeclarators:
             case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
@@ -3446,11 +3434,8 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
                 return this.parseStatement(/*allowFunctionDeclaration:*/ false);
 
-            case ListParsingState.Block_Statements_AllowFunctionDeclarations:
+            case ListParsingState.Block_Statements:
                 return this.parseStatement(/*allowFunctionDeclaration:*/ true);
-
-            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
-                return this.parseStatement(/*allowFunctionDeclaration:*/ false);
 
             case ListParsingState.EnumDeclaration_VariableDeclarators:
                 return this.parseVariableDeclarator(/*allowIn:*/ true);
@@ -3501,8 +3486,7 @@ class Parser extends SlidingWindow {
             case ListParsingState.SwitchClause_Statements:
                 return Strings.statement;
 
-            case ListParsingState.Block_Statements_AllowFunctionDeclarations:     // Fall through.
-            case ListParsingState.Block_Statements_DisallowFunctionDeclarations:
+            case ListParsingState.Block_Statements:
                 return Strings.statement;
             
             case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
