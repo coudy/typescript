@@ -76,16 +76,16 @@ class Scanner extends SlidingWindow {
 
     public scan(diagnostics: SyntaxDiagnostic[]): ISyntaxToken {
         var start = this.absoluteIndex();
-        var leadingTriviaInfo = this.scanTriviaInfo(/*isTrailing: */ false);
+        var leadingTriviaInfo = this.scanTriviaInfo(diagnostics, /*isTrailing: */ false);
         this.scanSyntaxToken(diagnostics);
-        var trailingTriviaInfo = this.scanTriviaInfo(/*isTrailing: */true);
+        var trailingTriviaInfo = this.scanTriviaInfo(diagnostics,/*isTrailing: */true);
 
         this.previousTokenKind = this.tokenInfo.Kind;
         this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
         return SyntaxTokenFactory.create(start, leadingTriviaInfo, this.tokenInfo, trailingTriviaInfo);
     }
 
-    private scanTriviaInfo(isTrailing: bool): number {
+    private scanTriviaInfo(diagnostics: SyntaxDiagnostic[], isTrailing: bool): number {
         var width = 0;
         var hasComment = false;
         var hasNewLine = false;
@@ -126,7 +126,7 @@ class Scanner extends SlidingWindow {
                         hasComment = true;
 
                         // The '2' is for the "/*" we consumed.
-                        width += 2 + this.scanMultiLineCommentTrivia();
+                        width += 2 + this.scanMultiLineCommentTrivia(diagnostics);
                         continue;
                     }
 
@@ -179,11 +179,13 @@ class Scanner extends SlidingWindow {
         }
     }
 
-    private scanMultiLineCommentTrivia(): number {
+    private scanMultiLineCommentTrivia(diagnostics: SyntaxDiagnostic[]): number {
         var width = 0;
         while (true) {
             var ch = this.currentItem();
             if (ch === CharacterCodes.nullCharacter) {
+                diagnostics.push(new SyntaxDiagnostic(
+                    this.absoluteIndex(), 0, DiagnosticCode._StarSlash__expected, null));
                 return width;
             }
 

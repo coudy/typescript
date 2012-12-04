@@ -286,7 +286,7 @@ class Parser extends SlidingWindow {
                 // Report the missing semicolon at the end of the *previous* token.
 
                 this.addDiagnostic(
-                    new SyntaxDiagnostic(this.previousToken.end(), 0, DiagnosticCode.AutomaticSemicolonInsertionNotAllowed, null)); 
+                    new SyntaxDiagnostic(this.previousToken.end(), 0, DiagnosticCode.Automatic_semicolon_insertion_not_allowed, null)); 
             }
 
             return semicolonToken;

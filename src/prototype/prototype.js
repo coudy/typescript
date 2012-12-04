@@ -285,12 +285,14 @@ var DiagnosticCode;
     DiagnosticCode._0_expected = 5;
     DiagnosticCode._map[6] = "Identifier_expected__0_is_a_keyword";
     DiagnosticCode.Identifier_expected__0_is_a_keyword = 6;
-    DiagnosticCode._map[7] = "AutomaticSemicolonInsertionNotAllowed";
-    DiagnosticCode.AutomaticSemicolonInsertionNotAllowed = 7;
+    DiagnosticCode._map[7] = "Automatic_semicolon_insertion_not_allowed";
+    DiagnosticCode.Automatic_semicolon_insertion_not_allowed = 7;
     DiagnosticCode._map[8] = "Unexpected_token__0_expected";
     DiagnosticCode.Unexpected_token__0_expected = 8;
     DiagnosticCode._map[9] = "Trailing_separator_not_allowed";
     DiagnosticCode.Trailing_separator_not_allowed = 9;
+    DiagnosticCode._map[10] = "_StarSlash__expected";
+    DiagnosticCode._StarSlash__expected = 10;
 })(DiagnosticCode || (DiagnosticCode = {}));
 var DiagnosticMessages = (function () {
     function DiagnosticMessages() { }
@@ -304,9 +306,10 @@ var DiagnosticMessages = (function () {
             DiagnosticMessages.codeToFormatString[4 /* _0_keyword_expected */ ] = "'{0}' keyword expected.";
             DiagnosticMessages.codeToFormatString[5 /* _0_expected */ ] = "'{0}' expected.";
             DiagnosticMessages.codeToFormatString[6 /* Identifier_expected__0_is_a_keyword */ ] = "Identifier expected; '{0}' is a keyword.";
-            DiagnosticMessages.codeToFormatString[7 /* AutomaticSemicolonInsertionNotAllowed */ ] = "Automatic semicolon insertion not allowed.";
+            DiagnosticMessages.codeToFormatString[7 /* Automatic_semicolon_insertion_not_allowed */ ] = "Automatic semicolon insertion not allowed.";
             DiagnosticMessages.codeToFormatString[8 /* Unexpected_token__0_expected */ ] = "Unexpected token; '{0}' expected.";
             DiagnosticMessages.codeToFormatString[9 /* Trailing_separator_not_allowed */ ] = "Trailing separator not allowed.";
+            DiagnosticMessages.codeToFormatString[10 /* _StarSlash__expected */ ] = "'*/' expected.";
         }
     }
     DiagnosticMessages.getFormatString = function getFormatString(code) {
@@ -1045,7 +1048,7 @@ var Parser = (function (_super) {
         if(this.canEatAutomaticSemicolon(allowWithoutNewline)) {
             var semicolonToken = SyntaxTokenFactory.createEmptyToken(this.previousToken.end(), 71 /* SemicolonToken */ , 0 /* None */ );
             if(!this.options.allowAutomaticSemicolonInsertion()) {
-                this.addDiagnostic(new SyntaxDiagnostic(this.previousToken.end(), 0, 7 /* AutomaticSemicolonInsertionNotAllowed */ , null));
+                this.addDiagnostic(new SyntaxDiagnostic(this.previousToken.end(), 0, 7 /* Automatic_semicolon_insertion_not_allowed */ , null));
             }
             return semicolonToken;
         }
@@ -3571,14 +3574,14 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.scan = function (diagnostics) {
         var start = this.absoluteIndex();
-        var leadingTriviaInfo = this.scanTriviaInfo(false);
+        var leadingTriviaInfo = this.scanTriviaInfo(diagnostics, false);
         this.scanSyntaxToken(diagnostics);
-        var trailingTriviaInfo = this.scanTriviaInfo(true);
+        var trailingTriviaInfo = this.scanTriviaInfo(diagnostics, true);
         this.previousTokenKind = this.tokenInfo.Kind;
         this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
         return SyntaxTokenFactory.create(start, leadingTriviaInfo, this.tokenInfo, trailingTriviaInfo);
     };
-    Scanner.prototype.scanTriviaInfo = function (isTrailing) {
+    Scanner.prototype.scanTriviaInfo = function (diagnostics, isTrailing) {
         var width = 0;
         var hasComment = false;
         var hasNewLine = false;
@@ -3609,7 +3612,7 @@ var Scanner = (function (_super) {
                         this.moveToNextItem();
                         this.moveToNextItem();
                         hasComment = true;
-                        width += 2 + this.scanMultiLineCommentTrivia();
+                        width += 2 + this.scanMultiLineCommentTrivia(diagnostics);
                         continue;
                     }
                     break;
@@ -3657,11 +3660,12 @@ var Scanner = (function (_super) {
             width++;
         }
     };
-    Scanner.prototype.scanMultiLineCommentTrivia = function () {
+    Scanner.prototype.scanMultiLineCommentTrivia = function (diagnostics) {
         var width = 0;
         while(true) {
             var ch = this.currentItem();
             if(ch === 0 /* nullCharacter */ ) {
+                diagnostics.push(new SyntaxDiagnostic(this.absoluteIndex(), 0, 10 /* _StarSlash__expected */ , null));
                 return width;
             }
             if(ch === 42 /* asterisk */  && this.peekItemN(1) === 47 /* slash */ ) {
@@ -35520,7 +35524,7 @@ if(true) {
     Environment.standardOut.WriteLine("Total time: " + (end - start));
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(true) {
+if(false) {
     start = new Date().getTime();
     program.runAllTests(Environment, true, false);
     program.run(Environment, true);
