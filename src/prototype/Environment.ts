@@ -68,8 +68,8 @@ var Environment = (function () {
                 }
             },
 
-            writeFile: function (path, contents) {
-                var file = this.createFile(path);
+            writeFile: function (path, contents, useUTF8?: bool = false) {
+                var file = this.createFile(path, useUTF8);
                 file.Write(contents);
                 file.Close();
             },
@@ -119,7 +119,7 @@ var Environment = (function () {
                 return filesInFolder(folder, path);
             },
             
-            createFile: function (path, useUTF8?) {
+            createFile: function (path, useUTF8?: bool = false) {
                 try {
                     var streamObj = getStreamObject();
                     streamObj.Charset = useUTF8 ? 'utf-8' : 'x-ansi';

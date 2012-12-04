@@ -379,8 +379,9 @@ var Environment = (function () {
                     throw new Error("Error reading file \"" + path + "\": " + err.message);
                 }
             },
-            writeFile: function (path, contents) {
-                var file = this.createFile(path);
+            writeFile: function (path, contents, useUTF8) {
+                if (typeof useUTF8 === "undefined") { useUTF8 = false; }
+                var file = this.createFile(path, useUTF8);
                 file.Write(contents);
                 file.Close();
             },
@@ -420,6 +421,7 @@ var Environment = (function () {
                 return filesInFolder(folder, path);
             },
             createFile: function (path, useUTF8) {
+                if (typeof useUTF8 === "undefined") { useUTF8 = false; }
                 try  {
                     var streamObj = getStreamObject();
                     streamObj.Charset = useUTF8 ? 'utf-8' : 'x-ansi';
@@ -962,10 +964,11 @@ var Parser = (function (_super) {
         this.options = null;
         this._currentToken = null;
         this.previousToken = null;
+        this.tokenDiagnostics = [];
+        this.listParsingState = 0;
         this.isInStrictMode = false;
         this.skippedTokens = [];
         this.diagnostics = [];
-        this.listParsingState = 0;
         this.scanner = scanner;
         this.oldTree = oldTree;
         this.options = options || new ParseOptions();
@@ -987,7 +990,7 @@ var Parser = (function (_super) {
         this.skippedTokens.length = rewindPoint.skippedTokensCount;
     };
     Parser.prototype.fetchMoreItems = function (sourceIndex, window, destinationIndex, spaceAvailable) {
-        window[destinationIndex] = this.scanner.scan();
+        window[destinationIndex] = this.scanner.scan(this.tokenDiagnostics);
         return 1;
     };
     Parser.prototype.currentToken = function () {
@@ -3512,7 +3515,6 @@ var Scanner = (function (_super) {
     function Scanner(text, languageVersion, stringTable) {
         _super.call(this, 2048, 0, text.length());
         this.text = null;
-        this.errors = [];
         this.previousTokenKind = 0 /* None */ ;
         this.previousTokenKeywordKind = 0 /* None */ ;
         this.tokenInfo = new ScannerTokenInfo();
@@ -3563,17 +3565,14 @@ var Scanner = (function (_super) {
         this.text.copyTo(sourceIndex, window, destinationIndex, amountToRead);
         return amountToRead;
     };
-    Scanner.prototype.scan = function () {
-        if(this.errors.length > 0) {
-            this.errors = [];
-        }
+    Scanner.prototype.scan = function (diagnostics) {
         var start = this.absoluteIndex();
         var leadingTriviaInfo = this.scanTriviaInfo(false);
-        this.scanSyntaxToken();
+        this.scanSyntaxToken(diagnostics);
         var trailingTriviaInfo = this.scanTriviaInfo(true);
         this.previousTokenKind = this.tokenInfo.Kind;
         this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
-        return SyntaxTokenFactory.create(start, leadingTriviaInfo, this.tokenInfo, trailingTriviaInfo, this.errors.length === 0 ? null : this.errors);
+        return SyntaxTokenFactory.create(start, leadingTriviaInfo, this.tokenInfo, trailingTriviaInfo);
     };
     Scanner.prototype.scanTriviaInfo = function (isTrailing) {
         var width = 0;
@@ -3680,7 +3679,7 @@ var Scanner = (function (_super) {
             return 1;
         }
     };
-    Scanner.prototype.scanSyntaxToken = function () {
+    Scanner.prototype.scanSyntaxToken = function (diagnostics) {
         this.tokenInfo.Kind = 0 /* None */ ;
         this.tokenInfo.KeywordKind = 0 /* None */ ;
         this.tokenInfo.Text = null;
@@ -3689,7 +3688,7 @@ var Scanner = (function (_super) {
         switch(character) {
             case 34 /* doubleQuote */ :
             case 39 /* singleQuote */ : {
-                return this.scanStringLiteral();
+                return this.scanStringLiteral(diagnostics);
 
             }
             case 47 /* slash */ : {
@@ -3805,10 +3804,10 @@ var Scanner = (function (_super) {
             }
         }
         if(this.isIdentifierStart(this.peekCharOrUnicodeEscape())) {
-            this.slowScanIdentifier();
+            this.slowScanIdentifier(diagnostics);
             return;
         }
-        this.scanDefaultCharacter(character);
+        this.scanDefaultCharacter(character, diagnostics);
     };
     Scanner.prototype.isIdentifierStart = function (interpretedChar) {
         if(Scanner.isIdentifierStartCharacter[interpretedChar]) {
@@ -3849,11 +3848,10 @@ var Scanner = (function (_super) {
             }
         }
     };
-    Scanner.prototype.slowScanIdentifier = function () {
+    Scanner.prototype.slowScanIdentifier = function (diagnostics) {
         var startIndex = this.getAndPinAbsoluteIndex();
-        var errors = this.errors;
         do {
-            this.scanCharOrUnicodeEscape(errors);
+            this.scanCharOrUnicodeEscape(diagnostics);
         }while(this.isIdentifierPart(this.peekCharOrUnicodeEscape()))
         var endIndex = this.absoluteIndex();
         this.tokenInfo.Text = this.substring(startIndex, endIndex, true);
@@ -4190,14 +4188,16 @@ var Scanner = (function (_super) {
             this.tokenInfo.Kind = 94 /* ExclamationToken */ ;
         }
     };
-    Scanner.prototype.scanDefaultCharacter = function (character) {
+    Scanner.prototype.scanDefaultCharacter = function (character, diagnostics) {
         var position = this.absoluteIndex();
         this.moveToNextItem();
         this.tokenInfo.Text = String.fromCharCode(character);
         this.tokenInfo.Kind = 113 /* ErrorToken */ ;
-        this.addSimpleDiagnosticInfo(position, 1, 1 /* Unexpected_character_0 */ , this.tokenInfo.Text);
+        diagnostics.push(new SyntaxDiagnostic(position, 1, 1 /* Unexpected_character_0 */ , [
+            this.tokenInfo.Text
+        ]));
     };
-    Scanner.prototype.skipEscapeSequence = function () {
+    Scanner.prototype.skipEscapeSequence = function (diagnostics) {
         Debug.assert(this.currentItem() === 92 /* backslash */ );
         var rewindPoint = this.getRewindPoint();
         try  {
@@ -4242,7 +4242,7 @@ var Scanner = (function (_super) {
                 case 120 /* x */ :
                 case 117 /* u */ : {
                     this.rewind(rewindPoint);
-                    var value = this.scanUnicodeOrHexEscape(this.errors);
+                    var value = this.scanUnicodeOrHexEscape(diagnostics);
                     return;
 
                 }
@@ -4268,7 +4268,7 @@ var Scanner = (function (_super) {
             this.releaseRewindPoint(rewindPoint);
         }
     };
-    Scanner.prototype.scanStringLiteral = function () {
+    Scanner.prototype.scanStringLiteral = function (diagnostics) {
         var quoteCharacter = this.currentItem();
         Debug.assert(quoteCharacter === 39 /* singleQuote */  || quoteCharacter === 34 /* doubleQuote */ );
         var startIndex = this.getAndPinAbsoluteIndex();
@@ -4276,14 +4276,14 @@ var Scanner = (function (_super) {
         while(true) {
             var ch = this.currentItem();
             if(ch === 92 /* backslash */ ) {
-                this.skipEscapeSequence();
+                this.skipEscapeSequence(diagnostics);
             } else {
                 if(ch === quoteCharacter) {
                     this.moveToNextItem();
                     break;
                 } else {
                     if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
-                        this.addSimpleDiagnosticInfo(this.absoluteIndex(), 1, 2 /* Missing_closing_quote_character */ );
+                        diagnostics.push(new SyntaxDiagnostic(this.absoluteIndex(), 1, 2 /* Missing_closing_quote_character */ , null));
                         break;
                     } else {
                         this.moveToNextItem();
@@ -4395,19 +4395,6 @@ var Scanner = (function (_super) {
         } else {
             return StringUtilities.fromCharCodeArray(this.window.slice(offset, offset + length));
         }
-    };
-    Scanner.prototype.addSimpleDiagnosticInfo = function (position, width, code) {
-        var args = [];
-        for (var _i = 0; _i < (arguments.length - 3); _i++) {
-            args[_i] = arguments[_i + 3];
-        }
-        this.addDiagnosticInfo(new SyntaxDiagnostic(position, width, code, args));
-    };
-    Scanner.prototype.addDiagnosticInfo = function (error) {
-        if(this.errors === null) {
-            this.errors = [];
-        }
-        this.errors.push(error);
     };
     Scanner.prototype.createIllegalEscapeDiagnostic = function (start, end) {
         return new SyntaxDiagnostic(start, end - start, 0 /* Unrecognized_escape_sequence */ , null);
@@ -7800,10 +7787,6 @@ var SyntaxTokenFactory;
         if(token.hasTrailingNewLineTrivia()) {
             result.hasTrailingNewLineTrivia = true;
         }
-        var diagnostics = token.diagnostics();
-        if(diagnostics && diagnostics.length > 0) {
-            result.diagnostics = diagnostics;
-        }
         return result;
     }
     function toValueString(token) {
@@ -7855,9 +7838,6 @@ var SyntaxTokenFactory;
         EmptyToken.prototype.valueText = function () {
             return toValueString(this);
         };
-        EmptyToken.prototype.diagnostics = function () {
-            return [];
-        };
         EmptyToken.prototype.hasLeadingTrivia = function () {
             return false;
         };
@@ -7894,9 +7874,6 @@ var SyntaxTokenFactory;
         };
         FixedWidthTokenWithNoTrivia.prototype.isMissing = function () {
             return false;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.diagnostics = function () {
-            return null;
         };
         FixedWidthTokenWithNoTrivia.prototype.keywordKind = function () {
             return 0 /* None */ ;
@@ -7969,9 +7946,6 @@ var SyntaxTokenFactory;
         FixedWidthTokenWithLeadingTrivia.prototype.isMissing = function () {
             return false;
         };
-        FixedWidthTokenWithLeadingTrivia.prototype.diagnostics = function () {
-            return null;
-        };
         FixedWidthTokenWithLeadingTrivia.prototype.keywordKind = function () {
             return 0 /* None */ ;
         };
@@ -8042,9 +8016,6 @@ var SyntaxTokenFactory;
         };
         FixedWidthTokenWithTrailingTrivia.prototype.isMissing = function () {
             return false;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.diagnostics = function () {
-            return null;
         };
         FixedWidthTokenWithTrailingTrivia.prototype.keywordKind = function () {
             return 0 /* None */ ;
@@ -8118,9 +8089,6 @@ var SyntaxTokenFactory;
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isMissing = function () {
             return false;
         };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.diagnostics = function () {
-            return null;
-        };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.keywordKind = function () {
             return 0 /* None */ ;
         };
@@ -8191,9 +8159,6 @@ var SyntaxTokenFactory;
         };
         FixedWidthKeywordWithNoTrivia.prototype.isMissing = function () {
             return false;
-        };
-        FixedWidthKeywordWithNoTrivia.prototype.diagnostics = function () {
-            return null;
         };
         FixedWidthKeywordWithNoTrivia.prototype.keywordKind = function () {
             return this._keywordKind;
@@ -8267,9 +8232,6 @@ var SyntaxTokenFactory;
         FixedWidthKeywordWithLeadingTrivia.prototype.isMissing = function () {
             return false;
         };
-        FixedWidthKeywordWithLeadingTrivia.prototype.diagnostics = function () {
-            return null;
-        };
         FixedWidthKeywordWithLeadingTrivia.prototype.keywordKind = function () {
             return this._keywordKind;
         };
@@ -8341,9 +8303,6 @@ var SyntaxTokenFactory;
         };
         FixedWidthKeywordWithTrailingTrivia.prototype.isMissing = function () {
             return false;
-        };
-        FixedWidthKeywordWithTrailingTrivia.prototype.diagnostics = function () {
-            return null;
         };
         FixedWidthKeywordWithTrailingTrivia.prototype.keywordKind = function () {
             return this._keywordKind;
@@ -8418,9 +8377,6 @@ var SyntaxTokenFactory;
         FixedWidthKeywordWithLeadingAndTrailingTrivia.prototype.isMissing = function () {
             return false;
         };
-        FixedWidthKeywordWithLeadingAndTrailingTrivia.prototype.diagnostics = function () {
-            return null;
-        };
         FixedWidthKeywordWithLeadingAndTrailingTrivia.prototype.keywordKind = function () {
             return this._keywordKind;
         };
@@ -8492,9 +8448,6 @@ var SyntaxTokenFactory;
         };
         VariableWidthTokenWithNoTrivia.prototype.isMissing = function () {
             return false;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.diagnostics = function () {
-            return null;
         };
         VariableWidthTokenWithNoTrivia.prototype.keywordKind = function () {
             return 0 /* None */ ;
@@ -8569,9 +8522,6 @@ var SyntaxTokenFactory;
         VariableWidthTokenWithLeadingTrivia.prototype.isMissing = function () {
             return false;
         };
-        VariableWidthTokenWithLeadingTrivia.prototype.diagnostics = function () {
-            return null;
-        };
         VariableWidthTokenWithLeadingTrivia.prototype.keywordKind = function () {
             return 0 /* None */ ;
         };
@@ -8644,9 +8594,6 @@ var SyntaxTokenFactory;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.isMissing = function () {
             return false;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.diagnostics = function () {
-            return null;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.keywordKind = function () {
             return 0 /* None */ ;
@@ -8722,9 +8669,6 @@ var SyntaxTokenFactory;
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isMissing = function () {
             return false;
         };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.diagnostics = function () {
-            return null;
-        };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.keywordKind = function () {
             return 0 /* None */ ;
         };
@@ -8784,84 +8728,6 @@ var SyntaxTokenFactory;
         };
         return VariableWidthTokenWithLeadingAndTrailingTrivia;
     })();    
-    var FullToken = (function () {
-        function FullToken(kind, keywordKind, text, fullStart, leadingTriviaInfo, trailingTriviaInfo, diagnostics) {
-            this.kind = kind;
-            this._keywordKind = keywordKind;
-            this._text = text;
-            this._fullStart = fullStart;
-            this._leadingTriviaInfo = leadingTriviaInfo;
-            this._trailingTriviaInfo = trailingTriviaInfo;
-            this._diagnostics = diagnostics;
-        }
-        FullToken.prototype.toJSON = function (key) {
-            return toJSON(this);
-        };
-        FullToken.prototype.keywordKind = function () {
-            return this._keywordKind;
-        };
-        FullToken.prototype.fullStart = function () {
-            return this._fullStart;
-        };
-        FullToken.prototype.fullWidth = function () {
-            return getTriviaLength(this._leadingTriviaInfo) + this._text.length + getTriviaLength(this._trailingTriviaInfo);
-        };
-        FullToken.prototype.start = function () {
-            return this._fullStart + getTriviaLength(this._leadingTriviaInfo);
-        };
-        FullToken.prototype.width = function () {
-            return this._text.length;
-        };
-        FullToken.prototype.fullEnd = function () {
-            return fullEnd(this);
-        };
-        FullToken.prototype.end = function () {
-            return end(this);
-        };
-        FullToken.prototype.isMissing = function () {
-            return false;
-        };
-        FullToken.prototype.text = function () {
-            return this._text;
-        };
-        FullToken.prototype.fullText = function (text) {
-            return text.substr(this.fullStart(), this.fullWidth());
-        };
-        FullToken.prototype.value = function () {
-            return null;
-        };
-        FullToken.prototype.valueText = function () {
-            return toValueString(this);
-        };
-        FullToken.prototype.diagnostics = function () {
-            return this._diagnostics;
-        };
-        FullToken.prototype.hasLeadingTrivia = function () {
-            return getTriviaLength(this._leadingTriviaInfo) > 0;
-        };
-        FullToken.prototype.hasLeadingCommentTrivia = function () {
-            return hasTriviaComment(this._leadingTriviaInfo);
-        };
-        FullToken.prototype.hasLeadingNewLineTrivia = function () {
-            return hasTriviaNewLine(this._leadingTriviaInfo);
-        };
-        FullToken.prototype.hasTrailingTrivia = function () {
-            return getTriviaLength(this._trailingTriviaInfo) > 0;
-        };
-        FullToken.prototype.hasTrailingCommentTrivia = function () {
-            return hasTriviaComment(this._trailingTriviaInfo);
-        };
-        FullToken.prototype.hasTrailingNewLineTrivia = function () {
-            return hasTriviaNewLine(this._trailingTriviaInfo);
-        };
-        FullToken.prototype.leadingTrivia = function (text) {
-            throw Errors.notYetImplemented();
-        };
-        FullToken.prototype.trailingTrivia = function (text) {
-            throw Errors.notYetImplemented();
-        };
-        return FullToken;
-    })();    
     function createFixedWidthToken(fullStart, leadingTriviaInfo, kind, trailingTriviaInfo) {
         if(leadingTriviaInfo === 0) {
             if(trailingTriviaInfo === 0) {
@@ -8909,23 +8775,16 @@ var SyntaxTokenFactory;
             }
         }
     }
-    function createFullToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
-        var text = tokenInfo.Text || SyntaxFacts.getText(tokenInfo.Kind);
-        return new FullToken(tokenInfo.Kind, tokenInfo.KeywordKind, tokenInfo.Text, fullStart, leadingTriviaInfo, trailingTriviaInfo, diagnostics);
-    }
-    function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
-        if(diagnostics === null) {
-            if(SyntaxFacts.isAnyPunctuation(tokenInfo.Kind)) {
-                return createFixedWidthToken(fullStart, leadingTriviaInfo, tokenInfo.Kind, trailingTriviaInfo);
+    function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo) {
+        if(SyntaxFacts.isAnyPunctuation(tokenInfo.Kind)) {
+            return createFixedWidthToken(fullStart, leadingTriviaInfo, tokenInfo.Kind, trailingTriviaInfo);
+        } else {
+            if(SyntaxFacts.isAnyKeyword(tokenInfo.KeywordKind)) {
+                return createFixedWidthKeyword(fullStart, leadingTriviaInfo, tokenInfo.KeywordKind, trailingTriviaInfo);
             } else {
-                if(SyntaxFacts.isAnyKeyword(tokenInfo.KeywordKind)) {
-                    return createFixedWidthKeyword(fullStart, leadingTriviaInfo, tokenInfo.KeywordKind, trailingTriviaInfo);
-                } else {
-                    return createVariableWidthToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo);
-                }
+                return createVariableWidthToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo);
             }
         }
-        return createFullToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics);
     }
     SyntaxTokenFactory.create = create;
     function createEmptyToken(fullStart, kind, keywordKind) {
@@ -35507,7 +35366,7 @@ var Program = (function () {
         if(specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
             return;
         }
-        var contents = environment.readFile(filePath);
+        var contents = environment.readFile(filePath, 'utf-8');
         totalSize += contents.length;
         if(useTypeScript) {
             var text1 = new TypeScript.StringSourceText(contents);
@@ -35528,10 +35387,10 @@ var Program = (function () {
                 var actualResult = JSON2.stringify(unit, null, 4);
                 var expectedFile = filePath + ".expected";
                 var actualFile = filePath + ".actual";
-                var expectedResult = environment.readFile(expectedFile);
+                var expectedResult = environment.readFile(expectedFile, 'utf-8');
                 if(expectedResult !== actualResult) {
                     environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
-                    environment.writeFile(actualFile, actualResult);
+                    environment.writeFile(actualFile, actualResult, true);
                 }
             }
         }
@@ -35546,17 +35405,16 @@ var Program = (function () {
         if(specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
             return;
         }
-        var contents = environment.readFile(filePath);
+        var contents = environment.readFile(filePath, 'utf-8');
         var text = new StringText(contents);
         var scanner = Scanner.create(text, languageVersion);
         var tokens = [];
         var textArray = [];
+        var diagnostics = [];
         while(true) {
-            var token = scanner.scan();
+            var token = scanner.scan(diagnostics);
             tokens.push(token);
             if(verify) {
-                if(token.diagnostics()) {
-                }
                 var tokenText = token.text();
                 var tokenFullText = token.fullText(text);
                 textArray.push(tokenFullText);
@@ -35573,13 +35431,17 @@ var Program = (function () {
             if(contents !== fullText) {
                 throw new Error("Full text didn't match!");
             }
-            var actualResult = JSON2.stringify(tokens, null, 4);
+            var result = diagnostics.length === 0 ? tokens : {
+                diagnostics: diagnostics,
+                tokens: tokens
+            };
+            var actualResult = JSON2.stringify(result, null, 4);
             var expectedFile = filePath + ".expected";
             var actualFile = filePath + ".actual";
-            var expectedResult = environment.readFile(expectedFile);
+            var expectedResult = environment.readFile(expectedFile, 'utf-8');
             if(expectedResult !== actualResult) {
                 environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
-                environment.writeFile(actualFile, actualResult);
+                environment.writeFile(actualFile, actualResult, true);
             }
         }
     };
@@ -35654,14 +35516,14 @@ if(true) {
     Environment.standardOut.WriteLine("Total time: " + (end - start));
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(false) {
+if(true) {
     start = new Date().getTime();
     program.runAllTests(Environment, true, false);
     program.run(Environment, true);
     end = new Date().getTime();
     Environment.standardOut.WriteLine("Total time: " + (end - start));
 }
-if(specificFile === undefined) {
+if(false && specificFile === undefined) {
     start = new Date().getTime();
     program.run262(Environment, false);
     end = new Date().getTime();

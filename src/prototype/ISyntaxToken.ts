@@ -20,8 +20,6 @@ interface ISyntaxToken {
     value(): any;
     valueText(): string;
 
-    diagnostics(): Diagnostic[];
-
     hasLeadingTrivia(): bool;
     hasLeadingCommentTrivia(): bool;
     hasLeadingNewLineTrivia(): bool;

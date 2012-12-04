@@ -2,7 +2,7 @@
 
 interface IEnvironment {
     readFile(path: string, charSet?: string): string;
-    writeFile(path: string, contents: string): void;
+    writeFile(path: string, contents: string, useUTF8?: bool): void;
     deleteFile(path: string): void;
     fileExists(path: string): bool;
     directoryExists(path: string): bool;

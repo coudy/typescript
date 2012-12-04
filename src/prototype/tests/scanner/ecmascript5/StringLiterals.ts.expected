@@ -1,109 +1,109 @@
-[
-    {
-        "kind": "StringLiteral",
-        "start": 0,
-        "width": 2,
-        "fullWidth": 4,
-        "text": "\"\"",
-        "hasTrailingTrivia": true,
-        "hasTrailingNewLineTrivia": true
-    },
-    {
-        "kind": "StringLiteral",
-        "start": 4,
-        "width": 3,
-        "fullWidth": 5,
-        "text": "\" \"",
-        "hasTrailingTrivia": true,
-        "hasTrailingNewLineTrivia": true
-    },
-    {
-        "kind": "StringLiteral",
-        "start": 9,
-        "width": 3,
-        "fullWidth": 5,
-        "text": "\"a\"",
-        "hasTrailingTrivia": true,
-        "hasTrailingNewLineTrivia": true
-    },
-    {
-        "kind": "StringLiteral",
-        "start": 14,
-        "width": 3,
-        "fullWidth": 5,
-        "text": "\"'\"",
-        "hasTrailingTrivia": true,
-        "hasTrailingNewLineTrivia": true
-    },
-    {
-        "kind": "StringLiteral",
-        "start": 19,
-        "width": 3,
-        "fullWidth": 5,
-        "text": "'\"'",
-        "hasTrailingTrivia": true,
-        "hasTrailingNewLineTrivia": true
-    },
-    {
-        "kind": "StringLiteral",
-        "start": 24,
-        "width": 4,
-        "fullWidth": 6,
-        "text": "\"\\\"\"",
-        "hasTrailingTrivia": true,
-        "hasTrailingNewLineTrivia": true
-    },
-    {
-        "kind": "StringLiteral",
-        "start": 30,
-        "width": 12,
-        "fullWidth": 14,
-        "text": "'\\u2192\\   '",
-        "hasTrailingTrivia": true,
-        "hasTrailingNewLineTrivia": true
-    },
-    {
-        "kind": "StringLiteral",
-        "start": 44,
-        "width": 29,
-        "fullWidth": 31,
-        "text": "\"Legal line continuation \\\r\n\"",
-        "hasTrailingTrivia": true,
-        "hasTrailingNewLineTrivia": true
-    },
-    {
-        "kind": "StringLiteral",
-        "start": 75,
-        "width": 33,
-        "fullWidth": 35,
-        "text": "\"Should error because of newline.",
-        "hasTrailingTrivia": true,
-        "hasTrailingNewLineTrivia": true,
-        "diagnostics": [
-            {
-                "_position": 108,
-                "_width": 1,
-                "_diagnosticCode": "Missing_closing_quote_character"
-            }
-        ]
-    },
-    {
-        "kind": "StringLiteral",
-        "start": 110,
-        "width": 37,
-        "text": "\"Should error because of end of file.",
-        "diagnostics": [
-            {
-                "_position": 147,
-                "_width": 1,
-                "_diagnosticCode": "Missing_closing_quote_character"
-            }
-        ]
-    },
-    {
-        "kind": "EndOfFileToken",
-        "start": 147,
-        "width": 0,
-        "text": ""
-    }
-]
+{
+    "diagnostics": [
+        {
+            "_position": 108,
+            "_width": 1,
+            "_diagnosticCode": "Missing_closing_quote_character"
+        },
+        {
+            "_position": 147,
+            "_width": 1,
+            "_diagnosticCode": "Missing_closing_quote_character"
+        }
+    ],
+    "tokens": [
+        {
+            "kind": "StringLiteral",
+            "start": 0,
+            "width": 2,
+            "fullWidth": 4,
+            "text": "\"\"",
+            "hasTrailingTrivia": true,
+            "hasTrailingNewLineTrivia": true
+        },
+        {
+            "kind": "StringLiteral",
+            "start": 4,
+            "width": 3,
+            "fullWidth": 5,
+            "text": "\" \"",
+            "hasTrailingTrivia": true,
+            "hasTrailingNewLineTrivia": true
+        },
+        {
+            "kind": "StringLiteral",
+            "start": 9,
+            "width": 3,
+            "fullWidth": 5,
+            "text": "\"a\"",
+            "hasTrailingTrivia": true,
+            "hasTrailingNewLineTrivia": true
+        },
+        {
+            "kind": "StringLiteral",
+            "start": 14,
+            "width": 3,
+            "fullWidth": 5,
+            "text": "\"'\"",
+            "hasTrailingTrivia": true,
+            "hasTrailingNewLineTrivia": true
+        },
+        {
+            "kind": "StringLiteral",
+            "start": 19,
+            "width": 3,
+            "fullWidth": 5,
+            "text": "'\"'",
+            "hasTrailingTrivia": true,
+            "hasTrailingNewLineTrivia": true
+        },
+        {
+            "kind": "StringLiteral",
+            "start": 24,
+            "width": 4,
+            "fullWidth": 6,
+            "text": "\"\\\"\"",
+            "hasTrailingTrivia": true,
+            "hasTrailingNewLineTrivia": true
+        },
+        {
+            "kind": "StringLiteral",
+            "start": 30,
+            "width": 12,
+            "fullWidth": 14,
+            "text": "'\\u2192\\   '",
+            "hasTrailingTrivia": true,
+            "hasTrailingNewLineTrivia": true
+        },
+        {
+            "kind": "StringLiteral",
+            "start": 44,
+            "width": 29,
+            "fullWidth": 31,
+            "text": "\"Legal line continuation \\\r\n\"",
+            "hasTrailingTrivia": true,
+            "hasTrailingNewLineTrivia": true
+        },
+        {
+            "kind": "StringLiteral",
+            "start": 75,
+            "width": 33,
+            "fullWidth": 35,
+            "text": "\"Should error because of newline.",
+            "hasTrailingTrivia": true,
+            "hasTrailingNewLineTrivia": true
+        },
+        {
+            "kind": "StringLiteral",
+            "start": 110,
+            "width": 37,
+            "text": "\"Should error because of end of file."
+        },
+        {
+            "kind": "EndOfFileToken",
+            "start": 147,
+            "width": 0,
+            "text": ""
+        }
+    ]
+}

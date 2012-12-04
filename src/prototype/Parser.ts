@@ -137,13 +137,22 @@ class Parser extends SlidingWindow {
     // The previous token to the current token.  Set when we advance to the next token.
     private previousToken: ISyntaxToken = null;
 
+    // The diagnostics we get while scanning.  Note: this never gets rewound when we do a normal
+    // rewind.  That's because rewinding doesn't affect the tokens created.  It only affects where
+    // in the token stream we're pointing at.
+    private tokenDiagnostics: SyntaxDiagnostic[] = [];
+
+    // TODO: do we need to store/restore this when speculative parsing?  I don't think so.  The
+    // parsing logic already handles storing/restoring this and should work properly even if we're
+    // speculative parsing.
+    private listParsingState: ListParsingState = 0;
+
     // Whether or not we are in strict parsing mode.  All that changes in strict parsing mode is
     // that some tokens that would be considered identifiers may be considered keywords.
     private isInStrictMode: bool = false;
 
     private skippedTokens: ISyntaxToken[] = [];
     private diagnostics: SyntaxDiagnostic[] = [];
-    private listParsingState: ListParsingState = 0;
 
     constructor(
         scanner: Scanner,
@@ -180,7 +189,7 @@ class Parser extends SlidingWindow {
     public fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
         // Assert disabled because it is actually expensive enugh to affect perf.
         // Debug.assert(spaceAvailable > 0);
-        window[destinationIndex] = this.scanner.scan();
+        window[destinationIndex] = this.scanner.scan(this.tokenDiagnostics);
         return 1;
     }
 

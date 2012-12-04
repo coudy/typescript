@@ -9,7 +9,6 @@ class ScannerTokenInfo {
 
 class Scanner extends SlidingWindow {
     private text: IText = null;
-    private errors: SyntaxDiagnostic[] = [];
     private stringTable: StringTable;
     private languageVersion: LanguageVersion;
 
@@ -75,20 +74,15 @@ class Scanner extends SlidingWindow {
     private previousTokenKeywordKind: SyntaxKind = SyntaxKind.None;
     private tokenInfo: ScannerTokenInfo = new ScannerTokenInfo();
 
-    public scan(): ISyntaxToken {
-        if (this.errors.length > 0) {
-            this.errors = [];
-        }
-
+    public scan(diagnostics: SyntaxDiagnostic[]): ISyntaxToken {
         var start = this.absoluteIndex();
         var leadingTriviaInfo = this.scanTriviaInfo(/*isTrailing: */ false);
-        this.scanSyntaxToken();
+        this.scanSyntaxToken(diagnostics);
         var trailingTriviaInfo = this.scanTriviaInfo(/*isTrailing: */true);
 
         this.previousTokenKind = this.tokenInfo.Kind;
         this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
-        return SyntaxTokenFactory.create(start, leadingTriviaInfo, this.tokenInfo, trailingTriviaInfo,
-            this.errors.length === 0 ? null : this.errors);
+        return SyntaxTokenFactory.create(start, leadingTriviaInfo, this.tokenInfo, trailingTriviaInfo);
     }
 
     private scanTriviaInfo(isTrailing: bool): number {
@@ -219,7 +213,7 @@ class Scanner extends SlidingWindow {
         }
     }
 
-    private scanSyntaxToken(): void {
+    private scanSyntaxToken(diagnostics: SyntaxDiagnostic[]): void {
         this.tokenInfo.Kind = SyntaxKind.None;
         this.tokenInfo.KeywordKind = SyntaxKind.None;
         this.tokenInfo.Text = null;
@@ -230,7 +224,7 @@ class Scanner extends SlidingWindow {
         switch (character) {
             case CharacterCodes.doubleQuote:
             case CharacterCodes.singleQuote:
-                return this.scanStringLiteral();
+                return this.scanStringLiteral(diagnostics);
 
             // These are the set of variable width punctuation tokens.
             case CharacterCodes.slash:
@@ -319,6 +313,9 @@ class Scanner extends SlidingWindow {
             return;
         }
 
+        // We run into so many identifiers (and keywords) when scanning, that we want the code to
+        // be as fast as possible.  To that end, we have an extremely fast path for scanning that
+        // handles the 99.9% case of no-unicode characters and no unicode escapes.
         if (Scanner.isIdentifierStartCharacter[character]) {
             if (this.tryFastScanIdentifierOrKeyword(character)) {
                 return;
@@ -326,11 +323,11 @@ class Scanner extends SlidingWindow {
         }
 
         if (this.isIdentifierStart(this.peekCharOrUnicodeEscape())) {
-            this.slowScanIdentifier();
+            this.slowScanIdentifier(diagnostics);
             return;
         }
 
-        this.scanDefaultCharacter(character);
+        this.scanDefaultCharacter(character, diagnostics);
     }
 
     private isIdentifierStart(interpretedChar: number): bool {
@@ -393,12 +390,11 @@ class Scanner extends SlidingWindow {
 
     // A slow path for scanning identifiers.  Called when we run into a unicode character or 
     // escape sequence while processing the fast path.
-    private slowScanIdentifier(): void {
+    private slowScanIdentifier(diagnostics: SyntaxDiagnostic[]): void {
         var startIndex = this.getAndPinAbsoluteIndex();
 
-        var errors = this.errors;
         do {
-            this.scanCharOrUnicodeEscape(errors);
+            this.scanCharOrUnicodeEscape(diagnostics);
         }
         while (this.isIdentifierPart(this.peekCharOrUnicodeEscape()));
 
@@ -804,15 +800,16 @@ class Scanner extends SlidingWindow {
         }
     }
 
-    private scanDefaultCharacter(character: number): void {
+    private scanDefaultCharacter(character: number, diagnostics: SyntaxDiagnostic[]): void {
         var position = this.absoluteIndex();
         this.moveToNextItem();
         this.tokenInfo.Text = String.fromCharCode(character);
         this.tokenInfo.Kind = SyntaxKind.ErrorToken;
-        this.addSimpleDiagnosticInfo(position, 1, DiagnosticCode.Unexpected_character_0, this.tokenInfo.Text);
+        diagnostics.push(new SyntaxDiagnostic(
+            position, 1, DiagnosticCode.Unexpected_character_0, [this.tokenInfo.Text]));
     }
 
-    private skipEscapeSequence(): void {
+    private skipEscapeSequence(diagnostics: SyntaxDiagnostic[]): void {
         Debug.assert(this.currentItem() === CharacterCodes.backslash);
 
         var rewindPoint = this.getRewindPoint();
@@ -862,7 +859,7 @@ class Scanner extends SlidingWindow {
                 case CharacterCodes.x:
                 case CharacterCodes.u:
                     this.rewind(rewindPoint);
-                    var value = this.scanUnicodeOrHexEscape(this.errors);
+                    var value = this.scanUnicodeOrHexEscape(diagnostics);
                     return;
 
                 case CharacterCodes.carriageReturn:
@@ -889,7 +886,7 @@ class Scanner extends SlidingWindow {
         }
     }
 
-    private scanStringLiteral(): void {
+    private scanStringLiteral(diagnostics: SyntaxDiagnostic[]): void {
         var quoteCharacter = this.currentItem();
 
         Debug.assert(quoteCharacter === CharacterCodes.singleQuote || quoteCharacter === CharacterCodes.doubleQuote);
@@ -900,14 +897,15 @@ class Scanner extends SlidingWindow {
         while (true) {
             var ch = this.currentItem();
             if (ch === CharacterCodes.backslash) {
-                this.skipEscapeSequence();
+                this.skipEscapeSequence(diagnostics);
             }
             else if (ch === quoteCharacter) {
                 this.moveToNextItem();
                 break;
             }
             else if (this.isNewLineCharacter(ch) || ch === CharacterCodes.nullCharacter) {
-                this.addSimpleDiagnosticInfo(this.absoluteIndex(), 1, DiagnosticCode.Missing_closing_quote_character);
+                diagnostics.push(new SyntaxDiagnostic(
+                    this.absoluteIndex(), 1, DiagnosticCode.Missing_closing_quote_character, null));
                 break;
             }
             else {
@@ -1048,17 +1046,17 @@ class Scanner extends SlidingWindow {
         }
     }
 
-    private addSimpleDiagnosticInfo(position: number, width: number, code: DiagnosticCode, ...args: any[]): void {
-        this.addDiagnosticInfo(new SyntaxDiagnostic(position, width, code, args));
-    }
+    //private addSimpleDiagnosticInfo(position: number, width: number, code: DiagnosticCode, ...args: any[]): void {
+    //    this.addDiagnosticInfo(new SyntaxDiagnostic(position, width, code, args));
+    //}
 
-    private addDiagnosticInfo(error: SyntaxDiagnostic): void {
-        if (this.errors === null) {
-            this.errors = [];
-        }
+    //private addDiagnosticInfo(error: SyntaxDiagnostic): void {
+    //    if (this.errors === null) {
+    //        this.errors = [];
+    //    }
 
-        this.errors.push(error);
-    }
+    //    this.errors.push(error);
+    //}
 
     //private makeSimpleDiagnosticInfo(position: number, widthcode: DiagnosticCode, args: any[]): SyntaxDiagnostic {
     //    return SyntaxDiagnostic.create(code, args);
