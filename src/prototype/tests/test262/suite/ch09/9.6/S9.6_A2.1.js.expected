@@ -1,0 +1,1529 @@
+﻿{
+    "_sourceUnit": {
+        "kind": "SourceUnit",
+        "_moduleElements": [
+            {
+                "kind": "IfStatement",
+                "_ifKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "IfKeyword",
+                    "start": 329,
+                    "fullStart": 0,
+                    "width": 2,
+                    "fullWidth": 332,
+                    "text": "if",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingCommentTrivia": true,
+                    "hasLeadingNewLineTrivia": true,
+                    "hasTrailingTrivia": true
+                },
+                "_openParenToken": {
+                    "kind": "OpenParenToken",
+                    "start": 332,
+                    "width": 1,
+                    "text": "("
+                },
+                "_condition": {
+                    "kind": "NotEqualsExpression",
+                    "_left": {
+                        "kind": "ParenthesizedExpression",
+                        "_openParenToken": {
+                            "kind": "OpenParenToken",
+                            "start": 333,
+                            "width": 1,
+                            "text": "("
+                        },
+                        "_expression": {
+                            "kind": "UnsignedRightShiftExpression",
+                            "_left": {
+                                "kind": "NumericLiteralExpression",
+                                "_literalToken": {
+                                    "kind": "NumericLiteral",
+                                    "start": 334,
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": "0",
+                                    "hasTrailingTrivia": true
+                                }
+                            },
+                            "_operatorToken": {
+                                "kind": "GreaterThanGreaterThanGreaterThanToken",
+                                "start": 336,
+                                "width": 3,
+                                "fullWidth": 4,
+                                "text": ">>>",
+                                "hasTrailingTrivia": true
+                            },
+                            "_right": {
+                                "kind": "NumericLiteralExpression",
+                                "_literalToken": {
+                                    "kind": "NumericLiteral",
+                                    "start": 340,
+                                    "width": 1,
+                                    "text": "0"
+                                }
+                            }
+                        },
+                        "_closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "start": 341,
+                            "width": 1,
+                            "fullWidth": 2,
+                            "text": ")",
+                            "hasTrailingTrivia": true
+                        }
+                    },
+                    "_operatorToken": {
+                        "kind": "ExclamationEqualsEqualsToken",
+                        "start": 343,
+                        "width": 3,
+                        "fullWidth": 4,
+                        "text": "!==",
+                        "hasTrailingTrivia": true
+                    },
+                    "_right": {
+                        "kind": "NumericLiteralExpression",
+                        "_literalToken": {
+                            "kind": "NumericLiteral",
+                            "start": 347,
+                            "width": 1,
+                            "text": "0"
+                        }
+                    }
+                },
+                "_closeParenToken": {
+                    "kind": "CloseParenToken",
+                    "start": 348,
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ")",
+                    "hasTrailingTrivia": true
+                },
+                "_statement": {
+                    "kind": "Block",
+                    "_openBraceToken": {
+                        "kind": "OpenBraceToken",
+                        "start": 350,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "{",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    },
+                    "_statements": [
+                        {
+                            "kind": "ExpressionStatement",
+                            "_expression": {
+                                "kind": "InvocationExpression",
+                                "_expression": {
+                                    "kind": "IdentifierName",
+                                    "_identifier": {
+                                        "kind": "IdentifierNameToken",
+                                        "start": 354,
+                                        "fullStart": 352,
+                                        "width": 6,
+                                        "fullWidth": 8,
+                                        "text": "$ERROR",
+                                        "valueText": "$ERROR",
+                                        "hasLeadingTrivia": true
+                                    }
+                                },
+                                "_argumentList": {
+                                    "kind": "ArgumentList",
+                                    "_openParenToken": {
+                                        "kind": "OpenParenToken",
+                                        "start": 360,
+                                        "width": 1,
+                                        "text": "("
+                                    },
+                                    "_arguments": [
+                                        {
+                                            "kind": "AddExpression",
+                                            "_left": {
+                                                "kind": "StringLiteralExpression",
+                                                "_literalToken": {
+                                                    "kind": "StringLiteral",
+                                                    "start": 361,
+                                                    "width": 31,
+                                                    "fullWidth": 32,
+                                                    "text": "'#1: (0 >>> 0) === 0. Actual: '",
+                                                    "hasTrailingTrivia": true
+                                                }
+                                            },
+                                            "_operatorToken": {
+                                                "kind": "PlusToken",
+                                                "start": 393,
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": "+",
+                                                "hasTrailingTrivia": true
+                                            },
+                                            "_right": {
+                                                "kind": "ParenthesizedExpression",
+                                                "_openParenToken": {
+                                                    "kind": "OpenParenToken",
+                                                    "start": 395,
+                                                    "width": 1,
+                                                    "text": "("
+                                                },
+                                                "_expression": {
+                                                    "kind": "ParenthesizedExpression",
+                                                    "_openParenToken": {
+                                                        "kind": "OpenParenToken",
+                                                        "start": 396,
+                                                        "width": 1,
+                                                        "text": "("
+                                                    },
+                                                    "_expression": {
+                                                        "kind": "UnsignedRightShiftExpression",
+                                                        "_left": {
+                                                            "kind": "NumericLiteralExpression",
+                                                            "_literalToken": {
+                                                                "kind": "NumericLiteral",
+                                                                "start": 397,
+                                                                "width": 1,
+                                                                "fullWidth": 2,
+                                                                "text": "0",
+                                                                "hasTrailingTrivia": true
+                                                            }
+                                                        },
+                                                        "_operatorToken": {
+                                                            "kind": "GreaterThanGreaterThanGreaterThanToken",
+                                                            "start": 399,
+                                                            "width": 3,
+                                                            "fullWidth": 4,
+                                                            "text": ">>>",
+                                                            "hasTrailingTrivia": true
+                                                        },
+                                                        "_right": {
+                                                            "kind": "NumericLiteralExpression",
+                                                            "_literalToken": {
+                                                                "kind": "NumericLiteral",
+                                                                "start": 403,
+                                                                "width": 1,
+                                                                "text": "0"
+                                                            }
+                                                        }
+                                                    },
+                                                    "_closeParenToken": {
+                                                        "kind": "CloseParenToken",
+                                                        "start": 404,
+                                                        "width": 1,
+                                                        "text": ")"
+                                                    }
+                                                },
+                                                "_closeParenToken": {
+                                                    "kind": "CloseParenToken",
+                                                    "start": 405,
+                                                    "width": 1,
+                                                    "text": ")"
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "_closeParenToken": {
+                                        "kind": "CloseParenToken",
+                                        "start": 406,
+                                        "width": 1,
+                                        "text": ")"
+                                    }
+                                }
+                            },
+                            "_semicolonToken": {
+                                "kind": "SemicolonToken",
+                                "start": 407,
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ";",
+                                "hasTrailingTrivia": true,
+                                "hasTrailingNewLineTrivia": true
+                            }
+                        }
+                    ],
+                    "_closeBraceToken": {
+                        "kind": "CloseBraceToken",
+                        "start": 409,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "}",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    }
+                }
+            },
+            {
+                "kind": "IfStatement",
+                "_ifKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "IfKeyword",
+                    "start": 423,
+                    "fullStart": 411,
+                    "width": 2,
+                    "fullWidth": 15,
+                    "text": "if",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingCommentTrivia": true,
+                    "hasLeadingNewLineTrivia": true,
+                    "hasTrailingTrivia": true
+                },
+                "_openParenToken": {
+                    "kind": "OpenParenToken",
+                    "start": 426,
+                    "width": 1,
+                    "text": "("
+                },
+                "_condition": {
+                    "kind": "NotEqualsExpression",
+                    "_left": {
+                        "kind": "ParenthesizedExpression",
+                        "_openParenToken": {
+                            "kind": "OpenParenToken",
+                            "start": 427,
+                            "width": 1,
+                            "text": "("
+                        },
+                        "_expression": {
+                            "kind": "UnsignedRightShiftExpression",
+                            "_left": {
+                                "kind": "NumericLiteralExpression",
+                                "_literalToken": {
+                                    "kind": "NumericLiteral",
+                                    "start": 428,
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": "1",
+                                    "hasTrailingTrivia": true
+                                }
+                            },
+                            "_operatorToken": {
+                                "kind": "GreaterThanGreaterThanGreaterThanToken",
+                                "start": 430,
+                                "width": 3,
+                                "fullWidth": 4,
+                                "text": ">>>",
+                                "hasTrailingTrivia": true
+                            },
+                            "_right": {
+                                "kind": "NumericLiteralExpression",
+                                "_literalToken": {
+                                    "kind": "NumericLiteral",
+                                    "start": 434,
+                                    "width": 1,
+                                    "text": "0"
+                                }
+                            }
+                        },
+                        "_closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "start": 435,
+                            "width": 1,
+                            "fullWidth": 2,
+                            "text": ")",
+                            "hasTrailingTrivia": true
+                        }
+                    },
+                    "_operatorToken": {
+                        "kind": "ExclamationEqualsEqualsToken",
+                        "start": 437,
+                        "width": 3,
+                        "fullWidth": 4,
+                        "text": "!==",
+                        "hasTrailingTrivia": true
+                    },
+                    "_right": {
+                        "kind": "NumericLiteralExpression",
+                        "_literalToken": {
+                            "kind": "NumericLiteral",
+                            "start": 441,
+                            "width": 1,
+                            "text": "1"
+                        }
+                    }
+                },
+                "_closeParenToken": {
+                    "kind": "CloseParenToken",
+                    "start": 442,
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ")",
+                    "hasTrailingTrivia": true
+                },
+                "_statement": {
+                    "kind": "Block",
+                    "_openBraceToken": {
+                        "kind": "OpenBraceToken",
+                        "start": 444,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "{",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    },
+                    "_statements": [
+                        {
+                            "kind": "ExpressionStatement",
+                            "_expression": {
+                                "kind": "InvocationExpression",
+                                "_expression": {
+                                    "kind": "IdentifierName",
+                                    "_identifier": {
+                                        "kind": "IdentifierNameToken",
+                                        "start": 448,
+                                        "fullStart": 446,
+                                        "width": 6,
+                                        "fullWidth": 8,
+                                        "text": "$ERROR",
+                                        "valueText": "$ERROR",
+                                        "hasLeadingTrivia": true
+                                    }
+                                },
+                                "_argumentList": {
+                                    "kind": "ArgumentList",
+                                    "_openParenToken": {
+                                        "kind": "OpenParenToken",
+                                        "start": 454,
+                                        "width": 1,
+                                        "text": "("
+                                    },
+                                    "_arguments": [
+                                        {
+                                            "kind": "AddExpression",
+                                            "_left": {
+                                                "kind": "StringLiteralExpression",
+                                                "_literalToken": {
+                                                    "kind": "StringLiteral",
+                                                    "start": 455,
+                                                    "width": 31,
+                                                    "fullWidth": 32,
+                                                    "text": "'#2: (1 >>> 0) === 1. Actual: '",
+                                                    "hasTrailingTrivia": true
+                                                }
+                                            },
+                                            "_operatorToken": {
+                                                "kind": "PlusToken",
+                                                "start": 487,
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": "+",
+                                                "hasTrailingTrivia": true
+                                            },
+                                            "_right": {
+                                                "kind": "ParenthesizedExpression",
+                                                "_openParenToken": {
+                                                    "kind": "OpenParenToken",
+                                                    "start": 489,
+                                                    "width": 1,
+                                                    "text": "("
+                                                },
+                                                "_expression": {
+                                                    "kind": "ParenthesizedExpression",
+                                                    "_openParenToken": {
+                                                        "kind": "OpenParenToken",
+                                                        "start": 490,
+                                                        "width": 1,
+                                                        "text": "("
+                                                    },
+                                                    "_expression": {
+                                                        "kind": "UnsignedRightShiftExpression",
+                                                        "_left": {
+                                                            "kind": "NumericLiteralExpression",
+                                                            "_literalToken": {
+                                                                "kind": "NumericLiteral",
+                                                                "start": 491,
+                                                                "width": 1,
+                                                                "fullWidth": 2,
+                                                                "text": "1",
+                                                                "hasTrailingTrivia": true
+                                                            }
+                                                        },
+                                                        "_operatorToken": {
+                                                            "kind": "GreaterThanGreaterThanGreaterThanToken",
+                                                            "start": 493,
+                                                            "width": 3,
+                                                            "fullWidth": 4,
+                                                            "text": ">>>",
+                                                            "hasTrailingTrivia": true
+                                                        },
+                                                        "_right": {
+                                                            "kind": "NumericLiteralExpression",
+                                                            "_literalToken": {
+                                                                "kind": "NumericLiteral",
+                                                                "start": 497,
+                                                                "width": 1,
+                                                                "text": "0"
+                                                            }
+                                                        }
+                                                    },
+                                                    "_closeParenToken": {
+                                                        "kind": "CloseParenToken",
+                                                        "start": 498,
+                                                        "width": 1,
+                                                        "text": ")"
+                                                    }
+                                                },
+                                                "_closeParenToken": {
+                                                    "kind": "CloseParenToken",
+                                                    "start": 499,
+                                                    "width": 1,
+                                                    "text": ")"
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "_closeParenToken": {
+                                        "kind": "CloseParenToken",
+                                        "start": 500,
+                                        "width": 1,
+                                        "text": ")"
+                                    }
+                                }
+                            },
+                            "_semicolonToken": {
+                                "kind": "SemicolonToken",
+                                "start": 501,
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ";",
+                                "hasTrailingTrivia": true,
+                                "hasTrailingNewLineTrivia": true
+                            }
+                        }
+                    ],
+                    "_closeBraceToken": {
+                        "kind": "CloseBraceToken",
+                        "start": 503,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "}",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    }
+                }
+            },
+            {
+                "kind": "IfStatement",
+                "_ifKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "IfKeyword",
+                    "start": 517,
+                    "fullStart": 505,
+                    "width": 2,
+                    "fullWidth": 15,
+                    "text": "if",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingCommentTrivia": true,
+                    "hasLeadingNewLineTrivia": true,
+                    "hasTrailingTrivia": true
+                },
+                "_openParenToken": {
+                    "kind": "OpenParenToken",
+                    "start": 520,
+                    "width": 1,
+                    "text": "("
+                },
+                "_condition": {
+                    "kind": "NotEqualsExpression",
+                    "_left": {
+                        "kind": "ParenthesizedExpression",
+                        "_openParenToken": {
+                            "kind": "OpenParenToken",
+                            "start": 521,
+                            "width": 1,
+                            "text": "("
+                        },
+                        "_expression": {
+                            "kind": "UnsignedRightShiftExpression",
+                            "_left": {
+                                "kind": "NegateExpression",
+                                "_operatorToken": {
+                                    "kind": "MinusToken",
+                                    "start": 522,
+                                    "width": 1,
+                                    "text": "-"
+                                },
+                                "_operand": {
+                                    "kind": "NumericLiteralExpression",
+                                    "_literalToken": {
+                                        "kind": "NumericLiteral",
+                                        "start": 523,
+                                        "width": 1,
+                                        "fullWidth": 2,
+                                        "text": "1",
+                                        "hasTrailingTrivia": true
+                                    }
+                                }
+                            },
+                            "_operatorToken": {
+                                "kind": "GreaterThanGreaterThanGreaterThanToken",
+                                "start": 525,
+                                "width": 3,
+                                "fullWidth": 4,
+                                "text": ">>>",
+                                "hasTrailingTrivia": true
+                            },
+                            "_right": {
+                                "kind": "NumericLiteralExpression",
+                                "_literalToken": {
+                                    "kind": "NumericLiteral",
+                                    "start": 529,
+                                    "width": 1,
+                                    "text": "0"
+                                }
+                            }
+                        },
+                        "_closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "start": 530,
+                            "width": 1,
+                            "fullWidth": 2,
+                            "text": ")",
+                            "hasTrailingTrivia": true
+                        }
+                    },
+                    "_operatorToken": {
+                        "kind": "ExclamationEqualsEqualsToken",
+                        "start": 532,
+                        "width": 3,
+                        "fullWidth": 4,
+                        "text": "!==",
+                        "hasTrailingTrivia": true
+                    },
+                    "_right": {
+                        "kind": "NumericLiteralExpression",
+                        "_literalToken": {
+                            "kind": "NumericLiteral",
+                            "start": 536,
+                            "width": 10,
+                            "text": "4294967295"
+                        }
+                    }
+                },
+                "_closeParenToken": {
+                    "kind": "CloseParenToken",
+                    "start": 546,
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ")",
+                    "hasTrailingTrivia": true
+                },
+                "_statement": {
+                    "kind": "Block",
+                    "_openBraceToken": {
+                        "kind": "OpenBraceToken",
+                        "start": 548,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "{",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    },
+                    "_statements": [
+                        {
+                            "kind": "ExpressionStatement",
+                            "_expression": {
+                                "kind": "InvocationExpression",
+                                "_expression": {
+                                    "kind": "IdentifierName",
+                                    "_identifier": {
+                                        "kind": "IdentifierNameToken",
+                                        "start": 552,
+                                        "fullStart": 550,
+                                        "width": 6,
+                                        "fullWidth": 8,
+                                        "text": "$ERROR",
+                                        "valueText": "$ERROR",
+                                        "hasLeadingTrivia": true
+                                    }
+                                },
+                                "_argumentList": {
+                                    "kind": "ArgumentList",
+                                    "_openParenToken": {
+                                        "kind": "OpenParenToken",
+                                        "start": 558,
+                                        "width": 1,
+                                        "text": "("
+                                    },
+                                    "_arguments": [
+                                        {
+                                            "kind": "AddExpression",
+                                            "_left": {
+                                                "kind": "StringLiteralExpression",
+                                                "_literalToken": {
+                                                    "kind": "StringLiteral",
+                                                    "start": 559,
+                                                    "width": 41,
+                                                    "fullWidth": 42,
+                                                    "text": "'#3: (-1 >>> 0) === 4294967295. Actual: '",
+                                                    "hasTrailingTrivia": true
+                                                }
+                                            },
+                                            "_operatorToken": {
+                                                "kind": "PlusToken",
+                                                "start": 601,
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": "+",
+                                                "hasTrailingTrivia": true
+                                            },
+                                            "_right": {
+                                                "kind": "ParenthesizedExpression",
+                                                "_openParenToken": {
+                                                    "kind": "OpenParenToken",
+                                                    "start": 603,
+                                                    "width": 1,
+                                                    "text": "("
+                                                },
+                                                "_expression": {
+                                                    "kind": "ParenthesizedExpression",
+                                                    "_openParenToken": {
+                                                        "kind": "OpenParenToken",
+                                                        "start": 604,
+                                                        "width": 1,
+                                                        "text": "("
+                                                    },
+                                                    "_expression": {
+                                                        "kind": "UnsignedRightShiftExpression",
+                                                        "_left": {
+                                                            "kind": "NegateExpression",
+                                                            "_operatorToken": {
+                                                                "kind": "MinusToken",
+                                                                "start": 605,
+                                                                "width": 1,
+                                                                "text": "-"
+                                                            },
+                                                            "_operand": {
+                                                                "kind": "NumericLiteralExpression",
+                                                                "_literalToken": {
+                                                                    "kind": "NumericLiteral",
+                                                                    "start": 606,
+                                                                    "width": 1,
+                                                                    "fullWidth": 2,
+                                                                    "text": "1",
+                                                                    "hasTrailingTrivia": true
+                                                                }
+                                                            }
+                                                        },
+                                                        "_operatorToken": {
+                                                            "kind": "GreaterThanGreaterThanGreaterThanToken",
+                                                            "start": 608,
+                                                            "width": 3,
+                                                            "fullWidth": 4,
+                                                            "text": ">>>",
+                                                            "hasTrailingTrivia": true
+                                                        },
+                                                        "_right": {
+                                                            "kind": "NumericLiteralExpression",
+                                                            "_literalToken": {
+                                                                "kind": "NumericLiteral",
+                                                                "start": 612,
+                                                                "width": 1,
+                                                                "text": "0"
+                                                            }
+                                                        }
+                                                    },
+                                                    "_closeParenToken": {
+                                                        "kind": "CloseParenToken",
+                                                        "start": 613,
+                                                        "width": 1,
+                                                        "text": ")"
+                                                    }
+                                                },
+                                                "_closeParenToken": {
+                                                    "kind": "CloseParenToken",
+                                                    "start": 614,
+                                                    "width": 1,
+                                                    "text": ")"
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "_closeParenToken": {
+                                        "kind": "CloseParenToken",
+                                        "start": 615,
+                                        "width": 1,
+                                        "text": ")"
+                                    }
+                                }
+                            },
+                            "_semicolonToken": {
+                                "kind": "SemicolonToken",
+                                "start": 616,
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ";",
+                                "hasTrailingTrivia": true,
+                                "hasTrailingNewLineTrivia": true
+                            }
+                        }
+                    ],
+                    "_closeBraceToken": {
+                        "kind": "CloseBraceToken",
+                        "start": 618,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "}",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    }
+                }
+            },
+            {
+                "kind": "IfStatement",
+                "_ifKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "IfKeyword",
+                    "start": 632,
+                    "fullStart": 620,
+                    "width": 2,
+                    "fullWidth": 15,
+                    "text": "if",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingCommentTrivia": true,
+                    "hasLeadingNewLineTrivia": true,
+                    "hasTrailingTrivia": true
+                },
+                "_openParenToken": {
+                    "kind": "OpenParenToken",
+                    "start": 635,
+                    "width": 1,
+                    "text": "("
+                },
+                "_condition": {
+                    "kind": "NotEqualsExpression",
+                    "_left": {
+                        "kind": "ParenthesizedExpression",
+                        "_openParenToken": {
+                            "kind": "OpenParenToken",
+                            "start": 636,
+                            "width": 1,
+                            "text": "("
+                        },
+                        "_expression": {
+                            "kind": "UnsignedRightShiftExpression",
+                            "_left": {
+                                "kind": "NumericLiteralExpression",
+                                "_literalToken": {
+                                    "kind": "NumericLiteral",
+                                    "start": 637,
+                                    "width": 10,
+                                    "fullWidth": 11,
+                                    "text": "4294967295",
+                                    "hasTrailingTrivia": true
+                                }
+                            },
+                            "_operatorToken": {
+                                "kind": "GreaterThanGreaterThanGreaterThanToken",
+                                "start": 648,
+                                "width": 3,
+                                "fullWidth": 4,
+                                "text": ">>>",
+                                "hasTrailingTrivia": true
+                            },
+                            "_right": {
+                                "kind": "NumericLiteralExpression",
+                                "_literalToken": {
+                                    "kind": "NumericLiteral",
+                                    "start": 652,
+                                    "width": 1,
+                                    "text": "0"
+                                }
+                            }
+                        },
+                        "_closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "start": 653,
+                            "width": 1,
+                            "fullWidth": 2,
+                            "text": ")",
+                            "hasTrailingTrivia": true
+                        }
+                    },
+                    "_operatorToken": {
+                        "kind": "ExclamationEqualsEqualsToken",
+                        "start": 655,
+                        "width": 3,
+                        "fullWidth": 4,
+                        "text": "!==",
+                        "hasTrailingTrivia": true
+                    },
+                    "_right": {
+                        "kind": "NumericLiteralExpression",
+                        "_literalToken": {
+                            "kind": "NumericLiteral",
+                            "start": 659,
+                            "width": 10,
+                            "text": "4294967295"
+                        }
+                    }
+                },
+                "_closeParenToken": {
+                    "kind": "CloseParenToken",
+                    "start": 669,
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ")",
+                    "hasTrailingTrivia": true
+                },
+                "_statement": {
+                    "kind": "Block",
+                    "_openBraceToken": {
+                        "kind": "OpenBraceToken",
+                        "start": 671,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "{",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    },
+                    "_statements": [
+                        {
+                            "kind": "ExpressionStatement",
+                            "_expression": {
+                                "kind": "InvocationExpression",
+                                "_expression": {
+                                    "kind": "IdentifierName",
+                                    "_identifier": {
+                                        "kind": "IdentifierNameToken",
+                                        "start": 675,
+                                        "fullStart": 673,
+                                        "width": 6,
+                                        "fullWidth": 8,
+                                        "text": "$ERROR",
+                                        "valueText": "$ERROR",
+                                        "hasLeadingTrivia": true
+                                    }
+                                },
+                                "_argumentList": {
+                                    "kind": "ArgumentList",
+                                    "_openParenToken": {
+                                        "kind": "OpenParenToken",
+                                        "start": 681,
+                                        "width": 1,
+                                        "text": "("
+                                    },
+                                    "_arguments": [
+                                        {
+                                            "kind": "AddExpression",
+                                            "_left": {
+                                                "kind": "StringLiteralExpression",
+                                                "_literalToken": {
+                                                    "kind": "StringLiteral",
+                                                    "start": 682,
+                                                    "width": 49,
+                                                    "fullWidth": 50,
+                                                    "text": "'#4: (4294967295 >>> 0) === 4294967295. Actual: '",
+                                                    "hasTrailingTrivia": true
+                                                }
+                                            },
+                                            "_operatorToken": {
+                                                "kind": "PlusToken",
+                                                "start": 732,
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": "+",
+                                                "hasTrailingTrivia": true
+                                            },
+                                            "_right": {
+                                                "kind": "ParenthesizedExpression",
+                                                "_openParenToken": {
+                                                    "kind": "OpenParenToken",
+                                                    "start": 734,
+                                                    "width": 1,
+                                                    "text": "("
+                                                },
+                                                "_expression": {
+                                                    "kind": "ParenthesizedExpression",
+                                                    "_openParenToken": {
+                                                        "kind": "OpenParenToken",
+                                                        "start": 735,
+                                                        "width": 1,
+                                                        "text": "("
+                                                    },
+                                                    "_expression": {
+                                                        "kind": "UnsignedRightShiftExpression",
+                                                        "_left": {
+                                                            "kind": "NumericLiteralExpression",
+                                                            "_literalToken": {
+                                                                "kind": "NumericLiteral",
+                                                                "start": 736,
+                                                                "width": 10,
+                                                                "fullWidth": 11,
+                                                                "text": "4294967295",
+                                                                "hasTrailingTrivia": true
+                                                            }
+                                                        },
+                                                        "_operatorToken": {
+                                                            "kind": "GreaterThanGreaterThanGreaterThanToken",
+                                                            "start": 747,
+                                                            "width": 3,
+                                                            "fullWidth": 4,
+                                                            "text": ">>>",
+                                                            "hasTrailingTrivia": true
+                                                        },
+                                                        "_right": {
+                                                            "kind": "NumericLiteralExpression",
+                                                            "_literalToken": {
+                                                                "kind": "NumericLiteral",
+                                                                "start": 751,
+                                                                "width": 1,
+                                                                "text": "0"
+                                                            }
+                                                        }
+                                                    },
+                                                    "_closeParenToken": {
+                                                        "kind": "CloseParenToken",
+                                                        "start": 752,
+                                                        "width": 1,
+                                                        "text": ")"
+                                                    }
+                                                },
+                                                "_closeParenToken": {
+                                                    "kind": "CloseParenToken",
+                                                    "start": 753,
+                                                    "width": 1,
+                                                    "text": ")"
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "_closeParenToken": {
+                                        "kind": "CloseParenToken",
+                                        "start": 754,
+                                        "width": 1,
+                                        "text": ")"
+                                    }
+                                }
+                            },
+                            "_semicolonToken": {
+                                "kind": "SemicolonToken",
+                                "start": 755,
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ";",
+                                "hasTrailingTrivia": true,
+                                "hasTrailingNewLineTrivia": true
+                            }
+                        }
+                    ],
+                    "_closeBraceToken": {
+                        "kind": "CloseBraceToken",
+                        "start": 757,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "}",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    }
+                }
+            },
+            {
+                "kind": "IfStatement",
+                "_ifKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "IfKeyword",
+                    "start": 771,
+                    "fullStart": 759,
+                    "width": 2,
+                    "fullWidth": 15,
+                    "text": "if",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingCommentTrivia": true,
+                    "hasLeadingNewLineTrivia": true,
+                    "hasTrailingTrivia": true
+                },
+                "_openParenToken": {
+                    "kind": "OpenParenToken",
+                    "start": 774,
+                    "width": 1,
+                    "text": "("
+                },
+                "_condition": {
+                    "kind": "NotEqualsExpression",
+                    "_left": {
+                        "kind": "ParenthesizedExpression",
+                        "_openParenToken": {
+                            "kind": "OpenParenToken",
+                            "start": 775,
+                            "width": 1,
+                            "text": "("
+                        },
+                        "_expression": {
+                            "kind": "UnsignedRightShiftExpression",
+                            "_left": {
+                                "kind": "NumericLiteralExpression",
+                                "_literalToken": {
+                                    "kind": "NumericLiteral",
+                                    "start": 776,
+                                    "width": 10,
+                                    "fullWidth": 11,
+                                    "text": "4294967294",
+                                    "hasTrailingTrivia": true
+                                }
+                            },
+                            "_operatorToken": {
+                                "kind": "GreaterThanGreaterThanGreaterThanToken",
+                                "start": 787,
+                                "width": 3,
+                                "fullWidth": 4,
+                                "text": ">>>",
+                                "hasTrailingTrivia": true
+                            },
+                            "_right": {
+                                "kind": "NumericLiteralExpression",
+                                "_literalToken": {
+                                    "kind": "NumericLiteral",
+                                    "start": 791,
+                                    "width": 1,
+                                    "text": "0"
+                                }
+                            }
+                        },
+                        "_closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "start": 792,
+                            "width": 1,
+                            "fullWidth": 2,
+                            "text": ")",
+                            "hasTrailingTrivia": true
+                        }
+                    },
+                    "_operatorToken": {
+                        "kind": "ExclamationEqualsEqualsToken",
+                        "start": 794,
+                        "width": 3,
+                        "fullWidth": 4,
+                        "text": "!==",
+                        "hasTrailingTrivia": true
+                    },
+                    "_right": {
+                        "kind": "NumericLiteralExpression",
+                        "_literalToken": {
+                            "kind": "NumericLiteral",
+                            "start": 798,
+                            "width": 10,
+                            "text": "4294967294"
+                        }
+                    }
+                },
+                "_closeParenToken": {
+                    "kind": "CloseParenToken",
+                    "start": 808,
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ")",
+                    "hasTrailingTrivia": true
+                },
+                "_statement": {
+                    "kind": "Block",
+                    "_openBraceToken": {
+                        "kind": "OpenBraceToken",
+                        "start": 810,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "{",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    },
+                    "_statements": [
+                        {
+                            "kind": "ExpressionStatement",
+                            "_expression": {
+                                "kind": "InvocationExpression",
+                                "_expression": {
+                                    "kind": "IdentifierName",
+                                    "_identifier": {
+                                        "kind": "IdentifierNameToken",
+                                        "start": 814,
+                                        "fullStart": 812,
+                                        "width": 6,
+                                        "fullWidth": 8,
+                                        "text": "$ERROR",
+                                        "valueText": "$ERROR",
+                                        "hasLeadingTrivia": true
+                                    }
+                                },
+                                "_argumentList": {
+                                    "kind": "ArgumentList",
+                                    "_openParenToken": {
+                                        "kind": "OpenParenToken",
+                                        "start": 820,
+                                        "width": 1,
+                                        "text": "("
+                                    },
+                                    "_arguments": [
+                                        {
+                                            "kind": "AddExpression",
+                                            "_left": {
+                                                "kind": "StringLiteralExpression",
+                                                "_literalToken": {
+                                                    "kind": "StringLiteral",
+                                                    "start": 821,
+                                                    "width": 49,
+                                                    "fullWidth": 50,
+                                                    "text": "'#5: (4294967294 >>> 0) === 4294967294. Actual: '",
+                                                    "hasTrailingTrivia": true
+                                                }
+                                            },
+                                            "_operatorToken": {
+                                                "kind": "PlusToken",
+                                                "start": 871,
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": "+",
+                                                "hasTrailingTrivia": true
+                                            },
+                                            "_right": {
+                                                "kind": "ParenthesizedExpression",
+                                                "_openParenToken": {
+                                                    "kind": "OpenParenToken",
+                                                    "start": 873,
+                                                    "width": 1,
+                                                    "text": "("
+                                                },
+                                                "_expression": {
+                                                    "kind": "ParenthesizedExpression",
+                                                    "_openParenToken": {
+                                                        "kind": "OpenParenToken",
+                                                        "start": 874,
+                                                        "width": 1,
+                                                        "text": "("
+                                                    },
+                                                    "_expression": {
+                                                        "kind": "UnsignedRightShiftExpression",
+                                                        "_left": {
+                                                            "kind": "NumericLiteralExpression",
+                                                            "_literalToken": {
+                                                                "kind": "NumericLiteral",
+                                                                "start": 875,
+                                                                "width": 10,
+                                                                "fullWidth": 11,
+                                                                "text": "4294967294",
+                                                                "hasTrailingTrivia": true
+                                                            }
+                                                        },
+                                                        "_operatorToken": {
+                                                            "kind": "GreaterThanGreaterThanGreaterThanToken",
+                                                            "start": 886,
+                                                            "width": 3,
+                                                            "fullWidth": 4,
+                                                            "text": ">>>",
+                                                            "hasTrailingTrivia": true
+                                                        },
+                                                        "_right": {
+                                                            "kind": "NumericLiteralExpression",
+                                                            "_literalToken": {
+                                                                "kind": "NumericLiteral",
+                                                                "start": 890,
+                                                                "width": 1,
+                                                                "text": "0"
+                                                            }
+                                                        }
+                                                    },
+                                                    "_closeParenToken": {
+                                                        "kind": "CloseParenToken",
+                                                        "start": 891,
+                                                        "width": 1,
+                                                        "text": ")"
+                                                    }
+                                                },
+                                                "_closeParenToken": {
+                                                    "kind": "CloseParenToken",
+                                                    "start": 892,
+                                                    "width": 1,
+                                                    "text": ")"
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "_closeParenToken": {
+                                        "kind": "CloseParenToken",
+                                        "start": 893,
+                                        "width": 1,
+                                        "text": ")"
+                                    }
+                                }
+                            },
+                            "_semicolonToken": {
+                                "kind": "SemicolonToken",
+                                "start": 894,
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ";",
+                                "hasTrailingTrivia": true,
+                                "hasTrailingNewLineTrivia": true
+                            }
+                        }
+                    ],
+                    "_closeBraceToken": {
+                        "kind": "CloseBraceToken",
+                        "start": 896,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "}",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    }
+                }
+            },
+            {
+                "kind": "IfStatement",
+                "_ifKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "IfKeyword",
+                    "start": 910,
+                    "fullStart": 898,
+                    "width": 2,
+                    "fullWidth": 15,
+                    "text": "if",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingCommentTrivia": true,
+                    "hasLeadingNewLineTrivia": true,
+                    "hasTrailingTrivia": true
+                },
+                "_openParenToken": {
+                    "kind": "OpenParenToken",
+                    "start": 913,
+                    "width": 1,
+                    "text": "("
+                },
+                "_condition": {
+                    "kind": "NotEqualsExpression",
+                    "_left": {
+                        "kind": "ParenthesizedExpression",
+                        "_openParenToken": {
+                            "kind": "OpenParenToken",
+                            "start": 914,
+                            "width": 1,
+                            "text": "("
+                        },
+                        "_expression": {
+                            "kind": "UnsignedRightShiftExpression",
+                            "_left": {
+                                "kind": "NumericLiteralExpression",
+                                "_literalToken": {
+                                    "kind": "NumericLiteral",
+                                    "start": 915,
+                                    "width": 10,
+                                    "fullWidth": 11,
+                                    "text": "4294967296",
+                                    "hasTrailingTrivia": true
+                                }
+                            },
+                            "_operatorToken": {
+                                "kind": "GreaterThanGreaterThanGreaterThanToken",
+                                "start": 926,
+                                "width": 3,
+                                "fullWidth": 4,
+                                "text": ">>>",
+                                "hasTrailingTrivia": true
+                            },
+                            "_right": {
+                                "kind": "NumericLiteralExpression",
+                                "_literalToken": {
+                                    "kind": "NumericLiteral",
+                                    "start": 930,
+                                    "width": 1,
+                                    "text": "0"
+                                }
+                            }
+                        },
+                        "_closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "start": 931,
+                            "width": 1,
+                            "fullWidth": 2,
+                            "text": ")",
+                            "hasTrailingTrivia": true
+                        }
+                    },
+                    "_operatorToken": {
+                        "kind": "ExclamationEqualsEqualsToken",
+                        "start": 933,
+                        "width": 3,
+                        "fullWidth": 4,
+                        "text": "!==",
+                        "hasTrailingTrivia": true
+                    },
+                    "_right": {
+                        "kind": "NumericLiteralExpression",
+                        "_literalToken": {
+                            "kind": "NumericLiteral",
+                            "start": 937,
+                            "width": 1,
+                            "text": "0"
+                        }
+                    }
+                },
+                "_closeParenToken": {
+                    "kind": "CloseParenToken",
+                    "start": 938,
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ")",
+                    "hasTrailingTrivia": true
+                },
+                "_statement": {
+                    "kind": "Block",
+                    "_openBraceToken": {
+                        "kind": "OpenBraceToken",
+                        "start": 940,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "{",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    },
+                    "_statements": [
+                        {
+                            "kind": "ExpressionStatement",
+                            "_expression": {
+                                "kind": "InvocationExpression",
+                                "_expression": {
+                                    "kind": "IdentifierName",
+                                    "_identifier": {
+                                        "kind": "IdentifierNameToken",
+                                        "start": 944,
+                                        "fullStart": 942,
+                                        "width": 6,
+                                        "fullWidth": 8,
+                                        "text": "$ERROR",
+                                        "valueText": "$ERROR",
+                                        "hasLeadingTrivia": true
+                                    }
+                                },
+                                "_argumentList": {
+                                    "kind": "ArgumentList",
+                                    "_openParenToken": {
+                                        "kind": "OpenParenToken",
+                                        "start": 950,
+                                        "width": 1,
+                                        "text": "("
+                                    },
+                                    "_arguments": [
+                                        {
+                                            "kind": "AddExpression",
+                                            "_left": {
+                                                "kind": "StringLiteralExpression",
+                                                "_literalToken": {
+                                                    "kind": "StringLiteral",
+                                                    "start": 951,
+                                                    "width": 40,
+                                                    "fullWidth": 41,
+                                                    "text": "'#6: (4294967296 >>> 0) === 0. Actual: '",
+                                                    "hasTrailingTrivia": true
+                                                }
+                                            },
+                                            "_operatorToken": {
+                                                "kind": "PlusToken",
+                                                "start": 992,
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": "+",
+                                                "hasTrailingTrivia": true
+                                            },
+                                            "_right": {
+                                                "kind": "ParenthesizedExpression",
+                                                "_openParenToken": {
+                                                    "kind": "OpenParenToken",
+                                                    "start": 994,
+                                                    "width": 1,
+                                                    "text": "("
+                                                },
+                                                "_expression": {
+                                                    "kind": "ParenthesizedExpression",
+                                                    "_openParenToken": {
+                                                        "kind": "OpenParenToken",
+                                                        "start": 995,
+                                                        "width": 1,
+                                                        "text": "("
+                                                    },
+                                                    "_expression": {
+                                                        "kind": "UnsignedRightShiftExpression",
+                                                        "_left": {
+                                                            "kind": "NumericLiteralExpression",
+                                                            "_literalToken": {
+                                                                "kind": "NumericLiteral",
+                                                                "start": 996,
+                                                                "width": 10,
+                                                                "fullWidth": 11,
+                                                                "text": "4294967296",
+                                                                "hasTrailingTrivia": true
+                                                            }
+                                                        },
+                                                        "_operatorToken": {
+                                                            "kind": "GreaterThanGreaterThanGreaterThanToken",
+                                                            "start": 1007,
+                                                            "width": 3,
+                                                            "fullWidth": 4,
+                                                            "text": ">>>",
+                                                            "hasTrailingTrivia": true
+                                                        },
+                                                        "_right": {
+                                                            "kind": "NumericLiteralExpression",
+                                                            "_literalToken": {
+                                                                "kind": "NumericLiteral",
+                                                                "start": 1011,
+                                                                "width": 1,
+                                                                "text": "0"
+                                                            }
+                                                        }
+                                                    },
+                                                    "_closeParenToken": {
+                                                        "kind": "CloseParenToken",
+                                                        "start": 1012,
+                                                        "width": 1,
+                                                        "text": ")"
+                                                    }
+                                                },
+                                                "_closeParenToken": {
+                                                    "kind": "CloseParenToken",
+                                                    "start": 1013,
+                                                    "width": 1,
+                                                    "text": ")"
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "_closeParenToken": {
+                                        "kind": "CloseParenToken",
+                                        "start": 1014,
+                                        "width": 1,
+                                        "text": ")"
+                                    }
+                                }
+                            },
+                            "_semicolonToken": {
+                                "kind": "SemicolonToken",
+                                "start": 1015,
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ";",
+                                "hasTrailingTrivia": true,
+                                "hasTrailingNewLineTrivia": true
+                            }
+                        }
+                    ],
+                    "_closeBraceToken": {
+                        "kind": "CloseBraceToken",
+                        "start": 1017,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "}",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    }
+                }
+            }
+        ],
+        "_endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "start": 1020,
+            "fullStart": 1019,
+            "width": 0,
+            "fullWidth": 1,
+            "text": "",
+            "hasLeadingTrivia": true,
+            "hasLeadingNewLineTrivia": true
+        }
+    }
+}

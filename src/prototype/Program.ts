@@ -484,18 +484,18 @@ class Program {
     runAllTests(environment: IEnvironment, useTypeScript: bool, verify: bool): void {
         environment.standardOut.WriteLine("");
 
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
-            filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify));
-        // this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript3",
-        //    filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript3, useTypeScript, verify));
-            
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*allowErrors:*/ true));
-        // this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript3",
-        //    filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript3, useTypeScript, verify, /*allowErrors:*/ true));
+        //this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
+        //    filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify));
 
-        this.runTests(environment, "C:\\temp\\monoco-files",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ false));
+        //this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
+        //    filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*allowErrors:*/ true));
+
+        //this.runTests(environment, "C:\\temp\\monoco-files",
+        //    filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ false));
+
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262",
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*allowErrors:*/ true, /*generateBaseline:*/ true));
+
 
         environment.standardOut.WriteLine("");
     }
@@ -523,8 +523,9 @@ class Program {
               languageVersion: LanguageVersion,
               useTypeScript: bool,
               verify: bool,
-              allowErrors: bool): void {
-        if (!StringUtilities.endsWith(filePath, ".ts")) {
+              allowErrors: bool,
+              generateBaseline?: bool = false): void {
+        if (!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
             return;
         }
 
@@ -557,19 +558,22 @@ class Program {
                     throw new Error("File had unexpected error!");
                 }
             }
-
-            // var json = JSON2.stringify(unit);
             
-            if (verify) {
-                var actualResult = JSON2.stringify(unit, null, 4);
-                var expectedFile = filePath + ".expected";
+            var actualResult = JSON2.stringify(unit, null, 4);
+            var expectedFile = filePath + ".expected";
+
+            if (generateBaseline) {
+                environment.standardOut.WriteLine("Generating baseline for: " + filePath);
+                environment.writeFile(expectedFile, actualResult, /*useUTF8:*/ true);
+            }
+            else if (verify) {
                 var actualFile = filePath + ".actual";
 
                 var expectedResult = environment.readFile(expectedFile, 'utf-8');
 
                 if (expectedResult !== actualResult) {
                     environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
-                    environment.writeFile(actualFile, actualResult, true);
+                    environment.writeFile(actualFile, actualResult, /*useUTF8:*/ true);
                 }
             }
         }
@@ -733,7 +737,9 @@ var totalSize = 0;
 var program = new Program();
 var start: number, end: number;
 
-if (true) {
+program.runAllTests(Environment, false, true);
+
+if (false) {
     start = new Date().getTime();
     program.runAllTests(Environment, false, true);
     program.run(Environment, false);
@@ -750,7 +756,7 @@ if (false) {
     Environment.standardOut.WriteLine("Total time: " + (end - start));
 }
 
-if (true && specificFile === undefined) {
+if (false && specificFile === undefined) {
     start = new Date().getTime();
     program.run262(Environment, false);
     end = new Date().getTime();

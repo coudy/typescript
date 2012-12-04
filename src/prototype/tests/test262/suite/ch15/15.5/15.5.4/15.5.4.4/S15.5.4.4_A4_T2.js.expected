@@ -1,0 +1,791 @@
+﻿{
+    "_sourceUnit": {
+        "kind": "SourceUnit",
+        "_moduleElements": [
+            {
+                "kind": "ForStatement",
+                "_statement": {
+                    "kind": "Block",
+                    "_openBraceToken": {
+                        "kind": "OpenBraceToken",
+                        "start": 557,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "{",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    },
+                    "_statements": [
+                        {
+                            "kind": "IfStatement",
+                            "_ifKeyword": {
+                                "kind": "IdentifierNameToken",
+                                "keywordKind": "IfKeyword",
+                                "start": 561,
+                                "fullStart": 559,
+                                "width": 2,
+                                "fullWidth": 5,
+                                "text": "if",
+                                "hasLeadingTrivia": true,
+                                "hasTrailingTrivia": true
+                            },
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
+                                "start": 564,
+                                "width": 1,
+                                "text": "("
+                            },
+                            "_condition": {
+                                "kind": "NotEqualsExpression",
+                                "_left": {
+                                    "kind": "InvocationExpression",
+                                    "_expression": {
+                                        "kind": "MemberAccessExpression",
+                                        "_expression": {
+                                            "kind": "StringLiteralExpression",
+                                            "_literalToken": {
+                                                "kind": "StringLiteral",
+                                                "start": 565,
+                                                "width": 23,
+                                                "text": "\"ABC\\u0041\\u0042\\u0043\""
+                                            }
+                                        },
+                                        "_dotToken": {
+                                            "kind": "DotToken",
+                                            "start": 588,
+                                            "width": 1,
+                                            "text": "."
+                                        },
+                                        "_identifierName": {
+                                            "kind": "IdentifierName",
+                                            "_identifier": {
+                                                "kind": "IdentifierNameToken",
+                                                "start": 589,
+                                                "width": 6,
+                                                "text": "charAt",
+                                                "valueText": "charAt"
+                                            }
+                                        }
+                                    },
+                                    "_argumentList": {
+                                        "kind": "ArgumentList",
+                                        "_openParenToken": {
+                                            "kind": "OpenParenToken",
+                                            "start": 595,
+                                            "width": 1,
+                                            "text": "("
+                                        },
+                                        "_arguments": [
+                                            {
+                                                "kind": "IdentifierName",
+                                                "_identifier": {
+                                                    "kind": "IdentifierNameToken",
+                                                    "start": 596,
+                                                    "width": 1,
+                                                    "text": "i",
+                                                    "valueText": "i"
+                                                }
+                                            }
+                                        ],
+                                        "_closeParenToken": {
+                                            "kind": "CloseParenToken",
+                                            "start": 597,
+                                            "width": 1,
+                                            "fullWidth": 2,
+                                            "text": ")",
+                                            "hasTrailingTrivia": true
+                                        }
+                                    }
+                                },
+                                "_operatorToken": {
+                                    "kind": "ExclamationEqualsEqualsToken",
+                                    "start": 599,
+                                    "width": 3,
+                                    "fullWidth": 4,
+                                    "text": "!==",
+                                    "hasTrailingTrivia": true
+                                },
+                                "_right": {
+                                    "kind": "InvocationExpression",
+                                    "_expression": {
+                                        "kind": "MemberAccessExpression",
+                                        "_expression": {
+                                            "kind": "StringLiteralExpression",
+                                            "_literalToken": {
+                                                "kind": "StringLiteral",
+                                                "start": 603,
+                                                "width": 23,
+                                                "text": "\"\\u0041\\u0042\\u0043ABC\""
+                                            }
+                                        },
+                                        "_dotToken": {
+                                            "kind": "DotToken",
+                                            "start": 626,
+                                            "width": 1,
+                                            "text": "."
+                                        },
+                                        "_identifierName": {
+                                            "kind": "IdentifierName",
+                                            "_identifier": {
+                                                "kind": "IdentifierNameToken",
+                                                "start": 627,
+                                                "width": 9,
+                                                "text": "substring",
+                                                "valueText": "substring"
+                                            }
+                                        }
+                                    },
+                                    "_argumentList": {
+                                        "kind": "ArgumentList",
+                                        "_openParenToken": {
+                                            "kind": "OpenParenToken",
+                                            "start": 636,
+                                            "width": 1,
+                                            "text": "("
+                                        },
+                                        "_arguments": [
+                                            {
+                                                "kind": "IdentifierName",
+                                                "_identifier": {
+                                                    "kind": "IdentifierNameToken",
+                                                    "start": 637,
+                                                    "width": 1,
+                                                    "text": "i",
+                                                    "valueText": "i"
+                                                }
+                                            },
+                                            {
+                                                "kind": "CommaToken",
+                                                "start": 638,
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": ",",
+                                                "hasTrailingTrivia": true
+                                            },
+                                            {
+                                                "kind": "AddExpression",
+                                                "_left": {
+                                                    "kind": "IdentifierName",
+                                                    "_identifier": {
+                                                        "kind": "IdentifierNameToken",
+                                                        "start": 640,
+                                                        "width": 1,
+                                                        "text": "i",
+                                                        "valueText": "i"
+                                                    }
+                                                },
+                                                "_operatorToken": {
+                                                    "kind": "PlusToken",
+                                                    "start": 641,
+                                                    "width": 1,
+                                                    "text": "+"
+                                                },
+                                                "_right": {
+                                                    "kind": "NumericLiteralExpression",
+                                                    "_literalToken": {
+                                                        "kind": "NumericLiteral",
+                                                        "start": 642,
+                                                        "width": 1,
+                                                        "text": "1"
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "_closeParenToken": {
+                                            "kind": "CloseParenToken",
+                                            "start": 643,
+                                            "width": 1,
+                                            "text": ")"
+                                        }
+                                    }
+                                }
+                            },
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "start": 644,
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ")",
+                                "hasTrailingTrivia": true
+                            },
+                            "_statement": {
+                                "kind": "Block",
+                                "_openBraceToken": {
+                                    "kind": "OpenBraceToken",
+                                    "start": 646,
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": "{",
+                                    "hasTrailingTrivia": true,
+                                    "hasTrailingNewLineTrivia": true
+                                },
+                                "_statements": [
+                                    {
+                                        "kind": "ExpressionStatement",
+                                        "_expression": {
+                                            "kind": "InvocationExpression",
+                                            "_expression": {
+                                                "kind": "IdentifierName",
+                                                "_identifier": {
+                                                    "kind": "IdentifierNameToken",
+                                                    "start": 654,
+                                                    "fullStart": 648,
+                                                    "width": 6,
+                                                    "fullWidth": 12,
+                                                    "text": "$ERROR",
+                                                    "valueText": "$ERROR",
+                                                    "hasLeadingTrivia": true
+                                                }
+                                            },
+                                            "_argumentList": {
+                                                "kind": "ArgumentList",
+                                                "_openParenToken": {
+                                                    "kind": "OpenParenToken",
+                                                    "start": 660,
+                                                    "width": 1,
+                                                    "text": "("
+                                                },
+                                                "_arguments": [
+                                                    {
+                                                        "kind": "AddExpression",
+                                                        "_left": {
+                                                            "kind": "AddExpression",
+                                                            "_left": {
+                                                                "kind": "AddExpression",
+                                                                "_left": {
+                                                                    "kind": "AddExpression",
+                                                                    "_left": {
+                                                                        "kind": "AddExpression",
+                                                                        "_left": {
+                                                                            "kind": "AddExpression",
+                                                                            "_left": {
+                                                                                "kind": "AddExpression",
+                                                                                "_left": {
+                                                                                    "kind": "AddExpression",
+                                                                                    "_left": {
+                                                                                        "kind": "AddExpression",
+                                                                                        "_left": {
+                                                                                            "kind": "AddExpression",
+                                                                                            "_left": {
+                                                                                                "kind": "AddExpression",
+                                                                                                "_left": {
+                                                                                                    "kind": "StringLiteralExpression",
+                                                                                                    "_literalToken": {
+                                                                                                        "kind": "StringLiteral",
+                                                                                                        "start": 661,
+                                                                                                        "width": 3,
+                                                                                                        "text": "'#'"
+                                                                                                    }
+                                                                                                },
+                                                                                                "_operatorToken": {
+                                                                                                    "kind": "PlusToken",
+                                                                                                    "start": 664,
+                                                                                                    "width": 1,
+                                                                                                    "text": "+"
+                                                                                                },
+                                                                                                "_right": {
+                                                                                                    "kind": "ParenthesizedExpression",
+                                                                                                    "_openParenToken": {
+                                                                                                        "kind": "OpenParenToken",
+                                                                                                        "start": 665,
+                                                                                                        "width": 1,
+                                                                                                        "text": "("
+                                                                                                    },
+                                                                                                    "_expression": {
+                                                                                                        "kind": "AddExpression",
+                                                                                                        "_left": {
+                                                                                                            "kind": "IdentifierName",
+                                                                                                            "_identifier": {
+                                                                                                                "kind": "IdentifierNameToken",
+                                                                                                                "start": 666,
+                                                                                                                "width": 1,
+                                                                                                                "text": "i",
+                                                                                                                "valueText": "i"
+                                                                                                            }
+                                                                                                        },
+                                                                                                        "_operatorToken": {
+                                                                                                            "kind": "PlusToken",
+                                                                                                            "start": 667,
+                                                                                                            "width": 1,
+                                                                                                            "text": "+"
+                                                                                                        },
+                                                                                                        "_right": {
+                                                                                                            "kind": "NumericLiteralExpression",
+                                                                                                            "_literalToken": {
+                                                                                                                "kind": "NumericLiteral",
+                                                                                                                "start": 668,
+                                                                                                                "width": 1,
+                                                                                                                "text": "2"
+                                                                                                            }
+                                                                                                        }
+                                                                                                    },
+                                                                                                    "_closeParenToken": {
+                                                                                                        "kind": "CloseParenToken",
+                                                                                                        "start": 669,
+                                                                                                        "width": 1,
+                                                                                                        "text": ")"
+                                                                                                    }
+                                                                                                }
+                                                                                            },
+                                                                                            "_operatorToken": {
+                                                                                                "kind": "PlusToken",
+                                                                                                "start": 670,
+                                                                                                "width": 1,
+                                                                                                "text": "+"
+                                                                                            },
+                                                                                            "_right": {
+                                                                                                "kind": "StringLiteralExpression",
+                                                                                                "_literalToken": {
+                                                                                                    "kind": "StringLiteral",
+                                                                                                    "start": 671,
+                                                                                                    "width": 38,
+                                                                                                    "text": "': \"ABC\\\\u0041\\\\u0042\\\\u0043\".charAt('"
+                                                                                                }
+                                                                                            }
+                                                                                        },
+                                                                                        "_operatorToken": {
+                                                                                            "kind": "PlusToken",
+                                                                                            "start": 709,
+                                                                                            "width": 1,
+                                                                                            "text": "+"
+                                                                                        },
+                                                                                        "_right": {
+                                                                                            "kind": "IdentifierName",
+                                                                                            "_identifier": {
+                                                                                                "kind": "IdentifierNameToken",
+                                                                                                "start": 710,
+                                                                                                "width": 1,
+                                                                                                "text": "i",
+                                                                                                "valueText": "i"
+                                                                                            }
+                                                                                        }
+                                                                                    },
+                                                                                    "_operatorToken": {
+                                                                                        "kind": "PlusToken",
+                                                                                        "start": 711,
+                                                                                        "width": 1,
+                                                                                        "text": "+"
+                                                                                    },
+                                                                                    "_right": {
+                                                                                        "kind": "StringLiteralExpression",
+                                                                                        "_literalToken": {
+                                                                                            "kind": "StringLiteral",
+                                                                                            "start": 712,
+                                                                                            "width": 45,
+                                                                                            "text": "') === \"\\\\u0041\\\\u0042\\\\u0043ABC\".substring('"
+                                                                                        }
+                                                                                    }
+                                                                                },
+                                                                                "_operatorToken": {
+                                                                                    "kind": "PlusToken",
+                                                                                    "start": 757,
+                                                                                    "width": 1,
+                                                                                    "text": "+"
+                                                                                },
+                                                                                "_right": {
+                                                                                    "kind": "IdentifierName",
+                                                                                    "_identifier": {
+                                                                                        "kind": "IdentifierNameToken",
+                                                                                        "start": 758,
+                                                                                        "width": 1,
+                                                                                        "text": "i",
+                                                                                        "valueText": "i"
+                                                                                    }
+                                                                                }
+                                                                            },
+                                                                            "_operatorToken": {
+                                                                                "kind": "PlusToken",
+                                                                                "start": 759,
+                                                                                "width": 1,
+                                                                                "text": "+"
+                                                                            },
+                                                                            "_right": {
+                                                                                "kind": "StringLiteralExpression",
+                                                                                "_literalToken": {
+                                                                                    "kind": "StringLiteral",
+                                                                                    "start": 760,
+                                                                                    "width": 4,
+                                                                                    "text": "', '"
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        "_operatorToken": {
+                                                                            "kind": "PlusToken",
+                                                                            "start": 764,
+                                                                            "width": 1,
+                                                                            "text": "+"
+                                                                        },
+                                                                        "_right": {
+                                                                            "kind": "ParenthesizedExpression",
+                                                                            "_openParenToken": {
+                                                                                "kind": "OpenParenToken",
+                                                                                "start": 765,
+                                                                                "width": 1,
+                                                                                "text": "("
+                                                                            },
+                                                                            "_expression": {
+                                                                                "kind": "AddExpression",
+                                                                                "_left": {
+                                                                                    "kind": "IdentifierName",
+                                                                                    "_identifier": {
+                                                                                        "kind": "IdentifierNameToken",
+                                                                                        "start": 766,
+                                                                                        "width": 1,
+                                                                                        "text": "i",
+                                                                                        "valueText": "i"
+                                                                                    }
+                                                                                },
+                                                                                "_operatorToken": {
+                                                                                    "kind": "PlusToken",
+                                                                                    "start": 767,
+                                                                                    "width": 1,
+                                                                                    "text": "+"
+                                                                                },
+                                                                                "_right": {
+                                                                                    "kind": "NumericLiteralExpression",
+                                                                                    "_literalToken": {
+                                                                                        "kind": "NumericLiteral",
+                                                                                        "start": 768,
+                                                                                        "width": 1,
+                                                                                        "text": "1"
+                                                                                    }
+                                                                                }
+                                                                            },
+                                                                            "_closeParenToken": {
+                                                                                "kind": "CloseParenToken",
+                                                                                "start": 769,
+                                                                                "width": 1,
+                                                                                "text": ")"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "_operatorToken": {
+                                                                        "kind": "PlusToken",
+                                                                        "start": 770,
+                                                                        "width": 1,
+                                                                        "text": "+"
+                                                                    },
+                                                                    "_right": {
+                                                                        "kind": "StringLiteralExpression",
+                                                                        "_literalToken": {
+                                                                            "kind": "StringLiteral",
+                                                                            "start": 771,
+                                                                            "width": 47,
+                                                                            "text": "'). Actual: \"ABC\\\\u0041\\\\u0042\\\\u0043\".charAt('"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "_operatorToken": {
+                                                                    "kind": "PlusToken",
+                                                                    "start": 818,
+                                                                    "width": 1,
+                                                                    "text": "+"
+                                                                },
+                                                                "_right": {
+                                                                    "kind": "IdentifierName",
+                                                                    "_identifier": {
+                                                                        "kind": "IdentifierNameToken",
+                                                                        "start": 819,
+                                                                        "width": 1,
+                                                                        "text": "i",
+                                                                        "valueText": "i"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "_operatorToken": {
+                                                                "kind": "PlusToken",
+                                                                "start": 820,
+                                                                "width": 1,
+                                                                "text": "+"
+                                                            },
+                                                            "_right": {
+                                                                "kind": "StringLiteralExpression",
+                                                                "_literalToken": {
+                                                                    "kind": "StringLiteral",
+                                                                    "start": 821,
+                                                                    "width": 7,
+                                                                    "text": "') ==='"
+                                                                }
+                                                            }
+                                                        },
+                                                        "_operatorToken": {
+                                                            "kind": "PlusToken",
+                                                            "start": 828,
+                                                            "width": 1,
+                                                            "text": "+"
+                                                        },
+                                                        "_right": {
+                                                            "kind": "ParenthesizedExpression",
+                                                            "_openParenToken": {
+                                                                "kind": "OpenParenToken",
+                                                                "start": 829,
+                                                                "width": 1,
+                                                                "text": "("
+                                                            },
+                                                            "_expression": {
+                                                                "kind": "InvocationExpression",
+                                                                "_expression": {
+                                                                    "kind": "MemberAccessExpression",
+                                                                    "_expression": {
+                                                                        "kind": "StringLiteralExpression",
+                                                                        "_literalToken": {
+                                                                            "kind": "StringLiteral",
+                                                                            "start": 830,
+                                                                            "width": 23,
+                                                                            "text": "\"ABC\\u0041\\u0042\\u0043\""
+                                                                        }
+                                                                    },
+                                                                    "_dotToken": {
+                                                                        "kind": "DotToken",
+                                                                        "start": 853,
+                                                                        "width": 1,
+                                                                        "text": "."
+                                                                    },
+                                                                    "_identifierName": {
+                                                                        "kind": "IdentifierName",
+                                                                        "_identifier": {
+                                                                            "kind": "IdentifierNameToken",
+                                                                            "start": 854,
+                                                                            "width": 6,
+                                                                            "text": "charAt",
+                                                                            "valueText": "charAt"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "_argumentList": {
+                                                                    "kind": "ArgumentList",
+                                                                    "_openParenToken": {
+                                                                        "kind": "OpenParenToken",
+                                                                        "start": 860,
+                                                                        "width": 1,
+                                                                        "text": "("
+                                                                    },
+                                                                    "_arguments": [
+                                                                        {
+                                                                            "kind": "IdentifierName",
+                                                                            "_identifier": {
+                                                                                "kind": "IdentifierNameToken",
+                                                                                "start": 861,
+                                                                                "width": 1,
+                                                                                "text": "i",
+                                                                                "valueText": "i"
+                                                                            }
+                                                                        }
+                                                                    ],
+                                                                    "_closeParenToken": {
+                                                                        "kind": "CloseParenToken",
+                                                                        "start": 862,
+                                                                        "width": 1,
+                                                                        "text": ")"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "_closeParenToken": {
+                                                                "kind": "CloseParenToken",
+                                                                "start": 863,
+                                                                "width": 1,
+                                                                "fullWidth": 2,
+                                                                "text": ")",
+                                                                "hasTrailingTrivia": true
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "_closeParenToken": {
+                                                    "kind": "CloseParenToken",
+                                                    "start": 865,
+                                                    "width": 1,
+                                                    "text": ")"
+                                                }
+                                            }
+                                        },
+                                        "_semicolonToken": {
+                                            "kind": "SemicolonToken",
+                                            "start": 866,
+                                            "width": 1,
+                                            "fullWidth": 3,
+                                            "text": ";",
+                                            "hasTrailingTrivia": true,
+                                            "hasTrailingNewLineTrivia": true
+                                        }
+                                    }
+                                ],
+                                "_closeBraceToken": {
+                                    "kind": "CloseBraceToken",
+                                    "start": 873,
+                                    "fullStart": 869,
+                                    "width": 1,
+                                    "fullWidth": 6,
+                                    "text": "}",
+                                    "hasLeadingTrivia": true,
+                                    "hasTrailingTrivia": true,
+                                    "hasTrailingNewLineTrivia": true
+                                }
+                            }
+                        }
+                    ],
+                    "_closeBraceToken": {
+                        "kind": "CloseBraceToken",
+                        "start": 875,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "}",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    }
+                },
+                "_forKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "ForKeyword",
+                    "start": 533,
+                    "fullStart": 0,
+                    "width": 3,
+                    "fullWidth": 536,
+                    "text": "for",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingCommentTrivia": true,
+                    "hasLeadingNewLineTrivia": true
+                },
+                "_openParenToken": {
+                    "kind": "OpenParenToken",
+                    "start": 536,
+                    "width": 1,
+                    "text": "("
+                },
+                "_variableDeclaration": {
+                    "kind": "VariableDeclaration",
+                    "_varKeyword": {
+                        "kind": "IdentifierNameToken",
+                        "keywordKind": "VarKeyword",
+                        "start": 537,
+                        "width": 3,
+                        "fullWidth": 4,
+                        "text": "var",
+                        "hasTrailingTrivia": true
+                    },
+                    "_variableDeclarators": [
+                        {
+                            "kind": "VariableDeclarator",
+                            "_identifier": {
+                                "kind": "IdentifierNameToken",
+                                "start": 541,
+                                "width": 1,
+                                "text": "i",
+                                "valueText": "i"
+                            },
+                            "_equalsValueClause": {
+                                "kind": "EqualsValueClause",
+                                "_equalsToken": {
+                                    "kind": "EqualsToken",
+                                    "start": 542,
+                                    "width": 1,
+                                    "text": "="
+                                },
+                                "_value": {
+                                    "kind": "NegateExpression",
+                                    "_operatorToken": {
+                                        "kind": "MinusToken",
+                                        "start": 543,
+                                        "width": 1,
+                                        "text": "-"
+                                    },
+                                    "_operand": {
+                                        "kind": "NumericLiteralExpression",
+                                        "_literalToken": {
+                                            "kind": "NumericLiteral",
+                                            "start": 544,
+                                            "width": 1,
+                                            "text": "2"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                "_closeParenToken": {
+                    "kind": "CloseParenToken",
+                    "start": 555,
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ")",
+                    "hasTrailingTrivia": true
+                },
+                "_firstSemicolonToken": {
+                    "kind": "SemicolonToken",
+                    "start": 545,
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ";",
+                    "hasTrailingTrivia": true
+                },
+                "_condition": {
+                    "kind": "LessThanExpression",
+                    "_left": {
+                        "kind": "IdentifierName",
+                        "_identifier": {
+                            "kind": "IdentifierNameToken",
+                            "start": 547,
+                            "width": 1,
+                            "text": "i",
+                            "valueText": "i"
+                        }
+                    },
+                    "_operatorToken": {
+                        "kind": "LessThanToken",
+                        "start": 548,
+                        "width": 1,
+                        "text": "<"
+                    },
+                    "_right": {
+                        "kind": "NumericLiteralExpression",
+                        "_literalToken": {
+                            "kind": "NumericLiteral",
+                            "start": 549,
+                            "width": 1,
+                            "text": "0"
+                        }
+                    }
+                },
+                "_secondSemicolonToken": {
+                    "kind": "SemicolonToken",
+                    "start": 550,
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ";",
+                    "hasTrailingTrivia": true
+                },
+                "_incrementor": {
+                    "kind": "PostIncrementExpression",
+                    "_operand": {
+                        "kind": "IdentifierName",
+                        "_identifier": {
+                            "kind": "IdentifierNameToken",
+                            "start": 552,
+                            "width": 1,
+                            "text": "i",
+                            "valueText": "i"
+                        }
+                    },
+                    "_operatorToken": {
+                        "kind": "PlusPlusToken",
+                        "start": 553,
+                        "width": 2,
+                        "text": "++"
+                    }
+                }
+            }
+        ],
+        "_endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "start": 965,
+            "fullStart": 877,
+            "width": 0,
+            "fullWidth": 88,
+            "text": "",
+            "hasLeadingTrivia": true,
+            "hasLeadingCommentTrivia": true,
+            "hasLeadingNewLineTrivia": true
+        }
+    }
+}

@@ -35343,14 +35343,8 @@ var Program = (function () {
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {
         var _this = this;
         environment.standardOut.WriteLine("");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
-            return _this.runScanner(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify);
-        });
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
-        });
-        this.runTests(environment, "C:\\temp\\monoco-files", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
+            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true, true);
         });
         environment.standardOut.WriteLine("");
     };
@@ -35367,8 +35361,9 @@ var Program = (function () {
             }
         }
     };
-    Program.prototype.runParser = function (environment, filePath, languageVersion, useTypeScript, verify, allowErrors) {
-        if(!StringUtilities.endsWith(filePath, ".ts")) {
+    Program.prototype.runParser = function (environment, filePath, languageVersion, useTypeScript, verify, allowErrors, generateBaseline) {
+        if (typeof generateBaseline === "undefined") { generateBaseline = false; }
+        if(!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
             return;
         }
         if(filePath.indexOf("RealSource") >= 0) {
@@ -35394,14 +35389,19 @@ var Program = (function () {
                     throw new Error("File had unexpected error!");
                 }
             }
-            if(verify) {
-                var actualResult = JSON2.stringify(unit, null, 4);
-                var expectedFile = filePath + ".expected";
-                var actualFile = filePath + ".actual";
-                var expectedResult = environment.readFile(expectedFile, 'utf-8');
-                if(expectedResult !== actualResult) {
-                    environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
-                    environment.writeFile(actualFile, actualResult, true);
+            var actualResult = JSON2.stringify(unit, null, 4);
+            var expectedFile = filePath + ".expected";
+            if(generateBaseline) {
+                environment.standardOut.WriteLine("Generating baseline for: " + filePath);
+                environment.writeFile(expectedFile, actualResult, true);
+            } else {
+                if(verify) {
+                    var actualFile = filePath + ".actual";
+                    var expectedResult = environment.readFile(expectedFile, 'utf-8');
+                    if(expectedResult !== actualResult) {
+                        environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
+                        environment.writeFile(actualFile, actualResult, true);
+                    }
                 }
             }
         }
@@ -35519,7 +35519,8 @@ var Program = (function () {
 var totalSize = 0;
 var program = new Program();
 var start, end;
-if(true) {
+program.runAllTests(Environment, false, true);
+if(false) {
     start = new Date().getTime();
     program.runAllTests(Environment, false, true);
     program.run(Environment, false);
@@ -35534,7 +35535,7 @@ if(false) {
     end = new Date().getTime();
     Environment.standardOut.WriteLine("Total time: " + (end - start));
 }
-if(true && specificFile === undefined) {
+if(false && specificFile === undefined) {
     start = new Date().getTime();
     program.run262(Environment, false);
     end = new Date().getTime();

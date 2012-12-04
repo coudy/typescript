@@ -1,0 +1,129 @@
+﻿{
+    "_skippedTokens": [
+        {
+            "kind": "CloseParenToken",
+            "start": 308,
+            "width": 1,
+            "fullWidth": 2,
+            "text": ")",
+            "hasTrailingTrivia": true
+        },
+        {
+            "kind": "AsteriskToken",
+            "start": 310,
+            "width": 1,
+            "fullWidth": 2,
+            "text": "*",
+            "hasTrailingTrivia": true
+        }
+    ],
+    "_diagnostics": [
+        {
+            "_position": 307,
+            "_width": 1,
+            "_diagnosticCode": "_0_expected",
+            "_arguments": [
+                ")"
+            ]
+        },
+        {
+            "_position": 308,
+            "_width": 1,
+            "_diagnosticCode": "Unexpected_token__0_expected",
+            "_arguments": [
+                "module, class, interface, enum, import or statement"
+            ]
+        },
+        {
+            "_position": 310,
+            "_width": 1,
+            "_diagnosticCode": "Unexpected_token__0_expected",
+            "_arguments": [
+                "module, class, interface, enum, import or statement"
+            ]
+        }
+    ],
+    "_sourceUnit": {
+        "kind": "SourceUnit",
+        "_moduleElements": [
+            {
+                "kind": "ExpressionStatement",
+                "_expression": {
+                    "kind": "ParenthesizedExpression",
+                    "_openParenToken": {
+                        "kind": "OpenParenToken",
+                        "start": 304,
+                        "fullStart": 0,
+                        "width": 1,
+                        "fullWidth": 305,
+                        "text": "(",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingCommentTrivia": true,
+                        "hasLeadingNewLineTrivia": true
+                    },
+                    "_expression": {
+                        "kind": "ObjectLiteralExpression",
+                        "_openBraceToken": {
+                            "kind": "OpenBraceToken",
+                            "start": 305,
+                            "width": 1,
+                            "text": "{"
+                        },
+                        "_propertyAssignments": [],
+                        "_closeBraceToken": {
+                            "kind": "CloseBraceToken",
+                            "start": 306,
+                            "width": 1,
+                            "text": "}"
+                        }
+                    },
+                    "_closeParenToken": {
+                        "kind": "CloseParenToken",
+                        "start": 307,
+                        "width": 0,
+                        "isMissing": true,
+                        "text": ""
+                    }
+                },
+                "_semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "start": 307,
+                    "width": 1,
+                    "text": ";"
+                }
+            },
+            {
+                "kind": "ExpressionStatement",
+                "_expression": {
+                    "kind": "NumericLiteralExpression",
+                    "_literalToken": {
+                        "kind": "NumericLiteral",
+                        "start": 312,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "1",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    }
+                },
+                "_semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "start": 313,
+                    "width": 0,
+                    "isMissing": true,
+                    "text": ""
+                }
+            }
+        ],
+        "_endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "start": 315,
+            "fullStart": 314,
+            "width": 0,
+            "fullWidth": 1,
+            "text": "",
+            "hasLeadingTrivia": true,
+            "hasLeadingNewLineTrivia": true
+        }
+    }
+}
