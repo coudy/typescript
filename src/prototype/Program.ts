@@ -3,7 +3,9 @@
 
 var stringTable = new StringTable();
 
-var specificFile = undefined; // "S7.3_A1.1_T2";
+var specificFile = 
+    //"15.4.4.14-9-2.ts"; 
+    undefined;
 
 class Program {
     runAllTests(environment: IEnvironment, useTypeScript: bool, verify: bool): void {
@@ -193,11 +195,11 @@ class Program {
 
                 if (isNegative) {
                     skipCount++;
-                    environment.standardOut.Write("S");
+                    // environment.standardOut.Write("S");
                     continue;
                 }
                 else {
-                    environment.standardOut.Write(".");
+                    // environment.standardOut.Write(".");
                 }
 
                 var stringText = new StringText(contents);
@@ -241,7 +243,7 @@ var totalSize = 0;
 var program = new Program();
 var start: number, end: number;
 
-if (true) {
+if (specificFile === undefined) {
     start = new Date().getTime();
     program.runAllTests(Environment, false, true);
     program.run(Environment, false);
@@ -258,7 +260,7 @@ if (false) {
     Environment.standardOut.WriteLine("Total time: " + (end - start));
 }
 
-if (false) {
+if (specificFile === undefined) {
     start = new Date().getTime();
     program.run262(Environment, false);
     end = new Date().getTime();

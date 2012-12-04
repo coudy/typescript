@@ -4132,13 +4132,19 @@ var Scanner = (function (_super) {
 
             }
             case 8 /* StringLiteral */ :
+            case 7 /* NumericLiteral */ :
             case 6 /* RegularExpressionLiteral */ :
-            case 29 /* ThisKeyword */ :
             case 86 /* PlusPlusToken */ :
             case 87 /* MinusMinusToken */ :
             case 66 /* CloseParenToken */ :
             case 68 /* CloseBracketToken */ :
-            case 64 /* CloseBraceToken */ :
+            case 64 /* CloseBraceToken */ : {
+                return false;
+
+            }
+        }
+        switch(this.previousTokenKeywordKind) {
+            case 29 /* ThisKeyword */ :
             case 31 /* TrueKeyword */ :
             case 18 /* FalseKeyword */ : {
                 return false;
@@ -35141,10 +35147,8 @@ var Program = (function () {
                 testCount++;
                 if(isNegative) {
                     skipCount++;
-                    environment.standardOut.Write("S");
                     continue;
                 } else {
-                    environment.standardOut.Write(".");
                 }
                 var stringText = new StringText(contents);
                 var scanner = new Scanner(stringText, 1 /* EcmaScript5 */ , stringTable);
@@ -35178,7 +35182,7 @@ var Program = (function () {
 var totalSize = 0;
 var program = new Program();
 var start, end;
-if(true) {
+if(specificFile === undefined) {
     start = new Date().getTime();
     program.runAllTests(Environment, false, true);
     program.run(Environment, false);
@@ -35193,7 +35197,7 @@ if(false) {
     end = new Date().getTime();
     Environment.standardOut.WriteLine("Total time: " + (end - start));
 }
-if(false) {
+if(specificFile === undefined) {
     start = new Date().getTime();
     program.run262(Environment, false);
     end = new Date().getTime();

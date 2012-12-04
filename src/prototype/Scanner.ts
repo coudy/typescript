@@ -726,13 +726,18 @@ class Scanner extends SlidingWindow {
                 break;
 
             case SyntaxKind.StringLiteral:
+            case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
-            case SyntaxKind.ThisKeyword:
             case SyntaxKind.PlusPlusToken:
             case SyntaxKind.MinusMinusToken:
             case SyntaxKind.CloseParenToken:
             case SyntaxKind.CloseBracketToken:
             case SyntaxKind.CloseBraceToken:
+                return false;
+        }
+
+        switch (this.previousTokenKeywordKind) {
+            case SyntaxKind.ThisKeyword:
             case SyntaxKind.TrueKeyword:
             case SyntaxKind.FalseKeyword:
                 return false;
