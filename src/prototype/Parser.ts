@@ -1663,11 +1663,7 @@ class Parser extends SlidingWindow {
         Debug.assert(this.isCaseSwitchClause());
 
         var caseKeyword = this.eatKeyword(SyntaxKind.CaseKeyword);
-        var expression: ExpressionSyntax = null;
-        if (this.currentToken().kind !== SyntaxKind.ColonToken) {
-            expression = this.parseExpression(/*allowIn:*/ true);
-        }
-
+        var expression = this.parseExpression(/*allowIn:*/ true);
         var colonToken = this.eatToken(SyntaxKind.ColonToken);
         var statements = this.parseSyntaxList(ListParsingState.SwitchClause_Statements);
 

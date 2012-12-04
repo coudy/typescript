@@ -2059,10 +2059,7 @@ var Parser = (function (_super) {
     Parser.prototype.parseCaseSwitchClause = function () {
         Debug.assert(this.isCaseSwitchClause());
         var caseKeyword = this.eatKeyword(10 /* CaseKeyword */ );
-        var expression = null;
-        if(this.currentToken().kind !== 99 /* ColonToken */ ) {
-            expression = this.parseExpression(true);
-        }
+        var expression = this.parseExpression(true);
         var colonToken = this.eatToken(99 /* ColonToken */ );
         var statements = this.parseSyntaxList(16 /* SwitchClause_Statements */ );
         return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements);
@@ -35644,6 +35641,8 @@ if(true) {
     end = new Date().getTime();
     Environment.standardOut.WriteLine("Total time: " + (end - start));
     Environment.standardOut.WriteLine("Total size: " + totalSize);
+}
+if(false) {
     start = new Date().getTime();
     program.runAllTests(Environment, true, false);
     program.run(Environment, true);
