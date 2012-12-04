@@ -4,7 +4,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    //"15.4.4.14-9-2.ts"; 
+    // "S7.6_A4.2_T1"; 
     undefined;
 
 class Program {
@@ -13,13 +13,13 @@ class Program {
 
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
             filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify));
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript3",
-            filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript3, useTypeScript, verify));
+        // this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript3",
+        //    filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript3, useTypeScript, verify));
             
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
             filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*allowErrors:*/ true));
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript3",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript3, useTypeScript, verify, /*allowErrors:*/ true));
+        // this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript3",
+        //    filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript3, useTypeScript, verify, /*allowErrors:*/ true));
 
         this.runTests(environment, "C:\\temp\\monoco-files",
             filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ false));
@@ -243,22 +243,18 @@ var totalSize = 0;
 var program = new Program();
 var start: number, end: number;
 
-if (specificFile === undefined) {
-    start = new Date().getTime();
-    program.runAllTests(Environment, false, false);
-    program.run(Environment, false);
-    end = new Date().getTime();
-    Environment.standardOut.WriteLine("Total time: " + (end - start));
-    Environment.standardOut.WriteLine("Total size: " + totalSize);
-}
+start = new Date().getTime();
+program.runAllTests(Environment, false, true);
+program.run(Environment, false);
+end = new Date().getTime();
+Environment.standardOut.WriteLine("Total time: " + (end - start));
+Environment.standardOut.WriteLine("Total size: " + totalSize);
 
-if (true) {
-    start = new Date().getTime();
-    program.runAllTests(Environment, true, false);
-    program.run(Environment, true);
-    end = new Date().getTime();
-    Environment.standardOut.WriteLine("Total time: " + (end - start));
-}
+start = new Date().getTime();
+program.runAllTests(Environment, true, false);
+program.run(Environment, true);
+end = new Date().getTime();
+Environment.standardOut.WriteLine("Total time: " + (end - start));
 
 if (specificFile === undefined) {
     start = new Date().getTime();

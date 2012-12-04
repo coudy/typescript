@@ -34999,14 +34999,8 @@ var Program = (function () {
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
             return _this.runScanner(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify);
         });
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript3", function (filePath) {
-            return _this.runScanner(environment, filePath, 0 /* EcmaScript3 */ , useTypeScript, verify);
-        });
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
             return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
-        });
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript3", function (filePath) {
-            return _this.runParser(environment, filePath, 0 /* EcmaScript3 */ , useTypeScript, verify, true);
         });
         this.runTests(environment, "C:\\temp\\monoco-files", function (filePath) {
             return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
@@ -35169,21 +35163,17 @@ var Program = (function () {
 var totalSize = 0;
 var program = new Program();
 var start, end;
-if(specificFile === undefined) {
-    start = new Date().getTime();
-    program.runAllTests(Environment, false, false);
-    program.run(Environment, false);
-    end = new Date().getTime();
-    Environment.standardOut.WriteLine("Total time: " + (end - start));
-    Environment.standardOut.WriteLine("Total size: " + totalSize);
-}
-if(true) {
-    start = new Date().getTime();
-    program.runAllTests(Environment, true, false);
-    program.run(Environment, true);
-    end = new Date().getTime();
-    Environment.standardOut.WriteLine("Total time: " + (end - start));
-}
+start = new Date().getTime();
+program.runAllTests(Environment, false, true);
+program.run(Environment, false);
+end = new Date().getTime();
+Environment.standardOut.WriteLine("Total time: " + (end - start));
+Environment.standardOut.WriteLine("Total size: " + totalSize);
+start = new Date().getTime();
+program.runAllTests(Environment, true, false);
+program.run(Environment, true);
+end = new Date().getTime();
+Environment.standardOut.WriteLine("Total time: " + (end - start));
 if(specificFile === undefined) {
     start = new Date().getTime();
     program.run262(Environment, false);
