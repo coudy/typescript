@@ -632,7 +632,7 @@ class Program {
             var actualFile = filePath + ".actual";
 
             var expectedResult = environment.readFile(expectedFile, 'utf-8');
-
+            
             if (expectedResult !== actualResult) {
                 environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
                 environment.writeFile(actualFile, actualResult, true);
@@ -750,7 +750,7 @@ if (true) {
     Environment.standardOut.WriteLine("Total time: " + (end - start));
 }
 
-if (false && specificFile === undefined) {
+if (true && specificFile === undefined) {
     start = new Date().getTime();
     program.run262(Environment, false);
     end = new Date().getTime();

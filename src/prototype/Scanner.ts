@@ -1046,22 +1046,6 @@ class Scanner extends SlidingWindow {
         }
     }
 
-    //private addSimpleDiagnosticInfo(position: number, width: number, code: DiagnosticCode, ...args: any[]): void {
-    //    this.addDiagnosticInfo(new SyntaxDiagnostic(position, width, code, args));
-    //}
-
-    //private addDiagnosticInfo(error: SyntaxDiagnostic): void {
-    //    if (this.errors === null) {
-    //        this.errors = [];
-    //    }
-
-    //    this.errors.push(error);
-    //}
-
-    //private makeSimpleDiagnosticInfo(position: number, widthcode: DiagnosticCode, args: any[]): SyntaxDiagnostic {
-    //    return SyntaxDiagnostic.create(code, args);
-    //}
-
     private createIllegalEscapeDiagnostic(start: number, end: number): SyntaxDiagnostic {
         return new SyntaxDiagnostic(start, end - start,
             DiagnosticCode.Unrecognized_escape_sequence, null);
