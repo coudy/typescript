@@ -212,13 +212,13 @@ class Program {
                 {
                     // Not a negative test.  We can't have any errors or skipped tokens.
                     if (syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
-                        environment.standardOut.WriteLine("\r\nUnexpected diagnostics: " + filePath);
+                        environment.standardOut.WriteLine("Unexpected diagnostics: " + filePath);
                         failCount++;
                         continue;
                     }
 
                     if (syntaxTree.skippedTokens() && syntaxTree.skippedTokens().length > 0) {
-                        environment.standardOut.WriteLine("\r\nUnexpected skipped tokens: " + filePath);
+                        environment.standardOut.WriteLine("Unexpected skipped tokens: " + filePath);
                         failCount++;
                         continue;
                     }

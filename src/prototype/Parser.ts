@@ -215,7 +215,7 @@ class Parser extends SlidingWindow {
         this.moveToNextItem();
     }
 
-    private canEatAutomaticSemicolon(): bool {
+    private canEatAutomaticSemicolon(allowWithoutNewLine: bool): bool {
         var token = this.currentToken();
 
         // An automatic semicolon is always allowed if we're at the end of the file.
@@ -228,6 +228,10 @@ class Parser extends SlidingWindow {
             return true;
         }
 
+        if (allowWithoutNewLine) {
+            return true;
+        }
+
         // It is also allowed if there is a newline between the last token seen and the next one.
         if (this.previousToken !== null && this.previousToken.hasTrailingNewLineTrivia()) {
             return true;
@@ -236,17 +240,17 @@ class Parser extends SlidingWindow {
         return false;
     }
 
-    private canEatExplicitOrAutomaticSemicolon(): bool {
+    private canEatExplicitOrAutomaticSemicolon(allowWithoutNewline: bool): bool {
         var token = this.currentToken();
 
         if (token.kind === SyntaxKind.SemicolonToken) {
             return true;
         }
 
-        return this.canEatAutomaticSemicolon();
+        return this.canEatAutomaticSemicolon(allowWithoutNewline);
     }
 
-    private eatExplicitOrAutomaticSemicolon(): ISyntaxToken {
+    private eatExplicitOrAutomaticSemicolon(allowWithoutNewline: bool): ISyntaxToken {
         var token = this.currentToken();
 
         // If we see a semicolon, then we can definitely eat it.
@@ -257,7 +261,7 @@ class Parser extends SlidingWindow {
         // Check if an automatic semicolon could go here.  If so, synthesize one.  However, if the
         // user has the option set to error on automatic semicolons, then add an error to that
         // token as well.
-        if (this.canEatAutomaticSemicolon()) {
+        if (this.canEatAutomaticSemicolon(allowWithoutNewline)) {
             var semicolonToken = SyntaxTokenFactory.createEmptyToken(this.previousToken.end(), SyntaxKind.SemicolonToken, SyntaxKind.None);
 
             if (!this.options.allowAutomaticSemicolonInsertion()) {
@@ -572,7 +576,7 @@ class Parser extends SlidingWindow {
         var identifier = this.eatIdentifierToken();
         var equalsToken = this.eatToken(SyntaxKind.EqualsToken);
         var moduleReference = this.parseModuleReference();
-        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
         return new ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken);
     }
@@ -831,7 +835,7 @@ class Parser extends SlidingWindow {
             block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
         }
         else {
-            semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+            semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
         }
 
         return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken);
@@ -875,7 +879,7 @@ class Parser extends SlidingWindow {
             block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
         }
         else {
-            semicolon = this.eatExplicitOrAutomaticSemicolon();
+            semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
         }
 
         return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolon);
@@ -892,7 +896,7 @@ class Parser extends SlidingWindow {
 
         var staticKeyword = this.tryEatKeyword(SyntaxKind.StaticKeyword);
         var variableDeclarator = this.parseVariableDeclarator(/*allowIn:*/ true);
-        var semicolon = this.eatExplicitOrAutomaticSemicolon();
+        var semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
         return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolon);
     }
@@ -948,7 +952,7 @@ class Parser extends SlidingWindow {
             block = this.parseBlock(/*allowFunctionDeclaration:*/ true);
         }
         else {
-            semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+            semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
         }
 
         return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken);
@@ -1304,7 +1308,7 @@ class Parser extends SlidingWindow {
         Debug.assert(this.isDebuggerStatement());
 
         var debuggerKeyword = this.eatKeyword(SyntaxKind.DebuggerKeyword);
-        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
         return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken);
     }
@@ -1322,7 +1326,12 @@ class Parser extends SlidingWindow {
         var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
         var condition = this.parseExpression(/*allowIn:*/ true);
         var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+
+        // From: https://mail.mozilla.org/pipermail/es-discuss/2011-August/016188.html
+        // 157 min --- All allen at wirfs-brock.com CONF --- "do{;}while(false)false" prohibited in 
+        // spec but allowed in consensus reality. Approved -- this is the de-facto standard whereby
+        //  do;while(0)x will have a semicolon inserted before x.
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ true);
 
         return new DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken);
     }
@@ -1575,13 +1584,13 @@ class Parser extends SlidingWindow {
         // If there is no newline after the break keyword, then we can consume an optional 
         // identifier.
         var identifier: ISyntaxToken = null;
-        if (!this.canEatExplicitOrAutomaticSemicolon()) {
+        if (!this.canEatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false)) {
             if (this.isIdentifier(this.currentToken())) {
                 identifier = this.eatIdentifierToken();
             }
         }
 
-        var semicolon = this.eatExplicitOrAutomaticSemicolon();
+        var semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
         return new BreakStatementSyntax(breakKeyword, identifier, semicolon);
     }
 
@@ -1597,13 +1606,13 @@ class Parser extends SlidingWindow {
         // If there is no newline after the break keyword, then we can consume an optional 
         // identifier.
         var identifier: ISyntaxToken = null;
-        if (!this.canEatExplicitOrAutomaticSemicolon()) {
+        if (!this.canEatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false)) {
             if (this.isIdentifier(this.currentToken())) {
                 identifier = this.eatIdentifierToken();
             }
         }
 
-        var semicolon = this.eatExplicitOrAutomaticSemicolon();
+        var semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
         return new ContinueStatementSyntax(continueKeyword, identifier, semicolon);
     }
 
@@ -1691,7 +1700,7 @@ class Parser extends SlidingWindow {
         var throwKeyword = this.eatKeyword(SyntaxKind.ThrowKeyword);
 
         var expression: ExpressionSyntax = null;
-        if (this.canEatExplicitOrAutomaticSemicolon()) {
+        if (this.canEatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false)) {
             // Because of automatic semicolon insertion, we need to report error if this 
             // throw could be terminated with a semicolon.  Note: we can't call 'parseExpression'
             // directly as that might consume an expression on the following line.  
@@ -1702,7 +1711,7 @@ class Parser extends SlidingWindow {
             expression = this.parseExpression(/*allowIn:*/ true);
         }
         
-        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
         return new ThrowStatementSyntax(throwKeyword, expression, semicolonToken);
     }
@@ -1717,11 +1726,11 @@ class Parser extends SlidingWindow {
         var returnKeyword = this.eatKeyword(SyntaxKind.ReturnKeyword);
 
         var expression: ExpressionSyntax = null;
-        if (!this.canEatExplicitOrAutomaticSemicolon()) {
+        if (!this.canEatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false)) {
             expression = this.parseExpression(/*allowIn:*/ true);
         }
         
-        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
         return new ReturnStatementSyntax(returnKeyword, expression, semicolonToken);
     }
@@ -1823,7 +1832,7 @@ class Parser extends SlidingWindow {
     private parseExpressionStatement(): ExpressionStatementSyntax {
         var expression = this.parseExpression(/*allowIn:*/ true);
 
-        var semicolon = this.eatExplicitOrAutomaticSemicolon();
+        var semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
         return new ExpressionStatementSyntax(expression, semicolon);
     }
@@ -1885,7 +1894,7 @@ class Parser extends SlidingWindow {
         var declareKeyword = this.tryEatKeyword(SyntaxKind.DeclareKeyword);
 
         var variableDeclaration = this.parseVariableDeclaration(/*allowIn:*/ true);
-        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
         return new VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken);
     }
@@ -3031,8 +3040,8 @@ class Parser extends SlidingWindow {
                         break;
                     }
 
-                    if (allowAutomaticSemicolonInsertion && this.canEatAutomaticSemicolon()) {
-                        lastSeparator = this.eatExplicitOrAutomaticSemicolon();
+                    if (allowAutomaticSemicolonInsertion && this.canEatAutomaticSemicolon(/*allowWithoutNewline:*/ false)) {
+                        lastSeparator = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
                         items.push(lastSeparator);
                         continue;
                     }
@@ -3331,7 +3340,7 @@ class Parser extends SlidingWindow {
         }
 
         // We're done when we can eat a semicolon and we've parsed at least one item.
-        return itemCount > 0 && this.canEatExplicitOrAutomaticSemicolon();
+        return itemCount > 0 && this.canEatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
     }
 
     private isExpectedExtendsOrImplementsClause_TypeNameListTerminator(): bool {

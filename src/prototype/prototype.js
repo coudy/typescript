@@ -1008,7 +1008,7 @@ var Parser = (function (_super) {
         this._currentToken = null;
         this.moveToNextItem();
     };
-    Parser.prototype.canEatAutomaticSemicolon = function () {
+    Parser.prototype.canEatAutomaticSemicolon = function (allowWithoutNewLine) {
         var token = this.currentToken();
         if(token.kind === 114 /* EndOfFileToken */ ) {
             return true;
@@ -1016,24 +1016,27 @@ var Parser = (function (_super) {
         if(token.kind === 64 /* CloseBraceToken */ ) {
             return true;
         }
+        if(allowWithoutNewLine) {
+            return true;
+        }
         if(this.previousToken !== null && this.previousToken.hasTrailingNewLineTrivia()) {
             return true;
         }
         return false;
     };
-    Parser.prototype.canEatExplicitOrAutomaticSemicolon = function () {
+    Parser.prototype.canEatExplicitOrAutomaticSemicolon = function (allowWithoutNewline) {
         var token = this.currentToken();
         if(token.kind === 71 /* SemicolonToken */ ) {
             return true;
         }
-        return this.canEatAutomaticSemicolon();
+        return this.canEatAutomaticSemicolon(allowWithoutNewline);
     };
-    Parser.prototype.eatExplicitOrAutomaticSemicolon = function () {
+    Parser.prototype.eatExplicitOrAutomaticSemicolon = function (allowWithoutNewline) {
         var token = this.currentToken();
         if(token.kind === 71 /* SemicolonToken */ ) {
             return this.eatToken(71 /* SemicolonToken */ );
         }
-        if(this.canEatAutomaticSemicolon()) {
+        if(this.canEatAutomaticSemicolon(allowWithoutNewline)) {
             var semicolonToken = SyntaxTokenFactory.createEmptyToken(this.previousToken.end(), 71 /* SemicolonToken */ , 0 /* None */ );
             if(!this.options.allowAutomaticSemicolonInsertion()) {
                 this.addDiagnostic(new SyntaxDiagnostic(this.previousToken.end(), 0, 7 /* AutomaticSemicolonInsertionNotAllowed */ , null));
@@ -1291,7 +1294,7 @@ var Parser = (function (_super) {
         var identifier = this.eatIdentifierToken();
         var equalsToken = this.eatToken(100 /* EqualsToken */ );
         var moduleReference = this.parseModuleReference();
-        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon(false);
         return new ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken);
     };
     Parser.prototype.parseModuleReference = function () {
@@ -1466,7 +1469,7 @@ var Parser = (function (_super) {
         if(this.isBlock()) {
             block = this.parseBlock(true);
         } else {
-            semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+            semicolonToken = this.eatExplicitOrAutomaticSemicolon(false);
         }
         return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken);
     };
@@ -1498,7 +1501,7 @@ var Parser = (function (_super) {
         if(this.isBlock()) {
             block = this.parseBlock(true);
         } else {
-            semicolon = this.eatExplicitOrAutomaticSemicolon();
+            semicolon = this.eatExplicitOrAutomaticSemicolon(false);
         }
         return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolon);
     };
@@ -1510,7 +1513,7 @@ var Parser = (function (_super) {
         }
         var staticKeyword = this.tryEatKeyword(52 /* StaticKeyword */ );
         var variableDeclarator = this.parseVariableDeclarator(true);
-        var semicolon = this.eatExplicitOrAutomaticSemicolon();
+        var semicolon = this.eatExplicitOrAutomaticSemicolon(false);
         return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolon);
     };
     Parser.prototype.parseClassElement = function () {
@@ -1555,7 +1558,7 @@ var Parser = (function (_super) {
         if(this.isBlock()) {
             block = this.parseBlock(true);
         } else {
-            semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+            semicolonToken = this.eatExplicitOrAutomaticSemicolon(false);
         }
         return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken);
     };
@@ -1823,7 +1826,7 @@ var Parser = (function (_super) {
     Parser.prototype.parseDebuggerStatement = function () {
         Debug.assert(this.isDebuggerStatement());
         var debuggerKeyword = this.eatKeyword(13 /* DebuggerKeyword */ );
-        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon(false);
         return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken);
     };
     Parser.prototype.isDoStatement = function () {
@@ -1837,7 +1840,7 @@ var Parser = (function (_super) {
         var openParenToken = this.eatToken(65 /* OpenParenToken */ );
         var condition = this.parseExpression(true);
         var closeParenToken = this.eatToken(66 /* CloseParenToken */ );
-        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon(true);
         return new DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken);
     };
     Parser.prototype.isLabeledStatement = function () {
@@ -1997,12 +2000,12 @@ var Parser = (function (_super) {
         Debug.assert(this.isBreakStatement());
         var breakKeyword = this.eatKeyword(9 /* BreakKeyword */ );
         var identifier = null;
-        if(!this.canEatExplicitOrAutomaticSemicolon()) {
+        if(!this.canEatExplicitOrAutomaticSemicolon(false)) {
             if(this.isIdentifier(this.currentToken())) {
                 identifier = this.eatIdentifierToken();
             }
         }
-        var semicolon = this.eatExplicitOrAutomaticSemicolon();
+        var semicolon = this.eatExplicitOrAutomaticSemicolon(false);
         return new BreakStatementSyntax(breakKeyword, identifier, semicolon);
     };
     Parser.prototype.isContinueStatement = function () {
@@ -2012,12 +2015,12 @@ var Parser = (function (_super) {
         Debug.assert(this.isContinueStatement());
         var continueKeyword = this.eatKeyword(12 /* ContinueKeyword */ );
         var identifier = null;
-        if(!this.canEatExplicitOrAutomaticSemicolon()) {
+        if(!this.canEatExplicitOrAutomaticSemicolon(false)) {
             if(this.isIdentifier(this.currentToken())) {
                 identifier = this.eatIdentifierToken();
             }
         }
-        var semicolon = this.eatExplicitOrAutomaticSemicolon();
+        var semicolon = this.eatExplicitOrAutomaticSemicolon(false);
         return new ContinueStatementSyntax(continueKeyword, identifier, semicolon);
     };
     Parser.prototype.isSwitchStatement = function () {
@@ -2083,13 +2086,13 @@ var Parser = (function (_super) {
         Debug.assert(this.isThrowStatement());
         var throwKeyword = this.eatKeyword(30 /* ThrowKeyword */ );
         var expression = null;
-        if(this.canEatExplicitOrAutomaticSemicolon()) {
+        if(this.canEatExplicitOrAutomaticSemicolon(false)) {
             var token = this.createMissingToken(5 /* IdentifierNameToken */ , 0 /* None */ , null);
             expression = new IdentifierNameSyntax(token);
         } else {
             expression = this.parseExpression(true);
         }
-        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon(false);
         return new ThrowStatementSyntax(throwKeyword, expression, semicolonToken);
     };
     Parser.prototype.isReturnStatement = function () {
@@ -2099,10 +2102,10 @@ var Parser = (function (_super) {
         Debug.assert(this.isReturnStatement());
         var returnKeyword = this.eatKeyword(27 /* ReturnKeyword */ );
         var expression = null;
-        if(!this.canEatExplicitOrAutomaticSemicolon()) {
+        if(!this.canEatExplicitOrAutomaticSemicolon(false)) {
             expression = this.parseExpression(true);
         }
-        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon(false);
         return new ReturnStatementSyntax(returnKeyword, expression, semicolonToken);
     };
     Parser.prototype.isExpressionStatement = function () {
@@ -2195,7 +2198,7 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseExpressionStatement = function () {
         var expression = this.parseExpression(true);
-        var semicolon = this.eatExplicitOrAutomaticSemicolon();
+        var semicolon = this.eatExplicitOrAutomaticSemicolon(false);
         return new ExpressionStatementSyntax(expression, semicolon);
     };
     Parser.prototype.isIfStatement = function () {
@@ -2239,7 +2242,7 @@ var Parser = (function (_super) {
         var exportKeyword = this.tryEatKeyword(41 /* ExportKeyword */ );
         var declareKeyword = this.tryEatKeyword(57 /* DeclareKeyword */ );
         var variableDeclaration = this.parseVariableDeclaration(true);
-        var semicolonToken = this.eatExplicitOrAutomaticSemicolon();
+        var semicolonToken = this.eatExplicitOrAutomaticSemicolon(false);
         return new VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken);
     };
     Parser.prototype.parseVariableDeclaration = function (allowIn) {
@@ -3012,8 +3015,8 @@ var Parser = (function (_super) {
                     if(this.listIsTerminated(currentListType, items.length)) {
                         break;
                     }
-                    if(allowAutomaticSemicolonInsertion && this.canEatAutomaticSemicolon()) {
-                        lastSeparator = this.eatExplicitOrAutomaticSemicolon();
+                    if(allowAutomaticSemicolonInsertion && this.canEatAutomaticSemicolon(false)) {
+                        lastSeparator = this.eatExplicitOrAutomaticSemicolon(false);
                         items.push(lastSeparator);
                         continue;
                     }
@@ -3282,7 +3285,7 @@ var Parser = (function (_super) {
         if(this.previousToken.kind === 72 /* CommaToken */ ) {
             return false;
         }
-        return itemCount > 0 && this.canEatExplicitOrAutomaticSemicolon();
+        return itemCount > 0 && this.canEatExplicitOrAutomaticSemicolon(false);
     };
     Parser.prototype.isExpectedExtendsOrImplementsClause_TypeNameListTerminator = function () {
         if(this.currentToken().keywordKind() === 42 /* ExtendsKeyword */  || this.currentToken().keywordKind() === 45 /* ImplementsKeyword */ ) {
@@ -35156,12 +35159,12 @@ var Program = (function () {
                 var syntaxTree = parser.parseSyntaxTree();
  {
                     if(syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
-                        environment.standardOut.WriteLine("\r\nUnexpected diagnostics: " + filePath);
+                        environment.standardOut.WriteLine("Unexpected diagnostics: " + filePath);
                         failCount++;
                         continue;
                     }
                     if(syntaxTree.skippedTokens() && syntaxTree.skippedTokens().length > 0) {
-                        environment.standardOut.WriteLine("\r\nUnexpected skipped tokens: " + filePath);
+                        environment.standardOut.WriteLine("Unexpected skipped tokens: " + filePath);
                         failCount++;
                         continue;
                     }
