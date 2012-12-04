@@ -167,6 +167,48 @@ class Program {
             this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*allowErrors:*/ false);
         }
     }
+
+    run262(environment: IEnvironment, useTypeScript: bool): void {
+        var path = "C:\\temp\\test262\\suite";
+        var testFiles = environment.listFiles(path, null, { recursive: true });
+        for (var index in testFiles) {
+            var filePath = testFiles[index];
+
+            try {
+                var contents = environment.readFile(filePath);
+                var isNegative = contents.indexOf("@negative") >= 0
+
+                if (isNegative) {
+                    environment.standardOut.WriteLine("Skipping: " + filePath);
+                    continue;
+                }
+
+                var stringText = new StringText(contents);
+                var scanner = new Scanner(stringText, LanguageVersion.EcmaScript5, stringTable);
+                var parser = new Parser(scanner);
+
+                var syntaxTree = parser.parseSyntaxTree();
+                //environment.standardOut.Write(".");
+                environment.standardOut.WriteLine(filePath);
+
+                {
+                    // Not a negative test.  We can't have any errors or skipped tokens.
+                    if (syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
+                        environment.standardOut.WriteLine("\r\nFile had unexpected diagnostics!");
+                        throw new Error();
+                    }
+
+                    if (syntaxTree.skippedTokens() && syntaxTree.skippedTokens().length > 0) {
+                        environment.standardOut.WriteLine("\r\nFile had unexpected skipped tokens!");
+                        throw new Error();
+                    }
+                }
+            }
+            catch (e) {
+                environment.standardOut.WriteLine("Exception: " + filePath);
+            }
+        }
+    }
 }
 
 // (<any>WScript).StdIn.ReadLine();
@@ -175,7 +217,7 @@ var program = new Program();
 var start: number, end: number;
 
 start = new Date().getTime();
-program.runAllTests(Environment, false, false);
+program.runAllTests(Environment, false, true);
 program.run(Environment, false);
 end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));
@@ -186,3 +228,10 @@ program.runAllTests(Environment, true, false);
 program.run(Environment, true);
 end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));
+
+if (false) {
+    start = new Date().getTime();
+    program.run262(Environment, false);
+    end = new Date().getTime();
+    Environment.standardOut.WriteLine("Total time: " + (end - start));
+}

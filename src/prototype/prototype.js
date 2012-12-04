@@ -1392,21 +1392,6 @@ var Parser = (function (_super) {
     Parser.prototype.isConstructorDeclaration = function () {
         return this.currentToken().keywordKind() === 56 /* ConstructorKeyword */ ;
     };
-    Parser.prototype.isMemberFunctionDeclaration = function () {
-        var rewindPoint = this.getRewindPoint();
-        try  {
-            if(this.currentToken().keywordKind() === 51 /* PublicKeyword */  || this.currentToken().keywordKind() === 49 /* PrivateKeyword */ ) {
-                this.eatAnyToken();
-            }
-            if(this.currentToken().keywordKind() === 52 /* StaticKeyword */ ) {
-                this.eatAnyToken();
-            }
-            return this.isFunctionSignature();
-        }finally {
-            this.rewind(rewindPoint);
-            this.releaseRewindPoint(rewindPoint);
-        }
-    };
     Parser.prototype.isMemberAccessorDeclaration = function () {
         var rewindPoint = this.getRewindPoint();
         try  {
@@ -1484,6 +1469,21 @@ var Parser = (function (_super) {
             semicolonToken = this.eatExplicitOrAutomaticSemicolon();
         }
         return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken);
+    };
+    Parser.prototype.isMemberFunctionDeclaration = function () {
+        var rewindPoint = this.getRewindPoint();
+        try  {
+            if(this.currentToken().keywordKind() === 51 /* PublicKeyword */  || this.currentToken().keywordKind() === 49 /* PrivateKeyword */ ) {
+                this.eatAnyToken();
+            }
+            if(this.currentToken().keywordKind() === 52 /* StaticKeyword */ ) {
+                this.eatAnyToken();
+            }
+            return this.isFunctionSignature();
+        }finally {
+            this.rewind(rewindPoint);
+            this.releaseRewindPoint(rewindPoint);
+        }
     };
     Parser.prototype.parseMemberFunctionDeclaration = function () {
         Debug.assert(this.isMemberFunctionDeclaration());
@@ -1675,7 +1675,6 @@ var Parser = (function (_super) {
         return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation);
     };
     Parser.prototype.parseFunctionSignature = function () {
-        Debug.assert(this.currentToken().kind === 5 /* IdentifierNameToken */ );
         var identifier = this.eatIdentifierToken();
         var questionToken = this.tryEatToken(98 /* QuestionToken */ );
         var parameterList = this.parseParameterList();
@@ -2472,6 +2471,10 @@ var Parser = (function (_super) {
                 return this.parseDeleteExpression();
 
             }
+            case 35 /* VoidKeyword */ : {
+                return this.parseVoidExpression();
+
+            }
         }
         switch(currentTokenKind) {
             case 7 /* NumericLiteral */ : {
@@ -2516,6 +2519,12 @@ var Parser = (function (_super) {
         var deleteKeyword = this.eatKeyword(15 /* DeleteKeyword */ );
         var expression = this.parseUnaryExpression();
         return new DeleteExpressionSyntax(deleteKeyword, expression);
+    };
+    Parser.prototype.parseVoidExpression = function () {
+        Debug.assert(this.currentToken().keywordKind() === 35 /* VoidKeyword */ );
+        var voidKeyword = this.eatKeyword(35 /* VoidKeyword */ );
+        var expression = this.parseUnaryExpression();
+        return new VoidExpressionSyntax(voidKeyword, expression);
     };
     Parser.prototype.parseSuperExpression = function () {
         Debug.assert(this.currentToken().keywordKind() === 44 /* SuperKeyword */ );
@@ -7696,6 +7705,24 @@ var DeleteExpressionSyntax = (function (_super) {
         return this._expression;
     };
     return DeleteExpressionSyntax;
+})(UnaryExpressionSyntax);
+var VoidExpressionSyntax = (function (_super) {
+    __extends(VoidExpressionSyntax, _super);
+    function VoidExpressionSyntax(voidKeyword, expression) {
+        _super.call(this);
+        this._voidKeyword = voidKeyword;
+        this._expression = expression;
+    }
+    VoidExpressionSyntax.prototype.kind = function () {
+        return 158 /* VoidExpression */ ;
+    };
+    VoidExpressionSyntax.prototype.voidKeyword = function () {
+        return this._voidKeyword;
+    };
+    VoidExpressionSyntax.prototype.expression = function () {
+        return this._expression;
+    };
+    return VoidExpressionSyntax;
 })(UnaryExpressionSyntax);
 var DebuggerStatementSyntax = (function (_super) {
     __extends(DebuggerStatementSyntax, _super);
@@ -35093,13 +35120,47 @@ var Program = (function () {
             this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         }
     };
+    Program.prototype.run262 = function (environment, useTypeScript) {
+        var path = "C:\\temp\\test262\\suite";
+        var testFiles = environment.listFiles(path, null, {
+            recursive: true
+        });
+        for(var index in testFiles) {
+            var filePath = testFiles[index];
+            try  {
+                var contents = environment.readFile(filePath);
+                var isNegative = contents.indexOf("@negative") >= 0;
+                if(isNegative) {
+                    environment.standardOut.WriteLine("Skipping: " + filePath);
+                    continue;
+                }
+                var stringText = new StringText(contents);
+                var scanner = new Scanner(stringText, 1 /* EcmaScript5 */ , stringTable);
+                var parser = new Parser(scanner);
+                var syntaxTree = parser.parseSyntaxTree();
+                environment.standardOut.WriteLine(filePath);
+ {
+                    if(syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
+                        environment.standardOut.WriteLine("\r\nFile had unexpected diagnostics!");
+                        throw new Error();
+                    }
+                    if(syntaxTree.skippedTokens() && syntaxTree.skippedTokens().length > 0) {
+                        environment.standardOut.WriteLine("\r\nFile had unexpected skipped tokens!");
+                        throw new Error();
+                    }
+                }
+            } catch (e) {
+                environment.standardOut.WriteLine("Exception: " + filePath);
+            }
+        }
+    };
     return Program;
 })();
 var totalSize = 0;
 var program = new Program();
 var start, end;
 start = new Date().getTime();
-program.runAllTests(Environment, false, false);
+program.runAllTests(Environment, false, true);
 program.run(Environment, false);
 end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));
@@ -35109,3 +35170,9 @@ program.runAllTests(Environment, true, false);
 program.run(Environment, true);
 end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));
+if(false) {
+    start = new Date().getTime();
+    program.run262(Environment, false);
+    end = new Date().getTime();
+    Environment.standardOut.WriteLine("Total time: " + (end - start));
+}

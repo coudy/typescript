@@ -721,26 +721,6 @@ class Parser extends SlidingWindow {
         return this.currentToken().keywordKind() === SyntaxKind.ConstructorKeyword;
     }
 
-    private isMemberFunctionDeclaration(): bool {
-        var rewindPoint = this.getRewindPoint();
-        try {
-            if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
-                this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
-                this.eatAnyToken();
-            }
-
-            if (this.currentToken().keywordKind() === SyntaxKind.StaticKeyword) {
-                this.eatAnyToken();
-            }
-
-            return this.isFunctionSignature();
-        }
-        finally {
-            this.rewind(rewindPoint);
-            this.releaseRewindPoint(rewindPoint);
-        }
-    }
-
     private isMemberAccessorDeclaration(): bool {
         var rewindPoint = this.getRewindPoint();
         try {
@@ -855,6 +835,26 @@ class Parser extends SlidingWindow {
         }
 
         return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken);
+    }
+
+    private isMemberFunctionDeclaration(): bool {
+        var rewindPoint = this.getRewindPoint();
+        try {
+            if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
+                this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
+                this.eatAnyToken();
+            }
+
+            if (this.currentToken().keywordKind() === SyntaxKind.StaticKeyword) {
+                this.eatAnyToken();
+            }
+
+            return this.isFunctionSignature();
+        }
+        finally {
+            this.rewind(rewindPoint);
+            this.releaseRewindPoint(rewindPoint);
+        }
     }
 
     private parseMemberFunctionDeclaration(): MemberFunctionDeclarationSyntax {
@@ -1120,8 +1120,6 @@ class Parser extends SlidingWindow {
     }
 
     private parseFunctionSignature(): FunctionSignatureSyntax {
-        Debug.assert(this.currentToken().kind === SyntaxKind.IdentifierNameToken);
-
         var identifier = this.eatIdentifierToken();
         var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
 
@@ -2204,6 +2202,9 @@ class Parser extends SlidingWindow {
 
             case SyntaxKind.DeleteKeyword:
                 return this.parseDeleteExpression();
+
+            case SyntaxKind.VoidKeyword:
+                return this.parseVoidExpression();
         }
 
         switch (currentTokenKind) {
@@ -2249,6 +2250,15 @@ class Parser extends SlidingWindow {
         var expression = this.parseUnaryExpression();
 
         return new DeleteExpressionSyntax(deleteKeyword, expression);
+    }
+
+    private parseVoidExpression(): VoidExpressionSyntax {
+        Debug.assert(this.currentToken().keywordKind() === SyntaxKind.VoidKeyword);
+
+        var voidKeyword = this.eatKeyword(SyntaxKind.VoidKeyword);
+        var expression = this.parseUnaryExpression();
+
+        return new VoidExpressionSyntax(voidKeyword, expression);
     }
 
     private parseSuperExpression(): SuperExpressionSyntax {

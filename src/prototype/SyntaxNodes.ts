@@ -3803,6 +3803,39 @@ class DeleteExpressionSyntax extends UnaryExpressionSyntax {
     }
 }
 
+class VoidExpressionSyntax extends UnaryExpressionSyntax {
+    private _voidKeyword: ISyntaxToken;
+    private _expression: ExpressionSyntax;
+
+    constructor(voidKeyword: ISyntaxToken,
+                expression: ExpressionSyntax) {
+        super();
+
+        //if (voidKeyword.keywordKind() !== SyntaxKind.voidKeyword) {
+        //    throw Errors.argument("voidKeyword");
+        //}
+
+        //if (expression === null) {
+        //    throw Errors.argumentNull("expression");
+        //}
+
+        this._voidKeyword = voidKeyword;
+        this._expression = expression;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.VoidExpression;
+    }
+
+    public voidKeyword(): ISyntaxToken {
+        return this._voidKeyword;
+    }
+
+    public expression(): ExpressionSyntax {
+        return this._expression;
+    }
+}
+
 class DebuggerStatementSyntax extends StatementSyntax {
     private _debuggerKeyword: ISyntaxToken;
     private _semicolonToken: ISyntaxToken;
