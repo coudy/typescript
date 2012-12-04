@@ -962,6 +962,7 @@ var Parser = (function (_super) {
         this.options = null;
         this._currentToken = null;
         this.previousToken = null;
+        this.isInStrictMode = false;
         this.skippedTokens = [];
         this.diagnostics = [];
         this.listParsingState = 0;
@@ -1248,15 +1249,15 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseSourceUnit = function () {
         var savedIsInStrictMode = this.isInStrictMode;
-        var moduleElements = this.parseSyntaxList(1 /* SourceUnit_ModuleElements */ , this.updateStrictModeState);
+        var moduleElements = this.parseSyntaxList(1 /* SourceUnit_ModuleElements */ , Parser.updateStrictModeState);
         this.isInStrictMode = savedIsInStrictMode;
         return new SourceUnitSyntax(moduleElements, this.currentToken());
     };
-    Parser.prototype.updateStrictModeState = function (moduleElement) {
-        if(!this.isInStrictMode) {
-            this.isInStrictMode = Parser.isUseStrictDirective(moduleElement);
+    Parser.updateStrictModeState = function updateStrictModeState(parser, moduleElement) {
+        if(!parser.isInStrictMode) {
+            parser.isInStrictMode = Parser.isUseStrictDirective(moduleElement);
         }
-    };
+    }
     Parser.prototype.isModuleElement = function () {
         return this.isImportDeclaration() || this.isModuleDeclaration() || this.isInterfaceDeclaration() || this.isClassDeclaration() || this.isEnumDeclaration() || this.isStatement(true);
     };
@@ -2768,7 +2769,7 @@ var Parser = (function (_super) {
         var statements = SyntaxList.empty;
         if(!openBraceToken.isMissing()) {
             var savedIsInStrictMode = this.isInStrictMode;
-            statements = this.parseSyntaxList(32 /* Block_Statements */ , this.updateStrictModeState);
+            statements = this.parseSyntaxList(32 /* Block_Statements */ , Parser.updateStrictModeState);
             this.isInStrictMode = savedIsInStrictMode;
         }
         var closeBraceToken = this.eatToken(64 /* CloseBraceToken */ );
@@ -2957,7 +2958,7 @@ var Parser = (function (_super) {
             items = items || [];
             items.push(item);
             if(processItem !== null) {
-                processItem(item);
+                processItem(this, item);
             }
         }
         return items;

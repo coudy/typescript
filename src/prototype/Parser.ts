@@ -139,7 +139,7 @@ class Parser extends SlidingWindow {
 
     // Whether or not we are in strict parsing mode.  All that changes in strict parsing mode is
     // that some tokens that would be considered identifiers may be considered keywords.
-    private isInStrictMode: bool;
+    private isInStrictMode: bool = false;
 
     private skippedTokens: ISyntaxToken[] = [];
     private diagnostics: SyntaxDiagnostic[] = [];
@@ -513,15 +513,15 @@ class Parser extends SlidingWindow {
         // level parsing entrypoint.  So it will always start as false and be reset to false when the
         // loop ends.  However, for sake of symmetry and consistancy we do this.
         var savedIsInStrictMode = this.isInStrictMode;
-        var moduleElements = this.parseSyntaxList(ListParsingState.SourceUnit_ModuleElements, this.updateStrictModeState);
+        var moduleElements = this.parseSyntaxList(ListParsingState.SourceUnit_ModuleElements, Parser.updateStrictModeState);
         this.isInStrictMode = savedIsInStrictMode;
 
         return new SourceUnitSyntax(moduleElements, this.currentToken());
     }
 
-    private updateStrictModeState(moduleElement: ModuleElementSyntax): void {
-        if (!this.isInStrictMode) {
-            this.isInStrictMode = Parser.isUseStrictDirective(moduleElement);
+    private static updateStrictModeState(parser: Parser, moduleElement: ModuleElementSyntax): void {
+        if (!parser.isInStrictMode) {
+            parser.isInStrictMode = Parser.isUseStrictDirective(moduleElement);
         }
     }
 
@@ -2667,7 +2667,7 @@ class Parser extends SlidingWindow {
 
         if (!openBraceToken.isMissing()) {
             var savedIsInStrictMode = this.isInStrictMode;
-            statements = this.parseSyntaxList(ListParsingState.Block_Statements, this.updateStrictModeState);
+            statements = this.parseSyntaxList(ListParsingState.Block_Statements, Parser.updateStrictModeState);
             this.isInStrictMode = savedIsInStrictMode;
         }
 
@@ -2868,7 +2868,7 @@ class Parser extends SlidingWindow {
         return new ParameterSyntax(dotDotDotToken, publicOrPrivateToken, identifier, questionToken, typeAnnotation, equalsValueClause);
     }
 
-    private parseSyntaxList(currentListType: ListParsingState, processItem: (item: any) => void = null): ISyntaxList {
+    private parseSyntaxList(currentListType: ListParsingState, processItem: (parser: Parser, item: any) => void = null): ISyntaxList {
         var savedListParsingState = this.listParsingState;
         this.listParsingState |= currentListType;
 
@@ -2924,7 +2924,7 @@ class Parser extends SlidingWindow {
     private tryParseExpectedListItem(currentListType: ListParsingState,
                                      inErrorRecovery: bool,
                                      items: any[],
-                                     processItem: (item: any) => void): any[] {
+                                     processItem: (parser: Parser, item: any) => void): any[] {
         if (this.isExpectedListItem(currentListType, inErrorRecovery)) {
             var item = this.parseExpectedListItem(currentListType);
             Debug.assert(item !== null);
@@ -2933,7 +2933,7 @@ class Parser extends SlidingWindow {
             items.push(item);
 
             if (processItem !== null) {
-                processItem(item);
+                processItem(this, item);
             }
         }
 
@@ -2945,7 +2945,7 @@ class Parser extends SlidingWindow {
                this.currentToken().kind === SyntaxKind.EndOfFileToken;
     }
 
-    private parseSyntaxListWorker(currentListType: ListParsingState, processItem: (item: any) => void): ISyntaxList {
+    private parseSyntaxListWorker(currentListType: ListParsingState, processItem: (parser: Parser, item: any) => void): ISyntaxList {
         var items: any[] = null;
 
         while (true) {

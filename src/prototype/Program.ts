@@ -4,7 +4,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "S12.11_A3_T4.ts"; 
+    // "10.1.1-8gs.ts"; 
     undefined;
 
 var negative262ExpectedResults = {
