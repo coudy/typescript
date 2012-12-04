@@ -8,10 +8,10 @@ var specificFile =
     undefined;
 
 var negative262ExpectedResults = {
-    'Sbp_12.5_A9_T3.js': true,
-    'Sbp_12.6.1_A13_T3.js': true,
-    'Sbp_12.6.2_A13_T3.js': true,
-    'Sbp_12.6.4_A13_T3.js': true,
+    'Sbp_12.5_A9_T3.js': false,
+    'Sbp_12.6.1_A13_T3.js': false,
+    'Sbp_12.6.2_A13_T3.js': false,
+    'Sbp_12.6.4_A13_T3.js': false,
     'Sbp_7.8.4_A6.1_T4.js': false,
     'Sbp_7.8.4_A6.2_T1.js': false,
     'Sbp_7.8.4_A6.2_T2.js': false,
