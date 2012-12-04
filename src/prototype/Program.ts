@@ -742,7 +742,7 @@ if (true) {
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
 
-if (false) {
+if (true) {
     start = new Date().getTime();
     program.runAllTests(Environment, true, false);
     program.run(Environment, true);

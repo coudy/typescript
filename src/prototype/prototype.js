@@ -1253,7 +1253,11 @@ var Parser = (function (_super) {
     }
     Parser.prototype.parseSyntaxTree = function () {
         var sourceUnit = this.parseSourceUnit();
-        return new SyntaxTree(sourceUnit, this.skippedTokens, this.diagnostics);
+        var allDiagnostics = this.tokenDiagnostics.concat(this.diagnostics);
+        allDiagnostics.sort(function (a, b) {
+            return a.position() - b.position();
+        });
+        return new SyntaxTree(sourceUnit, this.skippedTokens, allDiagnostics);
     };
     Parser.prototype.parseSourceUnit = function () {
         var savedIsInStrictMode = this.isInStrictMode;
@@ -35516,7 +35520,7 @@ if(true) {
     Environment.standardOut.WriteLine("Total time: " + (end - start));
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(false) {
+if(true) {
     start = new Date().getTime();
     program.runAllTests(Environment, true, false);
     program.run(Environment, true);
