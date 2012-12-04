@@ -146,6 +146,7 @@ enum SyntaxKind {
     PredefinedType,
     FunctionType,
     ArrayType,
+    ConstructorType,
 
     // Module elements.
     InterfaceDeclaration,
@@ -280,6 +281,8 @@ enum SyntaxKind {
     TypeAnnotation,
     SimplePropertyAssignment,
     ExternalModuleReference,
+    GetAccessorPropertyAssignment,
+    SetAccessorPropertyAssignment,
 
     FirstStandardKeyword = BreakKeyword,
     LastStandardKeyword = WithKeyword,

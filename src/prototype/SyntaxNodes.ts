@@ -1093,6 +1093,10 @@ class ConstructorTypeSyntax extends TypeSyntax {
         this._type = type;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.ConstructorType;
+    }
+
     public newKeyword(): ISyntaxToken {
         return this._newKeyword;
     }
@@ -3332,6 +3336,10 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         this._getKeyword = getKeyword;
     }
 
+    public kind(): SyntaxKind {
+        return SyntaxKind.GetAccessorPropertyAssignment;
+    }
+
     public getKeyword(): ISyntaxToken {
         return this._getKeyword;
     }
@@ -3359,6 +3367,10 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
 
         this._setKeyword = setKeyword;
         this._parameterName = parameterName;
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.SetAccessorPropertyAssignment;
     }
 
     public setKeyword(): ISyntaxToken {
