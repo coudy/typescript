@@ -750,7 +750,7 @@ module SyntaxTokenFactory {
                            trailingTriviaInfo: number,
                            diagnostics: Diagnostic[]): ISyntaxToken {
         // if (false) {
-            if (diagnostics === null || diagnostics.length === 0) {
+            if (diagnostics === null) {
                 if (SyntaxFacts.isAnyPunctuation(tokenInfo.Kind)) {
                     return createFixedWidthToken(fullStart, leadingTriviaInfo, tokenInfo.Kind, trailingTriviaInfo);
                 }

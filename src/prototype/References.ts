@@ -6,6 +6,7 @@
 ///<reference path='Debug.ts' />
 ///<reference path='Diagnostic.ts' />
 ///<reference path='DiagnosticCode.ts' />
+///<reference path='Emitter.ts' />
 ///<reference path='Environment.ts' />
 ///<reference path='Errors.ts' />
 ///<reference path='Contract.ts' />

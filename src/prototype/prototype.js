@@ -322,6 +322,12 @@ var DiagnosticMessages = (function () {
     }
     return DiagnosticMessages;
 })();
+var Emitter = (function () {
+    function Emitter(syntaxOnly) {
+        this.syntaxOnly = syntaxOnly;
+    }
+    return Emitter;
+})();
 
 var Environment = (function () {
     function getWindowsScriptHostEnvironment() {
@@ -8883,7 +8889,7 @@ var SyntaxTokenFactory;
         return new FullToken(tokenInfo.Kind, tokenInfo.KeywordKind, tokenInfo.Text, fullStart, leadingTriviaInfo, trailingTriviaInfo, diagnostics);
     }
     function create(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo, diagnostics) {
-        if(diagnostics === null || diagnostics.length === 0) {
+        if(diagnostics === null) {
             if(SyntaxFacts.isAnyPunctuation(tokenInfo.Kind)) {
                 return createFixedWidthToken(fullStart, leadingTriviaInfo, tokenInfo.Kind, trailingTriviaInfo);
             } else {
@@ -35093,7 +35099,7 @@ var totalSize = 0;
 var program = new Program();
 var start, end;
 start = new Date().getTime();
-program.runAllTests(Environment, false, true);
+program.runAllTests(Environment, false, false);
 program.run(Environment, false);
 end = new Date().getTime();
 Environment.standardOut.WriteLine("Total time: " + (end - start));
