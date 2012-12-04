@@ -4,7 +4,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "7.6.1-4-1.js"; 
+    "7.6.1-4-1.js"; 
     undefined;
 
 var negative262ExpectedResults = {
@@ -484,17 +484,17 @@ class Program {
     runAllTests(environment: IEnvironment, useTypeScript: bool, verify: bool): void {
         environment.standardOut.WriteLine("");
 
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
-            filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify));
+        //this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
+        //    filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify));
 
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*allowErrors:*/ true));
+        //this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
+        //    filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*allowErrors:*/ true));
 
-        this.runTests(environment, "C:\\temp\\monoco-files",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ false));
+        //this.runTests(environment, "C:\\temp\\monoco-files",
+        //    filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ false));
 
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*allowErrors:*/ true));
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*allowErrors:*/ true, true));
 
         environment.standardOut.WriteLine("");
     }
@@ -512,7 +512,12 @@ class Program {
                 action(filePath);
             }
             catch (e) {
-                environment.standardOut.WriteLine("Exception: " + filePath);
+                if ((<string>e.message).indexOf(filePath) < 0) {
+                    environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
+                }
+                else {
+                    environment.standardOut.WriteLine(e.message);
+                }
             }
         }
     }
@@ -562,7 +567,7 @@ class Program {
                 var actualResult = JSON2.stringify(unit, null, 4);
                 var expectedFile = filePath + ".expected";
 
-                environment.standardOut.WriteLine("Generating baseline for: " + filePath);
+                // environment.standardOut.WriteLine("Generating baseline for: " + filePath);
                 environment.writeFile(expectedFile, actualResult, /*useUTF8:*/ true);
             }
             else if (verify) {

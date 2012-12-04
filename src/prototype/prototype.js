@@ -35358,17 +35358,8 @@ var Program = (function () {
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {
         var _this = this;
         environment.standardOut.WriteLine("");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
-            return _this.runScanner(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify);
-        });
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
-        });
-        this.runTests(environment, "C:\\temp\\monoco-files", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
-        });
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
+            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true, true);
         });
         environment.standardOut.WriteLine("");
     };
@@ -35381,7 +35372,11 @@ var Program = (function () {
             try  {
                 action(filePath);
             } catch (e) {
-                environment.standardOut.WriteLine("Exception: " + filePath);
+                if((e.message).indexOf(filePath) < 0) {
+                    environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
+                } else {
+                    environment.standardOut.WriteLine(e.message);
+                }
             }
         }
     };
@@ -35416,7 +35411,6 @@ var Program = (function () {
             if(generateBaseline) {
                 var actualResult = JSON2.stringify(unit, null, 4);
                 var expectedFile = filePath + ".expected";
-                environment.standardOut.WriteLine("Generating baseline for: " + filePath);
                 environment.writeFile(expectedFile, actualResult, true);
             } else {
                 if(verify) {
