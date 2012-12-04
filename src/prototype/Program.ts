@@ -188,7 +188,9 @@ class Program {
             var filePath = testFiles[index];
 
             try {
-                var contents = environment.readFile(filePath);
+                // All 262 files are utf8.  But they dont' have a BOM.  Force them to be read in
+                // as UTF8.
+                var contents = environment.readFile(filePath, 'utf-8');
                 var isNegative = contents.indexOf("@negative") >= 0
 
                 testCount++;

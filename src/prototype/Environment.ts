@@ -38,7 +38,7 @@ var Environment = (function () {
         }
 
         return {
-            readFile: function (path) {
+            readFile: function (path, charSet? = 'x-ansi') {
                 try {
                     var streamObj = getStreamObject();
                     streamObj.Open();
@@ -47,11 +47,14 @@ var Environment = (function () {
                     streamObj.LoadFromFile(path);
                     var bomChar = streamObj.ReadText(2); // Read the BOM char
                     streamObj.Position = 0; // Position has to be at 0 before changing the encoding
-                    if ((bomChar.charCodeAt(0) === 0xFE && bomChar.charCodeAt(1) === 0xFF)
-                        || (bomChar.charCodeAt(0) === 0xFF && bomChar.charCodeAt(1) === 0xFE)) {
+                    if ((bomChar.charCodeAt(0) === 0xFE && bomChar.charCodeAt(1) === 0xFF) ||
+                        (bomChar.charCodeAt(0) === 0xFF && bomChar.charCodeAt(1) === 0xFE)) {
                         streamObj.Charset = 'unicode';
                     } else if (bomChar.charCodeAt(0) === 0xEF && bomChar.charCodeAt(1) === 0xBB) {
                         streamObj.Charset = 'utf-8';
+                    }
+                    else {
+                        streamObj.Charset = charSet;
                     }
 
                 // Read the whole file

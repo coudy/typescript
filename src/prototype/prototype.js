@@ -352,7 +352,8 @@ var Environment = (function () {
             args[i] = WScript.Arguments.Item(i);
         }
         return {
-            readFile: function (path) {
+            readFile: function (path, charSet) {
+                if (typeof charSet === "undefined") { charSet = 'x-ansi'; }
                 try  {
                     var streamObj = getStreamObject();
                     streamObj.Open();
@@ -366,6 +367,8 @@ var Environment = (function () {
                     } else {
                         if(bomChar.charCodeAt(0) === 239 && bomChar.charCodeAt(1) === 187) {
                             streamObj.Charset = 'utf-8';
+                        } else {
+                            streamObj.Charset = charSet;
                         }
                     }
                     var str = streamObj.ReadText(-1);
@@ -35123,7 +35126,7 @@ var Program = (function () {
         for(var index in testFiles) {
             var filePath = testFiles[index];
             try  {
-                var contents = environment.readFile(filePath);
+                var contents = environment.readFile(filePath, 'utf-8');
                 var isNegative = contents.indexOf("@negative") >= 0;
                 testCount++;
                 if(isNegative) {

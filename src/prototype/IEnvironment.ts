@@ -1,7 +1,7 @@
 ///<reference path='References.ts' />
 
 interface IEnvironment {
-    readFile(path: string): string;
+    readFile(path: string, charSet?: string): string;
     writeFile(path: string, contents: string): void;
     deleteFile(path: string): void;
     fileExists(path: string): bool;
