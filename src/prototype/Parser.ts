@@ -486,21 +486,28 @@ class Parser extends SlidingWindow {
         throw Errors.invalidOperation();
     }
 
-    private static isUseStrictDirective(node: SyntaxNode) {
+    private static isDirectivePrologueElement(node: SyntaxNode): bool {
         if (node.kind() === SyntaxKind.ExpressionStatement) {
             var expressionStatement = <ExpressionStatementSyntax>node;
             var expression = expressionStatement.expression();
 
             if (expression.kind() === SyntaxKind.StringLiteralExpression) {
-                var stringLiteralExpression = <LiteralExpressionSyntax>expression;
-                var stringLiteral = stringLiteralExpression.literalToken();
-
-                var text = stringLiteral.text();
-                return text === '"use strict"' || text === "'use strict'";
+                return true;
             }
         }
 
-        return false;
+        return false
+    }
+
+    private static isUseStrictDirective(node: SyntaxNode) {
+        var expressionStatement = <ExpressionStatementSyntax>node;
+        var expression = expressionStatement.expression();
+
+        var stringLiteralExpression = <LiteralExpressionSyntax>expression;
+        var stringLiteral = stringLiteralExpression.literalToken();
+
+        var text = stringLiteral.text();
+        return text === '"use strict"' || text === "'use strict'";
     }
 
     public parseSyntaxTree(): SyntaxTree {
@@ -519,9 +526,17 @@ class Parser extends SlidingWindow {
         return new SourceUnitSyntax(moduleElements, this.currentToken());
     }
 
-    private static updateStrictModeState(parser: Parser, moduleElement: ModuleElementSyntax): void {
+    private static updateStrictModeState(parser: Parser, items: any[]): void {
         if (!parser.isInStrictMode) {
-            parser.isInStrictMode = Parser.isUseStrictDirective(moduleElement);
+            // Check if all the items are directive prologue elements.
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                if (!Parser.isDirectivePrologueElement(item)) {
+                    return;
+                }
+            }
+
+            parser.isInStrictMode = Parser.isUseStrictDirective(items[items.length - 1]);
         }
     }
 
@@ -2868,11 +2883,12 @@ class Parser extends SlidingWindow {
         return new ParameterSyntax(dotDotDotToken, publicOrPrivateToken, identifier, questionToken, typeAnnotation, equalsValueClause);
     }
 
-    private parseSyntaxList(currentListType: ListParsingState, processItem: (parser: Parser, item: any) => void = null): ISyntaxList {
+    private parseSyntaxList(currentListType: ListParsingState,
+                            processItems: (parser: Parser, items: any[]) => void = null): ISyntaxList {
         var savedListParsingState = this.listParsingState;
         this.listParsingState |= currentListType;
 
-        var result = this.parseSyntaxListWorker(currentListType, processItem);
+        var result = this.parseSyntaxListWorker(currentListType, processItems);
 
         this.listParsingState = savedListParsingState;
 
@@ -2924,7 +2940,7 @@ class Parser extends SlidingWindow {
     private tryParseExpectedListItem(currentListType: ListParsingState,
                                      inErrorRecovery: bool,
                                      items: any[],
-                                     processItem: (parser: Parser, item: any) => void): any[] {
+                                     processItems: (parser: Parser, items: any[]) => void): any[] {
         if (this.isExpectedListItem(currentListType, inErrorRecovery)) {
             var item = this.parseExpectedListItem(currentListType);
             Debug.assert(item !== null);
@@ -2932,8 +2948,8 @@ class Parser extends SlidingWindow {
             items = items || [];
             items.push(item);
 
-            if (processItem !== null) {
-                processItem(this, item);
+            if (processItems !== null) {
+                processItems(this, items);
             }
         }
 
@@ -2945,7 +2961,8 @@ class Parser extends SlidingWindow {
                this.currentToken().kind === SyntaxKind.EndOfFileToken;
     }
 
-    private parseSyntaxListWorker(currentListType: ListParsingState, processItem: (parser: Parser, item: any) => void): ISyntaxList {
+    private parseSyntaxListWorker(currentListType: ListParsingState,
+                                  processItems: (parser: Parser, items: any[]) => void): ISyntaxList {
         var items: any[] = null;
 
         while (true) {
@@ -2959,7 +2976,7 @@ class Parser extends SlidingWindow {
 
             // Try to parse an item of the list.  If we fail then decide if we need to abort or 
             // continue parsing.
-            items = this.tryParseExpectedListItem(currentListType, /*inErrorRecovery:*/ false, items, processItem);
+            items = this.tryParseExpectedListItem(currentListType, /*inErrorRecovery:*/ false, items, processItems);
             if (items !== null && items.length > itemsCount) {
                 continue;
             }

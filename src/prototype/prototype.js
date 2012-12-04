@@ -1230,18 +1230,23 @@ var Parser = (function (_super) {
         }
         throw Errors.invalidOperation();
     }
-    Parser.isUseStrictDirective = function isUseStrictDirective(node) {
+    Parser.isDirectivePrologueElement = function isDirectivePrologueElement(node) {
         if(node.kind() === 135 /* ExpressionStatement */ ) {
             var expressionStatement = node;
             var expression = expressionStatement.expression();
             if(expression.kind() === 163 /* StringLiteralExpression */ ) {
-                var stringLiteralExpression = expression;
-                var stringLiteral = stringLiteralExpression.literalToken();
-                var text = stringLiteral.text();
-                return text === '"use strict"' || text === "'use strict'";
+                return true;
             }
         }
         return false;
+    }
+    Parser.isUseStrictDirective = function isUseStrictDirective(node) {
+        var expressionStatement = node;
+        var expression = expressionStatement.expression();
+        var stringLiteralExpression = expression;
+        var stringLiteral = stringLiteralExpression.literalToken();
+        var text = stringLiteral.text();
+        return text === '"use strict"' || text === "'use strict'";
     }
     Parser.prototype.parseSyntaxTree = function () {
         var sourceUnit = this.parseSourceUnit();
@@ -1253,9 +1258,15 @@ var Parser = (function (_super) {
         this.isInStrictMode = savedIsInStrictMode;
         return new SourceUnitSyntax(moduleElements, this.currentToken());
     };
-    Parser.updateStrictModeState = function updateStrictModeState(parser, moduleElement) {
+    Parser.updateStrictModeState = function updateStrictModeState(parser, items) {
         if(!parser.isInStrictMode) {
-            parser.isInStrictMode = Parser.isUseStrictDirective(moduleElement);
+            for(var i = 0; i < items.length; i++) {
+                var item = items[i];
+                if(!Parser.isDirectivePrologueElement(item)) {
+                    return;
+                }
+            }
+            parser.isInStrictMode = Parser.isUseStrictDirective(items[items.length - 1]);
         }
     }
     Parser.prototype.isModuleElement = function () {
@@ -2922,11 +2933,11 @@ var Parser = (function (_super) {
         }
         return new ParameterSyntax(dotDotDotToken, publicOrPrivateToken, identifier, questionToken, typeAnnotation, equalsValueClause);
     };
-    Parser.prototype.parseSyntaxList = function (currentListType, processItem) {
-        if (typeof processItem === "undefined") { processItem = null; }
+    Parser.prototype.parseSyntaxList = function (currentListType, processItems) {
+        if (typeof processItems === "undefined") { processItems = null; }
         var savedListParsingState = this.listParsingState;
         this.listParsingState |= currentListType;
-        var result = this.parseSyntaxListWorker(currentListType, processItem);
+        var result = this.parseSyntaxListWorker(currentListType, processItems);
         this.listParsingState = savedListParsingState;
         return result;
     };
@@ -2951,14 +2962,14 @@ var Parser = (function (_super) {
         this.moveToNextToken();
         return false;
     };
-    Parser.prototype.tryParseExpectedListItem = function (currentListType, inErrorRecovery, items, processItem) {
+    Parser.prototype.tryParseExpectedListItem = function (currentListType, inErrorRecovery, items, processItems) {
         if(this.isExpectedListItem(currentListType, inErrorRecovery)) {
             var item = this.parseExpectedListItem(currentListType);
             Debug.assert(item !== null);
             items = items || [];
             items.push(item);
-            if(processItem !== null) {
-                processItem(this, item);
+            if(processItems !== null) {
+                processItems(this, items);
             }
         }
         return items;
@@ -2966,14 +2977,14 @@ var Parser = (function (_super) {
     Parser.prototype.listIsTerminated = function (currentListType, itemCount) {
         return this.isExpectedListTerminator(currentListType, itemCount) || this.currentToken().kind === 114 /* EndOfFileToken */ ;
     };
-    Parser.prototype.parseSyntaxListWorker = function (currentListType, processItem) {
+    Parser.prototype.parseSyntaxListWorker = function (currentListType, processItems) {
         var items = null;
         while(true) {
             var itemsCount = items === null ? 0 : items.length;
             if(this.listIsTerminated(currentListType, itemsCount)) {
                 break;
             }
-            items = this.tryParseExpectedListItem(currentListType, false, items, processItem);
+            items = this.tryParseExpectedListItem(currentListType, false, items, processItems);
             if(items !== null && items.length > itemsCount) {
                 continue;
             }
