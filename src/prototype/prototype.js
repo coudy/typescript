@@ -3916,7 +3916,10 @@ var Scanner = (function (_super) {
     Scanner.prototype.isHexNumericLiteral = function () {
         if(this.currentItem() === 48 /* _0 */ ) {
             var ch = this.peekItemN(1);
-            return ch === 120 /* x */  || ch === 88 /* X */ ;
+            if(ch === 120 /* x */  || ch === 88 /* X */ ) {
+                ch = this.peekItemN(2);
+                return CharacterInfo.isHexDigit(ch);
+            }
         }
         return false;
     };

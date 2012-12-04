@@ -420,6 +420,14 @@ class Scanner extends SlidingWindow {
         }
 
         this.releaseAndUnpinAbsoluteIndex(startIndex);
+
+        //// From the spec:
+        //// The source character immediately following a NumericLiteral must not be an 
+        //// IdentifierStart or DecimalDigit.
+        //if (this.isIdentifierStart(this.peekCharOrUnicodeEscape())) {
+        //    diagnostics.add(new SyntaxDiagnostic(
+        //        this.absoluteIndex(), 1, DiagnosticCode.Numeric_literal_can_not_be_followed_directly
+        //}
     }
 
     private scanDecimalNumericLiteral(startIndex: number): void {
@@ -474,7 +482,12 @@ class Scanner extends SlidingWindow {
     private isHexNumericLiteral(): bool {
         if (this.currentItem() === CharacterCodes._0) {
             var ch = this.peekItemN(1);
-            return ch === CharacterCodes.x || ch === CharacterCodes.X;
+
+            if (ch === CharacterCodes.x || ch === CharacterCodes.X) {
+                ch = this.peekItemN(2);
+
+                return CharacterInfo.isHexDigit(ch);
+            }
         }
 
         return false;
