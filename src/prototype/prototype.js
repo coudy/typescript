@@ -165,6 +165,7 @@ var CharacterCodes;
     CharacterCodes.lineSeparator = 8232;
     CharacterCodes.paragraphSeparator = 8233;
     CharacterCodes.space = 32;
+    CharacterCodes.nonBreakingSpace = 160;
     CharacterCodes._ = 95;
     CharacterCodes.$ = 36;
     CharacterCodes._0 = 48;
@@ -214,7 +215,6 @@ var CharacterCodes;
     CharacterCodes.tilde = 126;
     CharacterCodes.backspace = 8;
     CharacterCodes.formFeed = 12;
-    CharacterCodes.nonBreakingSpace = 160;
     CharacterCodes.byteOrderMark = 65279;
     CharacterCodes.tab = 9;
     CharacterCodes.verticalTab = 11;
@@ -2942,11 +2942,11 @@ var Parser = (function (_super) {
         this.listParsingState = savedListParsingState;
         return result;
     };
-    Parser.prototype.abortParsingListOrMoveToNextToken = function (currentListType) {
+    Parser.prototype.abortParsingListOrMoveToNextToken = function (currentListType, itemCount) {
         this.reportUnexpectedTokenDiagnostic(currentListType);
         for(var state = ListParsingState.LastListParsingState; state >= ListParsingState.FirstListParsingState; state >>= 1) {
             if((this.listParsingState & state) !== 0) {
-                if(this.isExpectedListTerminator(state) || this.isExpectedListItem(state, true)) {
+                if(this.isExpectedListTerminator(state, itemCount) || this.isExpectedListItem(state, true)) {
                     return true;
                 }
             }
@@ -2968,21 +2968,21 @@ var Parser = (function (_super) {
         }
         return items;
     };
-    Parser.prototype.listIsTerminated = function (currentListType) {
-        return this.isExpectedListTerminator(currentListType) || this.currentToken().kind === 114 /* EndOfFileToken */ ;
+    Parser.prototype.listIsTerminated = function (currentListType, itemCount) {
+        return this.isExpectedListTerminator(currentListType, itemCount) || this.currentToken().kind === 114 /* EndOfFileToken */ ;
     };
     Parser.prototype.parseSyntaxListWorker = function (currentListType, processItem) {
         var items = null;
         while(true) {
-            if(this.listIsTerminated(currentListType)) {
+            var itemsCount = items === null ? 0 : items.length;
+            if(this.listIsTerminated(currentListType, itemsCount)) {
                 break;
             }
-            var itemsLength = items === null ? 0 : items.length;
             items = this.tryParseExpectedListItem(currentListType, false, items, processItem);
-            if(items !== null && items.length > itemsLength) {
+            if(items !== null && items.length > itemsCount) {
                 continue;
             }
-            var abort = this.abortParsingListOrMoveToNextToken(currentListType);
+            var abort = this.abortParsingListOrMoveToNextToken(currentListType, itemsCount);
             if(abort) {
                 break;
             }
@@ -2998,18 +2998,18 @@ var Parser = (function (_super) {
         var lastSeparator = null;
         var inErrorRecovery = false;
         while(true) {
-            if(this.listIsTerminated(currentListType)) {
+            var itemsCount = items === null ? 0 : items.length;
+            if(this.listIsTerminated(currentListType, itemsCount)) {
                 if(lastSeparator !== null && !allowTrailingSeparator && !lastSeparator.isMissing()) {
                     this.addDiagnostic(new SyntaxDiagnostic(lastSeparator.start(), lastSeparator.width(), 9 /* Trailing_separator_not_allowed */ , null));
                 }
                 break;
             }
-            var itemsLength = items === null ? 0 : items.length;
             items = this.tryParseExpectedListItem(currentListType, inErrorRecovery, items, null);
             inErrorRecovery = false;
-            if(items !== null && items.length > itemsLength) {
+            if(items !== null && items.length > itemsCount) {
                 if(this.currentToken().kind !== separatorKind) {
-                    if(this.listIsTerminated(currentListType)) {
+                    if(this.listIsTerminated(currentListType, items.length)) {
                         break;
                     }
                     if(allowAutomaticSemicolonInsertion && this.canEatAutomaticSemicolon()) {
@@ -3023,7 +3023,7 @@ var Parser = (function (_super) {
                 inErrorRecovery = lastSeparator.isMissing();
                 continue;
             }
-            var abort = this.abortParsingListOrMoveToNextToken(currentListType);
+            var abort = this.abortParsingListOrMoveToNextToken(currentListType, itemsCount);
             if(abort) {
                 break;
             }
@@ -3169,7 +3169,7 @@ var Parser = (function (_super) {
         }
         this.diagnostics.push(diagnostic);
     };
-    Parser.prototype.isExpectedListTerminator = function (currentListType) {
+    Parser.prototype.isExpectedListTerminator = function (currentListType, itemCount) {
         switch(currentListType) {
             case 1 /* SourceUnit_ModuleElements */ : {
                 return this.isExpectedSourceUnit_ModuleElementsTerminator();
@@ -3213,7 +3213,7 @@ var Parser = (function (_super) {
 
             }
             case 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */ : {
-                return this.isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator();
+                return this.isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator(itemCount);
 
             }
             case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ : {
@@ -3278,11 +3278,11 @@ var Parser = (function (_super) {
         }
         return false;
     };
-    Parser.prototype.isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator = function () {
+    Parser.prototype.isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator = function (itemCount) {
         if(this.previousToken.kind === 72 /* CommaToken */ ) {
             return false;
         }
-        return this.canEatExplicitOrAutomaticSemicolon();
+        return itemCount > 0 && this.canEatExplicitOrAutomaticSemicolon();
     };
     Parser.prototype.isExpectedExtendsOrImplementsClause_TypeNameListTerminator = function () {
         if(this.currentToken().keywordKind() === 42 /* ExtendsKeyword */  || this.currentToken().keywordKind() === 45 /* ImplementsKeyword */ ) {
@@ -34997,6 +34997,7 @@ var TypeScript;
     TypeScript.quickParse = quickParse;
 })(TypeScript || (TypeScript = {}));
 var stringTable = new StringTable();
+var specificFile = undefined;
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {
@@ -35039,7 +35040,8 @@ var Program = (function () {
         if(filePath.indexOf("RealSource") >= 0) {
             return;
         }
-        if(filePath.indexOf("ArrayLiteralExpression2.ts") < 0) {
+        if(specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
+            return;
         }
         var contents = environment.readFile(filePath);
         totalSize += contents.length;
@@ -35075,6 +35077,9 @@ var Program = (function () {
             return;
         }
         if(useTypeScript) {
+            return;
+        }
+        if(specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
             return;
         }
         var contents = environment.readFile(filePath);
@@ -35125,51 +35130,69 @@ var Program = (function () {
         var testFiles = environment.listFiles(path, null, {
             recursive: true
         });
+        var testCount = 0;
+        var skipCount = 0;
+        var failCount = 0;
         for(var index in testFiles) {
             var filePath = testFiles[index];
             try  {
                 var contents = environment.readFile(filePath);
                 var isNegative = contents.indexOf("@negative") >= 0;
+                testCount++;
                 if(isNegative) {
-                    environment.standardOut.WriteLine("Skipping: " + filePath);
+                    skipCount++;
+                    environment.standardOut.Write("S");
                     continue;
+                } else {
+                    environment.standardOut.Write(".");
                 }
                 var stringText = new StringText(contents);
                 var scanner = new Scanner(stringText, 1 /* EcmaScript5 */ , stringTable);
                 var parser = new Parser(scanner);
                 var syntaxTree = parser.parseSyntaxTree();
-                environment.standardOut.WriteLine(filePath);
  {
                     if(syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
-                        environment.standardOut.WriteLine("\r\nFile had unexpected diagnostics!");
-                        throw new Error();
+                        environment.standardOut.WriteLine("\r\nUnexpected diagnostics: " + filePath);
+                        failCount++;
+                        continue;
                     }
                     if(syntaxTree.skippedTokens() && syntaxTree.skippedTokens().length > 0) {
-                        environment.standardOut.WriteLine("\r\nFile had unexpected skipped tokens!");
-                        throw new Error();
+                        environment.standardOut.WriteLine("\r\nUnexpected skipped tokens: " + filePath);
+                        failCount++;
+                        continue;
                     }
                 }
             } catch (e) {
+                failCount++;
                 environment.standardOut.WriteLine("Exception: " + filePath);
             }
         }
+        environment.standardOut.WriteLine("");
+        environment.standardOut.WriteLine("Test 262 results:");
+        environment.standardOut.WriteLine("Test Count: " + testCount);
+        environment.standardOut.WriteLine("Skip Count: " + skipCount);
+        environment.standardOut.WriteLine("Fail Count: " + failCount);
     };
     return Program;
 })();
 var totalSize = 0;
 var program = new Program();
 var start, end;
-start = new Date().getTime();
-program.runAllTests(Environment, false, true);
-program.run(Environment, false);
-end = new Date().getTime();
-Environment.standardOut.WriteLine("Total time: " + (end - start));
-Environment.standardOut.WriteLine("Total size: " + totalSize);
-start = new Date().getTime();
-program.runAllTests(Environment, true, false);
-program.run(Environment, true);
-end = new Date().getTime();
-Environment.standardOut.WriteLine("Total time: " + (end - start));
+if(true) {
+    start = new Date().getTime();
+    program.runAllTests(Environment, false, true);
+    program.run(Environment, false);
+    end = new Date().getTime();
+    Environment.standardOut.WriteLine("Total time: " + (end - start));
+    Environment.standardOut.WriteLine("Total size: " + totalSize);
+}
+if(false) {
+    start = new Date().getTime();
+    program.runAllTests(Environment, true, false);
+    program.run(Environment, true);
+    end = new Date().getTime();
+    Environment.standardOut.WriteLine("Total time: " + (end - start));
+}
 if(false) {
     start = new Date().getTime();
     program.run262(Environment, false);

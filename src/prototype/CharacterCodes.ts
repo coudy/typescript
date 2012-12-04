@@ -4,12 +4,14 @@ enum CharacterCodes {
     nullCharacter = 0,
     maxAsciiCharacter = 127,
 
-    newLine = 10,                   // \n
-    carriageReturn = 13,            // \r
-    nextLine = 0x0085,
-    lineSeparator = 0x2028,
-    paragraphSeparator = 0x2029,
-    space = 32,                     // " "
+    newLine             = 10,       // \n
+    carriageReturn      = 13,       // \r
+    nextLine            = 0x0085,
+    lineSeparator       = 0x2028,
+    paragraphSeparator  = 0x2029,
+    space               = 32,       // " "
+
+    nonBreakingSpace           = 0x00A0,   //
 
     _ = 95,
     $ = 36,
@@ -65,7 +67,6 @@ enum CharacterCodes {
 
     backspace = 8,              // \b
     formFeed = 12,              // \f
-    nonBreakingSpace = 0x00A0,  //
     byteOrderMark = 0xFEFF,
     tab = 9,                    // \t
     verticalTab = 11,           // \v

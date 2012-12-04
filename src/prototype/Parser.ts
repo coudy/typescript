@@ -2895,7 +2895,7 @@ class Parser extends SlidingWindow {
     }
 
     // Returns true if we should abort parsing the list.
-    private abortParsingListOrMoveToNextToken(currentListType: ListParsingState): bool {
+    private abortParsingListOrMoveToNextToken(currentListType: ListParsingState, itemCount: number): bool {
         // Ok.  It wasn't a terminator and it wasn't the start of an item in the list. 
         // Definitely report an error for this token.
         this.reportUnexpectedTokenDiagnostic(currentListType);
@@ -2909,7 +2909,7 @@ class Parser extends SlidingWindow {
              state >>= 1) {
 
             if ((this.listParsingState & state) !== 0) {
-                if (this.isExpectedListTerminator(state) || this.isExpectedListItem(state, /*inErrorRecovery:*/ true)) {
+                if (this.isExpectedListTerminator(state, itemCount) || this.isExpectedListItem(state, /*inErrorRecovery:*/ true)) {
                     return true;
                 }
             }
@@ -2944,8 +2944,9 @@ class Parser extends SlidingWindow {
         return items;
     }
 
-    private listIsTerminated(currentListType: ListParsingState): bool {
-        return this.isExpectedListTerminator(currentListType) || this.currentToken().kind === SyntaxKind.EndOfFileToken;
+    private listIsTerminated(currentListType: ListParsingState, itemCount: number): bool {
+        return this.isExpectedListTerminator(currentListType, itemCount) ||
+               this.currentToken().kind === SyntaxKind.EndOfFileToken;
     }
 
     private parseSyntaxListWorker(currentListType: ListParsingState, processItem: (item: any) => void): ISyntaxList {
@@ -2955,19 +2956,19 @@ class Parser extends SlidingWindow {
             // First check ifthe list is complete already.  If so, we're done.  Also, if we see an 
             // EOF then definitely stop.  We'll report the error higher when our caller tries to
             // consume the next token.
-            if (this.listIsTerminated(currentListType)) {
+            var itemsCount = items === null ? 0 : items.length;
+            if (this.listIsTerminated(currentListType, itemsCount)) {
                 break
             }
 
             // Try to parse an item of the list.  If we fail then decide if we need to abort or 
             // continue parsing.
-            var itemsLength = items === null ? 0 : items.length;
             items = this.tryParseExpectedListItem(currentListType, /*inErrorRecovery:*/ false, items, processItem);
-            if (items !== null && items.length > itemsLength) {
+            if (items !== null && items.length > itemsCount) {
                 continue;
             }
 
-            var abort = this.abortParsingListOrMoveToNextToken(currentListType);
+            var abort = this.abortParsingListOrMoveToNextToken(currentListType, itemsCount);
             if (abort) {
                 break;
             }
@@ -2989,7 +2990,8 @@ class Parser extends SlidingWindow {
         var lastSeparator: ISyntaxToken = null;
         var inErrorRecovery = false;
         while (true) {
-            if (this.listIsTerminated(currentListType)) {
+            var itemsCount = items === null ? 0 : items.length;
+            if (this.listIsTerminated(currentListType, itemsCount)) {
                 // We've reached the end of the list.  If there was a last separator and we don't 
                 // allow trailing separators, then report an error.  But don't report an error if
                 // the separator is missing.  We'll have already reported it.
@@ -3001,11 +3003,10 @@ class Parser extends SlidingWindow {
                 break;
             }
 
-            var itemsLength = items === null ? 0 : items.length;
             items = this.tryParseExpectedListItem(currentListType, inErrorRecovery, items, null);
             inErrorRecovery = false;
             
-            if (items !== null && items.length > itemsLength) {
+            if (items !== null && items.length > itemsCount) {
                 // We got an item and added it to our list.  If the next token is an explicit 
                 // separator, then add it to the list.
 
@@ -3025,7 +3026,7 @@ class Parser extends SlidingWindow {
                     // semicolon if we couldn't consume something normally.  in the above case, we can
                     // consume the '}' just fine.  So ASI doesn't apply.
 
-                    if (this.listIsTerminated(currentListType)) {
+                    if (this.listIsTerminated(currentListType, items.length)) {
                         // The list is done.  Return what we've got now.
                         break;
                     }
@@ -3060,7 +3061,7 @@ class Parser extends SlidingWindow {
             }
 
             // We failed to parse an item.  Decide if we need to abort, or move to the next token.
-            var abort = this.abortParsingListOrMoveToNextToken(currentListType);
+            var abort = this.abortParsingListOrMoveToNextToken(currentListType, itemsCount);
             if (abort) {
                 break;
             }
@@ -3207,7 +3208,7 @@ class Parser extends SlidingWindow {
         this.diagnostics.push(diagnostic);
     }
 
-    private isExpectedListTerminator(currentListType: ListParsingState): bool {
+    private isExpectedListTerminator(currentListType: ListParsingState, itemCount: number): bool {
         switch (currentListType) {
             case ListParsingState.SourceUnit_ModuleElements:
                 return this.isExpectedSourceUnit_ModuleElementsTerminator();
@@ -3241,7 +3242,7 @@ class Parser extends SlidingWindow {
                 return this.isExpectedExtendsOrImplementsClause_TypeNameListTerminator();
             
             case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
-                return this.isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator();
+                return this.isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator(itemCount);
 
             case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
                 return this.isExpectedVariableDeclaration_VariableDeclarators_DisallowInTerminator();
@@ -3319,18 +3320,18 @@ class Parser extends SlidingWindow {
         return false;
     }
 
-    private isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator(): bool {
+    private isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator(itemCount: number): bool {
         //// This is the case when we're parsing variable declarations in a variable statement.
 
         // If we just parsed a comma, then we can't terminate this list.  i.e.:
-        //      var a = bar, // <-- just consumed the  comma
+        //      var a = bar, // <-- just consumed the comma
         //          b = baz;
         if (this.previousToken.kind === SyntaxKind.CommaToken) {
             return false;
         }
 
-        // We're done when we can eat a semicolon.
-        return this.canEatExplicitOrAutomaticSemicolon();
+        // We're done when we can eat a semicolon and we've parsed at least one item.
+        return itemCount > 0 && this.canEatExplicitOrAutomaticSemicolon();
     }
 
     private isExpectedExtendsOrImplementsClause_TypeNameListTerminator(): bool {

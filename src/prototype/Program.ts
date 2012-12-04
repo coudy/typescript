@@ -3,6 +3,8 @@
 
 var stringTable = new StringTable();
 
+var specificFile = undefined; // "S7.3_A1.1_T2";
+
 class Program {
     runAllTests(environment: IEnvironment, useTypeScript: bool, verify: bool): void {
         environment.standardOut.WriteLine("");
@@ -55,8 +57,8 @@ class Program {
             return;
         }
 
-        if (filePath.indexOf("ArrayLiteralExpression2.ts") < 0) {
-            // return;
+        if (specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
+            return;
         }
 
         // environment.standardOut.WriteLine("Running Parser: " + filePath);
@@ -104,6 +106,10 @@ class Program {
         }
 
         if (useTypeScript) {
+            return;
+        }
+
+        if (specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
             return;
         }
 
@@ -171,6 +177,11 @@ class Program {
     run262(environment: IEnvironment, useTypeScript: bool): void {
         var path = "C:\\temp\\test262\\suite";
         var testFiles = environment.listFiles(path, null, { recursive: true });
+
+        var testCount = 0;
+        var skipCount = 0;
+        var failCount = 0;
+
         for (var index in testFiles) {
             var filePath = testFiles[index];
 
@@ -178,9 +189,15 @@ class Program {
                 var contents = environment.readFile(filePath);
                 var isNegative = contents.indexOf("@negative") >= 0
 
+                testCount++;
+
                 if (isNegative) {
-                    environment.standardOut.WriteLine("Skipping: " + filePath);
+                    skipCount++;
+                    environment.standardOut.Write("S");
                     continue;
+                }
+                else {
+                    environment.standardOut.Write(".");
                 }
 
                 var stringText = new StringText(contents);
@@ -189,25 +206,33 @@ class Program {
 
                 var syntaxTree = parser.parseSyntaxTree();
                 //environment.standardOut.Write(".");
-                environment.standardOut.WriteLine(filePath);
 
                 {
                     // Not a negative test.  We can't have any errors or skipped tokens.
                     if (syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
-                        environment.standardOut.WriteLine("\r\nFile had unexpected diagnostics!");
-                        throw new Error();
+                        environment.standardOut.WriteLine("\r\nUnexpected diagnostics: " + filePath);
+                        failCount++;
+                        continue;
                     }
 
                     if (syntaxTree.skippedTokens() && syntaxTree.skippedTokens().length > 0) {
-                        environment.standardOut.WriteLine("\r\nFile had unexpected skipped tokens!");
-                        throw new Error();
+                        environment.standardOut.WriteLine("\r\nUnexpected skipped tokens: " + filePath);
+                        failCount++;
+                        continue;
                     }
                 }
             }
             catch (e) {
+                failCount++;
                 environment.standardOut.WriteLine("Exception: " + filePath);
             }
         }
+
+        environment.standardOut.WriteLine("");
+        environment.standardOut.WriteLine("Test 262 results:");
+        environment.standardOut.WriteLine("Test Count: " + testCount);
+        environment.standardOut.WriteLine("Skip Count: " + skipCount);
+        environment.standardOut.WriteLine("Fail Count: " + failCount);
     }
 }
 
@@ -216,18 +241,22 @@ var totalSize = 0;
 var program = new Program();
 var start: number, end: number;
 
-start = new Date().getTime();
-program.runAllTests(Environment, false, true);
-program.run(Environment, false);
-end = new Date().getTime();
-Environment.standardOut.WriteLine("Total time: " + (end - start));
-Environment.standardOut.WriteLine("Total size: " + totalSize);
+if (true) {
+    start = new Date().getTime();
+    program.runAllTests(Environment, false, true);
+    program.run(Environment, false);
+    end = new Date().getTime();
+    Environment.standardOut.WriteLine("Total time: " + (end - start));
+    Environment.standardOut.WriteLine("Total size: " + totalSize);
+}
 
-start = new Date().getTime();
-program.runAllTests(Environment, true, false);
-program.run(Environment, true);
-end = new Date().getTime();
-Environment.standardOut.WriteLine("Total time: " + (end - start));
+if (false) {
+    start = new Date().getTime();
+    program.runAllTests(Environment, true, false);
+    program.run(Environment, true);
+    end = new Date().getTime();
+    Environment.standardOut.WriteLine("Total time: " + (end - start));
+}
 
 if (false) {
     start = new Date().getTime();
