@@ -35508,7 +35508,7 @@ var Program = (function () {
 var totalSize = 0;
 var program = new Program();
 var start, end;
-if(false) {
+if(true) {
     start = new Date().getTime();
     program.runAllTests(Environment, false, true);
     program.run(Environment, false);
@@ -35516,7 +35516,7 @@ if(false) {
     Environment.standardOut.WriteLine("Total time: " + (end - start));
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(true) {
+if(false) {
     start = new Date().getTime();
     program.runAllTests(Environment, true, false);
     program.run(Environment, true);

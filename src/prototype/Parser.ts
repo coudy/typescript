@@ -148,10 +148,20 @@ class Parser extends SlidingWindow {
     private listParsingState: ListParsingState = 0;
 
     // Whether or not we are in strict parsing mode.  All that changes in strict parsing mode is
-    // that some tokens that would be considered identifiers may be considered keywords.
+    // that some tokens that would be considered identifiers may be considered keywords.  When 
+    // rewinding, we need to store and restore this as the mode may have changed.
     private isInStrictMode: bool = false;
 
+    // Tokens we've decided to skip because they couldn't fit into the current production.  Any
+    // tokens that are skipped when speculative parsing need to removed when rewinding.  To do this
+    // we store the count of skipped tokens when we start speculative parsing.  And if we rewind,
+    // we restore this to the same count that we started at.
     private skippedTokens: ISyntaxToken[] = [];
+
+    // Diagnostics created when parsing invalid code.  Any diagnosics created when speculative 
+    // parsing need to removed when rewinding.  To do this we store the count of diagnostics when 
+    // we start speculative parsing.  And if we rewind, we restore this to the same count that we 
+    // started at.
     private diagnostics: SyntaxDiagnostic[] = [];
 
     constructor(
