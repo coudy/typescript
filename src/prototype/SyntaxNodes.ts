@@ -93,7 +93,7 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
     }
 }
 
-class ModuleNameModuleReference extends ModuleReferenceSyntax {
+class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
     private _moduleName: NameSyntax;
 
     constructor (moduleName: NameSyntax) {

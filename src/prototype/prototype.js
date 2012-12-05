@@ -370,6 +370,9 @@ var Emitter = (function () {
     function Emitter(syntaxOnly) {
         this.syntaxOnly = syntaxOnly;
     }
+    Emitter.prototype.emit = function (input) {
+        return null;
+    };
     return Emitter;
 })();
 
@@ -1430,7 +1433,7 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseModuleNameModuleReference = function () {
         var name = this.parseName();
-        return new ModuleNameModuleReference(name);
+        return new ModuleNameModuleReferenceSyntax(name);
     };
     Parser.prototype.parseIdentifierName = function () {
         var identifierName = this.eatIdentifierNameToken();
@@ -5951,16 +5954,16 @@ var ExternalModuleReferenceSyntax = (function (_super) {
     };
     return ExternalModuleReferenceSyntax;
 })(ModuleReferenceSyntax);
-var ModuleNameModuleReference = (function (_super) {
-    __extends(ModuleNameModuleReference, _super);
-    function ModuleNameModuleReference(moduleName) {
+var ModuleNameModuleReferenceSyntax = (function (_super) {
+    __extends(ModuleNameModuleReferenceSyntax, _super);
+    function ModuleNameModuleReferenceSyntax(moduleName) {
         _super.call(this);
         this._moduleName = moduleName;
     }
-    ModuleNameModuleReference.prototype.moduleName = function () {
+    ModuleNameModuleReferenceSyntax.prototype.moduleName = function () {
         return this._moduleName;
     };
-    return ModuleNameModuleReference;
+    return ModuleNameModuleReferenceSyntax;
 })(ModuleReferenceSyntax);
 var ImportDeclarationSyntax = (function (_super) {
     __extends(ImportDeclarationSyntax, _super);

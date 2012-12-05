@@ -650,9 +650,9 @@ class Parser extends SlidingWindow {
         return new ExternalModuleReferenceSyntax(moduleKeyword, openParenToken, stringLiteral, closeParenToken);
     }
 
-    private parseModuleNameModuleReference(): ModuleNameModuleReference {
+    private parseModuleNameModuleReference(): ModuleNameModuleReferenceSyntax {
         var name = this.parseName();
-        return new ModuleNameModuleReference(name);
+        return new ModuleNameModuleReferenceSyntax(name);
     }
 
     // NOTE: This will allow all identifier names.  Even the ones that are keywords.

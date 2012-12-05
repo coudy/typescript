@@ -19,6 +19,7 @@
 ///<reference path='ISyntaxToken.ts' />
 ///<reference path='ISyntaxTrivia.ts' />
 ///<reference path='ISyntaxTriviaList.ts' />
+///<reference path='ISyntaxVisitor.ts' />
 ///<reference path='IText.ts' />
 ///<reference path='ITextLine.ts' />
 ///<reference path='LanguageVersion.ts' />

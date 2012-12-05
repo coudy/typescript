@@ -6,4 +6,8 @@ class Emitter {
     constructor(syntaxOnly: bool) {
         this.syntaxOnly = syntaxOnly;
     }
+
+    emit(input: SyntaxTree): SyntaxTree {
+        return null;
+    }
 }
