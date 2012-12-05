@@ -285,6 +285,60 @@
                         },
                         {
                             "kind": "ForInStatement",
+                            "_forKeyword": {
+                                "kind": "IdentifierNameToken",
+                                "keywordKind": "ForKeyword",
+                                "start": 441,
+                                "fullStart": 436,
+                                "width": 3,
+                                "fullWidth": 8,
+                                "text": "for",
+                                "hasLeadingTrivia": true,
+                                "hasLeadingNewLineTrivia": true
+                            },
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
+                                "start": 444,
+                                "width": 1,
+                                "text": "("
+                            },
+                            "_left": {
+                                "kind": "IdentifierName",
+                                "_identifier": {
+                                    "kind": "IdentifierNameToken",
+                                    "start": 445,
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": "i",
+                                    "valueText": "i",
+                                    "hasTrailingTrivia": true
+                                }
+                            },
+                            "_inKeyword": {
+                                "kind": "IdentifierNameToken",
+                                "keywordKind": "InKeyword",
+                                "start": 447,
+                                "width": 2,
+                                "fullWidth": 3,
+                                "text": "in",
+                                "hasTrailingTrivia": true
+                            },
+                            "_expression": {
+                                "kind": "ThisExpression",
+                                "_thisKeyword": {
+                                    "kind": "IdentifierNameToken",
+                                    "keywordKind": "ThisKeyword",
+                                    "start": 450,
+                                    "width": 4,
+                                    "text": "this"
+                                }
+                            },
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "start": 454,
+                                "width": 1,
+                                "text": ")"
+                            },
                             "_statement": {
                                 "kind": "Block",
                                 "_openBraceToken": {
@@ -352,60 +406,6 @@
                                     "hasLeadingTrivia": true,
                                     "hasTrailingTrivia": true,
                                     "hasTrailingNewLineTrivia": true
-                                }
-                            },
-                            "_forKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ForKeyword",
-                                "start": 441,
-                                "fullStart": 436,
-                                "width": 3,
-                                "fullWidth": 8,
-                                "text": "for",
-                                "hasLeadingTrivia": true,
-                                "hasLeadingNewLineTrivia": true
-                            },
-                            "_openParenToken": {
-                                "kind": "OpenParenToken",
-                                "start": 444,
-                                "width": 1,
-                                "text": "("
-                            },
-                            "_closeParenToken": {
-                                "kind": "CloseParenToken",
-                                "start": 454,
-                                "width": 1,
-                                "text": ")"
-                            },
-                            "_left": {
-                                "kind": "IdentifierName",
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "start": 445,
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": "i",
-                                    "valueText": "i",
-                                    "hasTrailingTrivia": true
-                                }
-                            },
-                            "_inKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "InKeyword",
-                                "start": 447,
-                                "width": 2,
-                                "fullWidth": 3,
-                                "text": "in",
-                                "hasTrailingTrivia": true
-                            },
-                            "_expression": {
-                                "kind": "ThisExpression",
-                                "_thisKeyword": {
-                                    "kind": "IdentifierNameToken",
-                                    "keywordKind": "ThisKeyword",
-                                    "start": 450,
-                                    "width": 4,
-                                    "text": "this"
                                 }
                             }
                         },

@@ -488,6 +488,133 @@
             },
             {
                 "kind": "ForStatement",
+                "_forKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "ForKeyword",
+                    "start": 506,
+                    "fullStart": 505,
+                    "width": 3,
+                    "fullWidth": 5,
+                    "text": "for",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingNewLineTrivia": true,
+                    "hasTrailingTrivia": true
+                },
+                "_openParenToken": {
+                    "kind": "OpenParenToken",
+                    "start": 510,
+                    "width": 1,
+                    "text": "("
+                },
+                "_initializer": {
+                    "kind": "AssignmentExpression",
+                    "_left": {
+                        "kind": "IdentifierName",
+                        "_identifier": {
+                            "kind": "IdentifierNameToken",
+                            "start": 511,
+                            "width": 1,
+                            "fullWidth": 2,
+                            "text": "i",
+                            "valueText": "i",
+                            "hasTrailingTrivia": true
+                        }
+                    },
+                    "_operatorToken": {
+                        "kind": "EqualsToken",
+                        "start": 513,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "=",
+                        "hasTrailingTrivia": true
+                    },
+                    "_right": {
+                        "kind": "NumericLiteralExpression",
+                        "_literalToken": {
+                            "kind": "NumericLiteral",
+                            "start": 515,
+                            "width": 1,
+                            "text": "0"
+                        }
+                    }
+                },
+                "_firstSemicolonToken": {
+                    "kind": "SemicolonToken",
+                    "start": 516,
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ";",
+                    "hasTrailingTrivia": true
+                },
+                "_condition": {
+                    "kind": "LessThanExpression",
+                    "_left": {
+                        "kind": "IdentifierName",
+                        "_identifier": {
+                            "kind": "IdentifierNameToken",
+                            "start": 518,
+                            "width": 1,
+                            "fullWidth": 2,
+                            "text": "i",
+                            "valueText": "i",
+                            "hasTrailingTrivia": true
+                        }
+                    },
+                    "_operatorToken": {
+                        "kind": "LessThanToken",
+                        "start": 520,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "<",
+                        "hasTrailingTrivia": true
+                    },
+                    "_right": {
+                        "kind": "IdentifierName",
+                        "_identifier": {
+                            "kind": "IdentifierNameToken",
+                            "start": 522,
+                            "width": 4,
+                            "text": "ynum",
+                            "valueText": "ynum"
+                        }
+                    }
+                },
+                "_secondSemicolonToken": {
+                    "kind": "SemicolonToken",
+                    "start": 526,
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ";",
+                    "hasTrailingTrivia": true
+                },
+                "_incrementor": {
+                    "kind": "PostIncrementExpression",
+                    "_operand": {
+                        "kind": "IdentifierName",
+                        "_identifier": {
+                            "kind": "IdentifierNameToken",
+                            "start": 528,
+                            "width": 1,
+                            "text": "i",
+                            "valueText": "i"
+                        }
+                    },
+                    "_operatorToken": {
+                        "kind": "PlusPlusToken",
+                        "start": 529,
+                        "width": 2,
+                        "text": "++"
+                    }
+                },
+                "_closeParenToken": {
+                    "kind": "CloseParenToken",
+                    "start": 531,
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ")",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLineTrivia": true
+                },
                 "_statement": {
                     "kind": "Block",
                     "_openBraceToken": {
@@ -866,133 +993,6 @@
                         "text": "}",
                         "hasTrailingTrivia": true,
                         "hasTrailingNewLineTrivia": true
-                    }
-                },
-                "_forKeyword": {
-                    "kind": "IdentifierNameToken",
-                    "keywordKind": "ForKeyword",
-                    "start": 506,
-                    "fullStart": 505,
-                    "width": 3,
-                    "fullWidth": 5,
-                    "text": "for",
-                    "hasLeadingTrivia": true,
-                    "hasLeadingNewLineTrivia": true,
-                    "hasTrailingTrivia": true
-                },
-                "_openParenToken": {
-                    "kind": "OpenParenToken",
-                    "start": 510,
-                    "width": 1,
-                    "text": "("
-                },
-                "_closeParenToken": {
-                    "kind": "CloseParenToken",
-                    "start": 531,
-                    "width": 1,
-                    "fullWidth": 2,
-                    "text": ")",
-                    "hasTrailingTrivia": true,
-                    "hasTrailingNewLineTrivia": true
-                },
-                "_initializer": {
-                    "kind": "AssignmentExpression",
-                    "_left": {
-                        "kind": "IdentifierName",
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "start": 511,
-                            "width": 1,
-                            "fullWidth": 2,
-                            "text": "i",
-                            "valueText": "i",
-                            "hasTrailingTrivia": true
-                        }
-                    },
-                    "_operatorToken": {
-                        "kind": "EqualsToken",
-                        "start": 513,
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": "=",
-                        "hasTrailingTrivia": true
-                    },
-                    "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "start": 515,
-                            "width": 1,
-                            "text": "0"
-                        }
-                    }
-                },
-                "_firstSemicolonToken": {
-                    "kind": "SemicolonToken",
-                    "start": 516,
-                    "width": 1,
-                    "fullWidth": 2,
-                    "text": ";",
-                    "hasTrailingTrivia": true
-                },
-                "_condition": {
-                    "kind": "LessThanExpression",
-                    "_left": {
-                        "kind": "IdentifierName",
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "start": 518,
-                            "width": 1,
-                            "fullWidth": 2,
-                            "text": "i",
-                            "valueText": "i",
-                            "hasTrailingTrivia": true
-                        }
-                    },
-                    "_operatorToken": {
-                        "kind": "LessThanToken",
-                        "start": 520,
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": "<",
-                        "hasTrailingTrivia": true
-                    },
-                    "_right": {
-                        "kind": "IdentifierName",
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "start": 522,
-                            "width": 4,
-                            "text": "ynum",
-                            "valueText": "ynum"
-                        }
-                    }
-                },
-                "_secondSemicolonToken": {
-                    "kind": "SemicolonToken",
-                    "start": 526,
-                    "width": 1,
-                    "fullWidth": 2,
-                    "text": ";",
-                    "hasTrailingTrivia": true
-                },
-                "_incrementor": {
-                    "kind": "PostIncrementExpression",
-                    "_operand": {
-                        "kind": "IdentifierName",
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "start": 528,
-                            "width": 1,
-                            "text": "i",
-                            "valueText": "i"
-                        }
-                    },
-                    "_operatorToken": {
-                        "kind": "PlusPlusToken",
-                        "start": 529,
-                        "width": 2,
-                        "text": "++"
                     }
                 }
             }

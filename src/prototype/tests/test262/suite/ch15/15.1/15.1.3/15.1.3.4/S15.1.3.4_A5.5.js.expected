@@ -327,6 +327,58 @@
             },
             {
                 "kind": "ForInStatement",
+                "_forKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "ForKeyword",
+                    "start": 560,
+                    "width": 3,
+                    "fullWidth": 4,
+                    "text": "for",
+                    "hasTrailingTrivia": true
+                },
+                "_openParenToken": {
+                    "kind": "OpenParenToken",
+                    "start": 564,
+                    "width": 1,
+                    "text": "("
+                },
+                "_left": {
+                    "kind": "IdentifierName",
+                    "_identifier": {
+                        "kind": "IdentifierNameToken",
+                        "start": 565,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "p",
+                        "valueText": "p",
+                        "hasTrailingTrivia": true
+                    }
+                },
+                "_inKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "InKeyword",
+                    "start": 567,
+                    "width": 2,
+                    "fullWidth": 3,
+                    "text": "in",
+                    "hasTrailingTrivia": true
+                },
+                "_expression": {
+                    "kind": "ThisExpression",
+                    "_thisKeyword": {
+                        "kind": "IdentifierNameToken",
+                        "keywordKind": "ThisKeyword",
+                        "start": 570,
+                        "width": 4,
+                        "text": "this"
+                    }
+                },
+                "_closeParenToken": {
+                    "kind": "CloseParenToken",
+                    "start": 574,
+                    "width": 1,
+                    "text": ")"
+                },
                 "_statement": {
                     "kind": "Block",
                     "_openBraceToken": {
@@ -480,58 +532,6 @@
                         "text": "}",
                         "hasTrailingTrivia": true,
                         "hasTrailingNewLineTrivia": true
-                    }
-                },
-                "_forKeyword": {
-                    "kind": "IdentifierNameToken",
-                    "keywordKind": "ForKeyword",
-                    "start": 560,
-                    "width": 3,
-                    "fullWidth": 4,
-                    "text": "for",
-                    "hasTrailingTrivia": true
-                },
-                "_openParenToken": {
-                    "kind": "OpenParenToken",
-                    "start": 564,
-                    "width": 1,
-                    "text": "("
-                },
-                "_closeParenToken": {
-                    "kind": "CloseParenToken",
-                    "start": 574,
-                    "width": 1,
-                    "text": ")"
-                },
-                "_left": {
-                    "kind": "IdentifierName",
-                    "_identifier": {
-                        "kind": "IdentifierNameToken",
-                        "start": 565,
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": "p",
-                        "valueText": "p",
-                        "hasTrailingTrivia": true
-                    }
-                },
-                "_inKeyword": {
-                    "kind": "IdentifierNameToken",
-                    "keywordKind": "InKeyword",
-                    "start": 567,
-                    "width": 2,
-                    "fullWidth": 3,
-                    "text": "in",
-                    "hasTrailingTrivia": true
-                },
-                "_expression": {
-                    "kind": "ThisExpression",
-                    "_thisKeyword": {
-                        "kind": "IdentifierNameToken",
-                        "keywordKind": "ThisKeyword",
-                        "start": 570,
-                        "width": 4,
-                        "text": "this"
                     }
                 }
             },

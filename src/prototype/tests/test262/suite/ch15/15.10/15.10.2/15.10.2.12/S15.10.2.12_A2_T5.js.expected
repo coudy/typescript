@@ -204,63 +204,6 @@
             },
             {
                 "kind": "WhileStatement",
-                "_statement": {
-                    "kind": "Block",
-                    "_openBraceToken": {
-                        "kind": "OpenBraceToken",
-                        "start": 699,
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": "{",
-                        "hasTrailingTrivia": true,
-                        "hasTrailingNewLineTrivia": true
-                    },
-                    "_statements": [
-                        {
-                            "kind": "ExpressionStatement",
-                            "_expression": {
-                                "kind": "PostIncrementExpression",
-                                "_operand": {
-                                    "kind": "IdentifierName",
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "start": 704,
-                                        "fullStart": 701,
-                                        "width": 1,
-                                        "fullWidth": 4,
-                                        "text": "k",
-                                        "valueText": "k",
-                                        "hasLeadingTrivia": true
-                                    }
-                                },
-                                "_operatorToken": {
-                                    "kind": "PlusPlusToken",
-                                    "start": 705,
-                                    "width": 2,
-                                    "text": "++"
-                                }
-                            },
-                            "_semicolonToken": {
-                                "kind": "SemicolonToken",
-                                "start": 707,
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": ";",
-                                "hasTrailingTrivia": true,
-                                "hasTrailingNewLineTrivia": true
-                            }
-                        }
-                    ],
-                    "_closeBraceToken": {
-                        "kind": "CloseBraceToken",
-                        "start": 709,
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": "}",
-                        "hasTrailingTrivia": true,
-                        "hasTrailingNewLineTrivia": true
-                    }
-                },
                 "_whileKeyword": {
                     "kind": "IdentifierNameToken",
                     "keywordKind": "WhileKeyword",
@@ -365,6 +308,63 @@
                     "fullWidth": 2,
                     "text": ")",
                     "hasTrailingTrivia": true
+                },
+                "_statement": {
+                    "kind": "Block",
+                    "_openBraceToken": {
+                        "kind": "OpenBraceToken",
+                        "start": 699,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "{",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    },
+                    "_statements": [
+                        {
+                            "kind": "ExpressionStatement",
+                            "_expression": {
+                                "kind": "PostIncrementExpression",
+                                "_operand": {
+                                    "kind": "IdentifierName",
+                                    "_identifier": {
+                                        "kind": "IdentifierNameToken",
+                                        "start": 704,
+                                        "fullStart": 701,
+                                        "width": 1,
+                                        "fullWidth": 4,
+                                        "text": "k",
+                                        "valueText": "k",
+                                        "hasLeadingTrivia": true
+                                    }
+                                },
+                                "_operatorToken": {
+                                    "kind": "PlusPlusToken",
+                                    "start": 705,
+                                    "width": 2,
+                                    "text": "++"
+                                }
+                            },
+                            "_semicolonToken": {
+                                "kind": "SemicolonToken",
+                                "start": 707,
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ";",
+                                "hasTrailingTrivia": true,
+                                "hasTrailingNewLineTrivia": true
+                            }
+                        }
+                    ],
+                    "_closeBraceToken": {
+                        "kind": "CloseBraceToken",
+                        "start": 709,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "}",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    }
                 }
             },
             {

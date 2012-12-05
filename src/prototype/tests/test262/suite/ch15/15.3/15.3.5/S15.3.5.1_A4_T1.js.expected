@@ -298,6 +298,63 @@
             },
             {
                 "kind": "ForInStatement",
+                "_forKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "ForKeyword",
+                    "start": 490,
+                    "fullStart": 489,
+                    "width": 3,
+                    "fullWidth": 4,
+                    "text": "for",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingNewLineTrivia": true
+                },
+                "_openParenToken": {
+                    "kind": "OpenParenToken",
+                    "start": 493,
+                    "width": 1,
+                    "text": "("
+                },
+                "_left": {
+                    "kind": "IdentifierName",
+                    "_identifier": {
+                        "kind": "IdentifierNameToken",
+                        "start": 494,
+                        "width": 3,
+                        "fullWidth": 4,
+                        "text": "key",
+                        "valueText": "key",
+                        "hasTrailingTrivia": true
+                    }
+                },
+                "_inKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "InKeyword",
+                    "start": 498,
+                    "width": 2,
+                    "fullWidth": 3,
+                    "text": "in",
+                    "hasTrailingTrivia": true
+                },
+                "_expression": {
+                    "kind": "IdentifierName",
+                    "_identifier": {
+                        "kind": "IdentifierNameToken",
+                        "start": 501,
+                        "width": 1,
+                        "text": "f",
+                        "valueText": "f"
+                    }
+                },
+                "_closeParenToken": {
+                    "kind": "CloseParenToken",
+                    "start": 502,
+                    "width": 1,
+                    "fullWidth": 6,
+                    "text": ")",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLineTrivia": true
+                },
                 "_statement": {
                     "kind": "IfStatement",
                     "_ifKeyword": {
@@ -409,63 +466,6 @@
                             "hasTrailingTrivia": true,
                             "hasTrailingNewLineTrivia": true
                         }
-                    }
-                },
-                "_forKeyword": {
-                    "kind": "IdentifierNameToken",
-                    "keywordKind": "ForKeyword",
-                    "start": 490,
-                    "fullStart": 489,
-                    "width": 3,
-                    "fullWidth": 4,
-                    "text": "for",
-                    "hasLeadingTrivia": true,
-                    "hasLeadingNewLineTrivia": true
-                },
-                "_openParenToken": {
-                    "kind": "OpenParenToken",
-                    "start": 493,
-                    "width": 1,
-                    "text": "("
-                },
-                "_closeParenToken": {
-                    "kind": "CloseParenToken",
-                    "start": 502,
-                    "width": 1,
-                    "fullWidth": 6,
-                    "text": ")",
-                    "hasTrailingTrivia": true,
-                    "hasTrailingNewLineTrivia": true
-                },
-                "_left": {
-                    "kind": "IdentifierName",
-                    "_identifier": {
-                        "kind": "IdentifierNameToken",
-                        "start": 494,
-                        "width": 3,
-                        "fullWidth": 4,
-                        "text": "key",
-                        "valueText": "key",
-                        "hasTrailingTrivia": true
-                    }
-                },
-                "_inKeyword": {
-                    "kind": "IdentifierNameToken",
-                    "keywordKind": "InKeyword",
-                    "start": 498,
-                    "width": 2,
-                    "fullWidth": 3,
-                    "text": "in",
-                    "hasTrailingTrivia": true
-                },
-                "_expression": {
-                    "kind": "IdentifierName",
-                    "_identifier": {
-                        "kind": "IdentifierNameToken",
-                        "start": 501,
-                        "width": 1,
-                        "text": "f",
-                        "valueText": "f"
                     }
                 }
             },

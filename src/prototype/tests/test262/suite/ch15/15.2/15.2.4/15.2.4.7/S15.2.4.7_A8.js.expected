@@ -434,6 +434,100 @@
             },
             {
                 "kind": "ForInStatement",
+                "_forKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "ForKeyword",
+                    "start": 757,
+                    "fullStart": 745,
+                    "width": 3,
+                    "fullWidth": 16,
+                    "text": "for",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingCommentTrivia": true,
+                    "hasLeadingNewLineTrivia": true,
+                    "hasTrailingTrivia": true
+                },
+                "_openParenToken": {
+                    "kind": "OpenParenToken",
+                    "start": 761,
+                    "width": 1,
+                    "text": "("
+                },
+                "_left": {
+                    "kind": "IdentifierName",
+                    "_identifier": {
+                        "kind": "IdentifierNameToken",
+                        "start": 762,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "p",
+                        "valueText": "p",
+                        "hasTrailingTrivia": true
+                    }
+                },
+                "_inKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "InKeyword",
+                    "start": 764,
+                    "width": 2,
+                    "fullWidth": 3,
+                    "text": "in",
+                    "hasTrailingTrivia": true
+                },
+                "_expression": {
+                    "kind": "MemberAccessExpression",
+                    "_expression": {
+                        "kind": "MemberAccessExpression",
+                        "_expression": {
+                            "kind": "IdentifierName",
+                            "_identifier": {
+                                "kind": "IdentifierNameToken",
+                                "start": 767,
+                                "width": 6,
+                                "text": "Object",
+                                "valueText": "Object"
+                            }
+                        },
+                        "_dotToken": {
+                            "kind": "DotToken",
+                            "start": 773,
+                            "width": 1,
+                            "text": "."
+                        },
+                        "_identifierName": {
+                            "kind": "IdentifierName",
+                            "_identifier": {
+                                "kind": "IdentifierNameToken",
+                                "start": 774,
+                                "width": 9,
+                                "text": "prototype",
+                                "valueText": "prototype"
+                            }
+                        }
+                    },
+                    "_dotToken": {
+                        "kind": "DotToken",
+                        "start": 783,
+                        "width": 1,
+                        "text": "."
+                    },
+                    "_identifierName": {
+                        "kind": "IdentifierName",
+                        "_identifier": {
+                            "kind": "IdentifierNameToken",
+                            "start": 784,
+                            "width": 20,
+                            "text": "propertyIsEnumerable",
+                            "valueText": "propertyIsEnumerable"
+                        }
+                    }
+                },
+                "_closeParenToken": {
+                    "kind": "CloseParenToken",
+                    "start": 804,
+                    "width": 1,
+                    "text": ")"
+                },
                 "_statement": {
                     "kind": "Block",
                     "_openBraceToken": {
@@ -566,100 +660,6 @@
                         "text": "}",
                         "hasTrailingTrivia": true,
                         "hasTrailingNewLineTrivia": true
-                    }
-                },
-                "_forKeyword": {
-                    "kind": "IdentifierNameToken",
-                    "keywordKind": "ForKeyword",
-                    "start": 757,
-                    "fullStart": 745,
-                    "width": 3,
-                    "fullWidth": 16,
-                    "text": "for",
-                    "hasLeadingTrivia": true,
-                    "hasLeadingCommentTrivia": true,
-                    "hasLeadingNewLineTrivia": true,
-                    "hasTrailingTrivia": true
-                },
-                "_openParenToken": {
-                    "kind": "OpenParenToken",
-                    "start": 761,
-                    "width": 1,
-                    "text": "("
-                },
-                "_closeParenToken": {
-                    "kind": "CloseParenToken",
-                    "start": 804,
-                    "width": 1,
-                    "text": ")"
-                },
-                "_left": {
-                    "kind": "IdentifierName",
-                    "_identifier": {
-                        "kind": "IdentifierNameToken",
-                        "start": 762,
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": "p",
-                        "valueText": "p",
-                        "hasTrailingTrivia": true
-                    }
-                },
-                "_inKeyword": {
-                    "kind": "IdentifierNameToken",
-                    "keywordKind": "InKeyword",
-                    "start": 764,
-                    "width": 2,
-                    "fullWidth": 3,
-                    "text": "in",
-                    "hasTrailingTrivia": true
-                },
-                "_expression": {
-                    "kind": "MemberAccessExpression",
-                    "_expression": {
-                        "kind": "MemberAccessExpression",
-                        "_expression": {
-                            "kind": "IdentifierName",
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "start": 767,
-                                "width": 6,
-                                "text": "Object",
-                                "valueText": "Object"
-                            }
-                        },
-                        "_dotToken": {
-                            "kind": "DotToken",
-                            "start": 773,
-                            "width": 1,
-                            "text": "."
-                        },
-                        "_identifierName": {
-                            "kind": "IdentifierName",
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "start": 774,
-                                "width": 9,
-                                "text": "prototype",
-                                "valueText": "prototype"
-                            }
-                        }
-                    },
-                    "_dotToken": {
-                        "kind": "DotToken",
-                        "start": 783,
-                        "width": 1,
-                        "text": "."
-                    },
-                    "_identifierName": {
-                        "kind": "IdentifierName",
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "start": 784,
-                            "width": 20,
-                            "text": "propertyIsEnumerable",
-                            "valueText": "propertyIsEnumerable"
-                        }
                     }
                 }
             }

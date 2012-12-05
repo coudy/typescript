@@ -14,6 +14,19 @@
         "_moduleElements": [
             {
                 "kind": "DoStatement",
+                "_doKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "DoKeyword",
+                    "start": 436,
+                    "fullStart": 0,
+                    "width": 2,
+                    "fullWidth": 439,
+                    "text": "do",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingCommentTrivia": true,
+                    "hasLeadingNewLineTrivia": true,
+                    "hasTrailingTrivia": true
+                },
                 "_statement": {
                     "kind": "VariableStatement",
                     "_variableDeclaration": {
@@ -66,19 +79,6 @@
                         "text": ";",
                         "hasTrailingTrivia": true
                     }
-                },
-                "_doKeyword": {
-                    "kind": "IdentifierNameToken",
-                    "keywordKind": "DoKeyword",
-                    "start": 436,
-                    "fullStart": 0,
-                    "width": 2,
-                    "fullWidth": 439,
-                    "text": "do",
-                    "hasLeadingTrivia": true,
-                    "hasLeadingCommentTrivia": true,
-                    "hasLeadingNewLineTrivia": true,
-                    "hasTrailingTrivia": true
                 },
                 "_whileKeyword": {
                     "kind": "IdentifierNameToken",
@@ -177,18 +177,6 @@
             },
             {
                 "kind": "WhileStatement",
-                "_statement": {
-                    "kind": "EmptyStatement",
-                    "_semicolonToken": {
-                        "kind": "SemicolonToken",
-                        "start": 467,
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": ";",
-                        "hasTrailingTrivia": true,
-                        "hasTrailingNewLineTrivia": true
-                    }
-                },
                 "_whileKeyword": {
                     "kind": "IdentifierNameToken",
                     "keywordKind": "WhileKeyword",
@@ -218,6 +206,18 @@
                     "start": 466,
                     "width": 1,
                     "text": ")"
+                },
+                "_statement": {
+                    "kind": "EmptyStatement",
+                    "_semicolonToken": {
+                        "kind": "SemicolonToken",
+                        "start": 467,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": ";",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    }
                 }
             }
         ],

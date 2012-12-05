@@ -69,6 +69,121 @@
                 },
                 "_statement": {
                     "kind": "ForStatement",
+                    "_forKeyword": {
+                        "kind": "IdentifierNameToken",
+                        "keywordKind": "ForKeyword",
+                        "start": 501,
+                        "width": 3,
+                        "text": "for"
+                    },
+                    "_openParenToken": {
+                        "kind": "OpenParenToken",
+                        "start": 504,
+                        "width": 1,
+                        "text": "("
+                    },
+                    "_initializer": {
+                        "kind": "AssignmentExpression",
+                        "_left": {
+                            "kind": "IdentifierName",
+                            "_identifier": {
+                                "kind": "IdentifierNameToken",
+                                "start": 505,
+                                "width": 5,
+                                "text": "index",
+                                "valueText": "index"
+                            }
+                        },
+                        "_operatorToken": {
+                            "kind": "EqualsToken",
+                            "start": 510,
+                            "width": 1,
+                            "text": "="
+                        },
+                        "_right": {
+                            "kind": "NumericLiteralExpression",
+                            "_literalToken": {
+                                "kind": "NumericLiteral",
+                                "start": 511,
+                                "width": 1,
+                                "text": "0"
+                            }
+                        }
+                    },
+                    "_firstSemicolonToken": {
+                        "kind": "SemicolonToken",
+                        "start": 512,
+                        "width": 1,
+                        "text": ";"
+                    },
+                    "_condition": {
+                        "kind": "LessThanExpression",
+                        "_left": {
+                            "kind": "IdentifierName",
+                            "_identifier": {
+                                "kind": "IdentifierNameToken",
+                                "start": 513,
+                                "width": 5,
+                                "text": "index",
+                                "valueText": "index"
+                            }
+                        },
+                        "_operatorToken": {
+                            "kind": "LessThanToken",
+                            "start": 518,
+                            "width": 1,
+                            "text": "<"
+                        },
+                        "_right": {
+                            "kind": "NumericLiteralExpression",
+                            "_literalToken": {
+                                "kind": "NumericLiteral",
+                                "start": 519,
+                                "width": 1,
+                                "text": "4"
+                            }
+                        }
+                    },
+                    "_secondSemicolonToken": {
+                        "kind": "SemicolonToken",
+                        "start": 520,
+                        "width": 1,
+                        "text": ";"
+                    },
+                    "_incrementor": {
+                        "kind": "AddAssignmentExpression",
+                        "_left": {
+                            "kind": "IdentifierName",
+                            "_identifier": {
+                                "kind": "IdentifierNameToken",
+                                "start": 521,
+                                "width": 5,
+                                "text": "index",
+                                "valueText": "index"
+                            }
+                        },
+                        "_operatorToken": {
+                            "kind": "PlusEqualsToken",
+                            "start": 526,
+                            "width": 2,
+                            "text": "+="
+                        },
+                        "_right": {
+                            "kind": "NumericLiteralExpression",
+                            "_literalToken": {
+                                "kind": "NumericLiteral",
+                                "start": 528,
+                                "width": 1,
+                                "text": "1"
+                            }
+                        }
+                    },
+                    "_closeParenToken": {
+                        "kind": "CloseParenToken",
+                        "start": 529,
+                        "width": 1,
+                        "text": ")"
+                    },
                     "_statement": {
                         "kind": "Block",
                         "_openBraceToken": {
@@ -101,6 +216,113 @@
                                 },
                                 "_statement": {
                                     "kind": "ForStatement",
+                                    "_forKeyword": {
+                                        "kind": "IdentifierNameToken",
+                                        "keywordKind": "ForKeyword",
+                                        "start": 543,
+                                        "width": 3,
+                                        "text": "for"
+                                    },
+                                    "_openParenToken": {
+                                        "kind": "OpenParenToken",
+                                        "start": 546,
+                                        "width": 1,
+                                        "text": "("
+                                    },
+                                    "_initializer": {
+                                        "kind": "AssignmentExpression",
+                                        "_left": {
+                                            "kind": "IdentifierName",
+                                            "_identifier": {
+                                                "kind": "IdentifierNameToken",
+                                                "start": 547,
+                                                "width": 7,
+                                                "text": "index_n",
+                                                "valueText": "index_n"
+                                            }
+                                        },
+                                        "_operatorToken": {
+                                            "kind": "EqualsToken",
+                                            "start": 554,
+                                            "width": 1,
+                                            "text": "="
+                                        },
+                                        "_right": {
+                                            "kind": "NumericLiteralExpression",
+                                            "_literalToken": {
+                                                "kind": "NumericLiteral",
+                                                "start": 555,
+                                                "width": 1,
+                                                "text": "0"
+                                            }
+                                        }
+                                    },
+                                    "_firstSemicolonToken": {
+                                        "kind": "SemicolonToken",
+                                        "start": 556,
+                                        "width": 1,
+                                        "text": ";"
+                                    },
+                                    "_condition": {
+                                        "kind": "LessThanOrEqualExpression",
+                                        "_left": {
+                                            "kind": "IdentifierName",
+                                            "_identifier": {
+                                                "kind": "IdentifierNameToken",
+                                                "start": 557,
+                                                "width": 7,
+                                                "text": "index_n",
+                                                "valueText": "index_n"
+                                            }
+                                        },
+                                        "_operatorToken": {
+                                            "kind": "LessThanEqualsToken",
+                                            "start": 564,
+                                            "width": 2,
+                                            "text": "<="
+                                        },
+                                        "_right": {
+                                            "kind": "IdentifierName",
+                                            "_identifier": {
+                                                "kind": "IdentifierNameToken",
+                                                "start": 566,
+                                                "width": 5,
+                                                "text": "index",
+                                                "valueText": "index"
+                                            }
+                                        }
+                                    },
+                                    "_secondSemicolonToken": {
+                                        "kind": "SemicolonToken",
+                                        "start": 571,
+                                        "width": 1,
+                                        "text": ";"
+                                    },
+                                    "_incrementor": {
+                                        "kind": "PostIncrementExpression",
+                                        "_operand": {
+                                            "kind": "IdentifierName",
+                                            "_identifier": {
+                                                "kind": "IdentifierNameToken",
+                                                "start": 572,
+                                                "width": 7,
+                                                "text": "index_n",
+                                                "valueText": "index_n"
+                                            }
+                                        },
+                                        "_operatorToken": {
+                                            "kind": "PlusPlusToken",
+                                            "start": 579,
+                                            "width": 2,
+                                            "text": "++"
+                                        }
+                                    },
+                                    "_closeParenToken": {
+                                        "kind": "CloseParenToken",
+                                        "start": 581,
+                                        "width": 1,
+                                        "text": ")"
+                                    },
                                     "_statement": {
                                         "kind": "Block",
                                         "_openBraceToken": {
@@ -310,113 +532,6 @@
                                             "hasTrailingTrivia": true,
                                             "hasTrailingNewLineTrivia": true
                                         }
-                                    },
-                                    "_forKeyword": {
-                                        "kind": "IdentifierNameToken",
-                                        "keywordKind": "ForKeyword",
-                                        "start": 543,
-                                        "width": 3,
-                                        "text": "for"
-                                    },
-                                    "_openParenToken": {
-                                        "kind": "OpenParenToken",
-                                        "start": 546,
-                                        "width": 1,
-                                        "text": "("
-                                    },
-                                    "_closeParenToken": {
-                                        "kind": "CloseParenToken",
-                                        "start": 581,
-                                        "width": 1,
-                                        "text": ")"
-                                    },
-                                    "_initializer": {
-                                        "kind": "AssignmentExpression",
-                                        "_left": {
-                                            "kind": "IdentifierName",
-                                            "_identifier": {
-                                                "kind": "IdentifierNameToken",
-                                                "start": 547,
-                                                "width": 7,
-                                                "text": "index_n",
-                                                "valueText": "index_n"
-                                            }
-                                        },
-                                        "_operatorToken": {
-                                            "kind": "EqualsToken",
-                                            "start": 554,
-                                            "width": 1,
-                                            "text": "="
-                                        },
-                                        "_right": {
-                                            "kind": "NumericLiteralExpression",
-                                            "_literalToken": {
-                                                "kind": "NumericLiteral",
-                                                "start": 555,
-                                                "width": 1,
-                                                "text": "0"
-                                            }
-                                        }
-                                    },
-                                    "_firstSemicolonToken": {
-                                        "kind": "SemicolonToken",
-                                        "start": 556,
-                                        "width": 1,
-                                        "text": ";"
-                                    },
-                                    "_condition": {
-                                        "kind": "LessThanOrEqualExpression",
-                                        "_left": {
-                                            "kind": "IdentifierName",
-                                            "_identifier": {
-                                                "kind": "IdentifierNameToken",
-                                                "start": 557,
-                                                "width": 7,
-                                                "text": "index_n",
-                                                "valueText": "index_n"
-                                            }
-                                        },
-                                        "_operatorToken": {
-                                            "kind": "LessThanEqualsToken",
-                                            "start": 564,
-                                            "width": 2,
-                                            "text": "<="
-                                        },
-                                        "_right": {
-                                            "kind": "IdentifierName",
-                                            "_identifier": {
-                                                "kind": "IdentifierNameToken",
-                                                "start": 566,
-                                                "width": 5,
-                                                "text": "index",
-                                                "valueText": "index"
-                                            }
-                                        }
-                                    },
-                                    "_secondSemicolonToken": {
-                                        "kind": "SemicolonToken",
-                                        "start": 571,
-                                        "width": 1,
-                                        "text": ";"
-                                    },
-                                    "_incrementor": {
-                                        "kind": "PostIncrementExpression",
-                                        "_operand": {
-                                            "kind": "IdentifierName",
-                                            "_identifier": {
-                                                "kind": "IdentifierNameToken",
-                                                "start": 572,
-                                                "width": 7,
-                                                "text": "index_n",
-                                                "valueText": "index_n"
-                                            }
-                                        },
-                                        "_operatorToken": {
-                                            "kind": "PlusPlusToken",
-                                            "start": 579,
-                                            "width": 2,
-                                            "text": "++"
-                                        }
                                     }
                                 }
                             }
@@ -429,121 +544,6 @@
                             "text": "}",
                             "hasTrailingTrivia": true,
                             "hasTrailingNewLineTrivia": true
-                        }
-                    },
-                    "_forKeyword": {
-                        "kind": "IdentifierNameToken",
-                        "keywordKind": "ForKeyword",
-                        "start": 501,
-                        "width": 3,
-                        "text": "for"
-                    },
-                    "_openParenToken": {
-                        "kind": "OpenParenToken",
-                        "start": 504,
-                        "width": 1,
-                        "text": "("
-                    },
-                    "_closeParenToken": {
-                        "kind": "CloseParenToken",
-                        "start": 529,
-                        "width": 1,
-                        "text": ")"
-                    },
-                    "_initializer": {
-                        "kind": "AssignmentExpression",
-                        "_left": {
-                            "kind": "IdentifierName",
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "start": 505,
-                                "width": 5,
-                                "text": "index",
-                                "valueText": "index"
-                            }
-                        },
-                        "_operatorToken": {
-                            "kind": "EqualsToken",
-                            "start": 510,
-                            "width": 1,
-                            "text": "="
-                        },
-                        "_right": {
-                            "kind": "NumericLiteralExpression",
-                            "_literalToken": {
-                                "kind": "NumericLiteral",
-                                "start": 511,
-                                "width": 1,
-                                "text": "0"
-                            }
-                        }
-                    },
-                    "_firstSemicolonToken": {
-                        "kind": "SemicolonToken",
-                        "start": 512,
-                        "width": 1,
-                        "text": ";"
-                    },
-                    "_condition": {
-                        "kind": "LessThanExpression",
-                        "_left": {
-                            "kind": "IdentifierName",
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "start": 513,
-                                "width": 5,
-                                "text": "index",
-                                "valueText": "index"
-                            }
-                        },
-                        "_operatorToken": {
-                            "kind": "LessThanToken",
-                            "start": 518,
-                            "width": 1,
-                            "text": "<"
-                        },
-                        "_right": {
-                            "kind": "NumericLiteralExpression",
-                            "_literalToken": {
-                                "kind": "NumericLiteral",
-                                "start": 519,
-                                "width": 1,
-                                "text": "4"
-                            }
-                        }
-                    },
-                    "_secondSemicolonToken": {
-                        "kind": "SemicolonToken",
-                        "start": 520,
-                        "width": 1,
-                        "text": ";"
-                    },
-                    "_incrementor": {
-                        "kind": "AddAssignmentExpression",
-                        "_left": {
-                            "kind": "IdentifierName",
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "start": 521,
-                                "width": 5,
-                                "text": "index",
-                                "valueText": "index"
-                            }
-                        },
-                        "_operatorToken": {
-                            "kind": "PlusEqualsToken",
-                            "start": 526,
-                            "width": 2,
-                            "text": "+="
-                        },
-                        "_right": {
-                            "kind": "NumericLiteralExpression",
-                            "_literalToken": {
-                                "kind": "NumericLiteral",
-                                "start": 528,
-                                "width": 1,
-                                "text": "1"
-                            }
                         }
                     }
                 }

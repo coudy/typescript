@@ -35540,17 +35540,9 @@ var Program = (function () {
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {
         var _this = this;
         environment.standardOut.WriteLine("");
-        environment.standardOut.WriteLine("Testing scanner.");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
-            return _this.runScanner(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify);
-        });
-        environment.standardOut.WriteLine("Testing parser.");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
-        });
-        environment.standardOut.WriteLine("Testing against monoco.");
-        this.runTests(environment, "C:\\temp\\monoco-files", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
+        environment.standardOut.WriteLine("Testing against 262.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
+            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true, true);
         });
         environment.standardOut.WriteLine("Done.");
     };

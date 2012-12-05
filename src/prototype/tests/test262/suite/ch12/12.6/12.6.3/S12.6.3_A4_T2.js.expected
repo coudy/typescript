@@ -157,15 +157,6 @@
             },
             {
                 "kind": "ForInStatement",
-                "_statement": {
-                    "kind": "EmptyStatement",
-                    "_semicolonToken": {
-                        "kind": "SemicolonToken",
-                        "start": 535,
-                        "width": 1,
-                        "text": ";"
-                    }
-                },
                 "_forKeyword": {
                     "kind": "IdentifierNameToken",
                     "keywordKind": "ForKeyword",
@@ -183,13 +174,6 @@
                     "start": 526,
                     "width": 1,
                     "text": "("
-                },
-                "_closeParenToken": {
-                    "kind": "CloseParenToken",
-                    "start": 535,
-                    "width": 0,
-                    "isMissing": true,
-                    "text": ""
                 },
                 "_left": {
                     "kind": "NumericLiteralExpression",
@@ -219,6 +203,22 @@
                         "width": 3,
                         "text": "arr",
                         "valueText": "arr"
+                    }
+                },
+                "_closeParenToken": {
+                    "kind": "CloseParenToken",
+                    "start": 535,
+                    "width": 0,
+                    "isMissing": true,
+                    "text": ""
+                },
+                "_statement": {
+                    "kind": "EmptyStatement",
+                    "_semicolonToken": {
+                        "kind": "SemicolonToken",
+                        "start": 535,
+                        "width": 1,
+                        "text": ";"
                     }
                 }
             },

@@ -11,28 +11,22 @@
         "_moduleElements": [
             {
                 "kind": "DoStatement",
+                "_doKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "DoKeyword",
+                    "start": 307,
+                    "fullStart": 0,
+                    "width": 2,
+                    "fullWidth": 310,
+                    "text": "do",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingCommentTrivia": true,
+                    "hasLeadingNewLineTrivia": true,
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLineTrivia": true
+                },
                 "_statement": {
                     "kind": "WhileStatement",
-                    "_statement": {
-                        "kind": "ExpressionStatement",
-                        "_expression": {
-                            "kind": "IdentifierName",
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "start": 329,
-                                "width": 0,
-                                "isMissing": true,
-                                "text": ""
-                            }
-                        },
-                        "_semicolonToken": {
-                            "kind": "SemicolonToken",
-                            "start": 326,
-                            "width": 0,
-                            "isMissing": true,
-                            "text": ""
-                        }
-                    },
                     "_whileKeyword": {
                         "kind": "IdentifierNameToken",
                         "keywordKind": "WhileKeyword",
@@ -69,21 +63,27 @@
                         "text": ")",
                         "hasTrailingTrivia": true,
                         "hasTrailingNewLineTrivia": true
+                    },
+                    "_statement": {
+                        "kind": "ExpressionStatement",
+                        "_expression": {
+                            "kind": "IdentifierName",
+                            "_identifier": {
+                                "kind": "IdentifierNameToken",
+                                "start": 329,
+                                "width": 0,
+                                "isMissing": true,
+                                "text": ""
+                            }
+                        },
+                        "_semicolonToken": {
+                            "kind": "SemicolonToken",
+                            "start": 326,
+                            "width": 0,
+                            "isMissing": true,
+                            "text": ""
+                        }
                     }
-                },
-                "_doKeyword": {
-                    "kind": "IdentifierNameToken",
-                    "keywordKind": "DoKeyword",
-                    "start": 307,
-                    "fullStart": 0,
-                    "width": 2,
-                    "fullWidth": 310,
-                    "text": "do",
-                    "hasLeadingTrivia": true,
-                    "hasLeadingCommentTrivia": true,
-                    "hasLeadingNewLineTrivia": true,
-                    "hasTrailingTrivia": true,
-                    "hasTrailingNewLineTrivia": true
                 },
                 "_whileKeyword": {
                     "kind": "IdentifierNameToken",

@@ -31,63 +31,6 @@
                     "_statements": [
                         {
                             "kind": "ForStatement",
-                            "_statement": {
-                                "kind": "Block",
-                                "_openBraceToken": {
-                                    "kind": "OpenBraceToken",
-                                    "start": 550,
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": "{",
-                                    "hasTrailingTrivia": true,
-                                    "hasTrailingNewLineTrivia": true
-                                },
-                                "_statements": [
-                                    {
-                                        "kind": "ThrowStatement",
-                                        "_throwKeyword": {
-                                            "kind": "IdentifierNameToken",
-                                            "keywordKind": "ThrowKeyword",
-                                            "start": 554,
-                                            "fullStart": 552,
-                                            "width": 5,
-                                            "fullWidth": 8,
-                                            "text": "throw",
-                                            "hasLeadingTrivia": true,
-                                            "hasTrailingTrivia": true
-                                        },
-                                        "_expression": {
-                                            "kind": "StringLiteralExpression",
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "start": 560,
-                                                "width": 11,
-                                                "text": "\"Statement\""
-                                            }
-                                        },
-                                        "_semicolonToken": {
-                                            "kind": "SemicolonToken",
-                                            "start": 571,
-                                            "width": 1,
-                                            "fullWidth": 2,
-                                            "text": ";",
-                                            "hasTrailingTrivia": true,
-                                            "hasTrailingNewLineTrivia": true
-                                        }
-                                    }
-                                ],
-                                "_closeBraceToken": {
-                                    "kind": "CloseBraceToken",
-                                    "start": 574,
-                                    "fullStart": 573,
-                                    "width": 1,
-                                    "fullWidth": 3,
-                                    "text": "}",
-                                    "hasLeadingTrivia": true,
-                                    "hasTrailingTrivia": true,
-                                    "hasTrailingNewLineTrivia": true
-                                }
-                            },
                             "_forKeyword": {
                                 "kind": "IdentifierNameToken",
                                 "keywordKind": "ForKeyword",
@@ -103,14 +46,6 @@
                                 "start": 466,
                                 "width": 1,
                                 "text": "("
-                            },
-                            "_closeParenToken": {
-                                "kind": "CloseParenToken",
-                                "start": 548,
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": ")",
-                                "hasTrailingTrivia": true
                             },
                             "_initializer": {
                                 "kind": "InvocationExpression",
@@ -340,6 +275,71 @@
                                         "width": 1,
                                         "text": ")"
                                     }
+                                }
+                            },
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "start": 548,
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ")",
+                                "hasTrailingTrivia": true
+                            },
+                            "_statement": {
+                                "kind": "Block",
+                                "_openBraceToken": {
+                                    "kind": "OpenBraceToken",
+                                    "start": 550,
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": "{",
+                                    "hasTrailingTrivia": true,
+                                    "hasTrailingNewLineTrivia": true
+                                },
+                                "_statements": [
+                                    {
+                                        "kind": "ThrowStatement",
+                                        "_throwKeyword": {
+                                            "kind": "IdentifierNameToken",
+                                            "keywordKind": "ThrowKeyword",
+                                            "start": 554,
+                                            "fullStart": 552,
+                                            "width": 5,
+                                            "fullWidth": 8,
+                                            "text": "throw",
+                                            "hasLeadingTrivia": true,
+                                            "hasTrailingTrivia": true
+                                        },
+                                        "_expression": {
+                                            "kind": "StringLiteralExpression",
+                                            "_literalToken": {
+                                                "kind": "StringLiteral",
+                                                "start": 560,
+                                                "width": 11,
+                                                "text": "\"Statement\""
+                                            }
+                                        },
+                                        "_semicolonToken": {
+                                            "kind": "SemicolonToken",
+                                            "start": 571,
+                                            "width": 1,
+                                            "fullWidth": 2,
+                                            "text": ";",
+                                            "hasTrailingTrivia": true,
+                                            "hasTrailingNewLineTrivia": true
+                                        }
+                                    }
+                                ],
+                                "_closeBraceToken": {
+                                    "kind": "CloseBraceToken",
+                                    "start": 574,
+                                    "fullStart": 573,
+                                    "width": 1,
+                                    "fullWidth": 3,
+                                    "text": "}",
+                                    "hasLeadingTrivia": true,
+                                    "hasTrailingTrivia": true,
+                                    "hasTrailingNewLineTrivia": true
                                 }
                             }
                         },

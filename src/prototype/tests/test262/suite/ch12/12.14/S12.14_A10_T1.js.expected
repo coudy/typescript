@@ -83,6 +83,53 @@
                     "_statements": [
                         {
                             "kind": "WhileStatement",
+                            "_whileKeyword": {
+                                "kind": "IdentifierNameToken",
+                                "keywordKind": "WhileKeyword",
+                                "start": 386,
+                                "width": 5,
+                                "text": "while"
+                            },
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
+                                "start": 391,
+                                "width": 1,
+                                "text": "("
+                            },
+                            "_condition": {
+                                "kind": "LessThanExpression",
+                                "_left": {
+                                    "kind": "IdentifierName",
+                                    "_identifier": {
+                                        "kind": "IdentifierNameToken",
+                                        "start": 392,
+                                        "width": 1,
+                                        "text": "i",
+                                        "valueText": "i"
+                                    }
+                                },
+                                "_operatorToken": {
+                                    "kind": "LessThanToken",
+                                    "start": 393,
+                                    "width": 1,
+                                    "text": "<"
+                                },
+                                "_right": {
+                                    "kind": "NumericLiteralExpression",
+                                    "_literalToken": {
+                                        "kind": "NumericLiteral",
+                                        "start": 394,
+                                        "width": 2,
+                                        "text": "10"
+                                    }
+                                }
+                            },
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "start": 396,
+                                "width": 1,
+                                "text": ")"
+                            },
                             "_statement": {
                                 "kind": "Block",
                                 "_openBraceToken": {
@@ -225,53 +272,6 @@
                                     "hasTrailingTrivia": true,
                                     "hasTrailingNewLineTrivia": true
                                 }
-                            },
-                            "_whileKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "WhileKeyword",
-                                "start": 386,
-                                "width": 5,
-                                "text": "while"
-                            },
-                            "_openParenToken": {
-                                "kind": "OpenParenToken",
-                                "start": 391,
-                                "width": 1,
-                                "text": "("
-                            },
-                            "_condition": {
-                                "kind": "LessThanExpression",
-                                "_left": {
-                                    "kind": "IdentifierName",
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "start": 392,
-                                        "width": 1,
-                                        "text": "i",
-                                        "valueText": "i"
-                                    }
-                                },
-                                "_operatorToken": {
-                                    "kind": "LessThanToken",
-                                    "start": 393,
-                                    "width": 1,
-                                    "text": "<"
-                                },
-                                "_right": {
-                                    "kind": "NumericLiteralExpression",
-                                    "_literalToken": {
-                                        "kind": "NumericLiteral",
-                                        "start": 394,
-                                        "width": 2,
-                                        "text": "10"
-                                    }
-                                }
-                            },
-                            "_closeParenToken": {
-                                "kind": "CloseParenToken",
-                                "start": 396,
-                                "width": 1,
-                                "text": ")"
                             }
                         }
                     ],

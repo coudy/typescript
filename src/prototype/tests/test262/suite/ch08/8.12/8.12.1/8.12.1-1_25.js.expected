@@ -108,6 +108,15 @@
                                                 "_propertyAssignments": [
                                                     {
                                                         "kind": "GetAccessorPropertyAssignment",
+                                                        "_getKeyword": {
+                                                            "kind": "IdentifierNameToken",
+                                                            "keywordKind": "GetKeyword",
+                                                            "start": 568,
+                                                            "width": 3,
+                                                            "fullWidth": 4,
+                                                            "text": "get",
+                                                            "hasTrailingTrivia": true
+                                                        },
                                                         "_propertyName": {
                                                             "kind": "IdentifierNameToken",
                                                             "start": 572,
@@ -174,15 +183,6 @@
                                                                 "width": 1,
                                                                 "text": "}"
                                                             }
-                                                        },
-                                                        "_getKeyword": {
-                                                            "kind": "IdentifierNameToken",
-                                                            "keywordKind": "GetKeyword",
-                                                            "start": 568,
-                                                            "width": 3,
-                                                            "fullWidth": 4,
-                                                            "text": "get",
-                                                            "hasTrailingTrivia": true
                                                         }
                                                     },
                                                     {
@@ -195,6 +195,15 @@
                                                     },
                                                     {
                                                         "kind": "SetAccessorPropertyAssignment",
+                                                        "_setKeyword": {
+                                                            "kind": "IdentifierNameToken",
+                                                            "keywordKind": "SetKeyword",
+                                                            "start": 593,
+                                                            "width": 3,
+                                                            "fullWidth": 4,
+                                                            "text": "set",
+                                                            "hasTrailingTrivia": true
+                                                        },
                                                         "_propertyName": {
                                                             "kind": "IdentifierNameToken",
                                                             "start": 597,
@@ -207,6 +216,13 @@
                                                             "start": 600,
                                                             "width": 1,
                                                             "text": "("
+                                                        },
+                                                        "_parameterName": {
+                                                            "kind": "IdentifierNameToken",
+                                                            "start": 601,
+                                                            "width": 1,
+                                                            "text": "x",
+                                                            "valueText": "x"
                                                         },
                                                         "_closeParenToken": {
                                                             "kind": "CloseParenToken",
@@ -243,22 +259,6 @@
                                                                 "text": "}",
                                                                 "hasTrailingTrivia": true
                                                             }
-                                                        },
-                                                        "_setKeyword": {
-                                                            "kind": "IdentifierNameToken",
-                                                            "keywordKind": "SetKeyword",
-                                                            "start": 593,
-                                                            "width": 3,
-                                                            "fullWidth": 4,
-                                                            "text": "set",
-                                                            "hasTrailingTrivia": true
-                                                        },
-                                                        "_parameterName": {
-                                                            "kind": "IdentifierNameToken",
-                                                            "start": 601,
-                                                            "width": 1,
-                                                            "text": "x",
-                                                            "valueText": "x"
                                                         }
                                                     }
                                                 ],

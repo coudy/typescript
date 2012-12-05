@@ -89,6 +89,38 @@
                     "_statements": [
                         {
                             "kind": "WhileStatement",
+                            "_whileKeyword": {
+                                "kind": "IdentifierNameToken",
+                                "keywordKind": "WhileKeyword",
+                                "start": 376,
+                                "fullStart": 374,
+                                "width": 5,
+                                "fullWidth": 7,
+                                "text": "while",
+                                "hasLeadingTrivia": true
+                            },
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
+                                "start": 381,
+                                "width": 1,
+                                "text": "("
+                            },
+                            "_condition": {
+                                "kind": "BooleanLiteralExpression",
+                                "_literalToken": {
+                                    "kind": "IdentifierNameToken",
+                                    "keywordKind": "TrueKeyword",
+                                    "start": 382,
+                                    "width": 4,
+                                    "text": "true"
+                                }
+                            },
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "start": 386,
+                                "width": 1,
+                                "text": ")"
+                            },
                             "_statement": {
                                 "kind": "Block",
                                 "_openBraceToken": {
@@ -346,38 +378,6 @@
                                     "hasTrailingTrivia": true,
                                     "hasTrailingNewLineTrivia": true
                                 }
-                            },
-                            "_whileKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "WhileKeyword",
-                                "start": 376,
-                                "fullStart": 374,
-                                "width": 5,
-                                "fullWidth": 7,
-                                "text": "while",
-                                "hasLeadingTrivia": true
-                            },
-                            "_openParenToken": {
-                                "kind": "OpenParenToken",
-                                "start": 381,
-                                "width": 1,
-                                "text": "("
-                            },
-                            "_condition": {
-                                "kind": "BooleanLiteralExpression",
-                                "_literalToken": {
-                                    "kind": "IdentifierNameToken",
-                                    "keywordKind": "TrueKeyword",
-                                    "start": 382,
-                                    "width": 4,
-                                    "text": "true"
-                                }
-                            },
-                            "_closeParenToken": {
-                                "kind": "CloseParenToken",
-                                "start": 386,
-                                "width": 1,
-                                "text": ")"
                             }
                         },
                         {

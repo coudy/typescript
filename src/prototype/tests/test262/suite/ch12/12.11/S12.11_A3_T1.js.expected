@@ -182,6 +182,26 @@
                             "_caseClauses": [
                                 {
                                     "kind": "CaseSwitchClause",
+                                    "_caseKeyword": {
+                                        "kind": "IdentifierNameToken",
+                                        "keywordKind": "CaseKeyword",
+                                        "start": 365,
+                                        "fullStart": 361,
+                                        "width": 4,
+                                        "fullWidth": 9,
+                                        "text": "case",
+                                        "hasLeadingTrivia": true,
+                                        "hasTrailingTrivia": true
+                                    },
+                                    "_expression": {
+                                        "kind": "NumericLiteralExpression",
+                                        "_literalToken": {
+                                            "kind": "NumericLiteral",
+                                            "start": 370,
+                                            "width": 1,
+                                            "text": "0"
+                                        }
+                                    },
                                     "_colonToken": {
                                         "kind": "ColonToken",
                                         "start": 371,
@@ -238,30 +258,20 @@
                                                 "hasTrailingNewLineTrivia": true
                                             }
                                         }
-                                    ],
-                                    "_caseKeyword": {
-                                        "kind": "IdentifierNameToken",
-                                        "keywordKind": "CaseKeyword",
-                                        "start": 365,
-                                        "fullStart": 361,
-                                        "width": 4,
-                                        "fullWidth": 9,
-                                        "text": "case",
-                                        "hasLeadingTrivia": true,
-                                        "hasTrailingTrivia": true
-                                    },
-                                    "_expression": {
-                                        "kind": "NumericLiteralExpression",
-                                        "_literalToken": {
-                                            "kind": "NumericLiteral",
-                                            "start": 370,
-                                            "width": 1,
-                                            "text": "0"
-                                        }
-                                    }
+                                    ]
                                 },
                                 {
                                     "kind": "DefaultSwitchClause",
+                                    "_defaultKeyword": {
+                                        "kind": "IdentifierNameToken",
+                                        "keywordKind": "DefaultKeyword",
+                                        "start": 396,
+                                        "fullStart": 392,
+                                        "width": 7,
+                                        "fullWidth": 11,
+                                        "text": "default",
+                                        "hasLeadingTrivia": true
+                                    },
                                     "_colonToken": {
                                         "kind": "ColonToken",
                                         "start": 403,
@@ -340,17 +350,7 @@
                                                 "hasTrailingNewLineTrivia": true
                                             }
                                         }
-                                    ],
-                                    "_defaultKeyword": {
-                                        "kind": "IdentifierNameToken",
-                                        "keywordKind": "DefaultKeyword",
-                                        "start": 396,
-                                        "fullStart": 392,
-                                        "width": 7,
-                                        "fullWidth": 11,
-                                        "text": "default",
-                                        "hasLeadingTrivia": true
-                                    }
+                                    ]
                                 }
                             ],
                             "_closeBraceToken": {

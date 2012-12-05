@@ -62,37 +62,6 @@
             },
             {
                 "kind": "ForInStatement",
-                "_statement": {
-                    "kind": "ExpressionStatement",
-                    "_expression": {
-                        "kind": "PostIncrementExpression",
-                        "_operand": {
-                            "kind": "IdentifierName",
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "start": 349,
-                                "width": 5,
-                                "text": "count",
-                                "valueText": "count"
-                            }
-                        },
-                        "_operatorToken": {
-                            "kind": "PlusPlusToken",
-                            "start": 354,
-                            "width": 2,
-                            "text": "++"
-                        }
-                    },
-                    "_semicolonToken": {
-                        "kind": "SemicolonToken",
-                        "start": 356,
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": ";",
-                        "hasTrailingTrivia": true,
-                        "hasTrailingNewLineTrivia": true
-                    }
-                },
                 "_forKeyword": {
                     "kind": "IdentifierNameToken",
                     "keywordKind": "ForKeyword",
@@ -107,14 +76,6 @@
                     "start": 335,
                     "width": 1,
                     "text": "("
-                },
-                "_closeParenToken": {
-                    "kind": "CloseParenToken",
-                    "start": 347,
-                    "width": 1,
-                    "fullWidth": 2,
-                    "text": ")",
-                    "hasTrailingTrivia": true
                 },
                 "_left": {
                     "kind": "IdentifierName",
@@ -145,6 +106,45 @@
                         "width": 6,
                         "text": "Number",
                         "valueText": "Number"
+                    }
+                },
+                "_closeParenToken": {
+                    "kind": "CloseParenToken",
+                    "start": 347,
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ")",
+                    "hasTrailingTrivia": true
+                },
+                "_statement": {
+                    "kind": "ExpressionStatement",
+                    "_expression": {
+                        "kind": "PostIncrementExpression",
+                        "_operand": {
+                            "kind": "IdentifierName",
+                            "_identifier": {
+                                "kind": "IdentifierNameToken",
+                                "start": 349,
+                                "width": 5,
+                                "text": "count",
+                                "valueText": "count"
+                            }
+                        },
+                        "_operatorToken": {
+                            "kind": "PlusPlusToken",
+                            "start": 354,
+                            "width": 2,
+                            "text": "++"
+                        }
+                    },
+                    "_semicolonToken": {
+                        "kind": "SemicolonToken",
+                        "start": 356,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": ";",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
                     }
                 }
             },

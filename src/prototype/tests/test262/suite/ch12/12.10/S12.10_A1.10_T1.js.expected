@@ -1837,6 +1837,16 @@
                     "_statements": [
                         {
                             "kind": "DoStatement",
+                            "_doKeyword": {
+                                "kind": "IdentifierNameToken",
+                                "keywordKind": "DoKeyword",
+                                "start": 1270,
+                                "fullStart": 1268,
+                                "width": 2,
+                                "fullWidth": 4,
+                                "text": "do",
+                                "hasLeadingTrivia": true
+                            },
                             "_statement": {
                                 "kind": "Block",
                                 "_openBraceToken": {
@@ -2668,16 +2678,6 @@
                                     "hasTrailingTrivia": true,
                                     "hasTrailingNewLineTrivia": true
                                 }
-                            },
-                            "_doKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "DoKeyword",
-                                "start": 1270,
-                                "fullStart": 1268,
-                                "width": 2,
-                                "fullWidth": 4,
-                                "text": "do",
-                                "hasLeadingTrivia": true
                             },
                             "_whileKeyword": {
                                 "kind": "IdentifierNameToken",

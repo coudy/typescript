@@ -63,6 +63,38 @@
                     "_statements": [
                         {
                             "kind": "WhileStatement",
+                            "_whileKeyword": {
+                                "kind": "IdentifierNameToken",
+                                "keywordKind": "WhileKeyword",
+                                "start": 404,
+                                "fullStart": 403,
+                                "width": 5,
+                                "fullWidth": 6,
+                                "text": "while",
+                                "hasLeadingTrivia": true,
+                                "hasLeadingNewLineTrivia": true
+                            },
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
+                                "start": 409,
+                                "width": 1,
+                                "text": "("
+                            },
+                            "_condition": {
+                                "kind": "NumericLiteralExpression",
+                                "_literalToken": {
+                                    "kind": "NumericLiteral",
+                                    "start": 410,
+                                    "width": 1,
+                                    "text": "0"
+                                }
+                            },
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "start": 411,
+                                "width": 1,
+                                "text": ")"
+                            },
                             "_statement": {
                                 "kind": "Block",
                                 "_openBraceToken": {
@@ -150,38 +182,6 @@
                                     "width": 1,
                                     "text": "}"
                                 }
-                            },
-                            "_whileKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "WhileKeyword",
-                                "start": 404,
-                                "fullStart": 403,
-                                "width": 5,
-                                "fullWidth": 6,
-                                "text": "while",
-                                "hasLeadingTrivia": true,
-                                "hasLeadingNewLineTrivia": true
-                            },
-                            "_openParenToken": {
-                                "kind": "OpenParenToken",
-                                "start": 409,
-                                "width": 1,
-                                "text": "("
-                            },
-                            "_condition": {
-                                "kind": "NumericLiteralExpression",
-                                "_literalToken": {
-                                    "kind": "NumericLiteral",
-                                    "start": 410,
-                                    "width": 1,
-                                    "text": "0"
-                                }
-                            },
-                            "_closeParenToken": {
-                                "kind": "CloseParenToken",
-                                "start": 411,
-                                "width": 1,
-                                "text": ")"
                             }
                         },
                         {

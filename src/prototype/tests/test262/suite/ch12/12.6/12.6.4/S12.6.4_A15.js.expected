@@ -119,49 +119,6 @@
             },
             {
                 "kind": "ForInStatement",
-                "_statement": {
-                    "kind": "Block",
-                    "_openBraceToken": {
-                        "kind": "OpenBraceToken",
-                        "start": 432,
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": "{",
-                        "hasTrailingTrivia": true,
-                        "hasTrailingNewLineTrivia": true
-                    },
-                    "_statements": [
-                        {
-                            "kind": "BreakStatement",
-                            "_breakKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "BreakKeyword",
-                                "start": 437,
-                                "fullStart": 434,
-                                "width": 5,
-                                "fullWidth": 9,
-                                "text": "break",
-                                "hasLeadingTrivia": true,
-                                "hasTrailingTrivia": true
-                            },
-                            "_semicolonToken": {
-                                "kind": "SemicolonToken",
-                                "start": 443,
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": ";",
-                                "hasTrailingTrivia": true,
-                                "hasTrailingNewLineTrivia": true
-                            }
-                        }
-                    ],
-                    "_closeBraceToken": {
-                        "kind": "CloseBraceToken",
-                        "start": 445,
-                        "width": 1,
-                        "text": "}"
-                    }
-                },
                 "_forKeyword": {
                     "kind": "IdentifierNameToken",
                     "keywordKind": "ForKeyword",
@@ -179,12 +136,6 @@
                     "start": 418,
                     "width": 1,
                     "text": "("
-                },
-                "_closeParenToken": {
-                    "kind": "CloseParenToken",
-                    "start": 431,
-                    "width": 1,
-                    "text": ")"
                 },
                 "_left": {
                     "kind": "IdentifierName",
@@ -247,6 +198,55 @@
                     "_closeBraceToken": {
                         "kind": "CloseBraceToken",
                         "start": 430,
+                        "width": 1,
+                        "text": "}"
+                    }
+                },
+                "_closeParenToken": {
+                    "kind": "CloseParenToken",
+                    "start": 431,
+                    "width": 1,
+                    "text": ")"
+                },
+                "_statement": {
+                    "kind": "Block",
+                    "_openBraceToken": {
+                        "kind": "OpenBraceToken",
+                        "start": 432,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "{",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    },
+                    "_statements": [
+                        {
+                            "kind": "BreakStatement",
+                            "_breakKeyword": {
+                                "kind": "IdentifierNameToken",
+                                "keywordKind": "BreakKeyword",
+                                "start": 437,
+                                "fullStart": 434,
+                                "width": 5,
+                                "fullWidth": 9,
+                                "text": "break",
+                                "hasLeadingTrivia": true,
+                                "hasTrailingTrivia": true
+                            },
+                            "_semicolonToken": {
+                                "kind": "SemicolonToken",
+                                "start": 443,
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ";",
+                                "hasTrailingTrivia": true,
+                                "hasTrailingNewLineTrivia": true
+                            }
+                        }
+                    ],
+                    "_closeBraceToken": {
+                        "kind": "CloseBraceToken",
+                        "start": 445,
                         "width": 1,
                         "text": "}"
                     }

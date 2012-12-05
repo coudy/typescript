@@ -19,6 +19,19 @@
         "_moduleElements": [
             {
                 "kind": "DoStatement",
+                "_doKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "DoKeyword",
+                    "start": 309,
+                    "fullStart": 0,
+                    "width": 2,
+                    "fullWidth": 312,
+                    "text": "do",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingCommentTrivia": true,
+                    "hasLeadingNewLineTrivia": true,
+                    "hasTrailingTrivia": true
+                },
                 "_statement": {
                     "kind": "Block",
                     "_openBraceToken": {
@@ -34,19 +47,6 @@
                         "width": 1,
                         "text": "}"
                     }
-                },
-                "_doKeyword": {
-                    "kind": "IdentifierNameToken",
-                    "keywordKind": "DoKeyword",
-                    "start": 309,
-                    "fullStart": 0,
-                    "width": 2,
-                    "fullWidth": 312,
-                    "text": "do",
-                    "hasLeadingTrivia": true,
-                    "hasLeadingCommentTrivia": true,
-                    "hasLeadingNewLineTrivia": true,
-                    "hasTrailingTrivia": true
                 },
                 "_whileKeyword": {
                     "kind": "IdentifierNameToken",
@@ -92,26 +92,6 @@
             },
             {
                 "kind": "WhileStatement",
-                "_statement": {
-                    "kind": "ExpressionStatement",
-                    "_expression": {
-                        "kind": "IdentifierName",
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "start": 333,
-                            "width": 0,
-                            "isMissing": true,
-                            "text": ""
-                        }
-                    },
-                    "_semicolonToken": {
-                        "kind": "SemicolonToken",
-                        "start": 330,
-                        "width": 0,
-                        "isMissing": true,
-                        "text": ""
-                    }
-                },
                 "_whileKeyword": {
                     "kind": "IdentifierNameToken",
                     "keywordKind": "WhileKeyword",
@@ -145,6 +125,26 @@
                     "text": ")",
                     "hasTrailingTrivia": true,
                     "hasTrailingNewLineTrivia": true
+                },
+                "_statement": {
+                    "kind": "ExpressionStatement",
+                    "_expression": {
+                        "kind": "IdentifierName",
+                        "_identifier": {
+                            "kind": "IdentifierNameToken",
+                            "start": 333,
+                            "width": 0,
+                            "isMissing": true,
+                            "text": ""
+                        }
+                    },
+                    "_semicolonToken": {
+                        "kind": "SemicolonToken",
+                        "start": 330,
+                        "width": 0,
+                        "isMissing": true,
+                        "text": ""
+                    }
                 }
             }
         ],

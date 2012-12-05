@@ -26,6 +26,142 @@
                 },
                 "_statement": {
                     "kind": "ForStatement",
+                    "_forKeyword": {
+                        "kind": "IdentifierNameToken",
+                        "keywordKind": "ForKeyword",
+                        "start": 303,
+                        "width": 3,
+                        "fullWidth": 4,
+                        "text": "for",
+                        "hasTrailingTrivia": true
+                    },
+                    "_openParenToken": {
+                        "kind": "OpenParenToken",
+                        "start": 307,
+                        "width": 1,
+                        "text": "("
+                    },
+                    "_variableDeclaration": {
+                        "kind": "VariableDeclaration",
+                        "_varKeyword": {
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "VarKeyword",
+                            "start": 308,
+                            "width": 3,
+                            "fullWidth": 4,
+                            "text": "var",
+                            "hasTrailingTrivia": true
+                        },
+                        "_variableDeclarators": [
+                            {
+                                "kind": "VariableDeclarator",
+                                "_identifier": {
+                                    "kind": "IdentifierNameToken",
+                                    "start": 312,
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": "i",
+                                    "valueText": "i",
+                                    "hasTrailingTrivia": true
+                                },
+                                "_equalsValueClause": {
+                                    "kind": "EqualsValueClause",
+                                    "_equalsToken": {
+                                        "kind": "EqualsToken",
+                                        "start": 314,
+                                        "width": 1,
+                                        "fullWidth": 2,
+                                        "text": "=",
+                                        "hasTrailingTrivia": true
+                                    },
+                                    "_value": {
+                                        "kind": "NumericLiteralExpression",
+                                        "_literalToken": {
+                                            "kind": "NumericLiteral",
+                                            "start": 316,
+                                            "width": 1,
+                                            "text": "0"
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "_firstSemicolonToken": {
+                        "kind": "SemicolonToken",
+                        "start": 317,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": ";",
+                        "hasTrailingTrivia": true
+                    },
+                    "_condition": {
+                        "kind": "LessThanOrEqualExpression",
+                        "_left": {
+                            "kind": "IdentifierName",
+                            "_identifier": {
+                                "kind": "IdentifierNameToken",
+                                "start": 319,
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": "i",
+                                "valueText": "i",
+                                "hasTrailingTrivia": true
+                            }
+                        },
+                        "_operatorToken": {
+                            "kind": "LessThanEqualsToken",
+                            "start": 321,
+                            "width": 2,
+                            "fullWidth": 3,
+                            "text": "<=",
+                            "hasTrailingTrivia": true
+                        },
+                        "_right": {
+                            "kind": "NumericLiteralExpression",
+                            "_literalToken": {
+                                "kind": "NumericLiteral",
+                                "start": 324,
+                                "width": 1,
+                                "text": "0"
+                            }
+                        }
+                    },
+                    "_secondSemicolonToken": {
+                        "kind": "SemicolonToken",
+                        "start": 325,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": ";",
+                        "hasTrailingTrivia": true
+                    },
+                    "_incrementor": {
+                        "kind": "PostIncrementExpression",
+                        "_operand": {
+                            "kind": "IdentifierName",
+                            "_identifier": {
+                                "kind": "IdentifierNameToken",
+                                "start": 327,
+                                "width": 1,
+                                "text": "i",
+                                "valueText": "i"
+                            }
+                        },
+                        "_operatorToken": {
+                            "kind": "PlusPlusToken",
+                            "start": 328,
+                            "width": 2,
+                            "text": "++"
+                        }
+                    },
+                    "_closeParenToken": {
+                        "kind": "CloseParenToken",
+                        "start": 330,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": ")",
+                        "hasTrailingTrivia": true
+                    },
                     "_statement": {
                         "kind": "Block",
                         "_openBraceToken": {
@@ -40,61 +176,6 @@
                         "_statements": [
                             {
                                 "kind": "ForStatement",
-                                "_statement": {
-                                    "kind": "Block",
-                                    "_openBraceToken": {
-                                        "kind": "OpenBraceToken",
-                                        "start": 365,
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": "{",
-                                        "hasTrailingTrivia": true,
-                                        "hasTrailingNewLineTrivia": true
-                                    },
-                                    "_statements": [
-                                        {
-                                            "kind": "BreakStatement",
-                                            "_breakKeyword": {
-                                                "kind": "IdentifierNameToken",
-                                                "keywordKind": "BreakKeyword",
-                                                "start": 371,
-                                                "fullStart": 367,
-                                                "width": 5,
-                                                "fullWidth": 10,
-                                                "text": "break",
-                                                "hasLeadingTrivia": true,
-                                                "hasTrailingTrivia": true
-                                            },
-                                            "_identifier": {
-                                                "kind": "IdentifierNameToken",
-                                                "start": 377,
-                                                "width": 6,
-                                                "text": "label1",
-                                                "valueText": "label1"
-                                            },
-                                            "_semicolonToken": {
-                                                "kind": "SemicolonToken",
-                                                "start": 383,
-                                                "width": 1,
-                                                "fullWidth": 2,
-                                                "text": ";",
-                                                "hasTrailingTrivia": true,
-                                                "hasTrailingNewLineTrivia": true
-                                            }
-                                        }
-                                    ],
-                                    "_closeBraceToken": {
-                                        "kind": "CloseBraceToken",
-                                        "start": 387,
-                                        "fullStart": 385,
-                                        "width": 1,
-                                        "fullWidth": 4,
-                                        "text": "}",
-                                        "hasLeadingTrivia": true,
-                                        "hasTrailingTrivia": true,
-                                        "hasTrailingNewLineTrivia": true
-                                    }
-                                },
                                 "_forKeyword": {
                                     "kind": "IdentifierNameToken",
                                     "keywordKind": "ForKeyword",
@@ -157,14 +238,6 @@
                                             }
                                         }
                                     ]
-                                },
-                                "_closeParenToken": {
-                                    "kind": "CloseParenToken",
-                                    "start": 363,
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": ")",
-                                    "hasTrailingTrivia": true
                                 },
                                 "_firstSemicolonToken": {
                                     "kind": "SemicolonToken",
@@ -232,6 +305,69 @@
                                         "width": 2,
                                         "text": "++"
                                     }
+                                },
+                                "_closeParenToken": {
+                                    "kind": "CloseParenToken",
+                                    "start": 363,
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": ")",
+                                    "hasTrailingTrivia": true
+                                },
+                                "_statement": {
+                                    "kind": "Block",
+                                    "_openBraceToken": {
+                                        "kind": "OpenBraceToken",
+                                        "start": 365,
+                                        "width": 1,
+                                        "fullWidth": 2,
+                                        "text": "{",
+                                        "hasTrailingTrivia": true,
+                                        "hasTrailingNewLineTrivia": true
+                                    },
+                                    "_statements": [
+                                        {
+                                            "kind": "BreakStatement",
+                                            "_breakKeyword": {
+                                                "kind": "IdentifierNameToken",
+                                                "keywordKind": "BreakKeyword",
+                                                "start": 371,
+                                                "fullStart": 367,
+                                                "width": 5,
+                                                "fullWidth": 10,
+                                                "text": "break",
+                                                "hasLeadingTrivia": true,
+                                                "hasTrailingTrivia": true
+                                            },
+                                            "_identifier": {
+                                                "kind": "IdentifierNameToken",
+                                                "start": 377,
+                                                "width": 6,
+                                                "text": "label1",
+                                                "valueText": "label1"
+                                            },
+                                            "_semicolonToken": {
+                                                "kind": "SemicolonToken",
+                                                "start": 383,
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": ";",
+                                                "hasTrailingTrivia": true,
+                                                "hasTrailingNewLineTrivia": true
+                                            }
+                                        }
+                                    ],
+                                    "_closeBraceToken": {
+                                        "kind": "CloseBraceToken",
+                                        "start": 387,
+                                        "fullStart": 385,
+                                        "width": 1,
+                                        "fullWidth": 4,
+                                        "text": "}",
+                                        "hasLeadingTrivia": true,
+                                        "hasTrailingTrivia": true,
+                                        "hasTrailingNewLineTrivia": true
+                                    }
                                 }
                             },
                             {
@@ -297,142 +433,6 @@
                             "text": "}",
                             "hasTrailingTrivia": true,
                             "hasTrailingNewLineTrivia": true
-                        }
-                    },
-                    "_forKeyword": {
-                        "kind": "IdentifierNameToken",
-                        "keywordKind": "ForKeyword",
-                        "start": 303,
-                        "width": 3,
-                        "fullWidth": 4,
-                        "text": "for",
-                        "hasTrailingTrivia": true
-                    },
-                    "_openParenToken": {
-                        "kind": "OpenParenToken",
-                        "start": 307,
-                        "width": 1,
-                        "text": "("
-                    },
-                    "_variableDeclaration": {
-                        "kind": "VariableDeclaration",
-                        "_varKeyword": {
-                            "kind": "IdentifierNameToken",
-                            "keywordKind": "VarKeyword",
-                            "start": 308,
-                            "width": 3,
-                            "fullWidth": 4,
-                            "text": "var",
-                            "hasTrailingTrivia": true
-                        },
-                        "_variableDeclarators": [
-                            {
-                                "kind": "VariableDeclarator",
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "start": 312,
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": "i",
-                                    "valueText": "i",
-                                    "hasTrailingTrivia": true
-                                },
-                                "_equalsValueClause": {
-                                    "kind": "EqualsValueClause",
-                                    "_equalsToken": {
-                                        "kind": "EqualsToken",
-                                        "start": 314,
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": "=",
-                                        "hasTrailingTrivia": true
-                                    },
-                                    "_value": {
-                                        "kind": "NumericLiteralExpression",
-                                        "_literalToken": {
-                                            "kind": "NumericLiteral",
-                                            "start": 316,
-                                            "width": 1,
-                                            "text": "0"
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    },
-                    "_closeParenToken": {
-                        "kind": "CloseParenToken",
-                        "start": 330,
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": ")",
-                        "hasTrailingTrivia": true
-                    },
-                    "_firstSemicolonToken": {
-                        "kind": "SemicolonToken",
-                        "start": 317,
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": ";",
-                        "hasTrailingTrivia": true
-                    },
-                    "_condition": {
-                        "kind": "LessThanOrEqualExpression",
-                        "_left": {
-                            "kind": "IdentifierName",
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "start": 319,
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": "i",
-                                "valueText": "i",
-                                "hasTrailingTrivia": true
-                            }
-                        },
-                        "_operatorToken": {
-                            "kind": "LessThanEqualsToken",
-                            "start": 321,
-                            "width": 2,
-                            "fullWidth": 3,
-                            "text": "<=",
-                            "hasTrailingTrivia": true
-                        },
-                        "_right": {
-                            "kind": "NumericLiteralExpression",
-                            "_literalToken": {
-                                "kind": "NumericLiteral",
-                                "start": 324,
-                                "width": 1,
-                                "text": "0"
-                            }
-                        }
-                    },
-                    "_secondSemicolonToken": {
-                        "kind": "SemicolonToken",
-                        "start": 325,
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": ";",
-                        "hasTrailingTrivia": true
-                    },
-                    "_incrementor": {
-                        "kind": "PostIncrementExpression",
-                        "_operand": {
-                            "kind": "IdentifierName",
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "start": 327,
-                                "width": 1,
-                                "text": "i",
-                                "valueText": "i"
-                            }
-                        },
-                        "_operatorToken": {
-                            "kind": "PlusPlusToken",
-                            "start": 328,
-                            "width": 2,
-                            "text": "++"
                         }
                     }
                 }
@@ -519,6 +519,142 @@
                 },
                 "_statement": {
                     "kind": "ForStatement",
+                    "_forKeyword": {
+                        "kind": "IdentifierNameToken",
+                        "keywordKind": "ForKeyword",
+                        "start": 503,
+                        "width": 3,
+                        "fullWidth": 4,
+                        "text": "for",
+                        "hasTrailingTrivia": true
+                    },
+                    "_openParenToken": {
+                        "kind": "OpenParenToken",
+                        "start": 507,
+                        "width": 1,
+                        "text": "("
+                    },
+                    "_variableDeclaration": {
+                        "kind": "VariableDeclaration",
+                        "_varKeyword": {
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "VarKeyword",
+                            "start": 508,
+                            "width": 3,
+                            "fullWidth": 4,
+                            "text": "var",
+                            "hasTrailingTrivia": true
+                        },
+                        "_variableDeclarators": [
+                            {
+                                "kind": "VariableDeclarator",
+                                "_identifier": {
+                                    "kind": "IdentifierNameToken",
+                                    "start": 512,
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": "i",
+                                    "valueText": "i",
+                                    "hasTrailingTrivia": true
+                                },
+                                "_equalsValueClause": {
+                                    "kind": "EqualsValueClause",
+                                    "_equalsToken": {
+                                        "kind": "EqualsToken",
+                                        "start": 514,
+                                        "width": 1,
+                                        "fullWidth": 2,
+                                        "text": "=",
+                                        "hasTrailingTrivia": true
+                                    },
+                                    "_value": {
+                                        "kind": "NumericLiteralExpression",
+                                        "_literalToken": {
+                                            "kind": "NumericLiteral",
+                                            "start": 516,
+                                            "width": 1,
+                                            "text": "0"
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "_firstSemicolonToken": {
+                        "kind": "SemicolonToken",
+                        "start": 517,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": ";",
+                        "hasTrailingTrivia": true
+                    },
+                    "_condition": {
+                        "kind": "LessThanOrEqualExpression",
+                        "_left": {
+                            "kind": "IdentifierName",
+                            "_identifier": {
+                                "kind": "IdentifierNameToken",
+                                "start": 519,
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": "i",
+                                "valueText": "i",
+                                "hasTrailingTrivia": true
+                            }
+                        },
+                        "_operatorToken": {
+                            "kind": "LessThanEqualsToken",
+                            "start": 521,
+                            "width": 2,
+                            "fullWidth": 3,
+                            "text": "<=",
+                            "hasTrailingTrivia": true
+                        },
+                        "_right": {
+                            "kind": "NumericLiteralExpression",
+                            "_literalToken": {
+                                "kind": "NumericLiteral",
+                                "start": 524,
+                                "width": 1,
+                                "text": "0"
+                            }
+                        }
+                    },
+                    "_secondSemicolonToken": {
+                        "kind": "SemicolonToken",
+                        "start": 525,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": ";",
+                        "hasTrailingTrivia": true
+                    },
+                    "_incrementor": {
+                        "kind": "PostIncrementExpression",
+                        "_operand": {
+                            "kind": "IdentifierName",
+                            "_identifier": {
+                                "kind": "IdentifierNameToken",
+                                "start": 527,
+                                "width": 1,
+                                "text": "i",
+                                "valueText": "i"
+                            }
+                        },
+                        "_operatorToken": {
+                            "kind": "PlusPlusToken",
+                            "start": 528,
+                            "width": 2,
+                            "text": "++"
+                        }
+                    },
+                    "_closeParenToken": {
+                        "kind": "CloseParenToken",
+                        "start": 530,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": ")",
+                        "hasTrailingTrivia": true
+                    },
                     "_statement": {
                         "kind": "Block",
                         "_openBraceToken": {
@@ -533,6 +669,144 @@
                         "_statements": [
                             {
                                 "kind": "ForStatement",
+                                "_forKeyword": {
+                                    "kind": "IdentifierNameToken",
+                                    "keywordKind": "ForKeyword",
+                                    "start": 536,
+                                    "fullStart": 534,
+                                    "width": 3,
+                                    "fullWidth": 6,
+                                    "text": "for",
+                                    "hasLeadingTrivia": true,
+                                    "hasTrailingTrivia": true
+                                },
+                                "_openParenToken": {
+                                    "kind": "OpenParenToken",
+                                    "start": 540,
+                                    "width": 1,
+                                    "text": "("
+                                },
+                                "_variableDeclaration": {
+                                    "kind": "VariableDeclaration",
+                                    "_varKeyword": {
+                                        "kind": "IdentifierNameToken",
+                                        "keywordKind": "VarKeyword",
+                                        "start": 541,
+                                        "width": 3,
+                                        "fullWidth": 4,
+                                        "text": "var",
+                                        "hasTrailingTrivia": true
+                                    },
+                                    "_variableDeclarators": [
+                                        {
+                                            "kind": "VariableDeclarator",
+                                            "_identifier": {
+                                                "kind": "IdentifierNameToken",
+                                                "start": 545,
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": "j",
+                                                "valueText": "j",
+                                                "hasTrailingTrivia": true
+                                            },
+                                            "_equalsValueClause": {
+                                                "kind": "EqualsValueClause",
+                                                "_equalsToken": {
+                                                    "kind": "EqualsToken",
+                                                    "start": 547,
+                                                    "width": 1,
+                                                    "fullWidth": 2,
+                                                    "text": "=",
+                                                    "hasTrailingTrivia": true
+                                                },
+                                                "_value": {
+                                                    "kind": "NumericLiteralExpression",
+                                                    "_literalToken": {
+                                                        "kind": "NumericLiteral",
+                                                        "start": 549,
+                                                        "width": 1,
+                                                        "text": "0"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                },
+                                "_firstSemicolonToken": {
+                                    "kind": "SemicolonToken",
+                                    "start": 550,
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": ";",
+                                    "hasTrailingTrivia": true
+                                },
+                                "_condition": {
+                                    "kind": "LessThanOrEqualExpression",
+                                    "_left": {
+                                        "kind": "IdentifierName",
+                                        "_identifier": {
+                                            "kind": "IdentifierNameToken",
+                                            "start": 552,
+                                            "width": 1,
+                                            "fullWidth": 2,
+                                            "text": "j",
+                                            "valueText": "j",
+                                            "hasTrailingTrivia": true
+                                        }
+                                    },
+                                    "_operatorToken": {
+                                        "kind": "LessThanEqualsToken",
+                                        "start": 554,
+                                        "width": 2,
+                                        "fullWidth": 3,
+                                        "text": "<=",
+                                        "hasTrailingTrivia": true
+                                    },
+                                    "_right": {
+                                        "kind": "NumericLiteralExpression",
+                                        "_literalToken": {
+                                            "kind": "NumericLiteral",
+                                            "start": 557,
+                                            "width": 1,
+                                            "text": "0"
+                                        }
+                                    }
+                                },
+                                "_secondSemicolonToken": {
+                                    "kind": "SemicolonToken",
+                                    "start": 558,
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": ";",
+                                    "hasTrailingTrivia": true
+                                },
+                                "_incrementor": {
+                                    "kind": "PostIncrementExpression",
+                                    "_operand": {
+                                        "kind": "IdentifierName",
+                                        "_identifier": {
+                                            "kind": "IdentifierNameToken",
+                                            "start": 560,
+                                            "width": 1,
+                                            "text": "j",
+                                            "valueText": "j"
+                                        }
+                                    },
+                                    "_operatorToken": {
+                                        "kind": "PlusPlusToken",
+                                        "start": 561,
+                                        "width": 2,
+                                        "text": "++"
+                                    }
+                                },
+                                "_closeParenToken": {
+                                    "kind": "CloseParenToken",
+                                    "start": 563,
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": ")",
+                                    "hasTrailingTrivia": true
+                                },
                                 "_statement": {
                                     "kind": "Block",
                                     "_openBraceToken": {
@@ -604,144 +878,6 @@
                                         "hasTrailingTrivia": true,
                                         "hasTrailingNewLineTrivia": true
                                     }
-                                },
-                                "_forKeyword": {
-                                    "kind": "IdentifierNameToken",
-                                    "keywordKind": "ForKeyword",
-                                    "start": 536,
-                                    "fullStart": 534,
-                                    "width": 3,
-                                    "fullWidth": 6,
-                                    "text": "for",
-                                    "hasLeadingTrivia": true,
-                                    "hasTrailingTrivia": true
-                                },
-                                "_openParenToken": {
-                                    "kind": "OpenParenToken",
-                                    "start": 540,
-                                    "width": 1,
-                                    "text": "("
-                                },
-                                "_variableDeclaration": {
-                                    "kind": "VariableDeclaration",
-                                    "_varKeyword": {
-                                        "kind": "IdentifierNameToken",
-                                        "keywordKind": "VarKeyword",
-                                        "start": 541,
-                                        "width": 3,
-                                        "fullWidth": 4,
-                                        "text": "var",
-                                        "hasTrailingTrivia": true
-                                    },
-                                    "_variableDeclarators": [
-                                        {
-                                            "kind": "VariableDeclarator",
-                                            "_identifier": {
-                                                "kind": "IdentifierNameToken",
-                                                "start": 545,
-                                                "width": 1,
-                                                "fullWidth": 2,
-                                                "text": "j",
-                                                "valueText": "j",
-                                                "hasTrailingTrivia": true
-                                            },
-                                            "_equalsValueClause": {
-                                                "kind": "EqualsValueClause",
-                                                "_equalsToken": {
-                                                    "kind": "EqualsToken",
-                                                    "start": 547,
-                                                    "width": 1,
-                                                    "fullWidth": 2,
-                                                    "text": "=",
-                                                    "hasTrailingTrivia": true
-                                                },
-                                                "_value": {
-                                                    "kind": "NumericLiteralExpression",
-                                                    "_literalToken": {
-                                                        "kind": "NumericLiteral",
-                                                        "start": 549,
-                                                        "width": 1,
-                                                        "text": "0"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    ]
-                                },
-                                "_closeParenToken": {
-                                    "kind": "CloseParenToken",
-                                    "start": 563,
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": ")",
-                                    "hasTrailingTrivia": true
-                                },
-                                "_firstSemicolonToken": {
-                                    "kind": "SemicolonToken",
-                                    "start": 550,
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": ";",
-                                    "hasTrailingTrivia": true
-                                },
-                                "_condition": {
-                                    "kind": "LessThanOrEqualExpression",
-                                    "_left": {
-                                        "kind": "IdentifierName",
-                                        "_identifier": {
-                                            "kind": "IdentifierNameToken",
-                                            "start": 552,
-                                            "width": 1,
-                                            "fullWidth": 2,
-                                            "text": "j",
-                                            "valueText": "j",
-                                            "hasTrailingTrivia": true
-                                        }
-                                    },
-                                    "_operatorToken": {
-                                        "kind": "LessThanEqualsToken",
-                                        "start": 554,
-                                        "width": 2,
-                                        "fullWidth": 3,
-                                        "text": "<=",
-                                        "hasTrailingTrivia": true
-                                    },
-                                    "_right": {
-                                        "kind": "NumericLiteralExpression",
-                                        "_literalToken": {
-                                            "kind": "NumericLiteral",
-                                            "start": 557,
-                                            "width": 1,
-                                            "text": "0"
-                                        }
-                                    }
-                                },
-                                "_secondSemicolonToken": {
-                                    "kind": "SemicolonToken",
-                                    "start": 558,
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": ";",
-                                    "hasTrailingTrivia": true
-                                },
-                                "_incrementor": {
-                                    "kind": "PostIncrementExpression",
-                                    "_operand": {
-                                        "kind": "IdentifierName",
-                                        "_identifier": {
-                                            "kind": "IdentifierNameToken",
-                                            "start": 560,
-                                            "width": 1,
-                                            "text": "j",
-                                            "valueText": "j"
-                                        }
-                                    },
-                                    "_operatorToken": {
-                                        "kind": "PlusPlusToken",
-                                        "start": 561,
-                                        "width": 2,
-                                        "text": "++"
-                                    }
                                 }
                             },
                             {
@@ -800,142 +936,6 @@
                             "text": "}",
                             "hasTrailingTrivia": true,
                             "hasTrailingNewLineTrivia": true
-                        }
-                    },
-                    "_forKeyword": {
-                        "kind": "IdentifierNameToken",
-                        "keywordKind": "ForKeyword",
-                        "start": 503,
-                        "width": 3,
-                        "fullWidth": 4,
-                        "text": "for",
-                        "hasTrailingTrivia": true
-                    },
-                    "_openParenToken": {
-                        "kind": "OpenParenToken",
-                        "start": 507,
-                        "width": 1,
-                        "text": "("
-                    },
-                    "_variableDeclaration": {
-                        "kind": "VariableDeclaration",
-                        "_varKeyword": {
-                            "kind": "IdentifierNameToken",
-                            "keywordKind": "VarKeyword",
-                            "start": 508,
-                            "width": 3,
-                            "fullWidth": 4,
-                            "text": "var",
-                            "hasTrailingTrivia": true
-                        },
-                        "_variableDeclarators": [
-                            {
-                                "kind": "VariableDeclarator",
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "start": 512,
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": "i",
-                                    "valueText": "i",
-                                    "hasTrailingTrivia": true
-                                },
-                                "_equalsValueClause": {
-                                    "kind": "EqualsValueClause",
-                                    "_equalsToken": {
-                                        "kind": "EqualsToken",
-                                        "start": 514,
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": "=",
-                                        "hasTrailingTrivia": true
-                                    },
-                                    "_value": {
-                                        "kind": "NumericLiteralExpression",
-                                        "_literalToken": {
-                                            "kind": "NumericLiteral",
-                                            "start": 516,
-                                            "width": 1,
-                                            "text": "0"
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    },
-                    "_closeParenToken": {
-                        "kind": "CloseParenToken",
-                        "start": 530,
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": ")",
-                        "hasTrailingTrivia": true
-                    },
-                    "_firstSemicolonToken": {
-                        "kind": "SemicolonToken",
-                        "start": 517,
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": ";",
-                        "hasTrailingTrivia": true
-                    },
-                    "_condition": {
-                        "kind": "LessThanOrEqualExpression",
-                        "_left": {
-                            "kind": "IdentifierName",
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "start": 519,
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": "i",
-                                "valueText": "i",
-                                "hasTrailingTrivia": true
-                            }
-                        },
-                        "_operatorToken": {
-                            "kind": "LessThanEqualsToken",
-                            "start": 521,
-                            "width": 2,
-                            "fullWidth": 3,
-                            "text": "<=",
-                            "hasTrailingTrivia": true
-                        },
-                        "_right": {
-                            "kind": "NumericLiteralExpression",
-                            "_literalToken": {
-                                "kind": "NumericLiteral",
-                                "start": 524,
-                                "width": 1,
-                                "text": "0"
-                            }
-                        }
-                    },
-                    "_secondSemicolonToken": {
-                        "kind": "SemicolonToken",
-                        "start": 525,
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": ";",
-                        "hasTrailingTrivia": true
-                    },
-                    "_incrementor": {
-                        "kind": "PostIncrementExpression",
-                        "_operand": {
-                            "kind": "IdentifierName",
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "start": 527,
-                                "width": 1,
-                                "text": "i",
-                                "valueText": "i"
-                            }
-                        },
-                        "_operatorToken": {
-                            "kind": "PlusPlusToken",
-                            "start": 528,
-                            "width": 2,
-                            "text": "++"
                         }
                     }
                 }

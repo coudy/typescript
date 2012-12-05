@@ -120,17 +120,6 @@
             },
             {
                 "kind": "ForStatement",
-                "_statement": {
-                    "kind": "EmptyStatement",
-                    "_semicolonToken": {
-                        "kind": "SemicolonToken",
-                        "start": 500,
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": ";",
-                        "hasTrailingTrivia": true
-                    }
-                },
                 "_forKeyword": {
                     "kind": "IdentifierNameToken",
                     "keywordKind": "ForKeyword",
@@ -148,13 +137,6 @@
                     "start": 471,
                     "width": 1,
                     "text": "("
-                },
-                "_closeParenToken": {
-                    "kind": "CloseParenToken",
-                    "start": 500,
-                    "width": 0,
-                    "isMissing": true,
-                    "text": ""
                 },
                 "_initializer": {
                     "kind": "AssignmentExpression",
@@ -287,6 +269,24 @@
                         "width": 0,
                         "isMissing": true,
                         "text": ""
+                    }
+                },
+                "_closeParenToken": {
+                    "kind": "CloseParenToken",
+                    "start": 500,
+                    "width": 0,
+                    "isMissing": true,
+                    "text": ""
+                },
+                "_statement": {
+                    "kind": "EmptyStatement",
+                    "_semicolonToken": {
+                        "kind": "SemicolonToken",
+                        "start": 500,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": ";",
+                        "hasTrailingTrivia": true
                     }
                 }
             },

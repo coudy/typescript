@@ -101,112 +101,6 @@
                         },
                         {
                             "kind": "ForStatement",
-                            "_statement": {
-                                "kind": "ExpressionStatement",
-                                "_expression": {
-                                    "kind": "AssignmentExpression",
-                                    "_left": {
-                                        "kind": "IdentifierName",
-                                        "_identifier": {
-                                            "kind": "IdentifierNameToken",
-                                            "start": 431,
-                                            "fullStart": 424,
-                                            "width": 7,
-                                            "fullWidth": 14,
-                                            "text": "was_del",
-                                            "valueText": "was_del",
-                                            "hasLeadingTrivia": true
-                                        }
-                                    },
-                                    "_operatorToken": {
-                                        "kind": "EqualsToken",
-                                        "start": 438,
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": "=",
-                                        "hasTrailingTrivia": true
-                                    },
-                                    "_right": {
-                                        "kind": "LogicalOrExpression",
-                                        "_left": {
-                                            "kind": "IdentifierName",
-                                            "_identifier": {
-                                                "kind": "IdentifierNameToken",
-                                                "start": 440,
-                                                "width": 7,
-                                                "fullWidth": 8,
-                                                "text": "was_del",
-                                                "valueText": "was_del",
-                                                "hasTrailingTrivia": true
-                                            }
-                                        },
-                                        "_operatorToken": {
-                                            "kind": "BarBarToken",
-                                            "start": 448,
-                                            "width": 2,
-                                            "fullWidth": 3,
-                                            "text": "||",
-                                            "hasTrailingTrivia": true
-                                        },
-                                        "_right": {
-                                            "kind": "DeleteExpression",
-                                            "_deleteKeyword": {
-                                                "kind": "IdentifierNameToken",
-                                                "keywordKind": "DeleteKeyword",
-                                                "start": 451,
-                                                "width": 6,
-                                                "fullWidth": 7,
-                                                "text": "delete",
-                                                "hasTrailingTrivia": true
-                                            },
-                                            "_expression": {
-                                                "kind": "ElementAccessExpression",
-                                                "_expression": {
-                                                    "kind": "IdentifierName",
-                                                    "_identifier": {
-                                                        "kind": "IdentifierNameToken",
-                                                        "start": 458,
-                                                        "width": 9,
-                                                        "text": "arguments",
-                                                        "valueText": "arguments"
-                                                    }
-                                                },
-                                                "_openBracketToken": {
-                                                    "kind": "OpenBracketToken",
-                                                    "start": 467,
-                                                    "width": 1,
-                                                    "text": "["
-                                                },
-                                                "_argumentExpression": {
-                                                    "kind": "IdentifierName",
-                                                    "_identifier": {
-                                                        "kind": "IdentifierNameToken",
-                                                        "start": 468,
-                                                        "width": 1,
-                                                        "text": "i",
-                                                        "valueText": "i"
-                                                    }
-                                                },
-                                                "_closeBracketToken": {
-                                                    "kind": "CloseBracketToken",
-                                                    "start": 469,
-                                                    "width": 1,
-                                                    "text": "]"
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "_semicolonToken": {
-                                    "kind": "SemicolonToken",
-                                    "start": 470,
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": ";",
-                                    "hasTrailingTrivia": true,
-                                    "hasTrailingNewLineTrivia": true
-                                }
-                            },
                             "_forKeyword": {
                                 "kind": "IdentifierNameToken",
                                 "keywordKind": "ForKeyword",
@@ -223,15 +117,6 @@
                                 "start": 391,
                                 "width": 1,
                                 "text": "("
-                            },
-                            "_closeParenToken": {
-                                "kind": "CloseParenToken",
-                                "start": 422,
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": ")",
-                                "hasTrailingTrivia": true,
-                                "hasTrailingNewLineTrivia": true
                             },
                             "_initializer": {
                                 "kind": "AssignmentExpression",
@@ -346,6 +231,121 @@
                                     "start": 420,
                                     "width": 2,
                                     "text": "++"
+                                }
+                            },
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "start": 422,
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ")",
+                                "hasTrailingTrivia": true,
+                                "hasTrailingNewLineTrivia": true
+                            },
+                            "_statement": {
+                                "kind": "ExpressionStatement",
+                                "_expression": {
+                                    "kind": "AssignmentExpression",
+                                    "_left": {
+                                        "kind": "IdentifierName",
+                                        "_identifier": {
+                                            "kind": "IdentifierNameToken",
+                                            "start": 431,
+                                            "fullStart": 424,
+                                            "width": 7,
+                                            "fullWidth": 14,
+                                            "text": "was_del",
+                                            "valueText": "was_del",
+                                            "hasLeadingTrivia": true
+                                        }
+                                    },
+                                    "_operatorToken": {
+                                        "kind": "EqualsToken",
+                                        "start": 438,
+                                        "width": 1,
+                                        "fullWidth": 2,
+                                        "text": "=",
+                                        "hasTrailingTrivia": true
+                                    },
+                                    "_right": {
+                                        "kind": "LogicalOrExpression",
+                                        "_left": {
+                                            "kind": "IdentifierName",
+                                            "_identifier": {
+                                                "kind": "IdentifierNameToken",
+                                                "start": 440,
+                                                "width": 7,
+                                                "fullWidth": 8,
+                                                "text": "was_del",
+                                                "valueText": "was_del",
+                                                "hasTrailingTrivia": true
+                                            }
+                                        },
+                                        "_operatorToken": {
+                                            "kind": "BarBarToken",
+                                            "start": 448,
+                                            "width": 2,
+                                            "fullWidth": 3,
+                                            "text": "||",
+                                            "hasTrailingTrivia": true
+                                        },
+                                        "_right": {
+                                            "kind": "DeleteExpression",
+                                            "_deleteKeyword": {
+                                                "kind": "IdentifierNameToken",
+                                                "keywordKind": "DeleteKeyword",
+                                                "start": 451,
+                                                "width": 6,
+                                                "fullWidth": 7,
+                                                "text": "delete",
+                                                "hasTrailingTrivia": true
+                                            },
+                                            "_expression": {
+                                                "kind": "ElementAccessExpression",
+                                                "_expression": {
+                                                    "kind": "IdentifierName",
+                                                    "_identifier": {
+                                                        "kind": "IdentifierNameToken",
+                                                        "start": 458,
+                                                        "width": 9,
+                                                        "text": "arguments",
+                                                        "valueText": "arguments"
+                                                    }
+                                                },
+                                                "_openBracketToken": {
+                                                    "kind": "OpenBracketToken",
+                                                    "start": 467,
+                                                    "width": 1,
+                                                    "text": "["
+                                                },
+                                                "_argumentExpression": {
+                                                    "kind": "IdentifierName",
+                                                    "_identifier": {
+                                                        "kind": "IdentifierNameToken",
+                                                        "start": 468,
+                                                        "width": 1,
+                                                        "text": "i",
+                                                        "valueText": "i"
+                                                    }
+                                                },
+                                                "_closeBracketToken": {
+                                                    "kind": "CloseBracketToken",
+                                                    "start": 469,
+                                                    "width": 1,
+                                                    "text": "]"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "_semicolonToken": {
+                                    "kind": "SemicolonToken",
+                                    "start": 470,
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": ";",
+                                    "hasTrailingTrivia": true,
+                                    "hasTrailingNewLineTrivia": true
                                 }
                             }
                         },

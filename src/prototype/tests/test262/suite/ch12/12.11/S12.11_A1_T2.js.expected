@@ -275,6 +275,26 @@
                             "_caseClauses": [
                                 {
                                     "kind": "CaseSwitchClause",
+                                    "_caseKeyword": {
+                                        "kind": "IdentifierNameToken",
+                                        "keywordKind": "CaseKeyword",
+                                        "start": 447,
+                                        "fullStart": 443,
+                                        "width": 4,
+                                        "fullWidth": 9,
+                                        "text": "case",
+                                        "hasLeadingTrivia": true,
+                                        "hasTrailingTrivia": true
+                                    },
+                                    "_expression": {
+                                        "kind": "NumericLiteralExpression",
+                                        "_literalToken": {
+                                            "kind": "NumericLiteral",
+                                            "start": 452,
+                                            "width": 1,
+                                            "text": "0"
+                                        }
+                                    },
                                     "_colonToken": {
                                         "kind": "ColonToken",
                                         "start": 453,
@@ -331,12 +351,15 @@
                                                 "hasTrailingNewLineTrivia": true
                                             }
                                         }
-                                    ],
+                                    ]
+                                },
+                                {
+                                    "kind": "CaseSwitchClause",
                                     "_caseKeyword": {
                                         "kind": "IdentifierNameToken",
                                         "keywordKind": "CaseKeyword",
-                                        "start": 447,
-                                        "fullStart": 443,
+                                        "start": 478,
+                                        "fullStart": 474,
                                         "width": 4,
                                         "fullWidth": 9,
                                         "text": "case",
@@ -344,17 +367,14 @@
                                         "hasTrailingTrivia": true
                                     },
                                     "_expression": {
-                                        "kind": "NumericLiteralExpression",
+                                        "kind": "StringLiteralExpression",
                                         "_literalToken": {
-                                            "kind": "NumericLiteral",
-                                            "start": 452,
-                                            "width": 1,
-                                            "text": "0"
+                                            "kind": "StringLiteral",
+                                            "start": 483,
+                                            "width": 3,
+                                            "text": "'1'"
                                         }
-                                    }
-                                },
-                                {
-                                    "kind": "CaseSwitchClause",
+                                    },
                                     "_colonToken": {
                                         "kind": "ColonToken",
                                         "start": 486,
@@ -433,87 +453,10 @@
                                                 "hasTrailingNewLineTrivia": true
                                             }
                                         }
-                                    ],
-                                    "_caseKeyword": {
-                                        "kind": "IdentifierNameToken",
-                                        "keywordKind": "CaseKeyword",
-                                        "start": 478,
-                                        "fullStart": 474,
-                                        "width": 4,
-                                        "fullWidth": 9,
-                                        "text": "case",
-                                        "hasLeadingTrivia": true,
-                                        "hasTrailingTrivia": true
-                                    },
-                                    "_expression": {
-                                        "kind": "StringLiteralExpression",
-                                        "_literalToken": {
-                                            "kind": "StringLiteral",
-                                            "start": 483,
-                                            "width": 3,
-                                            "text": "'1'"
-                                        }
-                                    }
+                                    ]
                                 },
                                 {
                                     "kind": "CaseSwitchClause",
-                                    "_colonToken": {
-                                        "kind": "ColonToken",
-                                        "start": 542,
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": ":",
-                                        "hasTrailingTrivia": true,
-                                        "hasTrailingNewLineTrivia": true
-                                    },
-                                    "_statements": [
-                                        {
-                                            "kind": "ExpressionStatement",
-                                            "_expression": {
-                                                "kind": "AddAssignmentExpression",
-                                                "_left": {
-                                                    "kind": "IdentifierName",
-                                                    "_identifier": {
-                                                        "kind": "IdentifierNameToken",
-                                                        "start": 550,
-                                                        "fullStart": 544,
-                                                        "width": 6,
-                                                        "fullWidth": 13,
-                                                        "text": "result",
-                                                        "valueText": "result",
-                                                        "hasLeadingTrivia": true,
-                                                        "hasTrailingTrivia": true
-                                                    }
-                                                },
-                                                "_operatorToken": {
-                                                    "kind": "PlusEqualsToken",
-                                                    "start": 557,
-                                                    "width": 2,
-                                                    "fullWidth": 3,
-                                                    "text": "+=",
-                                                    "hasTrailingTrivia": true
-                                                },
-                                                "_right": {
-                                                    "kind": "NumericLiteralExpression",
-                                                    "_literalToken": {
-                                                        "kind": "NumericLiteral",
-                                                        "start": 560,
-                                                        "width": 1,
-                                                        "text": "8"
-                                                    }
-                                                }
-                                            },
-                                            "_semicolonToken": {
-                                                "kind": "SemicolonToken",
-                                                "start": 561,
-                                                "width": 1,
-                                                "fullWidth": 2,
-                                                "text": ";",
-                                                "hasTrailingTrivia": true,
-                                                "hasTrailingNewLineTrivia": true
-                                            }
-                                        }
-                                    ],
                                     "_caseKeyword": {
                                         "kind": "IdentifierNameToken",
                                         "keywordKind": "CaseKeyword",
@@ -572,10 +515,87 @@
                                                 "text": ")"
                                             }
                                         }
-                                    }
+                                    },
+                                    "_colonToken": {
+                                        "kind": "ColonToken",
+                                        "start": 542,
+                                        "width": 1,
+                                        "fullWidth": 2,
+                                        "text": ":",
+                                        "hasTrailingTrivia": true,
+                                        "hasTrailingNewLineTrivia": true
+                                    },
+                                    "_statements": [
+                                        {
+                                            "kind": "ExpressionStatement",
+                                            "_expression": {
+                                                "kind": "AddAssignmentExpression",
+                                                "_left": {
+                                                    "kind": "IdentifierName",
+                                                    "_identifier": {
+                                                        "kind": "IdentifierNameToken",
+                                                        "start": 550,
+                                                        "fullStart": 544,
+                                                        "width": 6,
+                                                        "fullWidth": 13,
+                                                        "text": "result",
+                                                        "valueText": "result",
+                                                        "hasLeadingTrivia": true,
+                                                        "hasTrailingTrivia": true
+                                                    }
+                                                },
+                                                "_operatorToken": {
+                                                    "kind": "PlusEqualsToken",
+                                                    "start": 557,
+                                                    "width": 2,
+                                                    "fullWidth": 3,
+                                                    "text": "+=",
+                                                    "hasTrailingTrivia": true
+                                                },
+                                                "_right": {
+                                                    "kind": "NumericLiteralExpression",
+                                                    "_literalToken": {
+                                                        "kind": "NumericLiteral",
+                                                        "start": 560,
+                                                        "width": 1,
+                                                        "text": "8"
+                                                    }
+                                                }
+                                            },
+                                            "_semicolonToken": {
+                                                "kind": "SemicolonToken",
+                                                "start": 561,
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": ";",
+                                                "hasTrailingTrivia": true,
+                                                "hasTrailingNewLineTrivia": true
+                                            }
+                                        }
+                                    ]
                                 },
                                 {
                                     "kind": "CaseSwitchClause",
+                                    "_caseKeyword": {
+                                        "kind": "IdentifierNameToken",
+                                        "keywordKind": "CaseKeyword",
+                                        "start": 567,
+                                        "fullStart": 563,
+                                        "width": 4,
+                                        "fullWidth": 9,
+                                        "text": "case",
+                                        "hasLeadingTrivia": true,
+                                        "hasTrailingTrivia": true
+                                    },
+                                    "_expression": {
+                                        "kind": "NumericLiteralExpression",
+                                        "_literalToken": {
+                                            "kind": "NumericLiteral",
+                                            "start": 572,
+                                            "width": 1,
+                                            "text": "3"
+                                        }
+                                    },
                                     "_colonToken": {
                                         "kind": "ColonToken",
                                         "start": 573,
@@ -632,30 +652,20 @@
                                                 "hasTrailingNewLineTrivia": true
                                             }
                                         }
-                                    ],
-                                    "_caseKeyword": {
-                                        "kind": "IdentifierNameToken",
-                                        "keywordKind": "CaseKeyword",
-                                        "start": 567,
-                                        "fullStart": 563,
-                                        "width": 4,
-                                        "fullWidth": 9,
-                                        "text": "case",
-                                        "hasLeadingTrivia": true,
-                                        "hasTrailingTrivia": true
-                                    },
-                                    "_expression": {
-                                        "kind": "NumericLiteralExpression",
-                                        "_literalToken": {
-                                            "kind": "NumericLiteral",
-                                            "start": 572,
-                                            "width": 1,
-                                            "text": "3"
-                                        }
-                                    }
+                                    ]
                                 },
                                 {
                                     "kind": "DefaultSwitchClause",
+                                    "_defaultKeyword": {
+                                        "kind": "IdentifierNameToken",
+                                        "keywordKind": "DefaultKeyword",
+                                        "start": 599,
+                                        "fullStart": 595,
+                                        "width": 7,
+                                        "fullWidth": 11,
+                                        "text": "default",
+                                        "hasLeadingTrivia": true
+                                    },
                                     "_colonToken": {
                                         "kind": "ColonToken",
                                         "start": 606,
@@ -734,20 +744,30 @@
                                                 "hasTrailingNewLineTrivia": true
                                             }
                                         }
-                                    ],
-                                    "_defaultKeyword": {
-                                        "kind": "IdentifierNameToken",
-                                        "keywordKind": "DefaultKeyword",
-                                        "start": 599,
-                                        "fullStart": 595,
-                                        "width": 7,
-                                        "fullWidth": 11,
-                                        "text": "default",
-                                        "hasLeadingTrivia": true
-                                    }
+                                    ]
                                 },
                                 {
                                     "kind": "CaseSwitchClause",
+                                    "_caseKeyword": {
+                                        "kind": "IdentifierNameToken",
+                                        "keywordKind": "CaseKeyword",
+                                        "start": 645,
+                                        "fullStart": 641,
+                                        "width": 4,
+                                        "fullWidth": 9,
+                                        "text": "case",
+                                        "hasLeadingTrivia": true,
+                                        "hasTrailingTrivia": true
+                                    },
+                                    "_expression": {
+                                        "kind": "NumericLiteralExpression",
+                                        "_literalToken": {
+                                            "kind": "NumericLiteral",
+                                            "start": 650,
+                                            "width": 1,
+                                            "text": "4"
+                                        }
+                                    },
                                     "_colonToken": {
                                         "kind": "ColonToken",
                                         "start": 651,
@@ -826,12 +846,15 @@
                                                 "hasTrailingNewLineTrivia": true
                                             }
                                         }
-                                    ],
+                                    ]
+                                },
+                                {
+                                    "kind": "CaseSwitchClause",
                                     "_caseKeyword": {
                                         "kind": "IdentifierNameToken",
                                         "keywordKind": "CaseKeyword",
-                                        "start": 645,
-                                        "fullStart": 641,
+                                        "start": 690,
+                                        "fullStart": 686,
                                         "width": 4,
                                         "fullWidth": 9,
                                         "text": "case",
@@ -839,17 +862,15 @@
                                         "hasTrailingTrivia": true
                                     },
                                     "_expression": {
-                                        "kind": "NumericLiteralExpression",
-                                        "_literalToken": {
-                                            "kind": "NumericLiteral",
-                                            "start": 650,
+                                        "kind": "IdentifierName",
+                                        "_identifier": {
+                                            "kind": "IdentifierNameToken",
+                                            "start": 695,
                                             "width": 1,
-                                            "text": "4"
+                                            "text": "x",
+                                            "valueText": "x"
                                         }
-                                    }
-                                },
-                                {
-                                    "kind": "CaseSwitchClause",
+                                    },
                                     "_colonToken": {
                                         "kind": "ColonToken",
                                         "start": 696,
@@ -928,12 +949,15 @@
                                                 "hasTrailingNewLineTrivia": true
                                             }
                                         }
-                                    ],
+                                    ]
+                                },
+                                {
+                                    "kind": "CaseSwitchClause",
                                     "_caseKeyword": {
                                         "kind": "IdentifierNameToken",
                                         "keywordKind": "CaseKeyword",
-                                        "start": 690,
-                                        "fullStart": 686,
+                                        "start": 736,
+                                        "fullStart": 732,
                                         "width": 4,
                                         "fullWidth": 9,
                                         "text": "case",
@@ -941,18 +965,14 @@
                                         "hasTrailingTrivia": true
                                     },
                                     "_expression": {
-                                        "kind": "IdentifierName",
-                                        "_identifier": {
-                                            "kind": "IdentifierNameToken",
-                                            "start": 695,
+                                        "kind": "NumericLiteralExpression",
+                                        "_literalToken": {
+                                            "kind": "NumericLiteral",
+                                            "start": 741,
                                             "width": 1,
-                                            "text": "x",
-                                            "valueText": "x"
+                                            "text": "0"
                                         }
-                                    }
-                                },
-                                {
-                                    "kind": "CaseSwitchClause",
+                                    },
                                     "_colonToken": {
                                         "kind": "ColonToken",
                                         "start": 742,
@@ -1009,12 +1029,15 @@
                                                 "hasTrailingNewLineTrivia": true
                                             }
                                         }
-                                    ],
+                                    ]
+                                },
+                                {
+                                    "kind": "CaseSwitchClause",
                                     "_caseKeyword": {
                                         "kind": "IdentifierNameToken",
                                         "keywordKind": "CaseKeyword",
-                                        "start": 736,
-                                        "fullStart": 732,
+                                        "start": 769,
+                                        "fullStart": 765,
                                         "width": 4,
                                         "fullWidth": 9,
                                         "text": "case",
@@ -1025,14 +1048,11 @@
                                         "kind": "NumericLiteralExpression",
                                         "_literalToken": {
                                             "kind": "NumericLiteral",
-                                            "start": 741,
+                                            "start": 774,
                                             "width": 1,
-                                            "text": "0"
+                                            "text": "1"
                                         }
-                                    }
-                                },
-                                {
-                                    "kind": "CaseSwitchClause",
+                                    },
                                     "_colonToken": {
                                         "kind": "ColonToken",
                                         "start": 775,
@@ -1089,27 +1109,7 @@
                                                 "hasTrailingNewLineTrivia": true
                                             }
                                         }
-                                    ],
-                                    "_caseKeyword": {
-                                        "kind": "IdentifierNameToken",
-                                        "keywordKind": "CaseKeyword",
-                                        "start": 769,
-                                        "fullStart": 765,
-                                        "width": 4,
-                                        "fullWidth": 9,
-                                        "text": "case",
-                                        "hasLeadingTrivia": true,
-                                        "hasTrailingTrivia": true
-                                    },
-                                    "_expression": {
-                                        "kind": "NumericLiteralExpression",
-                                        "_literalToken": {
-                                            "kind": "NumericLiteral",
-                                            "start": 774,
-                                            "width": 1,
-                                            "text": "1"
-                                        }
-                                    }
+                                    ]
                                 }
                             ],
                             "_closeBraceToken": {

@@ -62,6 +62,79 @@
             },
             {
                 "kind": "WhileStatement",
+                "_whileKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "WhileKeyword",
+                    "start": 386,
+                    "width": 5,
+                    "text": "while"
+                },
+                "_openParenToken": {
+                    "kind": "OpenParenToken",
+                    "start": 391,
+                    "width": 1,
+                    "text": "("
+                },
+                "_condition": {
+                    "kind": "FunctionExpression",
+                    "_functionKeyword": {
+                        "kind": "IdentifierNameToken",
+                        "keywordKind": "FunctionKeyword",
+                        "start": 392,
+                        "width": 8,
+                        "fullWidth": 9,
+                        "text": "function",
+                        "hasTrailingTrivia": true
+                    },
+                    "_identifier": {
+                        "kind": "IdentifierNameToken",
+                        "start": 401,
+                        "width": 1,
+                        "text": "f",
+                        "valueText": "f"
+                    },
+                    "_callSignature": {
+                        "kind": "CallSignature",
+                        "_parameterList": {
+                            "kind": "ParameterList",
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
+                                "start": 402,
+                                "width": 1,
+                                "text": "("
+                            },
+                            "_parameters": [],
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "start": 403,
+                                "width": 1,
+                                "text": ")"
+                            }
+                        }
+                    },
+                    "_block": {
+                        "kind": "Block",
+                        "_openBraceToken": {
+                            "kind": "OpenBraceToken",
+                            "start": 404,
+                            "width": 1,
+                            "text": "{"
+                        },
+                        "_statements": [],
+                        "_closeBraceToken": {
+                            "kind": "CloseBraceToken",
+                            "start": 405,
+                            "width": 1,
+                            "text": "}"
+                        }
+                    }
+                },
+                "_closeParenToken": {
+                    "kind": "CloseParenToken",
+                    "start": 406,
+                    "width": 1,
+                    "text": ")"
+                },
                 "_statement": {
                     "kind": "Block",
                     "_openBraceToken": {
@@ -374,79 +447,6 @@
                         "hasTrailingTrivia": true,
                         "hasTrailingNewLineTrivia": true
                     }
-                },
-                "_whileKeyword": {
-                    "kind": "IdentifierNameToken",
-                    "keywordKind": "WhileKeyword",
-                    "start": 386,
-                    "width": 5,
-                    "text": "while"
-                },
-                "_openParenToken": {
-                    "kind": "OpenParenToken",
-                    "start": 391,
-                    "width": 1,
-                    "text": "("
-                },
-                "_condition": {
-                    "kind": "FunctionExpression",
-                    "_functionKeyword": {
-                        "kind": "IdentifierNameToken",
-                        "keywordKind": "FunctionKeyword",
-                        "start": 392,
-                        "width": 8,
-                        "fullWidth": 9,
-                        "text": "function",
-                        "hasTrailingTrivia": true
-                    },
-                    "_identifier": {
-                        "kind": "IdentifierNameToken",
-                        "start": 401,
-                        "width": 1,
-                        "text": "f",
-                        "valueText": "f"
-                    },
-                    "_callSignature": {
-                        "kind": "CallSignature",
-                        "_parameterList": {
-                            "kind": "ParameterList",
-                            "_openParenToken": {
-                                "kind": "OpenParenToken",
-                                "start": 402,
-                                "width": 1,
-                                "text": "("
-                            },
-                            "_parameters": [],
-                            "_closeParenToken": {
-                                "kind": "CloseParenToken",
-                                "start": 403,
-                                "width": 1,
-                                "text": ")"
-                            }
-                        }
-                    },
-                    "_block": {
-                        "kind": "Block",
-                        "_openBraceToken": {
-                            "kind": "OpenBraceToken",
-                            "start": 404,
-                            "width": 1,
-                            "text": "{"
-                        },
-                        "_statements": [],
-                        "_closeBraceToken": {
-                            "kind": "CloseBraceToken",
-                            "start": 405,
-                            "width": 1,
-                            "text": "}"
-                        }
-                    }
-                },
-                "_closeParenToken": {
-                    "kind": "CloseParenToken",
-                    "start": 406,
-                    "width": 1,
-                    "text": ")"
                 }
             },
             {

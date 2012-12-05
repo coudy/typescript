@@ -82,6 +82,40 @@
                                 "_statements": [
                                     {
                                         "kind": "WhileStatement",
+                                        "_whileKeyword": {
+                                            "kind": "IdentifierNameToken",
+                                            "keywordKind": "WhileKeyword",
+                                            "start": 541,
+                                            "fullStart": 538,
+                                            "width": 5,
+                                            "fullWidth": 9,
+                                            "text": "while",
+                                            "hasLeadingTrivia": true,
+                                            "hasTrailingTrivia": true
+                                        },
+                                        "_openParenToken": {
+                                            "kind": "OpenParenToken",
+                                            "start": 547,
+                                            "width": 1,
+                                            "text": "("
+                                        },
+                                        "_condition": {
+                                            "kind": "NumericLiteralExpression",
+                                            "_literalToken": {
+                                                "kind": "NumericLiteral",
+                                                "start": 548,
+                                                "width": 1,
+                                                "text": "0"
+                                            }
+                                        },
+                                        "_closeParenToken": {
+                                            "kind": "CloseParenToken",
+                                            "start": 549,
+                                            "width": 1,
+                                            "fullWidth": 2,
+                                            "text": ")",
+                                            "hasTrailingTrivia": true
+                                        },
                                         "_statement": {
                                             "kind": "Block",
                                             "_openBraceToken": {
@@ -172,40 +206,6 @@
                                                 "text": "}",
                                                 "hasLeadingTrivia": true
                                             }
-                                        },
-                                        "_whileKeyword": {
-                                            "kind": "IdentifierNameToken",
-                                            "keywordKind": "WhileKeyword",
-                                            "start": 541,
-                                            "fullStart": 538,
-                                            "width": 5,
-                                            "fullWidth": 9,
-                                            "text": "while",
-                                            "hasLeadingTrivia": true,
-                                            "hasTrailingTrivia": true
-                                        },
-                                        "_openParenToken": {
-                                            "kind": "OpenParenToken",
-                                            "start": 547,
-                                            "width": 1,
-                                            "text": "("
-                                        },
-                                        "_condition": {
-                                            "kind": "NumericLiteralExpression",
-                                            "_literalToken": {
-                                                "kind": "NumericLiteral",
-                                                "start": 548,
-                                                "width": 1,
-                                                "text": "0"
-                                            }
-                                        },
-                                        "_closeParenToken": {
-                                            "kind": "CloseParenToken",
-                                            "start": 549,
-                                            "width": 1,
-                                            "fullWidth": 2,
-                                            "text": ")",
-                                            "hasTrailingTrivia": true
                                         }
                                     },
                                     {
