@@ -2268,6 +2268,10 @@ var Parser = (function (_super) {
                 return true;
 
             }
+            case 80 /* EqualsGreaterThanToken */ : {
+                return true;
+
+            }
         }
         var keywordKind = currentToken.keywordKind();
         switch(keywordKind) {
@@ -2533,6 +2537,9 @@ var Parser = (function (_super) {
                 return this.parseType(true);
             }
         }
+        if(currentToken.tokenKind === 80 /* EqualsGreaterThanToken */ ) {
+            return this.parseSimpleArrowFunctionExpression();
+        }
         if(this.isIdentifier(currentToken)) {
             if(this.isSimpleArrowFunctionExpression()) {
                 return this.parseSimpleArrowFunctionExpression();
@@ -2714,6 +2721,9 @@ var Parser = (function (_super) {
         }
     };
     Parser.prototype.isSimpleArrowFunctionExpression = function () {
+        if(this.currentToken().tokenKind === 80 /* EqualsGreaterThanToken */ ) {
+            return true;
+        }
         return this.isIdentifier(this.currentToken()) && this.peekTokenN(1).tokenKind === 80 /* EqualsGreaterThanToken */ ;
     };
     Parser.prototype.parseSimpleArrowFunctionExpression = function () {
@@ -3381,6 +3391,9 @@ var Parser = (function (_super) {
     Parser.prototype.isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator = function (itemCount) {
         if(this.previousToken.tokenKind === 74 /* CommaToken */ ) {
             return false;
+        }
+        if(this.currentToken().tokenKind === 80 /* EqualsGreaterThanToken */ ) {
+            return true;
         }
         return itemCount > 0 && this.canEatExplicitOrAutomaticSemicolon(false);
     };
@@ -36059,7 +36072,7 @@ if(false) {
     end = new Date().getTime();
     Environment.standardOut.WriteLine("Total time: " + (end - start));
 }
-if(false && specificFile === undefined) {
+if(true && specificFile === undefined) {
     start = new Date().getTime();
     program.run262(Environment, false);
     end = new Date().getTime();

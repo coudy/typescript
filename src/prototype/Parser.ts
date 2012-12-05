@@ -1832,6 +1832,12 @@ class Parser extends SlidingWindow {
 
             case SyntaxKind.OpenBraceToken: // For object type literal expressions.
                 return true;
+            
+            // If we see a => then we know the user was probably trying to type in an arrow 
+            // function.  So allow this as the start of an expression, knowing that when we 
+            // actually try to parse it we'll report the missing identifier.
+            case SyntaxKind.EqualsGreaterThanToken:
+                return true;
         }
 
         var keywordKind = currentToken.keywordKind();
@@ -2209,6 +2215,13 @@ class Parser extends SlidingWindow {
             }
         }
 
+        // ERROR RECOVERY TWEAK:
+        // If we see a standalong => try to parse it as an arrow function as that's likely what
+        // the user intended to write.
+        if (currentToken.tokenKind === SyntaxKind.EqualsGreaterThanToken) {
+            return this.parseSimpleArrowFunctionExpression();
+        }
+
         if (this.isIdentifier(currentToken)) {
             if (this.isSimpleArrowFunctionExpression()) {
                 return this.parseSimpleArrowFunctionExpression();
@@ -2431,6 +2444,11 @@ class Parser extends SlidingWindow {
     }
 
     private isSimpleArrowFunctionExpression(): bool {
+        // ERROR RECOVERY TWEAK:
+        if (this.currentToken().tokenKind === SyntaxKind.EqualsGreaterThanToken) {
+            return true;
+        }
+
         return this.isIdentifier(this.currentToken()) && 
                this.peekTokenN(1).tokenKind === SyntaxKind.EqualsGreaterThanToken;
     }
@@ -3366,6 +3384,14 @@ class Parser extends SlidingWindow {
         //          b = baz;
         if (this.previousToken.tokenKind === SyntaxKind.CommaToken) {
             return false;
+        }
+
+        // ERROR RECOVERY TWEAK:
+        // For better error recovery, if we see a => then we just stop immediately.  We've got an
+        // arrow function here and it's going to be veyr unlikely that we'll resynchronize and get
+        // another variable declaration.
+        if (this.currentToken().tokenKind === SyntaxKind.EqualsGreaterThanToken) {
+            return true;
         }
 
         // We're done when we can eat a semicolon and we've parsed at least one item.
