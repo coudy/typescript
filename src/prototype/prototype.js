@@ -35862,10 +35862,6 @@ var Program = (function () {
         this.runTests(environment, "C:\\temp\\monoco-files", function (filePath) {
             return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
-        environment.standardOut.WriteLine("Testing against 262.");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true, true);
-        });
         environment.standardOut.WriteLine("Done.");
     };
     Program.prototype.runTests = function (environment, path, action, printDots) {

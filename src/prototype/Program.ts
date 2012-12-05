@@ -24,9 +24,9 @@ class Program {
         this.runTests(environment, "C:\\temp\\monoco-files",
             filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ false));
             
-        environment.standardOut.WriteLine("Testing against 262.");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ true, /*generateBaselines:*/ true));
+        //environment.standardOut.WriteLine("Testing against 262.");
+        //this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262",
+        //    filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ true, /*generateBaselines:*/ false));
 
         environment.standardOut.WriteLine("Done.");
     }
