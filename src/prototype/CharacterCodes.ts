@@ -11,7 +11,7 @@ enum CharacterCodes {
     paragraphSeparator  = 0x2029,
     space               = 32,       // " "
 
-    nonBreakingSpace           = 0x00A0,   //
+    nonBreakingSpace    = 0x00A0,   //
 
     _ = 95,
     $ = 36,
