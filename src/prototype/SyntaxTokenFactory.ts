@@ -105,6 +105,7 @@ module SyntaxTokenFactory {
             this._keywordKind = keywordKind;
         }
         
+        public syntaxKind() { return this.kind; }
         public toJSON(key) { return toJSON(this); }
         public keywordKind() { return this._keywordKind; }
         public fullStart() { return this._fullStart; }
@@ -136,7 +137,8 @@ module SyntaxTokenFactory {
             this.kind = kind;
             this._fullStart = fullStart;
         }
-
+        
+        public syntaxKind() { return this.kind; }
         public toJSON(key) { return toJSON(this); }
         
         public isMissing(): bool { return false; }
@@ -171,7 +173,8 @@ module SyntaxTokenFactory {
             this._fullStart = fullStart;
             this._leadingTriviaInfo = leadingTriviaInfo;
         }
-
+        
+        public syntaxKind() { return this.kind; }
         public toJSON(key) { return toJSON(this); }
 
         public isMissing(): bool { return false; }
@@ -208,7 +211,8 @@ module SyntaxTokenFactory {
             this._fullStart = fullStart;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
-
+        
+        public syntaxKind() { return this.kind; }
         public toJSON(key) { return toJSON(this); }
         
         public isMissing(): bool { return false; }
@@ -247,7 +251,8 @@ module SyntaxTokenFactory {
             this._leadingTriviaInfo = leadingTriviaInfo;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
-
+        
+        public syntaxKind() { return this.kind; }
         public toJSON(key) { return toJSON(this); }
         
         public isMissing(): bool { return false; }
@@ -282,7 +287,8 @@ module SyntaxTokenFactory {
             this._keywordKind = kind;
             this._fullStart = fullStart;
         }
-
+        
+        public syntaxKind() { return SyntaxKind.IdentifierNameToken; }
         public toJSON(key) { return toJSON(this); }
         
         public isMissing(): bool { return false; }
@@ -318,7 +324,8 @@ module SyntaxTokenFactory {
             this._fullStart = fullStart;
             this._leadingTriviaInfo = leadingTriviaInfo;
         }
-
+        
+        public syntaxKind() { return SyntaxKind.IdentifierNameToken; }
         public toJSON(key) { return toJSON(this); }
 
         public isMissing(): bool { return false; }
@@ -356,7 +363,8 @@ module SyntaxTokenFactory {
             this._fullStart = fullStart;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
-
+        
+        public syntaxKind() { return SyntaxKind.IdentifierNameToken; }
         public toJSON(key) { return toJSON(this); }
         
         public isMissing(): bool { return false; }
@@ -396,7 +404,8 @@ module SyntaxTokenFactory {
             this._leadingTriviaInfo = leadingTriviaInfo;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
-
+        
+        public syntaxKind() { return SyntaxKind.IdentifierNameToken; }
         public toJSON(key) { return toJSON(this); }
         
         public isMissing(): bool { return false; }
@@ -436,7 +445,8 @@ module SyntaxTokenFactory {
             this._text = text;
             this._value = value;
         }
-
+        
+        public syntaxKind() { return this.kind; }
         public toJSON(key) { return toJSON(this); }
         
         public isMissing(): bool { return false; }
@@ -475,7 +485,8 @@ module SyntaxTokenFactory {
             this._leadingTriviaInfo = leadingTriviaInfo;
             this._value = value;
         }
-
+        
+        public syntaxKind() { return this.kind; }
         public toJSON(key) { return toJSON(this); }
 
         public isMissing(): bool { return false; }
@@ -516,7 +527,8 @@ module SyntaxTokenFactory {
             this._trailingTriviaInfo = trailingTriviaInfo;
             this._value = value;
         }
-
+        
+        public syntaxKind() { return this.kind; }
         public toJSON(key) { return toJSON(this); }
         
         public isMissing(): bool { return false; }
@@ -559,7 +571,8 @@ module SyntaxTokenFactory {
             this._trailingTriviaInfo = trailingTriviaInfo;
             this._value = value;
         }
-
+        
+        public syntaxKind() { return this.kind; }
         public toJSON(key) { return toJSON(this); }
         
         public isMissing(): bool { return false; }

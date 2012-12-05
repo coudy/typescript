@@ -1,6 +1,6 @@
 ///<reference path='References.ts' />
 
-interface ISeparatedSyntaxList {
+interface ISeparatedSyntaxList extends ISyntaxElement {
     count();
     itemAt(index: number): any;
 

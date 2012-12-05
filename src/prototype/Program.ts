@@ -12,21 +12,21 @@ class Program {
     runAllTests(environment: IEnvironment, useTypeScript: bool, verify: bool): void {
         environment.standardOut.WriteLine("");
 
-        //environment.standardOut.WriteLine("Testing scanner.");
-        //this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
-        //    filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify));
+        environment.standardOut.WriteLine("Testing scanner.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
+            filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify));
             
-        //environment.standardOut.WriteLine("Testing parser.");
-        //this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
-        //    filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*allowErrors:*/ true));
+        environment.standardOut.WriteLine("Testing parser.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*allowErrors:*/ true));
             
-        //environment.standardOut.WriteLine("Testing against monoco.");
-        //this.runTests(environment, "C:\\temp\\monoco-files",
-        //    filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ false));
+        environment.standardOut.WriteLine("Testing against monoco.");
+        this.runTests(environment, "C:\\temp\\monoco-files",
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ false));
             
-        environment.standardOut.WriteLine("Testing against 262.");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ true, /*generateBaselines:*/ true));
+        //environment.standardOut.WriteLine("Testing against 262.");
+        //this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262",
+        //    filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ true, /*generateBaselines:*/ false));
 
         environment.standardOut.WriteLine("Done.");
     }
@@ -290,7 +290,7 @@ if (true) {
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
 
-if (false) {
+if (true) {
     start = new Date().getTime();
     program.runAllTests(Environment, true, false);
     program.run(Environment, true);
@@ -298,7 +298,7 @@ if (false) {
     Environment.standardOut.WriteLine("Total time: " + (end - start));
 }
 
-if (false && specificFile === undefined) {
+if (true && specificFile === undefined) {
     start = new Date().getTime();
     program.run262(Environment, false);
     end = new Date().getTime();

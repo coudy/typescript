@@ -2,6 +2,8 @@
 
 enum SyntaxKind {
     None,
+    List,
+    SeparatedList,
 
     // Trivia
     WhitespaceTrivia,

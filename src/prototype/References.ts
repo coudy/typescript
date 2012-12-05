@@ -14,6 +14,7 @@
 ///<reference path='IntegerUtilities.ts' />
 ///<reference path='IEnvironment.ts' />
 ///<reference path='ISeparatedSyntaxList.ts' />
+///<reference path='ISyntaxElement.ts' />
 ///<reference path='ISyntaxList.ts' />
 ///<reference path='ISyntaxToken.ts' />
 ///<reference path='ISyntaxTrivia.ts' />

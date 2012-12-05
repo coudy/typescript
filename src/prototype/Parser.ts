@@ -531,8 +531,11 @@ class Parser extends SlidingWindow {
 
     public parseSyntaxTree(): SyntaxTree {
         var sourceUnit = this.parseSourceUnit();
+
         var allDiagnostics = this.tokenDiagnostics.concat(this.diagnostics);
         allDiagnostics.sort((a: SyntaxDiagnostic, b: SyntaxDiagnostic) => a.position() - b.position());
+
+        this.skippedTokens.sort((a: ISyntaxToken, b: ISyntaxToken) => a.fullStart() - b.fullStart());
 
         return new SyntaxTree(sourceUnit, this.skippedTokens, allDiagnostics);
     }

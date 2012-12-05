@@ -2,6 +2,8 @@
 
 module SeparatedSyntaxList {
     class EmptySeparatedSyntaxList implements ISeparatedSyntaxList {
+        public syntaxKind() { return SyntaxKind.SeparatedList; }
+
         public toJSON(key) { return []; }
 
         public count() { return 0; }
@@ -32,6 +34,7 @@ module SeparatedSyntaxList {
             return [this.item];
         }
 
+        public syntaxKind() { return SyntaxKind.SeparatedList; }
         public count() { return 1; }
         public syntaxNodeCount() { return 1; }
         public separatorCount() { return 0; }
@@ -63,7 +66,8 @@ module SeparatedSyntaxList {
         constructor(nodes: any[]) {
             this.nodes = nodes;
         }
-
+        
+        public syntaxKind() { return SyntaxKind.SeparatedList; }
         public toJSON(key) { return this.nodes; }
 
         public count() { return this.nodes.length; }
