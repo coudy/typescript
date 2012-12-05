@@ -115,25 +115,11 @@ SERVICES_SOURCES= \
   $(COMPILER_SOURCES_BASE) \
   $(SERVICES_SOURCES_BASE)
 
-PROTOTYPE_SOURCES_BASE= \
-  $(PSRC)\ArrayUtilities.ts \
-  $(PSRC)\CharacterCodes.ts \
-  $(PSRC)\Environment.ts \
-  $(PSRC)\Errors.ts \
-  $(PSRC)\Contract.ts \
-  $(PSRC)\IEnvironment.ts \
-  $(PSRC)\IText.ts \
-  $(PSRC)\ITextLine.ts \
-  $(PSRC)\LinePosition.ts \
-  $(PSRC)\MathPrototype.ts \
-  $(PSRC)\SubText.ts \
-  $(PSRC)\TextBase.ts \
-  $(PSRC)\TextLine.ts \
-  $(PSRC)\TextSpan.ts \
-  $(PSRC)\TextUtilities.ts \
+PROTOTYPE_SOURCES_PROGRAM= \
   $(PSRC)\Program.ts
 
-PROTOTYPE_SOURCES=$(PROTOTYPE_SOURCES_BASE)
+PROTOTYPE_SOURCES_TSC= \
+  $(PSRC)\Tsc.ts
 
 prebuild-local:
 	if not exist $(BUILT) mkdir $(BUILT)
@@ -169,11 +155,14 @@ local: prebuild-local $(BUILT_LOCAL)\typescript.js $(BUILT_LOCAL)\tsc.js $(BUILT
 
 compiler: local
 
-prototype: $(PROTOTYPE_SOURCES)
-	$(STRC_LKG) $(PROTOTYPE_SOURCES) -const -out $(PSRC)\prototype.js
+prototype: $(PROTOTYPE_SOURCES_PROGRAM)
+	$(STRC_LKG) $(PROTOTYPE_SOURCES_PROGRAM) -const -out $(PSRC)\prototype.js
 
 runprototype: prototype
 	$(DEBUG_HOST) $(PSRC)\prototype.js $(FRONTEND_SOURCES) $(SERVICES_SOURCES) $(BUILT_LOCALTEST)\typescriptServices.js $(HSRC)\harness.ts $(HSRC)\diff.ts $(HSRC)\exec.ts $(HSRC)\baselining.ts $(HSRC)\fourslash.ts $(HSRC)\dumpAST-baselining.ts $(HSRC)\external\json2.ts $(HSRC)\runner.ts
+
+prototype_tsc: $(PROTOTYPE_SOURCES_TSC)
+	$(STRC_LKG) $(PROTOTYPE_SOURCES_TSC) -const -out $(PSRC)\tsc.js
 
 COMPILER_TESTS=--compiler
 LS_TESTS=--ls
