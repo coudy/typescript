@@ -35862,6 +35862,10 @@ var Program = (function () {
         this.runTests(environment, "C:\\temp\\monoco-files", function (filePath) {
             return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
+        environment.standardOut.WriteLine("Testing against 262.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
+            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true, true);
+        });
         environment.standardOut.WriteLine("Done.");
     };
     Program.prototype.runTests = function (environment, path, action, printDots) {
@@ -36052,14 +36056,14 @@ if(true) {
     Environment.standardOut.WriteLine("Total time: " + (end - start));
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(true) {
+if(false) {
     start = new Date().getTime();
     program.runAllTests(Environment, true, false);
     program.run(Environment, true);
     end = new Date().getTime();
     Environment.standardOut.WriteLine("Total time: " + (end - start));
 }
-if(true && specificFile === undefined) {
+if(false && specificFile === undefined) {
     start = new Date().getTime();
     program.run262(Environment, false);
     end = new Date().getTime();

@@ -24,9 +24,9 @@ class Program {
         this.runTests(environment, "C:\\temp\\monoco-files",
             filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ false));
             
-        //environment.standardOut.WriteLine("Testing against 262.");
-        //this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262",
-        //    filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ true, /*generateBaselines:*/ false));
+        environment.standardOut.WriteLine("Testing against 262.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262",
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ true, /*generateBaselines:*/ true));
 
         environment.standardOut.WriteLine("Done.");
     }
@@ -290,7 +290,7 @@ if (true) {
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
 
-if (true) {
+if (false) {
     start = new Date().getTime();
     program.runAllTests(Environment, true, false);
     program.run(Environment, true);
@@ -298,7 +298,7 @@ if (true) {
     Environment.standardOut.WriteLine("Total time: " + (end - start));
 }
 
-if (true && specificFile === undefined) {
+if (false && specificFile === undefined) {
     start = new Date().getTime();
     program.run262(Environment, false);
     end = new Date().getTime();
