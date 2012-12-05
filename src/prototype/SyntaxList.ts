@@ -2,7 +2,11 @@
 
 module SyntaxList {
     class EmptySyntaxList implements ISyntaxList {
-        public syntaxKind(): SyntaxKind { return SyntaxKind.List; }
+        public isToken(): bool { return false; }
+        public isNode(): bool{ return false; }
+        public isList(): bool{ return true; }
+        public isSeparatedList(): bool{ return false; }
+        public kind(): SyntaxKind { return SyntaxKind.List; }
 
         public toJSON(key) {
             return [];
@@ -25,8 +29,12 @@ module SyntaxList {
         constructor(item: SyntaxNode) {
             this._item = item;
         }
-
-        public syntaxKind(): SyntaxKind { return SyntaxKind.List; }
+        
+        public isToken(): bool { return false; }
+        public isNode(): bool{ return false; }
+        public isList(): bool{ return true; }
+        public isSeparatedList(): bool{ return false; }
+        public kind(): SyntaxKind { return SyntaxKind.List; }
 
         public toJSON(key) {
             return [this._item];
@@ -51,8 +59,12 @@ module SyntaxList {
         constructor(nodes: SyntaxNode[]) {
             this.nodes = nodes;
         }
-
-        public syntaxKind(): SyntaxKind { return SyntaxKind.List; }
+        
+        public isToken(): bool { return false; }
+        public isNode(): bool{ return false; }
+        public isList(): bool{ return true; }
+        public isSeparatedList(): bool{ return false; }
+        public kind(): SyntaxKind { return SyntaxKind.List; }
 
         public toJSON(key) {
             return this.nodes;

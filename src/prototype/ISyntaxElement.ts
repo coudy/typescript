@@ -1,5 +1,10 @@
 ///<reference path='References.ts' />
 
 interface ISyntaxElement {
-    syntaxKind(): SyntaxKind;
+    kind(): SyntaxKind;
+
+    isToken(): bool;
+    isNode(): bool;
+    isList(): bool;
+    isSeparatedList(): bool;
 }

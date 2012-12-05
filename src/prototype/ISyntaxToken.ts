@@ -2,7 +2,7 @@
 
 interface ISyntaxToken extends ISyntaxElement {
     // Same as syntaxKind, just exposed through a property for perf.
-    kind: SyntaxKind;
+    tokenKind: SyntaxKind;
     keywordKind(): SyntaxKind;
 
     fullStart(): number;

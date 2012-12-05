@@ -161,7 +161,7 @@ class Program {
                 }
             }
 
-            if (token.kind === SyntaxKind.EndOfFileToken) {
+            if (token.tokenKind === SyntaxKind.EndOfFileToken) {
                 break;
             }
         }

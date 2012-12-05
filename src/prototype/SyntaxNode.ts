@@ -1,6 +1,11 @@
 ///<reference path='References.ts' />
 
-class SyntaxNode {
+class SyntaxNode implements ISyntaxElement {
+    public isToken(): bool { return false; }
+    public isNode(): bool{ return true; }
+    public isList(): bool{ return false; }
+    public isSeparatedList(): bool{ return false; }
+
     public kind(): SyntaxKind {
         throw Errors.abstract();
     }
