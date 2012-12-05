@@ -280,7 +280,10 @@ class Parser extends SlidingWindow {
         // user has the option set to error on automatic semicolons, then add an error to that
         // token as well.
         if (this.canEatAutomaticSemicolon(allowWithoutNewline)) {
-            var semicolonToken = SyntaxTokenFactory.createEmptyToken(this.previousToken.end(), SyntaxKind.SemicolonToken, SyntaxKind.None);
+            // Note: the missing token needs to go between real tokens.  So we place it at the 
+            // fullstart of the current token.
+            var semicolonToken = SyntaxTokenFactory.createEmptyToken(
+                this.currentToken().fullStart(), SyntaxKind.SemicolonToken, SyntaxKind.None);
 
             if (!this.options.allowAutomaticSemicolonInsertion()) {
                 // Report the missing semicolon at the end of the *previous* token.
@@ -393,7 +396,9 @@ class Parser extends SlidingWindow {
         var diagnostic = this.getExpectedTokenDiagnostic(expectedKind, expectedKeywordKind, actual);
         this.addDiagnostic(diagnostic);
 
-        return SyntaxTokenFactory.createEmptyToken(diagnostic.position(), expectedKind, expectedKeywordKind);
+        // The missing token will be at the full start of the current token.  That way empty tokens
+        // will always be between real tokens and not inside an actual token.
+        return SyntaxTokenFactory.createEmptyToken(this.currentToken().fullStart(), expectedKind, expectedKeywordKind);
     }
 
     private getExpectedTokenDiagnostic(expectedKind: SyntaxKind, expectedKeywordKind: SyntaxKind, actual: ISyntaxToken): SyntaxDiagnostic {

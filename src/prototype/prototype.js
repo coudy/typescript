@@ -1132,7 +1132,7 @@ var Parser = (function (_super) {
             return this.eatToken(73 /* SemicolonToken */ );
         }
         if(this.canEatAutomaticSemicolon(allowWithoutNewline)) {
-            var semicolonToken = SyntaxTokenFactory.createEmptyToken(this.previousToken.end(), 73 /* SemicolonToken */ , 0 /* None */ );
+            var semicolonToken = SyntaxTokenFactory.createEmptyToken(this.currentToken().fullStart(), 73 /* SemicolonToken */ , 0 /* None */ );
             if(!this.options.allowAutomaticSemicolonInsertion()) {
                 this.addDiagnostic(new SyntaxDiagnostic(this.previousToken.end(), 0, 7 /* Automatic_semicolon_insertion_not_allowed */ , null));
             }
@@ -1203,7 +1203,7 @@ var Parser = (function (_super) {
     Parser.prototype.createMissingToken = function (expectedKind, expectedKeywordKind, actual) {
         var diagnostic = this.getExpectedTokenDiagnostic(expectedKind, expectedKeywordKind, actual);
         this.addDiagnostic(diagnostic);
-        return SyntaxTokenFactory.createEmptyToken(diagnostic.position(), expectedKind, expectedKeywordKind);
+        return SyntaxTokenFactory.createEmptyToken(this.currentToken().fullStart(), expectedKind, expectedKeywordKind);
     };
     Parser.prototype.getExpectedTokenDiagnostic = function (expectedKind, expectedKeywordKind, actual) {
         var token = this.currentToken();
@@ -9371,6 +9371,12 @@ var SyntaxTree = (function () {
     };
     SyntaxTree.prototype.diagnostics = function () {
         return this._diagnostics;
+    };
+    SyntaxTree.prototype.findToken = function (position) {
+        if(position < 0 || position > this._sourceUnit.endOfFileToken().end()) {
+            throw Errors.argumentOutOfRange("position");
+        }
+        return null;
     };
     return SyntaxTree;
 })();

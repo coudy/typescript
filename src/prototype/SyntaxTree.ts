@@ -38,4 +38,12 @@ class SyntaxTree {
     public diagnostics(): SyntaxDiagnostic[] {
         return this._diagnostics;
     }
+
+    public findToken(position: number): ISyntaxToken {
+        if (position < 0 || position > this._sourceUnit.endOfFileToken().end()) {
+            throw Errors.argumentOutOfRange("position");
+        }
+
+        return null;
+    }
 }
