@@ -54,7 +54,6 @@
 ///<reference path='SyntaxTokenFactory.ts' />
 ///<reference path='SyntaxTree.ts' />
 ///<reference path='SyntaxTriviaList.ts' />
-///<reference path='Test262.ts' />
 ///<reference path='TextChangeRange.ts' />
 ///<reference path='TextLine.ts' />
 ///<reference path='TextSpan.ts' />

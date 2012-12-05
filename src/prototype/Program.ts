@@ -1,44 +1,55 @@
 ///<reference path='References.ts' />
 ///<reference path='..\compiler\parser.ts' />
+///<reference path='Test262.ts' />
 
 var stringTable = new StringTable();
 
 var specificFile = 
-    "7.6.1-4-1.js"; 
+    // "7.6.1-4-1.js"; 
     undefined;
 
 class Program {
     runAllTests(environment: IEnvironment, useTypeScript: bool, verify: bool): void {
         environment.standardOut.WriteLine("");
 
-        //this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
-        //    filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify));
+        environment.standardOut.WriteLine("Testing scanner.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
+            filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify));
+            
+        environment.standardOut.WriteLine("Testing parser.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*allowErrors:*/ true));
+            
+        environment.standardOut.WriteLine("Testing against monoco.");
+        this.runTests(environment, "C:\\temp\\monoco-files",
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ false));
+            
+        //environment.standardOut.WriteLine("Testing against 262.");
+        //this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262",
+        //    filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ true), true);
 
-        //this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
-        //    filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*allowErrors:*/ true));
-
-        //this.runTests(environment, "C:\\temp\\monoco-files",
-        //    filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ false));
-
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*allowErrors:*/ true, true));
-
-        environment.standardOut.WriteLine("");
+        environment.standardOut.WriteLine("Done.");
     }
 
     private runTests(
         environment: IEnvironment,
         path: string,
-        action: (filePath: string) => void) {
+        action: (filePath: string) => void,
+        printDots: bool = false) {
 
         var testFiles = environment.listFiles(path, null, { recursive: true });
         for (var index in testFiles) {
+            if (printDots) {
+                // environment.standardOut.Write(".");
+            }
+
             var filePath = testFiles[index];
 
             try {
                 action(filePath);
             }
             catch (e) {
+                environment.standardOut.WriteLine("");
                 if ((<string>e.message).indexOf(filePath) < 0) {
                     environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
                 }

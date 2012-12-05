@@ -6264,24 +6264,24 @@ var ParenthesizedExpressionSyntax = (function (_super) {
 })(UnaryExpressionSyntax);
 var ArrowFunctionExpressionSyntax = (function (_super) {
     __extends(ArrowFunctionExpressionSyntax, _super);
-    function ArrowFunctionExpressionSyntax(equalsGreaterThanToken, body) {
+    function ArrowFunctionExpressionSyntax() {
         _super.call(this);
-        this._equalsGreaterThanToken = equalsGreaterThanToken;
-        this._body = body;
     }
     ArrowFunctionExpressionSyntax.prototype.equalsGreaterThanToken = function () {
-        return this._equalsGreaterThanToken;
+        throw Errors.abstract();
     };
     ArrowFunctionExpressionSyntax.prototype.body = function () {
-        return this._body;
+        throw Errors.abstract();
     };
     return ArrowFunctionExpressionSyntax;
 })(UnaryExpressionSyntax);
 var SimpleArrowFunctionExpression = (function (_super) {
     __extends(SimpleArrowFunctionExpression, _super);
     function SimpleArrowFunctionExpression(identifier, equalsGreaterThanToken, body) {
-        _super.call(this, equalsGreaterThanToken, body);
+        _super.call(this);
         this._identifier = identifier;
+        this._equalsGreaterThanToken = equalsGreaterThanToken;
+        this._body = body;
     }
     SimpleArrowFunctionExpression.prototype.kind = function () {
         return 212 /* SimpleArrowFunctionExpression */ ;
@@ -6289,19 +6289,33 @@ var SimpleArrowFunctionExpression = (function (_super) {
     SimpleArrowFunctionExpression.prototype.identifier = function () {
         return this._identifier;
     };
+    SimpleArrowFunctionExpression.prototype.equalsGreaterThanToken = function () {
+        return this._equalsGreaterThanToken;
+    };
+    SimpleArrowFunctionExpression.prototype.body = function () {
+        return this._body;
+    };
     return SimpleArrowFunctionExpression;
 })(ArrowFunctionExpressionSyntax);
 var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
     __extends(ParenthesizedArrowFunctionExpressionSyntax, _super);
     function ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body) {
-        _super.call(this, equalsGreaterThanToken, body);
+        _super.call(this);
         this._callSignature = callSignature;
+        this._equalsGreaterThanToken = equalsGreaterThanToken;
+        this._body = body;
     }
     ParenthesizedArrowFunctionExpressionSyntax.prototype.kind = function () {
         return 211 /* ParenthesizedArrowFunctionExpression */ ;
     };
     ParenthesizedArrowFunctionExpressionSyntax.prototype.callSignature = function () {
         return this._callSignature;
+    };
+    ParenthesizedArrowFunctionExpressionSyntax.prototype.equalsGreaterThanToken = function () {
+        return this._equalsGreaterThanToken;
+    };
+    ParenthesizedArrowFunctionExpressionSyntax.prototype.body = function () {
+        return this._body;
     };
     return ParenthesizedArrowFunctionExpressionSyntax;
 })(ArrowFunctionExpressionSyntax);
@@ -6704,21 +6718,21 @@ var ConditionalExpressionSyntax = (function (_super) {
 })(ExpressionSyntax);
 var TypeMemberSyntax = (function (_super) {
     __extends(TypeMemberSyntax, _super);
-    function TypeMemberSyntax(typeAnnotation) {
+    function TypeMemberSyntax() {
         _super.call(this);
-        this._typeAnnotation = typeAnnotation;
     }
     TypeMemberSyntax.prototype.typeAnnotation = function () {
-        return this._typeAnnotation;
+        throw Errors.abstract();
     };
     return TypeMemberSyntax;
 })(SyntaxNode);
 var ConstructSignatureSyntax = (function (_super) {
     __extends(ConstructSignatureSyntax, _super);
     function ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation) {
-        _super.call(this, typeAnnotation);
+        _super.call(this);
         this._newKeyword = newKeyword;
         this._parameterList = parameterList;
+        this._typeAnnotation = typeAnnotation;
     }
     ConstructSignatureSyntax.prototype.kind = function () {
         return 232 /* ConstructSignature */ ;
@@ -6729,15 +6743,19 @@ var ConstructSignatureSyntax = (function (_super) {
     ConstructSignatureSyntax.prototype.parameterList = function () {
         return this._parameterList;
     };
+    ConstructSignatureSyntax.prototype.typeAnnotation = function () {
+        return this._typeAnnotation;
+    };
     return ConstructSignatureSyntax;
 })(TypeMemberSyntax);
 var FunctionSignatureSyntax = (function (_super) {
     __extends(FunctionSignatureSyntax, _super);
     function FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation) {
-        _super.call(this, typeAnnotation);
+        _super.call(this);
         this._identifier = identifier;
         this._questionToken = questionToken;
         this._parameterList = parameterList;
+        this._typeAnnotation = typeAnnotation;
     }
     FunctionSignatureSyntax.prototype.kind = function () {
         return 234 /* FunctionSignature */ ;
@@ -6751,15 +6769,19 @@ var FunctionSignatureSyntax = (function (_super) {
     FunctionSignatureSyntax.prototype.parameterList = function () {
         return this._parameterList;
     };
+    FunctionSignatureSyntax.prototype.typeAnnotation = function () {
+        return this._typeAnnotation;
+    };
     return FunctionSignatureSyntax;
 })(TypeMemberSyntax);
 var IndexSignatureSyntax = (function (_super) {
     __extends(IndexSignatureSyntax, _super);
     function IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation) {
-        _super.call(this, typeAnnotation);
+        _super.call(this);
         this._openBracketToken = openBracketToken;
         this._parameter = parameter;
         this._closeBracketToken = closeBracketToken;
+        this._typeAnnotation = typeAnnotation;
     }
     IndexSignatureSyntax.prototype.kind = function () {
         return 233 /* IndexSignature */ ;
@@ -6773,14 +6795,18 @@ var IndexSignatureSyntax = (function (_super) {
     IndexSignatureSyntax.prototype.closeBracketToken = function () {
         return this._closeBracketToken;
     };
+    IndexSignatureSyntax.prototype.typeAnnotation = function () {
+        return this._typeAnnotation;
+    };
     return IndexSignatureSyntax;
 })(TypeMemberSyntax);
 var PropertySignatureSyntax = (function (_super) {
     __extends(PropertySignatureSyntax, _super);
     function PropertySignatureSyntax(identifier, questionToken, typeAnnotation) {
-        _super.call(this, typeAnnotation);
+        _super.call(this);
         this._identifier = identifier;
         this._questionToken = questionToken;
+        this._typeAnnotation = typeAnnotation;
     }
     PropertySignatureSyntax.prototype.kind = function () {
         return 230 /* PropertySignature */ ;
@@ -6790,6 +6816,9 @@ var PropertySignatureSyntax = (function (_super) {
     };
     PropertySignatureSyntax.prototype.questionToken = function () {
         return this._questionToken;
+    };
+    PropertySignatureSyntax.prototype.typeAnnotation = function () {
+        return this._typeAnnotation;
     };
     return PropertySignatureSyntax;
 })(TypeMemberSyntax);
@@ -6818,14 +6847,18 @@ var ParameterListSyntax = (function (_super) {
 var CallSignatureSyntax = (function (_super) {
     __extends(CallSignatureSyntax, _super);
     function CallSignatureSyntax(parameterList, typeAnnotation) {
-        _super.call(this, typeAnnotation);
+        _super.call(this);
         this._parameterList = parameterList;
+        this._typeAnnotation = typeAnnotation;
     }
     CallSignatureSyntax.prototype.kind = function () {
         return 231 /* CallSignature */ ;
     };
     CallSignatureSyntax.prototype.parameterList = function () {
         return this._parameterList;
+    };
+    CallSignatureSyntax.prototype.typeAnnotation = function () {
+        return this._typeAnnotation;
     };
     return CallSignatureSyntax;
 })(TypeMemberSyntax);
@@ -6935,29 +6968,35 @@ var ConstructorDeclarationSyntax = (function (_super) {
 })(ClassElementSyntax);
 var MemberDeclarationSyntax = (function (_super) {
     __extends(MemberDeclarationSyntax, _super);
-    function MemberDeclarationSyntax(publicOrPrivateKeyword, staticKeyword) {
+    function MemberDeclarationSyntax() {
         _super.call(this);
-        this._publicOrPrivateKeyword = publicOrPrivateKeyword;
-        this._staticKeyword = staticKeyword;
     }
     MemberDeclarationSyntax.prototype.publicOrPrivateKeyword = function () {
-        return this._publicOrPrivateKeyword;
+        throw Errors.abstract();
     };
     MemberDeclarationSyntax.prototype.staticKeyword = function () {
-        return this._staticKeyword;
+        throw Errors.abstract();
     };
     return MemberDeclarationSyntax;
 })(ClassElementSyntax);
 var MemberFunctionDeclarationSyntax = (function (_super) {
     __extends(MemberFunctionDeclarationSyntax, _super);
     function MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken) {
-        _super.call(this, publicOrPrivateKeyword, staticKeyword);
+        _super.call(this);
+        this._publicOrPrivateKeyword = publicOrPrivateKeyword;
+        this._staticKeyword = staticKeyword;
         this._functionSignature = functionSignature;
         this._block = block;
         this._semicolonToken = semicolonToken;
     }
     MemberFunctionDeclarationSyntax.prototype.kind = function () {
         return 129 /* MemberFunctionDeclaration */ ;
+    };
+    MemberFunctionDeclarationSyntax.prototype.publicOrPrivateKeyword = function () {
+        return this._publicOrPrivateKeyword;
+    };
+    MemberFunctionDeclarationSyntax.prototype.staticKeyword = function () {
+        return this._staticKeyword;
     };
     MemberFunctionDeclarationSyntax.prototype.functionSignature = function () {
         return this._functionSignature;
@@ -6972,64 +7011,115 @@ var MemberFunctionDeclarationSyntax = (function (_super) {
 })(MemberDeclarationSyntax);
 var MemberAccessorDeclarationSyntax = (function (_super) {
     __extends(MemberAccessorDeclarationSyntax, _super);
-    function MemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, identifier, parameterList, block) {
-        _super.call(this, publicOrPrivateKeyword, staticKeyword);
-        this._identifier = identifier;
-        this._parameterList = parameterList;
-        this._block = block;
+    function MemberAccessorDeclarationSyntax() {
+        _super.call(this);
     }
+    MemberAccessorDeclarationSyntax.prototype.publicOrPrivateKeyword = function () {
+        throw Errors.abstract();
+    };
+    MemberAccessorDeclarationSyntax.prototype.staticKeyword = function () {
+        throw Errors.abstract();
+    };
     MemberAccessorDeclarationSyntax.prototype.identifier = function () {
-        return this._identifier;
+        throw Errors.abstract();
     };
     MemberAccessorDeclarationSyntax.prototype.parameterList = function () {
-        return this._parameterList;
+        throw Errors.abstract();
     };
     MemberAccessorDeclarationSyntax.prototype.block = function () {
-        return this._block;
+        throw Errors.abstract();
     };
     return MemberAccessorDeclarationSyntax;
 })(MemberDeclarationSyntax);
 var GetMemberAccessorDeclarationSyntax = (function (_super) {
     __extends(GetMemberAccessorDeclarationSyntax, _super);
     function GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block) {
-        _super.call(this, publicOrPrivateKeyword, staticKeyword, identifier, parameterList, block);
+        _super.call(this);
+        this._publicOrPrivateKeyword = publicOrPrivateKeyword;
+        this._staticKeyword = staticKeyword;
         this._getKeyword = getKeyword;
+        this._identifier = identifier;
+        this._parameterList = parameterList;
         this._typeAnnotation = typeAnnotation;
+        this._block = block;
     }
     GetMemberAccessorDeclarationSyntax.prototype.kind = function () {
         return 131 /* GetMemberAccessorDeclaration */ ;
     };
+    GetMemberAccessorDeclarationSyntax.prototype.publicOrPrivateKeyword = function () {
+        return this._publicOrPrivateKeyword;
+    };
+    GetMemberAccessorDeclarationSyntax.prototype.staticKeyword = function () {
+        return this._staticKeyword;
+    };
     GetMemberAccessorDeclarationSyntax.prototype.getKeyword = function () {
         return this._getKeyword;
     };
+    GetMemberAccessorDeclarationSyntax.prototype.identifier = function () {
+        return this._identifier;
+    };
+    GetMemberAccessorDeclarationSyntax.prototype.parameterList = function () {
+        return this._parameterList;
+    };
     GetMemberAccessorDeclarationSyntax.prototype.typeAnnotation = function () {
         return this._typeAnnotation;
+    };
+    GetMemberAccessorDeclarationSyntax.prototype.block = function () {
+        return this._block;
     };
     return GetMemberAccessorDeclarationSyntax;
 })(MemberAccessorDeclarationSyntax);
 var SetMemberAccessorDeclarationSyntax = (function (_super) {
     __extends(SetMemberAccessorDeclarationSyntax, _super);
     function SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block) {
-        _super.call(this, publicOrPrivateKeyword, staticKeyword, identifier, parameterList, block);
+        _super.call(this);
+        this._publicOrPrivateKeyword = publicOrPrivateKeyword;
+        this._staticKeyword = staticKeyword;
         this._setKeyword = setKeyword;
+        this._identifier = identifier;
+        this._parameterList = parameterList;
+        this._block = block;
     }
     SetMemberAccessorDeclarationSyntax.prototype.kind = function () {
         return 132 /* SetMemberAccessorDeclaration */ ;
     };
+    SetMemberAccessorDeclarationSyntax.prototype.publicOrPrivateKeyword = function () {
+        return this._publicOrPrivateKeyword;
+    };
+    SetMemberAccessorDeclarationSyntax.prototype.staticKeyword = function () {
+        return this._staticKeyword;
+    };
     SetMemberAccessorDeclarationSyntax.prototype.setKeyword = function () {
         return this._setKeyword;
+    };
+    SetMemberAccessorDeclarationSyntax.prototype.identifier = function () {
+        return this._identifier;
+    };
+    SetMemberAccessorDeclarationSyntax.prototype.parameterList = function () {
+        return this._parameterList;
+    };
+    SetMemberAccessorDeclarationSyntax.prototype.block = function () {
+        return this._block;
     };
     return SetMemberAccessorDeclarationSyntax;
 })(MemberAccessorDeclarationSyntax);
 var MemberVariableDeclarationSyntax = (function (_super) {
     __extends(MemberVariableDeclarationSyntax, _super);
     function MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolonToken) {
-        _super.call(this, publicOrPrivateKeyword, staticKeyword);
+        _super.call(this);
+        this._publicOrPrivateKeyword = publicOrPrivateKeyword;
+        this._staticKeyword = staticKeyword;
         this._variableDeclarator = variableDeclarator;
         this._semicolonToken = semicolonToken;
     }
     MemberVariableDeclarationSyntax.prototype.kind = function () {
         return 129 /* MemberFunctionDeclaration */ ;
+    };
+    MemberVariableDeclarationSyntax.prototype.publicOrPrivateKeyword = function () {
+        return this._publicOrPrivateKeyword;
+    };
+    MemberVariableDeclarationSyntax.prototype.staticKeyword = function () {
+        return this._staticKeyword;
     };
     MemberVariableDeclarationSyntax.prototype.variableDeclarator = function () {
         return this._variableDeclarator;
@@ -7145,25 +7235,25 @@ var SwitchStatementSyntax = (function (_super) {
 })(StatementSyntax);
 var SwitchClauseSyntax = (function (_super) {
     __extends(SwitchClauseSyntax, _super);
-    function SwitchClauseSyntax(colonToken, statements) {
+    function SwitchClauseSyntax() {
         _super.call(this);
-        this._colonToken = colonToken;
-        this._statements = statements;
     }
     SwitchClauseSyntax.prototype.colonToken = function () {
-        return this._colonToken;
+        throw Errors.abstract();
     };
     SwitchClauseSyntax.prototype.statements = function () {
-        return this._statements;
+        throw Errors.abstract();
     };
     return SwitchClauseSyntax;
 })(SyntaxNode);
 var CaseSwitchClauseSyntax = (function (_super) {
     __extends(CaseSwitchClauseSyntax, _super);
     function CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements) {
-        _super.call(this, colonToken, statements);
+        _super.call(this);
         this._caseKeyword = caseKeyword;
         this._expression = expression;
+        this._colonToken = colonToken;
+        this._statements = statements;
     }
     CaseSwitchClauseSyntax.prototype.kind = function () {
         return 225 /* CaseSwitchClause */ ;
@@ -7174,19 +7264,33 @@ var CaseSwitchClauseSyntax = (function (_super) {
     CaseSwitchClauseSyntax.prototype.expression = function () {
         return this._expression;
     };
+    CaseSwitchClauseSyntax.prototype.colonToken = function () {
+        return this._colonToken;
+    };
+    CaseSwitchClauseSyntax.prototype.statements = function () {
+        return this._statements;
+    };
     return CaseSwitchClauseSyntax;
 })(SwitchClauseSyntax);
 var DefaultSwitchClauseSyntax = (function (_super) {
     __extends(DefaultSwitchClauseSyntax, _super);
     function DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements) {
-        _super.call(this, colonToken, statements);
+        _super.call(this);
         this._defaultKeyword = defaultKeyword;
+        this._colonToken = colonToken;
+        this._statements = statements;
     }
     DefaultSwitchClauseSyntax.prototype.kind = function () {
         return 226 /* DefaultSwitchClause */ ;
     };
     DefaultSwitchClauseSyntax.prototype.defaultKeyword = function () {
         return this._defaultKeyword;
+    };
+    DefaultSwitchClauseSyntax.prototype.colonToken = function () {
+        return this._colonToken;
+    };
+    DefaultSwitchClauseSyntax.prototype.statements = function () {
+        return this._statements;
     };
     return DefaultSwitchClauseSyntax;
 })(SwitchClauseSyntax);
@@ -7236,50 +7340,68 @@ var ContinueStatementSyntax = (function (_super) {
 })(StatementSyntax);
 var IterationStatementSyntax = (function (_super) {
     __extends(IterationStatementSyntax, _super);
-    function IterationStatementSyntax(statement) {
+    function IterationStatementSyntax() {
         _super.call(this);
-        this._statement = statement;
     }
     IterationStatementSyntax.prototype.statement = function () {
-        return this._statement;
+        throw Errors.abstract();
     };
     return IterationStatementSyntax;
 })(StatementSyntax);
 var BaseForStatementSyntax = (function (_super) {
     __extends(BaseForStatementSyntax, _super);
-    function BaseForStatementSyntax(forKeyword, openParenToken, variableDeclaration, closeParenToken, statement) {
-        _super.call(this, statement);
-        this._forKeyword = forKeyword;
-        this._openParenToken = openParenToken;
-        this._variableDeclaration = variableDeclaration;
-        this._closeParenToken = closeParenToken;
+    function BaseForStatementSyntax() {
+        _super.call(this);
     }
     BaseForStatementSyntax.prototype.forKeyword = function () {
-        return this._forKeyword;
+        throw Errors.abstract();
     };
     BaseForStatementSyntax.prototype.openParenToken = function () {
-        return this._openParenToken;
+        throw Errors.abstract();
     };
     BaseForStatementSyntax.prototype.variableDeclaration = function () {
-        return this._variableDeclaration;
+        throw Errors.abstract();
     };
     BaseForStatementSyntax.prototype.closeParenToken = function () {
-        return this._closeParenToken;
+        throw Errors.abstract();
+    };
+    BaseForStatementSyntax.prototype.statement = function () {
+        throw Errors.abstract();
     };
     return BaseForStatementSyntax;
 })(IterationStatementSyntax);
 var ForStatementSyntax = (function (_super) {
     __extends(ForStatementSyntax, _super);
     function ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement) {
-        _super.call(this, forKeyword, openParenToken, variableDeclaration, closeParenToken, statement);
+        _super.call(this);
+        this._forKeyword = forKeyword;
+        this._openParenToken = openParenToken;
+        this._variableDeclaration = variableDeclaration;
         this._initializer = initializer;
         this._firstSemicolonToken = firstSemicolonToken;
         this._condition = condition;
         this._secondSemicolonToken = secondSemicolonToken;
         this._incrementor = incrementor;
+        this._closeParenToken = closeParenToken;
+        this._statement = statement;
     }
     ForStatementSyntax.prototype.kind = function () {
         return 141 /* ForStatement */ ;
+    };
+    ForStatementSyntax.prototype.forKeyword = function () {
+        return this._forKeyword;
+    };
+    ForStatementSyntax.prototype.openParenToken = function () {
+        return this._openParenToken;
+    };
+    ForStatementSyntax.prototype.variableDeclaration = function () {
+        return this._variableDeclaration;
+    };
+    ForStatementSyntax.prototype.closeParenToken = function () {
+        return this._closeParenToken;
+    };
+    ForStatementSyntax.prototype.statement = function () {
+        return this._statement;
     };
     ForStatementSyntax.prototype.initializer = function () {
         return this._initializer;
@@ -7301,13 +7423,33 @@ var ForStatementSyntax = (function (_super) {
 var ForInStatementSyntax = (function (_super) {
     __extends(ForInStatementSyntax, _super);
     function ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration, left, inKeyword, expression, closeParenToken, statement) {
-        _super.call(this, forKeyword, openParenToken, variableDeclaration, closeParenToken, statement);
+        _super.call(this);
+        this._forKeyword = forKeyword;
+        this._openParenToken = openParenToken;
+        this._variableDeclaration = variableDeclaration;
         this._left = left;
         this._inKeyword = inKeyword;
         this._expression = expression;
+        this._closeParenToken = closeParenToken;
+        this._statement = statement;
     }
     ForInStatementSyntax.prototype.kind = function () {
         return 142 /* ForInStatement */ ;
+    };
+    ForInStatementSyntax.prototype.forKeyword = function () {
+        return this._forKeyword;
+    };
+    ForInStatementSyntax.prototype.openParenToken = function () {
+        return this._openParenToken;
+    };
+    ForInStatementSyntax.prototype.variableDeclaration = function () {
+        return this._variableDeclaration;
+    };
+    ForInStatementSyntax.prototype.closeParenToken = function () {
+        return this._closeParenToken;
+    };
+    ForInStatementSyntax.prototype.statement = function () {
+        return this._statement;
     };
     ForInStatementSyntax.prototype.left = function () {
         return this._left;
@@ -7323,11 +7465,12 @@ var ForInStatementSyntax = (function (_super) {
 var WhileStatementSyntax = (function (_super) {
     __extends(WhileStatementSyntax, _super);
     function WhileStatementSyntax(whileKeyword, openParenToken, condition, closeParenToken, statement) {
-        _super.call(this, statement);
+        _super.call(this);
         this._whileKeyword = whileKeyword;
         this._openParenToken = openParenToken;
         this._condition = condition;
         this._closeParenToken = closeParenToken;
+        this._statement = statement;
     }
     WhileStatementSyntax.prototype.kind = function () {
         return 145 /* WhileStatement */ ;
@@ -7343,6 +7486,9 @@ var WhileStatementSyntax = (function (_super) {
     };
     WhileStatementSyntax.prototype.closeParenToken = function () {
         return this._closeParenToken;
+    };
+    WhileStatementSyntax.prototype.statement = function () {
+        return this._statement;
     };
     return WhileStatementSyntax;
 })(IterationStatementSyntax);
@@ -7460,24 +7606,27 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
 })(UnaryExpressionSyntax);
 var PropertyAssignmentSyntax = (function (_super) {
     __extends(PropertyAssignmentSyntax, _super);
-    function PropertyAssignmentSyntax(propertyName) {
+    function PropertyAssignmentSyntax() {
         _super.call(this);
-        this._propertyName = propertyName;
     }
     PropertyAssignmentSyntax.prototype.propertyName = function () {
-        return this._propertyName;
+        throw Errors.abstract();
     };
     return PropertyAssignmentSyntax;
 })(SyntaxNode);
 var SimplePropertyAssignmentSyntax = (function (_super) {
     __extends(SimplePropertyAssignmentSyntax, _super);
     function SimplePropertyAssignmentSyntax(propertyName, colonToken, expression) {
-        _super.call(this, propertyName);
+        _super.call(this);
+        this._propertyName = propertyName;
         this._colonToken = colonToken;
         this._expression = expression;
     }
     SimplePropertyAssignmentSyntax.prototype.kind = function () {
         return 237 /* SimplePropertyAssignment */ ;
+    };
+    SimplePropertyAssignmentSyntax.prototype.propertyName = function () {
+        return this._propertyName;
     };
     SimplePropertyAssignmentSyntax.prototype.colonToken = function () {
         return this._colonToken;
@@ -7489,28 +7638,29 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
 })(PropertyAssignmentSyntax);
 var AccessorPropertyAssignmentSyntax = (function (_super) {
     __extends(AccessorPropertyAssignmentSyntax, _super);
-    function AccessorPropertyAssignmentSyntax(propertyName, openParenToken, closeParenToken, block) {
-        _super.call(this, propertyName);
-        this._openParenToken = openParenToken;
-        this._closeParenToken = closeParenToken;
-        this._block = block;
+    function AccessorPropertyAssignmentSyntax() {
+        _super.call(this);
     }
     AccessorPropertyAssignmentSyntax.prototype.openParenToken = function () {
-        return this._openParenToken;
+        throw Errors.abstract();
     };
     AccessorPropertyAssignmentSyntax.prototype.closeParenToken = function () {
-        return this._closeParenToken;
+        throw Errors.abstract();
     };
     AccessorPropertyAssignmentSyntax.prototype.block = function () {
-        return this._block;
+        throw Errors.abstract();
     };
     return AccessorPropertyAssignmentSyntax;
 })(PropertyAssignmentSyntax);
 var GetAccessorPropertyAssignmentSyntax = (function (_super) {
     __extends(GetAccessorPropertyAssignmentSyntax, _super);
     function GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block) {
-        _super.call(this, propertyName, openParenToken, closeParenToken, block);
+        _super.call(this);
         this._getKeyword = getKeyword;
+        this._propertyName = propertyName;
+        this._openParenToken = openParenToken;
+        this._closeParenToken = closeParenToken;
+        this._block = block;
     }
     GetAccessorPropertyAssignmentSyntax.prototype.kind = function () {
         return 239 /* GetAccessorPropertyAssignment */ ;
@@ -7518,14 +7668,30 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
     GetAccessorPropertyAssignmentSyntax.prototype.getKeyword = function () {
         return this._getKeyword;
     };
+    GetAccessorPropertyAssignmentSyntax.prototype.propertyName = function () {
+        return this._propertyName;
+    };
+    GetAccessorPropertyAssignmentSyntax.prototype.openParenToken = function () {
+        return this._openParenToken;
+    };
+    GetAccessorPropertyAssignmentSyntax.prototype.closeParenToken = function () {
+        return this._closeParenToken;
+    };
+    GetAccessorPropertyAssignmentSyntax.prototype.block = function () {
+        return this._block;
+    };
     return GetAccessorPropertyAssignmentSyntax;
 })(AccessorPropertyAssignmentSyntax);
 var SetAccessorPropertyAssignmentSyntax = (function (_super) {
     __extends(SetAccessorPropertyAssignmentSyntax, _super);
     function SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block) {
-        _super.call(this, propertyName, openParenToken, closeParenToken, block);
+        _super.call(this);
         this._setKeyword = setKeyword;
+        this._propertyName = propertyName;
+        this._openParenToken = openParenToken;
         this._parameterName = parameterName;
+        this._closeParenToken = closeParenToken;
+        this._block = block;
     }
     SetAccessorPropertyAssignmentSyntax.prototype.kind = function () {
         return 240 /* SetAccessorPropertyAssignment */ ;
@@ -7533,8 +7699,20 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
     SetAccessorPropertyAssignmentSyntax.prototype.setKeyword = function () {
         return this._setKeyword;
     };
+    SetAccessorPropertyAssignmentSyntax.prototype.propertyName = function () {
+        return this._propertyName;
+    };
+    SetAccessorPropertyAssignmentSyntax.prototype.openParenToken = function () {
+        return this._openParenToken;
+    };
     SetAccessorPropertyAssignmentSyntax.prototype.parameterName = function () {
         return this._parameterName;
+    };
+    SetAccessorPropertyAssignmentSyntax.prototype.closeParenToken = function () {
+        return this._closeParenToken;
+    };
+    SetAccessorPropertyAssignmentSyntax.prototype.block = function () {
+        return this._block;
     };
     return SetAccessorPropertyAssignmentSyntax;
 })(AccessorPropertyAssignmentSyntax);
@@ -7691,8 +7869,9 @@ var LabeledStatement = (function (_super) {
 var DoStatementSyntax = (function (_super) {
     __extends(DoStatementSyntax, _super);
     function DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken) {
-        _super.call(this, statement);
+        _super.call(this);
         this._doKeyword = doKeyword;
+        this._statement = statement;
         this._whileKeyword = whileKeyword;
         this._openParenToken = openParenToken;
         this._condition = condition;
@@ -7704,6 +7883,9 @@ var DoStatementSyntax = (function (_super) {
     };
     DoStatementSyntax.prototype.doKeyword = function () {
         return this._doKeyword;
+    };
+    DoStatementSyntax.prototype.statement = function () {
+        return this._statement;
     };
     DoStatementSyntax.prototype.whileKeyword = function () {
         return this._whileKeyword;
@@ -8934,478 +9116,6 @@ var SyntaxTriviaList = (function () {
     }
     return SyntaxTriviaList;
 })();
-var negative262ExpectedResults = {
-    'Sbp_12.5_A9_T3.js': false,
-    'Sbp_12.6.1_A13_T3.js': false,
-    'Sbp_12.6.2_A13_T3.js': false,
-    'Sbp_12.6.4_A13_T3.js': false,
-    'Sbp_7.8.4_A6.1_T4.js': false,
-    'Sbp_7.8.4_A6.2_T1.js': false,
-    'Sbp_7.8.4_A6.2_T2.js': false,
-    'Sbp_A1_T1.js': true,
-    'Sbp_A2_T1.js': true,
-    'Sbp_A2_T2.js': true,
-    'Sbp_A3_T1.js': true,
-    'Sbp_A3_T2.js': true,
-    'Sbp_A4_T1.js': true,
-    'Sbp_A4_T2.js': true,
-    'Sbp_A5_T1.js': true,
-    'Sbp_A5_T2.js': true,
-    'S7.2_A5_T1.js': false,
-    'S7.2_A5_T2.js': false,
-    'S7.2_A5_T3.js': false,
-    'S7.2_A5_T4.js': false,
-    'S7.2_A5_T5.js': false,
-    'S7.3_A2.1_T1.js': true,
-    'S7.3_A2.1_T2.js': false,
-    'S7.3_A2.2_T1.js': true,
-    'S7.3_A2.2_T2.js': false,
-    'S7.3_A2.3.js': true,
-    'S7.3_A2.4.js': true,
-    'S7.3_A3.1_T1.js': true,
-    'S7.3_A3.1_T2.js': true,
-    'S7.3_A3.1_T3.js': false,
-    'S7.3_A3.2_T1.js': true,
-    'S7.3_A3.2_T2.js': true,
-    'S7.3_A3.2_T3.js': false,
-    'S7.3_A3.3_T1.js': true,
-    'S7.3_A3.3_T2.js': true,
-    'S7.3_A3.4_T1.js': true,
-    'S7.3_A3.4_T2.js': true,
-    'S7.3_A6_T1.js': false,
-    'S7.3_A6_T2.js': false,
-    'S7.3_A6_T3.js': false,
-    'S7.3_A6_T4.js': false,
-    'S7.4_A2_T2.js': false,
-    'S7.4_A3.js': false,
-    'S7.4_A4_T1.js': false,
-    'S7.4_A4_T4.js': false,
-    'S7.6.1.1_A1.1.js': false,
-    'S7.6.1.1_A1.10.js': false,
-    'S7.6.1.1_A1.11.js': false,
-    'S7.6.1.1_A1.12.js': false,
-    'S7.6.1.1_A1.13.js': false,
-    'S7.6.1.1_A1.14.js': false,
-    'S7.6.1.1_A1.15.js': false,
-    'S7.6.1.1_A1.16.js': false,
-    'S7.6.1.1_A1.17.js': false,
-    'S7.6.1.1_A1.18.js': true,
-    'S7.6.1.1_A1.19.js': false,
-    'S7.6.1.1_A1.2.js': false,
-    'S7.6.1.1_A1.20.js': false,
-    'S7.6.1.1_A1.21.js': false,
-    'S7.6.1.1_A1.22.js': false,
-    'S7.6.1.1_A1.23.js': false,
-    'S7.6.1.1_A1.24.js': false,
-    'S7.6.1.1_A1.25.js': false,
-    'S7.6.1.1_A1.3.js': false,
-    'S7.6.1.1_A1.4.js': false,
-    'S7.6.1.1_A1.5.js': false,
-    'S7.6.1.1_A1.6.js': false,
-    'S7.6.1.1_A1.7.js': false,
-    'S7.6.1.1_A1.8.js': false,
-    'S7.6.1.1_A1.9.js': false,
-    'S7.6.1.2_A1.10.js': false,
-    'S7.6.1.2_A1.11.js': false,
-    'S7.6.1.2_A1.15.js': false,
-    'S7.6.1.2_A1.16.js': false,
-    'S7.6.1.2_A1.18.js': false,
-    'S7.6.1.2_A1.21.js': false,
-    'S7.6.1.2_A1.22.js': false,
-    'S7.6.1.2_A1.23.js': false,
-    'S7.6.1.2_A1.24.js': false,
-    'S7.6.1.2_A1.26.js': false,
-    'S7.6.1.2_A1.27.js': false,
-    'S7.6.1.2_A1.5.js': false,
-    'S7.6.1.2_A1.6.js': false,
-    'S7.6.1.2_A1.7.js': false,
-    'S7.6.1.2_A1.9.js': false,
-    '7.6.1.2-1gs.js': false,
-    'S7.6.1_A1.1.js': true,
-    'S7.6.1_A1.2.js': true,
-    'S7.6.1_A1.3.js': true,
-    'S7.7_A2_T1.js': false,
-    'S7.7_A2_T10.js': false,
-    'S7.7_A2_T2.js': false,
-    'S7.7_A2_T3.js': false,
-    'S7.7_A2_T4.js': false,
-    'S7.7_A2_T5.js': false,
-    'S7.7_A2_T6.js': false,
-    'S7.7_A2_T7.js': false,
-    'S7.7_A2_T8.js': false,
-    'S7.7_A2_T9.js': false,
-    '7.8.3-1gs.js': true,
-    '7.8.3-2gs.js': true,
-    '7.8.3-3gs.js': true,
-    'S7.8.3_A4.1_T1.js': true,
-    'S7.8.3_A4.1_T2.js': true,
-    'S7.8.3_A4.1_T3.js': true,
-    'S7.8.3_A4.1_T4.js': true,
-    'S7.8.3_A4.1_T5.js': true,
-    'S7.8.3_A4.1_T6.js': true,
-    'S7.8.3_A4.1_T7.js': true,
-    'S7.8.3_A4.1_T8.js': true,
-    'S7.8.3_A6.1_T1.js': false,
-    'S7.8.3_A6.1_T2.js': false,
-    'S7.8.3_A6.2_T1.js': false,
-    'S7.8.3_A6.2_T2.js': false,
-    '7.8.4-1gs.js': true,
-    'S7.8.4_A1.1_T1.js': false,
-    'S7.8.4_A1.1_T2.js': false,
-    'S7.8.4_A1.2_T1.js': false,
-    'S7.8.4_A1.2_T2.js': false,
-    'S7.8.4_A3.1_T1.js': false,
-    'S7.8.4_A3.1_T2.js': false,
-    'S7.8.4_A3.2_T1.js': false,
-    'S7.8.4_A3.2_T2.js': false,
-    'S7.8.4_A4.3_T1.js': true,
-    'S7.8.4_A4.3_T2.js': true,
-    'S7.8.4_A7.1_T4.js': false,
-    'S7.8.4_A7.2_T1.js': false,
-    'S7.8.4_A7.2_T2.js': false,
-    'S7.8.4_A7.2_T3.js': false,
-    'S7.8.4_A7.2_T4.js': false,
-    'S7.8.4_A7.2_T5.js': false,
-    'S7.8.4_A7.2_T6.js': false,
-    '7.8.5-1gs.js': false,
-    'S7.8.5_A1.2_T1.js': false,
-    'S7.8.5_A1.2_T2.js': false,
-    'S7.8.5_A1.2_T3.js': false,
-    'S7.8.5_A1.2_T4.js': false,
-    'S7.8.5_A1.3_T1.js': false,
-    'S7.8.5_A1.3_T3.js': false,
-    'S7.8.5_A1.5_T1.js': false,
-    'S7.8.5_A1.5_T3.js': false,
-    'S7.8.5_A2.2_T1.js': false,
-    'S7.8.5_A2.2_T2.js': false,
-    'S7.8.5_A2.3_T1.js': false,
-    'S7.8.5_A2.3_T3.js': false,
-    'S7.8.5_A2.5_T1.js': false,
-    'S7.8.5_A2.5_T3.js': false,
-    'S7.9.2_A1_T1.js': false,
-    'S7.9.2_A1_T3.js': false,
-    'S7.9.2_A1_T6.js': false,
-    'S7.9_A10_T2.js': false,
-    'S7.9_A10_T4.js': false,
-    'S7.9_A10_T6.js': false,
-    'S7.9_A10_T8.js': false,
-    'S7.9_A11_T4.js': false,
-    'S7.9_A11_T8.js': false,
-    'S7.9_A4.js': false,
-    'S7.9_A5.1_T1.js': false,
-    'S7.9_A5.3_T1.js': false,
-    'S7.9_A5.7_T1.js': true,
-    'S7.9_A6.2_T1.js': false,
-    'S7.9_A6.2_T10.js': false,
-    'S7.9_A6.2_T2.js': false,
-    'S7.9_A6.2_T3.js': false,
-    'S7.9_A6.2_T4.js': false,
-    'S7.9_A6.2_T5.js': false,
-    'S7.9_A6.2_T6.js': false,
-    'S7.9_A6.2_T7.js': false,
-    'S7.9_A6.2_T8.js': false,
-    'S7.9_A6.2_T9.js': false,
-    'S7.9_A6.3_T1.js': false,
-    'S7.9_A6.3_T2.js': false,
-    'S7.9_A6.3_T3.js': false,
-    'S7.9_A6.3_T4.js': false,
-    'S7.9_A6.3_T5.js': false,
-    'S7.9_A6.3_T6.js': false,
-    'S7.9_A6.3_T7.js': false,
-    'S7.9_A6.4_T1.js': false,
-    'S7.9_A6.4_T2.js': false,
-    'S7.9_A7_T7.js': true,
-    'S7.9_A9_T6.js': false,
-    'S7.9_A9_T7.js': false,
-    'S7.9_A9_T8.js': false,
-    'S8.2_A2.js': false,
-    'S8.3_A2.1.js': true,
-    'S8.3_A2.2.js': true,
-    'S8.4_A13_T1.js': false,
-    'S8.4_A13_T2.js': false,
-    'S8.4_A13_T3.js': false,
-    'S8.4_A14_T1.js': false,
-    'S8.4_A14_T2.js': false,
-    'S8.4_A14_T3.js': false,
-    'S8.4_A7.1.js': true,
-    'S8.4_A7.2.js': true,
-    'S8.4_A7.3.js': true,
-    'S8.4_A7.4.js': true,
-    'S8.6.2_A7.js': true,
-    '8.7.2-3-a-1gs.js': true,
-    '8.7.2-3-a-2gs.js': true,
-    'S8.7.2_A1_T1.js': true,
-    'S8.7.2_A1_T2.js': true,
-    '10.1.1-2gs.js': false,
-    '10.1.1-5gs.js': false,
-    '10.1.1-8gs.js': false,
-    '10.4.2.1-1gs.js': true,
-    '10.5-1gs.js': true,
-    '10.6-2gs.js': true,
-    'S11.1.1_A1.js': true,
-    '11.1.5-1gs.js': true,
-    '11.1.5-2gs.js': true,
-    '11.13.1-4-28gs.js': true,
-    '11.13.1-4-29gs.js': true,
-    'S11.13.1_A2.1_T3.js': true,
-    '11.13.2-6-1gs.js': true,
-    'S11.13.2_A2.2_T1.js': true,
-    'S11.13.2_A2.2_T10.js': true,
-    'S11.13.2_A2.2_T11.js': true,
-    'S11.13.2_A2.2_T2.js': true,
-    'S11.13.2_A2.2_T3.js': true,
-    'S11.13.2_A2.2_T4.js': true,
-    'S11.13.2_A2.2_T5.js': true,
-    'S11.13.2_A2.2_T6.js': true,
-    'S11.13.2_A2.2_T7.js': true,
-    'S11.13.2_A2.2_T8.js': true,
-    'S11.13.2_A2.2_T9.js': true,
-    'S11.2.4_A1.3_T1.js': false,
-    '11.3.1-2-1gs.js': true,
-    'S11.3.1_A1.1_T1.js': true,
-    'S11.3.1_A1.1_T2.js': true,
-    'S11.3.1_A1.1_T3.js': true,
-    'S11.3.1_A1.1_T4.js': true,
-    'S11.3.1_A2.1_T3.js': true,
-    'S11.3.2_A1.1_T1.js': true,
-    'S11.3.2_A1.1_T2.js': true,
-    'S11.3.2_A1.1_T3.js': true,
-    'S11.3.2_A1.1_T4.js': true,
-    'S11.3.2_A2.1_T3.js': true,
-    '11.4.1-5-a-5gs.js': true,
-    'S11.4.2_A2_T2.js': true,
-    'S11.4.4_A2.1_T3.js': true,
-    '11.4.5-2-2gs.js': true,
-    'S11.4.5_A2.1_T3.js': true,
-    'S12.1_A4_T1.js': false,
-    'S12.1_A4_T2.js': false,
-    '12.10.1-11gs.js': true,
-    'S12.11_A2_T1.js': true,
-    'S12.11_A3_T1.js': false,
-    'S12.11_A3_T2.js': false,
-    'S12.11_A3_T3.js': false,
-    'S12.11_A3_T4.js': false,
-    'S12.11_A3_T5.js': false,
-    'S12.13_A1.js': true,
-    '12.14.1-1gs.js': true,
-    'S12.14_A16_T1.js': false,
-    'S12.14_A16_T10.js': false,
-    'S12.14_A16_T11.js': false,
-    'S12.14_A16_T12.js': false,
-    'S12.14_A16_T13.js': false,
-    'S12.14_A16_T14.js': false,
-    'S12.14_A16_T15.js': false,
-    'S12.14_A16_T2.js': false,
-    'S12.14_A16_T3.js': false,
-    'S12.14_A16_T4.js': false,
-    'S12.14_A16_T5.js': false,
-    'S12.14_A16_T6.js': false,
-    'S12.14_A16_T7.js': false,
-    'S12.14_A16_T8.js': false,
-    'S12.14_A16_T9.js': false,
-    '12.2.1-1gs.js': true,
-    '12.2.1-4gs.js': true,
-    'S12.2_A8_T1.js': false,
-    'S12.2_A8_T2.js': false,
-    'S12.2_A8_T3.js': false,
-    'S12.2_A8_T4.js': false,
-    'S12.2_A8_T5.js': false,
-    'S12.2_A8_T6.js': false,
-    'S12.2_A8_T7.js': false,
-    'S12.2_A8_T8.js': false,
-    'S12.4_A1.js': false,
-    'S12.5_A11.js': false,
-    'S12.5_A2.js': true,
-    'S12.5_A6_T1.js': false,
-    'S12.5_A6_T2.js': false,
-    'S12.5_A8.js': false,
-    'S12.6.1_A12.js': false,
-    'S12.6.1_A15.js': false,
-    'S12.6.1_A6_T1.js': false,
-    'S12.6.1_A6_T2.js': false,
-    'S12.6.1_A6_T3.js': false,
-    'S12.6.1_A6_T4.js': false,
-    'S12.6.1_A6_T5.js': false,
-    'S12.6.1_A6_T6.js': false,
-    'S12.6.2_A15.js': false,
-    'S12.6.2_A6_T1.js': false,
-    'S12.6.2_A6_T2.js': false,
-    'S12.6.2_A6_T3.js': false,
-    'S12.6.2_A6_T4.js': false,
-    'S12.6.2_A6_T5.js': false,
-    'S12.6.2_A6_T6.js': false,
-    'S12.6.3_A11.1_T3.js': true,
-    'S12.6.3_A11_T3.js': true,
-    'S12.6.3_A12.1_T3.js': true,
-    'S12.6.3_A12_T3.js': true,
-    'S12.6.3_A4.1.js': false,
-    'S12.6.3_A4_T1.js': false,
-    'S12.6.3_A4_T2.js': false,
-    'S12.6.3_A7.1_T1.js': false,
-    'S12.6.3_A7.1_T2.js': false,
-    'S12.6.3_A7_T1.js': false,
-    'S12.6.3_A7_T2.js': false,
-    'S12.6.3_A8.1_T1.js': false,
-    'S12.6.3_A8.1_T2.js': false,
-    'S12.6.3_A8.1_T3.js': false,
-    'S12.6.3_A8_T1.js': false,
-    'S12.6.3_A8_T2.js': false,
-    'S12.6.3_A8_T3.js': false,
-    'S12.6.4_A15.js': false,
-    'S12.7_A1_T1.js': true,
-    'S12.7_A1_T2.js': true,
-    'S12.7_A1_T3.js': true,
-    'S12.7_A1_T4.js': true,
-    'S12.7_A5_T1.js': true,
-    'S12.7_A5_T2.js': true,
-    'S12.7_A5_T3.js': true,
-    'S12.7_A6.js': true,
-    'S12.7_A8_T1.js': true,
-    'S12.7_A8_T2.js': true,
-    'S12.8_A1_T1.js': true,
-    'S12.8_A1_T2.js': true,
-    'S12.8_A1_T3.js': true,
-    'S12.8_A1_T4.js': true,
-    'S12.8_A5_T1.js': true,
-    'S12.8_A5_T2.js': true,
-    'S12.8_A5_T3.js': true,
-    'S12.8_A6.js': true,
-    'S12.8_A8_T1.js': true,
-    'S12.8_A8_T2.js': true,
-    'S12.9_A1_T1.js': true,
-    'S12.9_A1_T10.js': true,
-    'S12.9_A1_T2.js': true,
-    'S12.9_A1_T3.js': true,
-    'S12.9_A1_T4.js': true,
-    'S12.9_A1_T5.js': true,
-    'S12.9_A1_T6.js': true,
-    'S12.9_A1_T7.js': true,
-    'S12.9_A1_T8.js': true,
-    'S12.9_A1_T9.js': true,
-    '13.0_4-17gs.js': true,
-    '13.0_4-5gs.js': true,
-    'S13_A7_T3.js': false,
-    '13.1-13gs.js': true,
-    '13.1-1gs.js': true,
-    '13.1-4gs.js': true,
-    '13.1-5gs.js': true,
-    '13.1-8gs.js': true,
-    '13.2-19-b-3gs.js': true,
-    '14.1-4gs.js': true,
-    '14.1-5gs.js': true,
-    'S15.1.2.1_A2_T2.js': true,
-    'S15.1_A1_T1.js': true,
-    'S15.1_A1_T2.js': true,
-    'S15.1_A2_T1.js': true,
-    'S15.2.4.3_A12.js': true,
-    'S15.2.4.3_A13.js': true,
-    'S15.2.4.4_A12.js': true,
-    'S15.2.4.4_A13.js': true,
-    'S15.2.4.4_A14.js': true,
-    'S15.2.4.4_A15.js': true,
-    'S15.2.4.5_A12.js': true,
-    'S15.2.4.5_A13.js': true,
-    'S15.2.4.6_A12.js': true,
-    'S15.2.4.6_A13.js': true,
-    'S15.2.4.7_A12.js': true,
-    'S15.2.4.7_A13.js': true,
-    '15.3.2.1-10-4gs.js': true,
-    '15.3.2.1-10-6gs.js': true,
-    'S15.3.4.2_A12.js': true,
-    'S15.3.4.2_A13.js': true,
-    'S15.3.4.2_A14.js': true,
-    'S15.3.4.2_A15.js': true,
-    'S15.3.4.2_A16.js': true,
-    'S15.3.4.3_A13.js': true,
-    'S15.3.4.3_A14.js': true,
-    'S15.3.4.3_A15.js': true,
-    'S15.3.4.4_A13.js': true,
-    'S15.3.4.4_A14.js': true,
-    'S15.3.4.4_A15.js': true,
-    'S15.3.4.5_A1.js': true,
-    'S15.3.4.5_A13.js': true,
-    'S15.3.4.5_A14.js': true,
-    'S15.3.4.5_A15.js': true,
-    'S15.3.4.5_A2.js': true,
-    '15.3.5.4_2-10gs.js': true,
-    '15.3.5.4_2-11gs.js': true,
-    '15.3.5.4_2-13gs.js': true,
-    '15.3.5.4_2-15gs.js': true,
-    '15.3.5.4_2-16gs.js': true,
-    '15.3.5.4_2-17gs.js': true,
-    '15.3.5.4_2-18gs.js': true,
-    '15.3.5.4_2-19gs.js': true,
-    '15.3.5.4_2-1gs.js': true,
-    '15.3.5.4_2-20gs.js': true,
-    '15.3.5.4_2-21gs.js': true,
-    '15.3.5.4_2-22gs.js': true,
-    '15.3.5.4_2-23gs.js': true,
-    '15.3.5.4_2-24gs.js': true,
-    '15.3.5.4_2-25gs.js': true,
-    '15.3.5.4_2-26gs.js': true,
-    '15.3.5.4_2-27gs.js': true,
-    '15.3.5.4_2-28gs.js': true,
-    '15.3.5.4_2-29gs.js': true,
-    '15.3.5.4_2-2gs.js': true,
-    '15.3.5.4_2-30gs.js': true,
-    '15.3.5.4_2-31gs.js': true,
-    '15.3.5.4_2-32gs.js': true,
-    '15.3.5.4_2-33gs.js': true,
-    '15.3.5.4_2-34gs.js': true,
-    '15.3.5.4_2-35gs.js': true,
-    '15.3.5.4_2-36gs.js': true,
-    '15.3.5.4_2-37gs.js': true,
-    '15.3.5.4_2-38gs.js': true,
-    '15.3.5.4_2-39gs.js': true,
-    '15.3.5.4_2-3gs.js': true,
-    '15.3.5.4_2-40gs.js': true,
-    '15.3.5.4_2-41gs.js': true,
-    '15.3.5.4_2-42gs.js': true,
-    '15.3.5.4_2-43gs.js': true,
-    '15.3.5.4_2-44gs.js': true,
-    '15.3.5.4_2-45gs.js': true,
-    '15.3.5.4_2-46gs.js': true,
-    '15.3.5.4_2-47gs.js': true,
-    '15.3.5.4_2-48gs.js': true,
-    '15.3.5.4_2-49gs.js': true,
-    '15.3.5.4_2-4gs.js': true,
-    '15.3.5.4_2-50gs.js': true,
-    '15.3.5.4_2-51gs.js': true,
-    '15.3.5.4_2-52gs.js': true,
-    '15.3.5.4_2-53gs.js': true,
-    '15.3.5.4_2-54gs.js': true,
-    '15.3.5.4_2-55gs.js': true,
-    '15.3.5.4_2-56gs.js': true,
-    '15.3.5.4_2-57gs.js': true,
-    '15.3.5.4_2-58gs.js': true,
-    '15.3.5.4_2-59gs.js': true,
-    '15.3.5.4_2-5gs.js': true,
-    '15.3.5.4_2-60gs.js': true,
-    '15.3.5.4_2-61gs.js': true,
-    '15.3.5.4_2-62gs.js': true,
-    '15.3.5.4_2-63gs.js': true,
-    '15.3.5.4_2-64gs.js': true,
-    '15.3.5.4_2-65gs.js': true,
-    '15.3.5.4_2-66gs.js': true,
-    '15.3.5.4_2-67gs.js': true,
-    '15.3.5.4_2-68gs.js': true,
-    '15.3.5.4_2-69gs.js': true,
-    '15.3.5.4_2-6gs.js': true,
-    '15.3.5.4_2-70gs.js': true,
-    '15.3.5.4_2-71gs.js': true,
-    '15.3.5.4_2-72gs.js': true,
-    '15.3.5.4_2-73gs.js': true,
-    '15.3.5.4_2-74gs.js': true,
-    '15.3.5.4_2-7gs.js': true,
-    '15.3.5.4_2-8gs.js': true,
-    '15.3.5.4_2-94gs.js': true,
-    '15.3.5.4_2-95gs.js': true,
-    '15.3.5.4_2-96gs.js': true,
-    '15.3.5.4_2-97gs.js': true,
-    '15.3.5.4_2-9gs.js': true,
-    '15.3.5-1gs.js': true,
-    '15.3.5-2gs.js': true
-};
 var TextChangeRange = (function () {
     function TextChangeRange(span, newLength) {
         this._span = null;
@@ -35351,28 +35061,512 @@ var TypeScript;
     }
     TypeScript.quickParse = quickParse;
 })(TypeScript || (TypeScript = {}));
+var negative262ExpectedResults = {
+    'Sbp_12.5_A9_T3.js': false,
+    'Sbp_12.6.1_A13_T3.js': false,
+    'Sbp_12.6.2_A13_T3.js': false,
+    'Sbp_12.6.4_A13_T3.js': false,
+    'Sbp_7.8.4_A6.1_T4.js': false,
+    'Sbp_7.8.4_A6.2_T1.js': false,
+    'Sbp_7.8.4_A6.2_T2.js': false,
+    'Sbp_A1_T1.js': true,
+    'Sbp_A2_T1.js': true,
+    'Sbp_A2_T2.js': true,
+    'Sbp_A3_T1.js': true,
+    'Sbp_A3_T2.js': true,
+    'Sbp_A4_T1.js': true,
+    'Sbp_A4_T2.js': true,
+    'Sbp_A5_T1.js': true,
+    'Sbp_A5_T2.js': true,
+    'S7.2_A5_T1.js': false,
+    'S7.2_A5_T2.js': false,
+    'S7.2_A5_T3.js': false,
+    'S7.2_A5_T4.js': false,
+    'S7.2_A5_T5.js': false,
+    'S7.3_A2.1_T1.js': true,
+    'S7.3_A2.1_T2.js': false,
+    'S7.3_A2.2_T1.js': true,
+    'S7.3_A2.2_T2.js': false,
+    'S7.3_A2.3.js': true,
+    'S7.3_A2.4.js': true,
+    'S7.3_A3.1_T1.js': true,
+    'S7.3_A3.1_T2.js': true,
+    'S7.3_A3.1_T3.js': false,
+    'S7.3_A3.2_T1.js': true,
+    'S7.3_A3.2_T2.js': true,
+    'S7.3_A3.2_T3.js': false,
+    'S7.3_A3.3_T1.js': true,
+    'S7.3_A3.3_T2.js': true,
+    'S7.3_A3.4_T1.js': true,
+    'S7.3_A3.4_T2.js': true,
+    'S7.3_A6_T1.js': false,
+    'S7.3_A6_T2.js': false,
+    'S7.3_A6_T3.js': false,
+    'S7.3_A6_T4.js': false,
+    'S7.4_A2_T2.js': false,
+    'S7.4_A3.js': false,
+    'S7.4_A4_T1.js': false,
+    'S7.4_A4_T4.js': false,
+    'S7.6.1.1_A1.1.js': false,
+    'S7.6.1.1_A1.10.js': false,
+    'S7.6.1.1_A1.11.js': false,
+    'S7.6.1.1_A1.12.js': false,
+    'S7.6.1.1_A1.13.js': false,
+    'S7.6.1.1_A1.14.js': false,
+    'S7.6.1.1_A1.15.js': false,
+    'S7.6.1.1_A1.16.js': false,
+    'S7.6.1.1_A1.17.js': false,
+    'S7.6.1.1_A1.18.js': true,
+    'S7.6.1.1_A1.19.js': false,
+    'S7.6.1.1_A1.2.js': false,
+    'S7.6.1.1_A1.20.js': false,
+    'S7.6.1.1_A1.21.js': false,
+    'S7.6.1.1_A1.22.js': false,
+    'S7.6.1.1_A1.23.js': false,
+    'S7.6.1.1_A1.24.js': false,
+    'S7.6.1.1_A1.25.js': false,
+    'S7.6.1.1_A1.3.js': false,
+    'S7.6.1.1_A1.4.js': false,
+    'S7.6.1.1_A1.5.js': false,
+    'S7.6.1.1_A1.6.js': false,
+    'S7.6.1.1_A1.7.js': false,
+    'S7.6.1.1_A1.8.js': false,
+    'S7.6.1.1_A1.9.js': false,
+    'S7.6.1.2_A1.10.js': false,
+    'S7.6.1.2_A1.11.js': false,
+    'S7.6.1.2_A1.15.js': false,
+    'S7.6.1.2_A1.16.js': false,
+    'S7.6.1.2_A1.18.js': false,
+    'S7.6.1.2_A1.21.js': false,
+    'S7.6.1.2_A1.22.js': false,
+    'S7.6.1.2_A1.23.js': false,
+    'S7.6.1.2_A1.24.js': false,
+    'S7.6.1.2_A1.26.js': false,
+    'S7.6.1.2_A1.27.js': false,
+    'S7.6.1.2_A1.5.js': false,
+    'S7.6.1.2_A1.6.js': false,
+    'S7.6.1.2_A1.7.js': false,
+    'S7.6.1.2_A1.9.js': false,
+    '7.6.1.2-1gs.js': false,
+    'S7.6.1_A1.1.js': true,
+    'S7.6.1_A1.2.js': true,
+    'S7.6.1_A1.3.js': true,
+    'S7.7_A2_T1.js': false,
+    'S7.7_A2_T10.js': false,
+    'S7.7_A2_T2.js': false,
+    'S7.7_A2_T3.js': false,
+    'S7.7_A2_T4.js': false,
+    'S7.7_A2_T5.js': false,
+    'S7.7_A2_T6.js': false,
+    'S7.7_A2_T7.js': false,
+    'S7.7_A2_T8.js': false,
+    'S7.7_A2_T9.js': false,
+    '7.8.3-1gs.js': true,
+    '7.8.3-2gs.js': true,
+    '7.8.3-3gs.js': true,
+    'S7.8.3_A4.1_T1.js': true,
+    'S7.8.3_A4.1_T2.js': true,
+    'S7.8.3_A4.1_T3.js': true,
+    'S7.8.3_A4.1_T4.js': true,
+    'S7.8.3_A4.1_T5.js': true,
+    'S7.8.3_A4.1_T6.js': true,
+    'S7.8.3_A4.1_T7.js': true,
+    'S7.8.3_A4.1_T8.js': true,
+    'S7.8.3_A6.1_T1.js': false,
+    'S7.8.3_A6.1_T2.js': false,
+    'S7.8.3_A6.2_T1.js': false,
+    'S7.8.3_A6.2_T2.js': false,
+    '7.8.4-1gs.js': true,
+    'S7.8.4_A1.1_T1.js': false,
+    'S7.8.4_A1.1_T2.js': false,
+    'S7.8.4_A1.2_T1.js': false,
+    'S7.8.4_A1.2_T2.js': false,
+    'S7.8.4_A3.1_T1.js': false,
+    'S7.8.4_A3.1_T2.js': false,
+    'S7.8.4_A3.2_T1.js': false,
+    'S7.8.4_A3.2_T2.js': false,
+    'S7.8.4_A4.3_T1.js': true,
+    'S7.8.4_A4.3_T2.js': true,
+    'S7.8.4_A7.1_T4.js': false,
+    'S7.8.4_A7.2_T1.js': false,
+    'S7.8.4_A7.2_T2.js': false,
+    'S7.8.4_A7.2_T3.js': false,
+    'S7.8.4_A7.2_T4.js': false,
+    'S7.8.4_A7.2_T5.js': false,
+    'S7.8.4_A7.2_T6.js': false,
+    '7.8.5-1gs.js': false,
+    'S7.8.5_A1.2_T1.js': false,
+    'S7.8.5_A1.2_T2.js': false,
+    'S7.8.5_A1.2_T3.js': false,
+    'S7.8.5_A1.2_T4.js': false,
+    'S7.8.5_A1.3_T1.js': false,
+    'S7.8.5_A1.3_T3.js': false,
+    'S7.8.5_A1.5_T1.js': false,
+    'S7.8.5_A1.5_T3.js': false,
+    'S7.8.5_A2.2_T1.js': false,
+    'S7.8.5_A2.2_T2.js': false,
+    'S7.8.5_A2.3_T1.js': false,
+    'S7.8.5_A2.3_T3.js': false,
+    'S7.8.5_A2.5_T1.js': false,
+    'S7.8.5_A2.5_T3.js': false,
+    'S7.9.2_A1_T1.js': false,
+    'S7.9.2_A1_T3.js': false,
+    'S7.9.2_A1_T6.js': false,
+    'S7.9_A10_T2.js': false,
+    'S7.9_A10_T4.js': false,
+    'S7.9_A10_T6.js': false,
+    'S7.9_A10_T8.js': false,
+    'S7.9_A11_T4.js': false,
+    'S7.9_A11_T8.js': false,
+    'S7.9_A4.js': false,
+    'S7.9_A5.1_T1.js': false,
+    'S7.9_A5.3_T1.js': false,
+    'S7.9_A5.7_T1.js': true,
+    'S7.9_A6.2_T1.js': false,
+    'S7.9_A6.2_T10.js': false,
+    'S7.9_A6.2_T2.js': false,
+    'S7.9_A6.2_T3.js': false,
+    'S7.9_A6.2_T4.js': false,
+    'S7.9_A6.2_T5.js': false,
+    'S7.9_A6.2_T6.js': false,
+    'S7.9_A6.2_T7.js': false,
+    'S7.9_A6.2_T8.js': false,
+    'S7.9_A6.2_T9.js': false,
+    'S7.9_A6.3_T1.js': false,
+    'S7.9_A6.3_T2.js': false,
+    'S7.9_A6.3_T3.js': false,
+    'S7.9_A6.3_T4.js': false,
+    'S7.9_A6.3_T5.js': false,
+    'S7.9_A6.3_T6.js': false,
+    'S7.9_A6.3_T7.js': false,
+    'S7.9_A6.4_T1.js': false,
+    'S7.9_A6.4_T2.js': false,
+    'S7.9_A7_T7.js': true,
+    'S7.9_A9_T6.js': false,
+    'S7.9_A9_T7.js': false,
+    'S7.9_A9_T8.js': false,
+    'S8.2_A2.js': false,
+    'S8.3_A2.1.js': true,
+    'S8.3_A2.2.js': true,
+    'S8.4_A13_T1.js': false,
+    'S8.4_A13_T2.js': false,
+    'S8.4_A13_T3.js': false,
+    'S8.4_A14_T1.js': false,
+    'S8.4_A14_T2.js': false,
+    'S8.4_A14_T3.js': false,
+    'S8.4_A7.1.js': true,
+    'S8.4_A7.2.js': true,
+    'S8.4_A7.3.js': true,
+    'S8.4_A7.4.js': true,
+    'S8.6.2_A7.js': true,
+    '8.7.2-3-a-1gs.js': true,
+    '8.7.2-3-a-2gs.js': true,
+    'S8.7.2_A1_T1.js': true,
+    'S8.7.2_A1_T2.js': true,
+    '10.1.1-2gs.js': false,
+    '10.1.1-5gs.js': false,
+    '10.1.1-8gs.js': false,
+    '10.4.2.1-1gs.js': true,
+    '10.5-1gs.js': true,
+    '10.6-2gs.js': true,
+    'S11.1.1_A1.js': true,
+    '11.1.5-1gs.js': true,
+    '11.1.5-2gs.js': true,
+    '11.13.1-4-28gs.js': true,
+    '11.13.1-4-29gs.js': true,
+    'S11.13.1_A2.1_T3.js': true,
+    '11.13.2-6-1gs.js': true,
+    'S11.13.2_A2.2_T1.js': true,
+    'S11.13.2_A2.2_T10.js': true,
+    'S11.13.2_A2.2_T11.js': true,
+    'S11.13.2_A2.2_T2.js': true,
+    'S11.13.2_A2.2_T3.js': true,
+    'S11.13.2_A2.2_T4.js': true,
+    'S11.13.2_A2.2_T5.js': true,
+    'S11.13.2_A2.2_T6.js': true,
+    'S11.13.2_A2.2_T7.js': true,
+    'S11.13.2_A2.2_T8.js': true,
+    'S11.13.2_A2.2_T9.js': true,
+    'S11.2.4_A1.3_T1.js': false,
+    '11.3.1-2-1gs.js': true,
+    'S11.3.1_A1.1_T1.js': true,
+    'S11.3.1_A1.1_T2.js': true,
+    'S11.3.1_A1.1_T3.js': true,
+    'S11.3.1_A1.1_T4.js': true,
+    'S11.3.1_A2.1_T3.js': true,
+    'S11.3.2_A1.1_T1.js': true,
+    'S11.3.2_A1.1_T2.js': true,
+    'S11.3.2_A1.1_T3.js': true,
+    'S11.3.2_A1.1_T4.js': true,
+    'S11.3.2_A2.1_T3.js': true,
+    '11.4.1-5-a-5gs.js': true,
+    'S11.4.2_A2_T2.js': true,
+    'S11.4.4_A2.1_T3.js': true,
+    '11.4.5-2-2gs.js': true,
+    'S11.4.5_A2.1_T3.js': true,
+    'S12.1_A4_T1.js': false,
+    'S12.1_A4_T2.js': false,
+    '12.10.1-11gs.js': true,
+    'S12.11_A2_T1.js': true,
+    'S12.11_A3_T1.js': false,
+    'S12.11_A3_T2.js': false,
+    'S12.11_A3_T3.js': false,
+    'S12.11_A3_T4.js': false,
+    'S12.11_A3_T5.js': false,
+    'S12.13_A1.js': true,
+    '12.14.1-1gs.js': true,
+    'S12.14_A16_T1.js': false,
+    'S12.14_A16_T10.js': false,
+    'S12.14_A16_T11.js': false,
+    'S12.14_A16_T12.js': false,
+    'S12.14_A16_T13.js': false,
+    'S12.14_A16_T14.js': false,
+    'S12.14_A16_T15.js': false,
+    'S12.14_A16_T2.js': false,
+    'S12.14_A16_T3.js': false,
+    'S12.14_A16_T4.js': false,
+    'S12.14_A16_T5.js': false,
+    'S12.14_A16_T6.js': false,
+    'S12.14_A16_T7.js': false,
+    'S12.14_A16_T8.js': false,
+    'S12.14_A16_T9.js': false,
+    '12.2.1-1gs.js': true,
+    '12.2.1-4gs.js': true,
+    'S12.2_A8_T1.js': false,
+    'S12.2_A8_T2.js': false,
+    'S12.2_A8_T3.js': false,
+    'S12.2_A8_T4.js': false,
+    'S12.2_A8_T5.js': false,
+    'S12.2_A8_T6.js': false,
+    'S12.2_A8_T7.js': false,
+    'S12.2_A8_T8.js': false,
+    'S12.4_A1.js': false,
+    'S12.5_A11.js': false,
+    'S12.5_A2.js': true,
+    'S12.5_A6_T1.js': false,
+    'S12.5_A6_T2.js': false,
+    'S12.5_A8.js': false,
+    'S12.6.1_A12.js': false,
+    'S12.6.1_A15.js': false,
+    'S12.6.1_A6_T1.js': false,
+    'S12.6.1_A6_T2.js': false,
+    'S12.6.1_A6_T3.js': false,
+    'S12.6.1_A6_T4.js': false,
+    'S12.6.1_A6_T5.js': false,
+    'S12.6.1_A6_T6.js': false,
+    'S12.6.2_A15.js': false,
+    'S12.6.2_A6_T1.js': false,
+    'S12.6.2_A6_T2.js': false,
+    'S12.6.2_A6_T3.js': false,
+    'S12.6.2_A6_T4.js': false,
+    'S12.6.2_A6_T5.js': false,
+    'S12.6.2_A6_T6.js': false,
+    'S12.6.3_A11.1_T3.js': true,
+    'S12.6.3_A11_T3.js': true,
+    'S12.6.3_A12.1_T3.js': true,
+    'S12.6.3_A12_T3.js': true,
+    'S12.6.3_A4.1.js': false,
+    'S12.6.3_A4_T1.js': false,
+    'S12.6.3_A4_T2.js': false,
+    'S12.6.3_A7.1_T1.js': false,
+    'S12.6.3_A7.1_T2.js': false,
+    'S12.6.3_A7_T1.js': false,
+    'S12.6.3_A7_T2.js': false,
+    'S12.6.3_A8.1_T1.js': false,
+    'S12.6.3_A8.1_T2.js': false,
+    'S12.6.3_A8.1_T3.js': false,
+    'S12.6.3_A8_T1.js': false,
+    'S12.6.3_A8_T2.js': false,
+    'S12.6.3_A8_T3.js': false,
+    'S12.6.4_A15.js': false,
+    'S12.7_A1_T1.js': true,
+    'S12.7_A1_T2.js': true,
+    'S12.7_A1_T3.js': true,
+    'S12.7_A1_T4.js': true,
+    'S12.7_A5_T1.js': true,
+    'S12.7_A5_T2.js': true,
+    'S12.7_A5_T3.js': true,
+    'S12.7_A6.js': true,
+    'S12.7_A8_T1.js': true,
+    'S12.7_A8_T2.js': true,
+    'S12.8_A1_T1.js': true,
+    'S12.8_A1_T2.js': true,
+    'S12.8_A1_T3.js': true,
+    'S12.8_A1_T4.js': true,
+    'S12.8_A5_T1.js': true,
+    'S12.8_A5_T2.js': true,
+    'S12.8_A5_T3.js': true,
+    'S12.8_A6.js': true,
+    'S12.8_A8_T1.js': true,
+    'S12.8_A8_T2.js': true,
+    'S12.9_A1_T1.js': true,
+    'S12.9_A1_T10.js': true,
+    'S12.9_A1_T2.js': true,
+    'S12.9_A1_T3.js': true,
+    'S12.9_A1_T4.js': true,
+    'S12.9_A1_T5.js': true,
+    'S12.9_A1_T6.js': true,
+    'S12.9_A1_T7.js': true,
+    'S12.9_A1_T8.js': true,
+    'S12.9_A1_T9.js': true,
+    '13.0_4-17gs.js': true,
+    '13.0_4-5gs.js': true,
+    'S13_A7_T3.js': false,
+    '13.1-13gs.js': true,
+    '13.1-1gs.js': true,
+    '13.1-4gs.js': true,
+    '13.1-5gs.js': true,
+    '13.1-8gs.js': true,
+    '13.2-19-b-3gs.js': true,
+    '14.1-4gs.js': true,
+    '14.1-5gs.js': true,
+    'S15.1.2.1_A2_T2.js': true,
+    'S15.1_A1_T1.js': true,
+    'S15.1_A1_T2.js': true,
+    'S15.1_A2_T1.js': true,
+    'S15.2.4.3_A12.js': true,
+    'S15.2.4.3_A13.js': true,
+    'S15.2.4.4_A12.js': true,
+    'S15.2.4.4_A13.js': true,
+    'S15.2.4.4_A14.js': true,
+    'S15.2.4.4_A15.js': true,
+    'S15.2.4.5_A12.js': true,
+    'S15.2.4.5_A13.js': true,
+    'S15.2.4.6_A12.js': true,
+    'S15.2.4.6_A13.js': true,
+    'S15.2.4.7_A12.js': true,
+    'S15.2.4.7_A13.js': true,
+    '15.3.2.1-10-4gs.js': true,
+    '15.3.2.1-10-6gs.js': true,
+    'S15.3.4.2_A12.js': true,
+    'S15.3.4.2_A13.js': true,
+    'S15.3.4.2_A14.js': true,
+    'S15.3.4.2_A15.js': true,
+    'S15.3.4.2_A16.js': true,
+    'S15.3.4.3_A13.js': true,
+    'S15.3.4.3_A14.js': true,
+    'S15.3.4.3_A15.js': true,
+    'S15.3.4.4_A13.js': true,
+    'S15.3.4.4_A14.js': true,
+    'S15.3.4.4_A15.js': true,
+    'S15.3.4.5_A1.js': true,
+    'S15.3.4.5_A13.js': true,
+    'S15.3.4.5_A14.js': true,
+    'S15.3.4.5_A15.js': true,
+    'S15.3.4.5_A2.js': true,
+    '15.3.5.4_2-10gs.js': true,
+    '15.3.5.4_2-11gs.js': true,
+    '15.3.5.4_2-13gs.js': true,
+    '15.3.5.4_2-15gs.js': true,
+    '15.3.5.4_2-16gs.js': true,
+    '15.3.5.4_2-17gs.js': true,
+    '15.3.5.4_2-18gs.js': true,
+    '15.3.5.4_2-19gs.js': true,
+    '15.3.5.4_2-1gs.js': true,
+    '15.3.5.4_2-20gs.js': true,
+    '15.3.5.4_2-21gs.js': true,
+    '15.3.5.4_2-22gs.js': true,
+    '15.3.5.4_2-23gs.js': true,
+    '15.3.5.4_2-24gs.js': true,
+    '15.3.5.4_2-25gs.js': true,
+    '15.3.5.4_2-26gs.js': true,
+    '15.3.5.4_2-27gs.js': true,
+    '15.3.5.4_2-28gs.js': true,
+    '15.3.5.4_2-29gs.js': true,
+    '15.3.5.4_2-2gs.js': true,
+    '15.3.5.4_2-30gs.js': true,
+    '15.3.5.4_2-31gs.js': true,
+    '15.3.5.4_2-32gs.js': true,
+    '15.3.5.4_2-33gs.js': true,
+    '15.3.5.4_2-34gs.js': true,
+    '15.3.5.4_2-35gs.js': true,
+    '15.3.5.4_2-36gs.js': true,
+    '15.3.5.4_2-37gs.js': true,
+    '15.3.5.4_2-38gs.js': true,
+    '15.3.5.4_2-39gs.js': true,
+    '15.3.5.4_2-3gs.js': true,
+    '15.3.5.4_2-40gs.js': true,
+    '15.3.5.4_2-41gs.js': true,
+    '15.3.5.4_2-42gs.js': true,
+    '15.3.5.4_2-43gs.js': true,
+    '15.3.5.4_2-44gs.js': true,
+    '15.3.5.4_2-45gs.js': true,
+    '15.3.5.4_2-46gs.js': true,
+    '15.3.5.4_2-47gs.js': true,
+    '15.3.5.4_2-48gs.js': true,
+    '15.3.5.4_2-49gs.js': true,
+    '15.3.5.4_2-4gs.js': true,
+    '15.3.5.4_2-50gs.js': true,
+    '15.3.5.4_2-51gs.js': true,
+    '15.3.5.4_2-52gs.js': true,
+    '15.3.5.4_2-53gs.js': true,
+    '15.3.5.4_2-54gs.js': true,
+    '15.3.5.4_2-55gs.js': true,
+    '15.3.5.4_2-56gs.js': true,
+    '15.3.5.4_2-57gs.js': true,
+    '15.3.5.4_2-58gs.js': true,
+    '15.3.5.4_2-59gs.js': true,
+    '15.3.5.4_2-5gs.js': true,
+    '15.3.5.4_2-60gs.js': true,
+    '15.3.5.4_2-61gs.js': true,
+    '15.3.5.4_2-62gs.js': true,
+    '15.3.5.4_2-63gs.js': true,
+    '15.3.5.4_2-64gs.js': true,
+    '15.3.5.4_2-65gs.js': true,
+    '15.3.5.4_2-66gs.js': true,
+    '15.3.5.4_2-67gs.js': true,
+    '15.3.5.4_2-68gs.js': true,
+    '15.3.5.4_2-69gs.js': true,
+    '15.3.5.4_2-6gs.js': true,
+    '15.3.5.4_2-70gs.js': true,
+    '15.3.5.4_2-71gs.js': true,
+    '15.3.5.4_2-72gs.js': true,
+    '15.3.5.4_2-73gs.js': true,
+    '15.3.5.4_2-74gs.js': true,
+    '15.3.5.4_2-7gs.js': true,
+    '15.3.5.4_2-8gs.js': true,
+    '15.3.5.4_2-94gs.js': true,
+    '15.3.5.4_2-95gs.js': true,
+    '15.3.5.4_2-96gs.js': true,
+    '15.3.5.4_2-97gs.js': true,
+    '15.3.5.4_2-9gs.js': true,
+    '15.3.5-1gs.js': true,
+    '15.3.5-2gs.js': true
+};
 var stringTable = new StringTable();
-var specificFile = "7.6.1-4-1.js";
-undefined;
+var specificFile = undefined;
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {
         var _this = this;
         environment.standardOut.WriteLine("");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true, true);
+        environment.standardOut.WriteLine("Testing scanner.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
+            return _this.runScanner(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify);
         });
-        environment.standardOut.WriteLine("");
+        environment.standardOut.WriteLine("Testing parser.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
+            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
+        });
+        environment.standardOut.WriteLine("Testing against monoco.");
+        this.runTests(environment, "C:\\temp\\monoco-files", function (filePath) {
+            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
+        });
+        environment.standardOut.WriteLine("Done.");
     };
-    Program.prototype.runTests = function (environment, path, action) {
+    Program.prototype.runTests = function (environment, path, action, printDots) {
+        if (typeof printDots === "undefined") { printDots = false; }
         var testFiles = environment.listFiles(path, null, {
             recursive: true
         });
         for(var index in testFiles) {
+            if(printDots) {
+            }
             var filePath = testFiles[index];
             try  {
                 action(filePath);
             } catch (e) {
+                environment.standardOut.WriteLine("");
                 if((e.message).indexOf(filePath) < 0) {
                     environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
                 } else {
