@@ -36389,7 +36389,6 @@ var Program = (function () {
         this.runTests(environment, "C:\\temp\\monoco-files", function (filePath) {
             return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
-        environment.standardOut.WriteLine("Done.");
     };
     Program.prototype.runTests = function (environment, path, action, printDots) {
         if (typeof printDots === "undefined") { printDots = false; }
@@ -36424,6 +36423,8 @@ var Program = (function () {
             return;
         }
         var contents = environment.readFile(filePath, 'utf-8');
+        var start, end;
+        start = new Date().getTime();
         totalSize += contents.length;
         if(useTypeScript) {
             var text1 = new TypeScript.StringSourceText(contents);
@@ -36457,6 +36458,8 @@ var Program = (function () {
                 }
             }
         }
+        end = new Date().getTime();
+        totalTime += (end - start);
     };
     Program.prototype.runScanner = function (environment, filePath, languageVersion, useTypeScript, verify) {
         if(!StringUtilities.endsWith(filePath, ".ts")) {
@@ -36469,46 +36472,54 @@ var Program = (function () {
             return;
         }
         var contents = environment.readFile(filePath, 'utf-8');
-        var text = new StringText(contents);
-        var scanner = Scanner.create(text, languageVersion);
-        var tokens = [];
-        var textArray = [];
-        var diagnostics = [];
-        while(true) {
-            var token = scanner.scan(diagnostics);
-            tokens.push(token);
-            if(verify) {
-                var tokenText = token.text();
-                var tokenFullText = token.fullText(text);
-                textArray.push(tokenFullText);
-                if(tokenFullText.substr(token.start() - token.fullStart(), token.width()) !== tokenText) {
-                    throw new Error("Token invariant broken!");
+        var start, end;
+        start = new Date().getTime();
+        try  {
+            var text = new StringText(contents);
+            var scanner = Scanner.create(text, languageVersion);
+            var tokens = [];
+            var textArray = [];
+            var diagnostics = [];
+            while(true) {
+                var token = scanner.scan(diagnostics);
+                tokens.push(token);
+                if(verify) {
+                    var tokenText = token.text();
+                    var tokenFullText = token.fullText(text);
+                    textArray.push(tokenFullText);
+                    if(tokenFullText.substr(token.start() - token.fullStart(), token.width()) !== tokenText) {
+                        throw new Error("Token invariant broken!");
+                    }
+                }
+                if(token.tokenKind === 116 /* EndOfFileToken */ ) {
+                    break;
                 }
             }
-            if(token.tokenKind === 116 /* EndOfFileToken */ ) {
-                break;
+            if(verify) {
+                var fullText = textArray.join("");
+                if(contents !== fullText) {
+                    throw new Error("Full text didn't match!");
+                }
+                var result = diagnostics.length === 0 ? tokens : {
+                    diagnostics: diagnostics,
+                    tokens: tokens
+                };
+                var actualResult = JSON2.stringify(result, null, 4);
+                var expectedFile = filePath + ".expected";
+                var actualFile = filePath + ".actual";
+                var expectedResult = environment.readFile(expectedFile, 'utf-8');
+                if(expectedResult !== actualResult) {
+                    environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
+                    environment.writeFile(actualFile, actualResult, true);
+                }
             }
-        }
-        if(verify) {
-            var fullText = textArray.join("");
-            if(contents !== fullText) {
-                throw new Error("Full text didn't match!");
-            }
-            var result = diagnostics.length === 0 ? tokens : {
-                diagnostics: diagnostics,
-                tokens: tokens
-            };
-            var actualResult = JSON2.stringify(result, null, 4);
-            var expectedFile = filePath + ".expected";
-            var actualFile = filePath + ".actual";
-            var expectedResult = environment.readFile(expectedFile, 'utf-8');
-            if(expectedResult !== actualResult) {
-                environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
-                environment.writeFile(actualFile, actualResult, true);
-            }
+        }finally {
+            end = new Date().getTime();
+            totalTime += (end - start);
         }
     };
     Program.prototype.run = function (environment, useTypeScript) {
+        environment.standardOut.WriteLine("Testing input files.");
         for(var index in environment.arguments) {
             var filePath = environment.arguments[index];
             this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
@@ -36524,8 +36535,11 @@ var Program = (function () {
         var skippedTests = [];
         for(var index in testFiles) {
             var filePath = testFiles[index];
+            var contents = environment.readFile(filePath, 'utf-8');
+            var start, end;
+            start = new Date().getTime();
             try  {
-                var contents = environment.readFile(filePath, 'utf-8');
+                totalSize += contents.length;
                 var isNegative = contents.indexOf("@negative") >= 0;
                 testCount++;
                 var stringText = new StringText(contents);
@@ -36555,6 +36569,9 @@ var Program = (function () {
             } catch (e) {
                 failCount++;
                 environment.standardOut.WriteLine("Exception: " + filePath);
+            }finally {
+                end = new Date().getTime();
+                totalTime += (end - start);
             }
         }
         environment.standardOut.WriteLine("");
@@ -36569,26 +36586,28 @@ var Program = (function () {
     return Program;
 })();
 var totalSize = 0;
+var totalTime = 0;
 var program = new Program();
-var start, end;
 if(true) {
-    start = new Date().getTime();
+    totalTime = 0;
+    totalSize = 0;
     program.runAllTests(Environment, false, true);
     program.run(Environment, false);
-    end = new Date().getTime();
-    Environment.standardOut.WriteLine("Total time: " + (end - start));
+    Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(false) {
-    start = new Date().getTime();
+if(true) {
+    totalTime = 0;
+    totalSize = 0;
     program.runAllTests(Environment, true, false);
     program.run(Environment, true);
-    end = new Date().getTime();
-    Environment.standardOut.WriteLine("Total time: " + (end - start));
+    Environment.standardOut.WriteLine("Total time: " + totalTime);
+    Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
 if(true && specificFile === undefined) {
-    start = new Date().getTime();
+    totalTime = 0;
+    totalSize = 0;
     program.run262(Environment, false);
-    end = new Date().getTime();
-    Environment.standardOut.WriteLine("Total time: " + (end - start));
+    Environment.standardOut.WriteLine("Total time: " + totalTime);
+    Environment.standardOut.WriteLine("Total size: " + totalSize);
 }

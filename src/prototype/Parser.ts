@@ -1249,6 +1249,7 @@ class Parser extends SlidingWindow {
     }
 
     private isStatement(allowFunctionDeclaration: bool): bool {
+        // ERROR RECOVERY
         switch (this.currentToken().keywordKind()) {
             case SyntaxKind.PublicKeyword:
             case SyntaxKind.PrivateKeyword:
@@ -1258,7 +1259,7 @@ class Parser extends SlidingWindow {
                 // parsable as a ClassElement then don't consider them a statement.  Note:
                 //
                 // It should not be possible for any class element that starts with public, private
-                // or static to be parsed as a statement.  So this is save to do.
+                // or static to be parsed as a statement.  So this is safe to do.
                 if (this.isClassElement()) {
                     return false;
                 }

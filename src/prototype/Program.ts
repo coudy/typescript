@@ -27,8 +27,6 @@ class Program {
         //environment.standardOut.WriteLine("Testing against 262.");
         //this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262",
         //    filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ true, /*generateBaselines:*/ false));
-
-        environment.standardOut.WriteLine("Done.");
     }
 
     private runTests(
@@ -81,6 +79,10 @@ class Program {
 
         // environment.standardOut.WriteLine("Running Parser: " + filePath);
         var contents = environment.readFile(filePath, 'utf-8');
+        
+        var start: number, end: number;
+        start = new Date().getTime();
+
         totalSize += contents.length;
 
         if (useTypeScript) {
@@ -121,6 +123,9 @@ class Program {
                 }
             }
         }
+        
+        end = new Date().getTime();
+        totalTime += (end - start);
     }
 
     runScanner(environment: IEnvironment, filePath: string, languageVersion: LanguageVersion, useTypeScript: bool, verify: bool): void {
@@ -139,56 +144,66 @@ class Program {
         // environment.standardOut.WriteLine("Running Scanner: " + filePath);
 
         var contents = environment.readFile(filePath, 'utf-8');
-        var text = new StringText(contents);
-        var scanner = Scanner.create(text, languageVersion);
 
-        var tokens: ISyntaxToken[] = [];
-        var textArray: string[] = [];
-        var diagnostics: SyntaxDiagnostic[] = [];
+        var start: number, end: number;
+        start = new Date().getTime();
+        try {
+            var text = new StringText(contents);
+            var scanner = Scanner.create(text, languageVersion);
 
-        while (true) {
-            var token = scanner.scan(diagnostics);
-            tokens.push(token);
-            
-            if (verify) {
-                var tokenText = token.text();
-                var tokenFullText = token.fullText(text);
+            var tokens: ISyntaxToken[] = [];
+            var textArray: string[] = [];
+            var diagnostics: SyntaxDiagnostic[] = [];
 
-                textArray.push(tokenFullText);
+            while (true) {
+                var token = scanner.scan(diagnostics);
+                tokens.push(token);
 
-                if (tokenFullText.substr(token.start() - token.fullStart(), token.width()) !== tokenText) {
-                    throw new Error("Token invariant broken!");
+                if (verify) {
+                    var tokenText = token.text();
+                    var tokenFullText = token.fullText(text);
+
+                    textArray.push(tokenFullText);
+
+                    if (tokenFullText.substr(token.start() - token.fullStart(), token.width()) !== tokenText) {
+                        throw new Error("Token invariant broken!");
+                    }
+                }
+
+                if (token.tokenKind === SyntaxKind.EndOfFileToken) {
+                    break;
                 }
             }
 
-            if (token.tokenKind === SyntaxKind.EndOfFileToken) {
-                break;
+            if (verify) {
+                var fullText = textArray.join("");
+
+                if (contents !== fullText) {
+                    throw new Error("Full text didn't match!");
+                }
+
+                var result = diagnostics.length === 0 ? <any>tokens : { diagnostics: diagnostics, tokens: tokens };
+
+                var actualResult = JSON2.stringify(result, null, 4);
+                var expectedFile = filePath + ".expected";
+                var actualFile = filePath + ".actual";
+
+                var expectedResult = environment.readFile(expectedFile, 'utf-8');
+
+                if (expectedResult !== actualResult) {
+                    environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
+                    environment.writeFile(actualFile, actualResult, true);
+                }
             }
         }
-
-        if (verify) {
-            var fullText = textArray.join("");
-
-            if (contents !== fullText) {
-                throw new Error("Full text didn't match!");
-            }
-
-            var result = diagnostics.length === 0 ? <any>tokens : { diagnostics: diagnostics, tokens: tokens };
-        
-            var actualResult = JSON2.stringify(result, null, 4);
-            var expectedFile = filePath + ".expected";
-            var actualFile = filePath + ".actual";
-
-            var expectedResult = environment.readFile(expectedFile, 'utf-8');
-            
-            if (expectedResult !== actualResult) {
-                environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
-                environment.writeFile(actualFile, actualResult, true);
-            }
+        finally {
+            end = new Date().getTime();
+            totalTime += (end - start);
         }
     }
 
     run(environment: IEnvironment, useTypeScript: bool): void {
+        environment.standardOut.WriteLine("Testing input files.");
         for (var index in environment.arguments) {
             var filePath: string = environment.arguments[index];
 
@@ -207,29 +222,25 @@ class Program {
         for (var index in testFiles) {
             var filePath: string = testFiles[index];
 
+            // All 262 files are utf8.  But they dont' have a BOM.  Force them to be read in
+            // as UTF8.
+            var contents = environment.readFile(filePath, 'utf-8');
+
+            var start: number, end: number;
+            start = new Date().getTime();
+
             try {
-                // All 262 files are utf8.  But they dont' have a BOM.  Force them to be read in
-                // as UTF8.
-                var contents = environment.readFile(filePath, 'utf-8');
+                totalSize += contents.length;
                 var isNegative = contents.indexOf("@negative") >= 0
 
                 testCount++;
-
-                //if (isNegative) {
-                //    skippedTests.push(filePath);
-                //    // environment.standardOut.Write("S");
-                //    continue;
-                //}
-                //else {
-                //    // environment.standardOut.Write(".");
-                //}
 
                 var stringText = new StringText(contents);
                 var scanner = new Scanner(stringText, LanguageVersion.EcmaScript5, stringTable);
                 var parser = new Parser(scanner);
 
                 var syntaxTree = parser.parseSyntaxTree();
-                //environment.standardOut.Write(".");
+            //environment.standardOut.Write(".");
 
                 if (isNegative) {
                     var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
@@ -262,6 +273,10 @@ class Program {
                 failCount++;
                 environment.standardOut.WriteLine("Exception: " + filePath);
             }
+            finally {
+                end = new Date().getTime();
+                totalTime += (end - start);
+            }
         }
 
         environment.standardOut.WriteLine("");
@@ -278,29 +293,34 @@ class Program {
 
 // (<any>WScript).StdIn.ReadLine();
 var totalSize = 0;
+var totalTime = 0;
 var program = new Program();
-var start: number, end: number;
 
+// New parser.
 if (true) {
-    start = new Date().getTime();
+    totalTime = 0;
+    totalSize = 0;
     program.runAllTests(Environment, false, true);
     program.run(Environment, false);
-    end = new Date().getTime();
-    Environment.standardOut.WriteLine("Total time: " + (end - start));
+    Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
 
-if (false) {
-    start = new Date().getTime();
+// Existing parser.
+if (true) {
+    totalTime = 0;
+    totalSize = 0;
     program.runAllTests(Environment, true, false);
     program.run(Environment, true);
-    end = new Date().getTime();
-    Environment.standardOut.WriteLine("Total time: " + (end - start));
+    Environment.standardOut.WriteLine("Total time: " + totalTime);
+    Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
 
+// Test 262.
 if (true && specificFile === undefined) {
-    start = new Date().getTime();
+    totalTime = 0;
+    totalSize = 0;
     program.run262(Environment, false);
-    end = new Date().getTime();
-    Environment.standardOut.WriteLine("Total time: " + (end - start));
+    Environment.standardOut.WriteLine("Total time: " + totalTime);
+    Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
