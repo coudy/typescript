@@ -68,10 +68,9 @@ class SlidingWindow {
         var amountFetched = this.fetchMoreItems(this.windowAbsoluteStartIndex + this.windowCount, this.window, this.windowCount, spaceAvailable);
 
         // Assert disabled because it is actually expensive enugh to affect perf.
-        // Debug.assert(amountFetched > 0);
-        this.windowCount += amountFetched;
 
-        return true;
+        this.windowCount += amountFetched;
+        return amountFetched > 0;
     }
 
     private tryShiftOrGrowTokenWindow(): void {

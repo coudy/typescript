@@ -5,7 +5,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "7.6.1-4-1.js"; 
+    // "amazon_com\\ads_common.js"; 
     undefined;
 
 class Program {
@@ -211,7 +211,7 @@ class Program {
         }
     }
 
-    run262(environment: IEnvironment, useTypeScript: bool): void {
+    run262(environment: IEnvironment): void {
         var path = "C:\\temp\\test262\\suite";
         var testFiles = environment.listFiles(path, null, { recursive: true });
 
@@ -289,6 +289,88 @@ class Program {
             environment.standardOut.WriteLine(skippedTests[i]);
         }
     }
+
+    runTop1000(environment: IEnvironment): void {
+        var path = "C:\\Temp\\TopJSFiles";
+        var testFiles = environment.listFiles(path, null, { recursive: true });
+
+        var testCount = 0;
+        var failCount = 0;
+        var skippedTests:string[] = [];
+
+        for (var index in testFiles) {
+            var filePath: string = testFiles[index];
+
+            if (specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
+                continue;
+            }
+
+            // All 262 files are utf8.  But they dont' have a BOM.  Force them to be read in
+            // as UTF8.
+            var contents = environment.readFile(filePath, 'utf-8');
+
+            var start: number, end: number;
+            start = new Date().getTime();
+
+            try {
+                totalSize += contents.length;
+                testCount++;
+
+                var stringText = new StringText(contents);
+                var scanner = new Scanner(stringText, LanguageVersion.EcmaScript5, stringTable);
+                var parser = new Parser(scanner);
+
+                var syntaxTree = parser.parseSyntaxTree();
+                environment.standardOut.WriteLine(filePath);
+
+                //if (isNegative) {
+                //    var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
+                //    var canParseSuccessfully = <bool>negative262ExpectedResults[fileName];
+
+                //    if (canParseSuccessfully) {
+                //        // We expected to parse this successfully.  Report an error if we didn't.
+                //        if (syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
+                //            environment.standardOut.WriteLine("Negative test. Unexpected failure: " + filePath);
+                //            failCount++;
+                //        }
+                //    }
+                //    else {
+                //        // We expected to fail on this.  Report an error if we don't.
+                //        if (syntaxTree.diagnostics() === null || syntaxTree.diagnostics().length === 0) {
+                //            environment.standardOut.WriteLine("Negative test. Unexpected success: " + filePath);
+                //            failCount++;
+                //        }
+                //    }
+                //}
+                //else {
+                    // Not a negative test.  We can't have any errors or skipped tokens.
+                    if (syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
+                        // environment.standardOut.WriteLine("");
+                        environment.standardOut.WriteLine("Unexpected failure: " + filePath);
+                        failCount++;
+                    }
+                //}
+            }
+            catch (e) {
+                failCount++;
+                environment.standardOut.WriteLine("Exception: " + filePath);
+            }
+            finally {
+                end = new Date().getTime();
+                totalTime += (end - start);
+            }
+        }
+
+        environment.standardOut.WriteLine("");
+        environment.standardOut.WriteLine("Test 262 results:");
+        environment.standardOut.WriteLine("Test Count: " + testCount);
+        environment.standardOut.WriteLine("Skip Count: " + skippedTests.length);
+        environment.standardOut.WriteLine("Fail Count: " + failCount);
+
+        for (var i = 0; i < skippedTests.length; i++) {
+            environment.standardOut.WriteLine(skippedTests[i]);
+        }
+    }
 }
 
 // (<any>WScript).StdIn.ReadLine();
@@ -307,7 +389,7 @@ if (true) {
 }
 
 // Existing parser.
-if (true) {
+if (false) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(Environment, true, false);
@@ -320,7 +402,16 @@ if (true) {
 if (true && specificFile === undefined) {
     totalTime = 0;
     totalSize = 0;
-    program.run262(Environment, false);
+    program.run262(Environment);
+    Environment.standardOut.WriteLine("Total time: " + totalTime);
+    Environment.standardOut.WriteLine("Total size: " + totalSize);
+}
+
+// Test Top 1000 sites.
+if (false) {
+    totalTime = 0;
+    totalSize = 0;
+    program.runTop1000(Environment);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }

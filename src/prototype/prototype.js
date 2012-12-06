@@ -1430,7 +1430,7 @@ var SlidingWindow = (function () {
         var spaceAvailable = this.window.length - this.windowCount;
         var amountFetched = this.fetchMoreItems(this.windowAbsoluteStartIndex + this.windowCount, this.window, this.windowCount, spaceAvailable);
         this.windowCount += amountFetched;
-        return true;
+        return amountFetched > 0;
     };
     SlidingWindow.prototype.tryShiftOrGrowTokenWindow = function () {
         var currentIndexIsPastWindowHalfwayPoint = this.currentRelativeItemIndex > (this.window.length >>> 1);
@@ -36525,7 +36525,7 @@ var Program = (function () {
             this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         }
     };
-    Program.prototype.run262 = function (environment, useTypeScript) {
+    Program.prototype.run262 = function (environment) {
         var path = "C:\\temp\\test262\\suite";
         var testFiles = environment.listFiles(path, null, {
             recursive: true
@@ -36583,6 +36583,51 @@ var Program = (function () {
             environment.standardOut.WriteLine(skippedTests[i]);
         }
     };
+    Program.prototype.runTop1000 = function (environment) {
+        var path = "C:\\Temp\\TopJSFiles";
+        var testFiles = environment.listFiles(path, null, {
+            recursive: true
+        });
+        var testCount = 0;
+        var failCount = 0;
+        var skippedTests = [];
+        for(var index in testFiles) {
+            var filePath = testFiles[index];
+            if(specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
+                continue;
+            }
+            var contents = environment.readFile(filePath, 'utf-8');
+            var start, end;
+            start = new Date().getTime();
+            try  {
+                totalSize += contents.length;
+                testCount++;
+                var stringText = new StringText(contents);
+                var scanner = new Scanner(stringText, 1 /* EcmaScript5 */ , stringTable);
+                var parser = new Parser(scanner);
+                var syntaxTree = parser.parseSyntaxTree();
+                environment.standardOut.WriteLine(filePath);
+                if(syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
+                    environment.standardOut.WriteLine("Unexpected failure: " + filePath);
+                    failCount++;
+                }
+            } catch (e) {
+                failCount++;
+                environment.standardOut.WriteLine("Exception: " + filePath);
+            }finally {
+                end = new Date().getTime();
+                totalTime += (end - start);
+            }
+        }
+        environment.standardOut.WriteLine("");
+        environment.standardOut.WriteLine("Test 262 results:");
+        environment.standardOut.WriteLine("Test Count: " + testCount);
+        environment.standardOut.WriteLine("Skip Count: " + skippedTests.length);
+        environment.standardOut.WriteLine("Fail Count: " + failCount);
+        for(var i = 0; i < skippedTests.length; i++) {
+            environment.standardOut.WriteLine(skippedTests[i]);
+        }
+    };
     return Program;
 })();
 var totalSize = 0;
@@ -36596,7 +36641,7 @@ if(true) {
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(true) {
+if(false) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(Environment, true, false);
@@ -36607,7 +36652,14 @@ if(true) {
 if(true && specificFile === undefined) {
     totalTime = 0;
     totalSize = 0;
-    program.run262(Environment, false);
+    program.run262(Environment);
+    Environment.standardOut.WriteLine("Total time: " + totalTime);
+    Environment.standardOut.WriteLine("Total size: " + totalSize);
+}
+if(false) {
+    totalTime = 0;
+    totalSize = 0;
+    program.runTop1000(Environment);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
