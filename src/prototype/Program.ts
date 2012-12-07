@@ -302,6 +302,7 @@ class Program {
     }
 
     runTop1000(environment: IEnvironment): void {
+        environment.standardOut.WriteLine("Testing top 1000 sites.");
 
         var path = "C:\\Temp\\TopJSFiles";
         var testFiles = environment.listFiles(path, null, { recursive: true });

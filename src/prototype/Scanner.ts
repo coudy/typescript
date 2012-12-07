@@ -169,7 +169,7 @@ class Scanner extends SlidingWindow {
         var width = 0;
         while (true) {
             var ch = this.currentCharCode();
-            if (this.isNewLineCharacter(ch) || ch === CharacterCodes.nullCharacter) {
+            if (this.isNewLineCharacter(ch) || this.isAtEndOfSource()) {
                 return width;
             }
 
@@ -182,7 +182,7 @@ class Scanner extends SlidingWindow {
         var width = 0;
         while (true) {
             var ch = this.currentCharCode();
-            if (ch === CharacterCodes.nullCharacter) {
+            if (this.isAtEndOfSource()) {
                 diagnostics.push(new SyntaxDiagnostic(
                     this.absoluteIndex(), 0, DiagnosticCode._StarSlash__expected, null));
                 return width;
@@ -219,6 +219,12 @@ class Scanner extends SlidingWindow {
         this.tokenInfo.KeywordKind = SyntaxKind.None;
         this.tokenInfo.Text = null;
         this.tokenInfo.Value = null;
+
+        if (this.isAtEndOfSource()) {
+            this.tokenInfo.Kind = SyntaxKind.EndOfFileToken;
+            this.tokenInfo.Text = "";
+            return;
+        }
 
         var character = this.currentCharCode();
 
@@ -301,12 +307,6 @@ class Scanner extends SlidingWindow {
 
             case CharacterCodes.question:
                 return this.advanceAndSetTokenKind(SyntaxKind.QuestionToken);
-
-            case CharacterCodes.nullCharacter:
-                // If we see a null character, we're done.
-                this.tokenInfo.Kind = SyntaxKind.EndOfFileToken;
-                this.tokenInfo.Text = "";
-                return;
         }
 
         if (Scanner.isNumericLiteralStart[character]) {
@@ -742,7 +742,7 @@ class Scanner extends SlidingWindow {
             var inCharacterClass = false;
             while (true) {
                 var ch = this.currentCharCode();
-                if (this.isNewLineCharacter(ch) || ch === CharacterCodes.nullCharacter) {
+                if (this.isNewLineCharacter(ch) || this.isAtEndOfSource()) {
                     this.rewindToPinnedIndex(startIndex);
                     return false;
                 }
@@ -930,7 +930,7 @@ class Scanner extends SlidingWindow {
                 this.moveToNextItem();
                 break;
             }
-            else if (this.isNewLineCharacter(ch) || ch === CharacterCodes.nullCharacter) {
+            else if (this.isNewLineCharacter(ch) || this.isAtEndOfSource()) {
                 diagnostics.push(new SyntaxDiagnostic(
                     this.absoluteIndex(), 1, DiagnosticCode.Missing_closing_quote_character, null));
                 break;

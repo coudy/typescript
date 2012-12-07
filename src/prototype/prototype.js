@@ -1455,6 +1455,9 @@ var SlidingWindow = (function () {
     SlidingWindow.prototype.absoluteIndex = function () {
         return this.windowAbsoluteStartIndex + this.currentRelativeItemIndex;
     };
+    SlidingWindow.prototype.isAtEndOfSource = function () {
+        return this.absoluteIndex() >= this.sourceLength;
+    };
     SlidingWindow.prototype.getAndPinAbsoluteIndex = function () {
         var absoluteIndex = this.absoluteIndex();
         if(this.pinCount === 0) {
@@ -4366,7 +4369,7 @@ var Scanner = (function (_super) {
         var width = 0;
         while(true) {
             var ch = this.currentCharCode();
-            if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
+            if(this.isNewLineCharacter(ch) || this.isAtEndOfSource()) {
                 return width;
             }
             this.moveToNextItem();
@@ -4377,7 +4380,7 @@ var Scanner = (function (_super) {
         var width = 0;
         while(true) {
             var ch = this.currentCharCode();
-            if(ch === 0 /* nullCharacter */ ) {
+            if(this.isAtEndOfSource()) {
                 diagnostics.push(new SyntaxDiagnostic(this.absoluteIndex(), 0, 10 /* _StarSlash__expected */ , null));
                 return width;
             }
@@ -4405,6 +4408,11 @@ var Scanner = (function (_super) {
         this.tokenInfo.KeywordKind = 0 /* None */ ;
         this.tokenInfo.Text = null;
         this.tokenInfo.Value = null;
+        if(this.isAtEndOfSource()) {
+            this.tokenInfo.Kind = 116 /* EndOfFileToken */ ;
+            this.tokenInfo.Text = "";
+            return;
+        }
         var character = this.currentCharCode();
         switch(character) {
             case 34 /* doubleQuote */ :
@@ -4506,12 +4514,6 @@ var Scanner = (function (_super) {
             }
             case 63 /* question */ : {
                 return this.advanceAndSetTokenKind(100 /* QuestionToken */ );
-
-            }
-            case 0 /* nullCharacter */ : {
-                this.tokenInfo.Kind = 116 /* EndOfFileToken */ ;
-                this.tokenInfo.Text = "";
-                return;
 
             }
         }
@@ -4845,7 +4847,7 @@ var Scanner = (function (_super) {
             var inCharacterClass = false;
             while(true) {
                 var ch = this.currentCharCode();
-                if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
+                if(this.isNewLineCharacter(ch) || this.isAtEndOfSource()) {
                     this.rewindToPinnedIndex(startIndex);
                     return false;
                 }
@@ -5003,7 +5005,7 @@ var Scanner = (function (_super) {
                     this.moveToNextItem();
                     break;
                 } else {
-                    if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
+                    if(this.isNewLineCharacter(ch) || this.isAtEndOfSource()) {
                         diagnostics.push(new SyntaxDiagnostic(this.absoluteIndex(), 1, 2 /* Missing_closing_quote_character */ , null));
                         break;
                     } else {
@@ -37687,7 +37689,11 @@ var expectedTop1000Failures = {
     "JSFile100\\atdmt_com\\016758.js": true,
     "JSFile100\\yandex_ru\\watch_visor.js": true,
     "JSFile100\\uol_com_br\\site_uolbr_chan_batepapo_subchan_capa_affiliate_uolbrbatepapo_size_125x125_page_7_conntype_1_expble_0_reso_1756x1127_tile_215298826605972.js": true,
-    "JSFile100\\uol_com_br\\site_uolbr_chan_batepapo_subchan_capa_affiliate_uolbrbatepapo_size_728x90_page_1_conntype_1_expble_0_reso_1756x1127_tile_215298826605972.js": true
+    "JSFile100\\uol_com_br\\site_uolbr_chan_batepapo_subchan_capa_affiliate_uolbrbatepapo_size_728x90_page_1_conntype_1_expble_0_reso_1756x1127_tile_215298826605972.js": true,
+    "JSFile100\\aol_com\ajax.js": true,
+    "aol_com\\ad_refresher.js": true,
+    "bing_com\\omniture.js": true,
+    "bing_com\\ScriptResource.js": true
 };
 var stringTable = new StringTable();
 var specificFile = undefined;
@@ -37710,7 +37716,7 @@ var Program = (function () {
         });
         environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, true, true, false, true);
+            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true, false, true);
         });
     };
     Program.prototype.runTests = function (environment, path, action, printDots) {
@@ -37748,7 +37754,6 @@ var Program = (function () {
         }
         var contents = environment.readFile(filePath, 'utf-8');
         if(printDots) {
-            environment.standardOut.Write(".");
         }
         var start, end;
         start = new Date().getTime();
@@ -37917,6 +37922,7 @@ var Program = (function () {
         }
     };
     Program.prototype.runTop1000 = function (environment) {
+        environment.standardOut.WriteLine("Testing top 1000 sites.");
         var path = "C:\\Temp\\TopJSFiles";
         var testFiles = environment.listFiles(path, null, {
             recursive: true

@@ -1222,4 +1222,8 @@ var expectedTop1000Failures = {
     "JSFile100\\yandex_ru\\watch_visor.js": true,
     "JSFile100\\uol_com_br\\site_uolbr_chan_batepapo_subchan_capa_affiliate_uolbrbatepapo_size_125x125_page_7_conntype_1_expble_0_reso_1756x1127_tile_215298826605972.js": true,
     "JSFile100\\uol_com_br\\site_uolbr_chan_batepapo_subchan_capa_affiliate_uolbrbatepapo_size_728x90_page_1_conntype_1_expble_0_reso_1756x1127_tile_215298826605972.js": true,
+    "JSFile100\\aol_com\ajax.js": true,
+    "aol_com\\ad_refresher.js": true,
+    "bing_com\\omniture.js": true,
+    "bing_com\\ScriptResource.js": true,
 };

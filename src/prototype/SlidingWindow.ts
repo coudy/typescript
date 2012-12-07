@@ -36,6 +36,7 @@ class SlidingWindow {
     // The default value to return when there are no more items left in the window.
     private defaultValue: any;
 
+    // The length of the source we're reading from if we know it up front.  -1 if we do not.
     private sourceLength: number;
 
     constructor(defaultWindowSize: number, defaultValue: any, sourceLength = -1) {
@@ -126,6 +127,10 @@ class SlidingWindow {
 
     public absoluteIndex(): number {
         return this.windowAbsoluteStartIndex + this.currentRelativeItemIndex;
+    }
+
+    public isAtEndOfSource(): bool {
+        return this.absoluteIndex() >= this.sourceLength;
     }
 
     public getAndPinAbsoluteIndex(): number {
