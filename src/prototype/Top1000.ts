@@ -1219,4 +1219,5 @@ var expectedTop1000Failures = {
     "JSFile100\\comcast_net\\datechooser.js": true,
     "JSFile100\\amazon_com\\all_1.js": true,
     "JSFile100\\atdmt_com\\016758.js": true,
+    "JSFile100\\yandex_ru\\watch_visor.js": true,
 };

@@ -6,7 +6,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "JSFile100\\google_ca\\9ZFLko0iJqU.js";
+    // "JSFile100\\live_com\\js_settings_php.js";
     undefined;
 
 class Program {
@@ -387,7 +387,7 @@ if (false) {
 }
 
 // Test 262.
-if (false && specificFile === undefined) {
+if (true && specificFile === undefined) {
     totalTime = 0;
     totalSize = 0;
     program.run262(Environment);
@@ -396,7 +396,7 @@ if (false && specificFile === undefined) {
 }
 
 // Test Top 1000 sites.
-if (true) {
+if (false) {
     totalTime = 0;
     totalSize = 0;
     program.runTop1000(Environment);

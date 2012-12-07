@@ -2076,13 +2076,25 @@ var Parser = (function (_super) {
         return new SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block);
     };
     Parser.prototype.isMemberVariableDeclaration = function () {
-        if(this.currentToken().keywordKind() === 53 /* PublicKeyword */  || this.currentToken().keywordKind() === 51 /* PrivateKeyword */ ) {
-            return true;
+        var rewindPoint = this.getRewindPoint();
+        try  {
+            if(this.currentToken().keywordKind() === 53 /* PublicKeyword */  || this.currentToken().keywordKind() === 51 /* PrivateKeyword */ ) {
+                this.eatAnyToken();
+                if(this.currentToken().tokenKind === 66 /* CloseBraceToken */  || this.currentToken().tokenKind === 116 /* EndOfFileToken */ ) {
+                    return true;
+                }
+            }
+            if(this.currentToken().keywordKind() === 54 /* StaticKeyword */ ) {
+                this.eatAnyToken();
+                if(this.currentToken().tokenKind === 66 /* CloseBraceToken */  || this.currentToken().tokenKind === 116 /* EndOfFileToken */ ) {
+                    return true;
+                }
+            }
+            return this.isVariableDeclarator();
+        }finally {
+            this.rewind(rewindPoint);
+            this.releaseRewindPoint(rewindPoint);
         }
-        if(this.currentToken().keywordKind() === 54 /* StaticKeyword */ ) {
-            return true;
-        }
-        return this.isIdentifier(this.currentToken());
     };
     Parser.prototype.isClassElement = function () {
         return this.isConstructorDeclaration() || this.isMemberFunctionDeclaration() || this.isMemberAccessorDeclaration() || this.isMemberVariableDeclaration();
@@ -37612,7 +37624,8 @@ var expectedTop1000Failures = {
     "JSFile100\\bing_com\\s_code.js": true,
     "JSFile100\\comcast_net\\datechooser.js": true,
     "JSFile100\\amazon_com\\all_1.js": true,
-    "JSFile100\\atdmt_com\\016758.js": true
+    "JSFile100\\atdmt_com\\016758.js": true,
+    "JSFile100\\yandex_ru\\watch_visor.js": true
 };
 var stringTable = new StringTable();
 var specificFile = undefined;
@@ -37900,14 +37913,14 @@ if(false) {
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(false && specificFile === undefined) {
+if(true && specificFile === undefined) {
     totalTime = 0;
     totalSize = 0;
     program.run262(Environment);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(true) {
+if(false) {
     totalTime = 0;
     totalSize = 0;
     program.runTop1000(Environment);

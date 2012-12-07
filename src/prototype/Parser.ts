@@ -845,18 +845,41 @@ class Parser extends SlidingWindow {
     }
 
     private isMemberVariableDeclaration(): bool {
-        if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
-            this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
-            return true;
-        }
+        var rewindPoint = this.getRewindPoint();
+        try {
+            if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
+                this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
+                this.eatAnyToken();
 
-        if (this.currentToken().keywordKind() === SyntaxKind.StaticKeyword) {
-            return true;
-        }
+                // ERROR RECOVERY: 
+                // If we're following by an close curly or EOF, then consider this the start of a
+                // variable declaration.
+                if (this.currentToken().tokenKind === SyntaxKind.CloseBraceToken ||
+                    this.currentToken().tokenKind === SyntaxKind.EndOfFileToken) {
+                    return true;
+                }
+            }
 
-        return this.isIdentifier(this.currentToken());
+            if (this.currentToken().keywordKind() === SyntaxKind.StaticKeyword) {
+                this.eatAnyToken();
+
+                // ERROR RECOVERY: 
+                // If we're following by an close curly or EOF, then consider this the start of a
+                // variable declaration.
+                if (this.currentToken().tokenKind === SyntaxKind.CloseBraceToken ||
+                    this.currentToken().tokenKind === SyntaxKind.EndOfFileToken) {
+                    return true;
+                }
+            }
+
+            return this.isVariableDeclarator();
+        }
+        finally {
+            this.rewind(rewindPoint);
+            this.releaseRewindPoint(rewindPoint);
+        }
     }
-
+    
     private isClassElement(): bool {
         // Note: the order of these calls is important.  Specifically, isMemberVariableDeclaration
         // checks for a subset of the conditions of the previous two.
