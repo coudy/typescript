@@ -36,7 +36,7 @@ class StringText extends TextBase {
     /// <returns>The character.</returns>
     /// <exception cref="T:ArgumentOutOfRangeException">When position is negative or 
     /// greater than <see cref="T:"/> length.</exception>
-    public getCharCodeAt(position: number): number {
+    public charCodeAt(position: number): number {
         if (position < 0 || position >= this.source.length) {
             throw Errors.argumentOutOfRange("position");
         }

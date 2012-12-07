@@ -6,7 +6,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "JSFile100\\live_com\\js_settings_php.js";
+    // "google_cz\\WrLXloe7h6U.js";
     undefined;
 
 class Program {
@@ -43,6 +43,10 @@ class Program {
             }
 
             var filePath = testFiles[index];
+            if (specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
+                continue;
+            }
+
 
             try {
                 action(filePath);
@@ -71,10 +75,6 @@ class Program {
         }
 
         if (filePath.indexOf("RealSource") >= 0) {
-            return;
-        }
-
-        if (specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
             return;
         }
 
@@ -137,12 +137,6 @@ class Program {
         if (useTypeScript) {
             return;
         }
-
-        if (specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
-            return;
-        }
-
-        // environment.standardOut.WriteLine("Running Scanner: " + filePath);
 
         var contents = environment.readFile(filePath, 'utf-8');
 
@@ -207,6 +201,9 @@ class Program {
         environment.standardOut.WriteLine("Testing input files.");
         for (var index in environment.arguments) {
             var filePath: string = environment.arguments[index];
+            if (specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
+                continue;
+            }
 
             this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*allowErrors:*/ false);
         }
@@ -222,6 +219,10 @@ class Program {
 
         for (var index in testFiles) {
             var filePath: string = testFiles[index];
+
+            if (specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
+                continue;
+            }
 
             // All 262 files are utf8.  But they dont' have a BOM.  Force them to be read in
             // as UTF8.
@@ -387,7 +388,7 @@ if (false) {
 }
 
 // Test 262.
-if (true && specificFile === undefined) {
+if (true) {
     totalTime = 0;
     totalSize = 0;
     program.run262(Environment);
@@ -396,7 +397,7 @@ if (true && specificFile === undefined) {
 }
 
 // Test Top 1000 sites.
-if (false) {
+if (true) {
     totalTime = 0;
     totalSize = 0;
     program.runTop1000(Environment);

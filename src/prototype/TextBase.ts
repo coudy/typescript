@@ -173,7 +173,7 @@ class TextBase implements IText {
         // performance critical, and thus inlines knowledge about common line breaks
         // and non-line breaks.
         while (index < length) {
-            var c = this.charCodeAt(0);
+            var c = this.charCodeAt(index);
             var lineBreakLength;
 
             // common case - ASCII & not a line break

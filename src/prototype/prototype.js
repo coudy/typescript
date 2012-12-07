@@ -5165,7 +5165,7 @@ var TextBase = (function () {
         var arrayBuilder = [];
         var lineNumber = 0;
         while(index < length) {
-            var c = this.charCodeAt(0);
+            var c = this.charCodeAt(index);
             var lineBreakLength;
             if(c > 13 /* carriageReturn */  && c <= 127) {
                 index++;
@@ -5352,7 +5352,7 @@ var StringText = (function (_super) {
     StringText.prototype.length = function () {
         return this.source.length;
     };
-    StringText.prototype.getCharCodeAt = function (position) {
+    StringText.prototype.charCodeAt = function (position) {
         if(position < 0 || position >= this.source.length) {
             throw Errors.argumentOutOfRange("position");
         }
@@ -37625,7 +37625,9 @@ var expectedTop1000Failures = {
     "JSFile100\\comcast_net\\datechooser.js": true,
     "JSFile100\\amazon_com\\all_1.js": true,
     "JSFile100\\atdmt_com\\016758.js": true,
-    "JSFile100\\yandex_ru\\watch_visor.js": true
+    "JSFile100\\yandex_ru\\watch_visor.js": true,
+    "JSFile100\\uol_com_br\\site_uolbr_chan_batepapo_subchan_capa_affiliate_uolbrbatepapo_size_125x125_page_7_conntype_1_expble_0_reso_1756x1127_tile_215298826605972.js": true,
+    "JSFile100\\uol_com_br\\site_uolbr_chan_batepapo_subchan_capa_affiliate_uolbrbatepapo_size_728x90_page_1_conntype_1_expble_0_reso_1756x1127_tile_215298826605972.js": true
 };
 var stringTable = new StringTable();
 var specificFile = undefined;
@@ -37656,6 +37658,9 @@ var Program = (function () {
             if(printDots) {
             }
             var filePath = testFiles[index];
+            if(specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
+                continue;
+            }
             try  {
                 action(filePath);
             } catch (e) {
@@ -37674,9 +37679,6 @@ var Program = (function () {
             return;
         }
         if(filePath.indexOf("RealSource") >= 0) {
-            return;
-        }
-        if(specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
             return;
         }
         var contents = environment.readFile(filePath, 'utf-8');
@@ -37723,9 +37725,6 @@ var Program = (function () {
             return;
         }
         if(useTypeScript) {
-            return;
-        }
-        if(specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
             return;
         }
         var contents = environment.readFile(filePath, 'utf-8');
@@ -37779,6 +37778,9 @@ var Program = (function () {
         environment.standardOut.WriteLine("Testing input files.");
         for(var index in environment.arguments) {
             var filePath = environment.arguments[index];
+            if(specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
+                continue;
+            }
             this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         }
     };
@@ -37792,6 +37794,9 @@ var Program = (function () {
         var skippedTests = [];
         for(var index in testFiles) {
             var filePath = testFiles[index];
+            if(specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
+                continue;
+            }
             var contents = environment.readFile(filePath, 'utf-8');
             var start, end;
             start = new Date().getTime();
@@ -37913,14 +37918,14 @@ if(false) {
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(true && specificFile === undefined) {
+if(true) {
     totalTime = 0;
     totalSize = 0;
     program.run262(Environment);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(false) {
+if(true) {
     totalTime = 0;
     totalSize = 0;
     program.runTop1000(Environment);
