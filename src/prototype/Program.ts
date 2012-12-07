@@ -6,7 +6,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "telegraph_co_uk\\external_tracking_min.js";
+    // "JSFile100\\google_ca\\9ZFLko0iJqU.js";
     undefined;
 
 class Program {
@@ -387,7 +387,7 @@ if (false) {
 }
 
 // Test 262.
-if (true && specificFile === undefined) {
+if (false && specificFile === undefined) {
     totalTime = 0;
     totalSize = 0;
     program.run262(Environment);
@@ -396,7 +396,7 @@ if (true && specificFile === undefined) {
 }
 
 // Test Top 1000 sites.
-if (false) {
+if (true) {
     totalTime = 0;
     totalSize = 0;
     program.runTop1000(Environment);

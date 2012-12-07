@@ -1213,4 +1213,10 @@ var expectedTop1000Failures = {
     "JSFileTop1000\\xe_com\\dnn.js": true,
     "JSFileTop1000\\xe_com\\dnn_xml.js": true,
     "JSFileTop1000\\xe_com\\dnn_xmlhttp.js": true,
+    "JSFile100\\amazon_com\\01Tr6v6ehxL.js": true,
+    "JSFile100\\facebook_com\\6S8W9_zcvGH.js": true,
+    "JSFile100\\bing_com\\s_code.js": true,
+    "JSFile100\\comcast_net\\datechooser.js": true,
+    "JSFile100\\amazon_com\\all_1.js": true,
+    "JSFile100\\atdmt_com\\016758.js": true,
 };

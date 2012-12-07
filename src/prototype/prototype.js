@@ -37606,7 +37606,13 @@ var expectedTop1000Failures = {
     "JSFileTop1000\\weebly_com\\effects_min.js": true,
     "JSFileTop1000\\xe_com\\dnn.js": true,
     "JSFileTop1000\\xe_com\\dnn_xml.js": true,
-    "JSFileTop1000\\xe_com\\dnn_xmlhttp.js": true
+    "JSFileTop1000\\xe_com\\dnn_xmlhttp.js": true,
+    "JSFile100\\amazon_com\\01Tr6v6ehxL.js": true,
+    "JSFile100\\facebook_com\\6S8W9_zcvGH.js": true,
+    "JSFile100\\bing_com\\s_code.js": true,
+    "JSFile100\\comcast_net\\datechooser.js": true,
+    "JSFile100\\amazon_com\\all_1.js": true,
+    "JSFile100\\atdmt_com\\016758.js": true
 };
 var stringTable = new StringTable();
 var specificFile = undefined;
@@ -37894,14 +37900,14 @@ if(false) {
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(true && specificFile === undefined) {
+if(false && specificFile === undefined) {
     totalTime = 0;
     totalSize = 0;
     program.run262(Environment);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(false) {
+if(true) {
     totalTime = 0;
     totalSize = 0;
     program.runTop1000(Environment);
