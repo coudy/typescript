@@ -25,9 +25,9 @@ class Program {
         this.runTests(environment, "C:\\temp\\monoco-files",
             filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ false));
             
-        //environment.standardOut.WriteLine("Testing against 262.");
-        //this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262",
-        //    filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ true, /*generateBaselines:*/ false));
+        environment.standardOut.WriteLine("Testing against 262.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262",
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ true, /*generateBaselines:*/ false, /*printDots:*/ true));
     }
 
     private runTests(
@@ -69,7 +69,8 @@ class Program {
               useTypeScript: bool,
               verify: bool,
               allowErrors: bool,
-              generateBaseline?: bool = false): void {
+              generateBaseline?: bool = false,
+              printDots?: bool = false): void {
         if (!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
             return;
         }
@@ -80,6 +81,10 @@ class Program {
 
         // environment.standardOut.WriteLine("Running Parser: " + filePath);
         var contents = environment.readFile(filePath, 'utf-8');
+        if (printDots) {
+            // environment.standardOut.Write(".");
+            // environment.standardOut.WriteLine(filePath);
+        }
         
         var start: number, end: number;
         start = new Date().getTime();
@@ -119,6 +124,10 @@ class Program {
                 var expectedResult = environment.readFile(expectedFile, 'utf-8');
 
                 if (expectedResult !== actualResult) {
+                    if (printDots) {
+                        environment.standardOut.WriteLine("");
+                    }
+
                     environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
                     environment.writeFile(actualFile, actualResult, /*useUTF8:*/ true);
                 }

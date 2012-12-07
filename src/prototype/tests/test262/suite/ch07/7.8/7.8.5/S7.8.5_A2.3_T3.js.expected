@@ -1,25 +1,9 @@
 ﻿{
-    "_skippedTokens": [
-        {
-            "kind": "SlashToken",
-            "start": 312,
-            "fullStart": 0,
-            "width": 1,
-            "fullWidth": 313,
-            "text": "/",
-            "hasLeadingTrivia": true,
-            "hasLeadingCommentTrivia": true,
-            "hasLeadingNewLineTrivia": true
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 312,
             "_width": 1,
-            "_diagnosticCode": "Unexpected_token__0_expected",
-            "_arguments": [
-                "module, class, interface, enum, import or statement"
-            ]
+            "_diagnosticCode": "Identifier_expected"
         },
         {
             "_position": 318,
@@ -35,16 +19,40 @@
                 "_expression": {
                     "kind": "DivideExpression",
                     "_left": {
-                        "kind": "IdentifierName",
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "start": 313,
+                        "kind": "DivideExpression",
+                        "_left": {
+                            "kind": "IdentifierName",
+                            "_identifier": {
+                                "kind": "IdentifierNameToken",
+                                "start": 0,
+                                "width": 0,
+                                "isMissing": true,
+                                "text": ""
+                            }
+                        },
+                        "_operatorToken": {
+                            "kind": "SlashToken",
+                            "start": 312,
+                            "fullStart": 0,
                             "width": 1,
-                            "fullWidth": 2,
-                            "text": "a",
-                            "valueText": "a",
-                            "hasTrailingTrivia": true,
-                            "hasTrailingNewLineTrivia": true
+                            "fullWidth": 313,
+                            "text": "/",
+                            "hasLeadingTrivia": true,
+                            "hasLeadingCommentTrivia": true,
+                            "hasLeadingNewLineTrivia": true
+                        },
+                        "_right": {
+                            "kind": "IdentifierName",
+                            "_identifier": {
+                                "kind": "IdentifierNameToken",
+                                "start": 313,
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": "a",
+                                "valueText": "a",
+                                "hasTrailingTrivia": true,
+                                "hasTrailingNewLineTrivia": true
+                            }
                         }
                     },
                     "_operatorToken": {

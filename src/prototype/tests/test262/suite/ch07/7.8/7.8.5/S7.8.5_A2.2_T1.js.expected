@@ -1,40 +1,17 @@
 ﻿{
     "_skippedTokens": [
         {
-            "kind": "SlashToken",
-            "start": 276,
-            "fullStart": 0,
-            "width": 1,
-            "fullWidth": 277,
-            "text": "/",
-            "hasLeadingTrivia": true,
-            "hasLeadingCommentTrivia": true,
-            "hasLeadingNewLineTrivia": true
-        },
-        {
             "kind": "ErrorToken",
             "start": 278,
             "width": 1,
             "text": "\\"
-        },
-        {
-            "kind": "SlashToken",
-            "start": 279,
-            "width": 1,
-            "fullWidth": 2,
-            "text": "/",
-            "hasTrailingTrivia": true,
-            "hasTrailingNewLineTrivia": true
         }
     ],
     "_diagnostics": [
         {
             "_position": 276,
             "_width": 1,
-            "_diagnosticCode": "Unexpected_token__0_expected",
-            "_arguments": [
-                "module, class, interface, enum, import or statement"
-            ]
+            "_diagnosticCode": "Identifier_expected"
         },
         {
             "_position": 278,
@@ -55,10 +32,12 @@
         {
             "_position": 279,
             "_width": 1,
-            "_diagnosticCode": "Unexpected_token__0_expected",
-            "_arguments": [
-                "module, class, interface, enum, import or statement"
-            ]
+            "_diagnosticCode": "Identifier_expected"
+        },
+        {
+            "_position": 282,
+            "_width": 0,
+            "_diagnosticCode": "Identifier_expected"
         }
     ],
     "_sourceUnit": {
@@ -67,17 +46,83 @@
             {
                 "kind": "ExpressionStatement",
                 "_expression": {
-                    "kind": "IdentifierName",
-                    "_identifier": {
-                        "kind": "IdentifierNameToken",
-                        "start": 277,
+                    "kind": "DivideExpression",
+                    "_left": {
+                        "kind": "IdentifierName",
+                        "_identifier": {
+                            "kind": "IdentifierNameToken",
+                            "start": 0,
+                            "width": 0,
+                            "isMissing": true,
+                            "text": ""
+                        }
+                    },
+                    "_operatorToken": {
+                        "kind": "SlashToken",
+                        "start": 276,
+                        "fullStart": 0,
                         "width": 1,
-                        "text": "a"
+                        "fullWidth": 277,
+                        "text": "/",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingCommentTrivia": true,
+                        "hasLeadingNewLineTrivia": true
+                    },
+                    "_right": {
+                        "kind": "IdentifierName",
+                        "_identifier": {
+                            "kind": "IdentifierNameToken",
+                            "start": 277,
+                            "width": 1,
+                            "text": "a"
+                        }
                     }
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
                     "start": 278,
+                    "width": 0,
+                    "isMissing": true,
+                    "text": ""
+                }
+            },
+            {
+                "kind": "ExpressionStatement",
+                "_expression": {
+                    "kind": "DivideExpression",
+                    "_left": {
+                        "kind": "IdentifierName",
+                        "_identifier": {
+                            "kind": "IdentifierNameToken",
+                            "start": 279,
+                            "width": 0,
+                            "isMissing": true,
+                            "text": ""
+                        }
+                    },
+                    "_operatorToken": {
+                        "kind": "SlashToken",
+                        "start": 279,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "/",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    },
+                    "_right": {
+                        "kind": "IdentifierName",
+                        "_identifier": {
+                            "kind": "IdentifierNameToken",
+                            "start": 281,
+                            "width": 0,
+                            "isMissing": true,
+                            "text": ""
+                        }
+                    }
+                },
+                "_semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "start": 281,
                     "width": 0,
                     "isMissing": true,
                     "text": ""

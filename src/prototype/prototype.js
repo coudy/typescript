@@ -37708,6 +37708,10 @@ var Program = (function () {
         this.runTests(environment, "C:\\temp\\monoco-files", function (filePath) {
             return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
+        environment.standardOut.WriteLine("Testing against 262.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
+            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, true, true, false, true);
+        });
     };
     Program.prototype.runTests = function (environment, path, action, printDots) {
         if (typeof printDots === "undefined") { printDots = false; }
@@ -37733,8 +37737,9 @@ var Program = (function () {
             }
         }
     };
-    Program.prototype.runParser = function (environment, filePath, languageVersion, useTypeScript, verify, allowErrors, generateBaseline) {
+    Program.prototype.runParser = function (environment, filePath, languageVersion, useTypeScript, verify, allowErrors, generateBaseline, printDots) {
         if (typeof generateBaseline === "undefined") { generateBaseline = false; }
+        if (typeof printDots === "undefined") { printDots = false; }
         if(!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
             return;
         }
@@ -37742,6 +37747,9 @@ var Program = (function () {
             return;
         }
         var contents = environment.readFile(filePath, 'utf-8');
+        if(printDots) {
+            environment.standardOut.Write(".");
+        }
         var start, end;
         start = new Date().getTime();
         totalSize += contents.length;
@@ -37771,6 +37779,9 @@ var Program = (function () {
                     var actualFile = filePath + ".actual";
                     var expectedResult = environment.readFile(expectedFile, 'utf-8');
                     if(expectedResult !== actualResult) {
+                        if(printDots) {
+                            environment.standardOut.WriteLine("");
+                        }
                         environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
                         environment.writeFile(actualFile, actualResult, true);
                     }

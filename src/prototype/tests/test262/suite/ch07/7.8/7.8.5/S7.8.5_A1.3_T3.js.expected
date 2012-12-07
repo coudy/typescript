@@ -1,49 +1,93 @@
 ﻿{
-    "_skippedTokens": [
-        {
-            "kind": "SlashToken",
-            "start": 317,
-            "fullStart": 0,
-            "width": 1,
-            "fullWidth": 319,
-            "text": "/",
-            "hasLeadingTrivia": true,
-            "hasLeadingCommentTrivia": true,
-            "hasLeadingNewLineTrivia": true,
-            "hasTrailingTrivia": true,
-            "hasTrailingNewLineTrivia": true
-        },
-        {
-            "kind": "SlashToken",
-            "start": 319,
-            "width": 1,
-            "fullWidth": 2,
-            "text": "/",
-            "hasTrailingTrivia": true,
-            "hasTrailingNewLineTrivia": true
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 317,
             "_width": 1,
-            "_diagnosticCode": "Unexpected_token__0_expected",
-            "_arguments": [
-                "module, class, interface, enum, import or statement"
-            ]
+            "_diagnosticCode": "Identifier_expected"
         },
         {
             "_position": 319,
             "_width": 1,
-            "_diagnosticCode": "Unexpected_token__0_expected",
-            "_arguments": [
-                "module, class, interface, enum, import or statement"
-            ]
+            "_diagnosticCode": "Identifier_expected"
+        },
+        {
+            "_position": 322,
+            "_width": 0,
+            "_diagnosticCode": "Identifier_expected"
         }
     ],
     "_sourceUnit": {
         "kind": "SourceUnit",
-        "_moduleElements": [],
+        "_moduleElements": [
+            {
+                "kind": "ExpressionStatement",
+                "_expression": {
+                    "kind": "DivideExpression",
+                    "_left": {
+                        "kind": "DivideExpression",
+                        "_left": {
+                            "kind": "IdentifierName",
+                            "_identifier": {
+                                "kind": "IdentifierNameToken",
+                                "start": 0,
+                                "width": 0,
+                                "isMissing": true,
+                                "text": ""
+                            }
+                        },
+                        "_operatorToken": {
+                            "kind": "SlashToken",
+                            "start": 317,
+                            "fullStart": 0,
+                            "width": 1,
+                            "fullWidth": 319,
+                            "text": "/",
+                            "hasLeadingTrivia": true,
+                            "hasLeadingCommentTrivia": true,
+                            "hasLeadingNewLineTrivia": true,
+                            "hasTrailingTrivia": true,
+                            "hasTrailingNewLineTrivia": true
+                        },
+                        "_right": {
+                            "kind": "IdentifierName",
+                            "_identifier": {
+                                "kind": "IdentifierNameToken",
+                                "start": 319,
+                                "width": 0,
+                                "isMissing": true,
+                                "text": ""
+                            }
+                        }
+                    },
+                    "_operatorToken": {
+                        "kind": "SlashToken",
+                        "start": 319,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "/",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    },
+                    "_right": {
+                        "kind": "IdentifierName",
+                        "_identifier": {
+                            "kind": "IdentifierNameToken",
+                            "start": 321,
+                            "width": 0,
+                            "isMissing": true,
+                            "text": ""
+                        }
+                    }
+                },
+                "_semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "start": 321,
+                    "width": 0,
+                    "isMissing": true,
+                    "text": ""
+                }
+            }
+        ],
         "_endOfFileToken": {
             "kind": "EndOfFileToken",
             "start": 322,

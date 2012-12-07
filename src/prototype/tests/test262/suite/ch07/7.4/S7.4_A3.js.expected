@@ -17,15 +17,6 @@
             "start": 297,
             "width": 1,
             "text": "*"
-        },
-        {
-            "kind": "SlashToken",
-            "start": 298,
-            "width": 1,
-            "fullWidth": 2,
-            "text": "/",
-            "hasTrailingTrivia": true,
-            "hasTrailingNewLineTrivia": true
         }
     ],
     "_diagnostics": [
@@ -48,10 +39,12 @@
         {
             "_position": 298,
             "_width": 1,
-            "_diagnosticCode": "Unexpected_token__0_expected",
-            "_arguments": [
-                "module, class, interface, enum, import or statement"
-            ]
+            "_diagnosticCode": "Identifier_expected"
+        },
+        {
+            "_position": 301,
+            "_width": 0,
+            "_diagnosticCode": "Identifier_expected"
         }
     ],
     "_sourceUnit": {
@@ -76,6 +69,48 @@
                     "text": ";",
                     "hasTrailingTrivia": true,
                     "hasTrailingNewLineTrivia": true
+                }
+            },
+            {
+                "kind": "ExpressionStatement",
+                "_expression": {
+                    "kind": "DivideExpression",
+                    "_left": {
+                        "kind": "IdentifierName",
+                        "_identifier": {
+                            "kind": "IdentifierNameToken",
+                            "start": 298,
+                            "width": 0,
+                            "isMissing": true,
+                            "text": ""
+                        }
+                    },
+                    "_operatorToken": {
+                        "kind": "SlashToken",
+                        "start": 298,
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "/",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLineTrivia": true
+                    },
+                    "_right": {
+                        "kind": "IdentifierName",
+                        "_identifier": {
+                            "kind": "IdentifierNameToken",
+                            "start": 300,
+                            "width": 0,
+                            "isMissing": true,
+                            "text": ""
+                        }
+                    }
+                },
+                "_semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "start": 300,
+                    "width": 0,
+                    "isMissing": true,
+                    "text": ""
                 }
             }
         ],
