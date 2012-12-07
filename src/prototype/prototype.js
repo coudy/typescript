@@ -4922,6 +4922,9 @@ var Scanner = (function (_super) {
         ]));
     };
     Scanner.prototype.getErrorMessageText = function (text) {
+        if(text === "\\") {
+            return '"\\"';
+        }
         return JSON2.stringify(text);
     };
     Scanner.prototype.skipEscapeSequence = function (diagnostics) {
@@ -37720,7 +37723,7 @@ var Program = (function () {
         });
         environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true, false, true);
+            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, true, true, false, true);
         });
     };
     Program.prototype.runTests = function (environment, path, action, printDots) {
@@ -37789,7 +37792,6 @@ var Program = (function () {
                     var expectedResult = environment.readFile(expectedFile, 'utf-8');
                     if(expectedResult !== actualResult) {
                         if(printDots) {
-                            environment.standardOut.WriteLine("");
                         }
                         environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
                         environment.writeFile(actualFile, actualResult, true);

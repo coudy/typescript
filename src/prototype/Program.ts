@@ -27,7 +27,7 @@ class Program {
             
         environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ true, /*generateBaselines:*/ false, /*printDots:*/ true));
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ true, /*allowErrors:*/ true, /*generateBaselines:*/ false, /*printDots:*/ true));
     }
 
     private runTests(
@@ -125,7 +125,7 @@ class Program {
 
                 if (expectedResult !== actualResult) {
                     if (printDots) {
-                        environment.standardOut.WriteLine("");
+                        // environment.standardOut.WriteLine("");
                     }
 
                     environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);

@@ -841,6 +841,12 @@ class Scanner extends SlidingWindow {
     // Convert text into a printable form usable for an error message.  This will both quote the 
     // string, and ensure all characters printable (i.e. by using unicode escapes when they're not).
     private getErrorMessageText(text: string): string {
+        // For just a simple backslash, we return it as is.  The default behavior of JSON2.stringify
+        // is not what we want here.
+        if (text === "\\") {
+            return '"\\"';
+        }
+
         return JSON2.stringify(text);
     }
 
