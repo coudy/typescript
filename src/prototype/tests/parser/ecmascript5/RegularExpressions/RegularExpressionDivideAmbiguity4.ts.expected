@@ -1,0 +1,88 @@
+﻿{
+    "_diagnostics": [
+        {
+            "_position": 4,
+            "_width": 1,
+            "_diagnosticCode": "Identifier_expected"
+        }
+    ],
+    "_sourceUnit": {
+        "kind": "SourceUnit",
+        "_moduleElements": [
+            {
+                "kind": "ExpressionStatement",
+                "_expression": {
+                    "kind": "InvocationExpression",
+                    "_expression": {
+                        "kind": "IdentifierName",
+                        "_identifier": {
+                            "kind": "IdentifierNameToken",
+                            "start": 0,
+                            "width": 3,
+                            "text": "foo",
+                            "valueText": "foo"
+                        }
+                    },
+                    "_argumentList": {
+                        "kind": "ArgumentList",
+                        "_openParenToken": {
+                            "kind": "OpenParenToken",
+                            "start": 3,
+                            "width": 1,
+                            "text": "("
+                        },
+                        "_arguments": [
+                            {
+                                "kind": "DivideExpression",
+                                "_left": {
+                                    "kind": "IdentifierName",
+                                    "_identifier": {
+                                        "kind": "IdentifierNameToken",
+                                        "start": 4,
+                                        "width": 0,
+                                        "isMissing": true,
+                                        "text": ""
+                                    }
+                                },
+                                "_operatorToken": {
+                                    "kind": "SlashToken",
+                                    "start": 4,
+                                    "width": 1,
+                                    "text": "/"
+                                },
+                                "_right": {
+                                    "kind": "IdentifierName",
+                                    "_identifier": {
+                                        "kind": "IdentifierNameToken",
+                                        "start": 5,
+                                        "width": 9,
+                                        "text": "notregexp",
+                                        "valueText": "notregexp"
+                                    }
+                                }
+                            }
+                        ],
+                        "_closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "start": 14,
+                            "width": 1,
+                            "text": ")"
+                        }
+                    }
+                },
+                "_semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "start": 15,
+                    "width": 1,
+                    "text": ";"
+                }
+            }
+        ],
+        "_endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "start": 16,
+            "width": 0,
+            "text": ""
+        }
+    }
+}

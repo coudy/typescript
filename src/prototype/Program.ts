@@ -6,7 +6,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "google_cz\\WrLXloe7h6U.js";
+    // "S7.8.5_A1.2_T2.js";
     undefined;
 
 class Program {
@@ -371,14 +371,14 @@ var program = new Program();
 if (true) {
     totalTime = 0;
     totalSize = 0;
-    program.runAllTests(Environment, false, false);
+    program.runAllTests(Environment, false, true);
     program.run(Environment, false);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
 
 // Existing parser.
-if (true) {
+if (false) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(Environment, true, false);
@@ -388,7 +388,7 @@ if (true) {
 }
 
 // Test 262.
-if (false) {
+if (true) {
     totalTime = 0;
     totalSize = 0;
     program.run262(Environment);

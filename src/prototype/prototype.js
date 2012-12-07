@@ -3184,25 +3184,27 @@ var Parser = (function (_super) {
         var currentToken = this.currentToken();
         var currentTokenKind = currentToken.tokenKind;
         Debug.assert(currentTokenKind === 113 /* SlashToken */  || currentTokenKind === 114 /* SlashEqualsToken */ );
-        var previousTokenKind = this.previousToken.tokenKind;
-        switch(previousTokenKind) {
-            case 7 /* IdentifierNameToken */ : {
-                var previousTokenKeywordKind = this.previousToken.keywordKind();
-                if(previousTokenKeywordKind === 0 /* None */  || previousTokenKeywordKind === 31 /* ThisKeyword */  || previousTokenKeywordKind === 33 /* TrueKeyword */  || previousTokenKeywordKind === 20 /* FalseKeyword */ ) {
-                    return null;
+        if(this.previousToken !== null) {
+            var previousTokenKind = this.previousToken.tokenKind;
+            switch(previousTokenKind) {
+                case 7 /* IdentifierNameToken */ : {
+                    var previousTokenKeywordKind = this.previousToken.keywordKind();
+                    if(previousTokenKeywordKind === 0 /* None */  || previousTokenKeywordKind === 31 /* ThisKeyword */  || previousTokenKeywordKind === 33 /* TrueKeyword */  || previousTokenKeywordKind === 20 /* FalseKeyword */ ) {
+                        return null;
+                    }
+                    break;
+
                 }
-                break;
+                case 10 /* StringLiteral */ :
+                case 9 /* NumericLiteral */ :
+                case 8 /* RegularExpressionLiteral */ :
+                case 88 /* PlusPlusToken */ :
+                case 89 /* MinusMinusToken */ :
+                case 70 /* CloseBracketToken */ :
+                case 66 /* CloseBraceToken */ : {
+                    return null;
 
-            }
-            case 10 /* StringLiteral */ :
-            case 9 /* NumericLiteral */ :
-            case 8 /* RegularExpressionLiteral */ :
-            case 88 /* PlusPlusToken */ :
-            case 89 /* MinusMinusToken */ :
-            case 70 /* CloseBracketToken */ :
-            case 66 /* CloseBraceToken */ : {
-                return null;
-
+                }
             }
         }
         var slashTokenFullStart = currentToken.fullStart();
@@ -3211,6 +3213,8 @@ var Parser = (function (_super) {
             var diagnostic = this.tokenDiagnostics[tokenDiagnosticsLength - 1];
             if(diagnostic.position() >= slashTokenFullStart) {
                 tokenDiagnosticsLength--;
+            } else {
+                break;
             }
         }
         this.tokenDiagnostics.length = tokenDiagnosticsLength;
@@ -4284,11 +4288,11 @@ var Scanner = (function (_super) {
         return this.currentItem(null);
     };
     Scanner.prototype.scan = function (diagnostics, allowRegularExpression) {
-        var start = this.absoluteIndex();
+        var fullStart = this.absoluteIndex();
         var leadingTriviaInfo = this.scanTriviaInfo(diagnostics, false);
         this.scanSyntaxToken(diagnostics, allowRegularExpression);
         var trailingTriviaInfo = this.scanTriviaInfo(diagnostics, true);
-        return SyntaxTokenFactory.create(start, leadingTriviaInfo, this.tokenInfo, trailingTriviaInfo);
+        return SyntaxTokenFactory.create(fullStart, leadingTriviaInfo, this.tokenInfo, trailingTriviaInfo);
     };
     Scanner.prototype.scanTriviaInfo = function (diagnostics, isTrailing) {
         var width = 0;
@@ -37961,12 +37965,12 @@ var program = new Program();
 if(true) {
     totalTime = 0;
     totalSize = 0;
-    program.runAllTests(Environment, false, false);
+    program.runAllTests(Environment, false, true);
     program.run(Environment, false);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(true) {
+if(false) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(Environment, true, false);
@@ -37974,7 +37978,7 @@ if(true) {
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(false) {
+if(true) {
     totalTime = 0;
     totalSize = 0;
     program.run262(Environment);

@@ -2358,48 +2358,50 @@ class Parser extends SlidingWindow {
 
         // There are several contexts where we could never see a regex.  Don't even bother 
         // reinterpretting the / in these contexts.
-        var previousTokenKind = this.previousToken.tokenKind;
-        switch (previousTokenKind) {
-            case SyntaxKind.IdentifierNameToken:
-                // Could be a keyword or identifier.  Regular expressions can't follow identifiers.
-                // And they also can't follow some keywords.
+        if (this.previousToken !== null) {
+            var previousTokenKind = this.previousToken.tokenKind;
+            switch (previousTokenKind) {
+                case SyntaxKind.IdentifierNameToken:
+                    // Could be a keyword or identifier.  Regular expressions can't follow identifiers.
+                    // And they also can't follow some keywords.
 
-                var previousTokenKeywordKind = this.previousToken.keywordKind();
-                if (previousTokenKeywordKind === SyntaxKind.None ||
-                    previousTokenKeywordKind === SyntaxKind.ThisKeyword ||
-                    previousTokenKeywordKind === SyntaxKind.TrueKeyword ||
-                    previousTokenKeywordKind === SyntaxKind.FalseKeyword) {
-                    // A regular expression can't follow a normal identifier (or this/true/false). 
-                    // This must be a divide.
+                    var previousTokenKeywordKind = this.previousToken.keywordKind();
+                    if (previousTokenKeywordKind === SyntaxKind.None ||
+                        previousTokenKeywordKind === SyntaxKind.ThisKeyword ||
+                        previousTokenKeywordKind === SyntaxKind.TrueKeyword ||
+                        previousTokenKeywordKind === SyntaxKind.FalseKeyword) {
+                        // A regular expression can't follow a normal identifier (or this/true/false). 
+                        // This must be a divide.
+                        return null;
+                    }
+
+                    // A regular expression could follow other keywords.  i.e. "return /blah/;"
+                    break;
+
+                case SyntaxKind.StringLiteral:
+                case SyntaxKind.NumericLiteral:
+                case SyntaxKind.RegularExpressionLiteral:
+                case SyntaxKind.PlusPlusToken:
+                case SyntaxKind.MinusMinusToken:
+                case SyntaxKind.CloseBracketToken:
+                case SyntaxKind.CloseBraceToken:
+                    // A regular expression can't follow any of these.  It must be a divide. Note: this
+                    // list *may* be incorrect (especially in the context of typescript).  We need to
+                    // carefully review it.
                     return null;
-                }
 
-                // A regular expression could follow other keywords.  i.e. "return /blah/;"
-                break;
-
-            case SyntaxKind.StringLiteral:
-            case SyntaxKind.NumericLiteral:
-            case SyntaxKind.RegularExpressionLiteral:
-            case SyntaxKind.PlusPlusToken:
-            case SyntaxKind.MinusMinusToken:
-            case SyntaxKind.CloseBracketToken:
-            case SyntaxKind.CloseBraceToken:
-                // A regular expression can't follow any of these.  It must be a divide. Note: this
-                // list *may* be incorrect (especially in the context of typescript).  We need to
-                // carefully review it.
-                return null;
-
-            // case SyntaxKind.CloseParenToken:
-            // It is tempting to say that if we have a slash after a close paren that it can't be 
-            // a regular expression.  after all, the normal case where we see that is "(1 + 2) / 3".
-            // However, it can appear in legal code.  Specifically:
-            //
-            //      for (...)
-            //          /regex/.Stuff...
-            //
-            // So we have to see if we can get a regular expression in that case.
+                // case SyntaxKind.CloseParenToken:
+                // It is tempting to say that if we have a slash after a close paren that it can't be 
+                // a regular expression.  after all, the normal case where we see that is "(1 + 2) / 3".
+                // However, it can appear in legal code.  Specifically:
+                //
+                //      for (...)
+                //          /regex/.Stuff...
+                //
+                // So we have to see if we can get a regular expression in that case.
+            }
         }
-        
+
         // Ok, from our quick lexical check, this could be a place where a regular expression could
         // go.  Now we have to do a bunch of work.
 
@@ -2421,6 +2423,9 @@ class Parser extends SlidingWindow {
             var diagnostic = this.tokenDiagnostics[tokenDiagnosticsLength - 1];
             if (diagnostic.position() >= slashTokenFullStart) {
                 tokenDiagnosticsLength--;
+            }
+            else {
+                break;
             }
         }
 
