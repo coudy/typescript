@@ -19,7 +19,7 @@ class DiagnosticMessages {
     private static initializeStaticData(): void {
         if (codeToFormatString.length === 0) {
             codeToFormatString[DiagnosticCode.Unrecognized_escape_sequence] = "Unrecognized escape sequence.";
-            codeToFormatString[DiagnosticCode.Unexpected_character_0] = "Unexpected character '{0}'.";
+            codeToFormatString[DiagnosticCode.Unexpected_character_0] = "Unexpected character {0}.";
             codeToFormatString[DiagnosticCode.Missing_closing_quote_character] = "Missing close quote character.";
             codeToFormatString[DiagnosticCode.Identifier_expected] = "Identifier expected.";
             codeToFormatString[DiagnosticCode._0_keyword_expected] = "'{0}' keyword expected.";

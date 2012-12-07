@@ -341,7 +341,7 @@ var DiagnosticMessages = (function () {
     DiagnosticMessages.initializeStaticData = function initializeStaticData() {
         if(DiagnosticMessages.codeToFormatString.length === 0) {
             DiagnosticMessages.codeToFormatString[0 /* Unrecognized_escape_sequence */ ] = "Unrecognized escape sequence.";
-            DiagnosticMessages.codeToFormatString[1 /* Unexpected_character_0 */ ] = "Unexpected character '{0}'.";
+            DiagnosticMessages.codeToFormatString[1 /* Unexpected_character_0 */ ] = "Unexpected character {0}.";
             DiagnosticMessages.codeToFormatString[2 /* Missing_closing_quote_character */ ] = "Missing close quote character.";
             DiagnosticMessages.codeToFormatString[3 /* Identifier_expected */ ] = "Identifier expected.";
             DiagnosticMessages.codeToFormatString[4 /* _0_keyword_expected */ ] = "'{0}' keyword expected.";
@@ -4916,9 +4916,13 @@ var Scanner = (function (_super) {
         this.moveToNextItem();
         this.tokenInfo.Text = String.fromCharCode(character);
         this.tokenInfo.Kind = 115 /* ErrorToken */ ;
+        var messageText = this.getErrorMessageText(this.tokenInfo.Text);
         diagnostics.push(new SyntaxDiagnostic(position, 1, 1 /* Unexpected_character_0 */ , [
-            this.tokenInfo.Text
+            messageText
         ]));
+    };
+    Scanner.prototype.getErrorMessageText = function (text) {
+        return JSON2.stringify(text);
     };
     Scanner.prototype.skipEscapeSequence = function (diagnostics) {
         Debug.assert(this.currentCharCode() === 92 /* backslash */ );

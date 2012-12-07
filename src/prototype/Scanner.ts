@@ -832,8 +832,16 @@ class Scanner extends SlidingWindow {
         this.moveToNextItem();
         this.tokenInfo.Text = String.fromCharCode(character);
         this.tokenInfo.Kind = SyntaxKind.ErrorToken;
+
+        var messageText = this.getErrorMessageText(this.tokenInfo.Text);
         diagnostics.push(new SyntaxDiagnostic(
-            position, 1, DiagnosticCode.Unexpected_character_0, [this.tokenInfo.Text]));
+            position, 1, DiagnosticCode.Unexpected_character_0, [messageText]));
+    }
+
+    // Convert text into a printable form usable for an error message.  This will both quote the 
+    // string, and ensure all characters printable (i.e. by using unicode escapes when they're not).
+    private getErrorMessageText(text: string): string {
+        return JSON2.stringify(text);
     }
 
     private skipEscapeSequence(diagnostics: SyntaxDiagnostic[]): void {
