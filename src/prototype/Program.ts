@@ -1,11 +1,12 @@
 ///<reference path='References.ts' />
 ///<reference path='..\compiler\parser.ts' />
 ///<reference path='Test262.ts' />
+///<reference path='Top1000.ts' />
 
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "amazon_com\\jquery_1_5_1_min.js";
+    // "telegraph_co_uk\\external_tracking_min.js";
     undefined;
 
 class Program {
@@ -291,13 +292,6 @@ class Program {
     }
 
     runTop1000(environment: IEnvironment): void {
-        var expectedFailures = {
-            "JSFile100\\4shared_com\\UploadModule.js": true,
-            "JSFile100\\addthis_com\\addthis_widget.js": true,
-            "JSFile100\\advertising_com\\SearchAdx.js": true,
-            "JSFile100\\amazon_com\\01Tr6v6ehxL.js": true,
-            "JSFile100\\amazon_com\\all_1.js": true,
-        };
 
         var path = "C:\\Temp\\TopJSFiles";
         var testFiles = environment.listFiles(path, null, { recursive: true });
@@ -313,7 +307,7 @@ class Program {
                 continue;
             }
 
-            var canParseSuccessfully = expectedFailures[filePath.substr(path.length + 1)] === undefined;
+            var canParseSuccessfully = expectedTop1000Failures[filePath.substr(path.length + 1)] === undefined;
             var contents = environment.readFile(filePath, 'utf-8');
 
             var start: number, end: number;
@@ -329,18 +323,18 @@ class Program {
 
                 var syntaxTree = parser.parseSyntaxTree();
                 //environment.standardOut.WriteLine(filePath);
-                environment.standardOut.Write(".");
+                // environment.standardOut.Write(".");
 
                 if (canParseSuccessfully) {
                     if (syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
-                        environment.standardOut.WriteLine("\r\nUnexpected failure: " + filePath);
+                        environment.standardOut.WriteLine("Unexpected failure: " + filePath);
                         failCount++;
                     }
                 }
                 else {
                     // We expected to fail on this.  Report an error if we don't.
                     if (syntaxTree.diagnostics() === null || syntaxTree.diagnostics().length === 0) {
-                        environment.standardOut.WriteLine("\r\nUnexpected success: " + filePath);
+                        environment.standardOut.WriteLine("Unexpected success: " + filePath);
                         failCount++;
                     }
                 }
@@ -393,7 +387,7 @@ if (false) {
 }
 
 // Test 262.
-if (true && specificFile === undefined) {
+if (false && specificFile === undefined) {
     totalTime = 0;
     totalSize = 0;
     program.run262(Environment);
