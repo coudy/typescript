@@ -760,7 +760,8 @@ class Scanner extends SlidingWindow {
         try {
             this.moveToNextItem();
 
-            var skipNextSlash = false;
+            var inEscape = false;
+            var inCharacterClass = false;
             while (true) {
                 var ch = this.currentItem();
                 if (this.isNewLineCharacter(ch) || ch === CharacterCodes.nullCharacter) {
@@ -769,15 +770,48 @@ class Scanner extends SlidingWindow {
                 }
 
                 this.moveToNextItem();
-                if (!skipNextSlash && ch === CharacterCodes.slash) {
-                    break;
-                }
-                else if (!skipNextSlash && ch === CharacterCodes.backslash) {
-                    skipNextSlash = true;
+                if (inEscape) {
+                    inEscape = false;
                     continue;
                 }
 
-                skipNextSlash = false;
+                switch (ch) {
+                    case CharacterCodes.backslash:
+                        // We're now in an escape.  Consume the next character we see (unless it's
+                        // a newline or null.
+                        inEscape = true;
+                        continue;
+                
+                    case CharacterCodes.openBracket:
+                        // If we see a [ then we're starting an character class.  Note: it's ok if 
+                        // we then hit another [ inside a character class.  We'll just set the value
+                        // to true again and that's ok.
+                        inCharacterClass = true;
+                        continue;
+
+                    case CharacterCodes.closeBracket:
+                        // If we ever hit a cloe bracket then we're now no longer in a character 
+                        // class.  If we weren't in a character class to begin with, then this has 
+                        // no effect.
+                        inCharacterClass = false;
+                        continue;
+
+                    case CharacterCodes.slash:
+                        // If we see a slash, and we're in a character class, then ignore it.
+                        if (inCharacterClass) {
+                            continue;
+                        }
+
+                        // We're done with the regex.  Break out of the switch (which will break 
+                        // out of hte loop.
+                        break;
+
+                    default:
+                        // Just consume any other characters.
+                        continue;
+                }
+
+                break;
             }
 
             // TODO: The grammar says any identifier part is allowed here.  Do we need to support

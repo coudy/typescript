@@ -4769,7 +4769,8 @@ var Scanner = (function (_super) {
         var startIndex = this.getAndPinAbsoluteIndex();
         try  {
             this.moveToNextItem();
-            var skipNextSlash = false;
+            var inEscape = false;
+            var inCharacterClass = false;
             while(true) {
                 var ch = this.currentItem();
                 if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
@@ -4777,15 +4778,39 @@ var Scanner = (function (_super) {
                     return false;
                 }
                 this.moveToNextItem();
-                if(!skipNextSlash && ch === 47 /* slash */ ) {
-                    break;
-                } else {
-                    if(!skipNextSlash && ch === 92 /* backslash */ ) {
-                        skipNextSlash = true;
+                if(inEscape) {
+                    inEscape = false;
+                    continue;
+                }
+                switch(ch) {
+                    case 92 /* backslash */ : {
+                        inEscape = true;
                         continue;
+
+                    }
+                    case 91 /* openBracket */ : {
+                        inCharacterClass = true;
+                        continue;
+
+                    }
+                    case 93 /* closeBracket */ : {
+                        inCharacterClass = false;
+                        continue;
+
+                    }
+                    case 47 /* slash */ : {
+                        if(inCharacterClass) {
+                            continue;
+                        }
+                        break;
+
+                    }
+                    default: {
+                        continue;
+
                     }
                 }
-                skipNextSlash = false;
+                break;
             }
             while(Scanner.isIdentifierPartCharacter[this.currentItem()]) {
                 this.moveToNextItem();
@@ -37869,7 +37894,7 @@ if(false) {
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(false && specificFile === undefined) {
+if(true && specificFile === undefined) {
     totalTime = 0;
     totalSize = 0;
     program.run262(Environment);

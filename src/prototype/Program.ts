@@ -387,7 +387,7 @@ if (false) {
 }
 
 // Test 262.
-if (false && specificFile === undefined) {
+if (true && specificFile === undefined) {
     totalTime = 0;
     totalSize = 0;
     program.run262(Environment);
