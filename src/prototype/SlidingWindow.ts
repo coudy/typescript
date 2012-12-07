@@ -50,11 +50,16 @@ class SlidingWindow {
     private restoreStateFromRewindPoint(rewindPoint: IRewindPoint): void {
     }
 
-    private fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
+    private fetchMoreItems(argument: any, sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
         throw Errors.notYetImplemented();
     }
 
-    private addMoreItemsToWindow(): bool {
+    // The last legal index of the window (exclusive).
+    private windowAbsoluteEndIndex(): number {
+        return this.windowAbsoluteStartIndex + this.windowCount;
+    }
+
+    private addMoreItemsToWindow(argument: any): bool {
         if (this.sourceLength >= 0 && this.absoluteIndex() >= this.sourceLength) {
             return false;
         }
@@ -65,7 +70,7 @@ class SlidingWindow {
         }
 
         var spaceAvailable = this.window.length - this.windowCount;
-        var amountFetched = this.fetchMoreItems(this.windowAbsoluteStartIndex + this.windowCount, this.window, this.windowCount, spaceAvailable);
+        var amountFetched = this.fetchMoreItems(argument, this.windowAbsoluteEndIndex(), this.window, this.windowCount, spaceAvailable);
 
         // Assert disabled because it is actually expensive enugh to affect perf.
 
@@ -196,9 +201,9 @@ class SlidingWindow {
         this.poolCount++;
     }
 
-    public currentItem(): any {
+    public currentItem(argument: any): any {
         if (this.currentRelativeItemIndex >= this.windowCount) {
-            if (!this.addMoreItemsToWindow()) {
+            if (!this.addMoreItemsToWindow(argument)) {
                 return this.defaultValue;
             }
         }
@@ -210,7 +215,7 @@ class SlidingWindow {
         // Assert disabled because it is actually expensive enugh to affect perf.
         // Debug.assert(n >= 0);
         while (this.currentRelativeItemIndex + n >= this.windowCount) {
-            if (!this.addMoreItemsToWindow()) {
+            if (!this.addMoreItemsToWindow(/*argument:*/ null)) {
                 return this.defaultValue;
             }
         }
@@ -220,5 +225,36 @@ class SlidingWindow {
 
     public moveToNextItem(): void {
         this.currentRelativeItemIndex++;
+    }
+
+    public disgardAllItemsFromCurrentIndexOnwards(): void {
+        // By setting the window count to the current relative offset, we are effectively making
+        // any items we added to the window from the current offset onwards unusable.  When we
+        // try to get the next item, we'll be forced to refetch them from the underlying source.
+        this.windowCount = this.currentRelativeItemIndex;
+    }
+
+    public setAbsoluteIndex(absoluteIndex: number): void {
+        // Shoudln't try to set the index while we currently have an active pin.
+        Debug.assert(this.pinCount === 0);
+
+        if (absoluteIndex >= this.windowAbsoluteStartIndex && absoluteIndex < this.windowAbsoluteEndIndex()) {
+            // The caller is setting the index to some place inside our current window.  This is 
+            // easy to handle (and should be the common case).
+            this.currentRelativeItemIndex = (absoluteIndex - this.windowAbsoluteStartIndex);
+        }
+        else {
+            // The caller is setting the index to a place not in the window.  Just throw away 
+            // everything we've got.
+            
+            // First, set the window start to that index.
+            this.windowAbsoluteStartIndex = absoluteIndex;
+
+            // Now, set the count to 0.  So we'll be forced to fetch more items.
+            this.windowCount = 0;
+
+            // And set us back to the start of the window.
+            this.currentRelativeItemIndex = 0;
+        }
     }
 }

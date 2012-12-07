@@ -131,7 +131,8 @@ class Parser extends SlidingWindow {
     // appropriate.
 
     // The current token the parser is examining.  If it is null it needs to be fetched from the 
-    // scanner.
+    // scanner.  Cached because it's accessed so often that even getting it from the sliding window
+    // can be expensive.
     private _currentToken: ISyntaxToken = null;
 
     // The previous token to the current token.  Set when we advance to the next token.
@@ -139,7 +140,8 @@ class Parser extends SlidingWindow {
 
     // The diagnostics we get while scanning.  Note: this never gets rewound when we do a normal
     // rewind.  That's because rewinding doesn't affect the tokens created.  It only affects where
-    // in the token stream we're pointing at.
+    // in the token stream we're pointing at.  However, it will get modified if we we decide to
+    // reparse a / or /= as a regular expression.
     private tokenDiagnostics: SyntaxDiagnostic[] = [];
 
     // TODO: do we need to store/restore this when speculative parsing?  I don't think so.  The
@@ -196,10 +198,10 @@ class Parser extends SlidingWindow {
         this.skippedTokens.length = rewindPoint.skippedTokensCount;
     }
 
-    public fetchMoreItems(sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
+    public fetchMoreItems(argument: any, sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
         // Assert disabled because it is actually expensive enugh to affect perf.
         // Debug.assert(spaceAvailable > 0);
-        window[destinationIndex] = this.scanner.scan(this.tokenDiagnostics);
+        window[destinationIndex] = this.scanner.scan(this.tokenDiagnostics, argument);
         return 1;
     }
 
@@ -207,10 +209,18 @@ class Parser extends SlidingWindow {
         var result = this._currentToken;
 
         if (result === null) {
-            result = this.currentItem();
+            result = this.currentItem(/*allowRegularExpression:*/ false);
             this._currentToken = result;
         }
 
+        return result;
+    }
+
+    private currentTokenAllowingRegularExpression(): ISyntaxToken {
+        Debug.assert(this._currentToken === null);
+
+        var result = this.currentItem(/*allowRegularExpression:*/ true);
+        this._currentToken = result;
         return result;
     }
 
@@ -1857,10 +1867,23 @@ class Parser extends SlidingWindow {
             case SyntaxKind.OpenBraceToken: // For object type literal expressions.
                 return true;
             
+            // ERROR TOLERANCE:
             // If we see a => then we know the user was probably trying to type in an arrow 
             // function.  So allow this as the start of an expression, knowing that when we 
             // actually try to parse it we'll report the missing identifier.
             case SyntaxKind.EqualsGreaterThanToken:
+                return true;
+
+            case SyntaxKind.SlashToken:
+            case SyntaxKind.SlashEqualsToken:
+                // Note: if we see a / or /= token then we always consider this an expression.  Why?
+                // Well, either that / or /= is actually a regular expression, in which case we're 
+                // definitely an expression.  Or, it's actually a divide.  In which case, we *still*
+                // want to think of ourself as an expression.  "But wait", you say.  '/' doesn't
+                // start an expression.  That's true.  BUt like the above check for =>, for error
+                // tolerance, we will consider ourselves in an expression.  We'll then parse out an
+                // missing identifier and then will consume the / token naturally as a binary 
+                // expression.
                 return true;
         }
 
@@ -2307,10 +2330,135 @@ class Parser extends SlidingWindow {
 
             case SyntaxKind.LessThanToken:
                 return this.parseCastExpression();
+
+            case SyntaxKind.SlashToken:
+            case SyntaxKind.SlashEqualsToken:
+                // If we see a standalone / or /= and we're expecting a term, then try to reparse
+                // it as a regular expression.  If we succeed, then return that.  Otherwise, fall
+                // back and just return a missing identifier as usual.  We'll then form a binary
+                // expression out of of the / as usual.
+                var result = this.tryReparseDivideAsRegularExpression();
+                if (result !== null) {
+                    return result;
+                }
+                break;
         }
 
         // Nothing else worked, just try to consume an identifier so we report an error.
         return new IdentifierNameSyntax(this.eatIdentifierToken());
+    }
+
+    private tryReparseDivideAsRegularExpression(): LiteralExpressionSyntax {
+        // If we see a / or /= token, then that may actually be the start of a regex in certain 
+        // contexts.
+
+        var currentToken = this.currentToken();
+        var currentTokenKind = currentToken.tokenKind;
+        Debug.assert(currentTokenKind === SyntaxKind.SlashToken || currentTokenKind === SyntaxKind.SlashEqualsToken);
+
+        // There are several contexts where we could never see a regex.  Don't even bother 
+        // reinterpretting the / in these contexts.
+        var previousTokenKind = this.previousToken.tokenKind;
+        switch (previousTokenKind) {
+            case SyntaxKind.IdentifierNameToken:
+                // Could be a keyword or identifier.  Regular expressions can't follow identifiers.
+                // And they also can't follow some keywords.
+
+                var previousTokenKeywordKind = this.previousToken.keywordKind();
+                if (previousTokenKeywordKind === SyntaxKind.None ||
+                    previousTokenKeywordKind === SyntaxKind.ThisKeyword ||
+                    previousTokenKeywordKind === SyntaxKind.TrueKeyword ||
+                    previousTokenKeywordKind === SyntaxKind.FalseKeyword) {
+                    // A regular expression can't follow a normal identifier (or this/true/false). 
+                    // This must be a divide.
+                    return null;
+                }
+
+                // A regular expression could follow other keywords.  i.e. "return /blah/;"
+                break;
+
+            case SyntaxKind.StringLiteral:
+            case SyntaxKind.NumericLiteral:
+            case SyntaxKind.RegularExpressionLiteral:
+            case SyntaxKind.PlusPlusToken:
+            case SyntaxKind.MinusMinusToken:
+            case SyntaxKind.CloseBracketToken:
+            case SyntaxKind.CloseBraceToken:
+                // A regular expression can't follow any of these.  It must be a divide. Note: this
+                // list *may* be incorrect (especially in the context of typescript).  We need to
+                // carefully review it.
+                return null;
+
+            // case SyntaxKind.CloseParenToken:
+            // It is tempting to say that if we have a slash after a close paren that it can't be 
+            // a regular expression.  after all, the normal case where we see that is "(1 + 2) / 3".
+            // However, it can appear in legal code.  Specifically:
+            //
+            //      for (...)
+            //          /regex/.Stuff...
+            //
+            // So we have to see if we can get a regular expression in that case.
+        }
+        
+        // Ok, from our quick lexical check, this could be a place where a regular expression could
+        // go.  Now we have to do a bunch of work.
+
+        // First, we're going to rewind all our data to the point where this / or /= token started.
+        // That's because if it does turn out to be a regular expression, then any tokens or token 
+        // diagnostics we produced after the original / may no longer be valid.  This would actually
+        // be a  fairly expected case.  For example, if you had:  / ... gibberish ... /, we may have 
+        // produced several diagnostics in the process of scanning the tokens after the first / as
+        // they may not have been legal javascript okens.
+        //
+        // We also need to remove all the tokesn we've gotten from the slash and onwards.  They may
+        // not have been what the scanner would have produced if it decides that this is actually
+        // a regular expresion.
+
+        // First, remove any diagnostics that came from the slash or afterwards.
+        var slashTokenFullStart = currentToken.fullStart();
+        var tokenDiagnosticsLength = this.tokenDiagnostics.length;
+        while (tokenDiagnosticsLength > 0) {
+            var diagnostic = this.tokenDiagnostics[tokenDiagnosticsLength - 1];
+            if (diagnostic.position() >= slashTokenFullStart) {
+                tokenDiagnosticsLength--;
+            }
+        }
+
+        this.tokenDiagnostics.length = tokenDiagnosticsLength;
+
+        // Now, tell our sliding window to throw away all tokens from the / onwards (including the /).
+        this.disgardAllItemsFromCurrentIndexOnwards();
+
+        // Our cached currentToken is no longer value.
+        // Note: previousToken is still valid. 
+        this._currentToken = null;
+
+        // Now tell the scanner to reset its position to the start of the / token as well.  That way
+        // when we try to scan the next item, we'll be at the right location.
+        this.scanner.setAbsoluteIndex(slashTokenFullStart);
+
+        // Now try to retrieve the current token again.  This time, allow the scanner to consider it
+        // as a regular expression
+        currentToken = this.currentTokenAllowingRegularExpression();
+
+        // Note: we *must* have gotten a /, /= or regular expression.  Or else something went *very*
+        // wrong with our logic above.
+        Debug.assert(currentToken.tokenKind === SyntaxKind.SlashToken ||
+                     currentToken.tokenKind === SyntaxKind.SlashEqualsToken ||
+                     currentToken.tokenKind === SyntaxKind.RegularExpressionLiteral);
+        
+        if (currentToken.tokenKind === SyntaxKind.SlashToken || currentToken.tokenKind === SyntaxKind.SlashEqualsToken) {
+            // Still came back as a / or /=.   This is not a regular expression literal.
+            return null;
+        }
+        else if (currentToken.tokenKind === SyntaxKind.RegularExpressionLiteral) {
+            return this.parseLiteralExpression(SyntaxKind.RegularExpressionLiteralExpression);
+        }
+        else {
+            // Something *very* wrong happened.  This is an internal parser fault that we need 
+            // to figure out and fix.
+            throw Errors.invalidOperation();
+        }
     }
 
     private parseTypeOfExpression(): TypeOfExpressionSyntax {

@@ -151,7 +151,7 @@ class Program {
             var diagnostics: SyntaxDiagnostic[] = [];
 
             while (true) {
-                var token = scanner.scan(diagnostics);
+                var token = scanner.scan(diagnostics, /*allowRegularExpression:*/ false);
                 tokens.push(token);
 
                 if (verify) {
@@ -371,14 +371,14 @@ var program = new Program();
 if (true) {
     totalTime = 0;
     totalSize = 0;
-    program.runAllTests(Environment, false, true);
+    program.runAllTests(Environment, false, false);
     program.run(Environment, false);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
 
 // Existing parser.
-if (false) {
+if (true) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(Environment, true, false);
@@ -388,7 +388,7 @@ if (false) {
 }
 
 // Test 262.
-if (true) {
+if (false) {
     totalTime = 0;
     totalSize = 0;
     program.run262(Environment);
@@ -397,7 +397,7 @@ if (true) {
 }
 
 // Test Top 1000 sites.
-if (true) {
+if (false) {
     totalTime = 0;
     totalSize = 0;
     program.runTop1000(Environment);

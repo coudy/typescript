@@ -1417,10 +1417,13 @@ var SlidingWindow = (function () {
     };
     SlidingWindow.prototype.restoreStateFromRewindPoint = function (rewindPoint) {
     };
-    SlidingWindow.prototype.fetchMoreItems = function (sourceIndex, window, destinationIndex, spaceAvailable) {
+    SlidingWindow.prototype.fetchMoreItems = function (argument, sourceIndex, window, destinationIndex, spaceAvailable) {
         throw Errors.notYetImplemented();
     };
-    SlidingWindow.prototype.addMoreItemsToWindow = function () {
+    SlidingWindow.prototype.windowAbsoluteEndIndex = function () {
+        return this.windowAbsoluteStartIndex + this.windowCount;
+    };
+    SlidingWindow.prototype.addMoreItemsToWindow = function (argument) {
         if(this.sourceLength >= 0 && this.absoluteIndex() >= this.sourceLength) {
             return false;
         }
@@ -1428,7 +1431,7 @@ var SlidingWindow = (function () {
             this.tryShiftOrGrowTokenWindow();
         }
         var spaceAvailable = this.window.length - this.windowCount;
-        var amountFetched = this.fetchMoreItems(this.windowAbsoluteStartIndex + this.windowCount, this.window, this.windowCount, spaceAvailable);
+        var amountFetched = this.fetchMoreItems(argument, this.windowAbsoluteEndIndex(), this.window, this.windowCount, spaceAvailable);
         this.windowCount += amountFetched;
         return amountFetched > 0;
     };
@@ -1494,9 +1497,9 @@ var SlidingWindow = (function () {
         this.pool[this.poolCount] = rewindPoint;
         this.poolCount++;
     };
-    SlidingWindow.prototype.currentItem = function () {
+    SlidingWindow.prototype.currentItem = function (argument) {
         if(this.currentRelativeItemIndex >= this.windowCount) {
-            if(!this.addMoreItemsToWindow()) {
+            if(!this.addMoreItemsToWindow(argument)) {
                 return this.defaultValue;
             }
         }
@@ -1504,7 +1507,7 @@ var SlidingWindow = (function () {
     };
     SlidingWindow.prototype.peekItemN = function (n) {
         while(this.currentRelativeItemIndex + n >= this.windowCount) {
-            if(!this.addMoreItemsToWindow()) {
+            if(!this.addMoreItemsToWindow(null)) {
                 return this.defaultValue;
             }
         }
@@ -1512,6 +1515,19 @@ var SlidingWindow = (function () {
     };
     SlidingWindow.prototype.moveToNextItem = function () {
         this.currentRelativeItemIndex++;
+    };
+    SlidingWindow.prototype.disgardAllItemsFromCurrentIndexOnwards = function () {
+        this.windowCount = this.currentRelativeItemIndex;
+    };
+    SlidingWindow.prototype.setAbsoluteIndex = function (absoluteIndex) {
+        Debug.assert(this.pinCount === 0);
+        if(absoluteIndex >= this.windowAbsoluteStartIndex && absoluteIndex < this.windowAbsoluteEndIndex()) {
+            this.currentRelativeItemIndex = (absoluteIndex - this.windowAbsoluteStartIndex);
+        } else {
+            this.windowAbsoluteStartIndex = absoluteIndex;
+            this.windowCount = 0;
+            this.currentRelativeItemIndex = 0;
+        }
     };
     return SlidingWindow;
 })();
@@ -1592,16 +1608,22 @@ var Parser = (function (_super) {
         this.diagnostics.length = rewindPoint.diagnosticsCount;
         this.skippedTokens.length = rewindPoint.skippedTokensCount;
     };
-    Parser.prototype.fetchMoreItems = function (sourceIndex, window, destinationIndex, spaceAvailable) {
-        window[destinationIndex] = this.scanner.scan(this.tokenDiagnostics);
+    Parser.prototype.fetchMoreItems = function (argument, sourceIndex, window, destinationIndex, spaceAvailable) {
+        window[destinationIndex] = this.scanner.scan(this.tokenDiagnostics, argument);
         return 1;
     };
     Parser.prototype.currentToken = function () {
         var result = this._currentToken;
         if(result === null) {
-            result = this.currentItem();
+            result = this.currentItem(false);
             this._currentToken = result;
         }
+        return result;
+    };
+    Parser.prototype.currentTokenAllowingRegularExpression = function () {
+        Debug.assert(this._currentToken === null);
+        var result = this.currentItem(true);
+        this._currentToken = result;
         return result;
     };
     Parser.prototype.peekTokenN = function (n) {
@@ -2798,6 +2820,11 @@ var Parser = (function (_super) {
                 return true;
 
             }
+            case 113 /* SlashToken */ :
+            case 114 /* SlashEqualsToken */ : {
+                return true;
+
+            }
         }
         var keywordKind = currentToken.keywordKind();
         switch(keywordKind) {
@@ -3141,8 +3168,66 @@ var Parser = (function (_super) {
                 return this.parseCastExpression();
 
             }
+            case 113 /* SlashToken */ :
+            case 114 /* SlashEqualsToken */ : {
+                var result = this.tryReparseDivideAsRegularExpression();
+                if(result !== null) {
+                    return result;
+                }
+                break;
+
+            }
         }
         return new IdentifierNameSyntax(this.eatIdentifierToken());
+    };
+    Parser.prototype.tryReparseDivideAsRegularExpression = function () {
+        var currentToken = this.currentToken();
+        var currentTokenKind = currentToken.tokenKind;
+        Debug.assert(currentTokenKind === 113 /* SlashToken */  || currentTokenKind === 114 /* SlashEqualsToken */ );
+        var previousTokenKind = this.previousToken.tokenKind;
+        switch(previousTokenKind) {
+            case 7 /* IdentifierNameToken */ : {
+                var previousTokenKeywordKind = this.previousToken.keywordKind();
+                if(previousTokenKeywordKind === 0 /* None */  || previousTokenKeywordKind === 31 /* ThisKeyword */  || previousTokenKeywordKind === 33 /* TrueKeyword */  || previousTokenKeywordKind === 20 /* FalseKeyword */ ) {
+                    return null;
+                }
+                break;
+
+            }
+            case 10 /* StringLiteral */ :
+            case 9 /* NumericLiteral */ :
+            case 8 /* RegularExpressionLiteral */ :
+            case 88 /* PlusPlusToken */ :
+            case 89 /* MinusMinusToken */ :
+            case 70 /* CloseBracketToken */ :
+            case 66 /* CloseBraceToken */ : {
+                return null;
+
+            }
+        }
+        var slashTokenFullStart = currentToken.fullStart();
+        var tokenDiagnosticsLength = this.tokenDiagnostics.length;
+        while(tokenDiagnosticsLength > 0) {
+            var diagnostic = this.tokenDiagnostics[tokenDiagnosticsLength - 1];
+            if(diagnostic.position() >= slashTokenFullStart) {
+                tokenDiagnosticsLength--;
+            }
+        }
+        this.tokenDiagnostics.length = tokenDiagnosticsLength;
+        this.disgardAllItemsFromCurrentIndexOnwards();
+        this._currentToken = null;
+        this.scanner.setAbsoluteIndex(slashTokenFullStart);
+        currentToken = this.currentTokenAllowingRegularExpression();
+        Debug.assert(currentToken.tokenKind === 113 /* SlashToken */  || currentToken.tokenKind === 114 /* SlashEqualsToken */  || currentToken.tokenKind === 8 /* RegularExpressionLiteral */ );
+        if(currentToken.tokenKind === 113 /* SlashToken */  || currentToken.tokenKind === 114 /* SlashEqualsToken */ ) {
+            return null;
+        } else {
+            if(currentToken.tokenKind === 8 /* RegularExpressionLiteral */ ) {
+                return this.parseLiteralExpression(165 /* RegularExpressionLiteralExpression */ );
+            } else {
+                throw Errors.invalidOperation();
+            }
+        }
     };
     Parser.prototype.parseTypeOfExpression = function () {
         Debug.assert(this.currentToken().keywordKind() === 35 /* TypeOfKeyword */ );
@@ -4147,8 +4232,6 @@ var Scanner = (function (_super) {
     function Scanner(text, languageVersion, stringTable) {
         _super.call(this, 2048, 0, text.length());
         this.text = null;
-        this.previousTokenKind = 0 /* None */ ;
-        this.previousTokenKeywordKind = 0 /* None */ ;
         this.tokenInfo = new ScannerTokenInfo();
         Scanner.initializeStaticData();
         this.text = text;
@@ -4191,19 +4274,20 @@ var Scanner = (function (_super) {
     Scanner.create = function create(text, languageVersion) {
         return new Scanner(text, languageVersion, new StringTable());
     }
-    Scanner.prototype.fetchMoreItems = function (sourceIndex, window, destinationIndex, spaceAvailable) {
+    Scanner.prototype.fetchMoreItems = function (argument, sourceIndex, window, destinationIndex, spaceAvailable) {
         var charactersRemaining = this.text.length() - sourceIndex;
         var amountToRead = MathPrototype.min(charactersRemaining, spaceAvailable);
         this.text.copyTo(sourceIndex, window, destinationIndex, amountToRead);
         return amountToRead;
     };
-    Scanner.prototype.scan = function (diagnostics) {
+    Scanner.prototype.currentCharCode = function () {
+        return this.currentItem(null);
+    };
+    Scanner.prototype.scan = function (diagnostics, allowRegularExpression) {
         var start = this.absoluteIndex();
         var leadingTriviaInfo = this.scanTriviaInfo(diagnostics, false);
-        this.scanSyntaxToken(diagnostics);
+        this.scanSyntaxToken(diagnostics, allowRegularExpression);
         var trailingTriviaInfo = this.scanTriviaInfo(diagnostics, true);
-        this.previousTokenKind = this.tokenInfo.Kind;
-        this.previousTokenKeywordKind = this.tokenInfo.KeywordKind;
         return SyntaxTokenFactory.create(start, leadingTriviaInfo, this.tokenInfo, trailingTriviaInfo);
     };
     Scanner.prototype.scanTriviaInfo = function (diagnostics, isTrailing) {
@@ -4211,7 +4295,7 @@ var Scanner = (function (_super) {
         var hasComment = false;
         var hasNewLine = false;
         while(true) {
-            var ch = this.currentItem();
+            var ch = this.currentCharCode();
             switch(ch) {
                 case 32 /* space */ :
                 case 9 /* tab */ :
@@ -4277,7 +4361,7 @@ var Scanner = (function (_super) {
     Scanner.prototype.scanSingleLineCommentTrivia = function () {
         var width = 0;
         while(true) {
-            var ch = this.currentItem();
+            var ch = this.currentCharCode();
             if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
                 return width;
             }
@@ -4288,7 +4372,7 @@ var Scanner = (function (_super) {
     Scanner.prototype.scanMultiLineCommentTrivia = function (diagnostics) {
         var width = 0;
         while(true) {
-            var ch = this.currentItem();
+            var ch = this.currentCharCode();
             if(ch === 0 /* nullCharacter */ ) {
                 diagnostics.push(new SyntaxDiagnostic(this.absoluteIndex(), 0, 10 /* _StarSlash__expected */ , null));
                 return width;
@@ -4305,19 +4389,19 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.scanLineTerminatorSequence = function (ch) {
         this.moveToNextItem();
-        if(ch === 13 /* carriageReturn */  && this.currentItem() === 10 /* newLine */ ) {
+        if(ch === 13 /* carriageReturn */  && this.currentCharCode() === 10 /* newLine */ ) {
             this.moveToNextItem();
             return 2;
         } else {
             return 1;
         }
     };
-    Scanner.prototype.scanSyntaxToken = function (diagnostics) {
+    Scanner.prototype.scanSyntaxToken = function (diagnostics, allowRegularExpression) {
         this.tokenInfo.Kind = 0 /* None */ ;
         this.tokenInfo.KeywordKind = 0 /* None */ ;
         this.tokenInfo.Text = null;
         this.tokenInfo.Value = null;
-        var character = this.currentItem();
+        var character = this.currentCharCode();
         switch(character) {
             case 34 /* doubleQuote */ :
             case 39 /* singleQuote */ : {
@@ -4325,7 +4409,7 @@ var Scanner = (function (_super) {
 
             }
             case 47 /* slash */ : {
-                return this.scanSlashToken();
+                return this.scanSlashToken(allowRegularExpression);
 
             }
             case 46 /* dot */ : {
@@ -4457,7 +4541,7 @@ var Scanner = (function (_super) {
     Scanner.prototype.tryFastScanIdentifierOrKeyword = function (firstCharacter) {
         var startIndex = this.getAndPinAbsoluteIndex();
         while(true) {
-            var character = this.currentItem();
+            var character = this.currentCharCode();
             if(Scanner.isIdentifierPartCharacter[character]) {
                 this.moveToNextItem();
             } else {
@@ -4501,26 +4585,26 @@ var Scanner = (function (_super) {
         this.releaseAndUnpinAbsoluteIndex(startIndex);
     };
     Scanner.prototype.scanDecimalNumericLiteral = function (startIndex) {
-        while(CharacterInfo.isDecimalDigit(this.currentItem())) {
+        while(CharacterInfo.isDecimalDigit(this.currentCharCode())) {
             this.moveToNextItem();
         }
-        if(this.currentItem() === 46 /* dot */ ) {
+        if(this.currentCharCode() === 46 /* dot */ ) {
             this.moveToNextItem();
         }
-        while(CharacterInfo.isDecimalDigit(this.currentItem())) {
+        while(CharacterInfo.isDecimalDigit(this.currentCharCode())) {
             this.moveToNextItem();
         }
-        var ch = this.currentItem();
+        var ch = this.currentCharCode();
         if(ch === 101 /* e */  || ch === 69 /* E */ ) {
             this.moveToNextItem();
-            ch = this.currentItem();
+            ch = this.currentCharCode();
             if(ch === 45 /* minus */  || ch === 43 /* plus */ ) {
                 if(CharacterInfo.isDecimalDigit(this.peekItemN(1))) {
                     this.moveToNextItem();
                 }
             }
         }
-        while(CharacterInfo.isDecimalDigit(this.currentItem())) {
+        while(CharacterInfo.isDecimalDigit(this.currentCharCode())) {
             this.moveToNextItem();
         }
         var endIndex = this.absoluteIndex();
@@ -4531,7 +4615,7 @@ var Scanner = (function (_super) {
         Debug.assert(this.isHexNumericLiteral());
         this.moveToNextItem();
         this.moveToNextItem();
-        while(CharacterInfo.isHexDigit(this.currentItem())) {
+        while(CharacterInfo.isHexDigit(this.currentCharCode())) {
             this.moveToNextItem();
         }
         var end = this.absoluteIndex();
@@ -4539,7 +4623,7 @@ var Scanner = (function (_super) {
         this.tokenInfo.Kind = 9 /* NumericLiteral */ ;
     };
     Scanner.prototype.isHexNumericLiteral = function () {
-        if(this.currentItem() === 48 /* _0 */ ) {
+        if(this.currentCharCode() === 48 /* _0 */ ) {
             var ch = this.peekItemN(1);
             if(ch === 120 /* x */  || ch === 88 /* X */ ) {
                 ch = this.peekItemN(2);
@@ -4554,7 +4638,7 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.scanGreaterThanToken = function () {
         this.moveToNextItem();
-        var character = this.currentItem();
+        var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
             this.tokenInfo.Kind = 78 /* GreaterThanEqualsToken */ ;
@@ -4568,7 +4652,7 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.scanGreaterThanGreaterThanToken = function () {
         this.moveToNextItem();
-        var character = this.currentItem();
+        var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
             this.tokenInfo.Kind = 108 /* GreaterThanGreaterThanEqualsToken */ ;
@@ -4582,7 +4666,7 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.scanGreaterThanGreaterThanGreaterThanToken = function () {
         this.moveToNextItem();
-        var character = this.currentItem();
+        var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
             this.tokenInfo.Kind = 109 /* GreaterThanGreaterThanGreaterThanEqualsToken */ ;
@@ -4592,13 +4676,13 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.scanLessThanToken = function () {
         this.moveToNextItem();
-        if(this.currentItem() === 61 /* equals */ ) {
+        if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
             this.tokenInfo.Kind = 77 /* LessThanEqualsToken */ ;
         } else {
-            if(this.currentItem() === 60 /* lessThan */ ) {
+            if(this.currentCharCode() === 60 /* lessThan */ ) {
                 this.moveToNextItem();
-                if(this.currentItem() === 61 /* equals */ ) {
+                if(this.currentCharCode() === 61 /* equals */ ) {
                     this.moveToNextItem();
                     this.tokenInfo.Kind = 107 /* LessThanLessThanEqualsToken */ ;
                 } else {
@@ -4611,11 +4695,11 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.scanBarToken = function () {
         this.moveToNextItem();
-        if(this.currentItem() === 61 /* equals */ ) {
+        if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
             this.tokenInfo.Kind = 111 /* BarEqualsToken */ ;
         } else {
-            if(this.currentItem() === 124 /* bar */ ) {
+            if(this.currentCharCode() === 124 /* bar */ ) {
                 this.moveToNextItem();
                 this.tokenInfo.Kind = 99 /* BarBarToken */ ;
             } else {
@@ -4625,7 +4709,7 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.scanCaretToken = function () {
         this.moveToNextItem();
-        if(this.currentItem() === 61 /* equals */ ) {
+        if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
             this.tokenInfo.Kind = 112 /* CaretEqualsToken */ ;
         } else {
@@ -4634,12 +4718,12 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.scanAmpersandToken = function () {
         this.moveToNextItem();
-        var character = this.currentItem();
+        var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
             this.tokenInfo.Kind = 110 /* AmpersandEqualsToken */ ;
         } else {
-            if(this.currentItem() === 38 /* ampersand */ ) {
+            if(this.currentCharCode() === 38 /* ampersand */ ) {
                 this.moveToNextItem();
                 this.tokenInfo.Kind = 98 /* AmpersandAmpersandToken */ ;
             } else {
@@ -4649,7 +4733,7 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.scanPercentToken = function () {
         this.moveToNextItem();
-        if(this.currentItem() === 61 /* equals */ ) {
+        if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
             this.tokenInfo.Kind = 106 /* PercentEqualsToken */ ;
         } else {
@@ -4658,7 +4742,7 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.scanMinusToken = function () {
         this.moveToNextItem();
-        var character = this.currentItem();
+        var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
             this.tokenInfo.Kind = 104 /* MinusEqualsToken */ ;
@@ -4673,7 +4757,7 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.scanPlusToken = function () {
         this.moveToNextItem();
-        var character = this.currentItem();
+        var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
             this.tokenInfo.Kind = 103 /* PlusEqualsToken */ ;
@@ -4688,7 +4772,7 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.scanAsteriskToken = function () {
         this.moveToNextItem();
-        if(this.currentItem() === 61 /* equals */ ) {
+        if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
             this.tokenInfo.Kind = 105 /* AsteriskEqualsToken */ ;
         } else {
@@ -4697,10 +4781,10 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.scanEqualsToken = function () {
         this.moveToNextItem();
-        var character = this.currentItem();
+        var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
-            if(this.currentItem() === 61 /* equals */ ) {
+            if(this.currentCharCode() === 61 /* equals */ ) {
                 this.moveToNextItem();
                 this.tokenInfo.Kind = 82 /* EqualsEqualsEqualsToken */ ;
             } else {
@@ -4716,7 +4800,7 @@ var Scanner = (function (_super) {
         }
     };
     Scanner.prototype.isDotPrefixedNumericLiteral = function () {
-        if(this.currentItem() === 46 /* dot */ ) {
+        if(this.currentCharCode() === 46 /* dot */ ) {
             var ch = this.peekItemN(1);
             return CharacterInfo.isDecimalDigit(ch);
         }
@@ -4728,7 +4812,7 @@ var Scanner = (function (_super) {
             return;
         }
         this.moveToNextItem();
-        if(this.currentItem() === 46 /* dot */  && this.peekItemN(1) === 46 /* dot */ ) {
+        if(this.currentCharCode() === 46 /* dot */  && this.peekItemN(1) === 46 /* dot */ ) {
             this.moveToNextItem();
             this.moveToNextItem();
             this.tokenInfo.Kind = 72 /* DotDotDotToken */ ;
@@ -4736,12 +4820,12 @@ var Scanner = (function (_super) {
             this.tokenInfo.Kind = 71 /* DotToken */ ;
         }
     };
-    Scanner.prototype.scanSlashToken = function () {
-        if(this.tryScanRegularExpressionToken()) {
+    Scanner.prototype.scanSlashToken = function (allowRegularExpression) {
+        if(allowRegularExpression && this.tryScanRegularExpressionToken()) {
             return;
         }
         this.moveToNextItem();
-        if(this.currentItem() === 61 /* equals */ ) {
+        if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
             this.tokenInfo.Kind = 114 /* SlashEqualsToken */ ;
         } else {
@@ -4749,42 +4833,14 @@ var Scanner = (function (_super) {
         }
     };
     Scanner.prototype.tryScanRegularExpressionToken = function () {
-        switch(this.previousTokenKind) {
-            case 7 /* IdentifierNameToken */ : {
-                if(this.previousTokenKeywordKind === 0 /* None */ ) {
-                    return false;
-                }
-                break;
-
-            }
-            case 10 /* StringLiteral */ :
-            case 9 /* NumericLiteral */ :
-            case 8 /* RegularExpressionLiteral */ :
-            case 88 /* PlusPlusToken */ :
-            case 89 /* MinusMinusToken */ :
-            case 68 /* CloseParenToken */ :
-            case 70 /* CloseBracketToken */ :
-            case 66 /* CloseBraceToken */ : {
-                return false;
-
-            }
-        }
-        switch(this.previousTokenKeywordKind) {
-            case 31 /* ThisKeyword */ :
-            case 33 /* TrueKeyword */ :
-            case 20 /* FalseKeyword */ : {
-                return false;
-
-            }
-        }
-        Debug.assert(this.currentItem() === 47 /* slash */ );
+        Debug.assert(this.currentCharCode() === 47 /* slash */ );
         var startIndex = this.getAndPinAbsoluteIndex();
         try  {
             this.moveToNextItem();
             var inEscape = false;
             var inCharacterClass = false;
             while(true) {
-                var ch = this.currentItem();
+                var ch = this.currentCharCode();
                 if(this.isNewLineCharacter(ch) || ch === 0 /* nullCharacter */ ) {
                     this.rewindToPinnedIndex(startIndex);
                     return false;
@@ -4824,7 +4880,7 @@ var Scanner = (function (_super) {
                 }
                 break;
             }
-            while(Scanner.isIdentifierPartCharacter[this.currentItem()]) {
+            while(Scanner.isIdentifierPartCharacter[this.currentCharCode()]) {
                 this.moveToNextItem();
             }
             var endIndex = this.absoluteIndex();
@@ -4837,9 +4893,9 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.scanExclamationToken = function () {
         this.moveToNextItem();
-        if(this.currentItem() === 61 /* equals */ ) {
+        if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
-            if(this.currentItem() === 61 /* equals */ ) {
+            if(this.currentCharCode() === 61 /* equals */ ) {
                 this.moveToNextItem();
                 this.tokenInfo.Kind = 83 /* ExclamationEqualsEqualsToken */ ;
             } else {
@@ -4859,11 +4915,11 @@ var Scanner = (function (_super) {
         ]));
     };
     Scanner.prototype.skipEscapeSequence = function (diagnostics) {
-        Debug.assert(this.currentItem() === 92 /* backslash */ );
+        Debug.assert(this.currentCharCode() === 92 /* backslash */ );
         var rewindPoint = this.getRewindPoint();
         try  {
             this.moveToNextItem();
-            var ch = this.currentItem();
+            var ch = this.currentCharCode();
             this.moveToNextItem();
             switch(ch) {
                 case 39 /* singleQuote */ :
@@ -4908,7 +4964,7 @@ var Scanner = (function (_super) {
 
                 }
                 case 13 /* carriageReturn */ : {
-                    if(this.currentItem() === 10 /* newLine */ ) {
+                    if(this.currentCharCode() === 10 /* newLine */ ) {
                         this.moveToNextItem();
                     }
                     return;
@@ -4930,12 +4986,12 @@ var Scanner = (function (_super) {
         }
     };
     Scanner.prototype.scanStringLiteral = function (diagnostics) {
-        var quoteCharacter = this.currentItem();
+        var quoteCharacter = this.currentCharCode();
         Debug.assert(quoteCharacter === 39 /* singleQuote */  || quoteCharacter === 34 /* doubleQuote */ );
         var startIndex = this.getAndPinAbsoluteIndex();
         this.moveToNextItem();
         while(true) {
-            var ch = this.currentItem();
+            var ch = this.currentCharCode();
             if(ch === 92 /* backslash */ ) {
                 this.skipEscapeSequence(diagnostics);
             } else {
@@ -4979,7 +5035,7 @@ var Scanner = (function (_super) {
         return false;
     };
     Scanner.prototype.peekCharOrUnicodeOrHexEscape = function () {
-        var character = this.currentItem();
+        var character = this.currentCharCode();
         if(this.isUnicodeOrHexEscape(character)) {
             return this.peekUnicodeOrHexEscape();
         } else {
@@ -4987,7 +5043,7 @@ var Scanner = (function (_super) {
         }
     };
     Scanner.prototype.peekCharOrUnicodeEscape = function () {
-        var character = this.currentItem();
+        var character = this.currentCharCode();
         if(this.isUnicodeEscape(character)) {
             return this.peekUnicodeOrHexEscape();
         } else {
@@ -5002,7 +5058,7 @@ var Scanner = (function (_super) {
         return ch;
     };
     Scanner.prototype.scanCharOrUnicodeEscape = function (errors) {
-        var ch = this.currentItem();
+        var ch = this.currentCharCode();
         if(ch === 92 /* backslash */ ) {
             var ch2 = this.peekItemN(1);
             if(ch2 === 117 /* u */ ) {
@@ -5013,7 +5069,7 @@ var Scanner = (function (_super) {
         return ch;
     };
     Scanner.prototype.scanCharOrUnicodeOrHexEscape = function (errors) {
-        var ch = this.currentItem();
+        var ch = this.currentCharCode();
         if(ch === 92 /* backslash */ ) {
             var ch2 = this.peekItemN(1);
             if(ch2 === 117 /* u */  || ch2 === 120 /* x */ ) {
@@ -5025,16 +5081,16 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.scanUnicodeOrHexEscape = function (errors) {
         var start = this.absoluteIndex();
-        var character = this.currentItem();
+        var character = this.currentCharCode();
         Debug.assert(character === 92 /* backslash */ );
         this.moveToNextItem();
-        character = this.currentItem();
+        character = this.currentCharCode();
         Debug.assert(character === 117 /* u */  || character === 120 /* x */ );
         var intChar = 0;
         this.moveToNextItem();
         var count = character === 117 /* u */  ? 4 : 2;
         for(var i = 0; i < count; i++) {
-            var ch2 = this.currentItem();
+            var ch2 = this.currentCharCode();
             if(!CharacterInfo.isHexDigit(ch2)) {
                 if(errors !== null) {
                     var end = this.absoluteIndex();
@@ -37737,7 +37793,7 @@ var Program = (function () {
             var textArray = [];
             var diagnostics = [];
             while(true) {
-                var token = scanner.scan(diagnostics);
+                var token = scanner.scan(diagnostics, false);
                 tokens.push(token);
                 if(verify) {
                     var tokenText = token.text();
@@ -37905,12 +37961,12 @@ var program = new Program();
 if(true) {
     totalTime = 0;
     totalSize = 0;
-    program.runAllTests(Environment, false, true);
+    program.runAllTests(Environment, false, false);
     program.run(Environment, false);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(false) {
+if(true) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(Environment, true, false);
@@ -37918,14 +37974,14 @@ if(false) {
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(true) {
+if(false) {
     totalTime = 0;
     totalSize = 0;
     program.run262(Environment);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(true) {
+if(false) {
     totalTime = 0;
     totalSize = 0;
     program.runTop1000(Environment);
