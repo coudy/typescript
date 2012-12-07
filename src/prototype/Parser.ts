@@ -2017,35 +2017,12 @@ class Parser extends SlidingWindow {
         // Because unary expression have the highest precedence, we can always parse one, regardless 
         // of what precedence was passed in.
         var leftOperand: ExpressionSyntax = this.parseUnaryExpression();
-        leftOperand = this.parseBinaryExpressions(precedence, allowIn, leftOperand);
-        leftOperand = this.parseConditionalExpression(precedence, allowIn, leftOperand);
+        leftOperand = this.parseBinaryOrConditionalExpressions(precedence, allowIn, leftOperand);
 
         return leftOperand;
     }
 
-    private parseConditionalExpression(precedence: number, allowIn: bool, leftOperand: ExpressionSyntax): ExpressionSyntax {
-        // Only consume this as a ternary expression if our precedence is higher than the ternary 
-        // level.  i.e. if we have "!f ? a : b" then we would not want to 
-        // consume the "?" as part of "f" because the precedence of "!" is far too high.  However,
-        // if we have: "x = f ? a : b", then we would want to consume the "?" as part of "f".
-        //
-        // Note: if we have "m = f ? x ? y : z : b, then we do want the second "?" to go with 
-
-        var currentTokenKind = this.currentToken().tokenKind;
-        if (currentTokenKind === SyntaxKind.QuestionToken && precedence <= ParserExpressionPrecedence.ConditionalExpressionPrecedence) {
-            var questionToken = this.eatToken(SyntaxKind.QuestionToken);
-
-            var whenTrueExpression = this.parseAssignmentExpression(allowIn);
-            var colon = this.eatToken(SyntaxKind.ColonToken);
-
-            var whenFalseExpression = this.parseAssignmentExpression(allowIn);
-            leftOperand = new ConditionalExpressionSyntax(leftOperand, questionToken, whenTrueExpression, colon, whenFalseExpression);
-        }
-
-        return leftOperand;
-    }
-
-    private parseBinaryExpressions(precedence: number, allowIn: bool, leftOperand: ExpressionSyntax): ExpressionSyntax {
+    private parseBinaryOrConditionalExpressions(precedence: number, allowIn: bool, leftOperand: ExpressionSyntax): ExpressionSyntax {
         while (true) {
             // We either have a binary operator here, or we're finished.
             var currentTokenKind = this.currentToken().tokenKind;
@@ -2055,34 +2032,55 @@ class Parser extends SlidingWindow {
                 currentTokenKind = currentTokenKeywordKind;
             }
 
-            if (!SyntaxFacts.isBinaryExpressionOperatorToken(currentTokenKind)) {
-                break;
+            // Check for binary expressions.
+            if (SyntaxFacts.isBinaryExpressionOperatorToken(currentTokenKind)) {
+                // also, if it's the 'in' operator, only allow if our caller allows it.
+                if (currentTokenKind === SyntaxKind.InKeyword && !allowIn) {
+                    break;
+                }
+
+                var binaryExpressionKind = SyntaxFacts.getBinaryExpressionFromOperatorToken(currentTokenKind);
+                var newPrecedence = Parser.getPrecedence(binaryExpressionKind);
+
+                // All binary operators must have precedence > 0!
+                Debug.assert(newPrecedence > 0);
+
+                // Check the precedence to see if we should "take" this operator
+                if (newPrecedence < precedence) {
+                    break;
+                }
+
+                // Same precedence, but not right-associative -- deal with this higher up in our stack "later"
+                if (newPrecedence === precedence && !this.isRightAssociative(binaryExpressionKind)) {
+                    break;
+                }
+
+                // Precedence is okay, so we'll "take" this operator.
+                var operatorToken = this.eatAnyToken();
+                leftOperand = new BinaryExpressionSyntax(binaryExpressionKind, leftOperand, operatorToken, this.parseSubExpression(newPrecedence, allowIn));
+                continue;
             }
 
-            // also, if it's the 'in' operator, only allow if our caller allows it.
-            if (currentTokenKind === SyntaxKind.InKeyword && !allowIn) {
-                break;
+            // Now check for conditional expression.
+            // Only consume this as a ternary expression if our precedence is higher than the ternary 
+            // level.  i.e. if we have "!f ? a : b" then we would not want to 
+            // consume the "?" as part of "f" because the precedence of "!" is far too high.  However,
+            // if we have: "x = f ? a : b", then we would want to consume the "?" as part of "f".
+            //
+            // Note: if we have "m = f ? x ? y : z : b, then we do want the second "?" to go with 'x'.
+            if (currentTokenKind === SyntaxKind.QuestionToken && precedence <= ParserExpressionPrecedence.ConditionalExpressionPrecedence) {
+                var questionToken = this.eatToken(SyntaxKind.QuestionToken);
+
+                var whenTrueExpression = this.parseAssignmentExpression(allowIn);
+                var colon = this.eatToken(SyntaxKind.ColonToken);
+
+                var whenFalseExpression = this.parseAssignmentExpression(allowIn);
+                leftOperand = new ConditionalExpressionSyntax(leftOperand, questionToken, whenTrueExpression, colon, whenFalseExpression);
+                continue;
             }
 
-            var binaryExpressionKind = SyntaxFacts.getBinaryExpressionFromOperatorToken(currentTokenKind);
-            var newPrecedence = Parser.getPrecedence(binaryExpressionKind);
-
-                  // All binary operators must have precedence > 0!
-            Debug.assert(newPrecedence > 0);
-
-            // Check the precedence to see if we should "take" this operator
-            if (newPrecedence < precedence) {
-                break;
-            }
-
-            // Same precedence, but not right-associative -- deal with this higher up in our stack "later"
-            if (newPrecedence === precedence && !this.isRightAssociative(binaryExpressionKind)) {
-                break;
-            }
-
-            // Precedence is okay, so we'll "take" this operator.
-            var operatorToken = this.eatAnyToken();
-            leftOperand = new BinaryExpressionSyntax(binaryExpressionKind, leftOperand, operatorToken, this.parseSubExpression(newPrecedence, allowIn));
+            // Not binary or ternary.  Nothing more to consume here.
+            break;
         }
 
         return leftOperand;
@@ -3449,7 +3447,7 @@ class Parser extends SlidingWindow {
                 return this.isSwitchClause();
 
             case ListParsingState.SwitchClause_Statements:
-                return this.isStatement(/*allowFunctionDeclaration:*/ false);
+                return this.isStatement(/*allowFunctionDeclaration:*/ true);
             
             case ListParsingState.Block_Statements:
                 return this.isStatement(/*allowFunctionDeclaration:*/ true);

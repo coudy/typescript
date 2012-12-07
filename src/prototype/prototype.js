@@ -2916,45 +2916,42 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseSubExpression = function (precedence, allowIn) {
         var leftOperand = this.parseUnaryExpression();
-        leftOperand = this.parseBinaryExpressions(precedence, allowIn, leftOperand);
-        leftOperand = this.parseConditionalExpression(precedence, allowIn, leftOperand);
+        leftOperand = this.parseBinaryOrConditionalExpressions(precedence, allowIn, leftOperand);
         return leftOperand;
     };
-    Parser.prototype.parseConditionalExpression = function (precedence, allowIn, leftOperand) {
-        var currentTokenKind = this.currentToken().tokenKind;
-        if(currentTokenKind === 100 /* QuestionToken */  && precedence <= 3 /* ConditionalExpressionPrecedence */ ) {
-            var questionToken = this.eatToken(100 /* QuestionToken */ );
-            var whenTrueExpression = this.parseAssignmentExpression(allowIn);
-            var colon = this.eatToken(101 /* ColonToken */ );
-            var whenFalseExpression = this.parseAssignmentExpression(allowIn);
-            leftOperand = new ConditionalExpressionSyntax(leftOperand, questionToken, whenTrueExpression, colon, whenFalseExpression);
-        }
-        return leftOperand;
-    };
-    Parser.prototype.parseBinaryExpressions = function (precedence, allowIn, leftOperand) {
+    Parser.prototype.parseBinaryOrConditionalExpressions = function (precedence, allowIn, leftOperand) {
         while(true) {
             var currentTokenKind = this.currentToken().tokenKind;
             var currentTokenKeywordKind = this.currentToken().keywordKind();
             if(currentTokenKeywordKind === 26 /* InstanceOfKeyword */  || currentTokenKeywordKind === 25 /* InKeyword */ ) {
                 currentTokenKind = currentTokenKeywordKind;
             }
-            if(!SyntaxFacts.isBinaryExpressionOperatorToken(currentTokenKind)) {
-                break;
+            if(SyntaxFacts.isBinaryExpressionOperatorToken(currentTokenKind)) {
+                if(currentTokenKind === 25 /* InKeyword */  && !allowIn) {
+                    break;
+                }
+                var binaryExpressionKind = SyntaxFacts.getBinaryExpressionFromOperatorToken(currentTokenKind);
+                var newPrecedence = Parser.getPrecedence(binaryExpressionKind);
+                Debug.assert(newPrecedence > 0);
+                if(newPrecedence < precedence) {
+                    break;
+                }
+                if(newPrecedence === precedence && !this.isRightAssociative(binaryExpressionKind)) {
+                    break;
+                }
+                var operatorToken = this.eatAnyToken();
+                leftOperand = new BinaryExpressionSyntax(binaryExpressionKind, leftOperand, operatorToken, this.parseSubExpression(newPrecedence, allowIn));
+                continue;
             }
-            if(currentTokenKind === 25 /* InKeyword */  && !allowIn) {
-                break;
+            if(currentTokenKind === 100 /* QuestionToken */  && precedence <= 3 /* ConditionalExpressionPrecedence */ ) {
+                var questionToken = this.eatToken(100 /* QuestionToken */ );
+                var whenTrueExpression = this.parseAssignmentExpression(allowIn);
+                var colon = this.eatToken(101 /* ColonToken */ );
+                var whenFalseExpression = this.parseAssignmentExpression(allowIn);
+                leftOperand = new ConditionalExpressionSyntax(leftOperand, questionToken, whenTrueExpression, colon, whenFalseExpression);
+                continue;
             }
-            var binaryExpressionKind = SyntaxFacts.getBinaryExpressionFromOperatorToken(currentTokenKind);
-            var newPrecedence = Parser.getPrecedence(binaryExpressionKind);
-            Debug.assert(newPrecedence > 0);
-            if(newPrecedence < precedence) {
-                break;
-            }
-            if(newPrecedence === precedence && !this.isRightAssociative(binaryExpressionKind)) {
-                break;
-            }
-            var operatorToken = this.eatAnyToken();
-            leftOperand = new BinaryExpressionSyntax(binaryExpressionKind, leftOperand, operatorToken, this.parseSubExpression(newPrecedence, allowIn));
+            break;
         }
         return leftOperand;
     };
@@ -3954,7 +3951,7 @@ var Parser = (function (_super) {
 
             }
             case 16 /* SwitchClause_Statements */ : {
-                return this.isStatement(false);
+                return this.isStatement(true);
 
             }
             case 32 /* Block_Statements */ : {
@@ -36584,6 +36581,13 @@ var Program = (function () {
         }
     };
     Program.prototype.runTop1000 = function (environment) {
+        var expectedFailures = {
+            "JSFile100\\4shared_com\\UploadModule.js": true,
+            "JSFile100\\addthis_com\\addthis_widget.js": true,
+            "JSFile100\\advertising_com\\SearchAdx.js": true,
+            "JSFile100\\amazon_com\\01Tr6v6ehxL.js": true,
+            "JSFile100\\amazon_com\\all_1.js": true
+        };
         var path = "C:\\Temp\\TopJSFiles";
         var testFiles = environment.listFiles(path, null, {
             recursive: true
@@ -36596,6 +36600,7 @@ var Program = (function () {
             if(specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
                 continue;
             }
+            var canParseSuccessfully = expectedFailures[filePath.substr(path.length + 1)] === undefined;
             var contents = environment.readFile(filePath, 'utf-8');
             var start, end;
             start = new Date().getTime();
@@ -36606,10 +36611,17 @@ var Program = (function () {
                 var scanner = new Scanner(stringText, 1 /* EcmaScript5 */ , stringTable);
                 var parser = new Parser(scanner);
                 var syntaxTree = parser.parseSyntaxTree();
-                environment.standardOut.WriteLine(filePath);
-                if(syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
-                    environment.standardOut.WriteLine("Unexpected failure: " + filePath);
-                    failCount++;
+                environment.standardOut.Write(".");
+                if(canParseSuccessfully) {
+                    if(syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
+                        environment.standardOut.WriteLine("\r\nUnexpected failure: " + filePath);
+                        failCount++;
+                    }
+                } else {
+                    if(syntaxTree.diagnostics() === null || syntaxTree.diagnostics().length === 0) {
+                        environment.standardOut.WriteLine("\r\nUnexpected success: " + filePath);
+                        failCount++;
+                    }
                 }
             } catch (e) {
                 failCount++;
@@ -36620,7 +36632,7 @@ var Program = (function () {
             }
         }
         environment.standardOut.WriteLine("");
-        environment.standardOut.WriteLine("Test 262 results:");
+        environment.standardOut.WriteLine("Top 1000 results:");
         environment.standardOut.WriteLine("Test Count: " + testCount);
         environment.standardOut.WriteLine("Skip Count: " + skippedTests.length);
         environment.standardOut.WriteLine("Fail Count: " + failCount);

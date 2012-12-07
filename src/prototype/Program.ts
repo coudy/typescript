@@ -5,7 +5,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "amazon_com\\ads_common.js"; 
+    // "amazon_com\\jquery_1_5_1_min.js";
     undefined;
 
 class Program {
@@ -291,6 +291,14 @@ class Program {
     }
 
     runTop1000(environment: IEnvironment): void {
+        var expectedFailures = {
+            "JSFile100\\4shared_com\\UploadModule.js": true,
+            "JSFile100\\addthis_com\\addthis_widget.js": true,
+            "JSFile100\\advertising_com\\SearchAdx.js": true,
+            "JSFile100\\amazon_com\\01Tr6v6ehxL.js": true,
+            "JSFile100\\amazon_com\\all_1.js": true,
+        };
+
         var path = "C:\\Temp\\TopJSFiles";
         var testFiles = environment.listFiles(path, null, { recursive: true });
 
@@ -305,8 +313,7 @@ class Program {
                 continue;
             }
 
-            // All 262 files are utf8.  But they dont' have a BOM.  Force them to be read in
-            // as UTF8.
+            var canParseSuccessfully = expectedFailures[filePath.substr(path.length + 1)] === undefined;
             var contents = environment.readFile(filePath, 'utf-8');
 
             var start: number, end: number;
@@ -321,35 +328,22 @@ class Program {
                 var parser = new Parser(scanner);
 
                 var syntaxTree = parser.parseSyntaxTree();
-                environment.standardOut.WriteLine(filePath);
+                //environment.standardOut.WriteLine(filePath);
+                environment.standardOut.Write(".");
 
-                //if (isNegative) {
-                //    var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
-                //    var canParseSuccessfully = <bool>negative262ExpectedResults[fileName];
-
-                //    if (canParseSuccessfully) {
-                //        // We expected to parse this successfully.  Report an error if we didn't.
-                //        if (syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
-                //            environment.standardOut.WriteLine("Negative test. Unexpected failure: " + filePath);
-                //            failCount++;
-                //        }
-                //    }
-                //    else {
-                //        // We expected to fail on this.  Report an error if we don't.
-                //        if (syntaxTree.diagnostics() === null || syntaxTree.diagnostics().length === 0) {
-                //            environment.standardOut.WriteLine("Negative test. Unexpected success: " + filePath);
-                //            failCount++;
-                //        }
-                //    }
-                //}
-                //else {
-                    // Not a negative test.  We can't have any errors or skipped tokens.
+                if (canParseSuccessfully) {
                     if (syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
-                        // environment.standardOut.WriteLine("");
-                        environment.standardOut.WriteLine("Unexpected failure: " + filePath);
+                        environment.standardOut.WriteLine("\r\nUnexpected failure: " + filePath);
                         failCount++;
                     }
-                //}
+                }
+                else {
+                    // We expected to fail on this.  Report an error if we don't.
+                    if (syntaxTree.diagnostics() === null || syntaxTree.diagnostics().length === 0) {
+                        environment.standardOut.WriteLine("\r\nUnexpected success: " + filePath);
+                        failCount++;
+                    }
+                }
             }
             catch (e) {
                 failCount++;
@@ -362,7 +356,7 @@ class Program {
         }
 
         environment.standardOut.WriteLine("");
-        environment.standardOut.WriteLine("Test 262 results:");
+        environment.standardOut.WriteLine("Top 1000 results:");
         environment.standardOut.WriteLine("Test Count: " + testCount);
         environment.standardOut.WriteLine("Skip Count: " + skippedTests.length);
         environment.standardOut.WriteLine("Fail Count: " + failCount);
