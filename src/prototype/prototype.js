@@ -399,8 +399,8 @@ var Environment = (function () {
             args[i] = WScript.Arguments.Item(i);
         }
         return {
-            readFile: function (path, charSet) {
-                if (typeof charSet === "undefined") { charSet = 'x-ansi'; }
+            readFile: function (path, useUTF8) {
+                if (typeof useUTF8 === "undefined") { useUTF8 = false; }
                 try  {
                     var streamObj = getStreamObject();
                     streamObj.Open();
@@ -415,7 +415,7 @@ var Environment = (function () {
                         if(bomChar.charCodeAt(0) === 239 && bomChar.charCodeAt(1) === 187) {
                             streamObj.Charset = 'utf-8';
                         } else {
-                            streamObj.Charset = charSet;
+                            streamObj.Charset = useUTF8 ? 'utf-8' : 'x-ansi';
                         }
                     }
                     var str = streamObj.ReadText(-1);
@@ -496,10 +496,134 @@ var Environment = (function () {
         };
     }
     ; ;
+    function getNodeEnvironment() {
+        var _fs = require('fs');
+        var _path = require('path');
+        var _module = require('module');
+        return {
+            readFile: function (file, useUTF8) {
+                var buffer = _fs.readFileSync(file);
+                switch(buffer[0]) {
+                    case 254: {
+                        if(buffer[1] == 255) {
+                            var i = 0;
+                            while((i + 1) < buffer.length) {
+                                var temp = buffer[i];
+                                buffer[i] = buffer[i + 1];
+                                buffer[i + 1] = temp;
+                                i += 2;
+                            }
+                            return buffer.toString("ucs2", 2);
+                        }
+                        break;
+
+                    }
+                    case 255: {
+                        if(buffer[1] == 254) {
+                            return buffer.toString("ucs2", 2);
+                        }
+                        break;
+
+                    }
+                    case 239: {
+                        if(buffer[1] == 187) {
+                            return buffer.toString("utf8", 3);
+                        }
+
+                    }
+                }
+                return useUTF8 ? buffer.toString("utf8", 0) : buffer.toString();
+            },
+            writeFile: function (path, contents, useUTF) {
+                if(useUTF) {
+                    _fs.writeFileSync(path, contents, "utf8");
+                } else {
+                    _fs.writeFileSync(path, contents);
+                }
+            },
+            fileExists: function (path) {
+                return _fs.existsSync(path);
+            },
+            deleteFile: function (path) {
+                try  {
+                    _fs.unlinkSync(path);
+                } catch (e) {
+                }
+            },
+            directoryExists: function (path) {
+                return _fs.existsSync(path) && _fs.lstatSync(path).isDirectory();
+            },
+            listFiles: function dir(path, spec, options) {
+                options = options || {
+                };
+                function filesInFolder(folder) {
+                    var paths = [];
+                    var files = _fs.readdirSync(folder);
+                    for(var i = 0; i < files.length; i++) {
+                        var stat = _fs.statSync(folder + "/" + files[i]);
+                        if(options.recursive && stat.isDirectory()) {
+                            paths = paths.concat(filesInFolder(folder + "/" + files[i]));
+                        } else {
+                            if(stat.isFile() && (!spec || files[i].match(spec))) {
+                                paths.push(folder + "/" + files[i]);
+                            }
+                        }
+                    }
+                    return paths;
+                }
+                return filesInFolder(path);
+            },
+            createFile: function (path, useUTF8) {
+                function mkdirRecursiveSync(path) {
+                    var stats = _fs.statSync(path);
+                    if(stats.isFile()) {
+                        throw "\"" + path + "\" exists but isn't a directory.";
+                    } else {
+                        if(stats.isDirectory()) {
+                            return;
+                        } else {
+                            mkdirRecursiveSync(_path.dirname(path));
+                            _fs.mkdirSync(path, 509);
+                        }
+                    }
+                }
+                mkdirRecursiveSync(_path.dirname(path));
+                var fd = _fs.openSync(path, 'w');
+                return {
+                    Write: function (str) {
+                        _fs.writeSync(fd, str);
+                    },
+                    WriteLine: function (str) {
+                        _fs.writeSync(fd, str + '\r\n');
+                    },
+                    Close: function () {
+                        _fs.closeSync(fd);
+                        fd = null;
+                    }
+                };
+            },
+            arguments: process.argv.slice(2),
+            standardOut: {
+                Write: function (str) {
+                    process.stdout.write(str);
+                },
+                WriteLine: function (str) {
+                    process.stdout.write(str + '\n');
+                },
+                Close: function () {
+                }
+            }
+        };
+    }
+    ; ;
     if(typeof ActiveXObject === "function") {
         return getWindowsScriptHostEnvironment();
     } else {
-        return null;
+        if(typeof require === "function") {
+            return getNodeEnvironment();
+        } else {
+            return null;
+        }
     }
 })();
 var Errors = (function () {
@@ -37765,7 +37889,7 @@ var Program = (function () {
         if(filePath.indexOf("RealSource") >= 0) {
             return;
         }
-        var contents = environment.readFile(filePath, 'utf-8');
+        var contents = environment.readFile(filePath, true);
         if(printDots) {
         }
         var start, end;
@@ -37795,7 +37919,7 @@ var Program = (function () {
                     var actualResult = JSON2.stringify(unit, null, 4);
                     var expectedFile = filePath + ".expected";
                     var actualFile = filePath + ".actual";
-                    var expectedResult = environment.readFile(expectedFile, 'utf-8');
+                    var expectedResult = environment.readFile(expectedFile, true);
                     if(expectedResult !== actualResult) {
                         if(printDots) {
                         }
@@ -37815,7 +37939,7 @@ var Program = (function () {
         if(useTypeScript) {
             return;
         }
-        var contents = environment.readFile(filePath, 'utf-8');
+        var contents = environment.readFile(filePath, true);
         var start, end;
         start = new Date().getTime();
         try  {
@@ -37851,7 +37975,7 @@ var Program = (function () {
                 var actualResult = JSON2.stringify(result, null, 4);
                 var expectedFile = filePath + ".expected";
                 var actualFile = filePath + ".actual";
-                var expectedResult = environment.readFile(expectedFile, 'utf-8');
+                var expectedResult = environment.readFile(expectedFile, true);
                 if(expectedResult !== actualResult) {
                     environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
                     environment.writeFile(actualFile, actualResult, true);
@@ -37885,7 +38009,7 @@ var Program = (function () {
             if(specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
                 continue;
             }
-            var contents = environment.readFile(filePath, 'utf-8');
+            var contents = environment.readFile(filePath, true);
             var start, end;
             start = new Date().getTime();
             try  {
@@ -37950,7 +38074,7 @@ var Program = (function () {
                 continue;
             }
             var canParseSuccessfully = expectedTop1000Failures[filePath.substr(path.length + 1)] === undefined;
-            var contents = environment.readFile(filePath, 'utf-8');
+            var contents = environment.readFile(filePath, true);
             var start, end;
             start = new Date().getTime();
             try  {

@@ -84,7 +84,7 @@ class Program {
         }
 
         // environment.standardOut.WriteLine("Running Parser: " + filePath);
-        var contents = environment.readFile(filePath, 'utf-8');
+        var contents = environment.readFile(filePath, /*useUTF8:*/ true);
         if (printDots) {
             // environment.standardOut.Write(".");
             // environment.standardOut.WriteLine(filePath);
@@ -125,7 +125,7 @@ class Program {
                 var expectedFile = filePath + ".expected";
                 var actualFile = filePath + ".actual";
 
-                var expectedResult = environment.readFile(expectedFile, 'utf-8');
+                var expectedResult = environment.readFile(expectedFile, /*useUTF8:*/ true);
 
                 if (expectedResult !== actualResult) {
                     if (printDots) {
@@ -151,7 +151,7 @@ class Program {
             return;
         }
 
-        var contents = environment.readFile(filePath, 'utf-8');
+        var contents = environment.readFile(filePath, /*useUTF8:*/ true);
 
         var start: number, end: number;
         start = new Date().getTime();
@@ -196,7 +196,7 @@ class Program {
                 var expectedFile = filePath + ".expected";
                 var actualFile = filePath + ".actual";
 
-                var expectedResult = environment.readFile(expectedFile, 'utf-8');
+                var expectedResult = environment.readFile(expectedFile, /*useUTF8:*/ true);
 
                 if (expectedResult !== actualResult) {
                     environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
@@ -239,7 +239,7 @@ class Program {
 
             // All 262 files are utf8.  But they dont' have a BOM.  Force them to be read in
             // as UTF8.
-            var contents = environment.readFile(filePath, 'utf-8');
+            var contents = environment.readFile(filePath, /*useUTF8:*/ true);
 
             var start: number, end: number;
             start = new Date().getTime();
@@ -325,7 +325,7 @@ class Program {
             }
 
             var canParseSuccessfully = expectedTop1000Failures[filePath.substr(path.length + 1)] === undefined;
-            var contents = environment.readFile(filePath, 'utf-8');
+            var contents = environment.readFile(filePath, /*useUTF8:*/ true);
 
             var start: number, end: number;
             start = new Date().getTime();

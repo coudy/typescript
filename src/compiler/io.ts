@@ -287,6 +287,7 @@ var IO = (function() {
                 // Default behaviour
                 return buffer.toString();
             },
+
             writeFile: <(path: string, contents: string) => void >_fs.writeFileSync,
             deleteFile: function(path) {
                 try {
