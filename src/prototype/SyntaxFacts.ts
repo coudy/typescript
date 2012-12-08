@@ -118,6 +118,11 @@ class SyntaxFacts {
                     kindToText[SyntaxFacts.textToKeywordKind[name]] = name;
                 }
             }
+
+            // Manually work around a bug in the CScript 5.8 runtime where 'constructor' is not
+            // listed when SyntaxFacts.textToKeywordKind is enumerated because it is the name of
+            // the constructor function.
+            kindToText[SyntaxKind.ConstructorKeyword] = "constructor";
         }
     }
 

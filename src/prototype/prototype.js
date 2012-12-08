@@ -6112,6 +6112,7 @@ var SyntaxFacts = (function () {
                     SyntaxFacts.kindToText[SyntaxFacts.textToKeywordKind[name]] = name;
                 }
             }
+            SyntaxFacts.kindToText[58 /* ConstructorKeyword */ ] = "constructor";
         }
     }
     SyntaxFacts.getTokenKind = function getTokenKind(text) {
@@ -37705,8 +37706,7 @@ var expectedTop1000Failures = {
     "JSFile800\\fedex_com\\InstantInvite3.js": true
 };
 var stringTable = new StringTable();
-var specificFile = "capitalone_com\\customer_info.js";
-undefined;
+var specificFile = undefined;
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {
@@ -37729,6 +37729,14 @@ var Program = (function () {
             return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true, false, true);
         });
     };
+    Program.prototype.handleException = function (environment, filePath, e) {
+        environment.standardOut.WriteLine("");
+        if((e.message).indexOf(filePath) < 0) {
+            environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
+        } else {
+            environment.standardOut.WriteLine(e.message);
+        }
+    };
     Program.prototype.runTests = function (environment, path, action, printDots) {
         if (typeof printDots === "undefined") { printDots = false; }
         var testFiles = environment.listFiles(path, null, {
@@ -37744,12 +37752,7 @@ var Program = (function () {
             try  {
                 action(filePath);
             } catch (e) {
-                environment.standardOut.WriteLine("");
-                if((e.message).indexOf(filePath) < 0) {
-                    environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
-                } else {
-                    environment.standardOut.WriteLine(e.message);
-                }
+                this.handleException(environment, filePath, e);
             }
         }
     };
@@ -37889,37 +37892,34 @@ var Program = (function () {
                 totalSize += contents.length;
                 var isNegative = contents.indexOf("@negative") >= 0;
                 testCount++;
-                var stringText = new StringText(contents);
-                var scanner = new Scanner(stringText, 1 /* EcmaScript5 */ , stringTable);
-                var parser = new Parser(scanner);
-                var syntaxTree = parser.parseSyntaxTree();
-                if(isNegative) {
-                    var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
-                    var canParseSuccessfully = negative262ExpectedResults[fileName];
-                    if(canParseSuccessfully) {
-                        if(syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
-                            environment.standardOut.WriteLine("Negative test. Unexpected failure: " + filePath);
-                            failCount++;
+                try  {
+                    var stringText = new StringText(contents);
+                    var scanner = new Scanner(stringText, 1 /* EcmaScript5 */ , stringTable);
+                    var parser = new Parser(scanner);
+                    var syntaxTree = parser.parseSyntaxTree();
+                    if(isNegative) {
+                        var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
+                        var canParseSuccessfully = negative262ExpectedResults[fileName];
+                        if(canParseSuccessfully) {
+                            if(syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
+                                environment.standardOut.WriteLine("Negative test. Unexpected failure: " + filePath);
+                                failCount++;
+                            }
+                        } else {
+                            if(syntaxTree.diagnostics() === null || syntaxTree.diagnostics().length === 0) {
+                                environment.standardOut.WriteLine("Negative test. Unexpected success: " + filePath);
+                                failCount++;
+                            }
                         }
                     } else {
-                        if(syntaxTree.diagnostics() === null || syntaxTree.diagnostics().length === 0) {
-                            environment.standardOut.WriteLine("Negative test. Unexpected success: " + filePath);
+                        if(syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
+                            environment.standardOut.WriteLine("Unexpected failure: " + filePath);
                             failCount++;
                         }
                     }
-                } else {
-                    if(syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
-                        environment.standardOut.WriteLine("Unexpected failure: " + filePath);
-                        failCount++;
-                    }
-                }
-            } catch (e) {
-                failCount++;
-                environment.standardOut.WriteLine("");
-                if((e.message).indexOf(filePath) < 0) {
-                    environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
-                } else {
-                    environment.standardOut.WriteLine(e.message);
+                } catch (e) {
+                    failCount++;
+                    this.handleException(environment, filePath, e);
                 }
             }finally {
                 end = new Date().getTime();
@@ -37956,28 +37956,25 @@ var Program = (function () {
             try  {
                 totalSize += contents.length;
                 testCount++;
-                var stringText = new StringText(contents);
-                var scanner = new Scanner(stringText, 1 /* EcmaScript5 */ , stringTable);
-                var parser = new Parser(scanner);
-                var syntaxTree = parser.parseSyntaxTree();
-                if(canParseSuccessfully) {
-                    if(syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
-                        environment.standardOut.WriteLine("Unexpected failure: " + filePath);
-                        failCount++;
+                try  {
+                    var stringText = new StringText(contents);
+                    var scanner = new Scanner(stringText, 1 /* EcmaScript5 */ , stringTable);
+                    var parser = new Parser(scanner);
+                    var syntaxTree = parser.parseSyntaxTree();
+                    if(canParseSuccessfully) {
+                        if(syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
+                            environment.standardOut.WriteLine("Unexpected failure: " + filePath);
+                            failCount++;
+                        }
+                    } else {
+                        if(syntaxTree.diagnostics() === null || syntaxTree.diagnostics().length === 0) {
+                            environment.standardOut.WriteLine("Unexpected success: " + filePath);
+                            failCount++;
+                        }
                     }
-                } else {
-                    if(syntaxTree.diagnostics() === null || syntaxTree.diagnostics().length === 0) {
-                        environment.standardOut.WriteLine("Unexpected success: " + filePath);
-                        failCount++;
-                    }
-                }
-            } catch (e) {
-                failCount++;
-                environment.standardOut.WriteLine("");
-                if((e.message).indexOf(filePath) < 0) {
-                    environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
-                } else {
-                    environment.standardOut.WriteLine(e.message);
+                } catch (e) {
+                    failCount++;
+                    this.handleException(environment, filePath, e);
                 }
             }finally {
                 end = new Date().getTime();
@@ -37998,7 +37995,7 @@ var Program = (function () {
 var totalSize = 0;
 var totalTime = 0;
 var program = new Program();
-if(false) {
+if(true) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(Environment, false, true);
@@ -38014,14 +38011,14 @@ if(false) {
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(false) {
+if(true) {
     totalTime = 0;
     totalSize = 0;
     program.run262(Environment);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(true) {
+if(false) {
     totalTime = 0;
     totalSize = 0;
     program.runTop1000(Environment);

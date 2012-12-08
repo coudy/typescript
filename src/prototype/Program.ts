@@ -30,6 +30,16 @@ class Program {
             filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ true, /*generateBaselines:*/ false, /*printDots:*/ true));
     }
 
+    private handleException(environment: IEnvironment, filePath: string, e: Error): void {
+        environment.standardOut.WriteLine("");
+        if ((<string>e.message).indexOf(filePath) < 0) {
+            environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
+        }
+        else {
+            environment.standardOut.WriteLine(e.message);
+        }
+    }
+
     private runTests(
         environment: IEnvironment,
         path: string,
@@ -52,14 +62,8 @@ class Program {
                 action(filePath);
             }
             catch (e) {
-                environment.standardOut.WriteLine("");
-                if ((<string>e.message).indexOf(filePath) < 0) {
-                    environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
-                }
-                else {
-                    environment.standardOut.WriteLine(e.message);
-                }
-            }
+                this.handleException(environment, filePath, e);
+           }
         }
     }
 
@@ -246,48 +250,44 @@ class Program {
 
                 testCount++;
 
-                var stringText = new StringText(contents);
-                var scanner = new Scanner(stringText, LanguageVersion.EcmaScript5, stringTable);
-                var parser = new Parser(scanner);
+                try {
+                    var stringText = new StringText(contents);
+                    var scanner = new Scanner(stringText, LanguageVersion.EcmaScript5, stringTable);
+                    var parser = new Parser(scanner);
 
-                var syntaxTree = parser.parseSyntaxTree();
+                    var syntaxTree = parser.parseSyntaxTree();
             //environment.standardOut.Write(".");
 
-                if (isNegative) {
-                    var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
-                    var canParseSuccessfully = <bool>negative262ExpectedResults[fileName];
+                    if (isNegative) {
+                        var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
+                        var canParseSuccessfully = <bool>negative262ExpectedResults[fileName];
 
-                    if (canParseSuccessfully) {
-                        // We expected to parse this successfully.  Report an error if we didn't.
-                        if (syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
-                            environment.standardOut.WriteLine("Negative test. Unexpected failure: " + filePath);
-                            failCount++;
+                        if (canParseSuccessfully) {
+                            // We expected to parse this successfully.  Report an error if we didn't.
+                            if (syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
+                                environment.standardOut.WriteLine("Negative test. Unexpected failure: " + filePath);
+                                failCount++;
+                            }
+                        }
+                        else {
+                            // We expected to fail on this.  Report an error if we don't.
+                            if (syntaxTree.diagnostics() === null || syntaxTree.diagnostics().length === 0) {
+                                environment.standardOut.WriteLine("Negative test. Unexpected success: " + filePath);
+                                failCount++;
+                            }
                         }
                     }
                     else {
-                        // We expected to fail on this.  Report an error if we don't.
-                        if (syntaxTree.diagnostics() === null || syntaxTree.diagnostics().length === 0) {
-                            environment.standardOut.WriteLine("Negative test. Unexpected success: " + filePath);
+                        // Not a negative test.  We can't have any errors or skipped tokens.
+                        if (syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
+                            environment.standardOut.WriteLine("Unexpected failure: " + filePath);
                             failCount++;
                         }
                     }
                 }
-                else {
-                    // Not a negative test.  We can't have any errors or skipped tokens.
-                    if (syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
-                        environment.standardOut.WriteLine("Unexpected failure: " + filePath);
-                        failCount++;
-                    }
-                }
-            }
-            catch (e) {
-                failCount++;
-                environment.standardOut.WriteLine("");
-                if ((<string>e.message).indexOf(filePath) < 0) {
-                    environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
-                }
-                else {
-                    environment.standardOut.WriteLine(e.message);
+                catch (e) {
+                    failCount++;
+                    this.handleException(environment, filePath, e);
                 }
             }
             finally {
@@ -334,36 +334,32 @@ class Program {
                 totalSize += contents.length;
                 testCount++;
 
-                var stringText = new StringText(contents);
-                var scanner = new Scanner(stringText, LanguageVersion.EcmaScript5, stringTable);
-                var parser = new Parser(scanner);
+                try {
+                    var stringText = new StringText(contents);
+                    var scanner = new Scanner(stringText, LanguageVersion.EcmaScript5, stringTable);
+                    var parser = new Parser(scanner);
 
-                var syntaxTree = parser.parseSyntaxTree();
-                //environment.standardOut.WriteLine(filePath);
-                // environment.standardOut.Write(".");
+                    var syntaxTree = parser.parseSyntaxTree();
+            //environment.standardOut.WriteLine(filePath);
+            // environment.standardOut.Write(".");
 
-                if (canParseSuccessfully) {
-                    if (syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
-                        environment.standardOut.WriteLine("Unexpected failure: " + filePath);
-                        failCount++;
+                    if (canParseSuccessfully) {
+                        if (syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
+                            environment.standardOut.WriteLine("Unexpected failure: " + filePath);
+                            failCount++;
+                        }
+                    }
+                    else {
+                        // We expected to fail on this.  Report an error if we don't.
+                        if (syntaxTree.diagnostics() === null || syntaxTree.diagnostics().length === 0) {
+                            environment.standardOut.WriteLine("Unexpected success: " + filePath);
+                            failCount++;
+                        }
                     }
                 }
-                else {
-                    // We expected to fail on this.  Report an error if we don't.
-                    if (syntaxTree.diagnostics() === null || syntaxTree.diagnostics().length === 0) {
-                        environment.standardOut.WriteLine("Unexpected success: " + filePath);
-                        failCount++;
-                    }
-                }
-            }
-            catch (e) {
-                failCount++;
-                environment.standardOut.WriteLine("");
-                if ((<string>e.message).indexOf(filePath) < 0) {
-                    environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
-                }
-                else {
-                    environment.standardOut.WriteLine(e.message);
+                catch (e) {
+                    failCount++;
+                    this.handleException(environment, filePath, e);
                 }
             }
             finally {
@@ -390,7 +386,7 @@ var totalTime = 0;
 var program = new Program();
 
 // New parser.
-if (false) {
+if (true) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(Environment, false, true);
@@ -410,7 +406,7 @@ if (false) {
 }
 
 // Test 262.
-if (false) {
+if (true) {
     totalTime = 0;
     totalSize = 0;
     program.run262(Environment);
@@ -419,7 +415,7 @@ if (false) {
 }
 
 // Test Top 1000 sites.
-if (true) {
+if (false) {
     totalTime = 0;
     totalSize = 0;
     program.runTop1000(Environment);
