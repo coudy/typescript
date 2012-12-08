@@ -37697,13 +37697,16 @@ var expectedTop1000Failures = {
     "JSFile100\\yandex_ru\\watch_visor.js": true,
     "JSFile100\\uol_com_br\\site_uolbr_chan_batepapo_subchan_capa_affiliate_uolbrbatepapo_size_125x125_page_7_conntype_1_expble_0_reso_1756x1127_tile_215298826605972.js": true,
     "JSFile100\\uol_com_br\\site_uolbr_chan_batepapo_subchan_capa_affiliate_uolbrbatepapo_size_728x90_page_1_conntype_1_expble_0_reso_1756x1127_tile_215298826605972.js": true,
-    "JSFile100\\aol_com\ajax.js": true,
-    "aol_com\\ad_refresher.js": true,
-    "bing_com\\omniture.js": true,
-    "bing_com\\ScriptResource.js": true
+    "JSFile100\\aol_com\\ajax.js": true,
+    "JSFile100\\aol_com\\ad_refresher.js": true,
+    "JSFile100\\bing_com\\omniture.js": true,
+    "JSFile100\\bing_com\\ScriptResource.js": true,
+    "JSFile600\\xstreetsl_com\\mootools_1_2_3_production.js": true,
+    "JSFile800\\fedex_com\\InstantInvite3.js": true
 };
 var stringTable = new StringTable();
-var specificFile = undefined;
+var specificFile = "capitalone_com\\customer_info.js";
+undefined;
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {
@@ -37723,7 +37726,7 @@ var Program = (function () {
         });
         environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, true, true, false, true);
+            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true, false, true);
         });
     };
     Program.prototype.runTests = function (environment, path, action, printDots) {
@@ -37912,7 +37915,12 @@ var Program = (function () {
                 }
             } catch (e) {
                 failCount++;
-                environment.standardOut.WriteLine("Exception: " + filePath);
+                environment.standardOut.WriteLine("");
+                if((e.message).indexOf(filePath) < 0) {
+                    environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
+                } else {
+                    environment.standardOut.WriteLine(e.message);
+                }
             }finally {
                 end = new Date().getTime();
                 totalTime += (end - start);
@@ -37965,7 +37973,12 @@ var Program = (function () {
                 }
             } catch (e) {
                 failCount++;
-                environment.standardOut.WriteLine("Exception: " + filePath);
+                environment.standardOut.WriteLine("");
+                if((e.message).indexOf(filePath) < 0) {
+                    environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
+                } else {
+                    environment.standardOut.WriteLine(e.message);
+                }
             }finally {
                 end = new Date().getTime();
                 totalTime += (end - start);
@@ -37985,7 +37998,7 @@ var Program = (function () {
 var totalSize = 0;
 var totalTime = 0;
 var program = new Program();
-if(true) {
+if(false) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(Environment, false, true);
@@ -38001,14 +38014,14 @@ if(false) {
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(true) {
+if(false) {
     totalTime = 0;
     totalSize = 0;
     program.run262(Environment);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(false) {
+if(true) {
     totalTime = 0;
     totalSize = 0;
     program.runTop1000(Environment);

@@ -6,7 +6,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "S7.8.5_A1.2_T2.js";
+    // "capitalone_com\\customer_info.js";
     undefined;
 
 class Program {
@@ -27,7 +27,7 @@ class Program {
             
         environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ true, /*allowErrors:*/ true, /*generateBaselines:*/ false, /*printDots:*/ true));
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ true, /*generateBaselines:*/ false, /*printDots:*/ true));
     }
 
     private runTests(
@@ -282,7 +282,13 @@ class Program {
             }
             catch (e) {
                 failCount++;
-                environment.standardOut.WriteLine("Exception: " + filePath);
+                environment.standardOut.WriteLine("");
+                if ((<string>e.message).indexOf(filePath) < 0) {
+                    environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
+                }
+                else {
+                    environment.standardOut.WriteLine(e.message);
+                }
             }
             finally {
                 end = new Date().getTime();
@@ -352,7 +358,13 @@ class Program {
             }
             catch (e) {
                 failCount++;
-                environment.standardOut.WriteLine("Exception: " + filePath);
+                environment.standardOut.WriteLine("");
+                if ((<string>e.message).indexOf(filePath) < 0) {
+                    environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
+                }
+                else {
+                    environment.standardOut.WriteLine(e.message);
+                }
             }
             finally {
                 end = new Date().getTime();
@@ -378,7 +390,7 @@ var totalTime = 0;
 var program = new Program();
 
 // New parser.
-if (true) {
+if (false) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(Environment, false, true);
@@ -398,7 +410,7 @@ if (false) {
 }
 
 // Test 262.
-if (true) {
+if (false) {
     totalTime = 0;
     totalSize = 0;
     program.run262(Environment);
@@ -407,7 +419,7 @@ if (true) {
 }
 
 // Test Top 1000 sites.
-if (false) {
+if (true) {
     totalTime = 0;
     totalSize = 0;
     program.runTop1000(Environment);
