@@ -26,4 +26,8 @@ class SyntaxNode implements ISyntaxElement {
 
         return result;
     }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        throw Errors.abstract();
+    }
 }

@@ -5,6 +5,7 @@ BUILT_LOCALTEST=$(BUILT)\localtest
 
 HOST=$(TYPESCRIPT_HOST)
 DEBUG_HOST=$(TYPESCRIPT_DEBUG_HOST)
+NODE_HOST=$(NODE_HOST)
 
 #compiler source location
 CSRC=$(BASE)src\compiler
@@ -160,6 +161,9 @@ prototype: $(PROTOTYPE_SOURCES_PROGRAM)
 
 runprototype: prototype
 	$(DEBUG_HOST) $(PSRC)\prototype.js $(FRONTEND_SOURCES) $(SERVICES_SOURCES) $(BUILT_LOCALTEST)\typescriptServices.js $(HSRC)\harness.ts $(HSRC)\diff.ts $(HSRC)\exec.ts $(HSRC)\baselining.ts $(HSRC)\fourslash.ts $(HSRC)\dumpAST-baselining.ts $(HSRC)\external\json2.ts $(HSRC)\runner.ts
+
+runprototype_node: prototype
+	$(NODE_HOST) $(PSRC)\prototype.js $(FRONTEND_SOURCES) $(SERVICES_SOURCES) $(BUILT_LOCALTEST)\typescriptServices.js $(HSRC)\harness.ts $(HSRC)\diff.ts $(HSRC)\exec.ts $(HSRC)\baselining.ts $(HSRC)\fourslash.ts $(HSRC)\dumpAST-baselining.ts $(HSRC)\external\json2.ts $(HSRC)\runner.ts
 
 prototype_tsc: $(PROTOTYPE_SOURCES_TSC)
 	$(STRC_LKG) $(PROTOTYPE_SOURCES_TSC) -const -out $(PSRC)\tsc.js

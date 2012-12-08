@@ -6,7 +6,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "capitalone_com\\customer_info.js";
+    // "google_com\\05AFD0210766275790B746BA3FBFA35D_cache.js";
     undefined;
 
 class Program {

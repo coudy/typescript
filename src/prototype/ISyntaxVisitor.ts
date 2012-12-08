@@ -1,6 +1,7 @@
 ///<reference path='References.ts' />
 
 interface ISyntaxVisitor {
+    visitSourceUnit(node: SourceUnitSyntax): void;
     visitExternalModuleReference(node: ExternalModuleReferenceSyntax): void;
     visitModuleNameModuleReference(node: ModuleNameModuleReferenceSyntax): void;
     visitImportDeclaration(node: ImportDeclarationSyntax): void;
@@ -88,6 +89,10 @@ interface ISyntaxVisitor {
 
 class DefaultSyntaxVisitor implements ISyntaxVisitor {
     public defaultVisit(node: SyntaxNode): void {
+    }
+
+    public visitSourceUnit(node: SourceUnitSyntax): void {
+        this.defaultVisit(node);
     }
 
     public visitExternalModuleReference(node: ExternalModuleReferenceSyntax): void {

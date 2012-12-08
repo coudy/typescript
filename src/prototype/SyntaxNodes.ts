@@ -19,6 +19,10 @@ class SourceUnitSyntax extends SyntaxNode {
         this._endOfFileToken = endOfFileToken;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitSourceUnit(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.SourceUnit;
     }
@@ -72,6 +76,10 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         this._closeParenToken = closeParenToken;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitExternalModuleReference(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ExternalModuleReference;
     }
@@ -106,6 +114,10 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         this._moduleName = moduleName;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitModuleNameModuleReference(this);
+    }
+
     public moduleName(): NameSyntax {
         return this._moduleName;
     }
@@ -118,11 +130,11 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
     private _moduleReference: ModuleReferenceSyntax;
     private _semicolonToken: ISyntaxToken;
 
-    constructor (importKeyword: ISyntaxToken,
-                 identifier: ISyntaxToken,
-                 equalsToken: ISyntaxToken,
-                 moduleReference: ModuleReferenceSyntax,
-                 semicolonToken: ISyntaxToken) {
+    constructor(importKeyword: ISyntaxToken,
+                identifier: ISyntaxToken,
+                equalsToken: ISyntaxToken,
+                moduleReference: ModuleReferenceSyntax,
+                semicolonToken: ISyntaxToken) {
         super();
 
         //if (importKeyword.keywordKind() !== SyntaxKind.ImportKeyword) {
@@ -150,6 +162,10 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
         this._equalsToken = equalsToken;
         this._moduleReference = moduleReference;
         this._semicolonToken = semicolonToken;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitImportDeclaration(this);
     }
 
     public kind(): SyntaxKind {
@@ -238,6 +254,10 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
         this._closeBraceToken = closeBraceToken;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitClassDeclaration(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ClassDeclaration;
     }
@@ -286,11 +306,11 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
     private _extendsClause: ExtendsClauseSyntax;
     private _body: ObjectTypeSyntax;
 
-    constructor (exportKeyword: ISyntaxToken,
-                 interfaceKeyword: ISyntaxToken,
-                 identifier: ISyntaxToken,
-                 extendsClause: ExtendsClauseSyntax,
-                 body: ObjectTypeSyntax) {
+    constructor(exportKeyword: ISyntaxToken,
+                interfaceKeyword: ISyntaxToken,
+                identifier: ISyntaxToken,
+                extendsClause: ExtendsClauseSyntax,
+                body: ObjectTypeSyntax) {
         super();
 
         //if (exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
@@ -314,6 +334,10 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
         this._identifier = identifier;
         this._extendsClause = extendsClause;
         this._body = body;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitInterfaceDeclaration(this);
     }
 
     public kind(): SyntaxKind {
@@ -345,8 +369,8 @@ class ExtendsClauseSyntax extends SyntaxNode {
     private _extendsKeyword: ISyntaxToken;
     private _typeNames: ISeparatedSyntaxList;
 
-    constructor (extendsKeyword: ISyntaxToken,
-                 typeNames: ISeparatedSyntaxList) {
+    constructor(extendsKeyword: ISyntaxToken,
+                typeNames: ISeparatedSyntaxList) {
         super();
 
         //if (extendsKeyword.keywordKind() !== SyntaxKind.ExtendsKeyword) {
@@ -394,6 +418,10 @@ class ImplementsClauseSyntax extends SyntaxNode {
         this._typeNames = typeNames;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitImplementsClause(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ImplementsClause;
     }
@@ -417,14 +445,14 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
     private _moduleElements: ISyntaxList;
     private _closeBraceToken: ISyntaxToken;
 
-    constructor (exportKeyword: ISyntaxToken,
-                 declareKeyword: ISyntaxToken,
-                 moduleKeyword: ISyntaxToken,
-                 moduleName: NameSyntax,
-                 stringLiteral: ISyntaxToken,
-                 openBraceToken: ISyntaxToken,
-                 moduleElements: ISyntaxList,
-                 closeBraceToken: ISyntaxToken) {
+    constructor(exportKeyword: ISyntaxToken,
+                declareKeyword: ISyntaxToken,
+                moduleKeyword: ISyntaxToken,
+                moduleName: NameSyntax,
+                stringLiteral: ISyntaxToken,
+                openBraceToken: ISyntaxToken,
+                moduleElements: ISyntaxList,
+                closeBraceToken: ISyntaxToken) {
         super();
 
         //if (exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
@@ -461,6 +489,10 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
         this._openBraceToken = openBraceToken;
         this._moduleElements = moduleElements;
         this._closeBraceToken = closeBraceToken;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitModuleDeclaration(this);
     }
 
     public kind(): SyntaxKind {
@@ -541,6 +573,10 @@ class FunctionDeclarationSyntax extends StatementSyntax {
         this._block = block;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitFunctionDeclaration(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.FunctionDeclaration;
     }
@@ -604,6 +640,10 @@ class VariableStatementSyntax extends StatementSyntax {
         this._semicolonToken = semicolonToken;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitVariableStatement(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.VariableStatement;
     }
@@ -651,6 +691,10 @@ class VariableDeclarationSyntax extends SyntaxNode {
         this._variableDeclarators = variableDeclarators;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitVariableDeclaration(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.VariableDeclaration;
     }
@@ -681,6 +725,10 @@ class VariableDeclaratorSyntax extends SyntaxNode {
         this._identifier = identifier;
         this._typeAnnotation = typeAnnotation;
         this._equalsValueClause = equalsValueClause;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitVariableDeclarator(this);
     }
 
     public kind(): SyntaxKind {
@@ -716,6 +764,10 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         this._value = value;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitEqualsValueClause(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.EqualsValueClause;
     }
@@ -749,6 +801,10 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
         this._operand = operand;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitPrefixUnaryExpression(this);
+    }
+
     public kind(): SyntaxKind {
         return this._kind;
     }
@@ -775,6 +831,10 @@ class ThisExpressionSyntax extends UnaryExpressionSyntax {
         this._thisKeyword = thisKeyword;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitThisExpression(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ThisExpression;
     }
@@ -795,6 +855,10 @@ class LiteralExpressionSyntax extends UnaryExpressionSyntax {
 
         this._kind = kind;
         this._literalToken = literalToken;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitLiteralExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -833,6 +897,10 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
         this._closeBracketToken = closeBracketToken;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitArrayLiteralExpression(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ArrayLiteralExpression;
     }
@@ -853,6 +921,10 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
 class OmittedExpressionSyntax extends ExpressionSyntax {
     constructor () {
         super();
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitOmittedExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -885,6 +957,10 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
         this._openParenToken = openParenToken;
         this._expression = expression;
         this._closeParenToken = closeParenToken;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitParenthesizedExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -947,6 +1023,10 @@ class SimpleArrowFunctionExpression extends ArrowFunctionExpressionSyntax {
         this._body = body;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitSimpleArrowFunctionExpression(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.SimpleArrowFunctionExpression;
     }
@@ -983,6 +1063,10 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
         this._body = body;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitParenthesizedArrowFunctionExpression(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ParenthesizedArrowFunctionExpression;
     }
@@ -1017,6 +1101,10 @@ class IdentifierNameSyntax extends NameSyntax {
         //}
 
         this._identifier = identifier;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitIdentifierName(this);
     }
 
     public kind(): SyntaxKind {
@@ -1057,6 +1145,10 @@ class QualifiedNameSyntax extends NameSyntax {
         this._left = left;
         this._dotToken = dotToken;
         this._right = right;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitQualifiedName(this);
     }
 
     public kind(): SyntaxKind {
@@ -1110,6 +1202,10 @@ class ConstructorTypeSyntax extends TypeSyntax {
         this._type = type;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitConstructorType(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ConstructorType;
     }
@@ -1158,6 +1254,10 @@ class FunctionTypeSyntax extends TypeSyntax {
         this._type = type;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitFunctionType(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.FunctionType;
     }
@@ -1202,6 +1302,10 @@ class ObjectTypeSyntax extends TypeSyntax {
         this._closeBraceToken = closeBraceToken;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitObjectType(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ObjectType;
     }
@@ -1242,6 +1346,10 @@ class ArrayTypeSyntax extends TypeSyntax {
         this._closeBracketToken = closeBracketToken;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitArrayType(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ArrayType;
     }
@@ -1267,6 +1375,10 @@ class PredefinedTypeSyntax extends TypeSyntax {
 
         // TODO: Add argument checking for keyword.
         this._keyword = keyword;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitPredefinedType(this);
     }
 
     public kind(): SyntaxKind {
@@ -1296,6 +1408,10 @@ class TypeAnnotationSyntax extends SyntaxNode {
 
         this._colonToken = colonToken;
         this._type = type;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitTypeAnnotation(this);
     }
 
     public kind(): SyntaxKind {
@@ -1336,6 +1452,10 @@ class BlockSyntax extends StatementSyntax {
         this._openBraceToken = openBraceToken;
         this._statements = statements;
         this._closeBraceToken = closeBraceToken;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitBlock(this);
     }
 
     public kind(): SyntaxKind {
@@ -1397,6 +1517,10 @@ class ParameterSyntax extends SyntaxNode {
         this._equalsValueClause = equalsValueClause;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitParameter(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.Parameter;
     }
@@ -1453,6 +1577,10 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
         this._identifierName = identifierName;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitMemberAccessExpression(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.MemberAccessExpression;
     }
@@ -1495,6 +1623,10 @@ class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
         this._kind = kind;
         this._operand = operand;
         this._operatorToken = operatorToken;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitPostfixUnaryExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -1544,6 +1676,10 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
         this._closeBracketToken = closeBracketToken;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitElementAccessExpression(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ElementAccessExpression;
     }
@@ -1585,6 +1721,10 @@ class InvocationExpressionSyntax extends UnaryExpressionSyntax {
         this._argumentList = argumentList;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitInvocationExpression(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.InvocationExpression;
     }
@@ -1623,6 +1763,10 @@ class ArgumentListSyntax extends SyntaxNode {
         this._openParenToken = openParenToken;
         this._arguments = arguments;
         this._closeParenToken = closeParenToken;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitArgumentList(this);
     }
 
     public kind(): SyntaxKind {
@@ -1670,6 +1814,10 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
         this._left = left;
         this._operatorToken = operatorToken;
         this._right = right;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitBinaryExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -1730,6 +1878,10 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
         this._whenFalse = whenFalse;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitConditionalExpression(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ConditionalExpression;
     }
@@ -1788,6 +1940,10 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         this._typeAnnotation = typeAnnotation;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitConstructSignature(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ConstructSignature;
     }
@@ -1833,6 +1989,10 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         this._questionToken = questionToken;
         this._parameterList = parameterList;
         this._typeAnnotation = typeAnnotation;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitFunctionSignature(this);
     }
 
     public kind(): SyntaxKind {
@@ -1886,6 +2046,10 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         this._typeAnnotation = typeAnnotation;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitIndexSignature(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.IndexSignature;
     }
@@ -1924,6 +2088,10 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         this._identifier = identifier;
         this._questionToken = questionToken;
         this._typeAnnotation = typeAnnotation;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitPropertySignature(this);
     }
 
     public kind(): SyntaxKind {
@@ -1970,6 +2138,10 @@ class ParameterListSyntax extends SyntaxNode {
         this._closeParenToken = closeParenToken;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitParameterList(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ParameterList;
     }
@@ -2003,6 +2175,10 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         this._typeAnnotation = typeAnnotation;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitCallSignature(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.CallSignature;
     }
@@ -2020,8 +2196,8 @@ class ElseClauseSyntax extends SyntaxNode {
     private _elseKeyword: ISyntaxToken;
     private _statement: StatementSyntax;
 
-    constructor (elseKeyword: ISyntaxToken,
-                 statement: StatementSyntax) {
+    constructor(elseKeyword: ISyntaxToken,
+                statement: StatementSyntax) {
         super();
 
         //if (elseKeyword.keywordKind() !== SyntaxKind.ElseKeyword) {
@@ -2034,6 +2210,10 @@ class ElseClauseSyntax extends SyntaxNode {
 
         this._elseKeyword = elseKeyword;
         this._statement = statement;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitElseClause(this);
     }
 
     public kind(): SyntaxKind {
@@ -2093,6 +2273,10 @@ class IfStatementSyntax extends StatementSyntax {
         this._elseClause = elseClause;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitIfStatement(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.IfStatement;
     }
@@ -2142,6 +2326,10 @@ class ExpressionStatementSyntax extends StatementSyntax {
         this._semicolonToken = semicolonToken;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitExpressionStatement(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ExpressionStatement;
     }
@@ -2188,6 +2376,10 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
         this._parameterList = parameterList;
         this._block = block;
         this._semicolonToken = semicolonToken;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitConstructorDeclaration(this);
     }
 
     public kind(): SyntaxKind {
@@ -2265,6 +2457,10 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
         this._functionSignature = functionSignature;
         this._block = block;
         this._semicolonToken = semicolonToken;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitMemberFunctionDeclaration(this);
     }
 
     public kind(): SyntaxKind {
@@ -2345,6 +2541,10 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         this._block = block;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitGetMemberAccessorDeclaration(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.GetMemberAccessorDeclaration;
     }
@@ -2400,6 +2600,10 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         this._identifier = identifier;
         this._parameterList = parameterList;
         this._block = block;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitSetMemberAccessorDeclaration(this);
     }
 
     public kind(): SyntaxKind {
@@ -2459,6 +2663,10 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
         this._semicolonToken = semicolonToken;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitMemberVariableDeclaration(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.MemberFunctionDeclaration;
     }
@@ -2507,6 +2715,10 @@ class ThrowStatementSyntax extends StatementSyntax {
         this._semicolonToken = semicolonToken;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitThrowStatement(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ThrowStatement;
     }
@@ -2547,6 +2759,10 @@ class ReturnStatementSyntax extends StatementSyntax {
         this._semicolonToken = semicolonToken;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitReturnStatement(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ReturnStatement;
     }
@@ -2585,6 +2801,10 @@ class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
         this._newKeyword = newKeyword;
         this._expression = expression;
         this._argumentList = argumentList;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitObjectCreationExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -2657,6 +2877,10 @@ class SwitchStatementSyntax extends StatementSyntax {
         this._openBraceToken = openBraceToken;
         this._caseClauses = caseClauses;
         this._closeBraceToken = closeBraceToken;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitSwitchStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -2740,6 +2964,10 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         this._statements = statements;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitCaseSwitchClause(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.CaseSwitchClause;
     }
@@ -2778,6 +3006,10 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         this._defaultKeyword = defaultKeyword;
         this._colonToken = colonToken;
         this._statements = statements;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitDefaultSwitchClause(this);
     }
 
     public kind(): SyntaxKind {
@@ -2824,6 +3056,10 @@ class BreakStatementSyntax extends StatementSyntax {
         this._semicolonToken = semicolonToken;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitBreakStatement(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.BreakStatement;
     }
@@ -2866,6 +3102,10 @@ class ContinueStatementSyntax extends StatementSyntax {
         this._continueKeyword = continueKeyword;
         this._identifier = identifier;
         this._semicolonToken = semicolonToken;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitContinueStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -2983,6 +3223,10 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         this._statement = statement;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitForStatement(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ForStatement;
     }
@@ -3067,6 +3311,10 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         this._statement = statement;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitForInStatement(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ForInStatement;
     }
@@ -3141,6 +3389,10 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         this._statement = statement;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitWhileStatement(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.WhileStatement;
     }
@@ -3205,6 +3457,10 @@ class WithStatementSyntax extends StatementSyntax {
         this._condition = condition;
         this._closeParenToken = closeParenToken;
         this._statement = statement;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitWithStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -3280,6 +3536,10 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
         this._closeBraceToken = closeBraceToken;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitEnumDeclaration(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.EnumDeclaration;
     }
@@ -3343,6 +3603,10 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
         this._expression = expression;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitCastExpression(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.CastExpression;
     }
@@ -3389,6 +3653,10 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
         this._openBraceToken = openBraceToken;
         this._propertyAssignments = propertyAssignments;
         this._closeBraceToken = closeBraceToken;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitObjectLiteralExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -3445,6 +3713,10 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         this._propertyName = propertyName;
         this._colonToken = colonToken;
         this._expression = expression;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitSimplePropertyAssignment(this);
     }
 
     public kind(): SyntaxKind {
@@ -3519,6 +3791,10 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         this._block = block;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitGetAccessorPropertyAssignment(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.GetAccessorPropertyAssignment;
     }
@@ -3574,6 +3850,10 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         this._parameterName = parameterName;
         this._closeParenToken = closeParenToken;
         this._block = block;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitSetAccessorPropertyAssignment(this);
     }
 
     public kind(): SyntaxKind {
@@ -3639,6 +3919,10 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
         this._block = block;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitFunctionExpression(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.FunctionExpression;
     }
@@ -3673,6 +3957,10 @@ class EmptyStatementSyntax extends StatementSyntax {
         this._semicolonToken = semicolonToken;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitEmptyStatement(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.EmptyStatement;
     }
@@ -3695,6 +3983,10 @@ class SuperExpressionSyntax extends UnaryExpressionSyntax {
         this._superKeyword = superKeyword;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitSuperExpression(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.SuperExpression;
     }
@@ -3711,9 +4003,9 @@ class TryStatementSyntax extends StatementSyntax {
     private _finallyClause: FinallyClauseSyntax;
 
     constructor(tryKeyword: ISyntaxToken,
-        block: BlockSyntax,
-        catchClause: CatchClauseSyntax,
-        finallyClause: FinallyClauseSyntax) {
+                block: BlockSyntax,
+                catchClause: CatchClauseSyntax,
+                finallyClause: FinallyClauseSyntax) {
         super();
 
         //if (tryKeyword.keywordKind() !== SyntaxKind.TryKeyword) {
@@ -3728,6 +4020,10 @@ class TryStatementSyntax extends StatementSyntax {
         this._block = block;
         this._catchClause = catchClause;
         this._finallyClause = finallyClause;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitTryStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -3792,6 +4088,10 @@ class CatchClauseSyntax extends SyntaxNode {
         this._block = block;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitCatchClause(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.CatchClause;
     }
@@ -3837,6 +4137,10 @@ class FinallyClauseSyntax extends SyntaxNode {
         this._block = block;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitFinallyClause(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.FinallyClause;
     }
@@ -3875,6 +4179,10 @@ class LabeledStatement extends StatementSyntax {
         this._identifier = identifier;
         this._colonToken = colonToken;
         this._statement = statement;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitLabeledStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -3945,6 +4253,10 @@ class DoStatementSyntax extends IterationStatementSyntax {
         this._semicolonToken = semicolonToken;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitDoStatement(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.DoStatement;
     }
@@ -3998,6 +4310,10 @@ class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
         this._expression = expression;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitTypeOfExpression(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.TypeOfExpression;
     }
@@ -4029,6 +4345,10 @@ class DeleteExpressionSyntax extends UnaryExpressionSyntax {
 
         this._deleteKeyword = deleteKeyword;
         this._expression = expression;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitDeleteExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -4064,6 +4384,10 @@ class VoidExpressionSyntax extends UnaryExpressionSyntax {
         this._expression = expression;
     }
 
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitVoidExpression(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.VoidExpression;
     }
@@ -4087,6 +4411,10 @@ class DebuggerStatementSyntax extends StatementSyntax {
 
         this._debuggerKeyword = debuggerKeyword;
         this._semicolonToken = semicolonToken;
+    }
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitDebuggerStatement(this);
     }
 
     public kind(): SyntaxKind {
