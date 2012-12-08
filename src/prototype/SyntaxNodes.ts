@@ -4,7 +4,8 @@ class SourceUnitSyntax extends SyntaxNode {
     private _moduleElements: ISyntaxList;
     private _endOfFileToken: ISyntaxToken;
 
-    constructor (moduleElements: ISyntaxList, endOfFileToken: ISyntaxToken) {
+    constructor(moduleElements: ISyntaxList,
+                endOfFileToken: ISyntaxToken) {
         super();
 
         //if (moduleElements === null) {
@@ -104,7 +105,7 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
 class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
     private _moduleName: NameSyntax;
 
-    constructor (moduleName: NameSyntax) {
+    constructor(moduleName: NameSyntax) {
         super();
 
         //if (moduleName === null) {
@@ -180,7 +181,7 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
         return this._identifier;
     }
 
-    public equalsTokens(): ISyntaxToken {
+    public equalsToken(): ISyntaxToken {
         return this._equalsToken;
     }
 
@@ -499,6 +500,10 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
         return SyntaxKind.ModuleDeclaration;
     }
 
+    public exportKeyword(): ISyntaxToken {
+        return this._exportKeyword;
+    }
+
     public declareKeyword(): ISyntaxToken {
         return this._declareKeyword;
     }
@@ -509,6 +514,10 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
 
     public moduleName(): NameSyntax {
         return this._moduleName;
+    }
+
+    public stringLiteral(): ISyntaxToken {
+        return this._stringLiteral;
     }
 
     public openBraceToken(): ISyntaxToken {
@@ -612,10 +621,10 @@ class VariableStatementSyntax extends StatementSyntax {
     private _variableDeclaration: VariableDeclarationSyntax;
     private _semicolonToken: ISyntaxToken;
 
-    constructor (exportKeyword: ISyntaxToken,
-                 declareKeyword: ISyntaxToken,
-                 variableDeclaration: VariableDeclarationSyntax,
-                 semicolonToken: ISyntaxToken) {
+    constructor(exportKeyword: ISyntaxToken,
+                declareKeyword: ISyntaxToken,
+                variableDeclaration: VariableDeclarationSyntax,
+                semicolonToken: ISyntaxToken) {
         super();
 
         //if (exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
@@ -713,9 +722,9 @@ class VariableDeclaratorSyntax extends SyntaxNode {
     private _typeAnnotation: TypeAnnotationSyntax;
     private _equalsValueClause: EqualsValueClauseSyntax;
 
-    constructor (identifier: ISyntaxToken,
-                 typeAnnotation: TypeAnnotationSyntax,
-                 equalsValueClause: EqualsValueClauseSyntax) {
+    constructor(identifier: ISyntaxToken,
+                typeAnnotation: TypeAnnotationSyntax,
+                equalsValueClause: EqualsValueClauseSyntax) {
         super();
 
         //if (identifier.kind !== SyntaxKind.IdentifierNameToken) {
@@ -752,8 +761,8 @@ class EqualsValueClauseSyntax extends SyntaxNode {
     private _equalsToken: ISyntaxToken;
     private _value: ExpressionSyntax;
 
-    constructor (equalsToken: ISyntaxToken,
-                 value: ExpressionSyntax) {
+    constructor(equalsToken: ISyntaxToken,
+                value: ExpressionSyntax) {
         super();
 
         //if (equalsToken.kind !== SyntaxKind.EqualsToken) {
@@ -772,7 +781,7 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         return SyntaxKind.EqualsValueClause;
     }
 
-    public equalsValue(): ISyntaxToken {
+    public equalsToken(): ISyntaxToken {
         return this._equalsToken;
     }
 
@@ -786,9 +795,9 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
     private _operatorToken: ISyntaxToken;
     private _operand: UnaryExpressionSyntax;
 
-    constructor (kind: SyntaxKind,
-                 operatorToken: ISyntaxToken,
-                 operand: UnaryExpressionSyntax) {
+    constructor(kind: SyntaxKind,
+                operatorToken: ISyntaxToken,
+                operand: UnaryExpressionSyntax) {
         super();
 
         //// Add error checking for kind and operator token.
@@ -821,7 +830,7 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
 class ThisExpressionSyntax extends UnaryExpressionSyntax {
     private _thisKeyword: ISyntaxToken;
 
-    constructor (thisKeyword: ISyntaxToken) {
+    constructor(thisKeyword: ISyntaxToken) {
         super();
 
         //if (thisKeyword.keywordKind() !== SyntaxKind.ThisKeyword) { 
@@ -848,7 +857,8 @@ class LiteralExpressionSyntax extends UnaryExpressionSyntax {
     private _kind: SyntaxKind = SyntaxKind.None;
     private _literalToken: ISyntaxToken;
 
-    constructor (kind: SyntaxKind, literalToken: ISyntaxToken) {
+    constructor(kind: SyntaxKind,
+                literalToken: ISyntaxToken) {
         super();
 
         // TODO: Add argument checking.
@@ -875,9 +885,9 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
     private _expressions: ISeparatedSyntaxList;
     private _closeBracketToken: ISyntaxToken;
 
-    constructor (openBracketToken: ISyntaxToken,
-                 expressions: ISeparatedSyntaxList,
-                 closeBracketToken: ISyntaxToken) {
+    constructor(openBracketToken: ISyntaxToken,
+                expressions: ISeparatedSyntaxList,
+                closeBracketToken: ISyntaxToken) {
         super();
 
         //if (openBracketToken.kind !== SyntaxKind.OpenBracketToken) {
@@ -919,7 +929,7 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
 }
 
 class OmittedExpressionSyntax extends ExpressionSyntax {
-    constructor () {
+    constructor() {
         super();
     }
 
@@ -937,9 +947,9 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
     private _expression: ExpressionSyntax;
     private _closeParenToken: ISyntaxToken;
 
-    constructor (openParenToken: ISyntaxToken,
-                 expression: ExpressionSyntax,
-                 closeParenToken: ISyntaxToken) {
+    constructor(openParenToken: ISyntaxToken,
+                expression: ExpressionSyntax,
+                closeParenToken: ISyntaxToken) {
         super();
 
         //if (openParenToken.kind !== SyntaxKind.OpenParenToken) {
@@ -1009,9 +1019,9 @@ class SimpleArrowFunctionExpression extends ArrowFunctionExpressionSyntax {
     private _equalsGreaterThanToken: ISyntaxToken;
     private _body: SyntaxNode;
 
-    constructor (identifier: ISyntaxToken,
-                 equalsGreaterThanToken: ISyntaxToken,
-                 body: SyntaxNode) {
+    constructor(identifier: ISyntaxToken,
+                equalsGreaterThanToken: ISyntaxToken,
+                body: SyntaxNode) {
         super();
 
         //if (identifier.kind !== SyntaxKind.IdentifierNameToken) {
@@ -1049,9 +1059,9 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
     private _equalsGreaterThanToken: ISyntaxToken;
     private _body: SyntaxNode;
 
-    constructor (callSignature: CallSignatureSyntax,
-                 equalsGreaterThanToken: ISyntaxToken,
-                 body: SyntaxNode) {
+    constructor(callSignature: CallSignatureSyntax,
+                equalsGreaterThanToken: ISyntaxToken,
+                body: SyntaxNode) {
         super();
 
         //if (callSignature === null) {
@@ -1093,7 +1103,7 @@ class NameSyntax extends TypeSyntax {
 class IdentifierNameSyntax extends NameSyntax {
     private _identifier: ISyntaxToken;
 
-    constructor (identifier: ISyntaxToken) {
+    constructor(identifier: ISyntaxToken) {
         super();
 
         //if (identifier.kind !== SyntaxKind.IdentifierNameToken) {
@@ -1125,9 +1135,9 @@ class QualifiedNameSyntax extends NameSyntax {
     private _dotToken: ISyntaxToken;
     private _right: IdentifierNameSyntax;
 
-    constructor (left: NameSyntax,
-                 dotToken: ISyntaxToken,
-                 right: IdentifierNameSyntax) {
+    constructor(left: NameSyntax,
+                dotToken: ISyntaxToken,
+                right: IdentifierNameSyntax) {
         super();
 
         //if (left === null) {
@@ -1175,9 +1185,9 @@ class ConstructorTypeSyntax extends TypeSyntax {
     private _type: TypeSyntax;
 
     constructor(newKeyword: ISyntaxToken,
-        parameterList: ParameterListSyntax,
-        equalsGreaterThanToken: ISyntaxToken,
-        type: TypeSyntax) {
+                parameterList: ParameterListSyntax,
+                equalsGreaterThanToken: ISyntaxToken,
+                type: TypeSyntax) {
         super();
 
         //if (newKeyword.keywordKind() !== SyntaxKind.NewKeyword) {
@@ -1280,9 +1290,9 @@ class ObjectTypeSyntax extends TypeSyntax {
     private _typeMembers: ISeparatedSyntaxList;
     private _closeBraceToken: ISyntaxToken;
 
-    constructor (openBraceToken: ISyntaxToken,
-                 typeMembers: ISeparatedSyntaxList,
-                 closeBraceToken: ISyntaxToken) {
+    constructor(openBraceToken: ISyntaxToken,
+                typeMembers: ISeparatedSyntaxList,
+                closeBraceToken: ISyntaxToken) {
         super();
 
         //if (openBraceToken.kind !== SyntaxKind.OpenBraceToken) {
@@ -1328,9 +1338,9 @@ class ArrayTypeSyntax extends TypeSyntax {
     private _openBracketToken: ISyntaxToken;
     private _closeBracketToken: ISyntaxToken;
 
-    constructor (type: TypeSyntax,
-                 openBracketToken: ISyntaxToken,
-                 closeBracketToken: ISyntaxToken) {
+    constructor(type: TypeSyntax,
+                openBracketToken: ISyntaxToken,
+                closeBracketToken: ISyntaxToken) {
         super();
 
         //if (openBracketToken.kind !== SyntaxKind.OpenBracketToken) {
@@ -1370,7 +1380,7 @@ class ArrayTypeSyntax extends TypeSyntax {
 class PredefinedTypeSyntax extends TypeSyntax {
     private _keyword: ISyntaxToken;
     
-    constructor (keyword: ISyntaxToken) {
+    constructor(keyword: ISyntaxToken) {
         super();
 
         // TODO: Add argument checking for keyword.
@@ -1394,8 +1404,8 @@ class TypeAnnotationSyntax extends SyntaxNode {
     private _colonToken: ISyntaxToken;
     private _type: TypeSyntax;
 
-    constructor (colonToken: ISyntaxToken,
-                 type: TypeSyntax) {
+    constructor(colonToken: ISyntaxToken,
+                type: TypeSyntax) {
         super();
 
         //if (colonToken.kind !== SyntaxKind.ColonToken) {
@@ -1432,9 +1442,9 @@ class BlockSyntax extends StatementSyntax {
     private _statements: ISyntaxList;
     private _closeBraceToken: ISyntaxToken;
 
-    constructor (openBraceToken: ISyntaxToken,
-                 statements: ISyntaxList,
-                 closeBraceToken: ISyntaxToken) {
+    constructor(openBraceToken: ISyntaxToken,
+                statements: ISyntaxList,
+                closeBraceToken: ISyntaxToken) {
         super();
 
         //if (openBraceToken.kind !== SyntaxKind.OpenBraceToken) {
@@ -1483,12 +1493,12 @@ class ParameterSyntax extends SyntaxNode {
     private _typeAnontation: TypeAnnotationSyntax;
     private _equalsValueClause: EqualsValueClauseSyntax;
 
-    constructor (dotDotDotToken: ISyntaxToken,
-                 publicOrPrivateKeyword: ISyntaxToken,
-                 identifier: ISyntaxToken,
-                 questionToken: ISyntaxToken,
-                 typeAnnotation: TypeAnnotationSyntax,
-                 equalsValueClause: EqualsValueClauseSyntax) {
+    constructor(dotDotDotToken: ISyntaxToken,
+                publicOrPrivateKeyword: ISyntaxToken,
+                identifier: ISyntaxToken,
+                questionToken: ISyntaxToken,
+                typeAnnotation: TypeAnnotationSyntax,
+                equalsValueClause: EqualsValueClauseSyntax) {
         super();
 
         //if (dotDotDotToken !== null && dotDotDotToken.kind !== SyntaxKind.DotDotDotToken) {
@@ -1555,9 +1565,9 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
     private _dotToken: ISyntaxToken;
     private _identifierName: IdentifierNameSyntax;
 
-    constructor (expression: ExpressionSyntax,
-                 dotToken: ISyntaxToken,
-                 identifierName: IdentifierNameSyntax) {
+    constructor(expression: ExpressionSyntax,
+                dotToken: ISyntaxToken,
+                identifierName: IdentifierNameSyntax) {
         super();
 
         //if (expression === null) {
@@ -1603,9 +1613,9 @@ class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
     private _operand: ExpressionSyntax;
     private _operatorToken: ISyntaxToken;
 
-    constructor (kind: SyntaxKind,
-                 operand: ExpressionSyntax,
-                 operatorToken: ISyntaxToken) {
+    constructor(kind: SyntaxKind,
+                operand: ExpressionSyntax,
+                operatorToken: ISyntaxToken) {
         super();
 
         //if (kind !== SyntaxKind.PostIncrementExpression && kind !== SyntaxKind.PostDecrementExpression) {
@@ -1648,10 +1658,10 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
     private _argumentExpression: ExpressionSyntax;
     private _closeBracketToken: ISyntaxToken;
 
-    constructor (expression: ExpressionSyntax,
-                 openBracketToken: ISyntaxToken,
-                 argumentExpression: ExpressionSyntax,
-                 closeBracketToken: ISyntaxToken) {
+    constructor(expression: ExpressionSyntax,
+                openBracketToken: ISyntaxToken,
+                argumentExpression: ExpressionSyntax,
+                closeBracketToken: ISyntaxToken) {
         super();
 
         //if (expression === null) {
@@ -1705,8 +1715,8 @@ class InvocationExpressionSyntax extends UnaryExpressionSyntax {
     private _expression: ExpressionSyntax;
     private _argumentList: ArgumentListSyntax;
 
-    constructor (expression: ExpressionSyntax,
-                 argumentList: ArgumentListSyntax) {
+    constructor(expression: ExpressionSyntax,
+                argumentList: ArgumentListSyntax) {
         super();
 
         //if (expression === null) {
@@ -1743,9 +1753,9 @@ class ArgumentListSyntax extends SyntaxNode {
     private _arguments: ISeparatedSyntaxList;
     private _closeParenToken: ISyntaxToken;
 
-    constructor (openParenToken: ISyntaxToken,
-                 arguments: ISeparatedSyntaxList,
-                 closeParenToken: ISyntaxToken) {
+    constructor(openParenToken: ISyntaxToken,
+                arguments: ISeparatedSyntaxList,
+                closeParenToken: ISyntaxToken) {
         super();
 
         //if (openParenToken.kind !== SyntaxKind.OpenParenToken) {
@@ -1792,10 +1802,10 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
     private _operatorToken: ISyntaxToken;
     private _right: ExpressionSyntax;
 
-    constructor (kind: SyntaxKind,
-                 left: ExpressionSyntax,
-                 operatorToken: ISyntaxToken,
-                 right: ExpressionSyntax) {
+    constructor(kind: SyntaxKind,
+                left: ExpressionSyntax,
+                operatorToken: ISyntaxToken,
+                right: ExpressionSyntax) {
         super();
 
         //// TODO: check kind.
@@ -1844,11 +1854,11 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
     private _colonToken: ISyntaxToken;
     private _whenFalse: ExpressionSyntax;
 
-    constructor (condition: ExpressionSyntax,
-                 questionToken: ISyntaxToken,
-                 whenTrue: ExpressionSyntax,
-                 colonToken: ISyntaxToken,
-                 whenFalse: ExpressionSyntax) {
+    constructor(condition: ExpressionSyntax,
+                questionToken: ISyntaxToken,
+                whenTrue: ExpressionSyntax,
+                colonToken: ISyntaxToken,
+                whenFalse: ExpressionSyntax) {
         super();
 
         //if (condition === null) {
@@ -1967,10 +1977,10 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
     private _parameterList: ParameterListSyntax;
     private _typeAnnotation: TypeAnnotationSyntax;
 
-    constructor (identifier: ISyntaxToken,
-                 questionToken: ISyntaxToken,
-                 parameterList: ParameterListSyntax,
-                 typeAnnotation: TypeAnnotationSyntax) {
+    constructor(identifier: ISyntaxToken,
+                questionToken: ISyntaxToken,
+                parameterList: ParameterListSyntax,
+                typeAnnotation: TypeAnnotationSyntax) {
         super();
 
         //if (identifier.kind !== SyntaxKind.IdentifierNameToken) {
@@ -2116,9 +2126,9 @@ class ParameterListSyntax extends SyntaxNode {
     private _parameters: ISeparatedSyntaxList;
     private _closeParenToken: ISyntaxToken;
 
-    constructor (openParenToken: ISyntaxToken,
-                 parameters: ISeparatedSyntaxList,
-                 closeParenToken: ISyntaxToken) {
+    constructor(openParenToken: ISyntaxToken,
+                parameters: ISeparatedSyntaxList,
+                closeParenToken: ISyntaxToken) {
         super();
 
         //if (openParenToken.kind !== SyntaxKind.OpenParenToken) {
@@ -2163,8 +2173,8 @@ class CallSignatureSyntax extends TypeMemberSyntax {
     private _parameterList: ParameterListSyntax;
     private _typeAnnotation: TypeAnnotationSyntax;
     
-    constructor (parameterList: ParameterListSyntax,
-                 typeAnnotation: TypeAnnotationSyntax) {
+    constructor(parameterList: ParameterListSyntax,
+                typeAnnotation: TypeAnnotationSyntax) {
         super();
 
         //if (parameterList === null) {
@@ -2238,11 +2248,11 @@ class IfStatementSyntax extends StatementSyntax {
     private _elseClause: ElseClauseSyntax;
 
     constructor(ifKeyword: ISyntaxToken,
-        openParenToken: ISyntaxToken,
-        condition: ExpressionSyntax,
-        closeParenToken: ISyntaxToken,
-        statement: StatementSyntax,
-        elseClause: ElseClauseSyntax) {
+                openParenToken: ISyntaxToken,
+                condition: ExpressionSyntax,
+                closeParenToken: ISyntaxToken,
+                statement: StatementSyntax,
+                elseClause: ElseClauseSyntax) {
         super();
 
         //if (ifKeyword.keywordKind() !== SyntaxKind.IfKeyword) {
@@ -2404,7 +2414,6 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
 }
 
 class MemberDeclarationSyntax extends ClassElementSyntax {
-
     constructor() {
         super();
 
@@ -2524,12 +2533,12 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
     private _block: BlockSyntax;
 
     constructor(publicOrPrivateKeyword: ISyntaxToken,
-        staticKeyword: ISyntaxToken,
-        getKeyword: ISyntaxToken,
-        identifier: ISyntaxToken,
-        parameterList: ParameterListSyntax,
-        typeAnnotation: TypeAnnotationSyntax,
-        block: BlockSyntax) {
+                staticKeyword: ISyntaxToken,
+                getKeyword: ISyntaxToken,
+                identifier: ISyntaxToken,
+                parameterList: ParameterListSyntax,
+                typeAnnotation: TypeAnnotationSyntax,
+                block: BlockSyntax) {
         super();
 
         this._publicOrPrivateKeyword = publicOrPrivateKeyword;

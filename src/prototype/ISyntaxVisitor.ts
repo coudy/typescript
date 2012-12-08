@@ -10,7 +10,6 @@ interface ISyntaxVisitor {
     visitExtendsClause(node: ExtendsClauseSyntax): void;
     visitImplementsClause(node: ImplementsClauseSyntax): void;
     visitModuleDeclaration(node: ModuleDeclarationSyntax): void;
-    visitStatement(node: StatementSyntax): void;
     visitFunctionDeclaration(node: FunctionDeclarationSyntax): void;
     visitVariableStatement(node: VariableStatementSyntax): void;
     visitVariableDeclaration(node: VariableDeclarationSyntax): void;
