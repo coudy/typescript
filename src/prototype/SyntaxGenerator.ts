@@ -1,6 +1,6 @@
 ///<reference path='References.ts' />
 
-var generateArgumentChecks = true;
+var argumentChecks = false;
 
 interface ITypeDefinition {
     name: string;
@@ -991,29 +991,10 @@ function generateProperties(definition: ITypeDefinition): string {
     return result;
 }
 
-function generateConstructor(definition: ITypeDefinition): string {
+function generateArgumentChecks(definition: ITypeDefinition): string {
     var result = "";
-    result += "    constructor("
 
-    for (var i = 0; i < definition.children.length; i++) {
-        var child = definition.children[i];
-        if (child === undefined) { continue; }
-
-        result += child.name + ": " + getType(child);
-
-        if (i < definition.children.length - 2) {
-            result += ",\r\n                ";
-        }
-    }
-
-    result += ") {\r\n";
-
-    result += "        super();\r\n";
-    if (definition.children.length > 0) {
-        result += "\r\n";
-    }
-
-    if (generateArgumentChecks) {
+    if (argumentChecks) {
         for (var i = 0; i < definition.children.length; i++) {
             var child: IMemberDefinition = definition.children[i];
             if (child === undefined) { continue; }
@@ -1057,11 +1038,38 @@ function generateConstructor(definition: ITypeDefinition): string {
                 result += ") { throw Errors.argument('" + child.name + "'); }\r\n";
             }
         }
+
+        if (definition.children.length > 0) {
+            result += "\r\n";
+        }
     }
 
+    return result;
+}
+
+function generateConstructor(definition: ITypeDefinition): string {
+    var result = "";
+    result += "    constructor("
+
+    for (var i = 0; i < definition.children.length; i++) {
+        var child = definition.children[i];
+        if (child === undefined) { continue; }
+
+        result += child.name + ": " + getType(child);
+
+        if (i < definition.children.length - 2) {
+            result += ",\r\n                ";
+        }
+    }
+
+    result += ") {\r\n";
+
+    result += "        super();\r\n";
     if (definition.children.length > 0) {
         result += "\r\n";
     }
+
+    result += generateArgumentChecks(definition);
 
     for (var i = 0; i < definition.children.length; i++) {
         var child: IMemberDefinition = definition.children[i];
