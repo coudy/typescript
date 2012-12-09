@@ -1959,12 +1959,18 @@ function getType(child) {
         }
     }
 }
+var hasKind = false;
+function getSafeName(child) {
+    if(child.name === "arguments") {
+        return "_" + child.name;
+    }
+    return child.name;
+}
 function getPropertyAccess(child) {
     return "this._" + child.name;
 }
-function generateNode(definition) {
-    var result = "class " + definition.name + " extends " + definition.baseType + " {\r\n";
-    var hasKind = false;
+function generateProperties(definition) {
+    var result = "";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
         if(child === undefined) {
@@ -1976,6 +1982,10 @@ function generateNode(definition) {
     if(definition.children.length > 0) {
         result += "\r\n";
     }
+    return result;
+}
+function generateConstructor(definition) {
+    var result = "";
     result += "    constructor(";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
@@ -2000,6 +2010,10 @@ function generateNode(definition) {
         result += "        " + getPropertyAccess(child) + " = " + child.name + ";\r\n";
     }
     result += "    }\r\n";
+    return result;
+}
+function generateAcceptMethods(definition) {
+    var result = "";
     if(!definition.isAbstract) {
         result += "\r\n";
         result += "    public accept(visitor: ISyntaxVisitor): void {\r\n";
@@ -2009,12 +2023,24 @@ function generateNode(definition) {
         result += "    public accept1(visitor: ISyntaxVisitor1): any {\r\n";
         result += "        return visitor.visit" + getNameWithoutSuffix(definition) + "(this);\r\n";
         result += "    }\r\n";
+    }
+    return result;
+}
+function generateKindMethod(definition) {
+    var result = "";
+    if(!definition.isAbstract) {
         if(!hasKind) {
             result += "\r\n";
             result += "    public kind(): SyntaxKind {\r\n";
             result += "        return SyntaxKind." + getNameWithoutSuffix(definition) + ";\r\n";
             result += "    }\r\n";
         }
+    }
+    return result;
+}
+function generateIsMissingMethod(definition) {
+    var result = "";
+    if(!definition.isAbstract) {
         result += "\r\n";
         result += "    public isMissing(): bool {\r\n";
         for(var i = 0; i < definition.children.length; i++) {
@@ -2034,6 +2060,10 @@ function generateNode(definition) {
         result += "        return true;\r\n";
         result += "    }\r\n";
     }
+    return result;
+}
+function generateAccessors(definition) {
+    var result = "";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
         if(child === undefined) {
@@ -2044,6 +2074,69 @@ function generateNode(definition) {
         result += "        return " + getPropertyAccess(child) + ";\r\n";
         result += "    }\r\n";
     }
+    return result;
+}
+function generateUpdateMethod(definition) {
+    if(definition.isAbstract) {
+        return "";
+    }
+    var result = "";
+    result += "\r\n";
+    result += "    public update(";
+    for(var i = 0; i < definition.children.length; i++) {
+        var child = definition.children[i];
+        if(child === undefined) {
+            continue;
+        }
+        result += getSafeName(child) + ": " + getType(child);
+        if(i < definition.children.length - 2) {
+            result += ",\r\n                  ";
+        }
+    }
+    result += ") {\r\n";
+    if(definition.children.length === 0) {
+        result += "        return this;\r\n";
+    } else {
+        result += "        if (";
+        for(var i = 0; i < definition.children.length; i++) {
+            var child = definition.children[i];
+            if(child === undefined) {
+                continue;
+            }
+            if(i !== 0) {
+                result += " && ";
+            }
+            result += getPropertyAccess(child) + " === " + getSafeName(child);
+        }
+        result += ") {\r\n";
+        result += "            return this;\r\n";
+        result += "        }\r\n\r\n";
+        result += "        return new " + definition.name + "(";
+        for(var i = 0; i < definition.children.length; i++) {
+            var child = definition.children[i];
+            if(child === undefined) {
+                continue;
+            }
+            if(i !== 0) {
+                result += ", ";
+            }
+            result += getSafeName(child);
+        }
+        result += ");\r\n";
+    }
+    result += "    }\r\n";
+    return result;
+}
+function generateNode(definition) {
+    var result = "class " + definition.name + " extends " + definition.baseType + " {\r\n";
+    hasKind = false;
+    result += generateProperties(definition);
+    result += generateConstructor(definition);
+    result += generateAcceptMethods(definition);
+    result += generateKindMethod(definition);
+    result += generateIsMissingMethod(definition);
+    result += generateAccessors(definition);
+    result += generateUpdateMethod(definition);
     result += "}";
     return result;
 }
