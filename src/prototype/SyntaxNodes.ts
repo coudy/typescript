@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+﻿///<reference path='References.ts' />
 
 class SourceUnitSyntax extends SyntaxNode {
     private _moduleElements: ISyntaxList;
@@ -690,11 +690,10 @@ class FunctionDeclarationSyntax extends StatementSyntax {
         super();
 
         if (functionSignature === null) { throw Errors.argumentNull('functionSignature'); }
-        if (block === null) { throw Errors.argumentNull('block'); }
         if (exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) { throw Errors.argument('exportKeyword'); }
         if (declareKeyword !== null && declareKeyword.keywordKind() !== SyntaxKind.DeclareKeyword) { throw Errors.argument('declareKeyword'); }
         if (functionKeyword.keywordKind() !== SyntaxKind.FunctionKeyword) { throw Errors.argument('functionKeyword'); }
-        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
+        if (semicolonToken !== null && semicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
         this._exportKeyword = exportKeyword;
         this._declareKeyword = declareKeyword;
@@ -721,8 +720,8 @@ class FunctionDeclarationSyntax extends StatementSyntax {
         if (this._declareKeyword !== null && !this._declareKeyword.isMissing()) { return false; }
         if (!this._functionKeyword.isMissing()) { return false; }
         if (!this._functionSignature.isMissing()) { return false; }
-        if (!this._block.isMissing()) { return false; }
-        if (!this._semicolonToken.isMissing()) { return false; }
+        if (this._block !== null && !this._block.isMissing()) { return false; }
+        if (this._semicolonToken !== null && !this._semicolonToken.isMissing()) { return false; }
         return true;
     }
 
@@ -1801,7 +1800,7 @@ class PredefinedTypeSyntax extends TypeSyntax {
     constructor(keyword: ISyntaxToken) {
         super();
 
-        if (keyword.keywordKind() !== SyntaxKind.AnyKeyword && keyword.keywordKind() !== SyntaxKind.BoolKeyword && keyword.keywordKind() !== SyntaxKind.NumberKeyword && keyword.keywordKind() !== SyntaxKind.StringKeyword) { throw Errors.argument('keyword'); }
+        if (keyword.keywordKind() !== SyntaxKind.AnyKeyword && keyword.keywordKind() !== SyntaxKind.BoolKeyword && keyword.keywordKind() !== SyntaxKind.NumberKeyword && keyword.keywordKind() !== SyntaxKind.StringKeyword && keyword.keywordKind() !== SyntaxKind.VoidKeyword) { throw Errors.argument('keyword'); }
 
         this._keyword = keyword;
     }
@@ -4452,7 +4451,7 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
         super();
 
         if (variableDeclarators === null) { throw Errors.argumentNull('variableDeclarators'); }
-        if (exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) { throw Errors.argument('exportKeyword'); }
+        if (exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) { throw Errors.argument('exportKeyword'); }
         if (enumKeyword.keywordKind() !== SyntaxKind.EnumKeyword) { throw Errors.argument('enumKeyword'); }
         if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
         if (openBraceToken.kind() !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
@@ -4479,7 +4478,7 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
     }
 
     public isMissing(): bool {
-        if (!this._exportKeyword.isMissing()) { return false; }
+        if (this._exportKeyword !== null && !this._exportKeyword.isMissing()) { return false; }
         if (!this._enumKeyword.isMissing()) { return false; }
         if (!this._identifier.isMissing()) { return false; }
         if (!this._openBraceToken.isMissing()) { return false; }
@@ -4675,7 +4674,7 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         super();
 
         if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (propertyName.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('propertyName'); }
+        if (propertyName.kind() !== SyntaxKind.IdentifierNameToken && propertyName.kind() !== SyntaxKind.StringLiteral && propertyName.kind() !== SyntaxKind.NumericLiteral) { throw Errors.argument('propertyName'); }
         if (colonToken.kind() !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
 
         this._propertyName = propertyName;

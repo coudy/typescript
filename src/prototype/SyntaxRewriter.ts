@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+﻿///<reference path='References.ts' />
 
 class SyntaxRewriter implements ISyntaxVisitor1 {
     public visitToken(token: ISyntaxToken): ISyntaxToken {
@@ -131,12 +131,12 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
 
     public visitFunctionDeclaration(node: FunctionDeclarationSyntax): any {
         return node.update(
-            this.visitToken(node.exportKeyword()),
-            this.visitToken(node.declareKeyword()),
+            node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()),
+            node.declareKeyword() === null ? null : this.visitToken(node.declareKeyword()),
             this.visitToken(node.functionKeyword()),
             <FunctionSignatureSyntax>this.visitNode(node.functionSignature()),
             <BlockSyntax>this.visitNode(node.block()),
-            this.visitToken(node.semicolonToken()));
+            node.semicolonToken() === null ? null : this.visitToken(node.semicolonToken()));
     }
 
     public visitVariableStatement(node: VariableStatementSyntax): any {
@@ -556,7 +556,7 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
 
     public visitEnumDeclaration(node: EnumDeclarationSyntax): any {
         return node.update(
-            this.visitToken(node.exportKeyword()),
+            node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()),
             this.visitToken(node.enumKeyword()),
             this.visitToken(node.identifier()),
             this.visitToken(node.openBraceToken()),

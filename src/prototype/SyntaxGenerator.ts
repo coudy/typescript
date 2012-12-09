@@ -1,3 +1,5 @@
+///<reference path='References.ts' />
+
 var generateArgumentChecks = true;
 
 interface ITypeDefinition {
@@ -136,8 +138,8 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'declareKeyword', isToken: true, isOptional: true },
             <any>{ name: 'functionKeyword', isToken: true },
             <any>{ name: 'functionSignature', type: 'FunctionSignatureSyntax' },
-            <any>{ name: 'block', type: 'BlockSyntax' },
-            <any>{ name: 'semicolonToken', isToken: true },
+            <any>{ name: 'block', type: 'BlockSyntax', isOptional: true },
+            <any>{ name: 'semicolonToken', isToken: true, isOptional: true },
         ]
     },
     <any>{
@@ -327,7 +329,7 @@ var definitions:ITypeDefinition[] = [
         name: 'PredefinedTypeSyntax',
         baseType: 'TypeSyntax',
         children: [
-            <any>{ name: 'keyword', isToken: true, tokenKinds: ["AnyKeyword", "BoolKeyword", "NumberKeyword", "StringKeyword"] },
+            <any>{ name: 'keyword', isToken: true, tokenKinds: ["AnyKeyword", "BoolKeyword", "NumberKeyword", "StringKeyword", "VoidKeyword"] },
         ]
     },
     <any>{
@@ -748,7 +750,7 @@ var definitions:ITypeDefinition[] = [
         name: 'EnumDeclarationSyntax',
         baseType: 'ModuleElementSyntax',
         children: [
-            <any>{ name: 'exportKeyword', isToken: true },
+            <any>{ name: 'exportKeyword', isToken: true, isOptional: true },
             <any>{ name: 'enumKeyword', isToken: true },
             <any>{ name: 'identifier', isToken: true, tokenKinds: ["IdentifierNameToken"] },
             <any>{ name: 'openBraceToken', isToken: true },
@@ -785,7 +787,7 @@ var definitions:ITypeDefinition[] = [
         name: 'SimplePropertyAssignmentSyntax',
         baseType: 'PropertyAssignmentSyntax',
         children: [
-            <any>{ name: 'propertyName', isToken: true, tokenKinds: ["IdentifierNameToken"] },
+            <any>{ name: 'propertyName', isToken: true, tokenKinds: ["IdentifierNameToken", "StringLiteral", "NumericLiteral"] },
             <any>{ name: 'colonToken', isToken: true },
             <any>{ name: 'expression', type: 'ExpressionSyntax' },
         ]
@@ -1362,4 +1364,5 @@ function generateRewriter(): string {
 var syntaxNodes = generateNodes();
 var rewriter = generateRewriter();
 
-1 + 1;
+Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxNodes.ts", syntaxNodes, true);
+Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxRewriter.ts", rewriter, true);

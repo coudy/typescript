@@ -7292,19 +7292,16 @@ var FunctionDeclarationSyntax = (function (_super) {
         if(functionSignature === null) {
             throw Errors.argumentNull('functionSignature');
         }
-        if(block === null) {
-            throw Errors.argumentNull('block');
-        }
-        if(exportKeyword.keywordKind() !== 43 /* ExportKeyword */ ) {
+        if(exportKeyword !== null && exportKeyword.keywordKind() !== 43 /* ExportKeyword */ ) {
             throw Errors.argument('exportKeyword');
         }
-        if(declareKeyword.keywordKind() !== 59 /* DeclareKeyword */ ) {
+        if(declareKeyword !== null && declareKeyword.keywordKind() !== 59 /* DeclareKeyword */ ) {
             throw Errors.argument('declareKeyword');
         }
         if(functionKeyword.keywordKind() !== 23 /* FunctionKeyword */ ) {
             throw Errors.argument('functionKeyword');
         }
-        if(semicolonToken.kind() !== 73 /* SemicolonToken */ ) {
+        if(semicolonToken !== null && semicolonToken.kind() !== 73 /* SemicolonToken */ ) {
             throw Errors.argument('semicolonToken');
         }
         this._exportKeyword = exportKeyword;
@@ -7324,10 +7321,10 @@ var FunctionDeclarationSyntax = (function (_super) {
         return 126 /* FunctionDeclaration */ ;
     };
     FunctionDeclarationSyntax.prototype.isMissing = function () {
-        if(!this._exportKeyword.isMissing()) {
+        if(this._exportKeyword !== null && !this._exportKeyword.isMissing()) {
             return false;
         }
-        if(!this._declareKeyword.isMissing()) {
+        if(this._declareKeyword !== null && !this._declareKeyword.isMissing()) {
             return false;
         }
         if(!this._functionKeyword.isMissing()) {
@@ -7336,10 +7333,10 @@ var FunctionDeclarationSyntax = (function (_super) {
         if(!this._functionSignature.isMissing()) {
             return false;
         }
-        if(!this._block.isMissing()) {
+        if(this._block !== null && !this._block.isMissing()) {
             return false;
         }
-        if(!this._semicolonToken.isMissing()) {
+        if(this._semicolonToken !== null && !this._semicolonToken.isMissing()) {
             return false;
         }
         return true;
@@ -8298,7 +8295,7 @@ var PredefinedTypeSyntax = (function (_super) {
     __extends(PredefinedTypeSyntax, _super);
     function PredefinedTypeSyntax(keyword) {
         _super.call(this);
-        if(keyword.keywordKind() !== 56 /* AnyKeyword */  && keyword.keywordKind() !== 57 /* BoolKeyword */  && keyword.keywordKind() !== 62 /* NumberKeyword */  && keyword.keywordKind() !== 64 /* StringKeyword */ ) {
+        if(keyword.keywordKind() !== 56 /* AnyKeyword */  && keyword.keywordKind() !== 57 /* BoolKeyword */  && keyword.keywordKind() !== 62 /* NumberKeyword */  && keyword.keywordKind() !== 64 /* StringKeyword */  && keyword.keywordKind() !== 37 /* VoidKeyword */ ) {
             throw Errors.argument('keyword');
         }
         this._keyword = keyword;
@@ -10686,7 +10683,7 @@ var EnumDeclarationSyntax = (function (_super) {
         if(variableDeclarators === null) {
             throw Errors.argumentNull('variableDeclarators');
         }
-        if(exportKeyword.keywordKind() !== 43 /* ExportKeyword */ ) {
+        if(exportKeyword !== null && exportKeyword.keywordKind() !== 43 /* ExportKeyword */ ) {
             throw Errors.argument('exportKeyword');
         }
         if(enumKeyword.keywordKind() !== 42 /* EnumKeyword */ ) {
@@ -10718,7 +10715,7 @@ var EnumDeclarationSyntax = (function (_super) {
         return 129 /* EnumDeclaration */ ;
     };
     EnumDeclarationSyntax.prototype.isMissing = function () {
-        if(!this._exportKeyword.isMissing()) {
+        if(this._exportKeyword !== null && !this._exportKeyword.isMissing()) {
             return false;
         }
         if(!this._enumKeyword.isMissing()) {
@@ -10898,7 +10895,7 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
         if(expression === null) {
             throw Errors.argumentNull('expression');
         }
-        if(propertyName.kind() !== 7 /* IdentifierNameToken */ ) {
+        if(propertyName.kind() !== 7 /* IdentifierNameToken */  && propertyName.kind() !== 10 /* StringLiteral */  && propertyName.kind() !== 9 /* NumericLiteral */ ) {
             throw Errors.argument('propertyName');
         }
         if(colonToken.kind() !== 101 /* ColonToken */ ) {
@@ -11829,7 +11826,7 @@ var SyntaxRewriter = (function () {
         return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), node.declareKeyword() === null ? null : this.visitToken(node.declareKeyword()), this.visitToken(node.moduleKeyword()), this.visitNode(node.moduleName()), node.stringLiteral() === null ? null : this.visitToken(node.stringLiteral()), this.visitToken(node.openBraceToken()), this.visitList(node.moduleElements()), this.visitToken(node.closeBraceToken()));
     };
     SyntaxRewriter.prototype.visitFunctionDeclaration = function (node) {
-        return node.update(this.visitToken(node.exportKeyword()), this.visitToken(node.declareKeyword()), this.visitToken(node.functionKeyword()), this.visitNode(node.functionSignature()), this.visitNode(node.block()), this.visitToken(node.semicolonToken()));
+        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), node.declareKeyword() === null ? null : this.visitToken(node.declareKeyword()), this.visitToken(node.functionKeyword()), this.visitNode(node.functionSignature()), this.visitNode(node.block()), node.semicolonToken() === null ? null : this.visitToken(node.semicolonToken()));
     };
     SyntaxRewriter.prototype.visitVariableStatement = function (node) {
         return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), node.declareKeyword() === null ? null : this.visitToken(node.declareKeyword()), this.visitNode(node.variableDeclaration()), this.visitToken(node.semicolonToken()));
@@ -11997,7 +11994,7 @@ var SyntaxRewriter = (function () {
         return node.update(this.visitToken(node.withKeyword()), this.visitToken(node.openParenToken()), this.visitNode(node.condition()), this.visitToken(node.closeParenToken()), this.visitNode(node.statement()));
     };
     SyntaxRewriter.prototype.visitEnumDeclaration = function (node) {
-        return node.update(this.visitToken(node.exportKeyword()), this.visitToken(node.enumKeyword()), this.visitToken(node.identifier()), this.visitToken(node.openBraceToken()), this.visitSeparatedList(node.variableDeclarators()), this.visitToken(node.closeBraceToken()));
+        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), this.visitToken(node.enumKeyword()), this.visitToken(node.identifier()), this.visitToken(node.openBraceToken()), this.visitSeparatedList(node.variableDeclarators()), this.visitToken(node.closeBraceToken()));
     };
     SyntaxRewriter.prototype.visitCastExpression = function (node) {
         return node.update(this.visitToken(node.lessThanToken()), this.visitNode(node.type()), this.visitToken(node.greaterThanToken()), this.visitNode(node.expression()));
