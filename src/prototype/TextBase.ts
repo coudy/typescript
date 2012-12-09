@@ -181,10 +181,10 @@ class TextBase implements IText {
                 index++;
                 continue;
             }
-            else if (c === CharacterCodes.carriageReturn && index + 1 < length && this.charCodeAt(index + 1) === CharacterCodes.newLine) {
+            else if (c === CharacterCodes.carriageReturn && index + 1 < length && this.charCodeAt(index + 1) === CharacterCodes.lineFeed) {
                 lineBreakLength = 2;
             }
-            else if (c === CharacterCodes.newLine) {
+            else if (c === CharacterCodes.lineFeed) {
                 lineBreakLength = 1;
             }
             else {

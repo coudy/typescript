@@ -203,7 +203,7 @@ var CharacterCodes;
     CharacterCodes._map = [];
     CharacterCodes.nullCharacter = 0;
     CharacterCodes.maxAsciiCharacter = 127;
-    CharacterCodes.newLine = 10;
+    CharacterCodes.lineFeed = 10;
     CharacterCodes.carriageReturn = 13;
     CharacterCodes.nextLine = 133;
     CharacterCodes.lineSeparator = 8232;
@@ -1529,7 +1529,7 @@ var SeparatedSyntaxList;
     })();    
     SeparatedSyntaxList.empty = new EmptySeparatedSyntaxList();
     function create(nodes) {
-        if(nodes === null || nodes.length === 0) {
+        if(nodes === undefined || nodes === null || nodes.length === 0) {
             return SeparatedSyntaxList.empty;
         }
         if(nodes.length === 1) {
@@ -4476,7 +4476,7 @@ var Scanner = (function (_super) {
 
                 }
                 case 13 /* carriageReturn */ :
-                case 10 /* newLine */ :
+                case 10 /* lineFeed */ :
                 case 8233 /* paragraphSeparator */ :
                 case 8232 /* lineSeparator */ : {
                     hasNewLine = true;
@@ -4494,7 +4494,7 @@ var Scanner = (function (_super) {
     Scanner.prototype.isNewLineCharacter = function (ch) {
         switch(ch) {
             case 13 /* carriageReturn */ :
-            case 10 /* newLine */ :
+            case 10 /* lineFeed */ :
             case 8233 /* paragraphSeparator */ :
             case 8232 /* lineSeparator */ : {
                 return true;
@@ -4537,7 +4537,7 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.scanLineTerminatorSequence = function (ch) {
         this.moveToNextItem();
-        if(ch === 13 /* carriageReturn */  && this.currentCharCode() === 10 /* newLine */ ) {
+        if(ch === 13 /* carriageReturn */  && this.currentCharCode() === 10 /* lineFeed */ ) {
             this.moveToNextItem();
             return 2;
         } else {
@@ -5118,13 +5118,13 @@ var Scanner = (function (_super) {
 
                 }
                 case 13 /* carriageReturn */ : {
-                    if(this.currentCharCode() === 10 /* newLine */ ) {
+                    if(this.currentCharCode() === 10 /* lineFeed */ ) {
                         this.moveToNextItem();
                     }
                     return;
 
                 }
-                case 10 /* newLine */ :
+                case 10 /* lineFeed */ :
                 case 8233 /* paragraphSeparator */ :
                 case 8232 /* lineSeparator */ : {
                     return;
@@ -5381,10 +5381,10 @@ var TextBase = (function () {
                 index++;
                 continue;
             } else {
-                if(c === 13 /* carriageReturn */  && index + 1 < length && this.charCodeAt(index + 1) === 10 /* newLine */ ) {
+                if(c === 13 /* carriageReturn */  && index + 1 < length && this.charCodeAt(index + 1) === 10 /* lineFeed */ ) {
                     lineBreakLength = 2;
                 } else {
-                    if(c === 10 /* newLine */ ) {
+                    if(c === 10 /* lineFeed */ ) {
                         lineBreakLength = 1;
                     } else {
                         lineBreakLength = TextUtilities.getLengthOfLineBreak(this, index);
@@ -6675,7 +6675,7 @@ var SyntaxList;
         return NormalSyntaxList;
     })();    
     function create(nodes) {
-        if(nodes === null || nodes.length === 0) {
+        if(nodes === undefined || nodes === null || nodes.length === 0) {
             return SyntaxList.empty;
         }
         if(nodes.length === 1) {
@@ -13648,6 +13648,9 @@ var SyntaxTrivia;
     }
     SyntaxTrivia.createTrivia = createTrivia;
     SyntaxTrivia.space = createTrivia(3 /* WhitespaceTrivia */ , " ");
+    SyntaxTrivia.lineFeed = createTrivia(4 /* NewLineTrivia */ , "\n");
+    SyntaxTrivia.carriageReturn = createTrivia(4 /* NewLineTrivia */ , "\r");
+    SyntaxTrivia.carriageReturnLineFeed = createTrivia(4 /* NewLineTrivia */ , "\r\n");
 })(SyntaxTrivia || (SyntaxTrivia = {}));
 var SyntaxTriviaList;
 (function (SyntaxTriviaList) {
@@ -13703,12 +13706,8 @@ var SyntaxTriviaList;
         };
         return NormalSyntaxTriviaList;
     })();    
-    function create() {
-        var trivia = [];
-        for (var _i = 0; _i < (arguments.length - 0); _i++) {
-            trivia[_i] = arguments[_i + 0];
-        }
-        if(trivia === null || trivia.length === 0) {
+    function create(trivia) {
+        if(trivia === undefined || trivia === null || trivia.length === 0) {
             return SyntaxTriviaList.empty;
         }
         if(trivia.length === 1) {
@@ -14364,7 +14363,7 @@ var TextUtilities = (function () {
     function TextUtilities() { }
     TextUtilities.getStartAndLengthOfLineBreakEndingAt = function getStartAndLengthOfLineBreakEndingAt(text, index, info) {
         var c = text.charCodeAt(index);
-        if(c === 10 /* newLine */ ) {
+        if(c === 10 /* lineFeed */ ) {
             if(index > 0 && text.charCodeAt(index - 1) === 13 /* carriageReturn */ ) {
                 info.startPosition = index - 1;
                 info.length = 2;
@@ -14383,7 +14382,7 @@ var TextUtilities = (function () {
         }
     }
     TextUtilities.isAnyLineBreakCharacter = function isAnyLineBreakCharacter(c) {
-        return c === 10 /* newLine */  || c === 13 /* carriageReturn */  || c === 133 /* nextLine */  || c === 8232 /* lineSeparator */  || c === 8233 /* paragraphSeparator */ ;
+        return c === 10 /* lineFeed */  || c === 13 /* carriageReturn */  || c === 133 /* nextLine */  || c === 8232 /* lineSeparator */  || c === 8233 /* paragraphSeparator */ ;
     }
     TextUtilities.getLengthOfLineBreak = function getLengthOfLineBreak(text, index) {
         var c = text.charCodeAt(index);
@@ -14395,7 +14394,7 @@ var TextUtilities = (function () {
     TextUtilities.getLengthOfLineBreakSlow = function getLengthOfLineBreakSlow(text, index, c) {
         if(c === 13 /* carriageReturn */ ) {
             var next = index + 1;
-            return (next < text.length()) && 10 /* newLine */  === text.charCodeAt(next) ? 2 : 1;
+            return (next < text.length()) && 10 /* lineFeed */  === text.charCodeAt(next) ? 2 : 1;
         } else {
             if(TextUtilities.isAnyLineBreakCharacter(c)) {
                 return 1;

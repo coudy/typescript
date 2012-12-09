@@ -132,7 +132,7 @@ module SeparatedSyntaxList {
     
     export var empty: ISeparatedSyntaxList = new EmptySeparatedSyntaxList();
     export function create(nodes: ISyntaxElement[]): ISeparatedSyntaxList {
-        if (nodes === null || nodes.length === 0) {
+        if (nodes === undefined || nodes === null || nodes.length === 0) {
             return empty;
         }
 

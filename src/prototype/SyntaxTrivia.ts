@@ -43,4 +43,7 @@ module SyntaxTrivia {
     }
 
     export var space: ISyntaxTrivia = createTrivia(SyntaxKind.WhitespaceTrivia, " ");
+    export var lineFeed: ISyntaxTrivia = createTrivia(SyntaxKind.NewLineTrivia, "\n");
+    export var carriageReturn: ISyntaxTrivia = createTrivia(SyntaxKind.NewLineTrivia, "\r");
+    export var carriageReturnLineFeed: ISyntaxTrivia = createTrivia(SyntaxKind.NewLineTrivia, "\r\n");
 }

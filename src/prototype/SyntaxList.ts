@@ -102,7 +102,7 @@ module SyntaxList {
     }
 
     export function create(nodes: SyntaxNode[]): ISyntaxList {
-        if (nodes === null || nodes.length === 0) {
+        if (nodes === undefined || nodes === null || nodes.length === 0) {
             return empty;
         }
 

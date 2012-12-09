@@ -65,8 +65,8 @@ module SyntaxTriviaList {
         }
     }
 
-    export function create(...trivia: ISyntaxTrivia[]): ISyntaxTriviaList {
-        if (trivia === null || trivia.length === 0) {
+    export function create(trivia: ISyntaxTrivia[]): ISyntaxTriviaList {
+        if (trivia === undefined || trivia === null || trivia.length === 0) {
             return SyntaxTriviaList.empty;
         }
 

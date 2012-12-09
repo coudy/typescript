@@ -15,7 +15,7 @@ class TextUtilities {
         text: IText, index: number, info: LinebreakInfo): void {
 
         var c = text.charCodeAt(index);
-        if (c === CharacterCodes.newLine) {
+        if (c === CharacterCodes.lineFeed) {
             if (index > 0 && text.charCodeAt(index - 1) === CharacterCodes.carriageReturn) {
                 // "\r\n" is the only 2-character line break.
                 info.startPosition = index - 1;
@@ -37,7 +37,7 @@ class TextUtilities {
     }
 
     private static isAnyLineBreakCharacter(c: number): bool {
-        return c === CharacterCodes.newLine ||
+        return c === CharacterCodes.lineFeed ||
                c === CharacterCodes.carriageReturn ||
                c === CharacterCodes.nextLine ||
                c === CharacterCodes.lineSeparator ||
@@ -58,7 +58,7 @@ class TextUtilities {
     private static getLengthOfLineBreakSlow(text: IText, index: number, c: number): number {
         if (c === CharacterCodes.carriageReturn) {
             var next = index + 1;
-            return (next < text.length()) && CharacterCodes.newLine === text.charCodeAt(next) ? 2 : 1;
+            return (next < text.length()) && CharacterCodes.lineFeed === text.charCodeAt(next) ? 2 : 1;
         }
         else if (isAnyLineBreakCharacter(c)) {
             return 1;

@@ -133,7 +133,7 @@ class Scanner extends SlidingWindow {
                     break;
 
                 case CharacterCodes.carriageReturn:
-                case CharacterCodes.newLine:
+                case CharacterCodes.lineFeed:
                 case CharacterCodes.paragraphSeparator:
                 case CharacterCodes.lineSeparator:
                     hasNewLine = true;
@@ -156,7 +156,7 @@ class Scanner extends SlidingWindow {
     private isNewLineCharacter(ch: number): bool {
         switch (ch) {
             case CharacterCodes.carriageReturn:
-            case CharacterCodes.newLine:
+            case CharacterCodes.lineFeed:
             case CharacterCodes.paragraphSeparator:
             case CharacterCodes.lineSeparator:
                 return true;
@@ -205,7 +205,7 @@ class Scanner extends SlidingWindow {
         this.moveToNextItem();
 
         // If it happened to be a \r and there's a following \n, then consume both.
-        if (ch === CharacterCodes.carriageReturn && this.currentCharCode() === CharacterCodes.newLine) {
+        if (ch === CharacterCodes.carriageReturn && this.currentCharCode() === CharacterCodes.lineFeed) {
             this.moveToNextItem();
             return 2;
         }
@@ -905,11 +905,11 @@ class Scanner extends SlidingWindow {
 
                 case CharacterCodes.carriageReturn:
                     // If it's \r\n then consume both characters.
-                    if (this.currentCharCode() === CharacterCodes.newLine) {
+                    if (this.currentCharCode() === CharacterCodes.lineFeed) {
                         this.moveToNextItem();
                     }
                     return;
-                case CharacterCodes.newLine:
+                case CharacterCodes.lineFeed:
                 case CharacterCodes.paragraphSeparator:
                 case CharacterCodes.lineSeparator:
                     return;

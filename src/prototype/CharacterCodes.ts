@@ -4,7 +4,7 @@ enum CharacterCodes {
     nullCharacter = 0,
     maxAsciiCharacter = 127,
 
-    newLine             = 10,       // \n
+    lineFeed            = 10,       // \n
     carriageReturn      = 13,       // \r
     nextLine            = 0x0085,
     lineSeparator       = 0x2028,
