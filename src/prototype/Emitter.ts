@@ -18,7 +18,7 @@ class Emitter extends SyntaxRewriter {
         var moduleElements: ModuleElementSyntax[] = [];
 
         for (var i = 0, n = node.moduleElements().count(); i < n; i++) {
-            var moduleElement = node.moduleElements()[i];
+            var moduleElement = node.moduleElements().syntaxNodeAt(i);
 
             var converted = moduleElement.accept1(this);
             if (ArrayUtilities.isArray(converted)) {
@@ -65,9 +65,9 @@ class Emitter extends SyntaxRewriter {
                         ParameterSyntax.create(identifierName.identifier())]),
                     SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken, trailingTrivia: [SyntaxTrivia.space]  }))),
             new BlockSyntax(
-                SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed]  }),
+                SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed]  }),
                 SyntaxList.empty,
-                SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken })));
+                SyntaxToken.createElastic({ kind: SyntaxKind.CloseBraceToken })));
 
         var parenthesizedFunctionExpression = new ParenthesizedExpressionSyntax(
             SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
@@ -96,7 +96,7 @@ class Emitter extends SyntaxRewriter {
             new ArgumentListSyntax(
                 SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
                 SeparatedSyntaxList.create([logicalOrExpression]),
-                SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken })));
+                SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken })));
 
         var expressionStatement = new ExpressionStatementSyntax(
             invocationExpression,

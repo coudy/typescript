@@ -13030,7 +13030,7 @@ var Emitter = (function (_super) {
     Emitter.prototype.visitSourceUnit = function (node) {
         var moduleElements = [];
         for(var i = 0, n = node.moduleElements().count(); i < n; i++) {
-            var moduleElement = node.moduleElements()[i];
+            var moduleElement = node.moduleElements().syntaxNodeAt(i);
             var converted = moduleElement.accept1(this);
             if(ArrayUtilities.isArray(converted)) {
                 moduleElements.push.apply(moduleElements, converted);
@@ -13078,12 +13078,12 @@ var Emitter = (function (_super) {
                 SyntaxTrivia.space
             ]
         }))), new BlockSyntax(SyntaxToken.createElastic({
-            kind: 68 /* OpenParenToken */ ,
+            kind: 66 /* OpenBraceToken */ ,
             trailingTrivia: [
                 SyntaxTrivia.carriageReturnLineFeed
             ]
         }), SyntaxList.empty, SyntaxToken.createElastic({
-            kind: 69 /* CloseParenToken */ 
+            kind: 67 /* CloseBraceToken */ 
         })));
         var parenthesizedFunctionExpression = new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
             kind: 68 /* OpenParenToken */ 
@@ -13108,7 +13108,7 @@ var Emitter = (function (_super) {
         }), SeparatedSyntaxList.create([
             logicalOrExpression
         ]), SyntaxToken.createElastic({
-            kind: 68 /* OpenParenToken */ 
+            kind: 69 /* CloseParenToken */ 
         })));
         var expressionStatement = new ExpressionStatementSyntax(invocationExpression, SyntaxToken.createElastic({
             kind: 74 /* SemicolonToken */ 
@@ -43202,6 +43202,10 @@ var Program = (function () {
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {
         var _this = this;
         environment.standardOut.WriteLine("");
+        environment.standardOut.WriteLine("Testing emitter.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5", function (filePath) {
+            return _this.runEmitter(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
+        });
         environment.standardOut.WriteLine("Testing scanner.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
             return _this.runScanner(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify);
@@ -43209,10 +43213,6 @@ var Program = (function () {
         environment.standardOut.WriteLine("Testing parser.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
             return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
-        });
-        environment.standardOut.WriteLine("Testing emitter.");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5", function (filePath) {
-            return _this.runEmitter(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
         });
         environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests(environment, "C:\\temp\\monoco-files", function (filePath) {
@@ -43254,7 +43254,6 @@ var Program = (function () {
         if (typeof generateBaseline === "undefined") { generateBaseline = false; }
         if (typeof printDots === "undefined") { printDots = false; }
         if(true) {
-            return;
         }
         if(!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
             return;
