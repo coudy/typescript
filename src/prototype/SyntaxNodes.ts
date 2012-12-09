@@ -244,12 +244,12 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
     }
 
     public isMissing(): bool {
-        if (!this._exportKeyword.isMissing()) { return false; }
-        if (!this._declareKeyword.isMissing()) { return false; }
+        if (this._exportKeyword !== null && !this._exportKeyword.isMissing()) { return false; }
+        if (this._declareKeyword !== null && !this._declareKeyword.isMissing()) { return false; }
         if (!this._classKeyword.isMissing()) { return false; }
         if (!this._identifier.isMissing()) { return false; }
-        if (!this._extendsClause.isMissing()) { return false; }
-        if (!this._implementsClause.isMissing()) { return false; }
+        if (this._extendsClause !== null && !this._extendsClause.isMissing()) { return false; }
+        if (this._implementsClause !== null && !this._implementsClause.isMissing()) { return false; }
         if (!this._openBraceToken.isMissing()) { return false; }
         if (!this._classElements.isMissing()) { return false; }
         if (!this._closeBraceToken.isMissing()) { return false; }
@@ -327,10 +327,10 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
     }
 
     public isMissing(): bool {
-        if (!this._exportKeyword.isMissing()) { return false; }
+        if (this._exportKeyword !== null && !this._exportKeyword.isMissing()) { return false; }
         if (!this._interfaceKeyword.isMissing()) { return false; }
         if (!this._identifier.isMissing()) { return false; }
-        if (!this._extendsClause.isMissing()) { return false; }
+        if (this._extendsClause !== null && !this._extendsClause.isMissing()) { return false; }
         if (!this._body.isMissing()) { return false; }
         return true;
     }
@@ -477,11 +477,11 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
     }
 
     public isMissing(): bool {
-        if (!this._exportKeyword.isMissing()) { return false; }
-        if (!this._declareKeyword.isMissing()) { return false; }
+        if (this._exportKeyword !== null && !this._exportKeyword.isMissing()) { return false; }
+        if (this._declareKeyword !== null && !this._declareKeyword.isMissing()) { return false; }
         if (!this._moduleKeyword.isMissing()) { return false; }
-        if (!this._moduleName.isMissing()) { return false; }
-        if (!this._stringLiteral.isMissing()) { return false; }
+        if (this._moduleName !== null && !this._moduleName.isMissing()) { return false; }
+        if (this._stringLiteral !== null && !this._stringLiteral.isMissing()) { return false; }
         if (!this._openBraceToken.isMissing()) { return false; }
         if (!this._moduleElements.isMissing()) { return false; }
         if (!this._closeBraceToken.isMissing()) { return false; }
@@ -629,8 +629,8 @@ class VariableStatementSyntax extends StatementSyntax {
     }
 
     public isMissing(): bool {
-        if (!this._exportKeyword.isMissing()) { return false; }
-        if (!this._declareKeyword.isMissing()) { return false; }
+        if (this._exportKeyword !== null && !this._exportKeyword.isMissing()) { return false; }
+        if (this._declareKeyword !== null && !this._declareKeyword.isMissing()) { return false; }
         if (!this._variableDeclaration.isMissing()) { return false; }
         if (!this._semicolonToken.isMissing()) { return false; }
         return true;
@@ -733,7 +733,7 @@ class VariableDeclaratorSyntax extends SyntaxNode {
 
     public isMissing(): bool {
         if (!this._identifier.isMissing()) { return false; }
-        if (!this._typeAnnotation.isMissing()) { return false; }
+        if (this._typeAnnotation !== null && !this._typeAnnotation.isMissing()) { return false; }
         if (!this._equalsValueClause.isMissing()) { return false; }
         return true;
     }
@@ -1553,12 +1553,12 @@ class ParameterSyntax extends SyntaxNode {
     }
 
     public isMissing(): bool {
-        if (!this._dotDotDotToken.isMissing()) { return false; }
-        if (!this._publicOrPrivateKeyword.isMissing()) { return false; }
+        if (this._dotDotDotToken !== null && !this._dotDotDotToken.isMissing()) { return false; }
+        if (this._publicOrPrivateKeyword !== null && !this._publicOrPrivateKeyword.isMissing()) { return false; }
         if (!this._identifier.isMissing()) { return false; }
-        if (!this._questionToken.isMissing()) { return false; }
-        if (!this._typeAnnotation.isMissing()) { return false; }
-        if (!this._equalsValueClause.isMissing()) { return false; }
+        if (this._questionToken !== null && !this._questionToken.isMissing()) { return false; }
+        if (this._typeAnnotation !== null && !this._typeAnnotation.isMissing()) { return false; }
+        if (this._equalsValueClause !== null && !this._equalsValueClause.isMissing()) { return false; }
         return true;
     }
 
@@ -1966,7 +1966,7 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
     public isMissing(): bool {
         if (!this._newKeyword.isMissing()) { return false; }
         if (!this._parameterList.isMissing()) { return false; }
-        if (!this._typeAnnotation.isMissing()) { return false; }
+        if (this._typeAnnotation !== null && !this._typeAnnotation.isMissing()) { return false; }
         return true;
     }
 
@@ -2015,9 +2015,9 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
 
     public isMissing(): bool {
         if (!this._identifier.isMissing()) { return false; }
-        if (!this._questionToken.isMissing()) { return false; }
+        if (this._questionToken !== null && !this._questionToken.isMissing()) { return false; }
         if (!this._parameterList.isMissing()) { return false; }
-        if (!this._typeAnnotation.isMissing()) { return false; }
+        if (this._typeAnnotation !== null && !this._typeAnnotation.isMissing()) { return false; }
         return true;
     }
 
@@ -2072,7 +2072,7 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         if (!this._openBracketToken.isMissing()) { return false; }
         if (!this._parameter.isMissing()) { return false; }
         if (!this._closeBracketToken.isMissing()) { return false; }
-        if (!this._typeAnnotation.isMissing()) { return false; }
+        if (this._typeAnnotation !== null && !this._typeAnnotation.isMissing()) { return false; }
         return true;
     }
 
@@ -2122,8 +2122,8 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
 
     public isMissing(): bool {
         if (!this._identifier.isMissing()) { return false; }
-        if (!this._questionToken.isMissing()) { return false; }
-        if (!this._typeAnnotation.isMissing()) { return false; }
+        if (this._questionToken !== null && !this._questionToken.isMissing()) { return false; }
+        if (this._typeAnnotation !== null && !this._typeAnnotation.isMissing()) { return false; }
         return true;
     }
 
@@ -2213,7 +2213,7 @@ class CallSignatureSyntax extends TypeMemberSyntax {
 
     public isMissing(): bool {
         if (!this._parameterList.isMissing()) { return false; }
-        if (!this._typeAnnotation.isMissing()) { return false; }
+        if (this._typeAnnotation !== null && !this._typeAnnotation.isMissing()) { return false; }
         return true;
     }
 
@@ -2307,7 +2307,7 @@ class IfStatementSyntax extends StatementSyntax {
         if (!this._condition.isMissing()) { return false; }
         if (!this._closeParenToken.isMissing()) { return false; }
         if (!this._statement.isMissing()) { return false; }
-        if (!this._elseClause.isMissing()) { return false; }
+        if (this._elseClause !== null && !this._elseClause.isMissing()) { return false; }
         return true;
     }
 
@@ -2414,8 +2414,8 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
     public isMissing(): bool {
         if (!this._constructorKeyword.isMissing()) { return false; }
         if (!this._parameterList.isMissing()) { return false; }
-        if (!this._block.isMissing()) { return false; }
-        if (!this._semicolonToken.isMissing()) { return false; }
+        if (this._block !== null && !this._block.isMissing()) { return false; }
+        if (this._semicolonToken !== null && !this._semicolonToken.isMissing()) { return false; }
         return true;
     }
 
@@ -2476,11 +2476,11 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
     }
 
     public isMissing(): bool {
-        if (!this._publicOrPrivateKeyword.isMissing()) { return false; }
-        if (!this._staticKeyword.isMissing()) { return false; }
+        if (this._publicOrPrivateKeyword !== null && !this._publicOrPrivateKeyword.isMissing()) { return false; }
+        if (this._staticKeyword !== null && !this._staticKeyword.isMissing()) { return false; }
         if (!this._functionSignature.isMissing()) { return false; }
-        if (!this._block.isMissing()) { return false; }
-        if (!this._semicolonToken.isMissing()) { return false; }
+        if (this._block !== null && !this._block.isMissing()) { return false; }
+        if (this._semicolonToken !== null && !this._semicolonToken.isMissing()) { return false; }
         return true;
     }
 
@@ -2551,12 +2551,12 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
     }
 
     public isMissing(): bool {
-        if (!this._publicOrPrivateKeyword.isMissing()) { return false; }
-        if (!this._staticKeyword.isMissing()) { return false; }
+        if (this._publicOrPrivateKeyword !== null && !this._publicOrPrivateKeyword.isMissing()) { return false; }
+        if (this._staticKeyword !== null && !this._staticKeyword.isMissing()) { return false; }
         if (!this._getKeyword.isMissing()) { return false; }
         if (!this._identifier.isMissing()) { return false; }
         if (!this._parameterList.isMissing()) { return false; }
-        if (!this._typeAnnotation.isMissing()) { return false; }
+        if (this._typeAnnotation !== null && !this._typeAnnotation.isMissing()) { return false; }
         if (!this._block.isMissing()) { return false; }
         return true;
     }
@@ -2627,8 +2627,8 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
     }
 
     public isMissing(): bool {
-        if (!this._publicOrPrivateKeyword.isMissing()) { return false; }
-        if (!this._staticKeyword.isMissing()) { return false; }
+        if (this._publicOrPrivateKeyword !== null && !this._publicOrPrivateKeyword.isMissing()) { return false; }
+        if (this._staticKeyword !== null && !this._staticKeyword.isMissing()) { return false; }
         if (!this._setKeyword.isMissing()) { return false; }
         if (!this._identifier.isMissing()) { return false; }
         if (!this._parameterList.isMissing()) { return false; }
@@ -2692,8 +2692,8 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
     }
 
     public isMissing(): bool {
-        if (!this._publicOrPrivateKeyword.isMissing()) { return false; }
-        if (!this._staticKeyword.isMissing()) { return false; }
+        if (this._publicOrPrivateKeyword !== null && !this._publicOrPrivateKeyword.isMissing()) { return false; }
+        if (this._staticKeyword !== null && !this._staticKeyword.isMissing()) { return false; }
         if (!this._variableDeclarator.isMissing()) { return false; }
         if (!this._semicolonToken.isMissing()) { return false; }
         return true;
@@ -2792,7 +2792,7 @@ class ReturnStatementSyntax extends StatementSyntax {
 
     public isMissing(): bool {
         if (!this._returnKeyword.isMissing()) { return false; }
-        if (!this._expression.isMissing()) { return false; }
+        if (this._expression !== null && !this._expression.isMissing()) { return false; }
         if (!this._semicolonToken.isMissing()) { return false; }
         return true;
     }
@@ -2840,7 +2840,7 @@ class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
     public isMissing(): bool {
         if (!this._newKeyword.isMissing()) { return false; }
         if (!this._expression.isMissing()) { return false; }
-        if (!this._argumentList.isMissing()) { return false; }
+        if (this._argumentList !== null && !this._argumentList.isMissing()) { return false; }
         return true;
     }
 
@@ -3073,7 +3073,7 @@ class BreakStatementSyntax extends StatementSyntax {
 
     public isMissing(): bool {
         if (!this._breakKeyword.isMissing()) { return false; }
-        if (!this._identifier.isMissing()) { return false; }
+        if (this._identifier !== null && !this._identifier.isMissing()) { return false; }
         if (!this._semicolonToken.isMissing()) { return false; }
         return true;
     }
@@ -3120,7 +3120,7 @@ class ContinueStatementSyntax extends StatementSyntax {
 
     public isMissing(): bool {
         if (!this._continueKeyword.isMissing()) { return false; }
-        if (!this._identifier.isMissing()) { return false; }
+        if (this._identifier !== null && !this._identifier.isMissing()) { return false; }
         if (!this._semicolonToken.isMissing()) { return false; }
         return true;
     }
@@ -3201,12 +3201,12 @@ class ForStatementSyntax extends BaseForStatementSyntax {
     public isMissing(): bool {
         if (!this._forKeyword.isMissing()) { return false; }
         if (!this._openParenToken.isMissing()) { return false; }
-        if (!this._variableDeclaration.isMissing()) { return false; }
-        if (!this._initializer.isMissing()) { return false; }
+        if (this._variableDeclaration !== null && !this._variableDeclaration.isMissing()) { return false; }
+        if (this._initializer !== null && !this._initializer.isMissing()) { return false; }
         if (!this._firstSemicolonToken.isMissing()) { return false; }
-        if (!this._condition.isMissing()) { return false; }
+        if (this._condition !== null && !this._condition.isMissing()) { return false; }
         if (!this._secondSemicolonToken.isMissing()) { return false; }
-        if (!this._incrementor.isMissing()) { return false; }
+        if (this._incrementor !== null && !this._incrementor.isMissing()) { return false; }
         if (!this._closeParenToken.isMissing()) { return false; }
         if (!this._statement.isMissing()) { return false; }
         return true;
@@ -3298,8 +3298,8 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
     public isMissing(): bool {
         if (!this._forKeyword.isMissing()) { return false; }
         if (!this._openParenToken.isMissing()) { return false; }
-        if (!this._variableDeclaration.isMissing()) { return false; }
-        if (!this._left.isMissing()) { return false; }
+        if (this._variableDeclaration !== null && !this._variableDeclaration.isMissing()) { return false; }
+        if (this._left !== null && !this._left.isMissing()) { return false; }
         if (!this._inKeyword.isMissing()) { return false; }
         if (!this._expression.isMissing()) { return false; }
         if (!this._closeParenToken.isMissing()) { return false; }
@@ -3864,7 +3864,7 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
 
     public isMissing(): bool {
         if (!this._functionKeyword.isMissing()) { return false; }
-        if (!this._identifier.isMissing()) { return false; }
+        if (this._identifier !== null && !this._identifier.isMissing()) { return false; }
         if (!this._callSignature.isMissing()) { return false; }
         if (!this._block.isMissing()) { return false; }
         return true;
@@ -3982,8 +3982,8 @@ class TryStatementSyntax extends StatementSyntax {
     public isMissing(): bool {
         if (!this._tryKeyword.isMissing()) { return false; }
         if (!this._block.isMissing()) { return false; }
-        if (!this._catchClause.isMissing()) { return false; }
-        if (!this._finallyClause.isMissing()) { return false; }
+        if (this._catchClause !== null && !this._catchClause.isMissing()) { return false; }
+        if (this._finallyClause !== null && !this._finallyClause.isMissing()) { return false; }
         return true;
     }
 

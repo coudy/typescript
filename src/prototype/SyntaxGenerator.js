@@ -93,11 +93,13 @@ var definitions = [
         children: [
             {
                 name: 'exportKeyword',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'declareKeyword',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'classKeyword',
@@ -109,11 +111,13 @@ var definitions = [
             }, 
             {
                 name: 'extendsClause',
-                type: 'ExtendsClauseSyntax'
+                type: 'ExtendsClauseSyntax',
+                isOptional: true
             }, 
             {
                 name: 'implementsClause',
-                type: 'ImplementsClauseSyntax'
+                type: 'ImplementsClauseSyntax',
+                isOptional: true
             }, 
             {
                 name: 'openBraceToken',
@@ -136,7 +140,8 @@ var definitions = [
         children: [
             {
                 name: 'exportKeyword',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'interfaceKeyword',
@@ -148,7 +153,8 @@ var definitions = [
             }, 
             {
                 name: 'extendsClause',
-                type: 'ExtendsClauseSyntax'
+                type: 'ExtendsClauseSyntax',
+                isOptional: true
             }, 
             {
                 name: 'body',
@@ -193,11 +199,13 @@ var definitions = [
         children: [
             {
                 name: 'exportKeyword',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'declareKeyword',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'moduleKeyword',
@@ -205,11 +213,13 @@ var definitions = [
             }, 
             {
                 name: 'moduleName',
-                type: 'NameSyntax'
+                type: 'NameSyntax',
+                isOptional: true
             }, 
             {
                 name: 'stringLiteral',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'openBraceToken',
@@ -269,11 +279,13 @@ var definitions = [
         children: [
             {
                 name: 'exportKeyword',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'declareKeyword',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'variableDeclaration',
@@ -323,7 +335,8 @@ var definitions = [
             }, 
             {
                 name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax'
+                type: 'TypeAnnotationSyntax',
+                isOptional: true
             }, 
             {
                 name: 'equalsValueClause',
@@ -652,11 +665,13 @@ var definitions = [
         children: [
             {
                 name: 'dotDotDotToken',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'publicOrPrivateKeyword',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'identifier',
@@ -664,15 +679,18 @@ var definitions = [
             }, 
             {
                 name: 'questionToken',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax'
+                type: 'TypeAnnotationSyntax',
+                isOptional: true
             }, 
             {
                 name: 'equalsValueClause',
-                type: 'EqualsValueClauseSyntax'
+                type: 'EqualsValueClauseSyntax',
+                isOptional: true
             }, 
             
         ]
@@ -842,7 +860,8 @@ var definitions = [
             }, 
             {
                 name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax'
+                type: 'TypeAnnotationSyntax',
+                isOptional: true
             }, 
             
         ]
@@ -857,7 +876,8 @@ var definitions = [
             }, 
             {
                 name: 'questionToken',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'parameterList',
@@ -865,7 +885,8 @@ var definitions = [
             }, 
             {
                 name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax'
+                type: 'TypeAnnotationSyntax',
+                isOptional: true
             }, 
             
         ]
@@ -888,7 +909,8 @@ var definitions = [
             }, 
             {
                 name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax'
+                type: 'TypeAnnotationSyntax',
+                isOptional: true
             }, 
             
         ]
@@ -903,11 +925,13 @@ var definitions = [
             }, 
             {
                 name: 'questionToken',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax'
+                type: 'TypeAnnotationSyntax',
+                isOptional: true
             }, 
             
         ]
@@ -941,7 +965,8 @@ var definitions = [
             }, 
             {
                 name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax'
+                type: 'TypeAnnotationSyntax',
+                isOptional: true
             }, 
             
         ]
@@ -987,7 +1012,8 @@ var definitions = [
             }, 
             {
                 name: 'elseClause',
-                type: 'ElseClauseSyntax'
+                type: 'ElseClauseSyntax',
+                isOptional: true
             }, 
             
         ]
@@ -1027,11 +1053,13 @@ var definitions = [
             }, 
             {
                 name: 'block',
-                type: 'BlockSyntax'
+                type: 'BlockSyntax',
+                isOptional: true
             }, 
             {
                 name: 'semicolonToken',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             
         ]
@@ -1048,11 +1076,13 @@ var definitions = [
         children: [
             {
                 name: 'publicOrPrivateKeyword',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'staticKeyword',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'functionSignature',
@@ -1060,11 +1090,13 @@ var definitions = [
             }, 
             {
                 name: 'block',
-                type: 'BlockSyntax'
+                type: 'BlockSyntax',
+                isOptional: true
             }, 
             {
                 name: 'semicolonToken',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             
         ]
@@ -1081,11 +1113,13 @@ var definitions = [
         children: [
             {
                 name: 'publicOrPrivateKeyword',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'staticKeyword',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'getKeyword',
@@ -1101,7 +1135,8 @@ var definitions = [
             }, 
             {
                 name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax'
+                type: 'TypeAnnotationSyntax',
+                isOptional: true
             }, 
             {
                 name: 'block',
@@ -1116,11 +1151,13 @@ var definitions = [
         children: [
             {
                 name: 'publicOrPrivateKeyword',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'staticKeyword',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'setKeyword',
@@ -1147,11 +1184,13 @@ var definitions = [
         children: [
             {
                 name: 'publicOrPrivateKeyword',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'staticKeyword',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'variableDeclarator',
@@ -1193,7 +1232,8 @@ var definitions = [
             }, 
             {
                 name: 'expression',
-                type: 'ExpressionSyntax'
+                type: 'ExpressionSyntax',
+                isOptional: true
             }, 
             {
                 name: 'semicolonToken',
@@ -1216,7 +1256,8 @@ var definitions = [
             }, 
             {
                 name: 'argumentList',
-                type: 'ArgumentListSyntax'
+                type: 'ArgumentListSyntax',
+                isOptional: true
             }, 
             
         ]
@@ -1314,7 +1355,8 @@ var definitions = [
             }, 
             {
                 name: 'identifier',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'semicolonToken',
@@ -1333,7 +1375,8 @@ var definitions = [
             }, 
             {
                 name: 'identifier',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'semicolonToken',
@@ -1368,11 +1411,13 @@ var definitions = [
             }, 
             {
                 name: 'variableDeclaration',
-                type: 'VariableDeclarationSyntax'
+                type: 'VariableDeclarationSyntax',
+                isOptional: true
             }, 
             {
                 name: 'initializer',
-                type: 'ExpressionSyntax'
+                type: 'ExpressionSyntax',
+                isOptional: true
             }, 
             {
                 name: 'firstSemicolonToken',
@@ -1380,7 +1425,8 @@ var definitions = [
             }, 
             {
                 name: 'condition',
-                type: 'ExpressionSyntax'
+                type: 'ExpressionSyntax',
+                isOptional: true
             }, 
             {
                 name: 'secondSemicolonToken',
@@ -1388,7 +1434,8 @@ var definitions = [
             }, 
             {
                 name: 'incrementor',
-                type: 'ExpressionSyntax'
+                type: 'ExpressionSyntax',
+                isOptional: true
             }, 
             {
                 name: 'closeParenToken',
@@ -1415,11 +1462,13 @@ var definitions = [
             }, 
             {
                 name: 'variableDeclaration',
-                type: 'VariableDeclarationSyntax'
+                type: 'VariableDeclarationSyntax',
+                isOptional: true
             }, 
             {
                 name: 'left',
-                type: 'ExpressionSyntax'
+                type: 'ExpressionSyntax',
+                isOptional: true
             }, 
             {
                 name: 'inKeyword',
@@ -1666,7 +1715,8 @@ var definitions = [
             }, 
             {
                 name: 'identifier',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'callSignature',
@@ -1715,11 +1765,13 @@ var definitions = [
             }, 
             {
                 name: 'catchClause',
-                type: 'CatchClauseSyntax'
+                type: 'CatchClauseSyntax',
+                isOptional: true
             }, 
             {
                 name: 'finallyClause',
-                type: 'FinallyClauseSyntax'
+                type: 'FinallyClauseSyntax',
+                isOptional: true
             }, 
             
         ]
@@ -1907,6 +1959,9 @@ function getType(child) {
         }
     }
 }
+function getPropertyAccess(child) {
+    return "this._" + child.name;
+}
 function generateNode(definition) {
     var result = "class " + definition.name + " extends " + definition.baseType + " {\r\n";
     var hasKind = false;
@@ -1942,7 +1997,7 @@ function generateNode(definition) {
         if(child === undefined) {
             continue;
         }
-        result += "        this._" + child.name + " = " + child.name + ";\r\n";
+        result += "        " + getPropertyAccess(child) + " = " + child.name + ";\r\n";
     }
     result += "    }\r\n";
     if(!definition.isAbstract) {
@@ -1970,7 +2025,11 @@ function generateNode(definition) {
             if(getType(child) === "SyntaxKind") {
                 continue;
             }
-            result += "        if (!this._" + child.name + ".isMissing()) { return false; }\r\n";
+            if(child.isOptional) {
+                result += "        if (" + getPropertyAccess(child) + " !== null && !" + getPropertyAccess(child) + ".isMissing()) { return false; }\r\n";
+            } else {
+                result += "        if (!" + getPropertyAccess(child) + ".isMissing()) { return false; }\r\n";
+            }
         }
         result += "        return true;\r\n";
         result += "    }\r\n";
@@ -1982,7 +2041,7 @@ function generateNode(definition) {
         }
         result += "\r\n";
         result += "    public " + child.name + "(): " + getType(child) + " {\r\n";
-        result += "        return this._" + child.name + ";\r\n";
+        result += "        return " + getPropertyAccess(child) + ";\r\n";
         result += "    }\r\n";
     }
     result += "}";

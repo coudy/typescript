@@ -11,6 +11,7 @@ interface IMemberDefinition {
     isToken?: bool;
     isList?: bool;
     isSeparatedList?: bool;
+    isOptional?: bool;
 }
 
 var definitions:any[] = [
@@ -66,12 +67,12 @@ var definitions:any[] = [
         name: 'ClassDeclarationSyntax',
         baseType: 'ModuleElementSyntax',
         children: [
-            <any>{ name: 'exportKeyword', isToken: true },
-            <any>{ name: 'declareKeyword', isToken: true },
+            <any>{ name: 'exportKeyword', isToken: true, isOptional: true  },
+            <any>{ name: 'declareKeyword', isToken: true, isOptional: true  },
             <any>{ name: 'classKeyword', isToken: true },
             <any>{ name: 'identifier', isToken: true },
-            <any>{ name: 'extendsClause', type: 'ExtendsClauseSyntax' },
-            <any>{ name: 'implementsClause', type: 'ImplementsClauseSyntax' },
+            <any>{ name: 'extendsClause', type: 'ExtendsClauseSyntax', isOptional: true },
+            <any>{ name: 'implementsClause', type: 'ImplementsClauseSyntax', isOptional: true },
             <any>{ name: 'openBraceToken', isToken: true },
             <any>{ name: 'classElements', isList: true },
             <any>{ name: 'closeBraceToken', isToken: true },
@@ -81,10 +82,10 @@ var definitions:any[] = [
         name: 'InterfaceDeclarationSyntax',
         baseType: 'ModuleElementSyntax',
         children: [
-            <any>{ name: 'exportKeyword', isToken: true },
+            <any>{ name: 'exportKeyword', isToken: true, isOptional: true  },
             <any>{ name: 'interfaceKeyword', isToken: true },
             <any>{ name: 'identifier', isToken: true },
-            <any>{ name: 'extendsClause', type: 'ExtendsClauseSyntax' },
+            <any>{ name: 'extendsClause', type: 'ExtendsClauseSyntax', isOptional: true },
             <any>{ name: 'body', type: 'ObjectTypeSyntax' },
         ]
     },
@@ -108,11 +109,11 @@ var definitions:any[] = [
         name: 'ModuleDeclarationSyntax',
         baseType: 'ModuleElementSyntax',
         children: [
-            <any>{ name: 'exportKeyword', isToken: true },
-            <any>{ name: 'declareKeyword', isToken: true },
+            <any>{ name: 'exportKeyword', isToken: true, isOptional: true },
+            <any>{ name: 'declareKeyword', isToken: true, isOptional: true },
             <any>{ name: 'moduleKeyword', isToken: true },
-            <any>{ name: 'moduleName', type: 'NameSyntax' },
-            <any>{ name: 'stringLiteral', isToken: true },
+            <any>{ name: 'moduleName', type: 'NameSyntax', isOptional: true },
+            <any>{ name: 'stringLiteral', isToken: true, isOptional: true },
             <any>{ name: 'openBraceToken', isToken: true },
             <any>{ name: 'moduleElements', isList: true },
             <any>{ name: 'closeBraceToken', isToken: true },
@@ -140,8 +141,8 @@ var definitions:any[] = [
         name: 'VariableStatementSyntax',
         baseType: 'StatementSyntax',
         children: [
-            <any>{ name: 'exportKeyword', isToken: true },
-            <any>{ name: 'declareKeyword', isToken: true },
+            <any>{ name: 'exportKeyword', isToken: true, isOptional: true },
+            <any>{ name: 'declareKeyword', isToken: true, isOptional: true },
             <any>{ name: 'variableDeclaration', type: 'VariableDeclarationSyntax' },
             <any>{ name: 'semicolonToken', isToken: true },
         ]
@@ -171,7 +172,7 @@ var definitions:any[] = [
         baseType: 'SyntaxNode',
         children: [
             <any>{ name: 'identifier', isToken: true },
-            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax' },
+            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true },
             <any>{ name: 'equalsValueClause', type: 'EqualsValueClauseSyntax' },
         ]
     },
@@ -347,12 +348,12 @@ var definitions:any[] = [
         name: 'ParameterSyntax',
         baseType: 'SyntaxNode',
         children: [
-            <any>{ name: 'dotDotDotToken', isToken: true },
-            <any>{ name: 'publicOrPrivateKeyword', isToken: true },
+            <any>{ name: 'dotDotDotToken', isToken: true, isOptional: true },
+            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true },
             <any>{ name: 'identifier', isToken: true },
-            <any>{ name: 'questionToken', isToken: true },
-            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax' },
-            <any>{ name: 'equalsValueClause', type: 'EqualsValueClauseSyntax' },
+            <any>{ name: 'questionToken', isToken: true, isOptional: true },
+            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true },
+            <any>{ name: 'equalsValueClause', type: 'EqualsValueClauseSyntax', isOptional: true },
         ]
     },
     <any>{
@@ -433,7 +434,7 @@ var definitions:any[] = [
         children: [
             <any>{ name: 'newKeyword', isToken: true },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
-            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax' },
+            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true },
         ]
     },
     <any>{
@@ -441,9 +442,9 @@ var definitions:any[] = [
         baseType: 'TypeMemberSyntax',
         children: [
             <any>{ name: 'identifier', isToken: true },
-            <any>{ name: 'questionToken', isToken: true },
+            <any>{ name: 'questionToken', isToken: true, isOptional: true },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
-            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax' },
+            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true },
         ]
     },
     <any>{
@@ -453,7 +454,7 @@ var definitions:any[] = [
             <any>{ name: 'openBracketToken', isToken: true },
             <any>{ name: 'parameter', type: 'ParameterSyntax' },
             <any>{ name: 'closeBracketToken', isToken: true },
-            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax' },
+            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true },
         ]
     },
     <any>{
@@ -461,8 +462,8 @@ var definitions:any[] = [
         baseType: 'TypeMemberSyntax',
         children: [
             <any>{ name: 'identifier', isToken: true },
-            <any>{ name: 'questionToken', isToken: true },
-            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax' },
+            <any>{ name: 'questionToken', isToken: true, isOptional: true },
+            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true },
         ]
     },
     <any>{
@@ -479,7 +480,7 @@ var definitions:any[] = [
         baseType: 'TypeMemberSyntax',
         children: [
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
-            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax' },
+            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true },
         ]
     },
     <any>{
@@ -499,7 +500,7 @@ var definitions:any[] = [
             <any>{ name: 'condition', type: 'ExpressionSyntax' },
             <any>{ name: 'closeParenToken', isToken: true },
             <any>{ name: 'statement', type: 'StatementSyntax' },
-            <any>{ name: 'elseClause', type: 'ElseClauseSyntax' },
+            <any>{ name: 'elseClause', type: 'ElseClauseSyntax', isOptional: true },
         ]
     },
     <any>{
@@ -522,8 +523,8 @@ var definitions:any[] = [
         children: [
             <any>{ name: 'constructorKeyword', isToken: true },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
-            <any>{ name: 'block', type: 'BlockSyntax' },
-            <any>{ name: 'semicolonToken', isToken: true },
+            <any>{ name: 'block', type: 'BlockSyntax', isOptional: true },
+            <any>{ name: 'semicolonToken', isToken: true, isOptional: true },
         ]
     },
     <any>{
@@ -536,11 +537,11 @@ var definitions:any[] = [
         name: 'MemberFunctionDeclarationSyntax',
         baseType: 'MemberDeclarationSyntax',
         children: [
-            <any>{ name: 'publicOrPrivateKeyword', isToken: true },
-            <any>{ name: 'staticKeyword', isToken: true },
+            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true },
+            <any>{ name: 'staticKeyword', isToken: true, isOptional: true },
             <any>{ name: 'functionSignature', type: 'FunctionSignatureSyntax' },
-            <any>{ name: 'block', type: 'BlockSyntax' },
-            <any>{ name: 'semicolonToken', isToken: true },
+            <any>{ name: 'block', type: 'BlockSyntax', isOptional: true },
+            <any>{ name: 'semicolonToken', isToken: true, isOptional: true },
         ]
     },
     <any>{
@@ -553,12 +554,12 @@ var definitions:any[] = [
         name: 'GetMemberAccessorDeclarationSyntax',
         baseType: 'MemberAccessorDeclarationSyntax',
         children: [
-            <any>{ name: 'publicOrPrivateKeyword', isToken: true },
-            <any>{ name: 'staticKeyword', isToken: true },
+            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true },
+            <any>{ name: 'staticKeyword', isToken: true, isOptional: true },
             <any>{ name: 'getKeyword', isToken: true },
             <any>{ name: 'identifier', isToken: true },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
-            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax' },
+            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true },
             <any>{ name: 'block', type: 'BlockSyntax' },
         ]
     },
@@ -566,8 +567,8 @@ var definitions:any[] = [
         name: 'SetMemberAccessorDeclarationSyntax',
         baseType: 'MemberAccessorDeclarationSyntax',
         children: [
-            <any>{ name: 'publicOrPrivateKeyword', isToken: true },
-            <any>{ name: 'staticKeyword', isToken: true },
+            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true },
+            <any>{ name: 'staticKeyword', isToken: true, isOptional: true },
             <any>{ name: 'setKeyword', isToken: true },
             <any>{ name: 'identifier', isToken: true },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
@@ -578,8 +579,8 @@ var definitions:any[] = [
         name: 'MemberVariableDeclarationSyntax',
         baseType: 'MemberDeclarationSyntax',
         children: [
-            <any>{ name: 'publicOrPrivateKeyword', isToken: true },
-            <any>{ name: 'staticKeyword', isToken: true },
+            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true },
+            <any>{ name: 'staticKeyword', isToken: true, isOptional: true },
             <any>{ name: 'variableDeclarator', type: 'VariableDeclaratorSyntax' },
             <any>{ name: 'semicolonToken', isToken: true },
         ]
@@ -598,7 +599,7 @@ var definitions:any[] = [
         baseType: 'StatementSyntax',
         children: [
             <any>{ name: 'returnKeyword', isToken: true },
-            <any>{ name: 'expression', type: 'ExpressionSyntax' },
+            <any>{ name: 'expression', type: 'ExpressionSyntax', isOptional: true },
             <any>{ name: 'semicolonToken', isToken: true },
         ]
     },
@@ -608,7 +609,7 @@ var definitions:any[] = [
         children: [
             <any>{ name: 'newKeyword', isToken: true },
             <any>{ name: 'expression', type: 'ExpressionSyntax' },
-            <any>{ name: 'argumentList', type: 'ArgumentListSyntax' },
+            <any>{ name: 'argumentList', type: 'ArgumentListSyntax', isOptional: true },
         ]
     },
     <any>{
@@ -654,7 +655,7 @@ var definitions:any[] = [
         baseType: 'StatementSyntax',
         children: [
             <any>{ name: 'breakKeyword', isToken: true },
-            <any>{ name: 'identifier', isToken: true },
+            <any>{ name: 'identifier', isToken: true, isOptional: true },
             <any>{ name: 'semicolonToken', isToken: true },
         ]
     },
@@ -663,7 +664,7 @@ var definitions:any[] = [
         baseType: 'StatementSyntax',
         children: [
             <any>{ name: 'continueKeyword', isToken: true },
-            <any>{ name: 'identifier', isToken: true },
+            <any>{ name: 'identifier', isToken: true, isOptional: true },
             <any>{ name: 'semicolonToken', isToken: true },
         ]
     },
@@ -685,12 +686,12 @@ var definitions:any[] = [
         children: [
             <any>{ name: 'forKeyword', isToken: true },
             <any>{ name: 'openParenToken', isToken: true },
-            <any>{ name: 'variableDeclaration', type: 'VariableDeclarationSyntax' },
-            <any>{ name: 'initializer', type: 'ExpressionSyntax' },
+            <any>{ name: 'variableDeclaration', type: 'VariableDeclarationSyntax', isOptional: true },
+            <any>{ name: 'initializer', type: 'ExpressionSyntax', isOptional: true },
             <any>{ name: 'firstSemicolonToken', isToken: true },
-            <any>{ name: 'condition', type: 'ExpressionSyntax' },
+            <any>{ name: 'condition', type: 'ExpressionSyntax', isOptional: true },
             <any>{ name: 'secondSemicolonToken', isToken: true },
-            <any>{ name: 'incrementor', type: 'ExpressionSyntax' },
+            <any>{ name: 'incrementor', type: 'ExpressionSyntax', isOptional: true },
             <any>{ name: 'closeParenToken', isToken: true },
             <any>{ name: 'statement', type: 'StatementSyntax' },
         ]
@@ -701,8 +702,8 @@ var definitions:any[] = [
         children: [
             <any>{ name: 'forKeyword', isToken: true },
             <any>{ name: 'openParenToken', isToken: true },
-            <any>{ name: 'variableDeclaration', type: 'VariableDeclarationSyntax' },
-            <any>{ name: 'left', type: 'ExpressionSyntax' },
+            <any>{ name: 'variableDeclaration', type: 'VariableDeclarationSyntax', isOptional: true },
+            <any>{ name: 'left', type: 'ExpressionSyntax', isOptional: true },
             <any>{ name: 'inKeyword', isToken: true },
             <any>{ name: 'expression', type: 'ExpressionSyntax' },
             <any>{ name: 'closeParenToken', isToken: true },
@@ -811,7 +812,7 @@ var definitions:any[] = [
         baseType: 'UnaryExpressionSyntax',
         children: [
             <any>{ name: 'functionKeyword', isToken: true },
-            <any>{ name: 'identifier', isToken: true },
+            <any>{ name: 'identifier', isToken: true, isOptional: true },
             <any>{ name: 'callSignature', type: 'CallSignatureSyntax' },
             <any>{ name: 'block', type: 'BlockSyntax' },
         ]
@@ -836,8 +837,8 @@ var definitions:any[] = [
         children: [
             <any>{ name: 'tryKeyword', isToken: true },
             <any>{ name: 'block', type: 'BlockSyntax' },
-            <any>{ name: 'catchClause', type: 'CatchClauseSyntax' },
-            <any>{ name: 'finallyClause', type: 'FinallyClauseSyntax' },
+            <any>{ name: 'catchClause', type: 'CatchClauseSyntax', isOptional: true },
+            <any>{ name: 'finallyClause', type: 'FinallyClauseSyntax', isOptional: true },
         ]
     },
     <any>{
@@ -943,6 +944,10 @@ function getType(child: IMemberDefinition): string {
     }
 }
 
+function getPropertyAccess(child: IMemberDefinition): string {
+    return "this._" + child.name;
+}
+
 function generateNode(definition: ITypeDefinition): string {
     var result = "class " + definition.name + " extends " + definition.baseType + " {\r\n";
     var hasKind = false;
@@ -987,7 +992,7 @@ function generateNode(definition: ITypeDefinition): string {
         var child: IMemberDefinition = definition.children[i];
         if (child === undefined) { continue; }
 
-        result += "        this._" + child.name + " = " + child.name + ";\r\n";
+        result += "        " + getPropertyAccess(child) + " = " + child.name + ";\r\n";
     }
 
     result += "    }\r\n";
@@ -1013,17 +1018,23 @@ function generateNode(definition: ITypeDefinition): string {
         result += "\r\n";
         result += "    public isMissing(): bool {\r\n";
 
-            for (var i = 0; i < definition.children.length; i++) {
-                var child: IMemberDefinition = definition.children[i];
-                if (child === undefined) { continue; }
+        for (var i = 0; i < definition.children.length; i++) {
+            var child: IMemberDefinition = definition.children[i];
+            if (child === undefined) { continue; }
 
-                if (getType(child) === "SyntaxKind") {
-                    continue;
-                }
-
-                result += "        if (!this._" + child.name + ".isMissing()) { return false; }\r\n";
+            if (getType(child) === "SyntaxKind") {
+                continue;
             }
-            result += "        return true;\r\n";
+
+            if (child.isOptional) {
+                result += "        if (" + getPropertyAccess(child) + " !== null && !" + getPropertyAccess(child) + ".isMissing()) { return false; }\r\n";
+            }
+            else {
+                result += "        if (!" + getPropertyAccess(child) + ".isMissing()) { return false; }\r\n";
+            }
+        }
+
+        result += "        return true;\r\n";
 
         result += "    }\r\n";
     }
@@ -1034,7 +1045,7 @@ function generateNode(definition: ITypeDefinition): string {
         
         result += "\r\n";
         result += "    public " + child.name + "(): " + getType(child) + " {\r\n";
-        result += "        return this._" + child.name + ";\r\n";
+        result += "        return " + getPropertyAccess(child) + ";\r\n";
         result += "    }\r\n";
     }
 
