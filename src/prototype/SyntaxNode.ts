@@ -11,7 +11,7 @@ class SyntaxNode implements ISyntaxElement {
     }
 
     public isMissing(): bool {
-        return false;
+        throw Errors.abstract();
     }
 
     public toJSON(key) {

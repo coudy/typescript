@@ -1960,6 +1960,20 @@ function generateNode(definition) {
             result += "        return SyntaxKind." + getNameWithoutSuffix(definition) + ";\r\n";
             result += "    }\r\n";
         }
+        result += "\r\n";
+        result += "    public isMissing(): bool {\r\n";
+        for(var i = 0; i < definition.children.length; i++) {
+            var child = definition.children[i];
+            if(child === undefined) {
+                continue;
+            }
+            if(getType(child) === "SyntaxKind") {
+                continue;
+            }
+            result += "        if (!this._" + child.name + ".isMissing()) { return false; }\r\n";
+        }
+        result += "        return true;\r\n";
+        result += "    }\r\n";
     }
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];

@@ -6,8 +6,9 @@ module SeparatedSyntaxList {
         public isToken(): bool { return false; }
         public isNode(): bool{ return false; }
         public isList(): bool{ return false; }
-        public isSeparatedList(): bool{ return true; }
+        public isSeparatedList(): bool { return true; }
         public kind() { return SyntaxKind.SeparatedList; }
+        public isMissing(): bool { return true; }
 
         public toJSON(key) { return []; }
 
@@ -44,6 +45,7 @@ module SeparatedSyntaxList {
         public isList(): bool{ return false; }
         public isSeparatedList(): bool{ return true; }
         public kind() { return SyntaxKind.SeparatedList; }
+        public isMissing(): bool { return this.item.isMissing(); }
 
         public count() { return 1; }
         public syntaxNodeCount() { return 1; }
@@ -71,9 +73,9 @@ module SeparatedSyntaxList {
     }
 
     class NormalSeparatedSyntaxList implements ISeparatedSyntaxList {
-        private nodes: any[];
+        private nodes: ISyntaxElement[];
 
-        constructor(nodes: any[]) {
+        constructor(nodes: ISyntaxElement[]) {
             this.nodes = nodes;
         }
         
@@ -83,6 +85,16 @@ module SeparatedSyntaxList {
         public isSeparatedList(): bool{ return true; }
         public kind() { return SyntaxKind.SeparatedList; }
         public toJSON(key) { return this.nodes; }
+
+        public isMissing(): bool {
+            for (var i = 0, n = this.nodes.length; i < n; i++) {
+                if (!this.nodes[i].isMissing()) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
 
         public count() { return this.nodes.length; }
         public syntaxNodeCount() { return IntegerUtilities.integerDivide(this.nodes.length + 1, 2); }
@@ -102,7 +114,7 @@ module SeparatedSyntaxList {
                 throw Errors.argumentOutOfRange("index");
             }
 
-            return this.nodes[value];
+            return <SyntaxNode>this.nodes[value];
         }
 
         public separatorAt(index: number): ISyntaxToken {
@@ -111,7 +123,7 @@ module SeparatedSyntaxList {
                 throw Errors.argumentOutOfRange("index");
             }
 
-            return this.nodes[value];
+            return <ISyntaxToken>this.nodes[value];
         }
     }
     

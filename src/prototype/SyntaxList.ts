@@ -15,6 +15,10 @@ module SyntaxList {
         public count(): number {
             return 0;
         }
+
+        public isMissing(): bool {
+            return true;
+        }
         
         public syntaxNodeAt(index: number): SyntaxNode {
             throw Errors.argumentOutOfRange("index");
@@ -35,6 +39,7 @@ module SyntaxList {
         public isList(): bool{ return true; }
         public isSeparatedList(): bool{ return false; }
         public kind(): SyntaxKind { return SyntaxKind.List; }
+        public isMissing(): bool { return this._item.isMissing(); }
 
         public toJSON(key) {
             return [this._item];
@@ -65,6 +70,16 @@ module SyntaxList {
         public isList(): bool{ return true; }
         public isSeparatedList(): bool{ return false; }
         public kind(): SyntaxKind { return SyntaxKind.List; }
+
+        public isMissing(): bool {
+            for (var i = 0, n = this.nodes.length; i < n; i++) {
+                if (!this.nodes[i].isMissing()) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
 
         public toJSON(key) {
             return this.nodes;

@@ -13,8 +13,6 @@ interface ISyntaxToken extends ISyntaxElement {
     width(): number;
     end(): number;
 
-    isMissing(): bool;
-
     text(): string;
     fullText(text: IText): string;
 
