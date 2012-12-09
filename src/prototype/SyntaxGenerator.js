@@ -2449,7 +2449,7 @@ function generateSwitchCases(tokenKinds, indent) {
 function generateDefaultCase(child, indent) {
     var result = "";
     result += indent + "            default:\r\n";
-    result += indent + "                throw Errors.argument('" + child.name + "');";
+    result += indent + "                throw Errors.argument('" + child.name + "');\r\n";
     return result;
 }
 function where(values, func) {
@@ -2470,11 +2470,11 @@ function generateSwitchKindCheck(child, tokenKinds, indent) {
         return v.indexOf("Keyword") >= 0;
     });
     var tokens = where(tokenKinds, function (v) {
-        return v.indexOf("Keyword") == 0;
+        return v.indexOf("Keyword") < 0;
     });
     if(tokens.length === 0) {
         if(keywords.length <= 2) {
-            result += generateIfKindCheck(child, keywords, indent);
+            return generateIfKindCheck(child, keywords, indent);
         } else {
             result += indent + "        switch (" + child.name + ".keywordKind()) {\r\n";
             result += generateSwitchCases(keywords, indent);
@@ -2484,7 +2484,7 @@ function generateSwitchKindCheck(child, tokenKinds, indent) {
         result += generateSwitchCases(tokens, indent);
         if(keywords.length > 0) {
             result += generateSwitchCase("IdentifierNameToken", indent);
-            result += generateSwitchKindCheck(child, keywords, indent + "    ");
+            result += generateSwitchKindCheck(child, keywords, indent + "        ");
             result += generateBreakStatement(indent);
         }
     }
@@ -2502,7 +2502,7 @@ function generateKindCheck(child) {
     var tokenKinds = child.tokenKinds ? child.tokenKinds : [
         child.name.substr(0, 1).toUpperCase() + child.name.substr(1)
     ];
-    if(true) {
+    if(tokenKinds.length <= 2) {
         result += generateIfKindCheck(child, tokenKinds, indent);
     } else {
         result += generateSwitchKindCheck(child, tokenKinds, indent);

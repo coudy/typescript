@@ -1041,7 +1041,17 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
 
         if (kind === null) { throw Errors.argumentNull('kind'); }
         if (operand === null) { throw Errors.argumentNull('operand'); }
-        if (operatorToken.kind() !== SyntaxKind.PlusPlusToken && operatorToken.kind() !== SyntaxKind.MinusMinusToken && operatorToken.kind() !== SyntaxKind.PlusToken && operatorToken.kind() !== SyntaxKind.MinusToken && operatorToken.kind() !== SyntaxKind.TildeToken && operatorToken.kind() !== SyntaxKind.ExclamationToken) { throw Errors.argument('operatorToken'); }
+        switch (operatorToken.kind()) {
+            case SyntaxKind.PlusPlusToken:
+            case SyntaxKind.MinusMinusToken:
+            case SyntaxKind.PlusToken:
+            case SyntaxKind.MinusToken:
+            case SyntaxKind.TildeToken:
+            case SyntaxKind.ExclamationToken:
+                break;
+            default:
+                throw Errors.argument('operatorToken');
+        }
 
         this._kind = kind;
         this._operatorToken = operatorToken;
@@ -1135,7 +1145,24 @@ class LiteralExpressionSyntax extends UnaryExpressionSyntax {
         super();
 
         if (kind === null) { throw Errors.argumentNull('kind'); }
-        if (literalToken.kind() !== SyntaxKind.RegularExpressionLiteral && literalToken.kind() !== SyntaxKind.StringLiteral && literalToken.kind() !== SyntaxKind.NumericLiteral && literalToken.keywordKind() !== SyntaxKind.FalseKeyword && literalToken.keywordKind() !== SyntaxKind.TrueKeyword && literalToken.keywordKind() !== SyntaxKind.NullKeyword) { throw Errors.argument('literalToken'); }
+        switch (literalToken.kind()) {
+            case SyntaxKind.RegularExpressionLiteral:
+            case SyntaxKind.StringLiteral:
+            case SyntaxKind.NumericLiteral:
+                break;
+            case SyntaxKind.IdentifierNameToken:
+                switch (literalToken.keywordKind()) {
+                    case SyntaxKind.FalseKeyword:
+                    case SyntaxKind.TrueKeyword:
+                    case SyntaxKind.NullKeyword:
+                        break;
+                    default:
+                        throw Errors.argument('literalToken');
+                }
+                break;
+            default:
+                throw Errors.argument('literalToken');
+        }
 
         this._kind = kind;
         this._literalToken = literalToken;
@@ -1822,7 +1849,16 @@ class PredefinedTypeSyntax extends TypeSyntax {
     constructor(keyword: ISyntaxToken) {
         super();
 
-        if (keyword.keywordKind() !== SyntaxKind.AnyKeyword && keyword.keywordKind() !== SyntaxKind.BoolKeyword && keyword.keywordKind() !== SyntaxKind.NumberKeyword && keyword.keywordKind() !== SyntaxKind.StringKeyword && keyword.keywordKind() !== SyntaxKind.VoidKeyword) { throw Errors.argument('keyword'); }
+        switch (keyword.keywordKind()) {
+            case SyntaxKind.AnyKeyword:
+            case SyntaxKind.BoolKeyword:
+            case SyntaxKind.NumberKeyword:
+            case SyntaxKind.StringKeyword:
+            case SyntaxKind.VoidKeyword:
+                break;
+            default:
+                throw Errors.argument('keyword');
+        }
 
         this._keyword = keyword;
     }
@@ -2379,7 +2415,48 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
         if (kind === null) { throw Errors.argumentNull('kind'); }
         if (left === null) { throw Errors.argumentNull('left'); }
         if (right === null) { throw Errors.argumentNull('right'); }
-        if (operatorToken.kind() !== SyntaxKind.AsteriskToken && operatorToken.kind() !== SyntaxKind.SlashToken && operatorToken.kind() !== SyntaxKind.PercentToken && operatorToken.kind() !== SyntaxKind.PlusToken && operatorToken.kind() !== SyntaxKind.MinusToken && operatorToken.kind() !== SyntaxKind.LessThanLessThanToken && operatorToken.kind() !== SyntaxKind.GreaterThanGreaterThanToken && operatorToken.kind() !== SyntaxKind.GreaterThanGreaterThanGreaterThanToken && operatorToken.kind() !== SyntaxKind.LessThanToken && operatorToken.kind() !== SyntaxKind.GreaterThanToken && operatorToken.kind() !== SyntaxKind.LessThanEqualsToken && operatorToken.kind() !== SyntaxKind.GreaterThanEqualsToken && operatorToken.keywordKind() !== SyntaxKind.InstanceOfKeyword && operatorToken.keywordKind() !== SyntaxKind.InKeyword && operatorToken.kind() !== SyntaxKind.EqualsEqualsToken && operatorToken.kind() !== SyntaxKind.ExclamationEqualsToken && operatorToken.kind() !== SyntaxKind.EqualsEqualsEqualsToken && operatorToken.kind() !== SyntaxKind.ExclamationEqualsEqualsToken && operatorToken.kind() !== SyntaxKind.AmpersandToken && operatorToken.kind() !== SyntaxKind.CaretToken && operatorToken.kind() !== SyntaxKind.BarToken && operatorToken.kind() !== SyntaxKind.AmpersandAmpersandToken && operatorToken.kind() !== SyntaxKind.BarBarToken && operatorToken.kind() !== SyntaxKind.BarEqualsToken && operatorToken.kind() !== SyntaxKind.AmpersandEqualsToken && operatorToken.kind() !== SyntaxKind.CaretEqualsToken && operatorToken.kind() !== SyntaxKind.LessThanLessThanEqualsToken && operatorToken.kind() !== SyntaxKind.GreaterThanGreaterThanEqualsToken && operatorToken.kind() !== SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken && operatorToken.kind() !== SyntaxKind.PlusEqualsToken && operatorToken.kind() !== SyntaxKind.MinusEqualsToken && operatorToken.kind() !== SyntaxKind.AsteriskEqualsToken && operatorToken.kind() !== SyntaxKind.SlashEqualsToken && operatorToken.kind() !== SyntaxKind.PercentEqualsToken && operatorToken.kind() !== SyntaxKind.EqualsToken && operatorToken.kind() !== SyntaxKind.CommaToken) { throw Errors.argument('operatorToken'); }
+        switch (operatorToken.kind()) {
+            case SyntaxKind.AsteriskToken:
+            case SyntaxKind.SlashToken:
+            case SyntaxKind.PercentToken:
+            case SyntaxKind.PlusToken:
+            case SyntaxKind.MinusToken:
+            case SyntaxKind.LessThanLessThanToken:
+            case SyntaxKind.GreaterThanGreaterThanToken:
+            case SyntaxKind.GreaterThanGreaterThanGreaterThanToken:
+            case SyntaxKind.LessThanToken:
+            case SyntaxKind.GreaterThanToken:
+            case SyntaxKind.LessThanEqualsToken:
+            case SyntaxKind.GreaterThanEqualsToken:
+            case SyntaxKind.EqualsEqualsToken:
+            case SyntaxKind.ExclamationEqualsToken:
+            case SyntaxKind.EqualsEqualsEqualsToken:
+            case SyntaxKind.ExclamationEqualsEqualsToken:
+            case SyntaxKind.AmpersandToken:
+            case SyntaxKind.CaretToken:
+            case SyntaxKind.BarToken:
+            case SyntaxKind.AmpersandAmpersandToken:
+            case SyntaxKind.BarBarToken:
+            case SyntaxKind.BarEqualsToken:
+            case SyntaxKind.AmpersandEqualsToken:
+            case SyntaxKind.CaretEqualsToken:
+            case SyntaxKind.LessThanLessThanEqualsToken:
+            case SyntaxKind.GreaterThanGreaterThanEqualsToken:
+            case SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken:
+            case SyntaxKind.PlusEqualsToken:
+            case SyntaxKind.MinusEqualsToken:
+            case SyntaxKind.AsteriskEqualsToken:
+            case SyntaxKind.SlashEqualsToken:
+            case SyntaxKind.PercentEqualsToken:
+            case SyntaxKind.EqualsToken:
+            case SyntaxKind.CommaToken:
+                break;
+            case SyntaxKind.IdentifierNameToken:
+                if (operatorToken.keywordKind() !== SyntaxKind.InstanceOfKeyword && operatorToken.keywordKind() !== SyntaxKind.InKeyword) { throw Errors.argument('operatorToken'); }
+                break;
+            default:
+                throw Errors.argument('operatorToken');
+        }
 
         this._kind = kind;
         this._left = left;
@@ -4732,7 +4809,14 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         super();
 
         if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (propertyName.kind() !== SyntaxKind.IdentifierNameToken && propertyName.kind() !== SyntaxKind.StringLiteral && propertyName.kind() !== SyntaxKind.NumericLiteral) { throw Errors.argument('propertyName'); }
+        switch (propertyName.kind()) {
+            case SyntaxKind.IdentifierNameToken:
+            case SyntaxKind.StringLiteral:
+            case SyntaxKind.NumericLiteral:
+                break;
+            default:
+                throw Errors.argument('propertyName');
+        }
         if (colonToken.kind() !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
 
         this._propertyName = propertyName;

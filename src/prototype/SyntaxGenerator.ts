@@ -1058,7 +1058,7 @@ function generateDefaultCase(child: IMemberDefinition, indent: string): string {
     var result = "";
     
     result += indent + "            default:\r\n";
-    result += indent + "                throw Errors.argument('" + child.name + "');"; 
+    result += indent + "                throw Errors.argument('" + child.name + "');\r\n"; 
 
     return result;
 }
@@ -1083,11 +1083,11 @@ function generateSwitchKindCheck(child: IMemberDefinition, tokenKinds: string[],
     var result = "";
 
     var keywords = where(tokenKinds, v => v.indexOf("Keyword") >= 0);
-    var tokens = where(tokenKinds, v => v.indexOf("Keyword") == 0);
+    var tokens = where(tokenKinds, v => v.indexOf("Keyword") < 0);
 
     if (tokens.length === 0) {
         if (keywords.length <= 2) {
-            result += generateIfKindCheck(child, keywords, indent);
+            return generateIfKindCheck(child, keywords, indent);
         }
         else {
             result += indent + "        switch (" + child.name + ".keywordKind()) {\r\n";
@@ -1100,7 +1100,7 @@ function generateSwitchKindCheck(child: IMemberDefinition, tokenKinds: string[],
 
         if (keywords.length > 0) {
             result += generateSwitchCase("IdentifierNameToken", indent);
-            result += generateSwitchKindCheck(child, keywords, indent + "    ");
+            result += generateSwitchKindCheck(child, keywords, indent + "        ");
             result += generateBreakStatement(indent);
         }
     }
@@ -1124,7 +1124,7 @@ function generateKindCheck(child: IMemberDefinition): string {
         ? child.tokenKinds
         : [child.name.substr(0, 1).toUpperCase() + child.name.substr(1)];
 
-    if (true /*tokenKinds.length <= 2*/) {
+    if (tokenKinds.length <= 2) {
         result += generateIfKindCheck(child, tokenKinds, indent);
     }
     else {
