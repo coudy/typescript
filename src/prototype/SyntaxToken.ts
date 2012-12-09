@@ -104,11 +104,11 @@ module SyntaxToken {
             this.tokenKind = kind;
             this._keywordKind = keywordKind;
         }
-        
+
         public isToken(): bool { return true; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return false; }
-        public isSeparatedList(): bool{ return false; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return false; }
+        public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public kind() { return this.tokenKind; }
 
@@ -143,15 +143,15 @@ module SyntaxToken {
             this.tokenKind = kind;
             this._fullStart = fullStart;
         }
-        
+
         public isToken(): bool { return true; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return false; }
-        public isSeparatedList(): bool{ return false; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return false; }
+        public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
-        
+
         public isMissing(): bool { return false; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
@@ -184,11 +184,11 @@ module SyntaxToken {
             this._fullStart = fullStart;
             this._leadingTriviaInfo = leadingTriviaInfo;
         }
-        
+
         public isToken(): bool { return true; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return false; }
-        public isSeparatedList(): bool{ return false; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return false; }
+        public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
@@ -227,15 +227,15 @@ module SyntaxToken {
             this._fullStart = fullStart;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
-        
+
         public isToken(): bool { return true; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return false; }
-        public isSeparatedList(): bool{ return false; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return false; }
+        public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
-        
+
         public isMissing(): bool { return false; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
@@ -272,15 +272,15 @@ module SyntaxToken {
             this._leadingTriviaInfo = leadingTriviaInfo;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
-        
+
         public isToken(): bool { return true; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return false; }
-        public isSeparatedList(): bool{ return false; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return false; }
+        public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
-        
+
         public isMissing(): bool { return false; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
@@ -313,15 +313,15 @@ module SyntaxToken {
             this._keywordKind = kind;
             this._fullStart = fullStart;
         }
-        
+
         public isToken(): bool { return true; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return false; }
-        public isSeparatedList(): bool{ return false; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return false; }
+        public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public kind() { return SyntaxKind.IdentifierNameToken; }
         public toJSON(key) { return toJSON(this); }
-        
+
         public isMissing(): bool { return false; }
         public tokenKind: SyntaxKind = SyntaxKind.IdentifierNameToken;
         public keywordKind(): SyntaxKind { return this._keywordKind; }
@@ -355,11 +355,11 @@ module SyntaxToken {
             this._fullStart = fullStart;
             this._leadingTriviaInfo = leadingTriviaInfo;
         }
-        
+
         public isToken(): bool { return true; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return false; }
-        public isSeparatedList(): bool{ return false; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return false; }
+        public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public kind() { return SyntaxKind.IdentifierNameToken; }
         public toJSON(key) { return toJSON(this); }
@@ -399,15 +399,15 @@ module SyntaxToken {
             this._fullStart = fullStart;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
-        
+
         public isToken(): bool { return true; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return false; }
-        public isSeparatedList(): bool{ return false; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return false; }
+        public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public kind() { return SyntaxKind.IdentifierNameToken; }
         public toJSON(key) { return toJSON(this); }
-        
+
         public isMissing(): bool { return false; }
         public tokenKind: SyntaxKind = SyntaxKind.IdentifierNameToken;
         public keywordKind(): SyntaxKind { return this._keywordKind; }
@@ -445,15 +445,15 @@ module SyntaxToken {
             this._leadingTriviaInfo = leadingTriviaInfo;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
-        
+
         public isToken(): bool { return true; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return false; }
-        public isSeparatedList(): bool{ return false; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return false; }
+        public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public kind() { return SyntaxKind.IdentifierNameToken; }
         public toJSON(key) { return toJSON(this); }
-        
+
         public isMissing(): bool { return false; }
         public tokenKind: SyntaxKind = SyntaxKind.IdentifierNameToken;
         public keywordKind(): SyntaxKind { return this._keywordKind; }
@@ -491,15 +491,15 @@ module SyntaxToken {
             this._text = text;
             this._value = value;
         }
-        
+
         public isToken(): bool { return true; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return false; }
-        public isSeparatedList(): bool{ return false; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return false; }
+        public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
-        
+
         public isMissing(): bool { return false; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
@@ -536,11 +536,11 @@ module SyntaxToken {
             this._leadingTriviaInfo = leadingTriviaInfo;
             this._value = value;
         }
-        
+
         public isToken(): bool { return true; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return false; }
-        public isSeparatedList(): bool{ return false; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return false; }
+        public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
@@ -583,15 +583,15 @@ module SyntaxToken {
             this._trailingTriviaInfo = trailingTriviaInfo;
             this._value = value;
         }
-        
+
         public isToken(): bool { return true; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return false; }
-        public isSeparatedList(): bool{ return false; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return false; }
+        public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
-        
+
         public isMissing(): bool { return false; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
@@ -632,15 +632,15 @@ module SyntaxToken {
             this._trailingTriviaInfo = trailingTriviaInfo;
             this._value = value;
         }
-        
+
         public isToken(): bool { return true; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return false; }
-        public isSeparatedList(): bool{ return false; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return false; }
+        public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
-        
+
         public isMissing(): bool { return false; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
         public fullStart(): number { return this._fullStart; }
@@ -731,9 +731,9 @@ module SyntaxToken {
     }
 
     export function create(fullStart: number,
-                           leadingTriviaInfo: number,
-                           tokenInfo: ScannerTokenInfo,
-                           trailingTriviaInfo: number): ISyntaxToken {
+        leadingTriviaInfo: number,
+        tokenInfo: ScannerTokenInfo,
+        trailingTriviaInfo: number): ISyntaxToken {
         if (SyntaxFacts.isAnyPunctuation(tokenInfo.Kind)) {
             return createFixedWidthToken(fullStart, leadingTriviaInfo, tokenInfo.Kind, trailingTriviaInfo);
         }
@@ -744,22 +744,128 @@ module SyntaxToken {
             return createVariableWidthToken(fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo);
         }
     }
-    
+
     export function createEmpty(fullStart: number, kind: SyntaxKind, keywordKind: SyntaxKind): ISyntaxToken {
         return new EmptyToken(fullStart, kind, keywordKind);
     }
 
-    //export function createElastic(kind: SyntaxKind, keywordKind = SyntaxKind.None, leadingTrivia = SyntaxTriviaList.empty, text = null, trailingTrivia = SyntaxTriviaList.empty): ISyntaxToken {
-    //    if (text === null) {
-    //        text = keywordKind !== SyntaxKind.None ? SyntaxFacts.getText(keywordKind) : SyntaxFacts.getText(kind);
-    //    }
-    //}
+    class ElasticToken implements ISyntaxToken {
+        private _keywordKind: SyntaxKind;
+        private _leadingTrivia: ISyntaxTriviaList;
+        private _text: string;
+        private _trailingTrivia: ISyntaxTriviaList;
 
-    //export function createElasticWithLeadingTrivia(leadingTrivia: ISyntaxTriviaList, kind: SyntaxKind, keywordKind = SyntaxKind.None, text = null, trailingTrivia = SyntaxTriviaList.empty): ISyntaxToken {
-    //    return createElastic(kind, keywordKind, leadingTrivia, text, trailingTrivia);
-    //}
+        constructor(kind: SyntaxKind,
+            keywordKind: SyntaxKind,
+            leadingTrivia: ISyntaxTriviaList,
+            text: string,
+            trailingTrivia: ISyntaxTriviaList) {
+            this.tokenKind = kind;
+            this._keywordKind = keywordKind;
+            this._leadingTrivia = leadingTrivia;
+            this._text = text;
+            this._trailingTrivia = trailingTrivia;
+        }
 
-    //export function createElasticWithTrailingTrivia(kind: SyntaxKind, keywordKind = SyntaxKind.None, trailingTrivia = SyntaxTriviaList.empty. leadingTrivia: ISyntaxTriviaList, text = null): ISyntaxToken {
-    //    return createElastic(kind, keywordKind, leadingTrivia, text, trailingTrivia);
-    //}
+        public isToken(): bool { return true; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return false; }
+        public isSeparatedList(): bool { return false; }
+        public isTrivia(): bool { return false; }
+        public isMissing(): bool { return false; }
+
+        public tokenKind: SyntaxKind;
+
+        public kind(): SyntaxKind {
+            return this.tokenKind;
+        }
+
+        public keywordKind(): SyntaxKind {
+            return this._keywordKind;
+        }
+
+        public fullStart(): number {
+            throw Errors.notYetImplemented();
+        }
+
+        public fullEnd(): number {
+            throw Errors.notYetImplemented();
+        }
+
+        public start(): number {
+            throw Errors.notYetImplemented();
+        }
+
+        public end(): number {
+            throw Errors.notYetImplemented();
+        }
+
+        public fullWidth(): number {
+            return this._leadingTrivia.fullWidth() + this.width() + this._trailingTrivia.fullWidth();
+        }
+
+        public width(): number {
+            return this._text.length;
+        }
+
+        public text(): string {
+            return this._text;
+        }
+
+        public fullText(text: IText): string {
+            return this._leadingTrivia.fullText(text) + this.text() + this._trailingTrivia.fullText(text);
+        }
+
+        public value(): any {
+            return null;
+        }
+
+        public valueText(): string {
+            return null;
+        }
+
+        public hasLeadingTrivia(): bool {
+            return this._leadingTrivia.count() > 0;
+        }
+
+        public hasLeadingCommentTrivia(): bool {
+            return this._leadingTrivia.hasComment();
+        }
+
+        public hasLeadingNewLineTrivia(): bool {
+            return this._trailingTrivia.hasNewLine();
+        }
+
+        public hasTrailingTrivia(): bool {
+            return this._trailingTrivia.count() > 0;
+        }
+
+        public hasTrailingCommentTrivia(): bool {
+            return this._trailingTrivia.hasComment();
+        }
+
+        public hasTrailingNewLineTrivia(): bool {
+            return this._trailingTrivia.hasNewLine();
+        }
+
+        public leadingTrivia(text: IText): ISyntaxTriviaList {
+            return this._leadingTrivia;
+        }
+
+        public trailingTrivia(text: IText): ISyntaxTriviaList {
+            return this._trailingTrivia;
+        }
+    }
+
+    export function createElastic(token: IElasticToken): ISyntaxToken {
+        var text = token.text ? token.text :
+            token.keywordKind ? SyntaxFacts.getText(token.keywordKind) : SyntaxFacts.getText(token.kind);
+
+        return new ElasticToken(
+            token.kind,
+            token.keywordKind ? token.keywordKind : SyntaxKind.None,
+            SyntaxTriviaList.create(token.leadingTrivia),
+            text,
+            SyntaxTriviaList.create(token.trailingTrivia));
+    }
 }

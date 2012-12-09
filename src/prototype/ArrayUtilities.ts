@@ -5,6 +5,26 @@ class ArrayUtilities {
         return Object.prototype.toString.apply(value, []) === '[object Array]';
     }
 
+    public static sum(array: any[], func: (v: any) => number): number {
+        var result = 0;
+
+        for (var i = 0, n = array.length; i < n; i++) {
+            result += func(array[i]);
+        }
+
+        return result;
+    }
+
+    public static any(array: any[], func: (v: any) => bool): bool {
+        for (var i = 0, n = array.length; i < n; i++) {
+            if (func(array[i])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static binarySearch(array: number[], value: number): number {
         var low = 0;
         var high = array.length - 1;

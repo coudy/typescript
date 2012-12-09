@@ -10,6 +10,22 @@ module SyntaxTriviaList {
             throw Errors.argumentOutOfRange("index");
         }
 
+        public fullWidth(): number {
+            return 0;
+        }
+
+        public fullText(text: IText): string {
+            return "";
+        }
+
+        public hasComment(): bool {
+            return false;
+        }
+
+        public hasNewLine(): bool {
+            return false;
+        }
+
         public toJSON(key) {
             return [];
         }
@@ -17,9 +33,13 @@ module SyntaxTriviaList {
 
     export var empty: ISyntaxTriviaList = new EmptySyntaxTriviaList();
 
+    function isComment(trivia: ISyntaxTrivia): bool {
+        return trivia.kind() === SyntaxKind.MultiLineCommentTrivia || trivia.kind() === SyntaxKind.SingleLineCommentTrivia;
+    }
+
     class SingletonSyntaxTriviaList implements ISyntaxTriviaList {
         private item: ISyntaxTrivia;
-
+        
         constructor(item: ISyntaxTrivia) {
             this.item = item;
         }
@@ -34,6 +54,22 @@ module SyntaxTriviaList {
             }
 
             return this.item;
+        }
+
+        public fullWidth(): number {
+            return this.item.fullWidth();
+        }
+
+        public fullText(text: IText): string {
+            return this.item.fullText(text);
+        }
+
+        public hasComment(): bool {
+            return isComment(this.item);
+        }
+
+        public hasNewLine(): bool {
+            return this.item.kind() === SyntaxKind.NewLineTrivia;
         }
 
         public toJSON(key) {
@@ -58,6 +94,28 @@ module SyntaxTriviaList {
             }
 
             return this.trivia[index];
+        }
+
+        public fullWidth(): number {
+            return ArrayUtilities.sum(this.trivia, t => t.fullWidth());
+        }
+
+        public fullText(text: IText): string {
+            var result = "";
+
+            for (var i = 0, n = this.trivia.length; i < n; i++) {
+                result += this.trivia[i].fullText(text);
+            }
+
+            return result;
+        }
+
+        public hasComment(): bool {
+            return ArrayUtilities.any(this.trivia, isComment);
+        }
+
+        public hasNewLine(): bool {
+            return ArrayUtilities.any(this.trivia, t => t.kind() === SyntaxKind.NewLineTrivia);
         }
 
         public toJSON(key) {
