@@ -112,14 +112,18 @@ class Program {
         var emitted = new Emitter(true).emit(<SourceUnitSyntax>tree.sourceUnit().realize(text));
 
         if (generateBaseline) {
-            var actualResult = emitted.fullText(null);
+            var result = { fullText: emitted.fullText(null), sourceUnit: emitted };
+            var actualResult = JSON2.stringify(result, null, 4);
+
             var expectedFile = filePath + ".expected";
 
             // environment.standardOut.WriteLine("Generating baseline for: " + filePath);
             environment.writeFile(expectedFile, actualResult, /*useUTF8:*/ true);
         }
         else if (verify) {
-            var actualResult = emitted.fullText(null);
+            var result = { fullText: emitted.fullText(null), sourceUnit: emitted };
+            var actualResult = JSON2.stringify(result, null, 4);
+
             var expectedFile = filePath + ".expected";
             var actualFile = filePath + ".actual";
 

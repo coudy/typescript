@@ -43391,12 +43391,20 @@ var Program = (function () {
         var tree = parser.parseSyntaxTree();
         var emitted = new Emitter(true).emit(tree.sourceUnit().realize(text));
         if(generateBaseline) {
-            var actualResult = emitted.fullText(null);
+            var result = {
+                fullText: emitted.fullText(null),
+                sourceUnit: emitted
+            };
+            var actualResult = JSON2.stringify(result, null, 4);
             var expectedFile = filePath + ".expected";
             environment.writeFile(expectedFile, actualResult, true);
         } else {
             if(verify) {
-                var actualResult = emitted.fullText(null);
+                var result = {
+                    fullText: emitted.fullText(null),
+                    sourceUnit: emitted
+                };
+                var actualResult = JSON2.stringify(result, null, 4);
                 var expectedFile = filePath + ".expected";
                 var actualFile = filePath + ".actual";
                 var expectedResult = environment.readFile(expectedFile, true);
