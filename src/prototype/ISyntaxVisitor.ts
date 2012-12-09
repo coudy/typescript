@@ -126,10 +126,6 @@ class DefaultSyntaxVisitor implements ISyntaxVisitor {
         this.defaultVisit(node);
     }
 
-    public visitStatement(node: StatementSyntax): void {
-        this.defaultVisit(node);
-    }
-
     public visitFunctionDeclaration(node: FunctionDeclarationSyntax): void {
         this.defaultVisit(node);
     }
@@ -428,6 +424,7 @@ class DefaultSyntaxVisitor implements ISyntaxVisitor {
 }
 
 interface ISyntaxVisitor1 {
+    visitSourceUnit(node: SourceUnitSyntax): any;
     visitExternalModuleReference(node: ExternalModuleReferenceSyntax): any;
     visitModuleNameModuleReference(node: ModuleNameModuleReferenceSyntax): any;
     visitImportDeclaration(node: ImportDeclarationSyntax): any;
@@ -436,7 +433,6 @@ interface ISyntaxVisitor1 {
     visitExtendsClause(node: ExtendsClauseSyntax): any;
     visitImplementsClause(node: ImplementsClauseSyntax): any;
     visitModuleDeclaration(node: ModuleDeclarationSyntax): any;
-    visitStatement(node: StatementSyntax): any;
     visitFunctionDeclaration(node: FunctionDeclarationSyntax): any;
     visitVariableStatement(node: VariableStatementSyntax): any;
     visitVariableDeclaration(node: VariableDeclarationSyntax): any;
@@ -518,6 +514,10 @@ class DefaultSyntaxVisitor1 implements ISyntaxVisitor1 {
         return null;
     }
 
+    public visitSourceUnit(node: SourceUnitSyntax): any {
+        return null;
+    }
+
     public visitExternalModuleReference(node: ExternalModuleReferenceSyntax): any {
         return this.defaultVisit(node);
     }
@@ -547,10 +547,6 @@ class DefaultSyntaxVisitor1 implements ISyntaxVisitor1 {
     }
 
     public visitModuleDeclaration(node: ModuleDeclarationSyntax): any {
-        return this.defaultVisit(node);
-    }
-
-    public visitStatement(node: StatementSyntax): any {
         return this.defaultVisit(node);
     }
 

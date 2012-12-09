@@ -160,6 +160,7 @@ enum SyntaxKind {
 
     // ClassElements
     MemberFunctionDeclaration,
+    MemberVariableDeclaration,
     ConstructorDeclaration,
     GetMemberAccessorDeclaration,
     SetMemberAccessorDeclaration,
@@ -283,6 +284,7 @@ enum SyntaxKind {
     TypeAnnotation,
     SimplePropertyAssignment,
     ExternalModuleReference,
+    ModuleNameModuleReference,
     GetAccessorPropertyAssignment,
     SetAccessorPropertyAssignment,
 

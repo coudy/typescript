@@ -30,4 +30,8 @@ class SyntaxNode implements ISyntaxElement {
     public accept(visitor: ISyntaxVisitor): void {
         throw Errors.abstract();
     }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        throw Errors.abstract();
+    }
 }

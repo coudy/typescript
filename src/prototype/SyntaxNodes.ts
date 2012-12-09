@@ -1,5 +1,3 @@
-///<reference path='References.ts' />
-
 class SourceUnitSyntax extends SyntaxNode {
     private _moduleElements: ISyntaxList;
     private _endOfFileToken: ISyntaxToken;
@@ -8,20 +6,16 @@ class SourceUnitSyntax extends SyntaxNode {
                 endOfFileToken: ISyntaxToken) {
         super();
 
-        //if (moduleElements === null) {
-        //    throw Errors.argumentNull("moduleElements");
-        //}
-
-        //if (endOfFileToken.kind !== SyntaxKind.EndOfFileToken) {
-        //    throw Errors.argument("endOfFileToken");
-        //}
-
         this._moduleElements = moduleElements;
         this._endOfFileToken = endOfFileToken;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitSourceUnit(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitSourceUnit(this);
     }
 
     public kind(): SyntaxKind {
@@ -38,9 +32,15 @@ class SourceUnitSyntax extends SyntaxNode {
 }
 
 class ModuleElementSyntax extends SyntaxNode {
+    constructor() {
+        super();
+    }
 }
 
 class ModuleReferenceSyntax extends SyntaxNode {
+    constructor() {
+        super();
+    }
 }
 
 class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
@@ -55,22 +55,6 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
                 closeParenToken: ISyntaxToken) {
         super();
 
-        //if (moduleKeyword.keywordKind() !== SyntaxKind.ModuleKeyword) {
-        //    throw Errors.argument("moduleKeyword");
-        //}
-
-        //if (openParenToken.kind !== SyntaxKind.OpenParenToken) {
-        //    throw Errors.argument("openParenToken");
-        //}
-
-        //if (stringLiteral.kind !== SyntaxKind.StringLiteral) {
-        //    throw Errors.argument("stringLiteral");
-        //}
-
-        //if (closeParenToken.kind !== SyntaxKind.CloseParenToken) {
-        //    throw Errors.argument("closeParenToken");
-        //}
-
         this._moduleKeyword = moduleKeyword;
         this._openParenToken = openParenToken;
         this._stringLiteral = stringLiteral;
@@ -79,6 +63,10 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitExternalModuleReference(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitExternalModuleReference(this);
     }
 
     public kind(): SyntaxKind {
@@ -108,15 +96,19 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
     constructor(moduleName: NameSyntax) {
         super();
 
-        //if (moduleName === null) {
-        //    throw Errors.argumentNull("moduleName");
-        //}
-
         this._moduleName = moduleName;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitModuleNameModuleReference(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitModuleNameModuleReference(this);
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ModuleNameModuleReference;
     }
 
     public moduleName(): NameSyntax {
@@ -138,26 +130,6 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
                 semicolonToken: ISyntaxToken) {
         super();
 
-        //if (importKeyword.keywordKind() !== SyntaxKind.ImportKeyword) {
-        //    throw Errors.argument("importKeyword");
-        //}
-
-        //if (identifier.kind !== SyntaxKind.IdentifierNameToken) {
-        //    throw Errors.argument("identifier");
-        //}
-
-        //if (equalsToken.kind !== SyntaxKind.EqualsToken) {
-        //    throw Errors.argument("equalsToken");
-        //}
-
-        //if (moduleReference === null) {
-        //    throw Errors.argumentNull("moduleReference");
-        //}
-
-        //if (semicolonToken.kind !== SyntaxKind.SemicolonToken) {
-        //    throw Errors.argument("semicolonToken");
-        //}
-
         this._importKeyword = importKeyword;
         this._identifier = identifier;
         this._equalsToken = equalsToken;
@@ -167,6 +139,10 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitImportDeclaration(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitImportDeclaration(this);
     }
 
     public kind(): SyntaxKind {
@@ -216,34 +192,6 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
                 closeBraceToken: ISyntaxToken) {
         super();
 
-        //if (exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
-        //    throw Errors.argument("exportKeyword");
-        //}
-
-        //if (declareKeyword !== null && declareKeyword.keywordKind() !== SyntaxKind.DeclareKeyword) {
-        //    throw Errors.argument("declareKeyword");
-        //}
-
-        //if (classKeyword.keywordKind() !== SyntaxKind.ClassKeyword) {
-        //    throw Errors.argument("classKeyword");
-        //}
-
-        //if (identifier.kind !== SyntaxKind.IdentifierNameToken) {
-        //    throw Errors.argument("identifier");
-        //}
-
-        //if (openBraceToken.kind !== SyntaxKind.OpenBraceToken) {
-        //    throw Errors.argument("openBraceToken");
-        //}
-
-        //if (classElements === null) {
-        //    throw Errors.argumentNull("classElements");
-        //}
-
-        //if (closeBraceToken.kind !== SyntaxKind.CloseBraceToken) {
-        //    throw Errors.argument("closeBraceToken");
-        //}
-
         this._exportKeyword = exportKeyword;
         this._declareKeyword = declareKeyword;
         this._classKeyword = classKeyword;
@@ -257,6 +205,10 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitClassDeclaration(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitClassDeclaration(this);
     }
 
     public kind(): SyntaxKind {
@@ -314,22 +266,6 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
                 body: ObjectTypeSyntax) {
         super();
 
-        //if (exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
-        //    throw Errors.argument("exportKeyword");
-        //}
-
-        //if (interfaceKeyword.keywordKind() !== SyntaxKind.InterfaceKeyword) {
-        //    throw Errors.argument("interfaceKeyword");
-        //}
-
-        //if (identifier.kind !== SyntaxKind.IdentifierNameToken) {
-        //    throw Errors.argument("identifier");
-        //}
-
-        //if (body === null) {
-        //    throw Errors.argumentNull("body");
-        //}
-
         this._exportKeyword = exportKeyword;
         this._interfaceKeyword = interfaceKeyword;
         this._identifier = identifier;
@@ -339,6 +275,10 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitInterfaceDeclaration(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitInterfaceDeclaration(this);
     }
 
     public kind(): SyntaxKind {
@@ -374,18 +314,18 @@ class ExtendsClauseSyntax extends SyntaxNode {
                 typeNames: ISeparatedSyntaxList) {
         super();
 
-        //if (extendsKeyword.keywordKind() !== SyntaxKind.ExtendsKeyword) {
-        //    throw Errors.argument("extendsKeyword");
-        //}
-
-        //if (typeNames === null) {
-        //    throw Errors.argumentNull("typeNames");
-        //}
-
         this._extendsKeyword = extendsKeyword;
         this._typeNames = typeNames;
     }
-    
+
+    public accept(visitor: ISyntaxVisitor): void {
+        visitor.visitExtendsClause(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitExtendsClause(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ExtendsClause;
     }
@@ -403,17 +343,9 @@ class ImplementsClauseSyntax extends SyntaxNode {
     private _implementsKeyword: ISyntaxToken;
     private _typeNames: ISeparatedSyntaxList;
 
-    constructor (implementsKeyword: ISyntaxToken,
-                 typeNames: ISeparatedSyntaxList) {
+    constructor(implementsKeyword: ISyntaxToken,
+                typeNames: ISeparatedSyntaxList) {
         super();
-
-        //if (implementsKeyword.keywordKind() !== SyntaxKind.ImplementsKeyword) {
-        //    throw Errors.argument("extendsKimplementsKeywordeyword");
-        //}
-
-        //if (typeNames === null) {
-        //    throw Errors.argumentNull("typeNames");
-        //}
 
         this._implementsKeyword = implementsKeyword;
         this._typeNames = typeNames;
@@ -421,6 +353,10 @@ class ImplementsClauseSyntax extends SyntaxNode {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitImplementsClause(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitImplementsClause(this);
     }
 
     public kind(): SyntaxKind {
@@ -456,37 +392,11 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
                 closeBraceToken: ISyntaxToken) {
         super();
 
-        //if (exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
-        //    throw Errors.argument("exportKeyword");
-        //}
-
-        //if (declareKeyword !== null && declareKeyword.keywordKind() !== SyntaxKind.DeclareKeyword) {
-        //    throw Errors.argument("declareKeyword");
-        //}
-
-        //if (moduleKeyword.keywordKind() !== SyntaxKind.ModuleKeyword) {
-        //    throw Errors.argument("moduleKeyword");
-        //}
-
-        //if (stringLiteral !== null && stringLiteral.kind !== SyntaxKind.StringLiteral) {
-        //    throw Errors.argumentNull("stringLiteral");
-        //}
-
-        //if (openBraceToken.kind !== SyntaxKind.OpenBraceToken) {
-        //    throw Errors.argument("openBraceToken");
-        //}
-
-        //if (moduleElements === null) {
-        //    throw Errors.argumentNull("moduleElements");
-        //}
-
-        //if (closeBraceToken.kind !== SyntaxKind.CloseBraceToken) {
-        //    throw Errors.argument("closeBraceToken");
-        //}
-
-        this._moduleKeyword = moduleKeyword;
+        this._exportKeyword = exportKeyword;
         this._declareKeyword = declareKeyword;
+        this._moduleKeyword = moduleKeyword;
         this._moduleName = moduleName;
+        this._stringLiteral = stringLiteral;
         this._openBraceToken = openBraceToken;
         this._moduleElements = moduleElements;
         this._closeBraceToken = closeBraceToken;
@@ -494,6 +404,10 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitModuleDeclaration(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitModuleDeclaration(this);
     }
 
     public kind(): SyntaxKind {
@@ -534,6 +448,9 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
 }
 
 class StatementSyntax extends ModuleElementSyntax {
+    constructor() {
+        super();
+    }
 }
 
 class FunctionDeclarationSyntax extends StatementSyntax {
@@ -544,46 +461,28 @@ class FunctionDeclarationSyntax extends StatementSyntax {
     private _block: BlockSyntax;
     private _semicolonToken: ISyntaxToken;
 
-    constructor (exportKeyword: ISyntaxToken,
-                 declareKeyword: ISyntaxToken,
-                 functionKeyword: ISyntaxToken,
-                 functionSignature: FunctionSignatureSyntax,
-                 block: BlockSyntax,
-                 semicolonToken: ISyntaxToken) {
+    constructor(exportKeyword: ISyntaxToken,
+                declareKeyword: ISyntaxToken,
+                functionKeyword: ISyntaxToken,
+                functionSignature: FunctionSignatureSyntax,
+                block: BlockSyntax,
+                semicolonToken: ISyntaxToken) {
         super();
-
-        //if (exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
-        //    throw Errors.argument("exportKeyword");
-        //}
-
-        //if (declareKeyword !== null && declareKeyword.keywordKind() !== SyntaxKind.DeclareKeyword) {
-        //    throw Errors.argument("declareKeyword");
-        //}
-
-        //if (functionKeyword.keywordKind() !== SyntaxKind.FunctionKeyword) {
-        //    throw Errors.argument("functionKeyword");
-        //}
-
-        //if (functionSignature === null) {
-        //    throw Errors.argumentNull("functionSignature");
-        //}
-
-        //// TODO: Add argument checking that exactly one of 'block' and 'semicolonToken' is set.
-
-        //if (semicolonToken !== null && semicolonToken.kind !== SyntaxKind.SemicolonToken) {
-        //    throw Errors.argument("semicolonToken");
-        //}
 
         this._exportKeyword = exportKeyword;
         this._declareKeyword = declareKeyword;
         this._functionKeyword = functionKeyword;
-        this._functionSignature = functionSignature
-        this._semicolonToken = semicolonToken;
+        this._functionSignature = functionSignature;
         this._block = block;
+        this._semicolonToken = semicolonToken;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitFunctionDeclaration(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitFunctionDeclaration(this);
     }
 
     public kind(): SyntaxKind {
@@ -627,22 +526,6 @@ class VariableStatementSyntax extends StatementSyntax {
                 semicolonToken: ISyntaxToken) {
         super();
 
-        //if (exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
-        //    throw Errors.argument("exportKeyword");
-        //}
-
-        //if (declareKeyword !== null && declareKeyword.keywordKind() !== SyntaxKind.DeclareKeyword) {
-        //    throw Errors.argument("declareKeyword");
-        //}
-
-        //if (variableDeclaration === null) {
-        //    throw Errors.argumentNull("variableDeclaration");
-        //}
-
-        //if (semicolonToken.kind !== SyntaxKind.SemicolonToken) {
-        //    throw Errors.argument("semicolonToken");
-        //}
-
         this._exportKeyword = exportKeyword;
         this._declareKeyword = declareKeyword;
         this._variableDeclaration = variableDeclaration;
@@ -651,6 +534,10 @@ class VariableStatementSyntax extends StatementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitVariableStatement(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitVariableStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -675,9 +562,15 @@ class VariableStatementSyntax extends StatementSyntax {
 }
 
 class ExpressionSyntax extends SyntaxNode {
+    constructor() {
+        super();
+    }
 }
 
 class UnaryExpressionSyntax extends ExpressionSyntax {
+    constructor() {
+        super();
+    }
 }
 
 class VariableDeclarationSyntax extends SyntaxNode {
@@ -688,20 +581,16 @@ class VariableDeclarationSyntax extends SyntaxNode {
                 variableDeclarators: ISeparatedSyntaxList) {
         super();
 
-        //if (varKeyword.keywordKind() !== SyntaxKind.VarKeyword) {
-        //    throw Errors.argument("varKeyword");
-        //}
-
-        //if (variableDeclarators === null) {
-        //    throw Errors.argumentNull("variableDeclarators");
-        //}
-
         this._varKeyword = varKeyword;
         this._variableDeclarators = variableDeclarators;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitVariableDeclaration(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitVariableDeclaration(this);
     }
 
     public kind(): SyntaxKind {
@@ -727,10 +616,6 @@ class VariableDeclaratorSyntax extends SyntaxNode {
                 equalsValueClause: EqualsValueClauseSyntax) {
         super();
 
-        //if (identifier.kind !== SyntaxKind.IdentifierNameToken) {
-        //    throw Errors.argument("identifier");
-        //}
-
         this._identifier = identifier;
         this._typeAnnotation = typeAnnotation;
         this._equalsValueClause = equalsValueClause;
@@ -738,6 +623,10 @@ class VariableDeclaratorSyntax extends SyntaxNode {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitVariableDeclarator(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitVariableDeclarator(this);
     }
 
     public kind(): SyntaxKind {
@@ -765,16 +654,16 @@ class EqualsValueClauseSyntax extends SyntaxNode {
                 value: ExpressionSyntax) {
         super();
 
-        //if (equalsToken.kind !== SyntaxKind.EqualsToken) {
-        //    throw Errors.argument("equalsToken");
-        //}
-
         this._equalsToken = equalsToken;
         this._value = value;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitEqualsValueClause(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitEqualsValueClause(this);
     }
 
     public kind(): SyntaxKind {
@@ -791,7 +680,7 @@ class EqualsValueClauseSyntax extends SyntaxNode {
 }
 
 class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
-    private _kind: SyntaxKind = SyntaxKind.None;
+    private _kind: SyntaxKind;
     private _operatorToken: ISyntaxToken;
     private _operand: UnaryExpressionSyntax;
 
@@ -800,11 +689,6 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
                 operand: UnaryExpressionSyntax) {
         super();
 
-        //// Add error checking for kind and operator token.
-        //if (operand === null) {
-        //    throw Errors.argumentNull("operand");
-        //}
-
         this._kind = kind;
         this._operatorToken = operatorToken;
         this._operand = operand;
@@ -812,6 +696,10 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitPrefixUnaryExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitPrefixUnaryExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -833,15 +721,15 @@ class ThisExpressionSyntax extends UnaryExpressionSyntax {
     constructor(thisKeyword: ISyntaxToken) {
         super();
 
-        //if (thisKeyword.keywordKind() !== SyntaxKind.ThisKeyword) { 
-        //    throw Errors.argument("thisKeyword");
-        //}
-
         this._thisKeyword = thisKeyword;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitThisExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitThisExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -854,14 +742,12 @@ class ThisExpressionSyntax extends UnaryExpressionSyntax {
 }
 
 class LiteralExpressionSyntax extends UnaryExpressionSyntax {
-    private _kind: SyntaxKind = SyntaxKind.None;
+    private _kind: SyntaxKind;
     private _literalToken: ISyntaxToken;
 
     constructor(kind: SyntaxKind,
                 literalToken: ISyntaxToken) {
         super();
-
-        // TODO: Add argument checking.
 
         this._kind = kind;
         this._literalToken = literalToken;
@@ -869,6 +755,10 @@ class LiteralExpressionSyntax extends UnaryExpressionSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitLiteralExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitLiteralExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -890,18 +780,6 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
                 closeBracketToken: ISyntaxToken) {
         super();
 
-        //if (openBracketToken.kind !== SyntaxKind.OpenBracketToken) {
-        //    throw Errors.argument("openBracketToken");
-        //}
-
-        //if (expressions === null) {
-        //    throw Errors.argumentNull("expressions");
-        //}
-
-        //if (closeBracketToken.kind !== SyntaxKind.CloseBracketToken) {
-        //    throw Errors.argument("closeBracketToken");
-        //}
-
         this._openBracketToken = openBracketToken;
         this._expressions = expressions;
         this._closeBracketToken = closeBracketToken;
@@ -909,6 +787,10 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitArrayLiteralExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitArrayLiteralExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -937,6 +819,10 @@ class OmittedExpressionSyntax extends ExpressionSyntax {
         visitor.visitOmittedExpression(this);
     }
 
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitOmittedExpression(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.OmittedExpression;
     }
@@ -952,18 +838,6 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
                 closeParenToken: ISyntaxToken) {
         super();
 
-        //if (openParenToken.kind !== SyntaxKind.OpenParenToken) {
-        //    throw Errors.argument("openParenToken");
-        //}
-
-        //if (expression === null) {
-        //    throw Errors.argumentNull("expression");
-        //}
-
-        //if (closeParenToken.kind !== SyntaxKind.CloseParenToken) {
-        //    throw Errors.argument("closeParenToken");
-        //}
-
         this._openParenToken = openParenToken;
         this._expression = expression;
         this._closeParenToken = closeParenToken;
@@ -971,6 +845,10 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitParenthesizedExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitParenthesizedExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -991,26 +869,8 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
 }
 
 class ArrowFunctionExpressionSyntax extends UnaryExpressionSyntax {
-    constructor () {
+    constructor() {
         super();
-
-        //if (equalsGreaterThanToken.kind !== SyntaxKind.EqualsGreaterThanToken) {
-        //    throw Errors.argument("equalsGreaterThanToken");
-        //}
-
-        //if (body === null) {
-        //    throw Errors.argumentNull("body");
-        //}
-
-        // TODO: Check that body is an expression or a block.
-    }
-
-    public equalsGreaterThanToken(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public body(): SyntaxNode {
-        throw Errors.abstract();
     }
 }
 
@@ -1024,10 +884,6 @@ class SimpleArrowFunctionExpression extends ArrowFunctionExpressionSyntax {
                 body: SyntaxNode) {
         super();
 
-        //if (identifier.kind !== SyntaxKind.IdentifierNameToken) {
-        //    throw Errors.argumentNull("identifier");
-        //}
-
         this._identifier = identifier;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
         this._body = body;
@@ -1035,6 +891,10 @@ class SimpleArrowFunctionExpression extends ArrowFunctionExpressionSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitSimpleArrowFunctionExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitSimpleArrowFunctionExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -1050,7 +910,7 @@ class SimpleArrowFunctionExpression extends ArrowFunctionExpressionSyntax {
     }
 
     public body(): SyntaxNode {
-        return this._body
+        return this._body;
     }
 }
 
@@ -1064,10 +924,6 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
                 body: SyntaxNode) {
         super();
 
-        //if (callSignature === null) {
-        //    throw Errors.argumentNull("callSignature");
-        //}
-
         this._callSignature = callSignature;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
         this._body = body;
@@ -1075,6 +931,10 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitParenthesizedArrowFunctionExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitParenthesizedArrowFunctionExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -1090,14 +950,20 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
     }
 
     public body(): SyntaxNode {
-        return this._body
+        return this._body;
     }
 }
 
 class TypeSyntax extends UnaryExpressionSyntax {
+    constructor() {
+        super();
+    }
 }
 
 class NameSyntax extends TypeSyntax {
+    constructor() {
+        super();
+    }
 }
 
 class IdentifierNameSyntax extends NameSyntax {
@@ -1106,15 +972,15 @@ class IdentifierNameSyntax extends NameSyntax {
     constructor(identifier: ISyntaxToken) {
         super();
 
-        //if (identifier.kind !== SyntaxKind.IdentifierNameToken) {
-        //    throw Errors.argument("identifier");
-        //}
-
         this._identifier = identifier;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitIdentifierName(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitIdentifierName(this);
     }
 
     public kind(): SyntaxKind {
@@ -1123,10 +989,6 @@ class IdentifierNameSyntax extends NameSyntax {
 
     public identifier(): ISyntaxToken {
         return this._identifier;
-    }
-
-    public isMissing(): bool {
-        return this.identifier().isMissing();
     }
 }
 
@@ -1140,18 +1002,6 @@ class QualifiedNameSyntax extends NameSyntax {
                 right: IdentifierNameSyntax) {
         super();
 
-        //if (left === null) {
-        //    throw Errors.argumentNull("left");
-        //}
-
-        //if (dotToken.kind !== SyntaxKind.DotToken) {
-        //    throw Errors.argument("dotToken");
-        //}
-
-        //if (right === null) {
-        //    throw Errors.argumentNull("right");
-        //}
-
         this._left = left;
         this._dotToken = dotToken;
         this._right = right;
@@ -1159,6 +1009,10 @@ class QualifiedNameSyntax extends NameSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitQualifiedName(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitQualifiedName(this);
     }
 
     public kind(): SyntaxKind {
@@ -1190,22 +1044,6 @@ class ConstructorTypeSyntax extends TypeSyntax {
                 type: TypeSyntax) {
         super();
 
-        //if (newKeyword.keywordKind() !== SyntaxKind.NewKeyword) {
-        //    throw Errors.argument("newKeyword");
-        //}
-
-        //if (parameterList === null) {
-        //    throw Errors.argumentNull("parameterList");
-        //}
-
-        //if (equalsGreaterThanToken.kind !== SyntaxKind.EqualsGreaterThanToken) {
-        //    throw Errors.argument("equalsGreaterThanToken");
-        //}
-
-        //if (type === null) {
-        //    throw Errors.argumentNull("type");
-        //}
-
         this._newKeyword = newKeyword;
         this._parameterList = parameterList;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
@@ -1214,6 +1052,10 @@ class ConstructorTypeSyntax extends TypeSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitConstructorType(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitConstructorType(this);
     }
 
     public kind(): SyntaxKind {
@@ -1231,7 +1073,7 @@ class ConstructorTypeSyntax extends TypeSyntax {
     public equalsGreaterThanToken(): ISyntaxToken {
         return this._equalsGreaterThanToken;
     }
-     
+
     public type(): TypeSyntax {
         return this._type;
     }
@@ -1247,18 +1089,6 @@ class FunctionTypeSyntax extends TypeSyntax {
                 type: TypeSyntax) {
         super();
 
-        //if (parameterList === null) {
-        //    throw Errors.argumentNull("parameterList");
-        //}
-
-        //if (equalsGreaterThanToken.kind !== SyntaxKind.EqualsGreaterThanToken) {
-        //    throw Errors.argument("equalsGreaterThanToken");
-        //}
-
-        //if (type === null) {
-        //    throw Errors.argumentNull("type");
-        //}
-
         this._parameterList = parameterList;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
         this._type = type;
@@ -1266,6 +1096,10 @@ class FunctionTypeSyntax extends TypeSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitFunctionType(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitFunctionType(this);
     }
 
     public kind(): SyntaxKind {
@@ -1295,18 +1129,6 @@ class ObjectTypeSyntax extends TypeSyntax {
                 closeBraceToken: ISyntaxToken) {
         super();
 
-        //if (openBraceToken.kind !== SyntaxKind.OpenBraceToken) {
-        //    throw Errors.argument("openBraceToken");
-        //}
-
-        //if (typeMembers === null) {
-        //    throw Errors.argumentNull("typeMembers");
-        //}
-
-        //if (closeBraceToken.kind !== SyntaxKind.CloseBraceToken) {
-        //    throw Errors.argument("closeBraceToken");
-        //}
-
         this._openBraceToken = openBraceToken;
         this._typeMembers = typeMembers;
         this._closeBraceToken = closeBraceToken;
@@ -1314,6 +1136,10 @@ class ObjectTypeSyntax extends TypeSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitObjectType(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitObjectType(this);
     }
 
     public kind(): SyntaxKind {
@@ -1343,14 +1169,6 @@ class ArrayTypeSyntax extends TypeSyntax {
                 closeBracketToken: ISyntaxToken) {
         super();
 
-        //if (openBracketToken.kind !== SyntaxKind.OpenBracketToken) {
-        //    throw Errors.argument("openBracketToken");
-        //}
-
-        //if (closeBracketToken.kind !== SyntaxKind.CloseBracketToken) {
-        //    throw Errors.argument("closeBracketToken");
-        //}
-
         this._type = type;
         this._openBracketToken = openBracketToken;
         this._closeBracketToken = closeBracketToken;
@@ -1358,6 +1176,10 @@ class ArrayTypeSyntax extends TypeSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitArrayType(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitArrayType(this);
     }
 
     public kind(): SyntaxKind {
@@ -1379,16 +1201,19 @@ class ArrayTypeSyntax extends TypeSyntax {
 
 class PredefinedTypeSyntax extends TypeSyntax {
     private _keyword: ISyntaxToken;
-    
+
     constructor(keyword: ISyntaxToken) {
         super();
 
-        // TODO: Add argument checking for keyword.
         this._keyword = keyword;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitPredefinedType(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitPredefinedType(this);
     }
 
     public kind(): SyntaxKind {
@@ -1408,20 +1233,16 @@ class TypeAnnotationSyntax extends SyntaxNode {
                 type: TypeSyntax) {
         super();
 
-        //if (colonToken.kind !== SyntaxKind.ColonToken) {
-        //    throw Errors.argument("colonToken");
-        //}
-
-        //if (type === null) {
-        //    throw Errors.argumentNull("type");
-        //}
-
         this._colonToken = colonToken;
         this._type = type;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitTypeAnnotation(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitTypeAnnotation(this);
     }
 
     public kind(): SyntaxKind {
@@ -1447,18 +1268,6 @@ class BlockSyntax extends StatementSyntax {
                 closeBraceToken: ISyntaxToken) {
         super();
 
-        //if (openBraceToken.kind !== SyntaxKind.OpenBraceToken) {
-        //    throw Errors.argument("openBraceToken");
-        //}
-
-        //if (statements === null) {
-        //    throw Errors.argumentNull("statements");
-        //}
-
-        //if (closeBraceToken.kind !== SyntaxKind.CloseBraceToken) {
-        //    throw Errors.argument("closeBraceToken");
-        //}
-
         this._openBraceToken = openBraceToken;
         this._statements = statements;
         this._closeBraceToken = closeBraceToken;
@@ -1466,6 +1275,10 @@ class BlockSyntax extends StatementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitBlock(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitBlock(this);
     }
 
     public kind(): SyntaxKind {
@@ -1490,7 +1303,7 @@ class ParameterSyntax extends SyntaxNode {
     private _publicOrPrivateKeyword: ISyntaxToken;
     private _identifier: ISyntaxToken;
     private _questionToken: ISyntaxToken;
-    private _typeAnontation: TypeAnnotationSyntax;
+    private _typeAnnotation: TypeAnnotationSyntax;
     private _equalsValueClause: EqualsValueClauseSyntax;
 
     constructor(dotDotDotToken: ISyntaxToken,
@@ -1501,34 +1314,20 @@ class ParameterSyntax extends SyntaxNode {
                 equalsValueClause: EqualsValueClauseSyntax) {
         super();
 
-        //if (dotDotDotToken !== null && dotDotDotToken.kind !== SyntaxKind.DotDotDotToken) {
-        //    throw Errors.argument("dotDotDotToken");
-        //}
-
-        //if (publicOrPrivateKeyword !== null &&
-        //    publicOrPrivateKeyword.keywordKind() !== SyntaxKind.PublicKeyword &&
-        //    publicOrPrivateKeyword.keywordKind() !== SyntaxKind.PrivateKeyword) {
-        //    throw Errors.argument("publicOrPrivateKeyword");
-        //}
-
-        //if (identifier.kind !== SyntaxKind.IdentifierNameToken) {
-        //    throw Errors.argument("identifier");
-        //}
-
-        //if (questionToken !== null && questionToken.kind !== SyntaxKind.QuestionToken) {
-        //    throw Errors.argument("questionToken");
-        //}
-
         this._dotDotDotToken = dotDotDotToken;
         this._publicOrPrivateKeyword = publicOrPrivateKeyword;
         this._identifier = identifier;
         this._questionToken = questionToken;
-        this._typeAnontation = typeAnnotation;
+        this._typeAnnotation = typeAnnotation;
         this._equalsValueClause = equalsValueClause;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitParameter(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitParameter(this);
     }
 
     public kind(): SyntaxKind {
@@ -1552,7 +1351,7 @@ class ParameterSyntax extends SyntaxNode {
     }
 
     public typeAnnotation(): TypeAnnotationSyntax {
-        return this._typeAnontation;
+        return this._typeAnnotation;
     }
 
     public equalsValueClause(): EqualsValueClauseSyntax {
@@ -1570,18 +1369,6 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
                 identifierName: IdentifierNameSyntax) {
         super();
 
-        //if (expression === null) {
-        //    throw Errors.argumentNull("expression");
-        //}
-
-        //if (dotToken.kind !== SyntaxKind.DotToken) {
-        //    throw Errors.argument("dotToken");
-        //}
-
-        //if (identifierName === null) {
-        //    throw Errors.argumentNull("identifierName");
-        //}
-
         this._expression = expression;
         this._dotToken = dotToken;
         this._identifierName = identifierName;
@@ -1589,6 +1376,10 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitMemberAccessExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitMemberAccessExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -1609,7 +1400,7 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
 }
 
 class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
-    private _kind: SyntaxKind = SyntaxKind.None;
+    private _kind: SyntaxKind;
     private _operand: ExpressionSyntax;
     private _operatorToken: ISyntaxToken;
 
@@ -1618,18 +1409,6 @@ class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
                 operatorToken: ISyntaxToken) {
         super();
 
-        //if (kind !== SyntaxKind.PostIncrementExpression && kind !== SyntaxKind.PostDecrementExpression) {
-        //    throw Errors.argument("kind");
-        //}
-
-        //if (operand === null) {
-        //    throw Errors.argumentNull("operand");
-        //}
-
-        //if (operatorToken.kind !== SyntaxKind.PlusPlusToken && operatorToken.kind !== SyntaxKind.MinusMinusToken) {
-        //    throw Errors.argument("operatorToken");
-        //}
-
         this._kind = kind;
         this._operand = operand;
         this._operatorToken = operatorToken;
@@ -1637,6 +1416,10 @@ class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitPostfixUnaryExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitPostfixUnaryExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -1664,22 +1447,6 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
                 closeBracketToken: ISyntaxToken) {
         super();
 
-        //if (expression === null) {
-        //    throw Errors.argumentNull("expression");
-        //}
-
-        //if (openBracketToken.kind !== SyntaxKind.OpenBracketToken) {
-        //    throw Errors.argument("openBracketToken");
-        //}
-
-        //if (argumentExpression === null) {
-        //    throw Errors.argumentNull("argumentExpression");
-        //}
-
-        //if (closeBracketToken.kind !== SyntaxKind.CloseBracketToken) {
-        //    throw Errors.argument("closeBracketToken");
-        //}
-
         this._expression = expression;
         this._openBracketToken = openBracketToken;
         this._argumentExpression = argumentExpression;
@@ -1688,6 +1455,10 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitElementAccessExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitElementAccessExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -1719,20 +1490,16 @@ class InvocationExpressionSyntax extends UnaryExpressionSyntax {
                 argumentList: ArgumentListSyntax) {
         super();
 
-        //if (expression === null) {
-        //    throw Errors.argument("expression");
-        //}
-
-        //if (argumentList === null) {
-        //    throw Errors.argument("argumentList");
-        //}
-
         this._expression = expression;
         this._argumentList = argumentList;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitInvocationExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitInvocationExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -1758,18 +1525,6 @@ class ArgumentListSyntax extends SyntaxNode {
                 closeParenToken: ISyntaxToken) {
         super();
 
-        //if (openParenToken.kind !== SyntaxKind.OpenParenToken) {
-        //    throw Errors.argument("openParenToken");
-        //}
-
-        //if (arguments === null) {
-        //    throw Errors.argumentNull("arguments");
-        //}
-
-        //if (closeParenToken.kind !== SyntaxKind.CloseParenToken) {
-        //    throw Errors.argument("closeParenToken");
-        //}
-
         this._openParenToken = openParenToken;
         this._arguments = arguments;
         this._closeParenToken = closeParenToken;
@@ -1777,6 +1532,10 @@ class ArgumentListSyntax extends SyntaxNode {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitArgumentList(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitArgumentList(this);
     }
 
     public kind(): SyntaxKind {
@@ -1797,7 +1556,7 @@ class ArgumentListSyntax extends SyntaxNode {
 }
 
 class BinaryExpressionSyntax extends ExpressionSyntax {
-    private _kind: SyntaxKind = SyntaxKind.None;
+    private _kind: SyntaxKind;
     private _left: ExpressionSyntax;
     private _operatorToken: ISyntaxToken;
     private _right: ExpressionSyntax;
@@ -1808,18 +1567,6 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
                 right: ExpressionSyntax) {
         super();
 
-        //// TODO: check kind.
-
-        //if (left === null) {
-        //    throw Errors.argumentNull("left");
-        //}
-
-        //// TODO: check operator token.
-
-        //if (right === null) {
-        //    throw Errors.argumentNull("right");
-        //}
-
         this._kind = kind;
         this._left = left;
         this._operatorToken = operatorToken;
@@ -1828,6 +1575,10 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitBinaryExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitBinaryExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -1861,26 +1612,6 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
                 whenFalse: ExpressionSyntax) {
         super();
 
-        //if (condition === null) {
-        //    throw Errors.argumentNull("condition");
-        //}
-
-        //if (questionToken.kind !== SyntaxKind.QuestionToken) {
-        //    throw Errors.argument("questionToken");
-        //}
-
-        //if (whenTrue === null) {
-        //    throw Errors.argumentNull("whenTrue");
-        //}
-
-        //if (colonToken.kind !== SyntaxKind.ColonToken) {
-        //    throw Errors.argument("colonToken");
-        //}
-
-        //if (whenFalse === null) {
-        //    throw Errors.argumentNull("whenFalse");
-        //}
-
         this._condition = condition;
         this._questionToken = questionToken;
         this._whenTrue = whenTrue;
@@ -1890,6 +1621,10 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitConditionalExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitConditionalExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -1921,10 +1656,6 @@ class TypeMemberSyntax extends SyntaxNode {
     constructor() {
         super();
     }
-
-    public typeAnnotation(): TypeAnnotationSyntax {
-        throw Errors.abstract();
-    }
 }
 
 class ConstructSignatureSyntax extends TypeMemberSyntax {
@@ -1937,14 +1668,6 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
                 typeAnnotation: TypeAnnotationSyntax) {
         super();
 
-        //if (newKeyword.keywordKind() !== SyntaxKind.NewKeyword) {
-        //    throw Errors.argument("newKeyword");
-        //}
-
-        //if (parameterList === null) {
-        //    throw Errors.argument("parameterList");
-        //}
-
         this._newKeyword = newKeyword;
         this._parameterList = parameterList;
         this._typeAnnotation = typeAnnotation;
@@ -1952,6 +1675,10 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitConstructSignature(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitConstructSignature(this);
     }
 
     public kind(): SyntaxKind {
@@ -1967,7 +1694,7 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
     }
 
     public typeAnnotation(): TypeAnnotationSyntax {
-        return this._typeAnnotation
+        return this._typeAnnotation;
     }
 }
 
@@ -1983,18 +1710,6 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
                 typeAnnotation: TypeAnnotationSyntax) {
         super();
 
-        //if (identifier.kind !== SyntaxKind.IdentifierNameToken) {
-        //    throw Errors.argument("identifier");
-        //}
-
-        //if (questionToken !== null && questionToken.kind !== SyntaxKind.QuestionToken) {
-        //    throw Errors.argument("questionToken");
-        //}
-
-        //if (parameterList === null) {
-        //    throw Errors.argumentNull("parameterList");
-        //}
-
         this._identifier = identifier;
         this._questionToken = questionToken;
         this._parameterList = parameterList;
@@ -2003,6 +1718,10 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitFunctionSignature(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitFunctionSignature(this);
     }
 
     public kind(): SyntaxKind {
@@ -2022,7 +1741,7 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
     }
 
     public typeAnnotation(): TypeAnnotationSyntax {
-        return this._typeAnnotation
+        return this._typeAnnotation;
     }
 }
 
@@ -2038,18 +1757,6 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
                 typeAnnotation: TypeAnnotationSyntax) {
         super();
 
-        //if (openBracketToken.kind !== SyntaxKind.OpenBracketToken) {
-        //    throw Errors.argument("openBracketToken");
-        //}
-
-        //if (parameter === null) {
-        //    throw Errors.argumentNull("parameter");
-        //}
-
-        //if (closeBracketToken.kind !== SyntaxKind.CloseBracketToken) {
-        //    throw Errors.argument("closeBracketToken");
-        //}
-
         this._openBracketToken = openBracketToken;
         this._parameter = parameter;
         this._closeBracketToken = closeBracketToken;
@@ -2058,6 +1765,10 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitIndexSignature(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitIndexSignature(this);
     }
 
     public kind(): SyntaxKind {
@@ -2077,7 +1788,7 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
     }
 
     public typeAnnotation(): TypeAnnotationSyntax {
-        return this._typeAnnotation
+        return this._typeAnnotation;
     }
 }
 
@@ -2091,10 +1802,6 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
                 typeAnnotation: TypeAnnotationSyntax) {
         super();
 
-        //if (identifier.kind !== SyntaxKind.IdentifierNameToken) {
-        //    throw Errors.argument("identifier");
-        //}
-
         this._identifier = identifier;
         this._questionToken = questionToken;
         this._typeAnnotation = typeAnnotation;
@@ -2102,6 +1809,10 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitPropertySignature(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitPropertySignature(this);
     }
 
     public kind(): SyntaxKind {
@@ -2117,7 +1828,7 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
     }
 
     public typeAnnotation(): TypeAnnotationSyntax {
-        return this._typeAnnotation
+        return this._typeAnnotation;
     }
 }
 
@@ -2131,18 +1842,6 @@ class ParameterListSyntax extends SyntaxNode {
                 closeParenToken: ISyntaxToken) {
         super();
 
-        //if (openParenToken.kind !== SyntaxKind.OpenParenToken) {
-        //    throw Errors.argument("openParenToken");
-        //}
-
-        //if (parameters === null) {
-        //    throw Errors.argumentNull("parameters");
-        //}
-
-        //if (closeParenToken.kind !== SyntaxKind.CloseParenToken) {
-        //    throw Errors.argument("closeParenToken");
-        //}
-        
         this._openParenToken = openParenToken;
         this._parameters = parameters;
         this._closeParenToken = closeParenToken;
@@ -2150,6 +1849,10 @@ class ParameterListSyntax extends SyntaxNode {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitParameterList(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitParameterList(this);
     }
 
     public kind(): SyntaxKind {
@@ -2172,14 +1875,10 @@ class ParameterListSyntax extends SyntaxNode {
 class CallSignatureSyntax extends TypeMemberSyntax {
     private _parameterList: ParameterListSyntax;
     private _typeAnnotation: TypeAnnotationSyntax;
-    
+
     constructor(parameterList: ParameterListSyntax,
                 typeAnnotation: TypeAnnotationSyntax) {
         super();
-
-        //if (parameterList === null) {
-        //    throw Errors.argumentNull("parameterList");
-        //}
 
         this._parameterList = parameterList;
         this._typeAnnotation = typeAnnotation;
@@ -2187,6 +1886,10 @@ class CallSignatureSyntax extends TypeMemberSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitCallSignature(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitCallSignature(this);
     }
 
     public kind(): SyntaxKind {
@@ -2210,20 +1913,16 @@ class ElseClauseSyntax extends SyntaxNode {
                 statement: StatementSyntax) {
         super();
 
-        //if (elseKeyword.keywordKind() !== SyntaxKind.ElseKeyword) {
-        //    throw Errors.argument("elseKeyword");
-        //}
-
-        //if (statement === null) {
-        //    throw Errors.argumentNull("statement");
-        //}
-
         this._elseKeyword = elseKeyword;
         this._statement = statement;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitElseClause(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitElseClause(this);
     }
 
     public kind(): SyntaxKind {
@@ -2255,26 +1954,6 @@ class IfStatementSyntax extends StatementSyntax {
                 elseClause: ElseClauseSyntax) {
         super();
 
-        //if (ifKeyword.keywordKind() !== SyntaxKind.IfKeyword) {
-        //    throw Errors.argument("ifKeyword");
-        //}
-
-        //if (openParenToken.kind !== SyntaxKind.OpenParenToken) {
-        //    throw Errors.argument("openParenToken");
-        //}
-
-        //if (condition === null) {
-        //    throw Errors.argumentNull("condition");
-        //}
-
-        //if (closeParenToken.kind !== SyntaxKind.CloseParenToken) {
-        //    throw Errors.argument("closeParenToken");
-        //}
-
-        //if (statement === null) {
-        //    throw Errors.argumentNull("statement");
-        //}
-
         this._ifKeyword = ifKeyword;
         this._openParenToken = openParenToken;
         this._condition = condition;
@@ -2285,6 +1964,10 @@ class IfStatementSyntax extends StatementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitIfStatement(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitIfStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -2324,20 +2007,16 @@ class ExpressionStatementSyntax extends StatementSyntax {
                 semicolonToken: ISyntaxToken) {
         super();
 
-        //if (expression === null) {
-        //    throw Errors.argumentNull("expression");
-        //}
-
-        //if (semicolonToken.kind !== SyntaxKind.SemicolonToken) {
-        //    throw Errors.argument("semicolonToken");
-        //}
-
         this._expression = expression;
         this._semicolonToken = semicolonToken;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitExpressionStatement(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitExpressionStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -2354,6 +2033,9 @@ class ExpressionStatementSyntax extends StatementSyntax {
 }
 
 class ClassElementSyntax extends SyntaxNode {
+    constructor() {
+        super();
+    }
 }
 
 class ConstructorDeclarationSyntax extends ClassElementSyntax {
@@ -2368,20 +2050,6 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
                 semicolonToken: ISyntaxToken) {
         super();
 
-        //if (constructorKeyword.keywordKind() !== SyntaxKind.ConstructorKeyword) {
-        //    throw Errors.argument("constructorKeyword");
-        //}
-
-        //if (parameterList === null) {
-        //    throw Errors.argumentNull("parameterList");
-        //}
-
-        //// TODO: Check that exactly one of block and semicolonToken are set.
-
-        //if (semicolonToken !== null && semicolonToken.kind !== SyntaxKind.SemicolonToken) {
-        //    throw Errors.argument("SemicolonToken");
-        //}
-
         this._constructorKeyword = constructorKeyword;
         this._parameterList = parameterList;
         this._block = block;
@@ -2390,6 +2058,10 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitConstructorDeclaration(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitConstructorDeclaration(this);
     }
 
     public kind(): SyntaxKind {
@@ -2416,24 +2088,6 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
 class MemberDeclarationSyntax extends ClassElementSyntax {
     constructor() {
         super();
-
-        //if (publicOrPrivateKeyword !== null &&
-        //    publicOrPrivateKeyword.keywordKind() !== SyntaxKind.PublicKeyword &&
-        //    publicOrPrivateKeyword.keywordKind() !== SyntaxKind.PrivateKeyword) {
-        //    throw Errors.argument("publicOrPrivateKeyword");
-        //}
-
-        //if (staticKeyword !== null && staticKeyword.keywordKind() !== SyntaxKind.StaticKeyword) {
-        //    throw Errors.argument("staticKeyword");
-        //}
-    }
-
-    public publicOrPrivateKeyword(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public staticKeyword(): ISyntaxToken {
-        throw Errors.abstract();
     }
 }
 
@@ -2451,16 +2105,6 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
                 semicolonToken: ISyntaxToken) {
         super();
 
-        //if (functionSignature === null) {
-        //    throw Errors.argumentNull("functionSignature");
-        //}
-
-        //// TODO: Check that exactly one of 'block' and 'semicolon' is set.
-
-        //if (semicolonToken !== null && semicolonToken.kind !== SyntaxKind.SemicolonToken) {
-        //    throw Errors.argument("semicolonToken");
-        //}
-
         this._publicOrPrivateKeyword = publicOrPrivateKeyword;
         this._staticKeyword = staticKeyword;
         this._functionSignature = functionSignature;
@@ -2470,6 +2114,10 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitMemberFunctionDeclaration(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitMemberFunctionDeclaration(this);
     }
 
     public kind(): SyntaxKind {
@@ -2500,26 +2148,6 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
 class MemberAccessorDeclarationSyntax extends MemberDeclarationSyntax {
     constructor() {
         super();
-    }
-
-    public publicOrPrivateKeyword(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public staticKeyword(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public identifier(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public parameterList(): ParameterListSyntax {
-        throw Errors.abstract();
-    }
-
-    public block(): BlockSyntax {
-        throw Errors.abstract();
     }
 }
 
@@ -2552,6 +2180,10 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitGetMemberAccessorDeclaration(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitGetMemberAccessorDeclaration(this);
     }
 
     public kind(): SyntaxKind {
@@ -2615,6 +2247,10 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         visitor.visitSetMemberAccessorDeclaration(this);
     }
 
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitSetMemberAccessorDeclaration(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.SetMemberAccessorDeclaration;
     }
@@ -2656,16 +2292,6 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
                 semicolonToken: ISyntaxToken) {
         super();
 
-        //if (variableDeclarator === null) {
-        //    throw Errors.argumentNull("variableDeclarator");
-        //}
-
-        //// TODO: Check that exactly one of 'block' and 'semicolon' is set.
-
-        //if (semicolonToken.kind !== SyntaxKind.SemicolonToken) {
-        //    throw Errors.argument("semicolonToken");
-        //}
-
         this._publicOrPrivateKeyword = publicOrPrivateKeyword;
         this._staticKeyword = staticKeyword;
         this._variableDeclarator = variableDeclarator;
@@ -2676,8 +2302,12 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
         visitor.visitMemberVariableDeclaration(this);
     }
 
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitMemberVariableDeclaration(this);
+    }
+
     public kind(): SyntaxKind {
-        return SyntaxKind.MemberFunctionDeclaration;
+        return SyntaxKind.MemberVariableDeclaration;
     }
 
     public publicOrPrivateKeyword(): ISyntaxToken {
@@ -2707,18 +2337,6 @@ class ThrowStatementSyntax extends StatementSyntax {
                 semicolonToken: ISyntaxToken) {
         super();
 
-        //if (throwKeyword.keywordKind() !== SyntaxKind.ThrowKeyword) {
-        //    throw Errors.argument("throwKeyword");
-        //}
-
-        //if (expression === null) {
-        //    throw Errors.argument("expression");
-        //}
-
-        //if (semicolonToken.kind !== SyntaxKind.SemicolonToken) {
-        //    throw Errors.argument("semicolonToken");
-        //}
-
         this._throwKeyword = throwKeyword;
         this._expression = expression;
         this._semicolonToken = semicolonToken;
@@ -2726,6 +2344,10 @@ class ThrowStatementSyntax extends StatementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitThrowStatement(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitThrowStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -2755,14 +2377,6 @@ class ReturnStatementSyntax extends StatementSyntax {
                 semicolonToken: ISyntaxToken) {
         super();
 
-        //if (returnKeyword.keywordKind() !== SyntaxKind.ReturnKeyword) {
-        //    throw Errors.argument("returnKeyword");
-        //}
-
-        //if (semicolonToken.kind !== SyntaxKind.SemicolonToken) {
-        //    throw Errors.argument("semicolonToken");
-        //}
-
         this._returnKeyword = returnKeyword;
         this._expression = expression;
         this._semicolonToken = semicolonToken;
@@ -2770,6 +2384,10 @@ class ReturnStatementSyntax extends StatementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitReturnStatement(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitReturnStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -2799,14 +2417,6 @@ class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
                 argumentList: ArgumentListSyntax) {
         super();
 
-        //if (newKeyword.keywordKind() !== SyntaxKind.NewKeyword) {
-        //    throw Errors.argument("newKeyword");
-        //}
-
-        //if (expression === null) {
-        //    throw Errors.argumentNull("expression");
-        //}
-
         this._newKeyword = newKeyword;
         this._expression = expression;
         this._argumentList = argumentList;
@@ -2814,6 +2424,10 @@ class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitObjectCreationExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitObjectCreationExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -2851,34 +2465,6 @@ class SwitchStatementSyntax extends StatementSyntax {
                 closeBraceToken: ISyntaxToken) {
         super();
 
-        //if (switchKeyword.keywordKind() !== SyntaxKind.SwitchKeyword) {
-        //    throw Errors.argument("switchKeyword");
-        //}
-
-        //if (openParenToken.kind !== SyntaxKind.OpenParenToken) {
-        //    throw Errors.argument("openParenToken");
-        //}
-
-        //if (expression === null) {
-        //    throw Errors.argumentNull("expression");
-        //}
-
-        //if (closeParenToken.kind !== SyntaxKind.CloseParenToken) {
-        //    throw Errors.argument("closeParenToken");
-        //}
-
-        //if (openBraceToken.kind !== SyntaxKind.OpenBraceToken) {
-        //    throw Errors.argument("openBraceToken");
-        //}
-
-        //if (caseClauses === null) {
-        //    throw Errors.argumentNull("caseClauses");
-        //}
-
-        //if (closeBraceToken.kind !== SyntaxKind.CloseBraceToken) {
-        //    throw Errors.argument("closeBraceToken");
-        //}
-
         this._switchKeyword = switchKeyword;
         this._openParenToken = openParenToken;
         this._expression = expression;
@@ -2890,6 +2476,10 @@ class SwitchStatementSyntax extends StatementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitSwitchStatement(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitSwitchStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -2928,22 +2518,6 @@ class SwitchStatementSyntax extends StatementSyntax {
 class SwitchClauseSyntax extends SyntaxNode {
     constructor() {
         super();
-
-        //if (colonToken.kind !== SyntaxKind.ColonToken) {
-        //    throw Errors.argument("colonToken");
-        //}
-
-        //if (statements === null) {
-        //    throw Errors.argumentNull("statements");
-        //}
-    }
-
-    public colonToken(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public statements(): ISyntaxList {
-        throw Errors.abstract();
     }
 }
 
@@ -2959,14 +2533,6 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
                 statements: ISyntaxList) {
         super();
 
-        //if (caseKeyword.keywordKind() !== SyntaxKind.CaseKeyword) {
-        //    throw Errors.argument("caseKeyword");
-        //}
-
-        //if (expression === null) {
-        //    throw Errors.argumentNull("expression");
-        //}
-
         this._caseKeyword = caseKeyword;
         this._expression = expression;
         this._colonToken = colonToken;
@@ -2975,6 +2541,10 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitCaseSwitchClause(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitCaseSwitchClause(this);
     }
 
     public kind(): SyntaxKind {
@@ -3008,10 +2578,6 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
                 statements: ISyntaxList) {
         super();
 
-        //if (defaultKeyword.keywordKind() !== SyntaxKind.DefaultKeyword) {
-        //    throw Errors.argument("defaultKeyword");
-        //}
-
         this._defaultKeyword = defaultKeyword;
         this._colonToken = colonToken;
         this._statements = statements;
@@ -3019,6 +2585,10 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitDefaultSwitchClause(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitDefaultSwitchClause(this);
     }
 
     public kind(): SyntaxKind {
@@ -3048,18 +2618,6 @@ class BreakStatementSyntax extends StatementSyntax {
                 semicolonToken: ISyntaxToken) {
         super();
 
-        //if (breakKeyword.keywordKind() !== SyntaxKind.BreakKeyword) {
-        //    throw Errors.argument("breakKeyword");
-        //}
-
-        //if (identifier !== null && identifier.kind !== SyntaxKind.IdentifierNameToken) {
-        //    throw Errors.argument("identifier");
-        //}
-
-        //if (semicolonToken.kind !== SyntaxKind.SemicolonToken) {
-        //    throw Errors.argument("semicolonToken");
-        //}
-
         this._breakKeyword = breakKeyword;
         this._identifier = identifier;
         this._semicolonToken = semicolonToken;
@@ -3067,6 +2625,10 @@ class BreakStatementSyntax extends StatementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitBreakStatement(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitBreakStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -3096,18 +2658,6 @@ class ContinueStatementSyntax extends StatementSyntax {
                 semicolonToken: ISyntaxToken) {
         super();
 
-        //if (continueKeyword.keywordKind() !== SyntaxKind.ContinueKeyword) {
-        //    throw Errors.argument("continueKeyword");
-        //}
-
-        //if (identifier !== null && identifier.kind !== SyntaxKind.IdentifierNameToken) {
-        //    throw Errors.argument("identifier");
-        //}
-
-        //if (semicolonToken.kind !== SyntaxKind.SemicolonToken) {
-        //    throw Errors.argument("semicolonToken");
-        //}
-
         this._continueKeyword = continueKeyword;
         this._identifier = identifier;
         this._semicolonToken = semicolonToken;
@@ -3115,6 +2665,10 @@ class ContinueStatementSyntax extends StatementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitContinueStatement(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitContinueStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -3137,53 +2691,12 @@ class ContinueStatementSyntax extends StatementSyntax {
 class IterationStatementSyntax extends StatementSyntax {
     constructor() {
         super();
-
-        //if (statement === null) {
-        //    throw Errors.argumentNull("statement");
-        //}
-
-    }
-
-    public statement(): StatementSyntax {
-        throw Errors.abstract();
     }
 }
 
 class BaseForStatementSyntax extends IterationStatementSyntax {
     constructor() {
         super();
-
-        //if (forKeyword.keywordKind() !== SyntaxKind.ForKeyword) {
-        //    throw Errors.argument("forKeyword");
-        //}
-
-        //if (openParenToken.kind !== SyntaxKind.OpenParenToken) {
-        //    throw Errors.argument("openParenToken");
-        //}
-
-        //if (closeParenToken.kind !== SyntaxKind.CloseParenToken) {
-        //    throw Errors.argument("closeParenToken");
-        //}
-    }
-
-    public forKeyword(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public openParenToken(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-    
-    public variableDeclaration(): VariableDeclarationSyntax {
-        throw Errors.abstract();
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public statement(): StatementSyntax {
-        throw Errors.abstract();
     }
 }
 
@@ -3211,15 +2724,6 @@ class ForStatementSyntax extends BaseForStatementSyntax {
                 statement: StatementSyntax) {
         super();
 
-        // TODO: Check that exactly one of variableDeclaration and initializer is set.
-
-        //if (firstSemicolonToken.kind !== SyntaxKind.SemicolonToken) {
-        //    throw Errors.argument("firstSemicolonToken");
-        //}
-
-        //if (secondSemicolonToken.kind !== SyntaxKind.SemicolonToken) {
-        //    throw Errors.argument("secondSemicolonToken");
-        //}
         this._forKeyword = forKeyword;
         this._openParenToken = openParenToken;
         this._variableDeclaration = variableDeclaration;
@@ -3236,6 +2740,10 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         visitor.visitForStatement(this);
     }
 
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitForStatement(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.ForStatement;
     }
@@ -3250,14 +2758,6 @@ class ForStatementSyntax extends BaseForStatementSyntax {
 
     public variableDeclaration(): VariableDeclarationSyntax {
         return this._variableDeclaration;
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        return this._closeParenToken;
-    }
-
-    public statement(): StatementSyntax {
-        return this._statement;
     }
 
     public initializer(): ExpressionSyntax {
@@ -3278,6 +2778,14 @@ class ForStatementSyntax extends BaseForStatementSyntax {
 
     public incrementor(): ExpressionSyntax {
         return this._incrementor;
+    }
+
+    public closeParenToken(): ISyntaxToken {
+        return this._closeParenToken;
+    }
+
+    public statement(): StatementSyntax {
+        return this._statement;
     }
 }
 
@@ -3301,15 +2809,6 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
                 statement: StatementSyntax) {
         super();
 
-        //if (inKeyword.keywordKind() !== SyntaxKind.InKeyword) {
-        //    throw Errors.argument("inKeyword");
-        //}
-
-        //if (expression === null) {
-        //    throw Errors.argumentNull("expression");
-        //}
-        
-
         this._forKeyword = forKeyword;
         this._openParenToken = openParenToken;
         this._variableDeclaration = variableDeclaration;
@@ -3322,6 +2821,10 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitForInStatement(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitForInStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -3340,14 +2843,6 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         return this._variableDeclaration;
     }
 
-    public closeParenToken(): ISyntaxToken {
-        return this._closeParenToken;
-    }
-
-    public statement(): StatementSyntax {
-        return this._statement;
-    }
-
     public left(): ExpressionSyntax {
         return this._left;
     }
@@ -3358,6 +2853,14 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
 
     public expression(): ExpressionSyntax {
         return this._expression;
+    }
+
+    public closeParenToken(): ISyntaxToken {
+        return this._closeParenToken;
+    }
+
+    public statement(): StatementSyntax {
+        return this._statement;
     }
 }
 
@@ -3375,22 +2878,6 @@ class WhileStatementSyntax extends IterationStatementSyntax {
                 statement: StatementSyntax) {
         super();
 
-        //if (whileKeyword.keywordKind() !== SyntaxKind.WhileKeyword) {
-        //    throw Errors.argument("whileKeyword");
-        //}
-
-        //if (openParenToken.kind !== SyntaxKind.OpenParenToken) {
-        //    throw Errors.argument("openParenToken");
-        //}
-
-        //if (condition === null) {
-        //    throw Errors.argumentNull("condition");
-        //}
-
-        //if (closeParenToken.kind !== SyntaxKind.CloseParenToken) {
-        //    throw Errors.argument("closeParenToken");
-        //}
-
         this._whileKeyword = whileKeyword;
         this._openParenToken = openParenToken;
         this._condition = condition;
@@ -3400,6 +2887,10 @@ class WhileStatementSyntax extends IterationStatementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitWhileStatement(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitWhileStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -3441,26 +2932,6 @@ class WithStatementSyntax extends StatementSyntax {
                 statement: StatementSyntax) {
         super();
 
-        //if (withKeyword.keywordKind() !== SyntaxKind.withKeyword) {
-        //    throw Errors.argument("withKeyword");
-        //}
-
-        //if (openParenToken.kind !== SyntaxKind.OpenParenToken) {
-        //    throw Errors.argument("openParenToken");
-        //}
-
-        //if (condition === null) {
-        //    throw Errors.argumentNull("condition");
-        //}
-
-        //if (closeParenToken.kind !== SyntaxKind.CloseParenToken) {
-        //    throw Errors.argument("closeParenToken");
-        //}
-
-        //if (statement === null) {
-        //    throw Errors.argumentNull("statement");
-        //}
-
         this._withKeyword = withKeyword;
         this._openParenToken = openParenToken;
         this._condition = condition;
@@ -3470,6 +2941,10 @@ class WithStatementSyntax extends StatementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitWithStatement(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitWithStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -3513,30 +2988,6 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
                 closeBraceToken: ISyntaxToken) {
         super();
 
-        //if (exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) {
-        //    throw Errors.argument("exportKeyword");
-        //}
-
-        //if (enumKeyword.keywordKind() !== SyntaxKind.EnumKeyword) {
-        //    throw Errors.argument("enumKeyword");
-        //}
-
-        //if (identifier.kind !== SyntaxKind.IdentifierNameToken) {
-        //    throw Errors.argument("identifier");
-        //}
-
-        //if (openBraceToken.kind !== SyntaxKind.OpenBraceToken) {
-        //    throw Errors.argument("openBraceToken");
-        //}
-
-        //if (variableDeclarators === null) {
-        //    throw Errors.argumentNull("variableDeclarators");
-        //}
-
-        //if (closeBraceToken.kind !== SyntaxKind.CloseBraceToken) {
-        //    throw Errors.argument("closeBraceToken");
-        //}
-
         this._exportKeyword = exportKeyword;
         this._enumKeyword = enumKeyword;
         this._identifier = identifier;
@@ -3547,6 +2998,10 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitEnumDeclaration(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitEnumDeclaration(this);
     }
 
     public kind(): SyntaxKind {
@@ -3590,22 +3045,6 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
                 expression: UnaryExpressionSyntax) {
         super();
 
-        //if (lessThanToken.kind !== SyntaxKind.LessThanToken) {
-        //    throw Errors.argument("lessThanToken");
-        //}
-
-        //if (type === null) {
-        //    throw Errors.argumentNull("null");
-        //}
-
-        //if (greaterThanToken.kind !== SyntaxKind.GreaterThanToken) {
-        //    throw Errors.argument("greaterThanToken");
-        //}
-
-        //if (expression === null) {
-        //    throw Errors.argumentNull("expression");
-        //}
-
         this._lessThanToken = lessThanToken;
         this._type = type;
         this._greaterThanToken = greaterThanToken;
@@ -3614,6 +3053,10 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitCastExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitCastExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -3647,18 +3090,6 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
                 closeBraceToken: ISyntaxToken) {
         super();
 
-        //if (openBraceToken.kind !== SyntaxKind.OpenBraceToken) {
-        //    throw Errors.argument("openBraceToken");
-        //}
-
-        //if (propertyAssignments === null) {
-        //    throw Errors.argument("propertyAssignments");
-        //}
-
-        //if (closeBraceToken.kind !== SyntaxKind.CloseBraceToken) {
-        //    throw Errors.argument("closeBraceToken");
-        //}
-        
         this._openBraceToken = openBraceToken;
         this._propertyAssignments = propertyAssignments;
         this._closeBraceToken = closeBraceToken;
@@ -3666,6 +3097,10 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitObjectLiteralExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitObjectLiteralExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -3688,16 +3123,6 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
 class PropertyAssignmentSyntax extends SyntaxNode {
     constructor() {
         super();
-
-        //if (propertyName.kind !== SyntaxKind.IdentifierNameToken &&
-        //    propertyName.kind !== SyntaxKind.StringLiteral &&
-        //    propertyName.kind !== SyntaxKind.NumericLiteral) {
-        //    throw Errors.argument("propertyName");
-        //}
-    }
-    
-    public propertyName(): ISyntaxToken {
-        throw Errors.abstract();
     }
 }
 
@@ -3711,14 +3136,6 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
                 expression: ExpressionSyntax) {
         super();
 
-        //if (colonToken.kind !== SyntaxKind.ColonToken) {
-        //    throw Errors.argument("colonToken");
-        //}
-
-        //if (expression === null) {
-        //    throw Errors.argumentNull("expression");
-        //}
-
         this._propertyName = propertyName;
         this._colonToken = colonToken;
         this._expression = expression;
@@ -3728,10 +3145,14 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         visitor.visitSimplePropertyAssignment(this);
     }
 
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitSimplePropertyAssignment(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.SimplePropertyAssignment;
     }
-    
+
     public propertyName(): ISyntaxToken {
         return this._propertyName;
     }
@@ -3748,30 +3169,6 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
 class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
     constructor() {
         super();
-
-        //if (openParenToken.kind !== SyntaxKind.OpenParenToken) {
-        //    throw Errors.argument("openParenToken");
-        //}
-
-        //if (closeParenToken.kind !== SyntaxKind.CloseParenToken) {
-        //    throw Errors.argument("closeParenToken");
-        //}
-
-        //if (block === null) {
-        //    throw Errors.argumentNull("block");
-        //}
-    }
-
-    public openParenToken(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public block(): BlockSyntax {
-        throw Errors.abstract();
     }
 }
 
@@ -3789,10 +3186,6 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
                 block: BlockSyntax) {
         super();
 
-        //if (getKeyword.keywordKind() !== SyntaxKind.GetKeyword) {
-        //    throw Errors.argument("getKeyword");
-        //}
-
         this._getKeyword = getKeyword;
         this._propertyName = propertyName;
         this._openParenToken = openParenToken;
@@ -3804,6 +3197,10 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         visitor.visitGetAccessorPropertyAssignment(this);
     }
 
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitGetAccessorPropertyAssignment(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.GetAccessorPropertyAssignment;
     }
@@ -3811,7 +3208,7 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
     public getKeyword(): ISyntaxToken {
         return this._getKeyword;
     }
-    
+
     public propertyName(): ISyntaxToken {
         return this._propertyName;
     }
@@ -3845,14 +3242,6 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
                 block: BlockSyntax) {
         super();
 
-        //if (setKeyword.keywordKind() !== SyntaxKind.SetKeyword) {
-        //    throw Errors.argument("setKeyword");
-        //}
-
-        //if (parameterName.kind !== SyntaxKind.IdentifierNameToken) {
-        //    throw Errors.argument("parameterName");
-        //}
-
         this._setKeyword = setKeyword;
         this._propertyName = propertyName;
         this._openParenToken = openParenToken;
@@ -3865,6 +3254,10 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         visitor.visitSetAccessorPropertyAssignment(this);
     }
 
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitSetAccessorPropertyAssignment(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.SetAccessorPropertyAssignment;
     }
@@ -3872,7 +3265,7 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
     public setKeyword(): ISyntaxToken {
         return this._setKeyword;
     }
-    
+
     public propertyName(): ISyntaxToken {
         return this._propertyName;
     }
@@ -3906,22 +3299,6 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
                 block: BlockSyntax) {
         super();
 
-        //if (functionKeyword.keywordKind() !== SyntaxKind.FunctionKeyword) {
-        //    throw Errors.argument("functionKeyword");
-        //}
-
-        //if (identifier !== null && identifier.kind !== SyntaxKind.IdentifierNameToken) {
-        //    throw Errors.argument("identifier");
-        //}
-
-        //if (callSignature === null) {
-        //    throw Errors.argumentNull("callSignature");
-        //}
-
-        //if (block === null) {
-        //    throw Errors.argumentNull("block");
-        //}
-
         this._functionKeyword = functionKeyword;
         this._identifier = identifier;
         this._callSignature = callSignature;
@@ -3930,6 +3307,10 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitFunctionExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitFunctionExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -3959,15 +3340,15 @@ class EmptyStatementSyntax extends StatementSyntax {
     constructor(semicolonToken: ISyntaxToken) {
         super();
 
-        //if (semicolonToken.kind !== SyntaxKind.SemicolonToken) {
-        //    throw Errors.argument("semicolonToken");
-        //}
-
         this._semicolonToken = semicolonToken;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitEmptyStatement(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitEmptyStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -3985,15 +3366,15 @@ class SuperExpressionSyntax extends UnaryExpressionSyntax {
     constructor(superKeyword: ISyntaxToken) {
         super();
 
-        //if (superKeyword.keywordKind() !== SyntaxKind.SuperKeyword) {
-        //    throw Errors.argument("superKeyword");
-        //}
-
         this._superKeyword = superKeyword;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitSuperExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitSuperExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -4017,14 +3398,6 @@ class TryStatementSyntax extends StatementSyntax {
                 finallyClause: FinallyClauseSyntax) {
         super();
 
-        //if (tryKeyword.keywordKind() !== SyntaxKind.TryKeyword) {
-        //    throw Errors.argument("tryKeyword");
-        //}
-
-        //if (block === null) {
-        //    throw Errors.argumentNull("block");
-        //}
-
         this._tryKeyword = tryKeyword;
         this._block = block;
         this._catchClause = catchClause;
@@ -4033,6 +3406,10 @@ class TryStatementSyntax extends StatementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitTryStatement(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitTryStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -4070,26 +3447,6 @@ class CatchClauseSyntax extends SyntaxNode {
                 block: BlockSyntax) {
         super();
 
-        //if (catchKeyword.keywordKind() !== SyntaxKind.CatchKeyword) {
-        //    throw Errors.argument("catchKeyword");
-        //}
-
-        //if (openParenToken.kind !== SyntaxKind.OpenParenToken) {
-        //    throw Errors.argument("openParenToken");
-        //}
-
-        //if (identifier.kind !== SyntaxKind.IdentifierNameToken) {
-        //    throw Errors.argument("identifier");
-        //}
-
-        //if (closeParenToken.kind !== SyntaxKind.CloseParenToken) {
-        //    throw Errors.argument("closeParenToken");
-        //}
-
-        //if (block === null) {
-        //    throw Errors.argument("block");
-        //}
-
         this._catchKeyword = catchKeyword;
         this._openParenToken = openParenToken;
         this._identifier = identifier;
@@ -4099,6 +3456,10 @@ class CatchClauseSyntax extends SyntaxNode {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitCatchClause(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitCatchClause(this);
     }
 
     public kind(): SyntaxKind {
@@ -4134,20 +3495,16 @@ class FinallyClauseSyntax extends SyntaxNode {
                 block: BlockSyntax) {
         super();
 
-        //if (finallyKeyword.keywordKind() !== SyntaxKind.FinallyKeyword) {
-        //    throw Errors.argument("finallyKeyword");
-        //}
-
-        //if (block === null) {
-        //    throw Errors.argumentNull("block");
-        //}
-
         this._finallyKeyword = finallyKeyword;
         this._block = block;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitFinallyClause(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitFinallyClause(this);
     }
 
     public kind(): SyntaxKind {
@@ -4157,7 +3514,7 @@ class FinallyClauseSyntax extends SyntaxNode {
     public finallyKeyword(): ISyntaxToken {
         return this._finallyKeyword;
     }
-     
+
     public block(): BlockSyntax {
         return this._block;
     }
@@ -4173,18 +3530,6 @@ class LabeledStatement extends StatementSyntax {
                 statement: StatementSyntax) {
         super();
 
-        //if (identifier.kind !== SyntaxKind.IdentifierNameToken) {
-        //    throw Errors.argument("identifier");
-        //}
-
-        //if (colonToken.kind !== SyntaxKind.ColonToken) {
-        //    throw Errors.argument("colonToken");
-        //}
-
-        //if (statement === null) {
-        //    throw Errors.argumentNull("statement");
-        //}
-
         this._identifier = identifier;
         this._colonToken = colonToken;
         this._statement = statement;
@@ -4192,6 +3537,10 @@ class LabeledStatement extends StatementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitLabeledStatement(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitLabeledStatement(this);
     }
 
     public kind(): SyntaxKind {
@@ -4229,30 +3578,6 @@ class DoStatementSyntax extends IterationStatementSyntax {
                 semicolonToken: ISyntaxToken) {
         super();
 
-        //if (doKeyword.keywordKind() !== SyntaxKind.DoKeyword) {
-        //    throw Errors.argument("doKeyword");
-        //}
-
-        //if (whileKeyword.keywordKind() !== SyntaxKind.WhileKeyword) {
-        //    throw Errors.argument("whileKeyword");
-        //}
-
-        //if (openParenToken.kind !== SyntaxKind.OpenParenToken) {
-        //    throw Errors.argument("openParenToken");
-        //}
-
-        //if (condition === null) {
-        //    throw Errors.argument("condition");
-        //}
-
-        //if (closeParenToken.kind !== SyntaxKind.CloseParenToken) {
-        //    throw Errors.argument("closeParenToken");
-        //}
-
-        //if (semicolonToken.kind !== SyntaxKind.SemicolonToken) {
-        //    throw Errors.argument("semicolonToken");
-        //}
-
         this._doKeyword = doKeyword;
         this._statement = statement;
         this._whileKeyword = whileKeyword;
@@ -4266,10 +3591,14 @@ class DoStatementSyntax extends IterationStatementSyntax {
         visitor.visitDoStatement(this);
     }
 
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitDoStatement(this);
+    }
+
     public kind(): SyntaxKind {
         return SyntaxKind.DoStatement;
     }
-    
+
     public doKeyword(): ISyntaxToken {
         return this._doKeyword;
     }
@@ -4307,20 +3636,16 @@ class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
                 expression: ExpressionSyntax) {
         super();
 
-        //if (typeOfKeyword.keywordKind() !== SyntaxKind.TypeOfKeyword) {
-        //    throw Errors.argument("typeOfKeyword");
-        //}
-
-        //if (expression === null) {
-        //    throw Errors.argumentNull("expression");
-        //}
-
         this._typeOfKeyword = typeOfKeyword;
         this._expression = expression;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitTypeOfExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitTypeOfExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -4344,20 +3669,16 @@ class DeleteExpressionSyntax extends UnaryExpressionSyntax {
                 expression: ExpressionSyntax) {
         super();
 
-        //if (deleteKeyword.keywordKind() !== SyntaxKind.DeleteKeyword) {
-        //    throw Errors.argument("deleteKeyword");
-        //}
-
-        //if (expression === null) {
-        //    throw Errors.argumentNull("expression");
-        //}
-
         this._deleteKeyword = deleteKeyword;
         this._expression = expression;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitDeleteExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitDeleteExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -4381,20 +3702,16 @@ class VoidExpressionSyntax extends UnaryExpressionSyntax {
                 expression: ExpressionSyntax) {
         super();
 
-        //if (voidKeyword.keywordKind() !== SyntaxKind.voidKeyword) {
-        //    throw Errors.argument("voidKeyword");
-        //}
-
-        //if (expression === null) {
-        //    throw Errors.argumentNull("expression");
-        //}
-
         this._voidKeyword = voidKeyword;
         this._expression = expression;
     }
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitVoidExpression(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitVoidExpression(this);
     }
 
     public kind(): SyntaxKind {
@@ -4424,6 +3741,10 @@ class DebuggerStatementSyntax extends StatementSyntax {
 
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitDebuggerStatement(this);
+    }
+
+    public accept1(visitor: ISyntaxVisitor1): any {
+        return visitor.visitDebuggerStatement(this);
     }
 
     public kind(): SyntaxKind {

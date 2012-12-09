@@ -53,6 +53,7 @@
 ///<reference path='SyntaxNode.ts' />
 ///<reference path='SyntaxList.ts' />
 ///<reference path='SyntaxNodes.ts' />
+///<reference path='SyntaxRewriter.ts' />
 ///<reference path='SyntaxTokenFactory.ts' />
 ///<reference path='SyntaxTree.ts' />
 ///<reference path='SyntaxTriviaList.ts' />

@@ -159,6 +159,12 @@ compiler: local
 prototype: $(PROTOTYPE_SOURCES_PROGRAM)
 	$(STRC_LKG) $(PROTOTYPE_SOURCES_PROGRAM) -const -out $(PSRC)\prototype.js
 
+syntaxgenerator: $(PSRC)\SyntaxGenerator.ts
+	$(STRC_LKG) $(PSRC)\SyntaxGenerator.ts -const -out $(PSRC)\SyntaxGenerator.js
+
+runsyntaxgenerator: syntaxgenerator
+	$(DEBUG_HOST) $(PSRC)\SyntaxGenerator.js 
+
 runprototype: prototype
 	$(DEBUG_HOST) $(PSRC)\prototype.js $(FRONTEND_SOURCES) $(SERVICES_SOURCES) $(BUILT_LOCALTEST)\typescriptServices.js $(HSRC)\harness.ts $(HSRC)\diff.ts $(HSRC)\exec.ts $(HSRC)\baselining.ts $(HSRC)\fourslash.ts $(HSRC)\dumpAST-baselining.ts $(HSRC)\external\json2.ts $(HSRC)\runner.ts
 
