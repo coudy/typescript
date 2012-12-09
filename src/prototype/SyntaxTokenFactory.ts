@@ -1,6 +1,6 @@
 ///<reference path='References.ts' />
 
-module SyntaxTokenFactory {
+module SyntaxToken {
     function getTriviaLength(value: number) {
         return value & Constants.TriviaLengthMask;
     }

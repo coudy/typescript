@@ -1812,7 +1812,7 @@ var Parser = (function (_super) {
             return this.eatToken(73 /* SemicolonToken */ );
         }
         if(this.canEatAutomaticSemicolon(allowWithoutNewline)) {
-            var semicolonToken = SyntaxTokenFactory.createEmpty(this.currentToken().fullStart(), 73 /* SemicolonToken */ , 0 /* None */ );
+            var semicolonToken = SyntaxToken.createEmpty(this.currentToken().fullStart(), 73 /* SemicolonToken */ , 0 /* None */ );
             if(!this.options.allowAutomaticSemicolonInsertion()) {
                 this.addDiagnostic(new SyntaxDiagnostic(this.previousToken.end(), 0, 7 /* Automatic_semicolon_insertion_not_allowed */ , null));
             }
@@ -1883,7 +1883,7 @@ var Parser = (function (_super) {
     Parser.prototype.createMissingToken = function (expectedKind, expectedKeywordKind, actual) {
         var diagnostic = this.getExpectedTokenDiagnostic(expectedKind, expectedKeywordKind, actual);
         this.addDiagnostic(diagnostic);
-        return SyntaxTokenFactory.createEmpty(this.currentToken().fullStart(), expectedKind, expectedKeywordKind);
+        return SyntaxToken.createEmpty(this.currentToken().fullStart(), expectedKind, expectedKeywordKind);
     };
     Parser.prototype.getExpectedTokenDiagnostic = function (expectedKind, expectedKeywordKind, actual) {
         var token = this.currentToken();
@@ -4436,7 +4436,7 @@ var Scanner = (function (_super) {
         var leadingTriviaInfo = this.scanTriviaInfo(diagnostics, false);
         this.scanSyntaxToken(diagnostics, allowRegularExpression);
         var trailingTriviaInfo = this.scanTriviaInfo(diagnostics, true);
-        return SyntaxTokenFactory.create(fullStart, leadingTriviaInfo, this.tokenInfo, trailingTriviaInfo);
+        return SyntaxToken.create(fullStart, leadingTriviaInfo, this.tokenInfo, trailingTriviaInfo);
     };
     Scanner.prototype.scanTriviaInfo = function (diagnostics, isTrailing) {
         var width = 0;
@@ -12269,8 +12269,8 @@ var Emitter = (function (_super) {
     };
     return Emitter;
 })(SyntaxRewriter);
-var SyntaxTokenFactory;
-(function (SyntaxTokenFactory) {
+var SyntaxToken;
+(function (SyntaxToken) {
     function getTriviaLength(value) {
         return value & 67108863 /* TriviaLengthMask */ ;
     }
@@ -13562,12 +13562,12 @@ var SyntaxTokenFactory;
             }
         }
     }
-    SyntaxTokenFactory.create = create;
+    SyntaxToken.create = create;
     function createEmpty(fullStart, kind, keywordKind) {
         return new EmptyToken(fullStart, kind, keywordKind);
     }
-    SyntaxTokenFactory.createEmpty = createEmpty;
-})(SyntaxTokenFactory || (SyntaxTokenFactory = {}));
+    SyntaxToken.createEmpty = createEmpty;
+})(SyntaxToken || (SyntaxToken = {}));
 var SyntaxTree = (function () {
     function SyntaxTree(sourceUnit, skippedTokens, diagnostics) {
         this._sourceUnit = sourceUnit;
