@@ -1176,16 +1176,13 @@ function generateNode(definition: ITypeDefinition): string {
 }
 
 function generateNodes(): string {
-    var result = "";
+    var result = "///<reference path='References.ts' />";
 
     for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         if (definition === undefined) { continue; }
 
-        if (result !== "") {
-            result += "\r\n\r\n";
-        }
-
+        result += "\r\n\r\n";
         result += generateNode(definition);
     }
 
