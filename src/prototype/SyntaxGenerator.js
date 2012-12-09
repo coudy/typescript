@@ -249,6 +249,74 @@ var Environment = (function () {
         }
     }
 })();
+var ArrayUtilities = (function () {
+    function ArrayUtilities() { }
+    ArrayUtilities.isArray = function isArray(value) {
+        return Object.prototype.toString.apply(value, []) === '[object Array]';
+    }
+    ArrayUtilities.sum = function sum(array, func) {
+        var result = 0;
+        for(var i = 0, n = array.length; i < n; i++) {
+            result += func(array[i]);
+        }
+        return result;
+    }
+    ArrayUtilities.where = function where(values, func) {
+        var result = [];
+        for(var i = 0; i < values.length; i++) {
+            if(func(values[i])) {
+                result.push(values[i]);
+            }
+        }
+        return result;
+    }
+    ArrayUtilities.any = function any(array, func) {
+        for(var i = 0, n = array.length; i < n; i++) {
+            if(func(array[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+    ArrayUtilities.binarySearch = function binarySearch(array, value) {
+        var low = 0;
+        var high = array.length - 1;
+        while(low <= high) {
+            var middle = low + ((high - low) >> 1);
+            var midValue = array[middle];
+            if(midValue === value) {
+                return middle;
+            } else {
+                if(midValue > value) {
+                    high = middle - 1;
+                } else {
+                    low = middle + 1;
+                }
+            }
+        }
+        return ~low;
+    }
+    ArrayUtilities.createArray = function createArray(length, defaultvalue) {
+        if (typeof defaultvalue === "undefined") { defaultvalue = null; }
+        var result = [];
+        for(var i = 0; i < length; i++) {
+            result.push(defaultvalue);
+        }
+        return result;
+    }
+    ArrayUtilities.grow = function grow(array, length, defaultValue) {
+        var count = length - array.length;
+        for(var i = 0; i < count; i++) {
+            array.push(defaultValue);
+        }
+    }
+    ArrayUtilities.copy = function copy(sourceArray, sourceIndex, destinationArray, destinationIndex, length) {
+        for(var i = 0; i < length; i++) {
+            destinationArray[destinationIndex + i] = sourceArray[sourceIndex + i];
+        }
+    }
+    return ArrayUtilities;
+})();
 var argumentChecks = true;
 var definitions = [
     {
@@ -262,8 +330,7 @@ var definitions = [
             {
                 name: 'endOfFileToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -297,8 +364,7 @@ var definitions = [
             {
                 name: 'closeParenToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -308,8 +374,7 @@ var definitions = [
             {
                 name: 'moduleName',
                 type: 'NameSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -338,8 +403,7 @@ var definitions = [
             {
                 name: 'semicolonToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -388,8 +452,7 @@ var definitions = [
             {
                 name: 'closeBraceToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -420,8 +483,7 @@ var definitions = [
             {
                 name: 'body',
                 type: 'ObjectTypeSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -435,8 +497,7 @@ var definitions = [
             {
                 name: 'typeNames',
                 isSeparatedList: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -450,8 +511,7 @@ var definitions = [
             {
                 name: 'typeNames',
                 isSeparatedList: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -493,8 +553,7 @@ var definitions = [
             {
                 name: 'closeBraceToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -534,8 +593,7 @@ var definitions = [
                 name: 'semicolonToken',
                 isToken: true,
                 isOptional: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -559,8 +617,7 @@ var definitions = [
             {
                 name: 'semicolonToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -586,8 +643,7 @@ var definitions = [
             {
                 name: 'variableDeclarators',
                 isSeparatedList: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -610,8 +666,7 @@ var definitions = [
                 name: 'equalsValueClause',
                 type: 'EqualsValueClauseSyntax',
                 isOptional: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -625,8 +680,7 @@ var definitions = [
             {
                 name: 'value',
                 type: 'ExpressionSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -652,8 +706,7 @@ var definitions = [
             {
                 name: 'operand',
                 type: 'UnaryExpressionSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -663,8 +716,7 @@ var definitions = [
             {
                 name: 'thisKeyword',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -686,8 +738,7 @@ var definitions = [
                     "TrueKeyword", 
                     "NullKeyword"
                 ]
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -705,8 +756,7 @@ var definitions = [
             {
                 name: 'closeBracketToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -729,8 +779,7 @@ var definitions = [
             {
                 name: 'closeParenToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -757,8 +806,7 @@ var definitions = [
             {
                 name: 'body',
                 type: 'SyntaxNode'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -776,8 +824,7 @@ var definitions = [
             {
                 name: 'body',
                 type: 'SyntaxNode'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -802,8 +849,7 @@ var definitions = [
                 tokenKinds: [
                     "IdentifierNameToken"
                 ]
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -821,8 +867,7 @@ var definitions = [
             {
                 name: 'right',
                 type: 'IdentifierNameSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -844,8 +889,7 @@ var definitions = [
             {
                 name: 'type',
                 type: 'TypeSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -863,8 +907,7 @@ var definitions = [
             {
                 name: 'type',
                 type: 'TypeSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -882,8 +925,7 @@ var definitions = [
             {
                 name: 'closeBraceToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -901,8 +943,7 @@ var definitions = [
             {
                 name: 'closeBracketToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -919,8 +960,7 @@ var definitions = [
                     "StringKeyword", 
                     "VoidKeyword"
                 ]
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -934,8 +974,7 @@ var definitions = [
             {
                 name: 'type',
                 type: 'TypeSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -953,8 +992,7 @@ var definitions = [
             {
                 name: 'closeBraceToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -996,8 +1034,7 @@ var definitions = [
                 name: 'equalsValueClause',
                 type: 'EqualsValueClauseSyntax',
                 isOptional: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1015,8 +1052,7 @@ var definitions = [
             {
                 name: 'identifierName',
                 type: 'IdentifierNameSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1038,8 +1074,7 @@ var definitions = [
                     "PlusPlusToken", 
                     "MinusMinusToken"
                 ]
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1061,8 +1096,7 @@ var definitions = [
             {
                 name: 'closeBracketToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1076,8 +1110,7 @@ var definitions = [
             {
                 name: 'argumentList',
                 type: 'ArgumentListSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1095,8 +1128,7 @@ var definitions = [
             {
                 name: 'closeParenToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1156,8 +1188,7 @@ var definitions = [
             {
                 name: 'right',
                 type: 'ExpressionSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1183,8 +1214,7 @@ var definitions = [
             {
                 name: 'whenFalse',
                 type: 'ExpressionSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1209,8 +1239,7 @@ var definitions = [
                 name: 'typeAnnotation',
                 type: 'TypeAnnotationSyntax',
                 isOptional: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1237,8 +1266,7 @@ var definitions = [
                 name: 'typeAnnotation',
                 type: 'TypeAnnotationSyntax',
                 isOptional: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1261,8 +1289,7 @@ var definitions = [
                 name: 'typeAnnotation',
                 type: 'TypeAnnotationSyntax',
                 isOptional: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1285,8 +1312,7 @@ var definitions = [
                 name: 'typeAnnotation',
                 type: 'TypeAnnotationSyntax',
                 isOptional: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1304,8 +1330,7 @@ var definitions = [
             {
                 name: 'closeParenToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1320,8 +1345,7 @@ var definitions = [
                 name: 'typeAnnotation',
                 type: 'TypeAnnotationSyntax',
                 isOptional: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1335,8 +1359,7 @@ var definitions = [
             {
                 name: 'statement',
                 type: 'StatementSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1367,8 +1390,7 @@ var definitions = [
                 name: 'elseClause',
                 type: 'ElseClauseSyntax',
                 isOptional: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1382,8 +1404,7 @@ var definitions = [
             {
                 name: 'semicolonToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1413,8 +1434,7 @@ var definitions = [
                 name: 'semicolonToken',
                 isToken: true,
                 isOptional: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1454,8 +1474,7 @@ var definitions = [
                 name: 'semicolonToken',
                 isToken: true,
                 isOptional: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1505,8 +1524,7 @@ var definitions = [
             {
                 name: 'block',
                 type: 'BlockSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1545,8 +1563,7 @@ var definitions = [
             {
                 name: 'block',
                 type: 'BlockSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1574,8 +1591,7 @@ var definitions = [
             {
                 name: 'semicolonToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1593,8 +1609,7 @@ var definitions = [
             {
                 name: 'semicolonToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1613,8 +1628,7 @@ var definitions = [
             {
                 name: 'semicolonToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1633,8 +1647,7 @@ var definitions = [
                 name: 'argumentList',
                 type: 'ArgumentListSyntax',
                 isOptional: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1668,8 +1681,7 @@ var definitions = [
             {
                 name: 'closeBraceToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1697,8 +1709,7 @@ var definitions = [
             {
                 name: 'statements',
                 isList: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1716,8 +1727,7 @@ var definitions = [
             {
                 name: 'statements',
                 isList: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1739,8 +1749,7 @@ var definitions = [
             {
                 name: 'semicolonToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1762,8 +1771,7 @@ var definitions = [
             {
                 name: 'semicolonToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1831,8 +1839,7 @@ var definitions = [
             {
                 name: 'statement',
                 type: 'StatementSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1872,8 +1879,7 @@ var definitions = [
             {
                 name: 'statement',
                 type: 'StatementSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1899,8 +1905,7 @@ var definitions = [
             {
                 name: 'statement',
                 type: 'StatementSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1926,8 +1931,7 @@ var definitions = [
             {
                 name: 'statement',
                 type: 'StatementSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1961,8 +1965,7 @@ var definitions = [
             {
                 name: 'closeBraceToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -1984,8 +1987,7 @@ var definitions = [
             {
                 name: 'expression',
                 type: 'UnaryExpressionSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -2003,8 +2005,7 @@ var definitions = [
             {
                 name: 'closeBraceToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -2033,8 +2034,7 @@ var definitions = [
             {
                 name: 'expression',
                 type: 'ExpressionSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -2069,8 +2069,7 @@ var definitions = [
             {
                 name: 'block',
                 type: 'BlockSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -2106,8 +2105,7 @@ var definitions = [
             {
                 name: 'block',
                 type: 'BlockSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -2133,8 +2131,7 @@ var definitions = [
             {
                 name: 'block',
                 type: 'BlockSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -2144,8 +2141,7 @@ var definitions = [
             {
                 name: 'semicolonToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -2155,8 +2151,7 @@ var definitions = [
             {
                 name: 'superKeyword',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -2180,8 +2175,7 @@ var definitions = [
                 name: 'finallyClause',
                 type: 'FinallyClauseSyntax',
                 isOptional: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -2210,8 +2204,7 @@ var definitions = [
             {
                 name: 'block',
                 type: 'BlockSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -2225,8 +2218,7 @@ var definitions = [
             {
                 name: 'block',
                 type: 'BlockSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -2247,8 +2239,7 @@ var definitions = [
             {
                 name: 'statement',
                 type: 'StatementSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -2282,8 +2273,7 @@ var definitions = [
             {
                 name: 'semicolonToken',
                 isToken: true
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -2297,8 +2287,7 @@ var definitions = [
             {
                 name: 'expression',
                 type: 'ExpressionSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -2312,8 +2301,7 @@ var definitions = [
             {
                 name: 'expression',
                 type: 'ExpressionSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -2327,8 +2315,7 @@ var definitions = [
             {
                 name: 'expression',
                 type: 'ExpressionSyntax'
-            }, 
-            
+            }
         ]
     }, 
     {
@@ -2342,11 +2329,9 @@ var definitions = [
             {
                 name: 'semicolonToken',
                 isToken: true
-            }, 
-            
+            }
         ]
-    }, 
-    
+    }
 ];
 function endsWith(string, value) {
     return string.substring(string.length - value.length, string.length) === value;
@@ -2387,9 +2372,6 @@ function generateProperties(definition) {
     var result = "";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
-        if(child === undefined) {
-            continue;
-        }
         result += "    private _" + child.name + ": " + getType(child) + ";\r\n";
         hasKind = hasKind || (getType(child) === "SyntaxKind");
     }
@@ -2402,9 +2384,6 @@ function generateNullChecks(definition) {
     var result = "";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
-        if(child === undefined) {
-            continue;
-        }
         if(!child.isOptional && !child.isToken) {
             result += "        if (" + child.name + " === null) { throw Errors.argumentNull('" + child.name + "'); }\r\n";
         }
@@ -2452,24 +2431,15 @@ function generateDefaultCase(child, indent) {
     result += indent + "                throw Errors.argument('" + child.name + "');\r\n";
     return result;
 }
-function where(values, func) {
-    var result = [];
-    for(var i = 0; i < values.length; i++) {
-        if(func(values[i])) {
-            result.push(values[i]);
-        }
-    }
-    return result;
-}
 function generateSwitchKindCheck(child, tokenKinds, indent) {
     if(tokenKinds.length === 0) {
         return "";
     }
     var result = "";
-    var keywords = where(tokenKinds, function (v) {
+    var keywords = ArrayUtilities.where(tokenKinds, function (v) {
         return v.indexOf("Keyword") >= 0;
     });
-    var tokens = where(tokenKinds, function (v) {
+    var tokens = ArrayUtilities.where(tokenKinds, function (v) {
         return v.indexOf("Keyword") < 0;
     });
     if(tokens.length === 0) {
@@ -2516,9 +2486,6 @@ function generateKindChecks(definition) {
     var result = "";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
-        if(child === undefined) {
-            continue;
-        }
         if(child.isToken) {
             result += generateKindCheck(child);
         }
@@ -2541,11 +2508,8 @@ function generateConstructor(definition) {
     result += "    constructor(";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
-        if(child === undefined) {
-            continue;
-        }
         result += child.name + ": " + getType(child);
-        if(i < definition.children.length - 2) {
+        if(i < definition.children.length - 1) {
             result += ",\r\n                ";
         }
     }
@@ -2557,11 +2521,49 @@ function generateConstructor(definition) {
     result += generateArgumentChecks(definition);
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
-        if(child === undefined) {
-            continue;
-        }
         result += "        " + getPropertyAccess(child) + " = " + child.name + ";\r\n";
     }
+    result += "    }\r\n";
+    return result;
+}
+function isMandatory(child) {
+    return !child.isOptional && !child.isList && !child.isSeparatedList;
+}
+function generateFactoryMethod(definition) {
+    var mandatoryChildren = ArrayUtilities.where(definition.children, isMandatory);
+    if(mandatoryChildren.length === definition.children.length) {
+        return "";
+    }
+    var result = "\r\n    public static create(";
+    for(var i = 0; i < mandatoryChildren.length; i++) {
+        var child = mandatoryChildren[i];
+        result += child.name + ": " + getType(child);
+        if(i < mandatoryChildren.length - 1) {
+            result += ",\r\n                         ";
+        }
+    }
+    result += "): " + definition.name + " {\r\n";
+    result += "        return new " + definition.name + "(";
+    for(var i = 0; i < definition.children.length; i++) {
+        var child = definition.children[i];
+        if(i > 0) {
+            result += ", ";
+        }
+        if(isMandatory(child)) {
+            result += child.name;
+        } else {
+            if(child.isList) {
+                result += "SyntaxList.empty";
+            } else {
+                if(child.isSeparatedList) {
+                    result += "SeparatedSyntaxList.empty";
+                } else {
+                    result += "null";
+                }
+            }
+        }
+    }
+    result += ");\r\n";
     result += "    }\r\n";
     return result;
 }
@@ -2598,9 +2600,6 @@ function generateIsMissingMethod(definition) {
         result += "    public isMissing(): bool {\r\n";
         for(var i = 0; i < definition.children.length; i++) {
             var child = definition.children[i];
-            if(child === undefined) {
-                continue;
-            }
             if(getType(child) === "SyntaxKind") {
                 continue;
             }
@@ -2619,9 +2618,6 @@ function generateAccessors(definition) {
     var result = "";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
-        if(child === undefined) {
-            continue;
-        }
         result += "\r\n";
         result += "    public " + child.name + "(): " + getType(child) + " {\r\n";
         result += "        return " + getPropertyAccess(child) + ";\r\n";
@@ -2638,11 +2634,8 @@ function generateUpdateMethod(definition) {
     result += "    public update(";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
-        if(child === undefined) {
-            continue;
-        }
         result += getSafeName(child) + ": " + getType(child);
-        if(i < definition.children.length - 2) {
+        if(i < definition.children.length - 1) {
             result += ",\r\n                  ";
         }
     }
@@ -2653,9 +2646,6 @@ function generateUpdateMethod(definition) {
         result += "        if (";
         for(var i = 0; i < definition.children.length; i++) {
             var child = definition.children[i];
-            if(child === undefined) {
-                continue;
-            }
             if(i !== 0) {
                 result += " && ";
             }
@@ -2667,9 +2657,6 @@ function generateUpdateMethod(definition) {
         result += "        return new " + definition.name + "(";
         for(var i = 0; i < definition.children.length; i++) {
             var child = definition.children[i];
-            if(child === undefined) {
-                continue;
-            }
             if(i !== 0) {
                 result += ", ";
             }
@@ -2685,6 +2672,7 @@ function generateNode(definition) {
     hasKind = false;
     result += generateProperties(definition);
     result += generateConstructor(definition);
+    result += generateFactoryMethod(definition);
     result += generateAcceptMethods(definition);
     result += generateKindMethod(definition);
     result += generateIsMissingMethod(definition);
@@ -2697,9 +2685,6 @@ function generateNodes() {
     var result = "///<reference path='References.ts' />";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
-        if(definition === undefined) {
-            continue;
-        }
         result += "\r\n\r\n";
         result += generateNode(definition);
     }
@@ -2710,9 +2695,6 @@ function generateRewriter() {
     result += "///<reference path='References.ts' />\r\n" + "\r\n" + "class SyntaxRewriter implements ISyntaxVisitor1 {\r\n" + "    public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n" + "        return token;\r\n" + "    }\r\n" + "\r\n" + "    private visitNode(node: SyntaxNode): SyntaxNode {\r\n" + "        return node === null ? null : node.accept1(this);\r\n" + "    }\r\n" + "\r\n" + "    private visitList(list: ISyntaxList): ISyntaxList {\r\n" + "        var newItems: SyntaxNode[] = null;\r\n" + "\r\n" + "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" + "            var item = list.syntaxNodeAt(i);\r\n" + "            var newItem = <SyntaxNode>item.accept1(this);\r\n" + "\r\n" + "            if (item !== newItem && newItems === null) {\r\n" + "                newItems = [];\r\n" + "                for (var j = 0; j < i; j++) {\r\n" + "                    newItems.push(list.syntaxNodeAt(j));\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            if (newItems) {\r\n" + "                newItems.push(newItem);\r\n" + "            }\r\n" + "        }\r\n" + "\r\n" + "        Debug.assert(newItems === null || newItems.length === list.count());\r\n" + "        return newItems === null ? list : SyntaxList.create(newItems);\r\n" + "    }\r\n" + "\r\n" + "    private visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n" + "        var newItems: any[] = null;\r\n" + "\r\n" + "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" + "            var item = list.itemAt(i);\r\n" + "            var newItem = item.isToken() ? <ISyntaxElement>this.visitToken(<ISyntaxToken>item) : this.visitNode(<SyntaxNode>item);\r\n" + "\r\n" + "            if (item !== newItem && newItems === null) {\r\n" + "                newItems = [];\r\n" + "                for (var j = 0; j < i; j++) {\r\n" + "                    newItems.push(list.itemAt(j));\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            if (newItems) {\r\n" + "                newItems.push(newItem);\r\n" + "            }\r\n" + "        }\r\n" + "\r\n" + "        Debug.assert(newItems === null || newItems.length === list.count());\r\n" + "        return newItems === null ? list : SeparatedSyntaxList.create(newItems);\r\n" + "    }\r\n";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
-        if(definition === undefined) {
-            continue;
-        }
         if(definition.isAbstract) {
             continue;
         }
@@ -2721,9 +2703,6 @@ function generateRewriter() {
         result += "        return node.update(\r\n";
         for(var j = 0; j < definition.children.length; j++) {
             var child = definition.children[j];
-            if(child === undefined) {
-                continue;
-            }
             result += "            ";
             if(child.isOptional && child.isToken) {
                 result += "node." + child.name + "() === null ? null : ";
@@ -2745,7 +2724,7 @@ function generateRewriter() {
                     }
                 }
             }
-            if(j < definition.children.length - 2) {
+            if(j < definition.children.length - 1) {
                 result += ",\r\n";
             }
         }

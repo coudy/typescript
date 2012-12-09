@@ -1,5 +1,3 @@
-///<reference path='References.ts' />
-
 class ArrayUtilities {
     public static isArray(value: any): bool {
         return Object.prototype.toString.apply(value, []) === '[object Array]';
@@ -10,6 +8,18 @@ class ArrayUtilities {
 
         for (var i = 0, n = array.length; i < n; i++) {
             result += func(array[i]);
+        }
+
+        return result;
+    }
+
+    public static where(values: any[], func: (v: any) => bool): any[] {
+        var result = [];
+
+        for (var i = 0; i < values.length; i++) {
+            if (func(values[i])) {
+                result.push(values[i]);
+            }
         }
 
         return result;

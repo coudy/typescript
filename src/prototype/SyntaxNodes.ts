@@ -15,6 +15,10 @@ class SourceUnitSyntax extends SyntaxNode {
         this._endOfFileToken = endOfFileToken;
     }
 
+    public static create(endOfFileToken: ISyntaxToken): SourceUnitSyntax {
+        return new SourceUnitSyntax(SyntaxList.empty, endOfFileToken);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitSourceUnit(this);
     }
@@ -301,6 +305,13 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
         this._closeBraceToken = closeBraceToken;
     }
 
+    public static create(classKeyword: ISyntaxToken,
+                         identifier: ISyntaxToken,
+                         openBraceToken: ISyntaxToken,
+                         closeBraceToken: ISyntaxToken): ClassDeclarationSyntax {
+        return new ClassDeclarationSyntax(null, null, classKeyword, identifier, null, null, openBraceToken, SyntaxList.empty, closeBraceToken);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitClassDeclaration(this);
     }
@@ -407,6 +418,12 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
         this._body = body;
     }
 
+    public static create(interfaceKeyword: ISyntaxToken,
+                         identifier: ISyntaxToken,
+                         body: ObjectTypeSyntax): InterfaceDeclarationSyntax {
+        return new InterfaceDeclarationSyntax(null, interfaceKeyword, identifier, null, body);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitInterfaceDeclaration(this);
     }
@@ -476,6 +493,10 @@ class ExtendsClauseSyntax extends SyntaxNode {
         this._typeNames = typeNames;
     }
 
+    public static create(extendsKeyword: ISyntaxToken): ExtendsClauseSyntax {
+        return new ExtendsClauseSyntax(extendsKeyword, SeparatedSyntaxList.empty);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitExtendsClause(this);
     }
@@ -525,6 +546,10 @@ class ImplementsClauseSyntax extends SyntaxNode {
 
         this._implementsKeyword = implementsKeyword;
         this._typeNames = typeNames;
+    }
+
+    public static create(implementsKeyword: ISyntaxToken): ImplementsClauseSyntax {
+        return new ImplementsClauseSyntax(implementsKeyword, SeparatedSyntaxList.empty);
     }
 
     public accept(visitor: ISyntaxVisitor): void {
@@ -605,6 +630,12 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
         this._openBraceToken = openBraceToken;
         this._moduleElements = moduleElements;
         this._closeBraceToken = closeBraceToken;
+    }
+
+    public static create(moduleKeyword: ISyntaxToken,
+                         openBraceToken: ISyntaxToken,
+                         closeBraceToken: ISyntaxToken): ModuleDeclarationSyntax {
+        return new ModuleDeclarationSyntax(null, null, moduleKeyword, null, null, openBraceToken, SyntaxList.empty, closeBraceToken);
     }
 
     public accept(visitor: ISyntaxVisitor): void {
@@ -721,6 +752,11 @@ class FunctionDeclarationSyntax extends StatementSyntax {
         this._semicolonToken = semicolonToken;
     }
 
+    public static create(functionKeyword: ISyntaxToken,
+                         functionSignature: FunctionSignatureSyntax): FunctionDeclarationSyntax {
+        return new FunctionDeclarationSyntax(null, null, functionKeyword, functionSignature, null, null);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitFunctionDeclaration(this);
     }
@@ -808,6 +844,11 @@ class VariableStatementSyntax extends StatementSyntax {
         this._semicolonToken = semicolonToken;
     }
 
+    public static create(variableDeclaration: VariableDeclarationSyntax,
+                         semicolonToken: ISyntaxToken): VariableStatementSyntax {
+        return new VariableStatementSyntax(null, null, variableDeclaration, semicolonToken);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitVariableStatement(this);
     }
@@ -883,6 +924,10 @@ class VariableDeclarationSyntax extends SyntaxNode {
         this._variableDeclarators = variableDeclarators;
     }
 
+    public static create(varKeyword: ISyntaxToken): VariableDeclarationSyntax {
+        return new VariableDeclarationSyntax(varKeyword, SeparatedSyntaxList.empty);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitVariableDeclaration(this);
     }
@@ -934,6 +979,10 @@ class VariableDeclaratorSyntax extends SyntaxNode {
         this._identifier = identifier;
         this._typeAnnotation = typeAnnotation;
         this._equalsValueClause = equalsValueClause;
+    }
+
+    public static create(identifier: ISyntaxToken): VariableDeclaratorSyntax {
+        return new VariableDeclaratorSyntax(identifier, null, null);
     }
 
     public accept(visitor: ISyntaxVisitor): void {
@@ -1216,6 +1265,11 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
         this._openBracketToken = openBracketToken;
         this._expressions = expressions;
         this._closeBracketToken = closeBracketToken;
+    }
+
+    public static create(openBracketToken: ISyntaxToken,
+                         closeBracketToken: ISyntaxToken): ArrayLiteralExpressionSyntax {
+        return new ArrayLiteralExpressionSyntax(openBracketToken, SeparatedSyntaxList.empty, closeBracketToken);
     }
 
     public accept(visitor: ISyntaxVisitor): void {
@@ -1740,6 +1794,11 @@ class ObjectTypeSyntax extends TypeSyntax {
         this._closeBraceToken = closeBraceToken;
     }
 
+    public static create(openBraceToken: ISyntaxToken,
+                         closeBraceToken: ISyntaxToken): ObjectTypeSyntax {
+        return new ObjectTypeSyntax(openBraceToken, SeparatedSyntaxList.empty, closeBraceToken);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitObjectType(this);
     }
@@ -1963,6 +2022,11 @@ class BlockSyntax extends StatementSyntax {
         this._closeBraceToken = closeBraceToken;
     }
 
+    public static create(openBraceToken: ISyntaxToken,
+                         closeBraceToken: ISyntaxToken): BlockSyntax {
+        return new BlockSyntax(openBraceToken, SyntaxList.empty, closeBraceToken);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitBlock(this);
     }
@@ -2038,6 +2102,10 @@ class ParameterSyntax extends SyntaxNode {
         this._questionToken = questionToken;
         this._typeAnnotation = typeAnnotation;
         this._equalsValueClause = equalsValueClause;
+    }
+
+    public static create(identifier: ISyntaxToken): ParameterSyntax {
+        return new ParameterSyntax(null, null, identifier, null, null, null);
     }
 
     public accept(visitor: ISyntaxVisitor): void {
@@ -2358,6 +2426,11 @@ class ArgumentListSyntax extends SyntaxNode {
         this._closeParenToken = closeParenToken;
     }
 
+    public static create(openParenToken: ISyntaxToken,
+                         closeParenToken: ISyntaxToken): ArgumentListSyntax {
+        return new ArgumentListSyntax(openParenToken, SeparatedSyntaxList.empty, closeParenToken);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitArgumentList(this);
     }
@@ -2612,6 +2685,11 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         this._typeAnnotation = typeAnnotation;
     }
 
+    public static create(newKeyword: ISyntaxToken,
+                         parameterList: ParameterListSyntax): ConstructSignatureSyntax {
+        return new ConstructSignatureSyntax(newKeyword, parameterList, null);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitConstructSignature(this);
     }
@@ -2676,6 +2754,11 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         this._questionToken = questionToken;
         this._parameterList = parameterList;
         this._typeAnnotation = typeAnnotation;
+    }
+
+    public static create(identifier: ISyntaxToken,
+                         parameterList: ParameterListSyntax): FunctionSignatureSyntax {
+        return new FunctionSignatureSyntax(identifier, null, parameterList, null);
     }
 
     public accept(visitor: ISyntaxVisitor): void {
@@ -2748,6 +2831,12 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         this._typeAnnotation = typeAnnotation;
     }
 
+    public static create(openBracketToken: ISyntaxToken,
+                         parameter: ParameterSyntax,
+                         closeBracketToken: ISyntaxToken): IndexSignatureSyntax {
+        return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, null);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitIndexSignature(this);
     }
@@ -2816,6 +2905,10 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         this._typeAnnotation = typeAnnotation;
     }
 
+    public static create(identifier: ISyntaxToken): PropertySignatureSyntax {
+        return new PropertySignatureSyntax(identifier, null, null);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitPropertySignature(this);
     }
@@ -2877,6 +2970,11 @@ class ParameterListSyntax extends SyntaxNode {
         this._closeParenToken = closeParenToken;
     }
 
+    public static create(openParenToken: ISyntaxToken,
+                         closeParenToken: ISyntaxToken): ParameterListSyntax {
+        return new ParameterListSyntax(openParenToken, SeparatedSyntaxList.empty, closeParenToken);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitParameterList(this);
     }
@@ -2931,6 +3029,10 @@ class CallSignatureSyntax extends TypeMemberSyntax {
 
         this._parameterList = parameterList;
         this._typeAnnotation = typeAnnotation;
+    }
+
+    public static create(parameterList: ParameterListSyntax): CallSignatureSyntax {
+        return new CallSignatureSyntax(parameterList, null);
     }
 
     public accept(visitor: ISyntaxVisitor): void {
@@ -3048,6 +3150,14 @@ class IfStatementSyntax extends StatementSyntax {
         this._closeParenToken = closeParenToken;
         this._statement = statement;
         this._elseClause = elseClause;
+    }
+
+    public static create(ifKeyword: ISyntaxToken,
+                         openParenToken: ISyntaxToken,
+                         condition: ExpressionSyntax,
+                         closeParenToken: ISyntaxToken,
+                         statement: StatementSyntax): IfStatementSyntax {
+        return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, null);
     }
 
     public accept(visitor: ISyntaxVisitor): void {
@@ -3191,6 +3301,11 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
         this._semicolonToken = semicolonToken;
     }
 
+    public static create(constructorKeyword: ISyntaxToken,
+                         parameterList: ParameterListSyntax): ConstructorDeclarationSyntax {
+        return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, null, null);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitConstructorDeclaration(this);
     }
@@ -3275,6 +3390,10 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
         this._functionSignature = functionSignature;
         this._block = block;
         this._semicolonToken = semicolonToken;
+    }
+
+    public static create(functionSignature: FunctionSignatureSyntax): MemberFunctionDeclarationSyntax {
+        return new MemberFunctionDeclarationSyntax(null, null, functionSignature, null, null);
     }
 
     public accept(visitor: ISyntaxVisitor): void {
@@ -3373,6 +3492,13 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         this._parameterList = parameterList;
         this._typeAnnotation = typeAnnotation;
         this._block = block;
+    }
+
+    public static create(getKeyword: ISyntaxToken,
+                         identifier: ISyntaxToken,
+                         parameterList: ParameterListSyntax,
+                         block: BlockSyntax): GetMemberAccessorDeclarationSyntax {
+        return new GetMemberAccessorDeclarationSyntax(null, null, getKeyword, identifier, parameterList, null, block);
     }
 
     public accept(visitor: ISyntaxVisitor): void {
@@ -3476,6 +3602,13 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         this._block = block;
     }
 
+    public static create(setKeyword: ISyntaxToken,
+                         identifier: ISyntaxToken,
+                         parameterList: ParameterListSyntax,
+                         block: BlockSyntax): SetMemberAccessorDeclarationSyntax {
+        return new SetMemberAccessorDeclarationSyntax(null, null, setKeyword, identifier, parameterList, block);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitSetMemberAccessorDeclaration(this);
     }
@@ -3561,6 +3694,11 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
         this._staticKeyword = staticKeyword;
         this._variableDeclarator = variableDeclarator;
         this._semicolonToken = semicolonToken;
+    }
+
+    public static create(variableDeclarator: VariableDeclaratorSyntax,
+                         semicolonToken: ISyntaxToken): MemberVariableDeclarationSyntax {
+        return new MemberVariableDeclarationSyntax(null, null, variableDeclarator, semicolonToken);
     }
 
     public accept(visitor: ISyntaxVisitor): void {
@@ -3690,6 +3828,11 @@ class ReturnStatementSyntax extends StatementSyntax {
         this._semicolonToken = semicolonToken;
     }
 
+    public static create(returnKeyword: ISyntaxToken,
+                         semicolonToken: ISyntaxToken): ReturnStatementSyntax {
+        return new ReturnStatementSyntax(returnKeyword, null, semicolonToken);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitReturnStatement(this);
     }
@@ -3748,6 +3891,11 @@ class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
         this._newKeyword = newKeyword;
         this._expression = expression;
         this._argumentList = argumentList;
+    }
+
+    public static create(newKeyword: ISyntaxToken,
+                         expression: ExpressionSyntax): ObjectCreationExpressionSyntax {
+        return new ObjectCreationExpressionSyntax(newKeyword, expression, null);
     }
 
     public accept(visitor: ISyntaxVisitor): void {
@@ -3825,6 +3973,15 @@ class SwitchStatementSyntax extends StatementSyntax {
         this._openBraceToken = openBraceToken;
         this._caseClauses = caseClauses;
         this._closeBraceToken = closeBraceToken;
+    }
+
+    public static create(switchKeyword: ISyntaxToken,
+                         openParenToken: ISyntaxToken,
+                         expression: ExpressionSyntax,
+                         closeParenToken: ISyntaxToken,
+                         openBraceToken: ISyntaxToken,
+                         closeBraceToken: ISyntaxToken): SwitchStatementSyntax {
+        return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, SyntaxList.empty, closeBraceToken);
     }
 
     public accept(visitor: ISyntaxVisitor): void {
@@ -3922,6 +4079,12 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         this._statements = statements;
     }
 
+    public static create(caseKeyword: ISyntaxToken,
+                         expression: ExpressionSyntax,
+                         colonToken: ISyntaxToken): CaseSwitchClauseSyntax {
+        return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, SyntaxList.empty);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitCaseSwitchClause(this);
     }
@@ -3989,6 +4152,11 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         this._statements = statements;
     }
 
+    public static create(defaultKeyword: ISyntaxToken,
+                         colonToken: ISyntaxToken): DefaultSwitchClauseSyntax {
+        return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, SyntaxList.empty);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitDefaultSwitchClause(this);
     }
@@ -4052,6 +4220,11 @@ class BreakStatementSyntax extends StatementSyntax {
         this._semicolonToken = semicolonToken;
     }
 
+    public static create(breakKeyword: ISyntaxToken,
+                         semicolonToken: ISyntaxToken): BreakStatementSyntax {
+        return new BreakStatementSyntax(breakKeyword, null, semicolonToken);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitBreakStatement(this);
     }
@@ -4113,6 +4286,11 @@ class ContinueStatementSyntax extends StatementSyntax {
         this._continueKeyword = continueKeyword;
         this._identifier = identifier;
         this._semicolonToken = semicolonToken;
+    }
+
+    public static create(continueKeyword: ISyntaxToken,
+                         semicolonToken: ISyntaxToken): ContinueStatementSyntax {
+        return new ContinueStatementSyntax(continueKeyword, null, semicolonToken);
     }
 
     public accept(visitor: ISyntaxVisitor): void {
@@ -4210,6 +4388,15 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         this._incrementor = incrementor;
         this._closeParenToken = closeParenToken;
         this._statement = statement;
+    }
+
+    public static create(forKeyword: ISyntaxToken,
+                         openParenToken: ISyntaxToken,
+                         firstSemicolonToken: ISyntaxToken,
+                         secondSemicolonToken: ISyntaxToken,
+                         closeParenToken: ISyntaxToken,
+                         statement: StatementSyntax): ForStatementSyntax {
+        return new ForStatementSyntax(forKeyword, openParenToken, null, null, firstSemicolonToken, null, secondSemicolonToken, null, closeParenToken, statement);
     }
 
     public accept(visitor: ISyntaxVisitor): void {
@@ -4331,6 +4518,15 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         this._expression = expression;
         this._closeParenToken = closeParenToken;
         this._statement = statement;
+    }
+
+    public static create(forKeyword: ISyntaxToken,
+                         openParenToken: ISyntaxToken,
+                         inKeyword: ISyntaxToken,
+                         expression: ExpressionSyntax,
+                         closeParenToken: ISyntaxToken,
+                         statement: StatementSyntax): ForInStatementSyntax {
+        return new ForInStatementSyntax(forKeyword, openParenToken, null, null, inKeyword, expression, closeParenToken, statement);
     }
 
     public accept(visitor: ISyntaxVisitor): void {
@@ -4600,6 +4796,13 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
         this._closeBraceToken = closeBraceToken;
     }
 
+    public static create(enumKeyword: ISyntaxToken,
+                         identifier: ISyntaxToken,
+                         openBraceToken: ISyntaxToken,
+                         closeBraceToken: ISyntaxToken): EnumDeclarationSyntax {
+        return new EnumDeclarationSyntax(null, enumKeyword, identifier, openBraceToken, SeparatedSyntaxList.empty, closeBraceToken);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitEnumDeclaration(this);
     }
@@ -4748,6 +4951,11 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
         this._openBraceToken = openBraceToken;
         this._propertyAssignments = propertyAssignments;
         this._closeBraceToken = closeBraceToken;
+    }
+
+    public static create(openBraceToken: ISyntaxToken,
+                         closeBraceToken: ISyntaxToken): ObjectLiteralExpressionSyntax {
+        return new ObjectLiteralExpressionSyntax(openBraceToken, SeparatedSyntaxList.empty, closeBraceToken);
     }
 
     public accept(visitor: ISyntaxVisitor): void {
@@ -5069,6 +5277,12 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
         this._block = block;
     }
 
+    public static create(functionKeyword: ISyntaxToken,
+                         callSignature: CallSignatureSyntax,
+                         block: BlockSyntax): FunctionExpressionSyntax {
+        return new FunctionExpressionSyntax(functionKeyword, null, callSignature, block);
+    }
+
     public accept(visitor: ISyntaxVisitor): void {
         visitor.visitFunctionExpression(this);
     }
@@ -5218,6 +5432,11 @@ class TryStatementSyntax extends StatementSyntax {
         this._block = block;
         this._catchClause = catchClause;
         this._finallyClause = finallyClause;
+    }
+
+    public static create(tryKeyword: ISyntaxToken,
+                         block: BlockSyntax): TryStatementSyntax {
+        return new TryStatementSyntax(tryKeyword, block, null, null);
     }
 
     public accept(visitor: ISyntaxVisitor): void {

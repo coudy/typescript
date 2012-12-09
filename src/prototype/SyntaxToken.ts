@@ -857,6 +857,13 @@ module SyntaxToken {
         }
     }
 
+    export function createElasticKeyword(token: IElasticToken): ISyntaxToken {
+        token.keywordKind = token.kind;
+        token.kind = SyntaxKind.IdentifierNameToken;
+
+        return createElastic(token);
+    }
+
     export function createElastic(token: IElasticToken): ISyntaxToken {
         var text = token.text ? token.text :
             token.keywordKind ? SyntaxFacts.getText(token.keywordKind) : SyntaxFacts.getText(token.kind);

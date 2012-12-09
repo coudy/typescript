@@ -45,21 +45,63 @@ class Emitter extends SyntaxRewriter {
     }
 
     private visitModuleDeclaration(node: ModuleDeclarationSyntax): StatementSyntax[] {
-        var result: StatementSyntax[] = [];
-        
         // TODO: Handle the case where this is a dotted name.  Note: existing typescript transpiler
         // does not seem to handle this.
         var identifierName = Emitter.leftmostName(node.moduleName());
 
-        //var variableStatement = new VariableStatementSyntax(
-        //    /*exportKeyword:*/ null,
-        //    /*declareKeyword:*/ null,
-        //    new VariableDeclarationSyntax(
-        //        SyntaxTokenFactory.createElastic(SyntaxKind.VarKeyword),
-        //        SeparatedSyntaxList.create(
-        //            [new VariableDeclaratorSyntax(identifierName.identifier(), null, null)])),
-        //    SyntaxTokenFactory.createElastic(SyntaxKind.SemicolonToken));
+        var variableStatement = VariableStatementSyntax.create(
+            new VariableDeclarationSyntax(
+                SyntaxToken.createElasticKeyword({ kind: SyntaxKind.VarKeyword, trailingTrivia: [SyntaxTrivia.space] }),
+                SeparatedSyntaxList.create(
+                    [VariableDeclaratorSyntax.create(identifierName.identifier())])),
+            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken }));
 
-        return result;
+        var functionExpression = FunctionExpressionSyntax.create(
+            SyntaxToken.createElasticKeyword({ kind: SyntaxKind.FunctionKeyword }),
+            CallSignatureSyntax.create(
+                new ParameterListSyntax(
+                    SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+                    SeparatedSyntaxList.create([
+                        ParameterSyntax.create(identifierName.identifier())]),
+                    SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }))),
+            new BlockSyntax(
+                SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+                SyntaxList.empty,
+                SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken })));
+
+        var parenthesizedFunctionExpression = new ParenthesizedExpressionSyntax(
+            SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+            functionExpression,
+            SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }));
+        
+        var logicalOrExpression = new BinaryExpressionSyntax(
+            SyntaxKind.LogicalOrExpression,
+            identifierName,
+            SyntaxToken.createElastic({ kind: SyntaxKind.BarBarToken }),
+            new ParenthesizedExpressionSyntax(
+                SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+                new BinaryExpressionSyntax(
+                    SyntaxKind.AssignmentExpression,
+                    identifierName,
+                    SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken }),
+                    new ObjectLiteralExpressionSyntax(
+                        SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken }),
+                        SeparatedSyntaxList.empty,
+                        SyntaxToken.createElastic({ kind: SyntaxKind.CloseBraceToken })
+                    )),
+                SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken })));
+
+        var invocationExpression = new InvocationExpressionSyntax(
+            parenthesizedFunctionExpression,
+            new ArgumentListSyntax(
+                SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+                SeparatedSyntaxList.create([logicalOrExpression]),
+                SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken })));
+
+        var expressionStatement = new ExpressionStatementSyntax(
+            invocationExpression,
+            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken }));
+
+        return [variableStatement, expressionStatement];
     }
 }
