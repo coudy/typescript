@@ -15265,7 +15265,7 @@ var Unicode = (function () {
     }
     return Unicode;
 })();
-var argumentChecks = false;
+var argumentChecks = true;
 var definitions = [
     {
         name: 'SourceUnitSyntax',
@@ -17414,46 +17414,129 @@ function generateProperties(definition) {
     }
     return result;
 }
+function generateNullChecks(definition) {
+    var result = "";
+    for(var i = 0; i < definition.children.length; i++) {
+        var child = definition.children[i];
+        if(child === undefined) {
+            continue;
+        }
+        if(!child.isOptional && !child.isToken) {
+            result += "        if (" + child.name + " === null) { throw Errors.argumentNull('" + child.name + "'); }\r\n";
+        }
+    }
+    return result;
+}
+function generateIfKindCheck(child, tokenKinds, indent) {
+    var result = "";
+    result += indent + "        if (";
+    for(var j = 0; j < tokenKinds.length; j++) {
+        var tokenKind = tokenKinds[j];
+        var isKeyword = tokenKind.indexOf("Keyword") >= 0;
+        if(j > 0) {
+            result += " && ";
+        }
+        if(isKeyword) {
+            result += child.name + ".keywordKind() !== SyntaxKind." + tokenKind;
+        } else {
+            result += child.name + ".kind() !== SyntaxKind." + tokenKind;
+        }
+    }
+    result += ") { throw Errors.argument('" + child.name + "'); }\r\n";
+    return result;
+}
+function generateSwitchCase(tokenKind, indent) {
+    return indent + "            case SyntaxKind." + tokenKind + ":\r\n";
+}
+function generateBreakStatement(indent) {
+    return indent + "                break;\r\n";
+}
+function generateSwitchCases(tokenKinds, indent) {
+    var result = "";
+    for(var j = 0; j < tokenKinds.length; j++) {
+        var tokenKind = tokenKinds[j];
+        result += generateSwitchCase(tokenKind, indent);
+    }
+    if(tokenKinds.length > 0) {
+        result += generateBreakStatement(indent);
+    }
+    return result;
+}
+function generateDefaultCase(child, indent) {
+    var result = "";
+    result += indent + "            default:\r\n";
+    result += indent + "                throw Errors.argument('" + child.name + "');";
+    return result;
+}
+function generateSwitchKindCheck(child, tokenKinds, indent) {
+    if(tokenKinds.length === 0) {
+        return "";
+    }
+    var result = "";
+    var keywords = tokenKinds.filter(function (v, i, a) {
+        return v.indexOf("Keyword") >= 0;
+    }, null);
+    var tokens = tokenKinds.filter(function (v, i, a) {
+        return v.indexOf("Keyword") == 0;
+    }, null);
+    if(tokens.length === 0) {
+        if(keywords.length <= 2) {
+            result += generateIfKindCheck(child, keywords, indent);
+        } else {
+            result += indent + "        switch (" + child.name + ".keywordKind()) {\r\n";
+            result += generateSwitchCases(keywords, indent);
+        }
+    } else {
+        result += indent + "        switch (" + child.name + ".kind()) {\r\n";
+        result += generateSwitchCases(tokens, indent);
+        if(keywords.length > 0) {
+            result += generateSwitchCase("IdentifierNameToken", indent);
+            result += generateSwitchKindCheck(child, keywords, indent + "    ");
+            result += generateBreakStatement(indent);
+        }
+    }
+    result += generateDefaultCase(child, indent);
+    result += indent + "        }\r\n";
+    return result;
+}
+function generateKindCheck(child) {
+    var indent = "";
+    var result = "";
+    if(child.isOptional) {
+        indent = "    ";
+        result += "        if (" + child.name + " !== null) {\r\n";
+    }
+    var tokenKinds = child.tokenKinds ? child.tokenKinds : [
+        child.name.substr(0, 1).toUpperCase() + child.name.substr(1)
+    ];
+    if(true) {
+        result += generateIfKindCheck(child, tokenKinds, indent);
+    } else {
+        result += generateSwitchKindCheck(child, tokenKinds, indent);
+    }
+    if(child.isOptional) {
+        result += "        }\r\n";
+    }
+    return result;
+}
+function generateKindChecks(definition) {
+    var result = "";
+    for(var i = 0; i < definition.children.length; i++) {
+        var child = definition.children[i];
+        if(child === undefined) {
+            continue;
+        }
+        if(child.isToken) {
+            result += generateKindCheck(child);
+        }
+    }
+    return result;
+}
 function generateArgumentChecks(definition) {
     var result = "";
     if(argumentChecks) {
-        for(var i = 0; i < definition.children.length; i++) {
-            var child = definition.children[i];
-            if(child === undefined) {
-                continue;
-            }
-            if(!child.isOptional && !child.isToken) {
-                result += "        if (" + child.name + " === null) { throw Errors.argumentNull('" + child.name + "'); }\r\n";
-            }
-        }
-        for(var i = 0; i < definition.children.length; i++) {
-            var child = definition.children[i];
-            if(child === undefined) {
-                continue;
-            }
-            if(child.isToken) {
-                result += "        if (";
-                if(child.isOptional) {
-                    result += child.name + " !== null && ";
-                }
-                var tokenKinds = child.tokenKinds ? child.tokenKinds : [
-                    child.name.substr(0, 1).toUpperCase() + child.name.substr(1)
-                ];
-                for(var j = 0; j < tokenKinds.length; j++) {
-                    var tokenKind = tokenKinds[j];
-                    var isKeyword = tokenKind.indexOf("Keyword") >= 0;
-                    if(j > 0) {
-                        result += " && ";
-                    }
-                    if(isKeyword) {
-                        result += child.name + ".keywordKind() !== SyntaxKind." + tokenKind;
-                    } else {
-                        result += child.name + ".kind() !== SyntaxKind." + tokenKind;
-                    }
-                }
-                result += ") { throw Errors.argument('" + child.name + "'); }\r\n";
-            }
-        }
+        result += generateNullChecks(definition);
+        result += generateKindChecks(definition);
         if(definition.children.length > 0) {
             result += "\r\n";
         }
