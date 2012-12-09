@@ -30,3 +30,11 @@ interface ISyntaxToken extends ISyntaxElement {
     leadingTrivia(text: IText): ISyntaxTriviaList;
     trailingTrivia(text: IText): ISyntaxTriviaList;
 }
+
+interface IElasticToken {
+    kind: SyntaxKind;
+    keywordKind?: SyntaxKind;
+    leadingTrivia?: ISyntaxTriviaList;
+    text?: string;
+    trailingTrivia?: ISyntaxTriviaList;
+}

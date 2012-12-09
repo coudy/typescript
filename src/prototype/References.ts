@@ -6,7 +6,6 @@
 ///<reference path='Debug.ts' />
 ///<reference path='Diagnostic.ts' />
 ///<reference path='DiagnosticCode.ts' />
-///<reference path='Emitter.ts' />
 ///<reference path='Environment.ts' />
 ///<reference path='Errors.ts' />
 ///<reference path='Contract.ts' />
@@ -54,8 +53,13 @@
 ///<reference path='SyntaxList.ts' />
 ///<reference path='SyntaxNodes.ts' />
 ///<reference path='SyntaxRewriter.ts' />
+
+// Emitter depends on SyntaxRewriter
+///<reference path='Emitter.ts' />
+
 ///<reference path='SyntaxTokenFactory.ts' />
 ///<reference path='SyntaxTree.ts' />
+///<reference path='SyntaxTrivia.ts' />
 ///<reference path='SyntaxTriviaList.ts' />
 ///<reference path='SyntaxWalker.ts' />
 ///<reference path='TextChangeRange.ts' />

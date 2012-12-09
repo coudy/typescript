@@ -5,6 +5,7 @@ class SyntaxNode implements ISyntaxElement {
     public isNode(): bool{ return true; }
     public isList(): bool{ return false; }
     public isSeparatedList(): bool{ return false; }
+    public isTrivia(): bool { return false; }
 
     public kind(): SyntaxKind {
         throw Errors.abstract();

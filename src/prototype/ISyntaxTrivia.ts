@@ -1,8 +1,6 @@
 ///<reference path='References.ts' />
 
-interface ISyntaxTrivia {
-    syntaxKind(): SyntaxKind;
-
+interface ISyntaxTrivia extends ISyntaxElement {
     fullStart(): number;
     fullWidth(): number;
 

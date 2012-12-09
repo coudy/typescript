@@ -1,6 +1,10 @@
 ///<reference path='References.ts' />
 
 class ArrayUtilities {
+    public static isArray(value: any): bool {
+        return Object.prototype.toString.apply(value, []) === '[object Array]';
+    }
+
     public static binarySearch(array: number[], value: number): number {
         var low = 0;
         var high = array.length - 1;

@@ -7,5 +7,6 @@ interface ISyntaxElement {
     isNode(): bool;
     isList(): bool;
     isSeparatedList(): bool;
+    isTrivia(): bool;
     isMissing(): bool;
 }

@@ -109,6 +109,7 @@ module SyntaxTokenFactory {
         public isNode(): bool{ return false; }
         public isList(): bool{ return false; }
         public isSeparatedList(): bool{ return false; }
+        public isTrivia(): bool { return false; }
         public kind() { return this.tokenKind; }
 
         public toJSON(key) { return toJSON(this); }
@@ -147,6 +148,7 @@ module SyntaxTokenFactory {
         public isNode(): bool{ return false; }
         public isList(): bool{ return false; }
         public isSeparatedList(): bool{ return false; }
+        public isTrivia(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
         
@@ -187,6 +189,7 @@ module SyntaxTokenFactory {
         public isNode(): bool{ return false; }
         public isList(): bool{ return false; }
         public isSeparatedList(): bool{ return false; }
+        public isTrivia(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
 
@@ -229,6 +232,7 @@ module SyntaxTokenFactory {
         public isNode(): bool{ return false; }
         public isList(): bool{ return false; }
         public isSeparatedList(): bool{ return false; }
+        public isTrivia(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
         
@@ -273,6 +277,7 @@ module SyntaxTokenFactory {
         public isNode(): bool{ return false; }
         public isList(): bool{ return false; }
         public isSeparatedList(): bool{ return false; }
+        public isTrivia(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
         
@@ -313,6 +318,7 @@ module SyntaxTokenFactory {
         public isNode(): bool{ return false; }
         public isList(): bool{ return false; }
         public isSeparatedList(): bool{ return false; }
+        public isTrivia(): bool { return false; }
         public kind() { return SyntaxKind.IdentifierNameToken; }
         public toJSON(key) { return toJSON(this); }
         
@@ -354,6 +360,7 @@ module SyntaxTokenFactory {
         public isNode(): bool{ return false; }
         public isList(): bool{ return false; }
         public isSeparatedList(): bool{ return false; }
+        public isTrivia(): bool { return false; }
         public kind() { return SyntaxKind.IdentifierNameToken; }
         public toJSON(key) { return toJSON(this); }
 
@@ -397,6 +404,7 @@ module SyntaxTokenFactory {
         public isNode(): bool{ return false; }
         public isList(): bool{ return false; }
         public isSeparatedList(): bool{ return false; }
+        public isTrivia(): bool { return false; }
         public kind() { return SyntaxKind.IdentifierNameToken; }
         public toJSON(key) { return toJSON(this); }
         
@@ -442,6 +450,7 @@ module SyntaxTokenFactory {
         public isNode(): bool{ return false; }
         public isList(): bool{ return false; }
         public isSeparatedList(): bool{ return false; }
+        public isTrivia(): bool { return false; }
         public kind() { return SyntaxKind.IdentifierNameToken; }
         public toJSON(key) { return toJSON(this); }
         
@@ -487,6 +496,7 @@ module SyntaxTokenFactory {
         public isNode(): bool{ return false; }
         public isList(): bool{ return false; }
         public isSeparatedList(): bool{ return false; }
+        public isTrivia(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
         
@@ -531,6 +541,7 @@ module SyntaxTokenFactory {
         public isNode(): bool{ return false; }
         public isList(): bool{ return false; }
         public isSeparatedList(): bool{ return false; }
+        public isTrivia(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
 
@@ -577,6 +588,7 @@ module SyntaxTokenFactory {
         public isNode(): bool{ return false; }
         public isList(): bool{ return false; }
         public isSeparatedList(): bool{ return false; }
+        public isTrivia(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
         
@@ -625,6 +637,7 @@ module SyntaxTokenFactory {
         public isNode(): bool{ return false; }
         public isList(): bool{ return false; }
         public isSeparatedList(): bool{ return false; }
+        public isTrivia(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
         
@@ -732,7 +745,21 @@ module SyntaxTokenFactory {
         }
     }
     
-    export function createEmptyToken(fullStart: number, kind: SyntaxKind, keywordKind: SyntaxKind): ISyntaxToken {
+    export function createEmpty(fullStart: number, kind: SyntaxKind, keywordKind: SyntaxKind): ISyntaxToken {
         return new EmptyToken(fullStart, kind, keywordKind);
     }
+
+    //export function createElastic(kind: SyntaxKind, keywordKind = SyntaxKind.None, leadingTrivia = SyntaxTriviaList.empty, text = null, trailingTrivia = SyntaxTriviaList.empty): ISyntaxToken {
+    //    if (text === null) {
+    //        text = keywordKind !== SyntaxKind.None ? SyntaxFacts.getText(keywordKind) : SyntaxFacts.getText(kind);
+    //    }
+    //}
+
+    //export function createElasticWithLeadingTrivia(leadingTrivia: ISyntaxTriviaList, kind: SyntaxKind, keywordKind = SyntaxKind.None, text = null, trailingTrivia = SyntaxTriviaList.empty): ISyntaxToken {
+    //    return createElastic(kind, keywordKind, leadingTrivia, text, trailingTrivia);
+    //}
+
+    //export function createElasticWithTrailingTrivia(kind: SyntaxKind, keywordKind = SyntaxKind.None, trailingTrivia = SyntaxTriviaList.empty. leadingTrivia: ISyntaxTriviaList, text = null): ISyntaxToken {
+    //    return createElastic(kind, keywordKind, leadingTrivia, text, trailingTrivia);
+    //}
 }

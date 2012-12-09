@@ -7,6 +7,7 @@ module SeparatedSyntaxList {
         public isNode(): bool{ return false; }
         public isList(): bool{ return false; }
         public isSeparatedList(): bool { return true; }
+        public isTrivia(): bool { return false; }
         public kind() { return SyntaxKind.SeparatedList; }
         public isMissing(): bool { return true; }
 
@@ -44,6 +45,7 @@ module SeparatedSyntaxList {
         public isNode(): bool{ return false; }
         public isList(): bool{ return false; }
         public isSeparatedList(): bool{ return true; }
+        public isTrivia(): bool { return false; }
         public kind() { return SyntaxKind.SeparatedList; }
         public isMissing(): bool { return this.item.isMissing(); }
 
@@ -83,6 +85,7 @@ module SeparatedSyntaxList {
         public isNode(): bool{ return false; }
         public isList(): bool{ return false; }
         public isSeparatedList(): bool{ return true; }
+        public isTrivia(): bool { return false; }
         public kind() { return SyntaxKind.SeparatedList; }
         public toJSON(key) { return this.nodes; }
 

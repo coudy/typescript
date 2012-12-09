@@ -6,6 +6,7 @@ module SyntaxList {
         public isNode(): bool{ return false; }
         public isList(): bool{ return true; }
         public isSeparatedList(): bool{ return false; }
+        public isTrivia(): bool { return false; }
         public kind(): SyntaxKind { return SyntaxKind.List; }
 
         public toJSON(key) {
@@ -38,6 +39,7 @@ module SyntaxList {
         public isNode(): bool{ return false; }
         public isList(): bool{ return true; }
         public isSeparatedList(): bool{ return false; }
+        public isTrivia(): bool { return false; }
         public kind(): SyntaxKind { return SyntaxKind.List; }
         public isMissing(): bool { return this._item.isMissing(); }
 
@@ -69,6 +71,7 @@ module SyntaxList {
         public isNode(): bool{ return false; }
         public isList(): bool{ return true; }
         public isSeparatedList(): bool{ return false; }
+        public isTrivia(): bool { return false; }
         public kind(): SyntaxKind { return SyntaxKind.List; }
 
         public isMissing(): bool {
