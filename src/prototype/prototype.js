@@ -4490,6 +4490,61 @@ var Scanner = (function (_super) {
         var trailingTriviaInfo = this.scanTriviaInfo(diagnostics, true);
         return SyntaxToken.create(fullStart, leadingTriviaInfo, this.tokenInfo, trailingTriviaInfo);
     };
+    Scanner.scanTrivia = function scanTrivia(text, start, length, isTrailing) {
+        Debug.assert(length > 0);
+        var scanner = new Scanner(text.subText(new TextSpan(start, length)), 1 /* EcmaScript5 */ , null);
+        return scanner.scanTrivia(isTrailing);
+    }
+    Scanner.prototype.scanTrivia = function (isTrailing) {
+        var trivia = [];
+        while(true) {
+            if(!this.isAtEndOfSource()) {
+                var ch = this.currentCharCode();
+                switch(ch) {
+                    case 32 /* space */ :
+                    case 9 /* tab */ :
+                    case 11 /* verticalTab */ :
+                    case 12 /* formFeed */ :
+                    case 160 /* nonBreakingSpace */ :
+                    case 65279 /* byteOrderMark */ : {
+                        trivia.push(this.scanWhitespaceTrivia());
+                        continue;
+
+                    }
+                    case 47 /* slash */ : {
+                        var ch2 = this.peekItemN(1);
+                        if(ch2 === 47 /* slash */ ) {
+                            trivia.push(this.scanSingleLineCommentTrivia());
+                            continue;
+                        }
+                        if(ch2 === 42 /* asterisk */ ) {
+                            trivia.push(this.scanMultiLineCommentTrivia());
+                            continue;
+                        }
+                        throw Errors.invalidOperation();
+
+                    }
+                    case 13 /* carriageReturn */ :
+                    case 10 /* lineFeed */ :
+                    case 8233 /* paragraphSeparator */ :
+                    case 8232 /* lineSeparator */ : {
+                        trivia.push(this.scanLineTerminatorSequenceTrivia(ch));
+                        if(!isTrailing) {
+                            continue;
+                        }
+                        break;
+
+                    }
+                    default: {
+                        throw Errors.invalidOperation();
+
+                    }
+                }
+            }
+            Debug.assert(trivia.length > 0);
+            return SyntaxTriviaList.create(trivia);
+        }
+    };
     Scanner.prototype.scanTriviaInfo = function (diagnostics, isTrailing) {
         var width = 0;
         var hasComment = false;
@@ -4511,17 +4566,13 @@ var Scanner = (function (_super) {
                 case 47 /* slash */ : {
                     var ch2 = this.peekItemN(1);
                     if(ch2 === 47 /* slash */ ) {
-                        this.moveToNextItem();
-                        this.moveToNextItem();
                         hasComment = true;
-                        width += 2 + this.scanSingleLineCommentTrivia();
+                        width += this.scanSingleLineCommentTriviaLength();
                         continue;
                     }
                     if(ch2 === 42 /* asterisk */ ) {
-                        this.moveToNextItem();
-                        this.moveToNextItem();
                         hasComment = true;
-                        width += 2 + this.scanMultiLineCommentTrivia(diagnostics);
+                        width += this.scanMultiLineCommentTriviaLength(diagnostics);
                         continue;
                     }
                     break;
@@ -4532,7 +4583,7 @@ var Scanner = (function (_super) {
                 case 8233 /* paragraphSeparator */ :
                 case 8232 /* lineSeparator */ : {
                     hasNewLine = true;
-                    width += this.scanLineTerminatorSequence(ch);
+                    width += this.scanLineTerminatorSequenceLength(ch);
                     if(!isTrailing) {
                         continue;
                     }
@@ -4558,25 +4609,62 @@ var Scanner = (function (_super) {
             }
         }
     };
-    Scanner.prototype.scanSingleLineCommentTrivia = function () {
+    Scanner.prototype.scanWhitespaceTrivia = function () {
+        var start = this.absoluteIndex();
         var width = 0;
         while(true) {
             var ch = this.currentCharCode();
-            if(this.isNewLineCharacter(ch) || this.isAtEndOfSource()) {
+            switch(ch) {
+                case 32 /* space */ :
+                case 9 /* tab */ :
+                case 11 /* verticalTab */ :
+                case 12 /* formFeed */ :
+                case 160 /* nonBreakingSpace */ :
+                case 65279 /* byteOrderMark */ : {
+                    this.moveToNextItem();
+                    width++;
+                    continue;
+
+                }
+            }
+            break;
+        }
+        return SyntaxTrivia.create(4 /* WhitespaceTrivia */ , this.substring(start, start + width, false));
+    };
+    Scanner.prototype.scanSingleLineCommentTrivia = function () {
+        var start = this.absoluteIndex();
+        var width = this.scanSingleLineCommentTriviaLength();
+        return SyntaxTrivia.create(7 /* SingleLineCommentTrivia */ , this.substring(start, start + width, false));
+    };
+    Scanner.prototype.scanSingleLineCommentTriviaLength = function () {
+        this.moveToNextItem();
+        this.moveToNextItem();
+        var width = 2;
+        while(true) {
+            if(this.isAtEndOfSource() || this.isNewLineCharacter(this.currentCharCode())) {
                 return width;
             }
             this.moveToNextItem();
             width++;
         }
     };
-    Scanner.prototype.scanMultiLineCommentTrivia = function (diagnostics) {
-        var width = 0;
+    Scanner.prototype.scanMultiLineCommentTrivia = function () {
+        var start = this.absoluteIndex();
+        var width = this.scanMultiLineCommentTriviaLength(null);
+        return SyntaxTrivia.create(6 /* MultiLineCommentTrivia */ , this.substring(start, start + width, false));
+    };
+    Scanner.prototype.scanMultiLineCommentTriviaLength = function (diagnostics) {
+        this.moveToNextItem();
+        this.moveToNextItem();
+        var width = 2;
         while(true) {
-            var ch = this.currentCharCode();
             if(this.isAtEndOfSource()) {
-                diagnostics.push(new SyntaxDiagnostic(this.absoluteIndex(), 0, 10 /* _StarSlash__expected */ , null));
+                if(diagnostics !== null) {
+                    diagnostics.push(new SyntaxDiagnostic(this.absoluteIndex(), 0, 10 /* _StarSlash__expected */ , null));
+                }
                 return width;
             }
+            var ch = this.currentCharCode();
             if(ch === 42 /* asterisk */  && this.peekItemN(1) === 47 /* slash */ ) {
                 this.moveToNextItem();
                 this.moveToNextItem();
@@ -4587,7 +4675,12 @@ var Scanner = (function (_super) {
             width++;
         }
     };
-    Scanner.prototype.scanLineTerminatorSequence = function (ch) {
+    Scanner.prototype.scanLineTerminatorSequenceTrivia = function (ch) {
+        var start = this.absoluteIndex();
+        var width = this.scanLineTerminatorSequenceLength(ch);
+        return SyntaxTrivia.create(5 /* NewLineTrivia */ , this.substring(start, start + width, false));
+    };
+    Scanner.prototype.scanLineTerminatorSequenceLength = function (ch) {
         this.moveToNextItem();
         if(ch === 13 /* carriageReturn */  && this.currentCharCode() === 10 /* lineFeed */ ) {
             this.moveToNextItem();
@@ -5345,7 +5438,7 @@ var TextBase = (function () {
         if (typeof span === "undefined") { span = null; }
         throw Errors.abstract();
     };
-    TextBase.prototype.getSubText = function (span) {
+    TextBase.prototype.subText = function (span) {
         this.checkSubSpan(span);
         return new SubText(this, span);
     };
@@ -5481,7 +5574,7 @@ var SubText = (function (_super) {
         }
         return this.text.charCodeAt(this.span.start() + position);
     };
-    SubText.prototype.getSubText = function (span) {
+    SubText.prototype.subText = function (span) {
         this.checkSubSpan(span);
         return new SubText(this.text, this.getCompositeSpan(span.start(), span.length()));
     };
@@ -13156,7 +13249,8 @@ var SyntaxToken;
         elements.push(token.text());
         token.trailingTrivia(text).collectTextElements(text, elements);
     }
-    function toJSON(token) {
+    function toJSON(token, includeRealTrivia) {
+        if (typeof includeRealTrivia === "undefined") { includeRealTrivia = false; }
         var result = {
             kind: (SyntaxKind)._map[token.tokenKind]
         };
@@ -13181,23 +13275,28 @@ var SyntaxToken;
         if(token.valueText() !== null) {
             result.valueText = token.valueText();
         }
-        if(token.hasLeadingTrivia()) {
-            result.hasLeadingTrivia = true;
-        }
-        if(token.hasLeadingCommentTrivia()) {
-            result.hasLeadingCommentTrivia = true;
-        }
-        if(token.hasLeadingNewLineTrivia()) {
-            result.hasLeadingNewLineTrivia = true;
-        }
-        if(token.hasTrailingTrivia()) {
-            result.hasTrailingTrivia = true;
-        }
-        if(token.hasTrailingCommentTrivia()) {
-            result.hasTrailingCommentTrivia = true;
-        }
-        if(token.hasTrailingNewLineTrivia()) {
-            result.hasTrailingNewLineTrivia = true;
+        if(includeRealTrivia) {
+            result.leadingTrivia = token.leadingTrivia(null);
+            result.trailingTrivia = token.trailingTrivia(null);
+        } else {
+            if(token.hasLeadingTrivia()) {
+                result.hasLeadingTrivia = true;
+            }
+            if(token.hasLeadingCommentTrivia()) {
+                result.hasLeadingCommentTrivia = true;
+            }
+            if(token.hasLeadingNewLineTrivia()) {
+                result.hasLeadingNewLineTrivia = true;
+            }
+            if(token.hasTrailingTrivia()) {
+                result.hasTrailingTrivia = true;
+            }
+            if(token.hasTrailingCommentTrivia()) {
+                result.hasTrailingCommentTrivia = true;
+            }
+            if(token.hasTrailingNewLineTrivia()) {
+                result.hasTrailingNewLineTrivia = true;
+            }
         }
         return result;
     }
@@ -13476,7 +13575,7 @@ var SyntaxToken;
             return hasTriviaNewLine(this._leadingTriviaInfo);
         };
         FixedWidthTokenWithLeadingTrivia.prototype.leadingTrivia = function (text) {
-            throw Errors.notYetImplemented();
+            return Scanner.scanTrivia(text, this.fullStart(), getTriviaLength(this._leadingTriviaInfo), false);
         };
         FixedWidthTokenWithLeadingTrivia.prototype.hasTrailingTrivia = function () {
             return false;
@@ -13586,7 +13685,7 @@ var SyntaxToken;
             return hasTriviaNewLine(this._trailingTriviaInfo);
         };
         FixedWidthTokenWithTrailingTrivia.prototype.trailingTrivia = function (text) {
-            throw Errors.notYetImplemented();
+            return Scanner.scanTrivia(text, this.end(), getTriviaLength(this._trailingTriviaInfo), true);
         };
         FixedWidthTokenWithTrailingTrivia.prototype.realize = function (text) {
             return realize(this, text);
@@ -13673,7 +13772,7 @@ var SyntaxToken;
             return hasTriviaNewLine(this._leadingTriviaInfo);
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.leadingTrivia = function (text) {
-            throw Errors.notYetImplemented();
+            return Scanner.scanTrivia(text, this.fullStart(), getTriviaLength(this._leadingTriviaInfo), false);
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingTrivia = function () {
             return true;
@@ -13685,7 +13784,7 @@ var SyntaxToken;
             return hasTriviaNewLine(this._trailingTriviaInfo);
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.trailingTrivia = function (text) {
-            throw Errors.notYetImplemented();
+            return Scanner.scanTrivia(text, this.end(), getTriviaLength(this._trailingTriviaInfo), true);
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.realize = function (text) {
             return realize(this, text);
@@ -13870,7 +13969,7 @@ var SyntaxToken;
             return hasTriviaNewLine(this._leadingTriviaInfo);
         };
         FixedWidthKeywordWithLeadingTrivia.prototype.leadingTrivia = function (text) {
-            throw Errors.notYetImplemented();
+            return Scanner.scanTrivia(text, this.fullStart(), getTriviaLength(this._leadingTriviaInfo), false);
         };
         FixedWidthKeywordWithLeadingTrivia.prototype.hasTrailingTrivia = function () {
             return false;
@@ -13981,7 +14080,7 @@ var SyntaxToken;
             return hasTriviaNewLine(this._trailingTriviaInfo);
         };
         FixedWidthKeywordWithTrailingTrivia.prototype.trailingTrivia = function (text) {
-            throw Errors.notYetImplemented();
+            return Scanner.scanTrivia(text, this.end(), getTriviaLength(this._trailingTriviaInfo), true);
         };
         FixedWidthKeywordWithTrailingTrivia.prototype.realize = function (text) {
             return realize(this, text);
@@ -14069,7 +14168,7 @@ var SyntaxToken;
             return hasTriviaNewLine(this._leadingTriviaInfo);
         };
         FixedWidthKeywordWithLeadingAndTrailingTrivia.prototype.leadingTrivia = function (text) {
-            throw Errors.notYetImplemented();
+            return Scanner.scanTrivia(text, this.fullStart(), getTriviaLength(this._leadingTriviaInfo), false);
         };
         FixedWidthKeywordWithLeadingAndTrailingTrivia.prototype.hasTrailingTrivia = function () {
             return true;
@@ -14081,7 +14180,7 @@ var SyntaxToken;
             return hasTriviaNewLine(this._trailingTriviaInfo);
         };
         FixedWidthKeywordWithLeadingAndTrailingTrivia.prototype.trailingTrivia = function (text) {
-            throw Errors.notYetImplemented();
+            return Scanner.scanTrivia(text, this.end(), getTriviaLength(this._trailingTriviaInfo), true);
         };
         FixedWidthKeywordWithLeadingAndTrailingTrivia.prototype.realize = function (text) {
             return realize(this, text);
@@ -14268,7 +14367,7 @@ var SyntaxToken;
             return hasTriviaNewLine(this._leadingTriviaInfo);
         };
         VariableWidthTokenWithLeadingTrivia.prototype.leadingTrivia = function (text) {
-            throw Errors.notYetImplemented();
+            return Scanner.scanTrivia(text, this.fullStart(), getTriviaLength(this._leadingTriviaInfo), false);
         };
         VariableWidthTokenWithLeadingTrivia.prototype.hasTrailingTrivia = function () {
             return false;
@@ -14380,7 +14479,7 @@ var SyntaxToken;
             return hasTriviaNewLine(this._trailingTriviaInfo);
         };
         VariableWidthTokenWithTrailingTrivia.prototype.trailingTrivia = function (text) {
-            throw Errors.notYetImplemented();
+            return Scanner.scanTrivia(text, this.end(), getTriviaLength(this._trailingTriviaInfo), true);
         };
         VariableWidthTokenWithTrailingTrivia.prototype.realize = function (text) {
             return realize(this, text);
@@ -14469,7 +14568,7 @@ var SyntaxToken;
             return hasTriviaNewLine(this._leadingTriviaInfo);
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.leadingTrivia = function (text) {
-            throw Errors.notYetImplemented();
+            return Scanner.scanTrivia(text, this.fullStart(), getTriviaLength(this._leadingTriviaInfo), false);
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingTrivia = function () {
             return true;
@@ -14481,7 +14580,7 @@ var SyntaxToken;
             return hasTriviaNewLine(this._trailingTriviaInfo);
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.trailingTrivia = function (text) {
-            throw Errors.notYetImplemented();
+            return Scanner.scanTrivia(text, this.end(), getTriviaLength(this._trailingTriviaInfo), true);
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.realize = function (text) {
             return realize(this, text);
@@ -14660,6 +14759,9 @@ var SyntaxToken;
         RealizedToken.prototype.kind = function () {
             return this._token.kind();
         };
+        RealizedToken.prototype.toJSON = function (key) {
+            return toJSON(this, true);
+        };
         RealizedToken.prototype.isToken = function () {
             return this._token.isToken();
         };
@@ -14800,6 +14902,13 @@ var SyntaxTrivia;
             this._kind = kind;
             this._text = text;
         }
+        SimpleSyntaxTrivia.prototype.toJSON = function (key) {
+            var result = {
+            };
+            result.kind = (SyntaxKind)._map[this._kind];
+            result.text = this._text;
+            return result;
+        };
         SimpleSyntaxTrivia.prototype.isToken = function () {
             return false;
         };
@@ -14838,15 +14947,16 @@ var SyntaxTrivia;
         };
         return SimpleSyntaxTrivia;
     })();    
-    function createTrivia(kind, text) {
+    function create(kind, text) {
         Debug.assert(kind === 6 /* MultiLineCommentTrivia */  || kind === 5 /* NewLineTrivia */  || kind === 7 /* SingleLineCommentTrivia */  || kind === 4 /* WhitespaceTrivia */ );
+        Debug.assert(text.length > 0);
         return new SimpleSyntaxTrivia(kind, text);
     }
-    SyntaxTrivia.createTrivia = createTrivia;
-    SyntaxTrivia.space = createTrivia(4 /* WhitespaceTrivia */ , " ");
-    SyntaxTrivia.lineFeed = createTrivia(5 /* NewLineTrivia */ , "\n");
-    SyntaxTrivia.carriageReturn = createTrivia(5 /* NewLineTrivia */ , "\r");
-    SyntaxTrivia.carriageReturnLineFeed = createTrivia(5 /* NewLineTrivia */ , "\r\n");
+    SyntaxTrivia.create = create;
+    SyntaxTrivia.space = create(4 /* WhitespaceTrivia */ , " ");
+    SyntaxTrivia.lineFeed = create(5 /* NewLineTrivia */ , "\n");
+    SyntaxTrivia.carriageReturn = create(5 /* NewLineTrivia */ , "\r");
+    SyntaxTrivia.carriageReturnLineFeed = create(5 /* NewLineTrivia */ , "\r\n");
 })(SyntaxTrivia || (SyntaxTrivia = {}));
 var SyntaxTriviaList;
 (function (SyntaxTriviaList) {
@@ -43202,9 +43312,13 @@ var Program = (function () {
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {
         var _this = this;
         environment.standardOut.WriteLine("");
+        environment.standardOut.WriteLine("Testing trivia.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\trivia\\ecmascript5", function (filePath) {
+            return _this.runTrivia(environment, filePath, 1 /* EcmaScript5 */ , verify);
+        });
         environment.standardOut.WriteLine("Testing emitter.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5", function (filePath) {
-            return _this.runEmitter(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
+            return _this.runEmitter(environment, filePath, 1 /* EcmaScript5 */ , verify);
         });
         environment.standardOut.WriteLine("Testing scanner.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
@@ -43342,6 +43456,41 @@ var Program = (function () {
         }
         end = new Date().getTime();
         totalTime += (end - start);
+    };
+    Program.prototype.runTrivia = function (environment, filePath, languageVersion, verify) {
+        if(!StringUtilities.endsWith(filePath, ".ts")) {
+            return;
+        }
+        var contents = environment.readFile(filePath, true);
+        var start, end;
+        start = new Date().getTime();
+        try  {
+            var text = new StringText(contents);
+            var scanner = Scanner.create(text, languageVersion);
+            var tokens = [];
+            var textArray = [];
+            var diagnostics = [];
+            while(true) {
+                var token = scanner.scan(diagnostics, false);
+                tokens.push(token.realize(text));
+                if(token.tokenKind === 117 /* EndOfFileToken */ ) {
+                    break;
+                }
+            }
+            if(verify) {
+                var actualResult = JSON2.stringify(tokens, null, 4);
+                var expectedFile = filePath + ".expected";
+                var actualFile = filePath + ".actual";
+                var expectedResult = environment.readFile(expectedFile, true);
+                if(expectedResult !== actualResult) {
+                    environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
+                    environment.writeFile(actualFile, actualResult, true);
+                }
+            }
+        }finally {
+            end = new Date().getTime();
+            totalTime += (end - start);
+        }
     };
     Program.prototype.runScanner = function (environment, filePath, languageVersion, useTypeScript, verify) {
         if(!StringUtilities.endsWith(filePath, ".ts")) {

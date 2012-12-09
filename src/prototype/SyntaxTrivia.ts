@@ -10,6 +10,13 @@ module SyntaxTrivia {
             this._text = text;
         }
 
+        public toJSON(key) {
+            var result: any = {};
+            result.kind = (<any>SyntaxKind)._map[this._kind];
+            result.text = this._text;
+            return result;
+        }
+
         public isToken(): bool { return false; }
         public isNode(): bool { return false; }
         public isList(): bool { return false; }
@@ -39,16 +46,17 @@ module SyntaxTrivia {
         }
     }
 
-    export function createTrivia(kind: SyntaxKind, text: string): ISyntaxTrivia {
+    export function create(kind: SyntaxKind, text: string): ISyntaxTrivia {
         Debug.assert(kind === SyntaxKind.MultiLineCommentTrivia ||
                      kind === SyntaxKind.NewLineTrivia ||
                      kind === SyntaxKind.SingleLineCommentTrivia ||
                      kind === SyntaxKind.WhitespaceTrivia);
+        Debug.assert(text.length > 0);
         return new SimpleSyntaxTrivia(kind, text);
     }
 
-    export var space: ISyntaxTrivia = createTrivia(SyntaxKind.WhitespaceTrivia, " ");
-    export var lineFeed: ISyntaxTrivia = createTrivia(SyntaxKind.NewLineTrivia, "\n");
-    export var carriageReturn: ISyntaxTrivia = createTrivia(SyntaxKind.NewLineTrivia, "\r");
-    export var carriageReturnLineFeed: ISyntaxTrivia = createTrivia(SyntaxKind.NewLineTrivia, "\r\n");
+    export var space: ISyntaxTrivia = create(SyntaxKind.WhitespaceTrivia, " ");
+    export var lineFeed: ISyntaxTrivia = create(SyntaxKind.NewLineTrivia, "\n");
+    export var carriageReturn: ISyntaxTrivia = create(SyntaxKind.NewLineTrivia, "\r");
+    export var carriageReturnLineFeed: ISyntaxTrivia = create(SyntaxKind.NewLineTrivia, "\r\n");
 }

@@ -53,7 +53,7 @@ interface IText {
     /// <summary>
     /// Gets the a new IText that corresponds to the contents of this IText for the given span.
     /// </summary>
-    getSubText(span: TextSpan): IText;
+    subText(span: TextSpan): IText;
 
     substr(start: number, length: number);
 

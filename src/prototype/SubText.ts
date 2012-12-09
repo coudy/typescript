@@ -37,7 +37,7 @@ class SubText extends TextBase {
         return this.text.charCodeAt(this.span.start() + position);
     }
 
-    public getSubText(span: TextSpan): IText {
+    public subText(span: TextSpan): IText {
         this.checkSubSpan(span);
 
         return new SubText(this.text, this.getCompositeSpan(span.start(), span.length()));

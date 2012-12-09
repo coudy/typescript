@@ -6,16 +6,20 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "google_com\\05AFD0210766275790B746BA3FBFA35D_cache.js";
+    // "Trivia11.ts";
     undefined;
 
 class Program {
     runAllTests(environment: IEnvironment, useTypeScript: bool, verify: bool): void {
         environment.standardOut.WriteLine("");
             
+        environment.standardOut.WriteLine("Testing trivia.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\trivia\\ecmascript5",
+            filePath => this.runTrivia(environment, filePath, LanguageVersion.EcmaScript5, verify));
+            
         environment.standardOut.WriteLine("Testing emitter.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5",
-            filePath => this.runEmitter(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*allowErrors:*/ true));
+            filePath => this.runEmitter(environment, filePath, LanguageVersion.EcmaScript5, verify));
 
         environment.standardOut.WriteLine("Testing scanner.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
@@ -207,6 +211,51 @@ class Program {
         
         end = new Date().getTime();
         totalTime += (end - start);
+    }
+
+    runTrivia(environment: IEnvironment, filePath: string, languageVersion: LanguageVersion, verify: bool): void {
+        if (!StringUtilities.endsWith(filePath, ".ts")) {
+            return;
+        }
+
+        var contents = environment.readFile(filePath, /*useUTF8:*/ true);
+
+        var start: number, end: number;
+        start = new Date().getTime();
+        try {
+            var text = new StringText(contents);
+            var scanner = Scanner.create(text, languageVersion);
+
+            var tokens: ISyntaxToken[] = [];
+            var textArray: string[] = [];
+            var diagnostics: SyntaxDiagnostic[] = [];
+
+            while (true) {
+                var token = scanner.scan(diagnostics, /*allowRegularExpression:*/ false);
+                tokens.push(token.realize(text));
+
+                if (token.tokenKind === SyntaxKind.EndOfFileToken) {
+                    break;
+                }
+            }
+
+            if (verify) {
+                var actualResult = JSON2.stringify(tokens, null, 4);
+                var expectedFile = filePath + ".expected";
+                var actualFile = filePath + ".actual";
+
+                var expectedResult = environment.readFile(expectedFile, /*useUTF8:*/ true);
+
+                if (expectedResult !== actualResult) {
+                    environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
+                    environment.writeFile(actualFile, actualResult, true);
+                }
+            }
+        }
+        finally {
+            end = new Date().getTime();
+            totalTime += (end - start);
+        }
     }
 
     runScanner(environment: IEnvironment, filePath: string, languageVersion: LanguageVersion, useTypeScript: bool, verify: bool): void {

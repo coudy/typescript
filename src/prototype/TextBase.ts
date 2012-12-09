@@ -38,7 +38,7 @@ class TextBase implements IText {
         throw Errors.abstract();
     }
 
-    public getSubText(span: TextSpan): IText {
+    public subText(span: TextSpan): IText {
         this.checkSubSpan(span);
 
         return new SubText(this, span);

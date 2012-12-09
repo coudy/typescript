@@ -84,7 +84,76 @@ class Scanner extends SlidingWindow {
         return SyntaxToken.create(fullStart, leadingTriviaInfo, this.tokenInfo, trailingTriviaInfo);
     }
 
+    public static scanTrivia(text: IText, start: number, length: number, isTrailing: bool): ISyntaxTriviaList {
+        Debug.assert(length > 0);
+        var scanner = new Scanner(text.subText(new TextSpan(start, length)), LanguageVersion.EcmaScript5, null);
+        return scanner.scanTrivia(isTrailing);
+    }
+    
+    private scanTrivia(isTrailing: bool): ISyntaxTriviaList {
+        // Keep this exactly in sync with scanTriviaInfo
+
+        var trivia: ISyntaxTrivia[] = [];
+
+        while (true) {
+            if (!this.isAtEndOfSource()) {
+                var ch = this.currentCharCode();
+
+                switch (ch) {
+                    case CharacterCodes.space:
+                    case CharacterCodes.tab:
+                    case CharacterCodes.verticalTab:
+                    case CharacterCodes.formFeed:
+                    case CharacterCodes.nonBreakingSpace:
+                    case CharacterCodes.byteOrderMark:
+                        // Normal whitespace.  Consume and continue.
+                        trivia.push(this.scanWhitespaceTrivia());
+                        continue;
+
+                    case CharacterCodes.slash:
+                        // Potential comment.  Consume if so.  Otherwise, break out and return.
+                        var ch2 = this.peekItemN(1);
+                        if (ch2 === CharacterCodes.slash) {
+                            trivia.push(this.scanSingleLineCommentTrivia());
+                            continue;
+                        }
+
+                        if (ch2 === CharacterCodes.asterisk) {
+                            trivia.push(this.scanMultiLineCommentTrivia());
+                            continue;
+                        }
+
+                        // Not a comment.  Don't consume.
+                        throw Errors.invalidOperation();
+
+                    case CharacterCodes.carriageReturn:
+                    case CharacterCodes.lineFeed:
+                    case CharacterCodes.paragraphSeparator:
+                    case CharacterCodes.lineSeparator:
+                        trivia.push(this.scanLineTerminatorSequenceTrivia(ch));
+
+                        // If we're consuming leading trivia, then we will continue consuming more 
+                        // trivia (including newlines) up to the first token we see.  If we're 
+                        // consuming trailing trivia, then we break after the first newline we see.
+                        if (!isTrailing) {
+                            continue;
+                        }
+
+                        break;
+
+                    default:
+                        throw Errors.invalidOperation();
+                }
+            }
+
+            Debug.assert(trivia.length > 0);
+            return SyntaxTriviaList.create(trivia);
+        }
+    }
+
     private scanTriviaInfo(diagnostics: SyntaxDiagnostic[], isTrailing: bool): number {
+        // Keep this exactly in sync with scanTrivia
+
         var width = 0;
         var hasComment = false;
         var hasNewLine = false;
@@ -108,24 +177,14 @@ class Scanner extends SlidingWindow {
                     // Potential comment.  Consume if so.  Otherwise, break out and return.
                     var ch2 = this.peekItemN(1);
                     if (ch2 === CharacterCodes.slash) {
-                        this.moveToNextItem();
-                        this.moveToNextItem();
-
                         hasComment = true;
-
-                        // The '2' is for the "//" we consumed.
-                        width += 2 + this.scanSingleLineCommentTrivia();
+                        width += this.scanSingleLineCommentTriviaLength();
                         continue;
                     }
 
                     if (ch2 === CharacterCodes.asterisk) {
-                        this.moveToNextItem();
-                        this.moveToNextItem();
-
                         hasComment = true;
-
-                        // The '2' is for the "/*" we consumed.
-                        width += 2 + this.scanMultiLineCommentTrivia(diagnostics);
+                        width += this.scanMultiLineCommentTriviaLength(diagnostics);
                         continue;
                     }
 
@@ -137,7 +196,7 @@ class Scanner extends SlidingWindow {
                 case CharacterCodes.paragraphSeparator:
                 case CharacterCodes.lineSeparator:
                     hasNewLine = true;
-                    width += this.scanLineTerminatorSequence(ch);
+                    width += this.scanLineTerminatorSequenceLength(ch);
 
                     // If we're consuming leading trivia, then we will continue consuming more 
                     // trivia (including newlines) up to the first token we see.  If we're 
@@ -165,11 +224,45 @@ class Scanner extends SlidingWindow {
         }
     }
 
-    private scanSingleLineCommentTrivia(): number {
+    private scanWhitespaceTrivia(): ISyntaxTrivia {
+        var start = this.absoluteIndex();
         var width = 0;
         while (true) {
             var ch = this.currentCharCode();
-            if (this.isNewLineCharacter(ch) || this.isAtEndOfSource()) {
+
+            switch (ch) {
+                case CharacterCodes.space:
+                case CharacterCodes.tab:
+                case CharacterCodes.verticalTab:
+                case CharacterCodes.formFeed:
+                case CharacterCodes.nonBreakingSpace:
+                case CharacterCodes.byteOrderMark:
+                    // Normal whitespace.  Consume and continue.
+                    this.moveToNextItem();
+                    width++;
+                    continue;
+            }
+
+            break;
+        }
+        
+        return SyntaxTrivia.create(SyntaxKind.WhitespaceTrivia, this.substring(start, start + width, /*intern:*/ false));
+    }
+    
+    private scanSingleLineCommentTrivia(): ISyntaxTrivia {
+        var start = this.absoluteIndex();
+        var width = this.scanSingleLineCommentTriviaLength();
+        return SyntaxTrivia.create(SyntaxKind.SingleLineCommentTrivia, this.substring(start, start + width, /*intern:*/ false));
+    }
+
+    private scanSingleLineCommentTriviaLength(): number {
+        this.moveToNextItem();
+        this.moveToNextItem();
+        
+        // The '2' is for the "//" we consumed.
+        var width = 2;
+        while (true) {
+            if (this.isAtEndOfSource() || this.isNewLineCharacter(this.currentCharCode())) {
                 return width;
             }
 
@@ -178,16 +271,29 @@ class Scanner extends SlidingWindow {
         }
     }
 
-    private scanMultiLineCommentTrivia(diagnostics: SyntaxDiagnostic[]): number {
-        var width = 0;
+    private scanMultiLineCommentTrivia(): ISyntaxTrivia {
+        var start = this.absoluteIndex();
+        var width = this.scanMultiLineCommentTriviaLength(null);
+        return SyntaxTrivia.create(SyntaxKind.MultiLineCommentTrivia, this.substring(start, start + width, /*intern:*/ false));
+    }
+
+    private scanMultiLineCommentTriviaLength(diagnostics: SyntaxDiagnostic[]): number {
+        this.moveToNextItem();
+        this.moveToNextItem();
+
+        // The '2' is for the "/*" we consumed.
+        var width = 2;
         while (true) {
-            var ch = this.currentCharCode();
             if (this.isAtEndOfSource()) {
-                diagnostics.push(new SyntaxDiagnostic(
-                    this.absoluteIndex(), 0, DiagnosticCode._StarSlash__expected, null));
+                if (diagnostics !== null) {
+                    diagnostics.push(new SyntaxDiagnostic(
+                        this.absoluteIndex(), 0, DiagnosticCode._StarSlash__expected, null));
+                }
+
                 return width;
             }
 
+            var ch = this.currentCharCode();
             if (ch === CharacterCodes.asterisk && this.peekItemN(1) === CharacterCodes.slash) {
                 this.moveToNextItem();
                 this.moveToNextItem();
@@ -200,7 +306,13 @@ class Scanner extends SlidingWindow {
         }
     }
 
-    private scanLineTerminatorSequence(ch: number): number {
+    private scanLineTerminatorSequenceTrivia(ch: number): ISyntaxTrivia {
+        var start = this.absoluteIndex();
+        var width = this.scanLineTerminatorSequenceLength(ch);
+        return SyntaxTrivia.create(SyntaxKind.NewLineTrivia, this.substring(start, start + width, /*intern:*/ false));
+    }
+
+    private scanLineTerminatorSequenceLength(ch: number): number {
         // Consume the first of the line terminator we saw.
         this.moveToNextItem();
 
