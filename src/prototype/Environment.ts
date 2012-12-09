@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='IEnvironment.ts' />
 
 declare class Enumerator {
     public atEnd(): bool;

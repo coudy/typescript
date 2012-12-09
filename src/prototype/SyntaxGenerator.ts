@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='Environment.ts' />
 
 var argumentChecks = true;
 
@@ -1063,6 +1063,18 @@ function generateDefaultCase(child: IMemberDefinition, indent: string): string {
     return result;
 }
 
+function where(values: any[], func:(v: any) => bool): any[] {
+    var result = [];
+
+    for (var i = 0; i < values.length; i++) {
+        if (func(values[i])) {
+            result.push(values[i]);
+        }
+    }
+
+    return result;
+}
+
 function generateSwitchKindCheck(child: IMemberDefinition, tokenKinds: string[], indent: string): string {
     if (tokenKinds.length === 0) {
         return "";
@@ -1070,8 +1082,8 @@ function generateSwitchKindCheck(child: IMemberDefinition, tokenKinds: string[],
 
     var result = "";
 
-    var keywords = tokenKinds.filter((v, i, a) => v.indexOf("Keyword") >= 0, null);
-    var tokens = tokenKinds.filter((v, i, a) => v.indexOf("Keyword") == 0, null);
+    var keywords = where(tokenKinds, v => v.indexOf("Keyword") >= 0);
+    var tokens = where(tokenKinds, v => v.indexOf("Keyword") == 0);
 
     if (tokens.length === 0) {
         if (keywords.length <= 2) {

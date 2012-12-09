@@ -1,5 +1,3 @@
-///<reference path='References.ts' />
-
 interface IEnvironment {
     readFile(path: string, useUTF8?: bool): string;
     writeFile(path: string, contents: string, useUTF8?: bool): void;
