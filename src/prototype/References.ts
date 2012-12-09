@@ -61,6 +61,7 @@
 ///<reference path='SyntaxRealizer.ts' />
 
 ///<reference path='SyntaxToken.ts' />
+///<reference path='SyntaxToken.generated.ts' />
 ///<reference path='SyntaxTree.ts' />
 ///<reference path='SyntaxTrivia.ts' />
 ///<reference path='SyntaxTriviaList.ts' />
