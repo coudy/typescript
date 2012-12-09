@@ -16,7 +16,7 @@ module SeparatedSyntaxList {
         public syntaxNodeCount() { return 0; }
         public separatorCount() { return 0 }
 
-        public itemAt(index: number): any {
+        public itemAt(index: number): ISyntaxElement {
             throw Errors.argumentOutOfRange("index");
         }
 
@@ -30,9 +30,9 @@ module SeparatedSyntaxList {
     }
 
     class SingletonSeparatedSyntaxList implements ISeparatedSyntaxList {
-        private item: any;
+        private item: ISyntaxElement;
 
-        constructor(item: any) {
+        constructor(item: ISyntaxElement) {
             this.item = item;
         }
 
@@ -51,7 +51,7 @@ module SeparatedSyntaxList {
         public syntaxNodeCount() { return 1; }
         public separatorCount() { return 0; }
 
-        public itemAt(index: number): any {
+        public itemAt(index: number): ISyntaxElement {
             if (index !== 0) {
                 throw Errors.argumentOutOfRange("index");
             }
@@ -100,7 +100,7 @@ module SeparatedSyntaxList {
         public syntaxNodeCount() { return IntegerUtilities.integerDivide(this.nodes.length + 1, 2); }
         public separatorCount() { return IntegerUtilities.integerDivide(this.nodes.length, 2); }
 
-        public itemAt(index: number): any {
+        public itemAt(index: number): ISyntaxElement {
             if (index < 0 || index >= this.nodes.length) {
                 throw Errors.argumentOutOfRange("index");
             }
@@ -128,7 +128,7 @@ module SeparatedSyntaxList {
     }
     
     export var empty: ISeparatedSyntaxList = new EmptySeparatedSyntaxList();
-    export function create(nodes: any[]): ISeparatedSyntaxList {
+    export function create(nodes: ISyntaxElement[]): ISeparatedSyntaxList {
         if (nodes === null || nodes.length === 0) {
             return empty;
         }

@@ -14,7 +14,7 @@ interface IMemberDefinition {
     isOptional?: bool;
 }
 
-var definitions:any[] = [
+var definitions:ITypeDefinition[] = [
     <any>{
         name: 'SourceUnitSyntax',
         baseType: 'SyntaxNode',
@@ -1192,6 +1192,121 @@ function generateNodes(): string {
     return result;
 }
 
-var nodes = generateNodes();
+//    public visitSourceUnit(node: SourceUnitSyntax): SyntaxNode {
+//        return node.update(
+//            this.visit(node.moduleElements()),
+//            this.visit(node.endOfFileToken()));
+//    }
+
+function generateRewriter(): string {
+    var result = "";
+
+    result +=
+"///<reference path='References.ts' />\r\n"+
+"\r\n" +
+"class SyntaxRewriter implements ISyntaxVisitor1 {\r\n" +
+"    public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n" +
+"        return token;\r\n" +
+"    }\r\n" +
+"\r\n" +
+"    private visitNode(node: SyntaxNode): SyntaxNode {\r\n" +
+"        return node === null ? null : node.accept1(this);\r\n" +
+"    }\r\n" +
+"\r\n" +
+"    private visitList(list: ISyntaxList): ISyntaxList {\r\n" +
+"        var newItems: SyntaxNode[] = null;\r\n" +
+"\r\n" +
+"        for (var i = 0, n = list.count(); i < n; i++) {\r\n" +
+"            var item = list.syntaxNodeAt(i);\r\n" +
+"            var newItem = <SyntaxNode>item.accept1(this);\r\n" +
+"\r\n" +
+"            if (item !== newItem && newItems === null) {\r\n" +
+"                newItems = [];\r\n" +
+"                for (var j = 0; j < i; j++) {\r\n" +
+"                    newItems.push(list.syntaxNodeAt(j));\r\n" +
+"                }\r\n" +
+"            }\r\n" +
+"\r\n" +
+"            if (newItems) {\r\n" +
+"                newItems.push(newItem);\r\n" +
+"            }\r\n" +
+"        }\r\n" +
+"\r\n" +
+"        Debug.assert(newItems === null || newItems.length === list.count());\r\n" +
+"        return newItems === null ? list : SyntaxList.create(newItems);\r\n" +
+"    }\r\n" +
+"\r\n" +
+"    private visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n" +
+"        var newItems: any[] = null;\r\n" +
+"\r\n" +
+"        for (var i = 0, n = list.count(); i < n; i++) {\r\n" +
+"            var item = list.itemAt(i);\r\n" +
+"            var newItem = item.isToken() ? <ISyntaxElement>this.visitToken(<ISyntaxToken>item) : this.visitNode(<SyntaxNode>item);\r\n" +
+"\r\n" +
+"            if (item !== newItem && newItems === null) {\r\n" +
+"                newItems = [];\r\n" +
+"                for (var j = 0; j < i; j++) {\r\n" +
+"                    newItems.push(list.itemAt(j));\r\n" +
+"                }\r\n" +
+"            }\r\n" +
+"\r\n" +
+"            if (newItems) {\r\n" +
+"                newItems.push(newItem);\r\n" +
+"            }\r\n" +
+"        }\r\n" +
+"\r\n" +
+"        Debug.assert(newItems === null || newItems.length === list.count());\r\n" +
+"        return newItems === null ? list : SeparatedSyntaxList.create(newItems);\r\n" +
+"    }\r\n";
+
+    for (var i = 0; i < definitions.length; i++) {
+        var definition = definitions[i];
+        if (definition === undefined) { continue; }
+        if (definition.isAbstract) { continue; }
+
+        result += "\r\n";
+        result += "    public visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
+        result += "        return node.update(\r\n";
+
+        for (var j = 0; j < definition.children.length; j++) {
+            var child = definition.children[j];
+            if (child === undefined) { continue; }
+
+            result += "            ";
+            if (child.isOptional && child.isToken) {
+                result += "node." + child.name + "() === null ? null : ";
+            }
+
+            if (child.isToken) {
+                result += "this.visitToken(node." + child.name + "())";
+            }
+            else if (child.isList) {
+                result += "this.visitList(node." + child.name + "())";
+            }
+            else if (child.isSeparatedList) {
+                result += "this.visitSeparatedList(node." + child.name + "())";
+            }
+            else if (child.type === "SyntaxKind") {
+                result += "node.kind()";
+            }
+            else {
+                result += "<" + child.type + ">this.visitNode(node." + child.name + "())";
+            }
+
+            if (j < definition.children.length - 2) {
+                result += ",\r\n";
+            }
+        }
+
+        result += ");\r\n";
+        result += "    }\r\n";
+    }
+
+    result += "}";
+    return result;
+}
+
+var syntaxNodes = generateNodes();
+var rewriter = generateRewriter();
 
 1 + 1;

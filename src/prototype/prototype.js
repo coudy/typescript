@@ -10938,6 +10938,301 @@ var DebuggerStatementSyntax = (function (_super) {
     };
     return DebuggerStatementSyntax;
 })(StatementSyntax);
+var SyntaxRewriter = (function () {
+    function SyntaxRewriter() { }
+    SyntaxRewriter.prototype.visitToken = function (token) {
+        return token;
+    };
+    SyntaxRewriter.prototype.visitNode = function (node) {
+        return node === null ? null : node.accept1(this);
+    };
+    SyntaxRewriter.prototype.visitList = function (list) {
+        var newItems = null;
+        for(var i = 0, n = list.count(); i < n; i++) {
+            var item = list.syntaxNodeAt(i);
+            var newItem = item.accept1(this);
+            if(item !== newItem && newItems === null) {
+                newItems = [];
+                for(var j = 0; j < i; j++) {
+                    newItems.push(list.syntaxNodeAt(j));
+                }
+            }
+            if(newItems) {
+                newItems.push(newItem);
+            }
+        }
+        Debug.assert(newItems === null || newItems.length === list.count());
+        return newItems === null ? list : SyntaxList.create(newItems);
+    };
+    SyntaxRewriter.prototype.visitSeparatedList = function (list) {
+        var newItems = null;
+        for(var i = 0, n = list.count(); i < n; i++) {
+            var item = list.itemAt(i);
+            var newItem = item.isToken() ? this.visitToken(item) : this.visitNode(item);
+            if(item !== newItem && newItems === null) {
+                newItems = [];
+                for(var j = 0; j < i; j++) {
+                    newItems.push(list.itemAt(j));
+                }
+            }
+            if(newItems) {
+                newItems.push(newItem);
+            }
+        }
+        Debug.assert(newItems === null || newItems.length === list.count());
+        return newItems === null ? list : SeparatedSyntaxList.create(newItems);
+    };
+    SyntaxRewriter.prototype.visitSourceUnit = function (node) {
+        return node.update(this.visitList(node.moduleElements()), this.visitToken(node.endOfFileToken()));
+    };
+    SyntaxRewriter.prototype.visitExternalModuleReference = function (node) {
+        return node.update(this.visitToken(node.moduleKeyword()), this.visitToken(node.openParenToken()), this.visitToken(node.stringLiteral()), this.visitToken(node.closeParenToken()));
+    };
+    SyntaxRewriter.prototype.visitModuleNameModuleReference = function (node) {
+        return node.update(this.visitNode(node.moduleName()));
+    };
+    SyntaxRewriter.prototype.visitImportDeclaration = function (node) {
+        return node.update(this.visitToken(node.importKeyword()), this.visitToken(node.identifier()), this.visitToken(node.equalsToken()), this.visitNode(node.moduleReference()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitClassDeclaration = function (node) {
+        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), node.declareKeyword() === null ? null : this.visitToken(node.declareKeyword()), this.visitToken(node.classKeyword()), this.visitToken(node.identifier()), this.visitNode(node.extendsClause()), this.visitNode(node.implementsClause()), this.visitToken(node.openBraceToken()), this.visitList(node.classElements()), this.visitToken(node.closeBraceToken()));
+    };
+    SyntaxRewriter.prototype.visitInterfaceDeclaration = function (node) {
+        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), this.visitToken(node.interfaceKeyword()), this.visitToken(node.identifier()), this.visitNode(node.extendsClause()), this.visitNode(node.body()));
+    };
+    SyntaxRewriter.prototype.visitExtendsClause = function (node) {
+        return node.update(this.visitToken(node.extendsKeyword()), this.visitSeparatedList(node.typeNames()));
+    };
+    SyntaxRewriter.prototype.visitImplementsClause = function (node) {
+        return node.update(this.visitToken(node.implementsKeyword()), this.visitSeparatedList(node.typeNames()));
+    };
+    SyntaxRewriter.prototype.visitModuleDeclaration = function (node) {
+        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), node.declareKeyword() === null ? null : this.visitToken(node.declareKeyword()), this.visitToken(node.moduleKeyword()), this.visitNode(node.moduleName()), node.stringLiteral() === null ? null : this.visitToken(node.stringLiteral()), this.visitToken(node.openBraceToken()), this.visitList(node.moduleElements()), this.visitToken(node.closeBraceToken()));
+    };
+    SyntaxRewriter.prototype.visitFunctionDeclaration = function (node) {
+        return node.update(this.visitToken(node.exportKeyword()), this.visitToken(node.declareKeyword()), this.visitToken(node.functionKeyword()), this.visitNode(node.functionSignature()), this.visitNode(node.block()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitVariableStatement = function (node) {
+        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), node.declareKeyword() === null ? null : this.visitToken(node.declareKeyword()), this.visitNode(node.variableDeclaration()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitVariableDeclaration = function (node) {
+        return node.update(this.visitToken(node.varKeyword()), this.visitSeparatedList(node.variableDeclarators()));
+    };
+    SyntaxRewriter.prototype.visitVariableDeclarator = function (node) {
+        return node.update(this.visitToken(node.identifier()), this.visitNode(node.typeAnnotation()), this.visitNode(node.equalsValueClause()));
+    };
+    SyntaxRewriter.prototype.visitEqualsValueClause = function (node) {
+        return node.update(this.visitToken(node.equalsToken()), this.visitNode(node.value()));
+    };
+    SyntaxRewriter.prototype.visitPrefixUnaryExpression = function (node) {
+        return node.update(node.kind(), this.visitToken(node.operatorToken()), this.visitNode(node.operand()));
+    };
+    SyntaxRewriter.prototype.visitThisExpression = function (node) {
+        return node.update(this.visitToken(node.thisKeyword()));
+    };
+    SyntaxRewriter.prototype.visitLiteralExpression = function (node) {
+        return node.update(node.kind(), this.visitToken(node.literalToken()));
+    };
+    SyntaxRewriter.prototype.visitArrayLiteralExpression = function (node) {
+        return node.update(this.visitToken(node.openBracketToken()), this.visitSeparatedList(node.expressions()), this.visitToken(node.closeBracketToken()));
+    };
+    SyntaxRewriter.prototype.visitOmittedExpression = function (node) {
+        return node.update();
+    };
+    SyntaxRewriter.prototype.visitParenthesizedExpression = function (node) {
+        return node.update(this.visitToken(node.openParenToken()), this.visitNode(node.expression()), this.visitToken(node.closeParenToken()));
+    };
+    SyntaxRewriter.prototype.visitSimpleArrowFunctionExpression = function (node) {
+        return node.update(this.visitToken(node.identifier()), this.visitToken(node.equalsGreaterThanToken()), this.visitNode(node.body()));
+    };
+    SyntaxRewriter.prototype.visitParenthesizedArrowFunctionExpression = function (node) {
+        return node.update(this.visitNode(node.callSignature()), this.visitToken(node.equalsGreaterThanToken()), this.visitNode(node.body()));
+    };
+    SyntaxRewriter.prototype.visitIdentifierName = function (node) {
+        return node.update(this.visitToken(node.identifier()));
+    };
+    SyntaxRewriter.prototype.visitQualifiedName = function (node) {
+        return node.update(this.visitNode(node.left()), this.visitToken(node.dotToken()), this.visitNode(node.right()));
+    };
+    SyntaxRewriter.prototype.visitConstructorType = function (node) {
+        return node.update(this.visitToken(node.newKeyword()), this.visitNode(node.parameterList()), this.visitToken(node.equalsGreaterThanToken()), this.visitNode(node.type()));
+    };
+    SyntaxRewriter.prototype.visitFunctionType = function (node) {
+        return node.update(this.visitNode(node.parameterList()), this.visitToken(node.equalsGreaterThanToken()), this.visitNode(node.type()));
+    };
+    SyntaxRewriter.prototype.visitObjectType = function (node) {
+        return node.update(this.visitToken(node.openBraceToken()), this.visitSeparatedList(node.typeMembers()), this.visitToken(node.closeBraceToken()));
+    };
+    SyntaxRewriter.prototype.visitArrayType = function (node) {
+        return node.update(this.visitNode(node.type()), this.visitToken(node.openBracketToken()), this.visitToken(node.closeBracketToken()));
+    };
+    SyntaxRewriter.prototype.visitPredefinedType = function (node) {
+        return node.update(this.visitToken(node.keyword()));
+    };
+    SyntaxRewriter.prototype.visitTypeAnnotation = function (node) {
+        return node.update(this.visitToken(node.colonToken()), this.visitNode(node.type()));
+    };
+    SyntaxRewriter.prototype.visitBlock = function (node) {
+        return node.update(this.visitToken(node.openBraceToken()), this.visitList(node.statements()), this.visitToken(node.closeBraceToken()));
+    };
+    SyntaxRewriter.prototype.visitParameter = function (node) {
+        return node.update(node.dotDotDotToken() === null ? null : this.visitToken(node.dotDotDotToken()), node.publicOrPrivateKeyword() === null ? null : this.visitToken(node.publicOrPrivateKeyword()), this.visitToken(node.identifier()), node.questionToken() === null ? null : this.visitToken(node.questionToken()), this.visitNode(node.typeAnnotation()), this.visitNode(node.equalsValueClause()));
+    };
+    SyntaxRewriter.prototype.visitMemberAccessExpression = function (node) {
+        return node.update(this.visitNode(node.expression()), this.visitToken(node.dotToken()), this.visitNode(node.identifierName()));
+    };
+    SyntaxRewriter.prototype.visitPostfixUnaryExpression = function (node) {
+        return node.update(node.kind(), this.visitNode(node.operand()), this.visitToken(node.operatorToken()));
+    };
+    SyntaxRewriter.prototype.visitElementAccessExpression = function (node) {
+        return node.update(this.visitNode(node.expression()), this.visitToken(node.openBracketToken()), this.visitNode(node.argumentExpression()), this.visitToken(node.closeBracketToken()));
+    };
+    SyntaxRewriter.prototype.visitInvocationExpression = function (node) {
+        return node.update(this.visitNode(node.expression()), this.visitNode(node.argumentList()));
+    };
+    SyntaxRewriter.prototype.visitArgumentList = function (node) {
+        return node.update(this.visitToken(node.openParenToken()), this.visitSeparatedList(node.arguments()), this.visitToken(node.closeParenToken()));
+    };
+    SyntaxRewriter.prototype.visitBinaryExpression = function (node) {
+        return node.update(node.kind(), this.visitNode(node.left()), this.visitToken(node.operatorToken()), this.visitNode(node.right()));
+    };
+    SyntaxRewriter.prototype.visitConditionalExpression = function (node) {
+        return node.update(this.visitNode(node.condition()), this.visitToken(node.questionToken()), this.visitNode(node.whenTrue()), this.visitToken(node.colonToken()), this.visitNode(node.whenFalse()));
+    };
+    SyntaxRewriter.prototype.visitConstructSignature = function (node) {
+        return node.update(this.visitToken(node.newKeyword()), this.visitNode(node.parameterList()), this.visitNode(node.typeAnnotation()));
+    };
+    SyntaxRewriter.prototype.visitFunctionSignature = function (node) {
+        return node.update(this.visitToken(node.identifier()), node.questionToken() === null ? null : this.visitToken(node.questionToken()), this.visitNode(node.parameterList()), this.visitNode(node.typeAnnotation()));
+    };
+    SyntaxRewriter.prototype.visitIndexSignature = function (node) {
+        return node.update(this.visitToken(node.openBracketToken()), this.visitNode(node.parameter()), this.visitToken(node.closeBracketToken()), this.visitNode(node.typeAnnotation()));
+    };
+    SyntaxRewriter.prototype.visitPropertySignature = function (node) {
+        return node.update(this.visitToken(node.identifier()), node.questionToken() === null ? null : this.visitToken(node.questionToken()), this.visitNode(node.typeAnnotation()));
+    };
+    SyntaxRewriter.prototype.visitParameterList = function (node) {
+        return node.update(this.visitToken(node.openParenToken()), this.visitSeparatedList(node.parameters()), this.visitToken(node.closeParenToken()));
+    };
+    SyntaxRewriter.prototype.visitCallSignature = function (node) {
+        return node.update(this.visitNode(node.parameterList()), this.visitNode(node.typeAnnotation()));
+    };
+    SyntaxRewriter.prototype.visitElseClause = function (node) {
+        return node.update(this.visitToken(node.elseKeyword()), this.visitNode(node.statement()));
+    };
+    SyntaxRewriter.prototype.visitIfStatement = function (node) {
+        return node.update(this.visitToken(node.ifKeyword()), this.visitToken(node.openParenToken()), this.visitNode(node.condition()), this.visitToken(node.closeParenToken()), this.visitNode(node.statement()), this.visitNode(node.elseClause()));
+    };
+    SyntaxRewriter.prototype.visitExpressionStatement = function (node) {
+        return node.update(this.visitNode(node.expression()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitConstructorDeclaration = function (node) {
+        return node.update(this.visitToken(node.constructorKeyword()), this.visitNode(node.parameterList()), this.visitNode(node.block()), node.semicolonToken() === null ? null : this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitMemberFunctionDeclaration = function (node) {
+        return node.update(node.publicOrPrivateKeyword() === null ? null : this.visitToken(node.publicOrPrivateKeyword()), node.staticKeyword() === null ? null : this.visitToken(node.staticKeyword()), this.visitNode(node.functionSignature()), this.visitNode(node.block()), node.semicolonToken() === null ? null : this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitGetMemberAccessorDeclaration = function (node) {
+        return node.update(node.publicOrPrivateKeyword() === null ? null : this.visitToken(node.publicOrPrivateKeyword()), node.staticKeyword() === null ? null : this.visitToken(node.staticKeyword()), this.visitToken(node.getKeyword()), this.visitToken(node.identifier()), this.visitNode(node.parameterList()), this.visitNode(node.typeAnnotation()), this.visitNode(node.block()));
+    };
+    SyntaxRewriter.prototype.visitSetMemberAccessorDeclaration = function (node) {
+        return node.update(node.publicOrPrivateKeyword() === null ? null : this.visitToken(node.publicOrPrivateKeyword()), node.staticKeyword() === null ? null : this.visitToken(node.staticKeyword()), this.visitToken(node.setKeyword()), this.visitToken(node.identifier()), this.visitNode(node.parameterList()), this.visitNode(node.block()));
+    };
+    SyntaxRewriter.prototype.visitMemberVariableDeclaration = function (node) {
+        return node.update(node.publicOrPrivateKeyword() === null ? null : this.visitToken(node.publicOrPrivateKeyword()), node.staticKeyword() === null ? null : this.visitToken(node.staticKeyword()), this.visitNode(node.variableDeclarator()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitThrowStatement = function (node) {
+        return node.update(this.visitToken(node.throwKeyword()), this.visitNode(node.expression()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitReturnStatement = function (node) {
+        return node.update(this.visitToken(node.returnKeyword()), this.visitNode(node.expression()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitObjectCreationExpression = function (node) {
+        return node.update(this.visitToken(node.newKeyword()), this.visitNode(node.expression()), this.visitNode(node.argumentList()));
+    };
+    SyntaxRewriter.prototype.visitSwitchStatement = function (node) {
+        return node.update(this.visitToken(node.switchKeyword()), this.visitToken(node.openParenToken()), this.visitNode(node.expression()), this.visitToken(node.closeParenToken()), this.visitToken(node.openBraceToken()), this.visitList(node.caseClauses()), this.visitToken(node.closeBraceToken()));
+    };
+    SyntaxRewriter.prototype.visitCaseSwitchClause = function (node) {
+        return node.update(this.visitToken(node.caseKeyword()), this.visitNode(node.expression()), this.visitToken(node.colonToken()), this.visitList(node.statements()));
+    };
+    SyntaxRewriter.prototype.visitDefaultSwitchClause = function (node) {
+        return node.update(this.visitToken(node.defaultKeyword()), this.visitToken(node.colonToken()), this.visitList(node.statements()));
+    };
+    SyntaxRewriter.prototype.visitBreakStatement = function (node) {
+        return node.update(this.visitToken(node.breakKeyword()), node.identifier() === null ? null : this.visitToken(node.identifier()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitContinueStatement = function (node) {
+        return node.update(this.visitToken(node.continueKeyword()), node.identifier() === null ? null : this.visitToken(node.identifier()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitForStatement = function (node) {
+        return node.update(this.visitToken(node.forKeyword()), this.visitToken(node.openParenToken()), this.visitNode(node.variableDeclaration()), this.visitNode(node.initializer()), this.visitToken(node.firstSemicolonToken()), this.visitNode(node.condition()), this.visitToken(node.secondSemicolonToken()), this.visitNode(node.incrementor()), this.visitToken(node.closeParenToken()), this.visitNode(node.statement()));
+    };
+    SyntaxRewriter.prototype.visitForInStatement = function (node) {
+        return node.update(this.visitToken(node.forKeyword()), this.visitToken(node.openParenToken()), this.visitNode(node.variableDeclaration()), this.visitNode(node.left()), this.visitToken(node.inKeyword()), this.visitNode(node.expression()), this.visitToken(node.closeParenToken()), this.visitNode(node.statement()));
+    };
+    SyntaxRewriter.prototype.visitWhileStatement = function (node) {
+        return node.update(this.visitToken(node.whileKeyword()), this.visitToken(node.openParenToken()), this.visitNode(node.condition()), this.visitToken(node.closeParenToken()), this.visitNode(node.statement()));
+    };
+    SyntaxRewriter.prototype.visitWithStatement = function (node) {
+        return node.update(this.visitToken(node.withKeyword()), this.visitToken(node.openParenToken()), this.visitNode(node.condition()), this.visitToken(node.closeParenToken()), this.visitNode(node.statement()));
+    };
+    SyntaxRewriter.prototype.visitEnumDeclaration = function (node) {
+        return node.update(this.visitToken(node.exportKeyword()), this.visitToken(node.enumKeyword()), this.visitToken(node.identifier()), this.visitToken(node.openBraceToken()), this.visitSeparatedList(node.variableDeclarators()), this.visitToken(node.closeBraceToken()));
+    };
+    SyntaxRewriter.prototype.visitCastExpression = function (node) {
+        return node.update(this.visitToken(node.lessThanToken()), this.visitNode(node.type()), this.visitToken(node.greaterThanToken()), this.visitNode(node.expression()));
+    };
+    SyntaxRewriter.prototype.visitObjectLiteralExpression = function (node) {
+        return node.update(this.visitToken(node.openBraceToken()), this.visitSeparatedList(node.propertyAssignments()), this.visitToken(node.closeBraceToken()));
+    };
+    SyntaxRewriter.prototype.visitSimplePropertyAssignment = function (node) {
+        return node.update(this.visitToken(node.propertyName()), this.visitToken(node.colonToken()), this.visitNode(node.expression()));
+    };
+    SyntaxRewriter.prototype.visitGetAccessorPropertyAssignment = function (node) {
+        return node.update(this.visitToken(node.getKeyword()), this.visitToken(node.propertyName()), this.visitToken(node.openParenToken()), this.visitToken(node.closeParenToken()), this.visitNode(node.block()));
+    };
+    SyntaxRewriter.prototype.visitSetAccessorPropertyAssignment = function (node) {
+        return node.update(this.visitToken(node.setKeyword()), this.visitToken(node.propertyName()), this.visitToken(node.openParenToken()), this.visitToken(node.parameterName()), this.visitToken(node.closeParenToken()), this.visitNode(node.block()));
+    };
+    SyntaxRewriter.prototype.visitFunctionExpression = function (node) {
+        return node.update(this.visitToken(node.functionKeyword()), node.identifier() === null ? null : this.visitToken(node.identifier()), this.visitNode(node.callSignature()), this.visitNode(node.block()));
+    };
+    SyntaxRewriter.prototype.visitEmptyStatement = function (node) {
+        return node.update(this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitSuperExpression = function (node) {
+        return node.update(this.visitToken(node.superKeyword()));
+    };
+    SyntaxRewriter.prototype.visitTryStatement = function (node) {
+        return node.update(this.visitToken(node.tryKeyword()), this.visitNode(node.block()), this.visitNode(node.catchClause()), this.visitNode(node.finallyClause()));
+    };
+    SyntaxRewriter.prototype.visitCatchClause = function (node) {
+        return node.update(this.visitToken(node.catchKeyword()), this.visitToken(node.openParenToken()), this.visitToken(node.identifier()), this.visitToken(node.closeParenToken()), this.visitNode(node.block()));
+    };
+    SyntaxRewriter.prototype.visitFinallyClause = function (node) {
+        return node.update(this.visitToken(node.finallyKeyword()), this.visitNode(node.block()));
+    };
+    SyntaxRewriter.prototype.visitLabeledStatement = function (node) {
+        return node.update(this.visitToken(node.identifier()), this.visitToken(node.colonToken()), this.visitNode(node.statement()));
+    };
+    SyntaxRewriter.prototype.visitDoStatement = function (node) {
+        return node.update(this.visitToken(node.doKeyword()), this.visitNode(node.statement()), this.visitToken(node.whileKeyword()), this.visitToken(node.openParenToken()), this.visitNode(node.condition()), this.visitToken(node.closeParenToken()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitTypeOfExpression = function (node) {
+        return node.update(this.visitToken(node.typeOfKeyword()), this.visitNode(node.expression()));
+    };
+    SyntaxRewriter.prototype.visitDeleteExpression = function (node) {
+        return node.update(this.visitToken(node.deleteKeyword()), this.visitNode(node.expression()));
+    };
+    SyntaxRewriter.prototype.visitVoidExpression = function (node) {
+        return node.update(this.visitToken(node.voidKeyword()), this.visitNode(node.expression()));
+    };
+    SyntaxRewriter.prototype.visitDebuggerStatement = function (node) {
+        return node.update(this.visitToken(node.debuggerKeyword()), this.visitToken(node.semicolonToken()));
+    };
+    return SyntaxRewriter;
+})();
 var SyntaxTokenFactory;
 (function (SyntaxTokenFactory) {
     function getTriviaLength(value) {
