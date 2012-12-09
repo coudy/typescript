@@ -132,8 +132,8 @@ var definitions:ITypeDefinition[] = [
         name: 'FunctionDeclarationSyntax',
         baseType: 'StatementSyntax',
         children: [
-            <any>{ name: 'exportKeyword', isToken: true },
-            <any>{ name: 'declareKeyword', isToken: true },
+            <any>{ name: 'exportKeyword', isToken: true, isOptional: true },
+            <any>{ name: 'declareKeyword', isToken: true, isOptional: true },
             <any>{ name: 'functionKeyword', isToken: true },
             <any>{ name: 'functionSignature', type: 'FunctionSignatureSyntax' },
             <any>{ name: 'block', type: 'BlockSyntax' },

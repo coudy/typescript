@@ -7498,9 +7498,6 @@ var VariableDeclaratorSyntax = (function (_super) {
     __extends(VariableDeclaratorSyntax, _super);
     function VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause) {
         _super.call(this);
-        if(equalsValueClause === null) {
-            throw Errors.argumentNull('equalsValueClause');
-        }
         if(identifier.kind() !== 7 /* IdentifierNameToken */ ) {
             throw Errors.argument('identifier');
         }
@@ -7524,7 +7521,7 @@ var VariableDeclaratorSyntax = (function (_super) {
         if(this._typeAnnotation !== null && !this._typeAnnotation.isMissing()) {
             return false;
         }
-        if(!this._equalsValueClause.isMissing()) {
+        if(this._equalsValueClause !== null && !this._equalsValueClause.isMissing()) {
             return false;
         }
         return true;

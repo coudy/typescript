@@ -691,8 +691,8 @@ class FunctionDeclarationSyntax extends StatementSyntax {
 
         if (functionSignature === null) { throw Errors.argumentNull('functionSignature'); }
         if (block === null) { throw Errors.argumentNull('block'); }
-        if (exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) { throw Errors.argument('exportKeyword'); }
-        if (declareKeyword.keywordKind() !== SyntaxKind.DeclareKeyword) { throw Errors.argument('declareKeyword'); }
+        if (exportKeyword !== null && exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) { throw Errors.argument('exportKeyword'); }
+        if (declareKeyword !== null && declareKeyword.keywordKind() !== SyntaxKind.DeclareKeyword) { throw Errors.argument('declareKeyword'); }
         if (functionKeyword.keywordKind() !== SyntaxKind.FunctionKeyword) { throw Errors.argument('functionKeyword'); }
         if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
@@ -717,8 +717,8 @@ class FunctionDeclarationSyntax extends StatementSyntax {
     }
 
     public isMissing(): bool {
-        if (!this._exportKeyword.isMissing()) { return false; }
-        if (!this._declareKeyword.isMissing()) { return false; }
+        if (this._exportKeyword !== null && !this._exportKeyword.isMissing()) { return false; }
+        if (this._declareKeyword !== null && !this._declareKeyword.isMissing()) { return false; }
         if (!this._functionKeyword.isMissing()) { return false; }
         if (!this._functionSignature.isMissing()) { return false; }
         if (!this._block.isMissing()) { return false; }

@@ -258,11 +258,13 @@ var definitions = [
         children: [
             {
                 name: 'exportKeyword',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'declareKeyword',
-                isToken: true
+                isToken: true,
+                isOptional: true
             }, 
             {
                 name: 'functionKeyword',
