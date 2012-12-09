@@ -1,12 +1,19 @@
 ///<reference path='References.ts' />
 
 module SyntaxList {
+    function collectTextElements(text: IText, elements: string[], list: ISyntaxList): void {
+        for (var i = 0, n = list.count(); i < n; i++) {
+            list.syntaxNodeAt(i).collectTextElements(text, elements);
+        }
+    }
+
     class EmptySyntaxList implements ISyntaxList {
         public isToken(): bool { return false; }
         public isNode(): bool{ return false; }
         public isList(): bool{ return true; }
         public isSeparatedList(): bool{ return false; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind(): SyntaxKind { return SyntaxKind.List; }
 
         public toJSON(key) {
@@ -24,6 +31,10 @@ module SyntaxList {
         public syntaxNodeAt(index: number): SyntaxNode {
             throw Errors.argumentOutOfRange("index");
         }
+
+        public collectTextElements(text: IText, elements: string[]): void {
+            return collectTextElements(text, elements, this);
+        }
     }
 
     export var empty: ISyntaxList = new EmptySyntaxList();
@@ -40,6 +51,7 @@ module SyntaxList {
         public isList(): bool{ return true; }
         public isSeparatedList(): bool{ return false; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind(): SyntaxKind { return SyntaxKind.List; }
         public isMissing(): bool { return this._item.isMissing(); }
 
@@ -58,6 +70,10 @@ module SyntaxList {
 
             return this._item;
         }
+
+        public collectTextElements(text: IText, elements: string[]): void {
+            return collectTextElements(text, elements, this);
+        }
     }
 
     class NormalSyntaxList implements ISyntaxList {
@@ -72,6 +88,7 @@ module SyntaxList {
         public isList(): bool{ return true; }
         public isSeparatedList(): bool{ return false; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind(): SyntaxKind { return SyntaxKind.List; }
 
         public isMissing(): bool {
@@ -98,6 +115,10 @@ module SyntaxList {
             }
 
             return this.nodes[index];
+        }
+
+        public collectTextElements(text: IText, elements: string[]): void {
+            return collectTextElements(text, elements, this);
         }
     }
 

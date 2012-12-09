@@ -6,6 +6,7 @@ class SyntaxNode implements ISyntaxElement {
     public isList(): bool{ return false; }
     public isSeparatedList(): bool{ return false; }
     public isTrivia(): bool { return false; }
+    public isTriviaList(): bool { return false; }
 
     public kind(): SyntaxKind {
         throw Errors.abstract();
@@ -34,5 +35,19 @@ class SyntaxNode implements ISyntaxElement {
 
     public accept1(visitor: ISyntaxVisitor1): any {
         throw Errors.abstract();
+    }
+
+    public realize(text: IText): SyntaxNode {
+        return this.accept1(new SyntaxRealizer(text));
+    }
+
+    public collectTextElements(text: IText, elements: string[]): void {
+        throw Errors.abstract();
+    }
+
+    public fullText(text: IText): string {
+        var elements: string[] = [];
+        this.collectTextElements(text, elements);
+        return elements.join("");
     }
 }

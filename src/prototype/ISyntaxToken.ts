@@ -29,6 +29,8 @@ interface ISyntaxToken extends ISyntaxElement {
 
     leadingTrivia(text: IText): ISyntaxTriviaList;
     trailingTrivia(text: IText): ISyntaxTriviaList;
+
+    realize(text: IText): ISyntaxToken;
 }
 
 interface IElasticToken {

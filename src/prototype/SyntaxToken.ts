@@ -21,6 +21,16 @@ module SyntaxToken {
         return token.start() + token.width();
     }
 
+    function realize(token: ISyntaxToken, text: IText): ISyntaxToken {
+        return new RealizedToken(token, text);
+    }
+
+    function collectTextElements(text: IText, elements: string[], token: ISyntaxToken): void {
+        token.leadingTrivia(text).collectTextElements(text, elements);
+        elements.push(token.text());
+        token.trailingTrivia(text).collectTextElements(text, elements);
+    }
+
     function toJSON(token: ISyntaxToken) {
         var result: any = {
             kind: (<any>SyntaxKind)._map[token.tokenKind]
@@ -110,6 +120,7 @@ module SyntaxToken {
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind() { return this.tokenKind; }
 
         public toJSON(key) { return toJSON(this); }
@@ -133,6 +144,8 @@ module SyntaxToken {
         public hasTrailingNewLineTrivia() { return false; }
         public leadingTrivia(text: IText): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
         public trailingTrivia(text: IText): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+        public realize(text: IText): ISyntaxToken { return realize(this, text); }
+        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(text, elements, this); }
     }
 
     class FixedWidthTokenWithNoTrivia implements ISyntaxToken {
@@ -149,6 +162,7 @@ module SyntaxToken {
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
 
@@ -172,6 +186,9 @@ module SyntaxToken {
         public hasTrailingNewLineTrivia(): bool { return false; }
         public leadingTrivia(text: IText): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
         public trailingTrivia(text: IText): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+
+        public realize(text: IText): ISyntaxToken { return realize(this, text); }
+        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(text, elements, this); }
     }
 
     class FixedWidthTokenWithLeadingTrivia implements ISyntaxToken {
@@ -190,6 +207,7 @@ module SyntaxToken {
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
 
@@ -215,6 +233,9 @@ module SyntaxToken {
         public hasTrailingCommentTrivia(): bool { return false; }
         public hasTrailingNewLineTrivia(): bool { return false; }
         public trailingTrivia(text: IText): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+
+        public realize(text: IText): ISyntaxToken { return realize(this, text); }
+        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(text, elements, this); }
     }
 
     class FixedWidthTokenWithTrailingTrivia implements ISyntaxToken {
@@ -233,6 +254,7 @@ module SyntaxToken {
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
 
@@ -258,6 +280,9 @@ module SyntaxToken {
         public hasTrailingCommentTrivia(): bool { return hasTriviaComment(this._trailingTriviaInfo); }
         public hasTrailingNewLineTrivia(): bool { return hasTriviaNewLine(this._trailingTriviaInfo); }
         public trailingTrivia(text: IText): ISyntaxTriviaList { throw Errors.notYetImplemented(); }
+
+        public realize(text: IText): ISyntaxToken { return realize(this, text); }
+        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(text, elements, this); }
     }
 
     class FixedWidthTokenWithLeadingAndTrailingTrivia implements ISyntaxToken {
@@ -278,6 +303,7 @@ module SyntaxToken {
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
 
@@ -303,6 +329,9 @@ module SyntaxToken {
         public hasTrailingCommentTrivia(): bool { return hasTriviaComment(this._trailingTriviaInfo); }
         public hasTrailingNewLineTrivia(): bool { return hasTriviaNewLine(this._trailingTriviaInfo); }
         public trailingTrivia(text: IText): ISyntaxTriviaList { throw Errors.notYetImplemented(); }
+
+        public realize(text: IText): ISyntaxToken { return realize(this, text); }
+        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(text, elements, this); }
     }
 
     class FixedWidthKeywordWithNoTrivia implements ISyntaxToken {
@@ -319,6 +348,7 @@ module SyntaxToken {
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind() { return SyntaxKind.IdentifierNameToken; }
         public toJSON(key) { return toJSON(this); }
 
@@ -343,6 +373,9 @@ module SyntaxToken {
         public hasTrailingNewLineTrivia(): bool { return false; }
         public leadingTrivia(text: IText): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
         public trailingTrivia(text: IText): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+
+        public realize(text: IText): ISyntaxToken { return realize(this, text); }
+        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(text, elements, this); }
     }
 
     class FixedWidthKeywordWithLeadingTrivia implements ISyntaxToken {
@@ -361,6 +394,7 @@ module SyntaxToken {
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind() { return SyntaxKind.IdentifierNameToken; }
         public toJSON(key) { return toJSON(this); }
 
@@ -387,6 +421,9 @@ module SyntaxToken {
         public hasTrailingCommentTrivia(): bool { return false; }
         public hasTrailingNewLineTrivia(): bool { return false; }
         public trailingTrivia(text: IText): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+
+        public realize(text: IText): ISyntaxToken { return realize(this, text); }
+        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(text, elements, this); }
     }
 
     class FixedWidthKeywordWithTrailingTrivia implements ISyntaxToken {
@@ -405,6 +442,7 @@ module SyntaxToken {
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind() { return SyntaxKind.IdentifierNameToken; }
         public toJSON(key) { return toJSON(this); }
 
@@ -431,6 +469,9 @@ module SyntaxToken {
         public hasTrailingCommentTrivia(): bool { return hasTriviaComment(this._trailingTriviaInfo); }
         public hasTrailingNewLineTrivia(): bool { return hasTriviaNewLine(this._trailingTriviaInfo); }
         public trailingTrivia(text: IText): ISyntaxTriviaList { throw Errors.notYetImplemented(); }
+
+        public realize(text: IText): ISyntaxToken { return realize(this, text); }
+        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(text, elements, this); }
     }
 
     class FixedWidthKeywordWithLeadingAndTrailingTrivia implements ISyntaxToken {
@@ -451,6 +492,7 @@ module SyntaxToken {
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind() { return SyntaxKind.IdentifierNameToken; }
         public toJSON(key) { return toJSON(this); }
 
@@ -477,6 +519,9 @@ module SyntaxToken {
         public hasTrailingCommentTrivia(): bool { return hasTriviaComment(this._trailingTriviaInfo); }
         public hasTrailingNewLineTrivia(): bool { return hasTriviaNewLine(this._trailingTriviaInfo); }
         public trailingTrivia(text: IText): ISyntaxTriviaList { throw Errors.notYetImplemented(); }
+
+        public realize(text: IText): ISyntaxToken { return realize(this, text); }
+        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(text, elements, this); }
     }
 
     class VariableWidthTokenWithNoTrivia implements ISyntaxToken {
@@ -497,6 +542,7 @@ module SyntaxToken {
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
 
@@ -520,6 +566,9 @@ module SyntaxToken {
         public hasTrailingNewLineTrivia(): bool { return false; }
         public leadingTrivia(text: IText): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
         public trailingTrivia(text: IText): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+
+        public realize(text: IText): ISyntaxToken { return realize(this, text); }
+        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(text, elements, this); }
     }
 
     class VariableWidthTokenWithLeadingTrivia implements ISyntaxToken {
@@ -542,6 +591,7 @@ module SyntaxToken {
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
 
@@ -567,6 +617,9 @@ module SyntaxToken {
         public hasTrailingCommentTrivia(): bool { return false; }
         public hasTrailingNewLineTrivia(): bool { return false; }
         public trailingTrivia(text: IText): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+
+        public realize(text: IText): ISyntaxToken { return realize(this, text); }
+        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(text, elements, this); }
     }
 
     class VariableWidthTokenWithTrailingTrivia implements ISyntaxToken {
@@ -589,6 +642,7 @@ module SyntaxToken {
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
 
@@ -614,6 +668,9 @@ module SyntaxToken {
         public hasTrailingCommentTrivia(): bool { return hasTriviaComment(this._trailingTriviaInfo); }
         public hasTrailingNewLineTrivia(): bool { return hasTriviaNewLine(this._trailingTriviaInfo); }
         public trailingTrivia(text: IText): ISyntaxTriviaList { throw Errors.notYetImplemented(); }
+
+        public realize(text: IText): ISyntaxToken { return realize(this, text); }
+        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(text, elements, this); }
     }
 
     class VariableWidthTokenWithLeadingAndTrailingTrivia implements ISyntaxToken {
@@ -638,6 +695,7 @@ module SyntaxToken {
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind() { return this.tokenKind; }
         public toJSON(key) { return toJSON(this); }
 
@@ -663,6 +721,9 @@ module SyntaxToken {
         public hasTrailingCommentTrivia(): bool { return hasTriviaComment(this._trailingTriviaInfo); }
         public hasTrailingNewLineTrivia(): bool { return hasTriviaNewLine(this._trailingTriviaInfo); }
         public trailingTrivia(text: IText): ISyntaxTriviaList { throw Errors.notYetImplemented(); }
+
+        public realize(text: IText): ISyntaxToken { return realize(this, text); }
+        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(text, elements, this); }
     }
 
     function createFixedWidthToken(fullStart: number,
@@ -772,33 +833,19 @@ module SyntaxToken {
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public isMissing(): bool { return false; }
 
         public tokenKind: SyntaxKind;
 
-        public kind(): SyntaxKind {
-            return this.tokenKind;
-        }
+        public kind(): SyntaxKind { return this.tokenKind; }
+        public keywordKind(): SyntaxKind { return this._keywordKind; }
 
-        public keywordKind(): SyntaxKind {
-            return this._keywordKind;
-        }
+        public fullStart(): number { throw Errors.notYetImplemented(); }
+        public fullEnd(): number { throw Errors.notYetImplemented(); }
 
-        public fullStart(): number {
-            throw Errors.notYetImplemented();
-        }
-
-        public fullEnd(): number {
-            throw Errors.notYetImplemented();
-        }
-
-        public start(): number {
-            throw Errors.notYetImplemented();
-        }
-
-        public end(): number {
-            throw Errors.notYetImplemented();
-        }
+        public start(): number { throw Errors.notYetImplemented(); }
+        public end(): number { throw Errors.notYetImplemented(); }
 
         public fullWidth(): number {
             return this._leadingTrivia.fullWidth() + this.width() + this._trailingTrivia.fullWidth();
@@ -848,13 +895,64 @@ module SyntaxToken {
             return this._trailingTrivia.hasNewLine();
         }
 
-        public leadingTrivia(text: IText): ISyntaxTriviaList {
-            return this._leadingTrivia;
+        public leadingTrivia(text: IText): ISyntaxTriviaList { return this._leadingTrivia; }
+        public trailingTrivia(text: IText): ISyntaxTriviaList { return this._trailingTrivia; }
+        
+        public realize(text: IText): ISyntaxToken { return realize(this, text); }
+        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(text, elements, this); }
+    }
+
+    class RealizedToken implements ISyntaxToken {
+        public tokenKind: SyntaxKind;
+        private _token: ISyntaxToken;
+        private _text: IText;
+
+        constructor(token: ISyntaxToken,
+            text: IText) {
+            this.tokenKind = token.tokenKind;
+            this._token = token;
+            this._text = text;
         }
 
-        public trailingTrivia(text: IText): ISyntaxTriviaList {
-            return this._trailingTrivia;
-        }
+        public kind(): SyntaxKind { return this._token.kind(); }
+
+        public isToken(): bool { return this._token.isToken(); }
+        public isNode(): bool { return this._token.isNode(); }
+        public isList(): bool { return this._token.isList(); }
+        public isSeparatedList(): bool { return this._token.isSeparatedList(); }
+        public isTrivia(): bool { return this._token.isTrivia(); }
+        public isTriviaList(): bool { return this._token.isTriviaList(); }
+        public isMissing(): bool { return this._token.isMissing(); }
+
+        public keywordKind(): SyntaxKind { return this._token.keywordKind(); }
+
+        public fullStart(): number { return this._token.fullStart(); }
+        public fullWidth(): number { return this._token.fullWidth(); }
+        public fullEnd(): number { return this._token.fullEnd(); }
+
+        public start(): number { return this._token.start(); }
+        public width(): number { return this._token.width(); }
+        public end(): number { return this._token.end(); }
+
+        public text(): string { return this._token.text(); }
+        public fullText(text: IText): string { return this._token.fullText(this._text); }
+
+        public value(): any { return this._token.value(); }
+        public valueText(): string { return this._token.value(); }
+
+        public hasLeadingTrivia(): bool { return this._token.hasLeadingTrivia(); }
+        public hasLeadingCommentTrivia(): bool { return this._token.hasLeadingCommentTrivia(); }
+        public hasLeadingNewLineTrivia(): bool { return this._token.hasLeadingNewLineTrivia(); }
+
+        public hasTrailingTrivia(): bool { return this._token.hasTrailingTrivia(); }
+        public hasTrailingCommentTrivia(): bool { return this._token.hasTrailingCommentTrivia(); }
+        public hasTrailingNewLineTrivia(): bool { return this._token.hasTrailingNewLineTrivia(); }
+
+        public leadingTrivia(text: IText): ISyntaxTriviaList { return this._token.leadingTrivia(this._text); }
+        public trailingTrivia(text: IText): ISyntaxTriviaList { return this._token.trailingTrivia(this._text); }
+
+        public realize(text: IText): ISyntaxToken { return this; }
+        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(text, elements, this); }
     }
 
     export function createElasticKeyword(token: IElasticToken): ISyntaxToken {

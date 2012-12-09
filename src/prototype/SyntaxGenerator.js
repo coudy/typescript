@@ -2667,6 +2667,25 @@ function generateUpdateMethod(definition) {
     result += "    }\r\n";
     return result;
 }
+function generateCollectTextElements(definition) {
+    if(definition.isAbstract) {
+        return "";
+    }
+    var result = "\r\n    private collectTextElements(text: IText, elements: string[]) {\r\n";
+    for(var i = 0; i < definition.children.length; i++) {
+        var child = definition.children[i];
+        if(child.type === "SyntaxKind") {
+            continue;
+        }
+        if(child.isOptional) {
+            result += "        if (" + getPropertyAccess(child) + " !== null) { " + getPropertyAccess(child) + ".collectTextElements(text, elements); }\r\n";
+        } else {
+            result += "        " + getPropertyAccess(child) + ".collectTextElements(text, elements);\r\n";
+        }
+    }
+    result += "    }\r\n";
+    return result;
+}
 function generateNode(definition) {
     var result = "class " + definition.name + " extends " + definition.baseType + " {\r\n";
     hasKind = false;
@@ -2678,6 +2697,7 @@ function generateNode(definition) {
     result += generateIsMissingMethod(definition);
     result += generateAccessors(definition);
     result += generateUpdateMethod(definition);
+    result += generateCollectTextElements(definition);
     result += "}";
     return result;
 }

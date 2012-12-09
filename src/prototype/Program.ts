@@ -21,6 +21,10 @@ class Program {
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
             filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*allowErrors:*/ true));
             
+        environment.standardOut.WriteLine("Testing emitter.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5",
+            filePath => this.runEmitter(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*allowErrors:*/ true));
+            
         environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests(environment, "C:\\temp\\monoco-files",
             filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ false));
@@ -67,6 +71,70 @@ class Program {
         }
     }
 
+    runEmitter(environment: IEnvironment,
+               filePath: string,
+               languageVersion: LanguageVersion,
+               verify: bool,
+               generateBaseline?: bool = false,
+               printDots?: bool = false): void {
+        if (true) {
+            return;
+        }
+
+        if (!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
+            return;
+        }
+
+        if (filePath.indexOf("RealSource") >= 0) {
+            return;
+        }
+
+        // environment.standardOut.WriteLine("Running Parser: " + filePath);
+        var contents = environment.readFile(filePath, /*useUTF8:*/ true);
+        if (printDots) {
+            // environment.standardOut.Write(".");
+            // environment.standardOut.WriteLine(filePath);
+        }
+
+        var start: number, end: number;
+        start = new Date().getTime();
+
+        totalSize += contents.length;
+
+        var text = new StringText(contents);
+
+        var parser = new Parser(text, languageVersion, stringTable);
+        var tree = parser.parseSyntaxTree();
+        var emitted = new Emitter(true).emit(<SourceUnitSyntax>tree.sourceUnit().realize(text));
+
+        if (generateBaseline) {
+            var actualResult = emitted.fullText(null);
+            var expectedFile = filePath + ".expected";
+
+            // environment.standardOut.WriteLine("Generating baseline for: " + filePath);
+            environment.writeFile(expectedFile, actualResult, /*useUTF8:*/ true);
+        }
+        else if (verify) {
+            var actualResult = emitted.fullText(null);
+            var expectedFile = filePath + ".expected";
+            var actualFile = filePath + ".actual";
+
+            var expectedResult = environment.readFile(expectedFile, /*useUTF8:*/ true);
+
+            if (expectedResult !== actualResult) {
+                if (printDots) {
+                    // environment.standardOut.WriteLine("");
+                }
+
+                environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
+                environment.writeFile(actualFile, actualResult, /*useUTF8:*/ true);
+            }
+        }
+
+        end = new Date().getTime();
+        totalTime += (end - start);
+    }
+
     runParser(environment: IEnvironment,
               filePath: string,
               languageVersion: LanguageVersion,
@@ -103,8 +171,7 @@ class Program {
         }
         else {
             var text = new StringText(contents);
-            var scanner = new Scanner(text, languageVersion, /* new StringTable() */ stringTable);
-            var parser = new Parser(scanner);
+            var parser = new Parser(text, languageVersion, stringTable);
             var unit = parser.parseSyntaxTree();
 
             if (!allowErrors) {
@@ -252,8 +319,7 @@ class Program {
 
                 try {
                     var stringText = new StringText(contents);
-                    var scanner = new Scanner(stringText, LanguageVersion.EcmaScript5, stringTable);
-                    var parser = new Parser(scanner);
+                    var parser = new Parser(stringText, LanguageVersion.EcmaScript5, stringTable);
 
                     var syntaxTree = parser.parseSyntaxTree();
             //environment.standardOut.Write(".");
@@ -336,8 +402,7 @@ class Program {
 
                 try {
                     var stringText = new StringText(contents);
-                    var scanner = new Scanner(stringText, LanguageVersion.EcmaScript5, stringTable);
-                    var parser = new Parser(scanner);
+                    var parser = new Parser(stringText, LanguageVersion.EcmaScript5, stringTable);
 
                     var syntaxTree = parser.parseSyntaxTree();
             //environment.standardOut.WriteLine(filePath);

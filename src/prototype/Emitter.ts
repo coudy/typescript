@@ -54,7 +54,7 @@ class Emitter extends SyntaxRewriter {
                 SyntaxToken.createElasticKeyword({ kind: SyntaxKind.VarKeyword, trailingTrivia: [SyntaxTrivia.space] }),
                 SeparatedSyntaxList.create(
                     [VariableDeclaratorSyntax.create(identifierName.identifier())])),
-            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken }));
+            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
 
         var functionExpression = FunctionExpressionSyntax.create(
             SyntaxToken.createElasticKeyword({ kind: SyntaxKind.FunctionKeyword }),
@@ -63,9 +63,9 @@ class Emitter extends SyntaxRewriter {
                     SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
                     SeparatedSyntaxList.create([
                         ParameterSyntax.create(identifierName.identifier())]),
-                    SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }))),
+                    SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken, trailingTrivia: [SyntaxTrivia.space]  }))),
             new BlockSyntax(
-                SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+                SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed]  }),
                 SyntaxList.empty,
                 SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken })));
 

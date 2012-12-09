@@ -1,6 +1,6 @@
 ///<reference path='References.ts' />
 
-interface ISyntaxTriviaList {
+interface ISyntaxTriviaList extends ISyntaxElement {
     count(): number;
     syntaxTriviaAt(index: number): ISyntaxTrivia;
 

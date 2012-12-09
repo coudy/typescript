@@ -1,13 +1,19 @@
 ///<reference path='References.ts' />
 
 module SeparatedSyntaxList {
-    class EmptySeparatedSyntaxList implements ISeparatedSyntaxList {
+    function collectTextElements(text: IText, elements: string[], list: ISeparatedSyntaxList): void {
+        for (var i = 0, n = list.count(); i < n; i++) {
+            list.itemAt(i).collectTextElements(text, elements);
+        }
+    }
 
+    class EmptySeparatedSyntaxList implements ISeparatedSyntaxList {
         public isToken(): bool { return false; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return false; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return false; }
         public isSeparatedList(): bool { return true; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind() { return SyntaxKind.SeparatedList; }
         public isMissing(): bool { return true; }
 
@@ -28,6 +34,10 @@ module SeparatedSyntaxList {
         public separatorAt(index: number): ISyntaxToken {
             throw Errors.argumentOutOfRange("index");
         }
+
+        public collectTextElements(text: IText, elements: string[]): void {
+            return collectTextElements(text, elements, this);
+        }
     }
 
     class SingletonSeparatedSyntaxList implements ISeparatedSyntaxList {
@@ -40,12 +50,13 @@ module SeparatedSyntaxList {
         public toJSON(key) {
             return [this.item];
         }
-        
+
         public isToken(): bool { return false; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return false; }
-        public isSeparatedList(): bool{ return true; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return false; }
+        public isSeparatedList(): bool { return true; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind() { return SyntaxKind.SeparatedList; }
         public isMissing(): bool { return this.item.isMissing(); }
 
@@ -72,6 +83,10 @@ module SeparatedSyntaxList {
         public separatorAt(index: number): ISyntaxToken {
             throw Errors.argumentOutOfRange("index");
         }
+
+        public collectTextElements(text: IText, elements: string[]): void {
+            return collectTextElements(text, elements, this);
+        }
     }
 
     class NormalSeparatedSyntaxList implements ISeparatedSyntaxList {
@@ -80,12 +95,13 @@ module SeparatedSyntaxList {
         constructor(nodes: ISyntaxElement[]) {
             this.nodes = nodes;
         }
-        
+
         public isToken(): bool { return false; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return false; }
-        public isSeparatedList(): bool{ return true; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return false; }
+        public isSeparatedList(): bool { return true; }
         public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
         public kind() { return SyntaxKind.SeparatedList; }
         public toJSON(key) { return this.nodes; }
 
@@ -128,9 +144,14 @@ module SeparatedSyntaxList {
 
             return <ISyntaxToken>this.nodes[value];
         }
+
+        public collectTextElements(text: IText, elements: string[]): void {
+            return collectTextElements(text, elements, this);
+        }
     }
-    
+
     export var empty: ISeparatedSyntaxList = new EmptySeparatedSyntaxList();
+
     export function create(nodes: ISyntaxElement[]): ISeparatedSyntaxList {
         if (nodes === undefined || nodes === null || nodes.length === 0) {
             return empty;

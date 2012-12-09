@@ -1370,6 +1370,96 @@ function generateUpdateMethod(definition: ITypeDefinition): string {
     return result;
 }
 
+//function generateRealizeMethod(definition: ITypeDefinition): string {
+//    if (definition.isAbstract) {
+//        return "";
+//    }
+
+//    var result = "";
+
+//    result += "\r\n";
+
+//    result += "    public update("
+
+//    for (var i = 0; i < definition.children.length; i++) {
+//        var child: IMemberDefinition = definition.children[i];
+
+//        result += getSafeName(child) + ": " + getType(child);
+
+//        if (i < definition.children.length - 1) {
+//            result += ",\r\n                  ";
+//        }
+//    }
+
+//    result += ") {\r\n";
+
+//    if (definition.children.length === 0) {
+//        result += "        return this;\r\n";
+//    }
+//    else {
+//        result += "        if (";
+
+//        for (var i = 0; i < definition.children.length; i++) {
+//            var child: IMemberDefinition = definition.children[i];
+
+//            if (i !== 0) {
+//                result += " && ";
+//            }
+
+//            result += getPropertyAccess(child) + " === " + getSafeName(child);
+//        }
+
+//        result += ") {\r\n";
+//        result += "            return this;\r\n";
+//        result += "        }\r\n\r\n";
+
+//        result += "        return new " + definition.name + "(";
+
+//        for (var i = 0; i < definition.children.length; i++) {
+//            var child: IMemberDefinition = definition.children[i];
+
+//            if (i !== 0) {
+//                result += ", ";
+//            }
+
+//            result += getSafeName(child);
+//        }
+
+//        result += ");\r\n";
+//    }
+
+//    result += "    }\r\n";
+
+//    return result;
+//}
+
+function generateCollectTextElements(definition: ITypeDefinition): string {
+    if (definition.isAbstract) {
+        return "";
+    }
+
+    var result = "\r\n    private collectTextElements(text: IText, elements: string[]) {\r\n";
+
+    for (var i = 0; i < definition.children.length; i++) {
+        var child = definition.children[i];
+
+        if (child.type === "SyntaxKind") {
+            continue;
+        }
+
+        if (child.isOptional) {
+            result += "        if (" + getPropertyAccess(child) + " !== null) { " + getPropertyAccess(child) + ".collectTextElements(text, elements); }\r\n";
+        }
+        else {
+            result += "        " + getPropertyAccess(child) + ".collectTextElements(text, elements);\r\n";
+        }
+    }
+
+    result += "    }\r\n";
+
+    return result;
+}
+
 function generateNode(definition: ITypeDefinition): string {
     var result = "class " + definition.name + " extends " + definition.baseType + " {\r\n";
     hasKind = false;
@@ -1382,6 +1472,8 @@ function generateNode(definition: ITypeDefinition): string {
     result += generateIsMissingMethod(definition);
     result += generateAccessors(definition);
     result += generateUpdateMethod(definition);
+    // result += generateRealizeMethod(definition);
+    result += generateCollectTextElements(definition);
 
     result += "}";
 

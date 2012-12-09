@@ -1385,6 +1385,11 @@ var ParseOptions = (function () {
 })();
 var SeparatedSyntaxList;
 (function (SeparatedSyntaxList) {
+    function collectTextElements(text, elements, list) {
+        for(var i = 0, n = list.count(); i < n; i++) {
+            list.itemAt(i).collectTextElements(text, elements);
+        }
+    }
     var EmptySeparatedSyntaxList = (function () {
         function EmptySeparatedSyntaxList() { }
         EmptySeparatedSyntaxList.prototype.isToken = function () {
@@ -1400,6 +1405,9 @@ var SeparatedSyntaxList;
             return true;
         };
         EmptySeparatedSyntaxList.prototype.isTrivia = function () {
+            return false;
+        };
+        EmptySeparatedSyntaxList.prototype.isTriviaList = function () {
             return false;
         };
         EmptySeparatedSyntaxList.prototype.kind = function () {
@@ -1429,6 +1437,9 @@ var SeparatedSyntaxList;
         EmptySeparatedSyntaxList.prototype.separatorAt = function (index) {
             throw Errors.argumentOutOfRange("index");
         };
+        EmptySeparatedSyntaxList.prototype.collectTextElements = function (text, elements) {
+            return collectTextElements(text, elements, this);
+        };
         return EmptySeparatedSyntaxList;
     })();    
     var SingletonSeparatedSyntaxList = (function () {
@@ -1453,6 +1464,9 @@ var SeparatedSyntaxList;
             return true;
         };
         SingletonSeparatedSyntaxList.prototype.isTrivia = function () {
+            return false;
+        };
+        SingletonSeparatedSyntaxList.prototype.isTriviaList = function () {
             return false;
         };
         SingletonSeparatedSyntaxList.prototype.kind = function () {
@@ -1485,6 +1499,9 @@ var SeparatedSyntaxList;
         SingletonSeparatedSyntaxList.prototype.separatorAt = function (index) {
             throw Errors.argumentOutOfRange("index");
         };
+        SingletonSeparatedSyntaxList.prototype.collectTextElements = function (text, elements) {
+            return collectTextElements(text, elements, this);
+        };
         return SingletonSeparatedSyntaxList;
     })();    
     var NormalSeparatedSyntaxList = (function () {
@@ -1504,6 +1521,9 @@ var SeparatedSyntaxList;
             return true;
         };
         NormalSeparatedSyntaxList.prototype.isTrivia = function () {
+            return false;
+        };
+        NormalSeparatedSyntaxList.prototype.isTriviaList = function () {
             return false;
         };
         NormalSeparatedSyntaxList.prototype.kind = function () {
@@ -1548,6 +1568,9 @@ var SeparatedSyntaxList;
                 throw Errors.argumentOutOfRange("index");
             }
             return this.nodes[value];
+        };
+        NormalSeparatedSyntaxList.prototype.collectTextElements = function (text, elements) {
+            return collectTextElements(text, elements, this);
         };
         return NormalSeparatedSyntaxList;
     })();    
@@ -1746,7 +1769,12 @@ var ListParsingState;
 })(ListParsingState || (ListParsingState = {}));
 var Parser = (function (_super) {
     __extends(Parser, _super);
-    function Parser(scanner, oldTree, changes, options) {
+    function Parser(text, languageVersion, stringTable, oldTree, changes, options) {
+        if (typeof languageVersion === "undefined") { languageVersion = 1 /* EcmaScript5 */ ; }
+        if (typeof stringTable === "undefined") { stringTable = null; }
+        if (typeof oldTree === "undefined") { oldTree = null; }
+        if (typeof changes === "undefined") { changes = null; }
+        if (typeof options === "undefined") { options = null; }
         _super.call(this, 32, null);
         this.options = null;
         this._currentToken = null;
@@ -1756,7 +1784,7 @@ var Parser = (function (_super) {
         this.isInStrictMode = false;
         this.skippedTokens = [];
         this.diagnostics = [];
-        this.scanner = scanner;
+        this.scanner = new Scanner(text, languageVersion, stringTable);
         this.oldTree = oldTree;
         this.options = options || new ParseOptions();
     }
@@ -1809,10 +1837,10 @@ var Parser = (function (_super) {
     };
     Parser.prototype.canEatAutomaticSemicolon = function (allowWithoutNewLine) {
         var token = this.currentToken();
-        if(token.tokenKind === 116 /* EndOfFileToken */ ) {
+        if(token.tokenKind === 117 /* EndOfFileToken */ ) {
             return true;
         }
-        if(token.tokenKind === 66 /* CloseBraceToken */ ) {
+        if(token.tokenKind === 67 /* CloseBraceToken */ ) {
             return true;
         }
         if(allowWithoutNewLine) {
@@ -1825,24 +1853,24 @@ var Parser = (function (_super) {
     };
     Parser.prototype.canEatExplicitOrAutomaticSemicolon = function (allowWithoutNewline) {
         var token = this.currentToken();
-        if(token.tokenKind === 73 /* SemicolonToken */ ) {
+        if(token.tokenKind === 74 /* SemicolonToken */ ) {
             return true;
         }
         return this.canEatAutomaticSemicolon(allowWithoutNewline);
     };
     Parser.prototype.eatExplicitOrAutomaticSemicolon = function (allowWithoutNewline) {
         var token = this.currentToken();
-        if(token.tokenKind === 73 /* SemicolonToken */ ) {
-            return this.eatToken(73 /* SemicolonToken */ );
+        if(token.tokenKind === 74 /* SemicolonToken */ ) {
+            return this.eatToken(74 /* SemicolonToken */ );
         }
         if(this.canEatAutomaticSemicolon(allowWithoutNewline)) {
-            var semicolonToken = SyntaxToken.createEmpty(this.currentToken().fullStart(), 73 /* SemicolonToken */ , 0 /* None */ );
+            var semicolonToken = SyntaxToken.createEmpty(this.currentToken().fullStart(), 74 /* SemicolonToken */ , 0 /* None */ );
             if(!this.options.allowAutomaticSemicolonInsertion()) {
                 this.addDiagnostic(new SyntaxDiagnostic(this.previousToken.end(), 0, 7 /* Automatic_semicolon_insertion_not_allowed */ , null));
             }
             return semicolonToken;
         }
-        return this.eatToken(73 /* SemicolonToken */ );
+        return this.eatToken(74 /* SemicolonToken */ );
     };
     Parser.prototype.eatToken = function (kind) {
         var token = this.currentToken();
@@ -1871,29 +1899,29 @@ var Parser = (function (_super) {
             this.moveToNextToken();
             return token;
         }
-        return this.createMissingToken(7 /* IdentifierNameToken */ , kind, token);
+        return this.createMissingToken(8 /* IdentifierNameToken */ , kind, token);
     };
     Parser.prototype.eatIdentifierNameToken = function () {
         var token = this.currentToken();
-        if(token.tokenKind === 7 /* IdentifierNameToken */ ) {
+        if(token.tokenKind === 8 /* IdentifierNameToken */ ) {
             this.moveToNextToken();
             return token;
         }
-        return this.createMissingToken(7 /* IdentifierNameToken */ , 0 /* None */ , token);
+        return this.createMissingToken(8 /* IdentifierNameToken */ , 0 /* None */ , token);
     };
     Parser.prototype.eatIdentifierToken = function () {
         var token = this.currentToken();
-        if(token.tokenKind === 7 /* IdentifierNameToken */ ) {
+        if(token.tokenKind === 8 /* IdentifierNameToken */ ) {
             if(this.isKeyword(token.keywordKind())) {
-                return this.createMissingToken(7 /* IdentifierNameToken */ , 0 /* None */ , token);
+                return this.createMissingToken(8 /* IdentifierNameToken */ , 0 /* None */ , token);
             }
             this.moveToNextToken();
             return token;
         }
-        return this.createMissingToken(7 /* IdentifierNameToken */ , 0 /* None */ , token);
+        return this.createMissingToken(8 /* IdentifierNameToken */ , 0 /* None */ , token);
     };
     Parser.prototype.isIdentifier = function (token) {
-        return token.tokenKind === 7 /* IdentifierNameToken */  && !this.isKeyword(token.keywordKind());
+        return token.tokenKind === 8 /* IdentifierNameToken */  && !this.isKeyword(token.keywordKind());
     };
     Parser.prototype.isKeyword = function (kind) {
         if(SyntaxFacts.isStandardKeyword(kind) || SyntaxFacts.isFutureReservedKeyword(kind)) {
@@ -1911,7 +1939,7 @@ var Parser = (function (_super) {
     };
     Parser.prototype.getExpectedTokenDiagnostic = function (expectedKind, expectedKeywordKind, actual) {
         var token = this.currentToken();
-        if(expectedKind === 7 /* IdentifierNameToken */ ) {
+        if(expectedKind === 8 /* IdentifierNameToken */ ) {
             if(SyntaxFacts.isAnyKeyword(expectedKeywordKind)) {
                 return new SyntaxDiagnostic(token.start(), token.width(), 5 /* _0_expected */ , [
                     SyntaxFacts.getText(expectedKeywordKind)
@@ -1935,91 +1963,91 @@ var Parser = (function (_super) {
     };
     Parser.getPrecedence = function getPrecedence(expressionKind) {
         switch(expressionKind) {
-            case 168 /* CommaExpression */ : {
+            case 169 /* CommaExpression */ : {
                 return 1 /* CommaExpressionPrecedence */ ;
 
             }
-            case 169 /* AssignmentExpression */ :
-            case 170 /* AddAssignmentExpression */ :
-            case 171 /* SubtractAssignmentExpression */ :
-            case 172 /* MultiplyAssignmentExpression */ :
-            case 173 /* DivideAssignmentExpression */ :
-            case 174 /* ModuloAssignmentExpression */ :
-            case 175 /* AndAssignmentExpression */ :
-            case 176 /* ExclusiveOrAssignmentExpression */ :
-            case 177 /* OrAssignmentExpression */ :
-            case 178 /* LeftShiftAssignmentExpression */ :
-            case 179 /* SignedRightShiftAssignmentExpression */ :
-            case 180 /* UnsignedRightShiftAssignmentExpression */ : {
+            case 170 /* AssignmentExpression */ :
+            case 171 /* AddAssignmentExpression */ :
+            case 172 /* SubtractAssignmentExpression */ :
+            case 173 /* MultiplyAssignmentExpression */ :
+            case 174 /* DivideAssignmentExpression */ :
+            case 175 /* ModuloAssignmentExpression */ :
+            case 176 /* AndAssignmentExpression */ :
+            case 177 /* ExclusiveOrAssignmentExpression */ :
+            case 178 /* OrAssignmentExpression */ :
+            case 179 /* LeftShiftAssignmentExpression */ :
+            case 180 /* SignedRightShiftAssignmentExpression */ :
+            case 181 /* UnsignedRightShiftAssignmentExpression */ : {
                 return 2 /* AssignmentExpressionPrecedence */ ;
 
             }
-            case 181 /* ConditionalExpression */ : {
+            case 182 /* ConditionalExpression */ : {
                 return 3 /* ConditionalExpressionPrecedence */ ;
 
             }
-            case 182 /* LogicalOrExpression */ : {
+            case 183 /* LogicalOrExpression */ : {
                 return 5 /* LogicalOrExpressionPrecedence */ ;
 
             }
-            case 183 /* LogicalAndExpression */ : {
+            case 184 /* LogicalAndExpression */ : {
                 return 6 /* LogicalAndExpressionPrecedence */ ;
 
             }
-            case 184 /* BitwiseOrExpression */ : {
+            case 185 /* BitwiseOrExpression */ : {
                 return 7 /* BitwiseOrExpressionPrecedence */ ;
 
             }
-            case 185 /* BitwiseExclusiveOrExpression */ : {
+            case 186 /* BitwiseExclusiveOrExpression */ : {
                 return 8 /* BitwiseExclusiveOrExpressionPrecedence */ ;
 
             }
-            case 186 /* BitwiseAndExpression */ : {
+            case 187 /* BitwiseAndExpression */ : {
                 return 9 /* BitwiseAndExpressionPrecedence */ ;
 
             }
-            case 187 /* EqualsWithTypeConversionExpression */ :
-            case 188 /* NotEqualsWithTypeConversionExpression */ :
-            case 189 /* EqualsExpression */ :
-            case 190 /* NotEqualsExpression */ : {
+            case 188 /* EqualsWithTypeConversionExpression */ :
+            case 189 /* NotEqualsWithTypeConversionExpression */ :
+            case 190 /* EqualsExpression */ :
+            case 191 /* NotEqualsExpression */ : {
                 return 10 /* EqualityExpressionPrecedence */ ;
 
             }
-            case 191 /* LessThanExpression */ :
-            case 192 /* GreaterThanExpression */ :
-            case 193 /* LessThanOrEqualExpression */ :
-            case 194 /* GreaterThanOrEqualExpression */ :
-            case 195 /* InstanceOfExpression */ :
-            case 196 /* InExpression */ : {
+            case 192 /* LessThanExpression */ :
+            case 193 /* GreaterThanExpression */ :
+            case 194 /* LessThanOrEqualExpression */ :
+            case 195 /* GreaterThanOrEqualExpression */ :
+            case 196 /* InstanceOfExpression */ :
+            case 197 /* InExpression */ : {
                 return 11 /* RelationalExpressionPrecedence */ ;
 
             }
-            case 197 /* LeftShiftExpression */ :
-            case 198 /* SignedRightShiftExpression */ :
-            case 199 /* UnsignedRightShiftExpression */ : {
+            case 198 /* LeftShiftExpression */ :
+            case 199 /* SignedRightShiftExpression */ :
+            case 200 /* UnsignedRightShiftExpression */ : {
                 return 12 /* ShiftExpressionPrecdence */ ;
 
             }
-            case 203 /* AddExpression */ :
-            case 204 /* SubtractExpression */ : {
+            case 204 /* AddExpression */ :
+            case 205 /* SubtractExpression */ : {
                 return 13 /* AdditiveExpressionPrecedence */ ;
 
             }
-            case 200 /* MultiplyExpression */ :
-            case 201 /* DivideExpression */ :
-            case 202 /* ModuloExpression */ : {
+            case 201 /* MultiplyExpression */ :
+            case 202 /* DivideExpression */ :
+            case 203 /* ModuloExpression */ : {
                 return 14 /* MultiplicativeExpressionPrecedence */ ;
 
             }
-            case 154 /* PlusExpression */ :
-            case 155 /* NegateExpression */ :
-            case 156 /* BitwiseNotExpression */ :
-            case 157 /* LogicalNotExpression */ :
-            case 160 /* DeleteExpression */ :
-            case 161 /* TypeOfExpression */ :
-            case 162 /* VoidExpression */ :
-            case 158 /* PreIncrementExpression */ :
-            case 159 /* PreDecrementExpression */ : {
+            case 155 /* PlusExpression */ :
+            case 156 /* NegateExpression */ :
+            case 157 /* BitwiseNotExpression */ :
+            case 158 /* LogicalNotExpression */ :
+            case 161 /* DeleteExpression */ :
+            case 162 /* TypeOfExpression */ :
+            case 163 /* VoidExpression */ :
+            case 159 /* PreIncrementExpression */ :
+            case 160 /* PreDecrementExpression */ : {
                 return 15 /* UnaryExpressionPrecedence */ ;
 
             }
@@ -2027,10 +2055,10 @@ var Parser = (function (_super) {
         throw Errors.invalidOperation();
     }
     Parser.isDirectivePrologueElement = function isDirectivePrologueElement(node) {
-        if(node.kind() === 139 /* ExpressionStatement */ ) {
+        if(node.kind() === 140 /* ExpressionStatement */ ) {
             var expressionStatement = node;
             var expression = expressionStatement.expression();
-            if(expression.kind() === 167 /* StringLiteralExpression */ ) {
+            if(expression.kind() === 168 /* StringLiteralExpression */ ) {
                 return true;
             }
         }
@@ -2103,13 +2131,13 @@ var Parser = (function (_super) {
         }
     };
     Parser.prototype.isImportDeclaration = function () {
-        return this.currentToken().keywordKind() === 45 /* ImportKeyword */  && this.peekTokenN(1).tokenKind === 7 /* IdentifierNameToken */  && this.peekTokenN(2).tokenKind === 102 /* EqualsToken */ ;
+        return this.currentToken().keywordKind() === 46 /* ImportKeyword */  && this.peekTokenN(1).tokenKind === 8 /* IdentifierNameToken */  && this.peekTokenN(2).tokenKind === 103 /* EqualsToken */ ;
     };
     Parser.prototype.parseImportDeclaration = function () {
-        Debug.assert(this.currentToken().keywordKind() === 45 /* ImportKeyword */ );
-        var importKeyword = this.eatKeyword(45 /* ImportKeyword */ );
+        Debug.assert(this.currentToken().keywordKind() === 46 /* ImportKeyword */ );
+        var importKeyword = this.eatKeyword(46 /* ImportKeyword */ );
         var identifier = this.eatIdentifierToken();
-        var equalsToken = this.eatToken(102 /* EqualsToken */ );
+        var equalsToken = this.eatToken(103 /* EqualsToken */ );
         var moduleReference = this.parseModuleReference();
         var semicolonToken = this.eatExplicitOrAutomaticSemicolon(false);
         return new ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken);
@@ -2122,14 +2150,14 @@ var Parser = (function (_super) {
         }
     };
     Parser.prototype.isExternalModuleReference = function () {
-        return this.currentToken().keywordKind() === 61 /* ModuleKeyword */  && this.peekTokenN(1).tokenKind === 67 /* OpenParenToken */ ;
+        return this.currentToken().keywordKind() === 62 /* ModuleKeyword */  && this.peekTokenN(1).tokenKind === 68 /* OpenParenToken */ ;
     };
     Parser.prototype.parseExternalModuleReference = function () {
         Debug.assert(this.isExternalModuleReference());
-        var moduleKeyword = this.eatKeyword(61 /* ModuleKeyword */ );
-        var openParenToken = this.eatToken(67 /* OpenParenToken */ );
-        var stringLiteral = this.eatToken(10 /* StringLiteral */ );
-        var closeParenToken = this.eatToken(68 /* CloseParenToken */ );
+        var moduleKeyword = this.eatKeyword(62 /* ModuleKeyword */ );
+        var openParenToken = this.eatToken(68 /* OpenParenToken */ );
+        var stringLiteral = this.eatToken(11 /* StringLiteral */ );
+        var closeParenToken = this.eatToken(69 /* CloseParenToken */ );
         return new ExternalModuleReferenceSyntax(moduleKeyword, openParenToken, stringLiteral, closeParenToken);
     };
     Parser.prototype.parseModuleNameModuleReference = function () {
@@ -2144,13 +2172,13 @@ var Parser = (function (_super) {
         return this.isIdentifier(this.currentToken());
     };
     Parser.prototype.parseName = function () {
-        var isIdentifier = this.currentToken().tokenKind === 7 /* IdentifierNameToken */ ;
+        var isIdentifier = this.currentToken().tokenKind === 8 /* IdentifierNameToken */ ;
         var identifier = this.eatIdentifierToken();
         var identifierName = new IdentifierNameSyntax(identifier);
         var current = identifierName;
-        while(isIdentifier && this.currentToken().tokenKind === 71 /* DotToken */ ) {
-            var dotToken = this.eatToken(71 /* DotToken */ );
-            isIdentifier = this.currentToken().tokenKind === 7 /* IdentifierNameToken */ ;
+        while(isIdentifier && this.currentToken().tokenKind === 72 /* DotToken */ ) {
+            var dotToken = this.eatToken(72 /* DotToken */ );
+            isIdentifier = this.currentToken().tokenKind === 8 /* IdentifierNameToken */ ;
             identifier = this.eatIdentifierToken();
             identifierName = new IdentifierNameSyntax(identifier);
             current = new QualifiedNameSyntax(current, dotToken, identifierName);
@@ -2158,40 +2186,40 @@ var Parser = (function (_super) {
         return current;
     };
     Parser.prototype.isEnumDeclaration = function () {
-        if(this.currentToken().keywordKind() === 43 /* ExportKeyword */  && this.peekTokenN(1).keywordKind() === 42 /* EnumKeyword */ ) {
+        if(this.currentToken().keywordKind() === 44 /* ExportKeyword */  && this.peekTokenN(1).keywordKind() === 43 /* EnumKeyword */ ) {
             return true;
         }
-        return this.currentToken().keywordKind() === 42 /* EnumKeyword */  && this.isIdentifier(this.peekTokenN(1));
+        return this.currentToken().keywordKind() === 43 /* EnumKeyword */  && this.isIdentifier(this.peekTokenN(1));
     };
     Parser.prototype.parseEnumDeclaration = function () {
         Debug.assert(this.isEnumDeclaration());
-        var exportKeyword = this.tryEatKeyword(43 /* ExportKeyword */ );
-        var enumKeyword = this.eatKeyword(42 /* EnumKeyword */ );
+        var exportKeyword = this.tryEatKeyword(44 /* ExportKeyword */ );
+        var enumKeyword = this.eatKeyword(43 /* EnumKeyword */ );
         var identifier = this.eatIdentifierToken();
-        var openBraceToken = this.eatToken(65 /* OpenBraceToken */ );
+        var openBraceToken = this.eatToken(66 /* OpenBraceToken */ );
         var variableDeclarators = SeparatedSyntaxList.empty;
         if(!openBraceToken.isMissing()) {
             variableDeclarators = this.parseSeparatedSyntaxList(128 /* EnumDeclaration_VariableDeclarators */ );
         }
-        var closeBraceToken = this.eatToken(66 /* CloseBraceToken */ );
+        var closeBraceToken = this.eatToken(67 /* CloseBraceToken */ );
         return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken);
     };
     Parser.prototype.isClassDeclaration = function () {
         var token0 = this.currentToken();
         var token1 = this.peekTokenN(1);
-        if(token0.keywordKind() === 43 /* ExportKeyword */  && token1.keywordKind() === 40 /* ClassKeyword */ ) {
+        if(token0.keywordKind() === 44 /* ExportKeyword */  && token1.keywordKind() === 41 /* ClassKeyword */ ) {
             return true;
         }
-        if(token0.keywordKind() === 59 /* DeclareKeyword */  && token1.keywordKind() === 40 /* ClassKeyword */ ) {
+        if(token0.keywordKind() === 60 /* DeclareKeyword */  && token1.keywordKind() === 41 /* ClassKeyword */ ) {
             return true;
         }
-        return token0.keywordKind() === 40 /* ClassKeyword */  && this.isIdentifier(token1);
+        return token0.keywordKind() === 41 /* ClassKeyword */  && this.isIdentifier(token1);
     };
     Parser.prototype.parseClassDeclaration = function () {
         Debug.assert(this.isClassDeclaration());
-        var exportKeyword = this.tryEatKeyword(43 /* ExportKeyword */ );
-        var declareKeyword = this.tryEatKeyword(59 /* DeclareKeyword */ );
-        var classKeyword = this.eatKeyword(40 /* ClassKeyword */ );
+        var exportKeyword = this.tryEatKeyword(44 /* ExportKeyword */ );
+        var declareKeyword = this.tryEatKeyword(60 /* DeclareKeyword */ );
+        var classKeyword = this.eatKeyword(41 /* ClassKeyword */ );
         var identifier = this.eatIdentifierToken();
         var extendsClause = null;
         if(this.isExtendsClause()) {
@@ -2201,27 +2229,27 @@ var Parser = (function (_super) {
         if(this.isImplementsClause()) {
             implementsClause = this.parseImplementsClause();
         }
-        var openBraceToken = this.eatToken(65 /* OpenBraceToken */ );
+        var openBraceToken = this.eatToken(66 /* OpenBraceToken */ );
         var classElements = SyntaxList.empty;
         if(!openBraceToken.isMissing()) {
             classElements = this.parseSyntaxList(2 /* ClassDeclaration_ClassElements */ );
         }
-        var closeBraceToken = this.eatToken(66 /* CloseBraceToken */ );
+        var closeBraceToken = this.eatToken(67 /* CloseBraceToken */ );
         return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken);
     };
     Parser.prototype.isConstructorDeclaration = function () {
-        return this.currentToken().keywordKind() === 58 /* ConstructorKeyword */ ;
+        return this.currentToken().keywordKind() === 59 /* ConstructorKeyword */ ;
     };
     Parser.prototype.isMemberAccessorDeclaration = function () {
         var rewindPoint = this.getRewindPoint();
         try  {
-            if(this.currentToken().keywordKind() === 53 /* PublicKeyword */  || this.currentToken().keywordKind() === 51 /* PrivateKeyword */ ) {
+            if(this.currentToken().keywordKind() === 54 /* PublicKeyword */  || this.currentToken().keywordKind() === 52 /* PrivateKeyword */ ) {
                 this.eatAnyToken();
             }
-            if(this.currentToken().keywordKind() === 54 /* StaticKeyword */ ) {
+            if(this.currentToken().keywordKind() === 55 /* StaticKeyword */ ) {
                 this.eatAnyToken();
             }
-            if(this.currentToken().keywordKind() !== 60 /* GetKeyword */  && this.currentToken().keywordKind() !== 63 /* SetKeyword */ ) {
+            if(this.currentToken().keywordKind() !== 61 /* GetKeyword */  && this.currentToken().keywordKind() !== 64 /* SetKeyword */ ) {
                 return false;
             }
             this.eatAnyToken();
@@ -2234,14 +2262,14 @@ var Parser = (function (_super) {
     Parser.prototype.parseMemberAccessorDeclaration = function () {
         Debug.assert(this.isMemberAccessorDeclaration());
         var publicOrPrivateKeyword = null;
-        if(this.currentToken().keywordKind() === 53 /* PublicKeyword */  || this.currentToken().keywordKind() === 51 /* PrivateKeyword */ ) {
+        if(this.currentToken().keywordKind() === 54 /* PublicKeyword */  || this.currentToken().keywordKind() === 52 /* PrivateKeyword */ ) {
             publicOrPrivateKeyword = this.eatAnyToken();
         }
-        var staticKeyword = this.tryEatKeyword(54 /* StaticKeyword */ );
-        if(this.currentToken().keywordKind() === 60 /* GetKeyword */ ) {
+        var staticKeyword = this.tryEatKeyword(55 /* StaticKeyword */ );
+        if(this.currentToken().keywordKind() === 61 /* GetKeyword */ ) {
             return this.parseGetMemberAccessorDeclaration(publicOrPrivateKeyword, staticKeyword);
         } else {
-            if(this.currentToken().keywordKind() === 63 /* SetKeyword */ ) {
+            if(this.currentToken().keywordKind() === 64 /* SetKeyword */ ) {
                 return this.parseSetMemberAccessorDeclaration(publicOrPrivateKeyword, staticKeyword);
             } else {
                 throw Errors.invalidOperation();
@@ -2249,8 +2277,8 @@ var Parser = (function (_super) {
         }
     };
     Parser.prototype.parseGetMemberAccessorDeclaration = function (publicOrPrivateKeyword, staticKeyword) {
-        Debug.assert(this.currentToken().keywordKind() === 60 /* GetKeyword */ );
-        var getKeyword = this.eatKeyword(60 /* GetKeyword */ );
+        Debug.assert(this.currentToken().keywordKind() === 61 /* GetKeyword */ );
+        var getKeyword = this.eatKeyword(61 /* GetKeyword */ );
         var identifier = this.eatIdentifierToken();
         var parameterList = this.parseParameterList();
         var typeAnnotation = this.parseOptionalTypeAnnotation();
@@ -2258,8 +2286,8 @@ var Parser = (function (_super) {
         return new GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block);
     };
     Parser.prototype.parseSetMemberAccessorDeclaration = function (publicOrPrivateKeyword, staticKeyword) {
-        Debug.assert(this.currentToken().keywordKind() === 63 /* SetKeyword */ );
-        var setKeyword = this.eatKeyword(63 /* SetKeyword */ );
+        Debug.assert(this.currentToken().keywordKind() === 64 /* SetKeyword */ );
+        var setKeyword = this.eatKeyword(64 /* SetKeyword */ );
         var identifier = this.eatIdentifierToken();
         var parameterList = this.parseParameterList();
         var block = this.parseBlock();
@@ -2268,15 +2296,15 @@ var Parser = (function (_super) {
     Parser.prototype.isMemberVariableDeclaration = function () {
         var rewindPoint = this.getRewindPoint();
         try  {
-            if(this.currentToken().keywordKind() === 53 /* PublicKeyword */  || this.currentToken().keywordKind() === 51 /* PrivateKeyword */ ) {
+            if(this.currentToken().keywordKind() === 54 /* PublicKeyword */  || this.currentToken().keywordKind() === 52 /* PrivateKeyword */ ) {
                 this.eatAnyToken();
-                if(this.currentToken().tokenKind === 66 /* CloseBraceToken */  || this.currentToken().tokenKind === 116 /* EndOfFileToken */ ) {
+                if(this.currentToken().tokenKind === 67 /* CloseBraceToken */  || this.currentToken().tokenKind === 117 /* EndOfFileToken */ ) {
                     return true;
                 }
             }
-            if(this.currentToken().keywordKind() === 54 /* StaticKeyword */ ) {
+            if(this.currentToken().keywordKind() === 55 /* StaticKeyword */ ) {
                 this.eatAnyToken();
-                if(this.currentToken().tokenKind === 66 /* CloseBraceToken */  || this.currentToken().tokenKind === 116 /* EndOfFileToken */ ) {
+                if(this.currentToken().tokenKind === 67 /* CloseBraceToken */  || this.currentToken().tokenKind === 117 /* EndOfFileToken */ ) {
                     return true;
                 }
             }
@@ -2291,7 +2319,7 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseConstructorDeclaration = function () {
         Debug.assert(this.isConstructorDeclaration());
-        var constructorKeyword = this.eatKeyword(58 /* ConstructorKeyword */ );
+        var constructorKeyword = this.eatKeyword(59 /* ConstructorKeyword */ );
         var parameterList = this.parseParameterList();
         var semicolonToken = null;
         var block = null;
@@ -2305,10 +2333,10 @@ var Parser = (function (_super) {
     Parser.prototype.isMemberFunctionDeclaration = function () {
         var rewindPoint = this.getRewindPoint();
         try  {
-            if(this.currentToken().keywordKind() === 53 /* PublicKeyword */  || this.currentToken().keywordKind() === 51 /* PrivateKeyword */ ) {
+            if(this.currentToken().keywordKind() === 54 /* PublicKeyword */  || this.currentToken().keywordKind() === 52 /* PrivateKeyword */ ) {
                 this.eatAnyToken();
             }
-            if(this.currentToken().keywordKind() === 54 /* StaticKeyword */ ) {
+            if(this.currentToken().keywordKind() === 55 /* StaticKeyword */ ) {
                 this.eatAnyToken();
             }
             return this.isFunctionSignature();
@@ -2320,10 +2348,10 @@ var Parser = (function (_super) {
     Parser.prototype.parseMemberFunctionDeclaration = function () {
         Debug.assert(this.isMemberFunctionDeclaration());
         var publicOrPrivateKeyword = null;
-        if(this.currentToken().keywordKind() === 53 /* PublicKeyword */  || this.currentToken().keywordKind() === 51 /* PrivateKeyword */ ) {
+        if(this.currentToken().keywordKind() === 54 /* PublicKeyword */  || this.currentToken().keywordKind() === 52 /* PrivateKeyword */ ) {
             publicOrPrivateKeyword = this.eatAnyToken();
         }
-        var staticKeyword = this.tryEatKeyword(54 /* StaticKeyword */ );
+        var staticKeyword = this.tryEatKeyword(55 /* StaticKeyword */ );
         var functionSignature = this.parseFunctionSignature();
         var block = null;
         var semicolon = null;
@@ -2337,10 +2365,10 @@ var Parser = (function (_super) {
     Parser.prototype.parseMemberVariableDeclaration = function () {
         Debug.assert(this.isMemberVariableDeclaration());
         var publicOrPrivateKeyword = null;
-        if(this.currentToken().keywordKind() === 53 /* PublicKeyword */  || this.currentToken().keywordKind() === 51 /* PrivateKeyword */ ) {
+        if(this.currentToken().keywordKind() === 54 /* PublicKeyword */  || this.currentToken().keywordKind() === 52 /* PrivateKeyword */ ) {
             publicOrPrivateKeyword = this.eatAnyToken();
         }
-        var staticKeyword = this.tryEatKeyword(54 /* StaticKeyword */ );
+        var staticKeyword = this.tryEatKeyword(55 /* StaticKeyword */ );
         var variableDeclarator = this.parseVariableDeclarator(true);
         var semicolon = this.eatExplicitOrAutomaticSemicolon(false);
         return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolon);
@@ -2367,20 +2395,20 @@ var Parser = (function (_super) {
     };
     Parser.prototype.isFunctionDeclaration = function () {
         var token0 = this.currentToken();
-        if(token0.keywordKind() === 23 /* FunctionKeyword */ ) {
+        if(token0.keywordKind() === 24 /* FunctionKeyword */ ) {
             return true;
         }
         var token1 = this.peekTokenN(1);
-        if(token0.keywordKind() === 43 /* ExportKeyword */  && token1.keywordKind() === 23 /* FunctionKeyword */ ) {
+        if(token0.keywordKind() === 44 /* ExportKeyword */  && token1.keywordKind() === 24 /* FunctionKeyword */ ) {
             return true;
         }
-        return token0.keywordKind() === 59 /* DeclareKeyword */  && token1.keywordKind() === 23 /* FunctionKeyword */ ;
+        return token0.keywordKind() === 60 /* DeclareKeyword */  && token1.keywordKind() === 24 /* FunctionKeyword */ ;
     };
     Parser.prototype.parseFunctionDeclaration = function () {
         Debug.assert(this.isFunctionDeclaration());
-        var exportKeyword = this.tryEatKeyword(43 /* ExportKeyword */ );
-        var declareKeyword = this.tryEatKeyword(59 /* DeclareKeyword */ );
-        var functionKeyword = this.eatKeyword(23 /* FunctionKeyword */ );
+        var exportKeyword = this.tryEatKeyword(44 /* ExportKeyword */ );
+        var declareKeyword = this.tryEatKeyword(60 /* DeclareKeyword */ );
+        var functionKeyword = this.eatKeyword(24 /* FunctionKeyword */ );
         var functionSignature = this.parseFunctionSignature();
         var semicolonToken = null;
         var block = null;
@@ -2394,22 +2422,22 @@ var Parser = (function (_super) {
     Parser.prototype.isModuleDeclaration = function () {
         var token0 = this.currentToken();
         var token1 = this.peekTokenN(1);
-        if(token0.keywordKind() === 43 /* ExportKeyword */  && token1.keywordKind() === 61 /* ModuleKeyword */ ) {
+        if(token0.keywordKind() === 44 /* ExportKeyword */  && token1.keywordKind() === 62 /* ModuleKeyword */ ) {
             return true;
         }
-        if(token0.keywordKind() === 59 /* DeclareKeyword */  && token1.keywordKind() === 61 /* ModuleKeyword */ ) {
+        if(token0.keywordKind() === 60 /* DeclareKeyword */  && token1.keywordKind() === 62 /* ModuleKeyword */ ) {
             return true;
         }
-        if(token0.keywordKind() === 61 /* ModuleKeyword */ ) {
-            if(token1.tokenKind === 65 /* OpenBraceToken */ ) {
+        if(token0.keywordKind() === 62 /* ModuleKeyword */ ) {
+            if(token1.tokenKind === 66 /* OpenBraceToken */ ) {
                 return true;
             }
-            if(token1.tokenKind === 7 /* IdentifierNameToken */ ) {
+            if(token1.tokenKind === 8 /* IdentifierNameToken */ ) {
                 var token2 = this.peekTokenN(2);
-                if(token2.tokenKind === 65 /* OpenBraceToken */ ) {
+                if(token2.tokenKind === 66 /* OpenBraceToken */ ) {
                     return true;
                 }
-                if(token2.tokenKind === 71 /* DotToken */ ) {
+                if(token2.tokenKind === 72 /* DotToken */ ) {
                     return true;
                 }
             }
@@ -2418,36 +2446,36 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseModuleDeclaration = function () {
         Debug.assert(this.isModuleDeclaration());
-        var exportKeyword = this.tryEatKeyword(43 /* ExportKeyword */ );
-        var declareKeyword = this.tryEatKeyword(59 /* DeclareKeyword */ );
-        var moduleKeyword = this.eatKeyword(61 /* ModuleKeyword */ );
+        var exportKeyword = this.tryEatKeyword(44 /* ExportKeyword */ );
+        var declareKeyword = this.tryEatKeyword(60 /* DeclareKeyword */ );
+        var moduleKeyword = this.eatKeyword(62 /* ModuleKeyword */ );
         var moduleName = null;
         var stringLiteral = null;
         if(this.isName()) {
             moduleName = this.parseName();
         } else {
-            if(this.currentToken().tokenKind === 10 /* StringLiteral */ ) {
-                stringLiteral = this.eatToken(10 /* StringLiteral */ );
+            if(this.currentToken().tokenKind === 11 /* StringLiteral */ ) {
+                stringLiteral = this.eatToken(11 /* StringLiteral */ );
             }
         }
-        var openBraceToken = this.eatToken(65 /* OpenBraceToken */ );
+        var openBraceToken = this.eatToken(66 /* OpenBraceToken */ );
         var moduleElements = SyntaxList.empty;
         if(!openBraceToken.isMissing()) {
             moduleElements = this.parseSyntaxList(4 /* ModuleDeclaration_ModuleElements */ );
         }
-        var closeBraceToken = this.eatToken(66 /* CloseBraceToken */ );
+        var closeBraceToken = this.eatToken(67 /* CloseBraceToken */ );
         return new ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken);
     };
     Parser.prototype.isInterfaceDeclaration = function () {
-        if(this.currentToken().keywordKind() === 43 /* ExportKeyword */  && this.peekTokenN(1).keywordKind() === 48 /* InterfaceKeyword */ ) {
+        if(this.currentToken().keywordKind() === 44 /* ExportKeyword */  && this.peekTokenN(1).keywordKind() === 49 /* InterfaceKeyword */ ) {
             return true;
         }
-        return this.currentToken().keywordKind() === 48 /* InterfaceKeyword */  && this.isIdentifier(this.peekTokenN(1));
+        return this.currentToken().keywordKind() === 49 /* InterfaceKeyword */  && this.isIdentifier(this.peekTokenN(1));
     };
     Parser.prototype.parseInterfaceDeclaration = function () {
-        Debug.assert(this.currentToken().keywordKind() === 43 /* ExportKeyword */  || this.currentToken().keywordKind() === 48 /* InterfaceKeyword */ );
-        var exportKeyword = this.tryEatKeyword(43 /* ExportKeyword */ );
-        var interfaceKeyword = this.eatKeyword(48 /* InterfaceKeyword */ );
+        Debug.assert(this.currentToken().keywordKind() === 44 /* ExportKeyword */  || this.currentToken().keywordKind() === 49 /* InterfaceKeyword */ );
+        var exportKeyword = this.tryEatKeyword(44 /* ExportKeyword */ );
+        var interfaceKeyword = this.eatKeyword(49 /* InterfaceKeyword */ );
         var identifier = this.eatIdentifierToken();
         var extendsClause = null;
         if(this.isExtendsClause()) {
@@ -2457,12 +2485,12 @@ var Parser = (function (_super) {
         return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, extendsClause, objectType);
     };
     Parser.prototype.parseObjectType = function () {
-        var openBraceToken = this.eatToken(65 /* OpenBraceToken */ );
+        var openBraceToken = this.eatToken(66 /* OpenBraceToken */ );
         var typeMembers = SeparatedSyntaxList.empty;
         if(!openBraceToken.isMissing()) {
             typeMembers = this.parseSeparatedSyntaxList(256 /* ObjectType_TypeMembers */ );
         }
-        var closeBraceToken = this.eatToken(66 /* CloseBraceToken */ );
+        var closeBraceToken = this.eatToken(67 /* CloseBraceToken */ );
         return new ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken);
     };
     Parser.prototype.isTypeMember = function () {
@@ -2493,22 +2521,22 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseConstructSignature = function () {
         Debug.assert(this.isConstructSignature());
-        var newKeyword = this.eatKeyword(27 /* NewKeyword */ );
+        var newKeyword = this.eatKeyword(28 /* NewKeyword */ );
         var parameterList = this.parseParameterList();
         var typeAnnotation = this.parseOptionalTypeAnnotation();
         return new ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation);
     };
     Parser.prototype.parseIndexSignature = function () {
         Debug.assert(this.isIndexSignature());
-        var openBracketToken = this.eatToken(69 /* OpenBracketToken */ );
+        var openBracketToken = this.eatToken(70 /* OpenBracketToken */ );
         var parameter = this.parseParameter();
-        var closeBracketToken = this.eatToken(70 /* CloseBracketToken */ );
+        var closeBracketToken = this.eatToken(71 /* CloseBracketToken */ );
         var typeAnnotation = this.parseOptionalTypeAnnotation();
         return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation);
     };
     Parser.prototype.parseFunctionSignature = function () {
         var identifier = this.eatIdentifierToken();
-        var questionToken = this.tryEatToken(100 /* QuestionToken */ );
+        var questionToken = this.tryEatToken(101 /* QuestionToken */ );
         var parameterList = this.parseParameterList();
         var typeAnnotation = this.parseOptionalTypeAnnotation();
         return new FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation);
@@ -2516,25 +2544,25 @@ var Parser = (function (_super) {
     Parser.prototype.parsePropertySignature = function () {
         Debug.assert(this.isPropertySignature());
         var identifier = this.eatIdentifierToken();
-        var questionToken = this.tryEatToken(100 /* QuestionToken */ );
+        var questionToken = this.tryEatToken(101 /* QuestionToken */ );
         var typeAnnotation = this.parseOptionalTypeAnnotation();
         return new PropertySignatureSyntax(identifier, questionToken, typeAnnotation);
     };
     Parser.prototype.isCallSignature = function () {
-        return this.currentToken().tokenKind === 67 /* OpenParenToken */ ;
+        return this.currentToken().tokenKind === 68 /* OpenParenToken */ ;
     };
     Parser.prototype.isConstructSignature = function () {
-        return this.currentToken().keywordKind() === 27 /* NewKeyword */ ;
+        return this.currentToken().keywordKind() === 28 /* NewKeyword */ ;
     };
     Parser.prototype.isIndexSignature = function () {
-        return this.currentToken().tokenKind === 69 /* OpenBracketToken */ ;
+        return this.currentToken().tokenKind === 70 /* OpenBracketToken */ ;
     };
     Parser.prototype.isFunctionSignature = function () {
         if(this.isIdentifier(this.currentToken())) {
-            if(this.peekTokenN(1).tokenKind === 67 /* OpenParenToken */ ) {
+            if(this.peekTokenN(1).tokenKind === 68 /* OpenParenToken */ ) {
                 return true;
             }
-            if(this.peekTokenN(1).tokenKind === 100 /* QuestionToken */  && this.peekTokenN(2).tokenKind === 67 /* OpenParenToken */ ) {
+            if(this.peekTokenN(1).tokenKind === 101 /* QuestionToken */  && this.peekTokenN(2).tokenKind === 68 /* OpenParenToken */ ) {
                 return true;
             }
         }
@@ -2544,28 +2572,28 @@ var Parser = (function (_super) {
         return this.isIdentifier(this.currentToken());
     };
     Parser.prototype.isExtendsClause = function () {
-        return this.currentToken().keywordKind() === 44 /* ExtendsKeyword */ ;
+        return this.currentToken().keywordKind() === 45 /* ExtendsKeyword */ ;
     };
     Parser.prototype.parseExtendsClause = function () {
         Debug.assert(this.isExtendsClause());
-        var extendsKeyword = this.eatKeyword(44 /* ExtendsKeyword */ );
+        var extendsKeyword = this.eatKeyword(45 /* ExtendsKeyword */ );
         var typeNames = this.parseSeparatedSyntaxList(512 /* ExtendsOrImplementsClause_TypeNameList */ );
         return new ExtendsClauseSyntax(extendsKeyword, typeNames);
     };
     Parser.prototype.isImplementsClause = function () {
-        return this.currentToken().keywordKind() === 47 /* ImplementsKeyword */ ;
+        return this.currentToken().keywordKind() === 48 /* ImplementsKeyword */ ;
     };
     Parser.prototype.parseImplementsClause = function () {
         Debug.assert(this.isImplementsClause());
-        var implementsKeyword = this.eatKeyword(47 /* ImplementsKeyword */ );
+        var implementsKeyword = this.eatKeyword(48 /* ImplementsKeyword */ );
         var typeNames = this.parseSeparatedSyntaxList(512 /* ExtendsOrImplementsClause_TypeNameList */ );
         return new ImplementsClauseSyntax(implementsKeyword, typeNames);
     };
     Parser.prototype.isStatement = function (allowFunctionDeclaration) {
         switch(this.currentToken().keywordKind()) {
-            case 53 /* PublicKeyword */ :
-            case 51 /* PrivateKeyword */ :
-            case 54 /* StaticKeyword */ : {
+            case 54 /* PublicKeyword */ :
+            case 52 /* PrivateKeyword */ :
+            case 55 /* StaticKeyword */ : {
                 if(this.isClassElement()) {
                     return false;
                 }
@@ -2646,44 +2674,44 @@ var Parser = (function (_super) {
         }
     };
     Parser.prototype.isDebuggerStatement = function () {
-        return this.currentToken().keywordKind() === 15 /* DebuggerKeyword */ ;
+        return this.currentToken().keywordKind() === 16 /* DebuggerKeyword */ ;
     };
     Parser.prototype.parseDebuggerStatement = function () {
         Debug.assert(this.isDebuggerStatement());
-        var debuggerKeyword = this.eatKeyword(15 /* DebuggerKeyword */ );
+        var debuggerKeyword = this.eatKeyword(16 /* DebuggerKeyword */ );
         var semicolonToken = this.eatExplicitOrAutomaticSemicolon(false);
         return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken);
     };
     Parser.prototype.isDoStatement = function () {
-        return this.currentToken().keywordKind() === 18 /* DoKeyword */ ;
+        return this.currentToken().keywordKind() === 19 /* DoKeyword */ ;
     };
     Parser.prototype.parseDoStatement = function () {
         Debug.assert(this.isDoStatement());
-        var doKeyword = this.eatKeyword(18 /* DoKeyword */ );
+        var doKeyword = this.eatKeyword(19 /* DoKeyword */ );
         var statement = this.parseStatement(false);
-        var whileKeyword = this.eatKeyword(38 /* WhileKeyword */ );
-        var openParenToken = this.eatToken(67 /* OpenParenToken */ );
+        var whileKeyword = this.eatKeyword(39 /* WhileKeyword */ );
+        var openParenToken = this.eatToken(68 /* OpenParenToken */ );
         var condition = this.parseExpression(true);
-        var closeParenToken = this.eatToken(68 /* CloseParenToken */ );
+        var closeParenToken = this.eatToken(69 /* CloseParenToken */ );
         var semicolonToken = this.eatExplicitOrAutomaticSemicolon(true);
         return new DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken);
     };
     Parser.prototype.isLabeledStatement = function () {
-        return this.isIdentifier(this.currentToken()) && this.peekTokenN(1).tokenKind === 101 /* ColonToken */ ;
+        return this.isIdentifier(this.currentToken()) && this.peekTokenN(1).tokenKind === 102 /* ColonToken */ ;
     };
     Parser.prototype.parseLabeledStatement = function () {
         Debug.assert(this.isLabeledStatement());
         var identifier = this.eatIdentifierToken();
-        var colonToken = this.eatToken(101 /* ColonToken */ );
+        var colonToken = this.eatToken(102 /* ColonToken */ );
         var statement = this.parseStatement(false);
         return new LabeledStatement(identifier, colonToken, statement);
     };
     Parser.prototype.isTryStatement = function () {
-        return this.currentToken().keywordKind() === 34 /* TryKeyword */ ;
+        return this.currentToken().keywordKind() === 35 /* TryKeyword */ ;
     };
     Parser.prototype.parseTryStatement = function () {
         Debug.assert(this.isTryStatement());
-        var tryKeyword = this.eatKeyword(34 /* TryKeyword */ );
+        var tryKeyword = this.eatKeyword(35 /* TryKeyword */ );
         var block = this.parseBlock();
         var catchClause = null;
         if(this.isCatchClause()) {
@@ -2696,70 +2724,70 @@ var Parser = (function (_super) {
         return new TryStatementSyntax(tryKeyword, block, catchClause, finallyClause);
     };
     Parser.prototype.isCatchClause = function () {
-        return this.currentToken().keywordKind() === 13 /* CatchKeyword */ ;
+        return this.currentToken().keywordKind() === 14 /* CatchKeyword */ ;
     };
     Parser.prototype.parseCatchClause = function () {
         Debug.assert(this.isCatchClause());
-        var catchKeyword = this.eatKeyword(13 /* CatchKeyword */ );
-        var openParenToken = this.eatToken(67 /* OpenParenToken */ );
+        var catchKeyword = this.eatKeyword(14 /* CatchKeyword */ );
+        var openParenToken = this.eatToken(68 /* OpenParenToken */ );
         var identifier = this.eatIdentifierToken();
-        var closeParenToken = this.eatToken(68 /* CloseParenToken */ );
+        var closeParenToken = this.eatToken(69 /* CloseParenToken */ );
         var block = this.parseBlock();
         return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block);
     };
     Parser.prototype.isFinallyClause = function () {
-        return this.currentToken().keywordKind() === 21 /* FinallyKeyword */ ;
+        return this.currentToken().keywordKind() === 22 /* FinallyKeyword */ ;
     };
     Parser.prototype.parseFinallyClause = function () {
         Debug.assert(this.isFinallyClause());
-        var finallyKeyword = this.eatKeyword(21 /* FinallyKeyword */ );
+        var finallyKeyword = this.eatKeyword(22 /* FinallyKeyword */ );
         var block = this.parseBlock();
         return new FinallyClauseSyntax(finallyKeyword, block);
     };
     Parser.prototype.isWithStatement = function () {
-        return this.currentToken().keywordKind() === 39 /* WithKeyword */ ;
+        return this.currentToken().keywordKind() === 40 /* WithKeyword */ ;
     };
     Parser.prototype.parseWithStatement = function () {
         Debug.assert(this.isWithStatement());
-        var withKeyword = this.eatKeyword(39 /* WithKeyword */ );
-        var openParenToken = this.eatToken(67 /* OpenParenToken */ );
+        var withKeyword = this.eatKeyword(40 /* WithKeyword */ );
+        var openParenToken = this.eatToken(68 /* OpenParenToken */ );
         var condition = this.parseExpression(true);
-        var closeParenToken = this.eatToken(68 /* CloseParenToken */ );
+        var closeParenToken = this.eatToken(69 /* CloseParenToken */ );
         var statement = this.parseStatement(false);
         return new WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement);
     };
     Parser.prototype.isWhileStatement = function () {
-        return this.currentToken().keywordKind() === 38 /* WhileKeyword */ ;
+        return this.currentToken().keywordKind() === 39 /* WhileKeyword */ ;
     };
     Parser.prototype.parseWhileStatement = function () {
         Debug.assert(this.isWhileStatement());
-        var whileKeyword = this.eatKeyword(38 /* WhileKeyword */ );
-        var openParenToken = this.eatToken(67 /* OpenParenToken */ );
+        var whileKeyword = this.eatKeyword(39 /* WhileKeyword */ );
+        var openParenToken = this.eatToken(68 /* OpenParenToken */ );
         var condition = this.parseExpression(true);
-        var closeParenToken = this.eatToken(68 /* CloseParenToken */ );
+        var closeParenToken = this.eatToken(69 /* CloseParenToken */ );
         var statement = this.parseStatement(false);
         return new WhileStatementSyntax(whileKeyword, openParenToken, condition, closeParenToken, statement);
     };
     Parser.prototype.isEmptyStatement = function () {
-        return this.currentToken().tokenKind === 73 /* SemicolonToken */ ;
+        return this.currentToken().tokenKind === 74 /* SemicolonToken */ ;
     };
     Parser.prototype.parseEmptyStatement = function () {
         Debug.assert(this.isEmptyStatement());
-        var semicolonToken = this.eatToken(73 /* SemicolonToken */ );
+        var semicolonToken = this.eatToken(74 /* SemicolonToken */ );
         return new EmptyStatementSyntax(semicolonToken);
     };
     Parser.prototype.isForOrForInStatement = function () {
-        return this.currentToken().keywordKind() === 22 /* ForKeyword */ ;
+        return this.currentToken().keywordKind() === 23 /* ForKeyword */ ;
     };
     Parser.prototype.parseForOrForInStatement = function () {
         Debug.assert(this.isForOrForInStatement());
-        var forKeyword = this.eatKeyword(22 /* ForKeyword */ );
-        var openParenToken = this.eatToken(67 /* OpenParenToken */ );
+        var forKeyword = this.eatKeyword(23 /* ForKeyword */ );
+        var openParenToken = this.eatToken(68 /* OpenParenToken */ );
         var currentToken = this.currentToken();
-        if(currentToken.keywordKind() === 36 /* VarKeyword */ ) {
+        if(currentToken.keywordKind() === 37 /* VarKeyword */ ) {
             return this.parseForOrForInStatementWithVariableDeclaration(forKeyword, openParenToken);
         } else {
-            if(currentToken.tokenKind === 73 /* SemicolonToken */ ) {
+            if(currentToken.tokenKind === 74 /* SemicolonToken */ ) {
                 return this.parseForStatement(forKeyword, openParenToken);
             } else {
                 return this.parseForOrForInStatementWithInitializer(forKeyword, openParenToken);
@@ -2767,60 +2795,60 @@ var Parser = (function (_super) {
         }
     };
     Parser.prototype.parseForOrForInStatementWithVariableDeclaration = function (forKeyword, openParenToken) {
-        Debug.assert(forKeyword.keywordKind() === 22 /* ForKeyword */  && openParenToken.tokenKind === 67 /* OpenParenToken */ );
-        Debug.assert(this.currentToken().keywordKind() === 36 /* VarKeyword */ );
+        Debug.assert(forKeyword.keywordKind() === 23 /* ForKeyword */  && openParenToken.tokenKind === 68 /* OpenParenToken */ );
+        Debug.assert(this.currentToken().keywordKind() === 37 /* VarKeyword */ );
         var variableDeclaration = this.parseVariableDeclaration(false);
-        if(this.currentToken().keywordKind() === 25 /* InKeyword */ ) {
+        if(this.currentToken().keywordKind() === 26 /* InKeyword */ ) {
             return this.parseForInStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, variableDeclaration, null);
         }
         return this.parseForStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, variableDeclaration, null);
     };
     Parser.prototype.parseForInStatementWithVariableDeclarationOrInitializer = function (forKeyword, openParenToken, variableDeclaration, initializer) {
-        Debug.assert(this.currentToken().keywordKind() === 25 /* InKeyword */ );
-        var inKeyword = this.eatKeyword(25 /* InKeyword */ );
+        Debug.assert(this.currentToken().keywordKind() === 26 /* InKeyword */ );
+        var inKeyword = this.eatKeyword(26 /* InKeyword */ );
         var expression = this.parseExpression(true);
-        var closeParenToken = this.eatToken(68 /* CloseParenToken */ );
+        var closeParenToken = this.eatToken(69 /* CloseParenToken */ );
         var statement = this.parseStatement(false);
         return new ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, inKeyword, expression, closeParenToken, statement);
     };
     Parser.prototype.parseForOrForInStatementWithInitializer = function (forKeyword, openParenToken) {
-        Debug.assert(forKeyword.keywordKind() === 22 /* ForKeyword */  && openParenToken.tokenKind === 67 /* OpenParenToken */ );
+        Debug.assert(forKeyword.keywordKind() === 23 /* ForKeyword */  && openParenToken.tokenKind === 68 /* OpenParenToken */ );
         var initializer = this.parseExpression(false);
-        if(this.currentToken().keywordKind() === 25 /* InKeyword */ ) {
+        if(this.currentToken().keywordKind() === 26 /* InKeyword */ ) {
             return this.parseForInStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, null, initializer);
         } else {
             return this.parseForStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, null, initializer);
         }
     };
     Parser.prototype.parseForStatement = function (forKeyword, openParenToken) {
-        Debug.assert(forKeyword.keywordKind() === 22 /* ForKeyword */  && openParenToken.tokenKind === 67 /* OpenParenToken */ );
+        Debug.assert(forKeyword.keywordKind() === 23 /* ForKeyword */  && openParenToken.tokenKind === 68 /* OpenParenToken */ );
         var initializer = null;
-        if(this.currentToken().tokenKind !== 73 /* SemicolonToken */  && this.currentToken().tokenKind !== 68 /* CloseParenToken */  && this.currentToken().tokenKind !== 116 /* EndOfFileToken */ ) {
+        if(this.currentToken().tokenKind !== 74 /* SemicolonToken */  && this.currentToken().tokenKind !== 69 /* CloseParenToken */  && this.currentToken().tokenKind !== 117 /* EndOfFileToken */ ) {
             initializer = this.parseExpression(false);
         }
         return this.parseForStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, null, initializer);
     };
     Parser.prototype.parseForStatementWithVariableDeclarationOrInitializer = function (forKeyword, openParenToken, variableDeclaration, initializer) {
-        var firstSemicolonToken = this.eatToken(73 /* SemicolonToken */ );
+        var firstSemicolonToken = this.eatToken(74 /* SemicolonToken */ );
         var condition = null;
-        if(this.currentToken().tokenKind !== 73 /* SemicolonToken */  && this.currentToken().tokenKind !== 68 /* CloseParenToken */  && this.currentToken().tokenKind !== 116 /* EndOfFileToken */ ) {
+        if(this.currentToken().tokenKind !== 74 /* SemicolonToken */  && this.currentToken().tokenKind !== 69 /* CloseParenToken */  && this.currentToken().tokenKind !== 117 /* EndOfFileToken */ ) {
             condition = this.parseExpression(true);
         }
-        var secondSemicolonToken = this.eatToken(73 /* SemicolonToken */ );
+        var secondSemicolonToken = this.eatToken(74 /* SemicolonToken */ );
         var incrementor = null;
-        if(this.currentToken().tokenKind !== 68 /* CloseParenToken */  && this.currentToken().tokenKind !== 116 /* EndOfFileToken */ ) {
+        if(this.currentToken().tokenKind !== 69 /* CloseParenToken */  && this.currentToken().tokenKind !== 117 /* EndOfFileToken */ ) {
             incrementor = this.parseExpression(true);
         }
-        var closeParenToken = this.eatToken(68 /* CloseParenToken */ );
+        var closeParenToken = this.eatToken(69 /* CloseParenToken */ );
         var statement = this.parseStatement(false);
         return new ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement);
     };
     Parser.prototype.isBreakStatement = function () {
-        return this.currentToken().keywordKind() === 11 /* BreakKeyword */ ;
+        return this.currentToken().keywordKind() === 12 /* BreakKeyword */ ;
     };
     Parser.prototype.parseBreakStatement = function () {
         Debug.assert(this.isBreakStatement());
-        var breakKeyword = this.eatKeyword(11 /* BreakKeyword */ );
+        var breakKeyword = this.eatKeyword(12 /* BreakKeyword */ );
         var identifier = null;
         if(!this.canEatExplicitOrAutomaticSemicolon(false)) {
             if(this.isIdentifier(this.currentToken())) {
@@ -2831,11 +2859,11 @@ var Parser = (function (_super) {
         return new BreakStatementSyntax(breakKeyword, identifier, semicolon);
     };
     Parser.prototype.isContinueStatement = function () {
-        return this.currentToken().keywordKind() === 14 /* ContinueKeyword */ ;
+        return this.currentToken().keywordKind() === 15 /* ContinueKeyword */ ;
     };
     Parser.prototype.parseContinueStatement = function () {
         Debug.assert(this.isContinueStatement());
-        var continueKeyword = this.eatKeyword(14 /* ContinueKeyword */ );
+        var continueKeyword = this.eatKeyword(15 /* ContinueKeyword */ );
         var identifier = null;
         if(!this.canEatExplicitOrAutomaticSemicolon(false)) {
             if(this.isIdentifier(this.currentToken())) {
@@ -2846,27 +2874,27 @@ var Parser = (function (_super) {
         return new ContinueStatementSyntax(continueKeyword, identifier, semicolon);
     };
     Parser.prototype.isSwitchStatement = function () {
-        return this.currentToken().keywordKind() === 30 /* SwitchKeyword */ ;
+        return this.currentToken().keywordKind() === 31 /* SwitchKeyword */ ;
     };
     Parser.prototype.parseSwitchStatement = function () {
         Debug.assert(this.isSwitchStatement());
-        var switchKeyword = this.eatKeyword(30 /* SwitchKeyword */ );
-        var openParenToken = this.eatToken(67 /* OpenParenToken */ );
+        var switchKeyword = this.eatKeyword(31 /* SwitchKeyword */ );
+        var openParenToken = this.eatToken(68 /* OpenParenToken */ );
         var expression = this.parseExpression(true);
-        var closeParenToken = this.eatToken(68 /* CloseParenToken */ );
-        var openBraceToken = this.eatToken(65 /* OpenBraceToken */ );
+        var closeParenToken = this.eatToken(69 /* CloseParenToken */ );
+        var openBraceToken = this.eatToken(66 /* OpenBraceToken */ );
         var switchClauses = SyntaxList.empty;
         if(!openBraceToken.isMissing()) {
             switchClauses = this.parseSyntaxList(8 /* SwitchStatement_SwitchClauses */ );
         }
-        var closeBraceToken = this.eatToken(66 /* CloseBraceToken */ );
+        var closeBraceToken = this.eatToken(67 /* CloseBraceToken */ );
         return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, switchClauses, closeBraceToken);
     };
     Parser.prototype.isCaseSwitchClause = function () {
-        return this.currentToken().keywordKind() === 12 /* CaseKeyword */ ;
+        return this.currentToken().keywordKind() === 13 /* CaseKeyword */ ;
     };
     Parser.prototype.isDefaultSwitchClause = function () {
-        return this.currentToken().keywordKind() === 16 /* DefaultKeyword */ ;
+        return this.currentToken().keywordKind() === 17 /* DefaultKeyword */ ;
     };
     Parser.prototype.isSwitchClause = function () {
         return this.isCaseSwitchClause() || this.isDefaultSwitchClause();
@@ -2885,28 +2913,28 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseCaseSwitchClause = function () {
         Debug.assert(this.isCaseSwitchClause());
-        var caseKeyword = this.eatKeyword(12 /* CaseKeyword */ );
+        var caseKeyword = this.eatKeyword(13 /* CaseKeyword */ );
         var expression = this.parseExpression(true);
-        var colonToken = this.eatToken(101 /* ColonToken */ );
+        var colonToken = this.eatToken(102 /* ColonToken */ );
         var statements = this.parseSyntaxList(16 /* SwitchClause_Statements */ );
         return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements);
     };
     Parser.prototype.parseDefaultSwitchClause = function () {
         Debug.assert(this.isDefaultSwitchClause());
-        var defaultKeyword = this.eatKeyword(16 /* DefaultKeyword */ );
-        var colonToken = this.eatToken(101 /* ColonToken */ );
+        var defaultKeyword = this.eatKeyword(17 /* DefaultKeyword */ );
+        var colonToken = this.eatToken(102 /* ColonToken */ );
         var statements = this.parseSyntaxList(16 /* SwitchClause_Statements */ );
         return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements);
     };
     Parser.prototype.isThrowStatement = function () {
-        return this.currentToken().keywordKind() === 32 /* ThrowKeyword */ ;
+        return this.currentToken().keywordKind() === 33 /* ThrowKeyword */ ;
     };
     Parser.prototype.parseThrowStatement = function () {
         Debug.assert(this.isThrowStatement());
-        var throwKeyword = this.eatKeyword(32 /* ThrowKeyword */ );
+        var throwKeyword = this.eatKeyword(33 /* ThrowKeyword */ );
         var expression = null;
         if(this.canEatExplicitOrAutomaticSemicolon(false)) {
-            var token = this.createMissingToken(7 /* IdentifierNameToken */ , 0 /* None */ , null);
+            var token = this.createMissingToken(8 /* IdentifierNameToken */ , 0 /* None */ , null);
             expression = new IdentifierNameSyntax(token);
         } else {
             expression = this.parseExpression(true);
@@ -2915,11 +2943,11 @@ var Parser = (function (_super) {
         return new ThrowStatementSyntax(throwKeyword, expression, semicolonToken);
     };
     Parser.prototype.isReturnStatement = function () {
-        return this.currentToken().keywordKind() === 29 /* ReturnKeyword */ ;
+        return this.currentToken().keywordKind() === 30 /* ReturnKeyword */ ;
     };
     Parser.prototype.parseReturnStatement = function () {
         Debug.assert(this.isReturnStatement());
-        var returnKeyword = this.eatKeyword(29 /* ReturnKeyword */ );
+        var returnKeyword = this.eatKeyword(30 /* ReturnKeyword */ );
         var expression = null;
         if(!this.canEatExplicitOrAutomaticSemicolon(false)) {
             expression = this.parseExpression(true);
@@ -2930,24 +2958,24 @@ var Parser = (function (_super) {
     Parser.prototype.isExpressionStatement = function () {
         var currentToken = this.currentToken();
         var kind = currentToken.tokenKind;
-        if(kind === 65 /* OpenBraceToken */ ) {
+        if(kind === 66 /* OpenBraceToken */ ) {
             return false;
         }
         var keywordKind = currentToken.keywordKind();
-        if(keywordKind === 23 /* FunctionKeyword */ ) {
+        if(keywordKind === 24 /* FunctionKeyword */ ) {
             return false;
         }
         return this.isExpression();
     };
     Parser.prototype.isAssignmentOrOmittedExpression = function () {
-        if(this.currentToken().tokenKind === 74 /* CommaToken */ ) {
+        if(this.currentToken().tokenKind === 75 /* CommaToken */ ) {
             return true;
         }
         return this.isExpression();
     };
     Parser.prototype.parseAssignmentOrOmittedExpression = function () {
         Debug.assert(this.isAssignmentOrOmittedExpression());
-        if(this.currentToken().tokenKind === 74 /* CommaToken */ ) {
+        if(this.currentToken().tokenKind === 75 /* CommaToken */ ) {
             return new OmittedExpressionSyntax();
         }
         return this.parseAssignmentExpression(true);
@@ -2956,65 +2984,65 @@ var Parser = (function (_super) {
         var currentToken = this.currentToken();
         var kind = currentToken.tokenKind;
         switch(kind) {
-            case 9 /* NumericLiteral */ :
-            case 10 /* StringLiteral */ :
-            case 8 /* RegularExpressionLiteral */ : {
+            case 10 /* NumericLiteral */ :
+            case 11 /* StringLiteral */ :
+            case 9 /* RegularExpressionLiteral */ : {
                 return true;
 
             }
-            case 69 /* OpenBracketToken */ :
-            case 67 /* OpenParenToken */ : {
+            case 70 /* OpenBracketToken */ :
+            case 68 /* OpenParenToken */ : {
                 return true;
 
             }
-            case 75 /* LessThanToken */ : {
+            case 76 /* LessThanToken */ : {
                 return true;
 
             }
-            case 88 /* PlusPlusToken */ :
-            case 89 /* MinusMinusToken */ :
-            case 84 /* PlusToken */ :
-            case 85 /* MinusToken */ :
-            case 97 /* TildeToken */ :
-            case 96 /* ExclamationToken */ : {
+            case 89 /* PlusPlusToken */ :
+            case 90 /* MinusMinusToken */ :
+            case 85 /* PlusToken */ :
+            case 86 /* MinusToken */ :
+            case 98 /* TildeToken */ :
+            case 97 /* ExclamationToken */ : {
                 return true;
 
             }
-            case 65 /* OpenBraceToken */ : {
+            case 66 /* OpenBraceToken */ : {
                 return true;
 
             }
-            case 80 /* EqualsGreaterThanToken */ : {
+            case 81 /* EqualsGreaterThanToken */ : {
                 return true;
 
             }
-            case 113 /* SlashToken */ :
-            case 114 /* SlashEqualsToken */ : {
+            case 114 /* SlashToken */ :
+            case 115 /* SlashEqualsToken */ : {
                 return true;
 
             }
         }
         var keywordKind = currentToken.keywordKind();
         switch(keywordKind) {
-            case 46 /* SuperKeyword */ :
-            case 31 /* ThisKeyword */ :
-            case 33 /* TrueKeyword */ :
-            case 20 /* FalseKeyword */ :
-            case 28 /* NullKeyword */ : {
+            case 47 /* SuperKeyword */ :
+            case 32 /* ThisKeyword */ :
+            case 34 /* TrueKeyword */ :
+            case 21 /* FalseKeyword */ :
+            case 29 /* NullKeyword */ : {
                 return true;
 
             }
-            case 27 /* NewKeyword */ : {
+            case 28 /* NewKeyword */ : {
                 return true;
 
             }
-            case 17 /* DeleteKeyword */ :
-            case 37 /* VoidKeyword */ :
-            case 35 /* TypeOfKeyword */ : {
+            case 18 /* DeleteKeyword */ :
+            case 38 /* VoidKeyword */ :
+            case 36 /* TypeOfKeyword */ : {
                 return true;
 
             }
-            case 23 /* FunctionKeyword */ : {
+            case 24 /* FunctionKeyword */ : {
                 return true;
 
             }
@@ -3030,14 +3058,14 @@ var Parser = (function (_super) {
         return new ExpressionStatementSyntax(expression, semicolon);
     };
     Parser.prototype.isIfStatement = function () {
-        return this.currentToken().keywordKind() === 24 /* IfKeyword */ ;
+        return this.currentToken().keywordKind() === 25 /* IfKeyword */ ;
     };
     Parser.prototype.parseIfStatement = function () {
         Debug.assert(this.isIfStatement());
-        var ifKeyword = this.eatKeyword(24 /* IfKeyword */ );
-        var openParenToken = this.eatToken(67 /* OpenParenToken */ );
+        var ifKeyword = this.eatKeyword(25 /* IfKeyword */ );
+        var openParenToken = this.eatToken(68 /* OpenParenToken */ );
         var condition = this.parseExpression(true);
-        var closeParenToken = this.eatToken(68 /* CloseParenToken */ );
+        var closeParenToken = this.eatToken(69 /* CloseParenToken */ );
         var statement = this.parseStatement(false);
         var elseClause = null;
         if(this.isElseClause()) {
@@ -3046,36 +3074,36 @@ var Parser = (function (_super) {
         return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause);
     };
     Parser.prototype.isElseClause = function () {
-        return this.currentToken().keywordKind() === 19 /* ElseKeyword */ ;
+        return this.currentToken().keywordKind() === 20 /* ElseKeyword */ ;
     };
     Parser.prototype.parseElseClause = function () {
         Debug.assert(this.isElseClause());
-        var elseKeyword = this.eatKeyword(19 /* ElseKeyword */ );
+        var elseKeyword = this.eatKeyword(20 /* ElseKeyword */ );
         var statement = this.parseStatement(false);
         return new ElseClauseSyntax(elseKeyword, statement);
     };
     Parser.prototype.isVariableStatement = function () {
         var token0 = this.currentToken();
-        if(token0.keywordKind() === 36 /* VarKeyword */ ) {
+        if(token0.keywordKind() === 37 /* VarKeyword */ ) {
             return true;
         }
         var token1 = this.peekTokenN(1);
-        if(token0.keywordKind() === 43 /* ExportKeyword */  && token1.keywordKind() === 36 /* VarKeyword */ ) {
+        if(token0.keywordKind() === 44 /* ExportKeyword */  && token1.keywordKind() === 37 /* VarKeyword */ ) {
             return true;
         }
-        return token0.keywordKind() === 59 /* DeclareKeyword */  && token1.keywordKind() === 36 /* VarKeyword */ ;
+        return token0.keywordKind() === 60 /* DeclareKeyword */  && token1.keywordKind() === 37 /* VarKeyword */ ;
     };
     Parser.prototype.parseVariableStatement = function () {
         Debug.assert(this.isVariableStatement());
-        var exportKeyword = this.tryEatKeyword(43 /* ExportKeyword */ );
-        var declareKeyword = this.tryEatKeyword(59 /* DeclareKeyword */ );
+        var exportKeyword = this.tryEatKeyword(44 /* ExportKeyword */ );
+        var declareKeyword = this.tryEatKeyword(60 /* DeclareKeyword */ );
         var variableDeclaration = this.parseVariableDeclaration(true);
         var semicolonToken = this.eatExplicitOrAutomaticSemicolon(false);
         return new VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken);
     };
     Parser.prototype.parseVariableDeclaration = function (allowIn) {
-        Debug.assert(this.currentToken().keywordKind() === 36 /* VarKeyword */ );
-        var varKeyword = this.eatKeyword(36 /* VarKeyword */ );
+        Debug.assert(this.currentToken().keywordKind() === 37 /* VarKeyword */ );
+        var varKeyword = this.eatKeyword(37 /* VarKeyword */ );
         var listParsingState = allowIn ? 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */  : 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ ;
         var variableDeclarators = this.parseSeparatedSyntaxList(listParsingState);
         return new VariableDeclarationSyntax(varKeyword, variableDeclarators);
@@ -3096,11 +3124,11 @@ var Parser = (function (_super) {
         return new VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause);
     };
     Parser.prototype.isEqualsValueClause = function () {
-        return this.currentToken().tokenKind === 102 /* EqualsToken */ ;
+        return this.currentToken().tokenKind === 103 /* EqualsToken */ ;
     };
     Parser.prototype.parseEqualsValuesClause = function (allowIn) {
         Debug.assert(this.isEqualsValueClause());
-        var equalsToken = this.eatToken(102 /* EqualsToken */ );
+        var equalsToken = this.eatToken(103 /* EqualsToken */ );
         var value = this.parseAssignmentExpression(allowIn);
         return new EqualsValueClauseSyntax(equalsToken, value);
     };
@@ -3130,11 +3158,11 @@ var Parser = (function (_super) {
         while(true) {
             var currentTokenKind = this.currentToken().tokenKind;
             var currentTokenKeywordKind = this.currentToken().keywordKind();
-            if(currentTokenKeywordKind === 26 /* InstanceOfKeyword */  || currentTokenKeywordKind === 25 /* InKeyword */ ) {
+            if(currentTokenKeywordKind === 27 /* InstanceOfKeyword */  || currentTokenKeywordKind === 26 /* InKeyword */ ) {
                 currentTokenKind = currentTokenKeywordKind;
             }
             if(SyntaxFacts.isBinaryExpressionOperatorToken(currentTokenKind)) {
-                if(currentTokenKind === 25 /* InKeyword */  && !allowIn) {
+                if(currentTokenKind === 26 /* InKeyword */  && !allowIn) {
                     break;
                 }
                 var binaryExpressionKind = SyntaxFacts.getBinaryExpressionFromOperatorToken(currentTokenKind);
@@ -3150,10 +3178,10 @@ var Parser = (function (_super) {
                 leftOperand = new BinaryExpressionSyntax(binaryExpressionKind, leftOperand, operatorToken, this.parseSubExpression(newPrecedence, allowIn));
                 continue;
             }
-            if(currentTokenKind === 100 /* QuestionToken */  && precedence <= 3 /* ConditionalExpressionPrecedence */ ) {
-                var questionToken = this.eatToken(100 /* QuestionToken */ );
+            if(currentTokenKind === 101 /* QuestionToken */  && precedence <= 3 /* ConditionalExpressionPrecedence */ ) {
+                var questionToken = this.eatToken(101 /* QuestionToken */ );
                 var whenTrueExpression = this.parseAssignmentExpression(allowIn);
-                var colon = this.eatToken(101 /* ColonToken */ );
+                var colon = this.eatToken(102 /* ColonToken */ );
                 var whenFalseExpression = this.parseAssignmentExpression(allowIn);
                 leftOperand = new ConditionalExpressionSyntax(leftOperand, questionToken, whenTrueExpression, colon, whenFalseExpression);
                 continue;
@@ -3164,18 +3192,18 @@ var Parser = (function (_super) {
     };
     Parser.prototype.isRightAssociative = function (expressionKind) {
         switch(expressionKind) {
-            case 169 /* AssignmentExpression */ :
-            case 170 /* AddAssignmentExpression */ :
-            case 171 /* SubtractAssignmentExpression */ :
-            case 172 /* MultiplyAssignmentExpression */ :
-            case 173 /* DivideAssignmentExpression */ :
-            case 174 /* ModuloAssignmentExpression */ :
-            case 175 /* AndAssignmentExpression */ :
-            case 176 /* ExclusiveOrAssignmentExpression */ :
-            case 177 /* OrAssignmentExpression */ :
-            case 178 /* LeftShiftAssignmentExpression */ :
-            case 179 /* SignedRightShiftAssignmentExpression */ :
-            case 180 /* UnsignedRightShiftAssignmentExpression */ : {
+            case 170 /* AssignmentExpression */ :
+            case 171 /* AddAssignmentExpression */ :
+            case 172 /* SubtractAssignmentExpression */ :
+            case 173 /* MultiplyAssignmentExpression */ :
+            case 174 /* DivideAssignmentExpression */ :
+            case 175 /* ModuloAssignmentExpression */ :
+            case 176 /* AndAssignmentExpression */ :
+            case 177 /* ExclusiveOrAssignmentExpression */ :
+            case 178 /* OrAssignmentExpression */ :
+            case 179 /* LeftShiftAssignmentExpression */ :
+            case 180 /* SignedRightShiftAssignmentExpression */ :
+            case 181 /* UnsignedRightShiftAssignmentExpression */ : {
                 return true;
 
             }
@@ -3197,7 +3225,7 @@ var Parser = (function (_super) {
         while(true) {
             var currentTokenKind = this.currentToken().tokenKind;
             switch(currentTokenKind) {
-                case 67 /* OpenParenToken */ : {
+                case 68 /* OpenParenToken */ : {
                     if(!allowInvocation) {
                         return expression;
                     }
@@ -3205,13 +3233,13 @@ var Parser = (function (_super) {
                     break;
 
                 }
-                case 69 /* OpenBracketToken */ : {
+                case 70 /* OpenBracketToken */ : {
                     expression = this.parseElementAccessExpression(expression);
                     break;
 
                 }
-                case 88 /* PlusPlusToken */ :
-                case 89 /* MinusMinusToken */ : {
+                case 89 /* PlusPlusToken */ :
+                case 90 /* MinusMinusToken */ : {
                     if(this.previousToken !== null && this.previousToken.hasTrailingNewLineTrivia()) {
                         return expression;
                     }
@@ -3219,8 +3247,8 @@ var Parser = (function (_super) {
                     break;
 
                 }
-                case 71 /* DotToken */ : {
-                    expression = new MemberAccessExpressionSyntax(expression, this.eatToken(71 /* DotToken */ ), this.parseIdentifierName());
+                case 72 /* DotToken */ : {
+                    expression = new MemberAccessExpressionSyntax(expression, this.eatToken(72 /* DotToken */ ), this.parseIdentifierName());
                     break;
 
                 }
@@ -3232,20 +3260,20 @@ var Parser = (function (_super) {
         }
     };
     Parser.prototype.isArgumentList = function () {
-        return this.currentToken().tokenKind === 67 /* OpenParenToken */ ;
+        return this.currentToken().tokenKind === 68 /* OpenParenToken */ ;
     };
     Parser.prototype.parseArgumentList = function () {
         Debug.assert(this.isArgumentList());
-        var openParenToken = this.eatToken(67 /* OpenParenToken */ );
+        var openParenToken = this.eatToken(68 /* OpenParenToken */ );
         var arguments = this.parseSeparatedSyntaxList(4096 /* ArgumentList_AssignmentExpressions */ );
-        var closeParenToken = this.eatToken(68 /* CloseParenToken */ );
+        var closeParenToken = this.eatToken(69 /* CloseParenToken */ );
         return new ArgumentListSyntax(openParenToken, arguments, closeParenToken);
     };
     Parser.prototype.parseElementAccessExpression = function (expression) {
-        Debug.assert(this.currentToken().tokenKind === 69 /* OpenBracketToken */ );
-        var openBracketToken = this.eatToken(69 /* OpenBracketToken */ );
+        Debug.assert(this.currentToken().tokenKind === 70 /* OpenBracketToken */ );
+        var openBracketToken = this.eatToken(70 /* OpenBracketToken */ );
         var argumentExpression = this.parseExpression(true);
-        var closeBracketToken = this.eatToken(70 /* CloseBracketToken */ );
+        var closeBracketToken = this.eatToken(71 /* CloseBracketToken */ );
         return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken);
     };
     Parser.prototype.parseTermWorker = function (insideObjectCreation) {
@@ -3255,7 +3283,7 @@ var Parser = (function (_super) {
                 return this.parseType(true);
             }
         }
-        if(currentToken.tokenKind === 80 /* EqualsGreaterThanToken */ ) {
+        if(currentToken.tokenKind === 81 /* EqualsGreaterThanToken */ ) {
             return this.parseSimpleArrowFunctionExpression();
         }
         if(this.isIdentifier(currentToken)) {
@@ -3269,75 +3297,75 @@ var Parser = (function (_super) {
         var currentTokenKind = currentToken.tokenKind;
         var currentTokenKeywordKind = currentToken.keywordKind();
         switch(currentTokenKeywordKind) {
-            case 31 /* ThisKeyword */ : {
+            case 32 /* ThisKeyword */ : {
                 return this.parseThisExpression();
 
             }
-            case 33 /* TrueKeyword */ :
-            case 20 /* FalseKeyword */ : {
-                return this.parseLiteralExpression(163 /* BooleanLiteralExpression */ );
+            case 34 /* TrueKeyword */ :
+            case 21 /* FalseKeyword */ : {
+                return this.parseLiteralExpression(164 /* BooleanLiteralExpression */ );
 
             }
-            case 28 /* NullKeyword */ : {
-                return this.parseLiteralExpression(164 /* NullLiteralExpression */ );
+            case 29 /* NullKeyword */ : {
+                return this.parseLiteralExpression(165 /* NullLiteralExpression */ );
 
             }
-            case 27 /* NewKeyword */ : {
+            case 28 /* NewKeyword */ : {
                 return this.parseObjectCreationExpression();
 
             }
-            case 23 /* FunctionKeyword */ : {
+            case 24 /* FunctionKeyword */ : {
                 return this.parseFunctionExpression();
 
             }
-            case 46 /* SuperKeyword */ : {
+            case 47 /* SuperKeyword */ : {
                 return this.parseSuperExpression();
 
             }
-            case 35 /* TypeOfKeyword */ : {
+            case 36 /* TypeOfKeyword */ : {
                 return this.parseTypeOfExpression();
 
             }
-            case 17 /* DeleteKeyword */ : {
+            case 18 /* DeleteKeyword */ : {
                 return this.parseDeleteExpression();
 
             }
-            case 37 /* VoidKeyword */ : {
+            case 38 /* VoidKeyword */ : {
                 return this.parseVoidExpression();
 
             }
         }
         switch(currentTokenKind) {
-            case 9 /* NumericLiteral */ : {
-                return this.parseLiteralExpression(165 /* NumericLiteralExpression */ );
+            case 10 /* NumericLiteral */ : {
+                return this.parseLiteralExpression(166 /* NumericLiteralExpression */ );
 
             }
-            case 8 /* RegularExpressionLiteral */ : {
-                return this.parseLiteralExpression(166 /* RegularExpressionLiteralExpression */ );
+            case 9 /* RegularExpressionLiteral */ : {
+                return this.parseLiteralExpression(167 /* RegularExpressionLiteralExpression */ );
 
             }
-            case 10 /* StringLiteral */ : {
-                return this.parseLiteralExpression(167 /* StringLiteralExpression */ );
+            case 11 /* StringLiteral */ : {
+                return this.parseLiteralExpression(168 /* StringLiteralExpression */ );
 
             }
-            case 69 /* OpenBracketToken */ : {
+            case 70 /* OpenBracketToken */ : {
                 return this.parseArrayLiteralExpression();
 
             }
-            case 65 /* OpenBraceToken */ : {
+            case 66 /* OpenBraceToken */ : {
                 return this.parseObjectLiteralExpression();
 
             }
-            case 67 /* OpenParenToken */ : {
+            case 68 /* OpenParenToken */ : {
                 return this.parseParenthesizedOrArrowFunctionExpression();
 
             }
-            case 75 /* LessThanToken */ : {
+            case 76 /* LessThanToken */ : {
                 return this.parseCastExpression();
 
             }
-            case 113 /* SlashToken */ :
-            case 114 /* SlashEqualsToken */ : {
+            case 114 /* SlashToken */ :
+            case 115 /* SlashEqualsToken */ : {
                 var result = this.tryReparseDivideAsRegularExpression();
                 if(result !== null) {
                     return result;
@@ -3351,25 +3379,25 @@ var Parser = (function (_super) {
     Parser.prototype.tryReparseDivideAsRegularExpression = function () {
         var currentToken = this.currentToken();
         var currentTokenKind = currentToken.tokenKind;
-        Debug.assert(currentTokenKind === 113 /* SlashToken */  || currentTokenKind === 114 /* SlashEqualsToken */ );
+        Debug.assert(currentTokenKind === 114 /* SlashToken */  || currentTokenKind === 115 /* SlashEqualsToken */ );
         if(this.previousToken !== null) {
             var previousTokenKind = this.previousToken.tokenKind;
             switch(previousTokenKind) {
-                case 7 /* IdentifierNameToken */ : {
+                case 8 /* IdentifierNameToken */ : {
                     var previousTokenKeywordKind = this.previousToken.keywordKind();
-                    if(previousTokenKeywordKind === 0 /* None */  || previousTokenKeywordKind === 31 /* ThisKeyword */  || previousTokenKeywordKind === 33 /* TrueKeyword */  || previousTokenKeywordKind === 20 /* FalseKeyword */ ) {
+                    if(previousTokenKeywordKind === 0 /* None */  || previousTokenKeywordKind === 32 /* ThisKeyword */  || previousTokenKeywordKind === 34 /* TrueKeyword */  || previousTokenKeywordKind === 21 /* FalseKeyword */ ) {
                         return null;
                     }
                     break;
 
                 }
-                case 10 /* StringLiteral */ :
-                case 9 /* NumericLiteral */ :
-                case 8 /* RegularExpressionLiteral */ :
-                case 88 /* PlusPlusToken */ :
-                case 89 /* MinusMinusToken */ :
-                case 70 /* CloseBracketToken */ :
-                case 66 /* CloseBraceToken */ : {
+                case 11 /* StringLiteral */ :
+                case 10 /* NumericLiteral */ :
+                case 9 /* RegularExpressionLiteral */ :
+                case 89 /* PlusPlusToken */ :
+                case 90 /* MinusMinusToken */ :
+                case 71 /* CloseBracketToken */ :
+                case 67 /* CloseBraceToken */ : {
                     return null;
 
                 }
@@ -3390,43 +3418,43 @@ var Parser = (function (_super) {
         this._currentToken = null;
         this.scanner.setAbsoluteIndex(slashTokenFullStart);
         currentToken = this.currentTokenAllowingRegularExpression();
-        Debug.assert(currentToken.tokenKind === 113 /* SlashToken */  || currentToken.tokenKind === 114 /* SlashEqualsToken */  || currentToken.tokenKind === 8 /* RegularExpressionLiteral */ );
-        if(currentToken.tokenKind === 113 /* SlashToken */  || currentToken.tokenKind === 114 /* SlashEqualsToken */ ) {
+        Debug.assert(currentToken.tokenKind === 114 /* SlashToken */  || currentToken.tokenKind === 115 /* SlashEqualsToken */  || currentToken.tokenKind === 9 /* RegularExpressionLiteral */ );
+        if(currentToken.tokenKind === 114 /* SlashToken */  || currentToken.tokenKind === 115 /* SlashEqualsToken */ ) {
             return null;
         } else {
-            if(currentToken.tokenKind === 8 /* RegularExpressionLiteral */ ) {
-                return this.parseLiteralExpression(166 /* RegularExpressionLiteralExpression */ );
+            if(currentToken.tokenKind === 9 /* RegularExpressionLiteral */ ) {
+                return this.parseLiteralExpression(167 /* RegularExpressionLiteralExpression */ );
             } else {
                 throw Errors.invalidOperation();
             }
         }
     };
     Parser.prototype.parseTypeOfExpression = function () {
-        Debug.assert(this.currentToken().keywordKind() === 35 /* TypeOfKeyword */ );
-        var typeOfKeyword = this.eatKeyword(35 /* TypeOfKeyword */ );
+        Debug.assert(this.currentToken().keywordKind() === 36 /* TypeOfKeyword */ );
+        var typeOfKeyword = this.eatKeyword(36 /* TypeOfKeyword */ );
         var expression = this.parseUnaryExpression();
         return new TypeOfExpressionSyntax(typeOfKeyword, expression);
     };
     Parser.prototype.parseDeleteExpression = function () {
-        Debug.assert(this.currentToken().keywordKind() === 17 /* DeleteKeyword */ );
-        var deleteKeyword = this.eatKeyword(17 /* DeleteKeyword */ );
+        Debug.assert(this.currentToken().keywordKind() === 18 /* DeleteKeyword */ );
+        var deleteKeyword = this.eatKeyword(18 /* DeleteKeyword */ );
         var expression = this.parseUnaryExpression();
         return new DeleteExpressionSyntax(deleteKeyword, expression);
     };
     Parser.prototype.parseVoidExpression = function () {
-        Debug.assert(this.currentToken().keywordKind() === 37 /* VoidKeyword */ );
-        var voidKeyword = this.eatKeyword(37 /* VoidKeyword */ );
+        Debug.assert(this.currentToken().keywordKind() === 38 /* VoidKeyword */ );
+        var voidKeyword = this.eatKeyword(38 /* VoidKeyword */ );
         var expression = this.parseUnaryExpression();
         return new VoidExpressionSyntax(voidKeyword, expression);
     };
     Parser.prototype.parseSuperExpression = function () {
-        Debug.assert(this.currentToken().keywordKind() === 46 /* SuperKeyword */ );
-        var superKeyword = this.eatKeyword(46 /* SuperKeyword */ );
+        Debug.assert(this.currentToken().keywordKind() === 47 /* SuperKeyword */ );
+        var superKeyword = this.eatKeyword(47 /* SuperKeyword */ );
         return new SuperExpressionSyntax(superKeyword);
     };
     Parser.prototype.parseFunctionExpression = function () {
-        Debug.assert(this.currentToken().keywordKind() === 23 /* FunctionKeyword */ );
-        var functionKeyword = this.eatKeyword(23 /* FunctionKeyword */ );
+        Debug.assert(this.currentToken().keywordKind() === 24 /* FunctionKeyword */ );
+        var functionKeyword = this.eatKeyword(24 /* FunctionKeyword */ );
         var identifier = null;
         if(this.isIdentifier(this.currentToken())) {
             identifier = this.eatIdentifierToken();
@@ -3436,16 +3464,16 @@ var Parser = (function (_super) {
         return new FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block);
     };
     Parser.prototype.parseCastExpression = function () {
-        Debug.assert(this.currentToken().tokenKind === 75 /* LessThanToken */ );
-        var lessThanToken = this.eatToken(75 /* LessThanToken */ );
+        Debug.assert(this.currentToken().tokenKind === 76 /* LessThanToken */ );
+        var lessThanToken = this.eatToken(76 /* LessThanToken */ );
         var type = this.parseType(false);
-        var greaterThanToken = this.eatToken(76 /* GreaterThanToken */ );
+        var greaterThanToken = this.eatToken(77 /* GreaterThanToken */ );
         var expression = this.parseUnaryExpression();
         return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression);
     };
     Parser.prototype.parseObjectCreationExpression = function () {
-        Debug.assert(this.currentToken().keywordKind() === 27 /* NewKeyword */ );
-        var newKeyword = this.eatKeyword(27 /* NewKeyword */ );
+        Debug.assert(this.currentToken().keywordKind() === 28 /* NewKeyword */ );
+        var newKeyword = this.eatKeyword(28 /* NewKeyword */ );
         var expression = this.parseTerm(false, true);
         var argumentList = null;
         if(this.isArgumentList()) {
@@ -3454,18 +3482,18 @@ var Parser = (function (_super) {
         return new ObjectCreationExpressionSyntax(newKeyword, expression, argumentList);
     };
     Parser.prototype.parseParenthesizedOrArrowFunctionExpression = function () {
-        Debug.assert(this.currentToken().tokenKind === 67 /* OpenParenToken */ );
+        Debug.assert(this.currentToken().tokenKind === 68 /* OpenParenToken */ );
         var result = this.tryParseArrowFunctionExpression();
         if(result !== null) {
             return result;
         }
-        var openParenToken = this.eatToken(67 /* OpenParenToken */ );
+        var openParenToken = this.eatToken(68 /* OpenParenToken */ );
         var expression = this.parseExpression(true);
-        var closeParenToken = this.eatToken(68 /* CloseParenToken */ );
+        var closeParenToken = this.eatToken(69 /* CloseParenToken */ );
         return new ParenthesizedExpressionSyntax(openParenToken, expression, closeParenToken);
     };
     Parser.prototype.tryParseArrowFunctionExpression = function () {
-        Debug.assert(this.currentToken().tokenKind === 67 /* OpenParenToken */ );
+        Debug.assert(this.currentToken().tokenKind === 68 /* OpenParenToken */ );
         if(this.isDefinitelyArrowFunctionExpression()) {
             return this.parseParenthesizedArrowFunctionExpression(false);
         }
@@ -3484,12 +3512,12 @@ var Parser = (function (_super) {
         }
     };
     Parser.prototype.parseParenthesizedArrowFunctionExpression = function (requireArrow) {
-        Debug.assert(this.currentToken().tokenKind === 67 /* OpenParenToken */ );
+        Debug.assert(this.currentToken().tokenKind === 68 /* OpenParenToken */ );
         var callSignature = this.parseCallSignature();
-        if(requireArrow && this.currentToken().tokenKind !== 80 /* EqualsGreaterThanToken */ ) {
+        if(requireArrow && this.currentToken().tokenKind !== 81 /* EqualsGreaterThanToken */ ) {
             return null;
         }
-        var equalsGreaterThanToken = this.eatToken(80 /* EqualsGreaterThanToken */ );
+        var equalsGreaterThanToken = this.eatToken(81 /* EqualsGreaterThanToken */ );
         var body = this.parseArrowFunctionBody();
         return new ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body);
     };
@@ -3501,76 +3529,76 @@ var Parser = (function (_super) {
         }
     };
     Parser.prototype.isSimpleArrowFunctionExpression = function () {
-        if(this.currentToken().tokenKind === 80 /* EqualsGreaterThanToken */ ) {
+        if(this.currentToken().tokenKind === 81 /* EqualsGreaterThanToken */ ) {
             return true;
         }
-        return this.isIdentifier(this.currentToken()) && this.peekTokenN(1).tokenKind === 80 /* EqualsGreaterThanToken */ ;
+        return this.isIdentifier(this.currentToken()) && this.peekTokenN(1).tokenKind === 81 /* EqualsGreaterThanToken */ ;
     };
     Parser.prototype.parseSimpleArrowFunctionExpression = function () {
         Debug.assert(this.isSimpleArrowFunctionExpression());
         var identifier = this.eatIdentifierToken();
-        var equalsGreaterThanToken = this.eatToken(80 /* EqualsGreaterThanToken */ );
+        var equalsGreaterThanToken = this.eatToken(81 /* EqualsGreaterThanToken */ );
         var body = this.parseArrowFunctionBody();
         return new SimpleArrowFunctionExpression(identifier, equalsGreaterThanToken, body);
     };
     Parser.prototype.isBlock = function () {
-        return this.currentToken().tokenKind === 65 /* OpenBraceToken */ ;
+        return this.currentToken().tokenKind === 66 /* OpenBraceToken */ ;
     };
     Parser.prototype.isDefinitelyArrowFunctionExpression = function () {
-        Debug.assert(this.currentToken().tokenKind === 67 /* OpenParenToken */ );
+        Debug.assert(this.currentToken().tokenKind === 68 /* OpenParenToken */ );
         var token1 = this.peekTokenN(1);
-        if(token1.tokenKind === 68 /* CloseParenToken */ ) {
+        if(token1.tokenKind === 69 /* CloseParenToken */ ) {
             return true;
         }
-        if(token1.tokenKind === 72 /* DotDotDotToken */ ) {
+        if(token1.tokenKind === 73 /* DotDotDotToken */ ) {
             return true;
         }
         if(!this.isIdentifier(token1)) {
             return false;
         }
         var token2 = this.peekTokenN(2);
-        if(token2.tokenKind === 101 /* ColonToken */ ) {
+        if(token2.tokenKind === 102 /* ColonToken */ ) {
             return true;
         }
         var token3 = this.peekTokenN(3);
-        if(token2.tokenKind === 100 /* QuestionToken */ ) {
-            if(token3.tokenKind === 101 /* ColonToken */  || token3.tokenKind === 68 /* CloseParenToken */  || token3.tokenKind === 74 /* CommaToken */ ) {
+        if(token2.tokenKind === 101 /* QuestionToken */ ) {
+            if(token3.tokenKind === 102 /* ColonToken */  || token3.tokenKind === 69 /* CloseParenToken */  || token3.tokenKind === 75 /* CommaToken */ ) {
                 return true;
             }
         }
-        if(token2.tokenKind === 68 /* CloseParenToken */ ) {
-            if(token3.tokenKind === 80 /* EqualsGreaterThanToken */ ) {
+        if(token2.tokenKind === 69 /* CloseParenToken */ ) {
+            if(token3.tokenKind === 81 /* EqualsGreaterThanToken */ ) {
                 return true;
             }
         }
         return false;
     };
     Parser.prototype.isPossiblyArrowFunctionExpression = function () {
-        Debug.assert(this.currentToken().tokenKind === 67 /* OpenParenToken */ );
+        Debug.assert(this.currentToken().tokenKind === 68 /* OpenParenToken */ );
         var token1 = this.peekTokenN(1);
         if(!this.isIdentifier(token1)) {
             return false;
         }
         var token2 = this.peekTokenN(2);
-        if(token2.tokenKind === 102 /* EqualsToken */ ) {
+        if(token2.tokenKind === 103 /* EqualsToken */ ) {
             return true;
         }
-        if(token2.tokenKind === 74 /* CommaToken */ ) {
+        if(token2.tokenKind === 75 /* CommaToken */ ) {
             return true;
         }
-        if(token2.tokenKind === 68 /* CloseParenToken */ ) {
+        if(token2.tokenKind === 69 /* CloseParenToken */ ) {
             var token3 = this.peekTokenN(3);
-            if(token3.tokenKind === 101 /* ColonToken */ ) {
+            if(token3.tokenKind === 102 /* ColonToken */ ) {
                 return true;
             }
         }
         return false;
     };
     Parser.prototype.parseObjectLiteralExpression = function () {
-        Debug.assert(this.currentToken().tokenKind === 65 /* OpenBraceToken */ );
-        var openBraceToken = this.eatToken(65 /* OpenBraceToken */ );
+        Debug.assert(this.currentToken().tokenKind === 66 /* OpenBraceToken */ );
+        var openBraceToken = this.eatToken(66 /* OpenBraceToken */ );
         var propertyAssignments = this.parseSeparatedSyntaxList(8192 /* ObjectLiteralExpression_PropertyAssignments */ );
-        var closeBraceToken = this.eatToken(66 /* CloseBraceToken */ );
+        var closeBraceToken = this.eatToken(67 /* CloseBraceToken */ );
         return new ObjectLiteralExpressionSyntax(openBraceToken, propertyAssignments, closeBraceToken);
     };
     Parser.prototype.parsePropertyAssignment = function () {
@@ -3593,27 +3621,27 @@ var Parser = (function (_super) {
         return this.isGetAccessorPropertyAssignment() || this.isSetAccessorPropertyAssignment() || this.isSimplePropertyAssignment(inErrorRecovery);
     };
     Parser.prototype.isGetAccessorPropertyAssignment = function () {
-        return this.currentToken().keywordKind() === 60 /* GetKeyword */  && this.isPropertyName(this.peekTokenN(1), false);
+        return this.currentToken().keywordKind() === 61 /* GetKeyword */  && this.isPropertyName(this.peekTokenN(1), false);
     };
     Parser.prototype.parseGetAccessorPropertyAssignment = function () {
         Debug.assert(this.isGetAccessorPropertyAssignment());
-        var getKeyword = this.eatKeyword(60 /* GetKeyword */ );
+        var getKeyword = this.eatKeyword(61 /* GetKeyword */ );
         var propertyName = this.eatAnyToken();
-        var openParenToken = this.eatToken(67 /* OpenParenToken */ );
-        var closeParenToken = this.eatToken(68 /* CloseParenToken */ );
+        var openParenToken = this.eatToken(68 /* OpenParenToken */ );
+        var closeParenToken = this.eatToken(69 /* CloseParenToken */ );
         var block = this.parseBlock();
         return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block);
     };
     Parser.prototype.isSetAccessorPropertyAssignment = function () {
-        return this.currentToken().keywordKind() === 63 /* SetKeyword */  && this.isPropertyName(this.peekTokenN(1), false);
+        return this.currentToken().keywordKind() === 64 /* SetKeyword */  && this.isPropertyName(this.peekTokenN(1), false);
     };
     Parser.prototype.parseSetAccessorPropertyAssignment = function () {
         Debug.assert(this.isSetAccessorPropertyAssignment());
-        var setKeyword = this.eatKeyword(63 /* SetKeyword */ );
+        var setKeyword = this.eatKeyword(64 /* SetKeyword */ );
         var propertyName = this.eatAnyToken();
-        var openParenToken = this.eatToken(67 /* OpenParenToken */ );
+        var openParenToken = this.eatToken(68 /* OpenParenToken */ );
         var parameterName = this.eatIdentifierToken();
-        var closeParenToken = this.eatToken(68 /* CloseParenToken */ );
+        var closeParenToken = this.eatToken(69 /* CloseParenToken */ );
         var block = this.parseBlock();
         return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block);
     };
@@ -3623,13 +3651,13 @@ var Parser = (function (_super) {
     Parser.prototype.parseSimplePropertyAssignment = function () {
         Debug.assert(this.isSimplePropertyAssignment(false));
         var propertyName = this.eatAnyToken();
-        var colonToken = this.eatToken(101 /* ColonToken */ );
+        var colonToken = this.eatToken(102 /* ColonToken */ );
         var expression = this.parseAssignmentExpression(true);
         return new SimplePropertyAssignmentSyntax(propertyName, colonToken, expression);
     };
     Parser.prototype.isPropertyName = function (token, inErrorRecovery) {
         switch(token.tokenKind) {
-            case 7 /* IdentifierNameToken */ : {
+            case 8 /* IdentifierNameToken */ : {
                 if(inErrorRecovery) {
                     return !this.isKeyword(token.keywordKind());
                 } else {
@@ -3637,8 +3665,8 @@ var Parser = (function (_super) {
                 }
 
             }
-            case 10 /* StringLiteral */ :
-            case 9 /* NumericLiteral */ : {
+            case 11 /* StringLiteral */ :
+            case 10 /* NumericLiteral */ : {
                 return true;
 
             }
@@ -3649,10 +3677,10 @@ var Parser = (function (_super) {
         }
     };
     Parser.prototype.parseArrayLiteralExpression = function () {
-        Debug.assert(this.currentToken().tokenKind === 69 /* OpenBracketToken */ );
-        var openBracketToken = this.eatToken(69 /* OpenBracketToken */ );
+        Debug.assert(this.currentToken().tokenKind === 70 /* OpenBracketToken */ );
+        var openBracketToken = this.eatToken(70 /* OpenBracketToken */ );
         var expressions = this.parseSeparatedSyntaxList(16384 /* ArrayLiteralExpression_AssignmentExpressions */ );
-        var closeBracketToken = this.eatToken(70 /* CloseBracketToken */ );
+        var closeBracketToken = this.eatToken(71 /* CloseBracketToken */ );
         return new ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken);
     };
     Parser.prototype.parseLiteralExpression = function (expressionKind) {
@@ -3660,19 +3688,19 @@ var Parser = (function (_super) {
         return new LiteralExpressionSyntax(expressionKind, literal);
     };
     Parser.prototype.parseThisExpression = function () {
-        Debug.assert(this.currentToken().keywordKind() === 31 /* ThisKeyword */ );
-        var thisKeyword = this.eatKeyword(31 /* ThisKeyword */ );
+        Debug.assert(this.currentToken().keywordKind() === 32 /* ThisKeyword */ );
+        var thisKeyword = this.eatKeyword(32 /* ThisKeyword */ );
         return new ThisExpressionSyntax(thisKeyword);
     };
     Parser.prototype.parseBlock = function () {
-        var openBraceToken = this.eatToken(65 /* OpenBraceToken */ );
+        var openBraceToken = this.eatToken(66 /* OpenBraceToken */ );
         var statements = SyntaxList.empty;
         if(!openBraceToken.isMissing()) {
             var savedIsInStrictMode = this.isInStrictMode;
             statements = this.parseSyntaxList(32 /* Block_Statements */ , Parser.updateStrictModeState);
             this.isInStrictMode = savedIsInStrictMode;
         }
-        var closeBraceToken = this.eatToken(66 /* CloseBraceToken */ );
+        var closeBraceToken = this.eatToken(67 /* CloseBraceToken */ );
         return new BlockSyntax(openBraceToken, statements, closeBraceToken);
     };
     Parser.prototype.parseCallSignature = function () {
@@ -3681,23 +3709,23 @@ var Parser = (function (_super) {
         return new CallSignatureSyntax(parameterList, typeAnnotation);
     };
     Parser.prototype.parseParameterList = function () {
-        var openParenToken = this.eatToken(67 /* OpenParenToken */ );
+        var openParenToken = this.eatToken(68 /* OpenParenToken */ );
         var parameters = SeparatedSyntaxList.empty;
         if(!openParenToken.isMissing()) {
             parameters = this.parseSeparatedSyntaxList(32768 /* ParameterList_Parameters */ );
         }
-        var closeParenToken = this.eatToken(68 /* CloseParenToken */ );
+        var closeParenToken = this.eatToken(69 /* CloseParenToken */ );
         return new ParameterListSyntax(openParenToken, parameters, closeParenToken);
     };
     Parser.prototype.isTypeAnnotation = function () {
-        return this.currentToken().tokenKind === 101 /* ColonToken */ ;
+        return this.currentToken().tokenKind === 102 /* ColonToken */ ;
     };
     Parser.prototype.parseOptionalTypeAnnotation = function () {
         return this.isTypeAnnotation() ? this.parseTypeAnnotation() : null;
     };
     Parser.prototype.parseTypeAnnotation = function () {
         Debug.assert(this.isTypeAnnotation());
-        var colonToken = this.eatToken(101 /* ColonToken */ );
+        var colonToken = this.eatToken(102 /* ColonToken */ );
         var type = this.parseType(false);
         return new TypeAnnotationSyntax(colonToken, type);
     };
@@ -3706,12 +3734,12 @@ var Parser = (function (_super) {
     };
     Parser.prototype.parseType = function (requireCompleteArraySuffix) {
         var type = this.parseNonArrayType();
-        while(this.currentToken().tokenKind === 69 /* OpenBracketToken */ ) {
-            if(requireCompleteArraySuffix && this.peekTokenN(1).tokenKind !== 70 /* CloseBracketToken */ ) {
+        while(this.currentToken().tokenKind === 70 /* OpenBracketToken */ ) {
+            if(requireCompleteArraySuffix && this.peekTokenN(1).tokenKind !== 71 /* CloseBracketToken */ ) {
                 break;
             }
-            var openBracketToken = this.eatToken(69 /* OpenBracketToken */ );
-            var closeBracketToken = this.eatToken(70 /* CloseBracketToken */ );
+            var openBracketToken = this.eatToken(70 /* OpenBracketToken */ );
+            var closeBracketToken = this.eatToken(71 /* CloseBracketToken */ );
             type = new ArrayTypeSyntax(type, openBracketToken, closeBracketToken);
         }
         return type;
@@ -3746,15 +3774,15 @@ var Parser = (function (_super) {
     Parser.prototype.parseFunctionType = function () {
         Debug.assert(this.isFunctionType());
         var parameterList = this.parseParameterList();
-        var equalsGreaterThanToken = this.eatToken(80 /* EqualsGreaterThanToken */ );
+        var equalsGreaterThanToken = this.eatToken(81 /* EqualsGreaterThanToken */ );
         var returnType = this.parseType(false);
         return new FunctionTypeSyntax(parameterList, equalsGreaterThanToken, returnType);
     };
     Parser.prototype.parseConstructorType = function () {
         Debug.assert(this.isConstructorType());
-        var newKeyword = this.eatKeyword(27 /* NewKeyword */ );
+        var newKeyword = this.eatKeyword(28 /* NewKeyword */ );
         var parameterList = this.parseParameterList();
-        var equalsGreaterThanToken = this.eatToken(80 /* EqualsGreaterThanToken */ );
+        var equalsGreaterThanToken = this.eatToken(81 /* EqualsGreaterThanToken */ );
         var type = this.parseType(false);
         return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type);
     };
@@ -3771,13 +3799,13 @@ var Parser = (function (_super) {
         return false;
     };
     Parser.prototype.isObjectType = function () {
-        return this.currentToken().tokenKind === 65 /* OpenBraceToken */ ;
+        return this.currentToken().tokenKind === 66 /* OpenBraceToken */ ;
     };
     Parser.prototype.isFunctionType = function () {
-        return this.currentToken().tokenKind === 67 /* OpenParenToken */ ;
+        return this.currentToken().tokenKind === 68 /* OpenParenToken */ ;
     };
     Parser.prototype.isConstructorType = function () {
-        return this.currentToken().keywordKind() === 27 /* NewKeyword */ ;
+        return this.currentToken().keywordKind() === 28 /* NewKeyword */ ;
     };
     Parser.prototype.parsePredefinedType = function () {
         Debug.assert(this.isPredefinedType());
@@ -3786,11 +3814,11 @@ var Parser = (function (_super) {
     };
     Parser.prototype.isPredefinedType = function () {
         switch(this.currentToken().keywordKind()) {
-            case 56 /* AnyKeyword */ :
-            case 62 /* NumberKeyword */ :
-            case 57 /* BoolKeyword */ :
-            case 64 /* StringKeyword */ :
-            case 37 /* VoidKeyword */ : {
+            case 57 /* AnyKeyword */ :
+            case 63 /* NumberKeyword */ :
+            case 58 /* BoolKeyword */ :
+            case 65 /* StringKeyword */ :
+            case 38 /* VoidKeyword */ : {
                 return true;
 
             }
@@ -3799,22 +3827,22 @@ var Parser = (function (_super) {
     };
     Parser.prototype.isParameter = function () {
         var token = this.currentToken();
-        if(token.tokenKind === 72 /* DotDotDotToken */ ) {
+        if(token.tokenKind === 73 /* DotDotDotToken */ ) {
             return true;
         }
-        if(token.keywordKind() === 53 /* PublicKeyword */  || token.keywordKind() === 51 /* PrivateKeyword */ ) {
+        if(token.keywordKind() === 54 /* PublicKeyword */  || token.keywordKind() === 52 /* PrivateKeyword */ ) {
             return true;
         }
         return this.isIdentifier(token);
     };
     Parser.prototype.parseParameter = function () {
-        var dotDotDotToken = this.tryEatToken(72 /* DotDotDotToken */ );
+        var dotDotDotToken = this.tryEatToken(73 /* DotDotDotToken */ );
         var publicOrPrivateToken = null;
-        if(this.currentToken().keywordKind() === 53 /* PublicKeyword */  || this.currentToken().keywordKind() === 51 /* PrivateKeyword */ ) {
+        if(this.currentToken().keywordKind() === 54 /* PublicKeyword */  || this.currentToken().keywordKind() === 52 /* PrivateKeyword */ ) {
             publicOrPrivateToken = this.eatAnyToken();
         }
         var identifier = this.eatIdentifierToken();
-        var questionToken = this.tryEatToken(100 /* QuestionToken */ );
+        var questionToken = this.tryEatToken(101 /* QuestionToken */ );
         var typeAnnotation = this.parseOptionalTypeAnnotation();
         var equalsValueClause = null;
         if(this.isEqualsValueClause()) {
@@ -3864,7 +3892,7 @@ var Parser = (function (_super) {
         return items;
     };
     Parser.prototype.listIsTerminated = function (currentListType, itemCount) {
-        return this.isExpectedListTerminator(currentListType, itemCount) || this.currentToken().tokenKind === 116 /* EndOfFileToken */ ;
+        return this.isExpectedListTerminator(currentListType, itemCount) || this.currentToken().tokenKind === 117 /* EndOfFileToken */ ;
     };
     Parser.prototype.parseSyntaxListWorker = function (currentListType, processItems) {
         var items = null;
@@ -4025,11 +4053,11 @@ var Parser = (function (_super) {
             case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
             case 32768 /* ParameterList_Parameters */ :
             case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ : {
-                return 74 /* CommaToken */ ;
+                return 75 /* CommaToken */ ;
 
             }
             case 256 /* ObjectType_TypeMembers */ : {
-                return 73 /* SemicolonToken */ ;
+                return 74 /* SemicolonToken */ ;
 
             }
             case 1 /* SourceUnit_ModuleElements */ :
@@ -4129,77 +4157,77 @@ var Parser = (function (_super) {
         }
     };
     Parser.prototype.isExpectedSourceUnit_ModuleElementsTerminator = function () {
-        return this.currentToken().tokenKind === 116 /* EndOfFileToken */ ;
+        return this.currentToken().tokenKind === 117 /* EndOfFileToken */ ;
     };
     Parser.prototype.isExpectedEnumDeclaration_VariableDeclaratorsTerminator = function () {
-        return this.currentToken().tokenKind === 66 /* CloseBraceToken */ ;
+        return this.currentToken().tokenKind === 67 /* CloseBraceToken */ ;
     };
     Parser.prototype.isExpectedModuleDeclaration_ModuleElementsTerminator = function () {
-        return this.currentToken().tokenKind === 66 /* CloseBraceToken */ ;
+        return this.currentToken().tokenKind === 67 /* CloseBraceToken */ ;
     };
     Parser.prototype.isExpectedObjectType_TypeMembersTerminator = function () {
-        return this.currentToken().tokenKind === 66 /* CloseBraceToken */ ;
+        return this.currentToken().tokenKind === 67 /* CloseBraceToken */ ;
     };
     Parser.prototype.isExpectedObjectLiteralExpression_PropertyAssignmentsTerminator = function () {
-        return this.currentToken().tokenKind === 66 /* CloseBraceToken */ ;
+        return this.currentToken().tokenKind === 67 /* CloseBraceToken */ ;
     };
     Parser.prototype.isExpectedLiteralExpression_AssignmentExpressionsTerminator = function () {
-        return this.currentToken().tokenKind === 70 /* CloseBracketToken */ ;
+        return this.currentToken().tokenKind === 71 /* CloseBracketToken */ ;
     };
     Parser.prototype.isExpectedParameterList_ParametersTerminator = function () {
         var token = this.currentToken();
-        if(token.tokenKind === 68 /* CloseParenToken */ ) {
+        if(token.tokenKind === 69 /* CloseParenToken */ ) {
             return true;
         }
-        if(token.tokenKind === 65 /* OpenBraceToken */ ) {
+        if(token.tokenKind === 66 /* OpenBraceToken */ ) {
             return true;
         }
-        if(token.tokenKind === 80 /* EqualsGreaterThanToken */ ) {
+        if(token.tokenKind === 81 /* EqualsGreaterThanToken */ ) {
             return true;
         }
         return false;
     };
     Parser.prototype.isExpectedVariableDeclaration_VariableDeclarators_DisallowInTerminator = function () {
-        if(this.currentToken().tokenKind === 73 /* SemicolonToken */  || this.currentToken().tokenKind === 68 /* CloseParenToken */ ) {
+        if(this.currentToken().tokenKind === 74 /* SemicolonToken */  || this.currentToken().tokenKind === 69 /* CloseParenToken */ ) {
             return true;
         }
-        if(this.currentToken().keywordKind() === 25 /* InKeyword */ ) {
+        if(this.currentToken().keywordKind() === 26 /* InKeyword */ ) {
             return true;
         }
         return false;
     };
     Parser.prototype.isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator = function (itemCount) {
-        if(this.previousToken.tokenKind === 74 /* CommaToken */ ) {
+        if(this.previousToken.tokenKind === 75 /* CommaToken */ ) {
             return false;
         }
-        if(this.currentToken().tokenKind === 80 /* EqualsGreaterThanToken */ ) {
+        if(this.currentToken().tokenKind === 81 /* EqualsGreaterThanToken */ ) {
             return true;
         }
         return itemCount > 0 && this.canEatExplicitOrAutomaticSemicolon(false);
     };
     Parser.prototype.isExpectedExtendsOrImplementsClause_TypeNameListTerminator = function () {
-        if(this.currentToken().keywordKind() === 44 /* ExtendsKeyword */  || this.currentToken().keywordKind() === 47 /* ImplementsKeyword */ ) {
+        if(this.currentToken().keywordKind() === 45 /* ExtendsKeyword */  || this.currentToken().keywordKind() === 48 /* ImplementsKeyword */ ) {
             return true;
         }
-        if(this.currentToken().tokenKind === 65 /* OpenBraceToken */  || this.currentToken().tokenKind === 66 /* CloseBraceToken */ ) {
+        if(this.currentToken().tokenKind === 66 /* OpenBraceToken */  || this.currentToken().tokenKind === 67 /* CloseBraceToken */ ) {
             return true;
         }
         return false;
     };
     Parser.prototype.isExpectedArgumentList_AssignmentExpressionsTerminator = function () {
-        return this.currentToken().tokenKind === 68 /* CloseParenToken */ ;
+        return this.currentToken().tokenKind === 69 /* CloseParenToken */ ;
     };
     Parser.prototype.isExpectedClassDeclaration_ClassElementsTerminator = function () {
-        return this.currentToken().tokenKind === 66 /* CloseBraceToken */ ;
+        return this.currentToken().tokenKind === 67 /* CloseBraceToken */ ;
     };
     Parser.prototype.isExpectedSwitchStatement_SwitchClausesTerminator = function () {
-        return this.currentToken().tokenKind === 66 /* CloseBraceToken */ ;
+        return this.currentToken().tokenKind === 67 /* CloseBraceToken */ ;
     };
     Parser.prototype.isExpectedSwitchClause_StatementsTerminator = function () {
-        return this.currentToken().tokenKind === 66 /* CloseBraceToken */  || this.isSwitchClause();
+        return this.currentToken().tokenKind === 67 /* CloseBraceToken */  || this.isSwitchClause();
     };
     Parser.prototype.isExpectedBlock_StatementsTerminator = function () {
-        return this.currentToken().tokenKind === 66 /* CloseBraceToken */ ;
+        return this.currentToken().tokenKind === 67 /* CloseBraceToken */ ;
     };
     Parser.prototype.isExpectedListItem = function (currentListType, inErrorRecovery) {
         switch(currentListType) {
@@ -4574,7 +4602,7 @@ var Scanner = (function (_super) {
         this.tokenInfo.Text = null;
         this.tokenInfo.Value = null;
         if(this.isAtEndOfSource()) {
-            this.tokenInfo.Kind = 116 /* EndOfFileToken */ ;
+            this.tokenInfo.Kind = 117 /* EndOfFileToken */ ;
             this.tokenInfo.Text = "";
             return;
         }
@@ -4638,47 +4666,47 @@ var Scanner = (function (_super) {
 
             }
             case 44 /* comma */ : {
-                return this.advanceAndSetTokenKind(74 /* CommaToken */ );
+                return this.advanceAndSetTokenKind(75 /* CommaToken */ );
 
             }
             case 58 /* colon */ : {
-                return this.advanceAndSetTokenKind(101 /* ColonToken */ );
+                return this.advanceAndSetTokenKind(102 /* ColonToken */ );
 
             }
             case 59 /* semicolon */ : {
-                return this.advanceAndSetTokenKind(73 /* SemicolonToken */ );
+                return this.advanceAndSetTokenKind(74 /* SemicolonToken */ );
 
             }
             case 126 /* tilde */ : {
-                return this.advanceAndSetTokenKind(97 /* TildeToken */ );
+                return this.advanceAndSetTokenKind(98 /* TildeToken */ );
 
             }
             case 40 /* openParen */ : {
-                return this.advanceAndSetTokenKind(67 /* OpenParenToken */ );
+                return this.advanceAndSetTokenKind(68 /* OpenParenToken */ );
 
             }
             case 41 /* closeParen */ : {
-                return this.advanceAndSetTokenKind(68 /* CloseParenToken */ );
+                return this.advanceAndSetTokenKind(69 /* CloseParenToken */ );
 
             }
             case 123 /* openBrace */ : {
-                return this.advanceAndSetTokenKind(65 /* OpenBraceToken */ );
+                return this.advanceAndSetTokenKind(66 /* OpenBraceToken */ );
 
             }
             case 125 /* closeBrace */ : {
-                return this.advanceAndSetTokenKind(66 /* CloseBraceToken */ );
+                return this.advanceAndSetTokenKind(67 /* CloseBraceToken */ );
 
             }
             case 91 /* openBracket */ : {
-                return this.advanceAndSetTokenKind(69 /* OpenBracketToken */ );
+                return this.advanceAndSetTokenKind(70 /* OpenBracketToken */ );
 
             }
             case 93 /* closeBracket */ : {
-                return this.advanceAndSetTokenKind(70 /* CloseBracketToken */ );
+                return this.advanceAndSetTokenKind(71 /* CloseBracketToken */ );
 
             }
             case 63 /* question */ : {
-                return this.advanceAndSetTokenKind(100 /* QuestionToken */ );
+                return this.advanceAndSetTokenKind(101 /* QuestionToken */ );
 
             }
         }
@@ -4723,7 +4751,7 @@ var Scanner = (function (_super) {
                 } else {
                     var endIndex = this.absoluteIndex();
                     this.tokenInfo.Text = this.substring(startIndex, endIndex, true);
-                    this.tokenInfo.Kind = 7 /* IdentifierNameToken */ ;
+                    this.tokenInfo.Kind = 8 /* IdentifierNameToken */ ;
                     if(Scanner.isKeywordStartCharacter[firstCharacter]) {
                         this.tokenInfo.KeywordKind = SyntaxFacts.getTokenKind(this.tokenInfo.Text);
                     }
@@ -4743,7 +4771,7 @@ var Scanner = (function (_super) {
         }while(this.isIdentifierPart(this.peekCharOrUnicodeEscape()))
         var endIndex = this.absoluteIndex();
         this.tokenInfo.Text = this.substring(startIndex, endIndex, true);
-        this.tokenInfo.Kind = 7 /* IdentifierNameToken */ ;
+        this.tokenInfo.Kind = 8 /* IdentifierNameToken */ ;
         this.releaseAndUnpinAbsoluteIndex(startIndex);
     };
     Scanner.prototype.scanNumericLiteral = function () {
@@ -4780,7 +4808,7 @@ var Scanner = (function (_super) {
         }
         var endIndex = this.absoluteIndex();
         this.tokenInfo.Text = this.substring(startIndex, endIndex, false);
-        this.tokenInfo.Kind = 9 /* NumericLiteral */ ;
+        this.tokenInfo.Kind = 10 /* NumericLiteral */ ;
     };
     Scanner.prototype.scanHexNumericLiteral = function (start) {
         Debug.assert(this.isHexNumericLiteral());
@@ -4791,7 +4819,7 @@ var Scanner = (function (_super) {
         }
         var end = this.absoluteIndex();
         this.tokenInfo.Text = this.substring(start, end, false);
-        this.tokenInfo.Kind = 9 /* NumericLiteral */ ;
+        this.tokenInfo.Kind = 10 /* NumericLiteral */ ;
     };
     Scanner.prototype.isHexNumericLiteral = function () {
         if(this.currentCharCode() === 48 /* _0 */ ) {
@@ -4812,12 +4840,12 @@ var Scanner = (function (_super) {
         var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 78 /* GreaterThanEqualsToken */ ;
+            this.tokenInfo.Kind = 79 /* GreaterThanEqualsToken */ ;
         } else {
             if(character === 62 /* greaterThan */ ) {
                 this.scanGreaterThanGreaterThanToken();
             } else {
-                this.tokenInfo.Kind = 76 /* GreaterThanToken */ ;
+                this.tokenInfo.Kind = 77 /* GreaterThanToken */ ;
             }
         }
     };
@@ -4826,12 +4854,12 @@ var Scanner = (function (_super) {
         var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 108 /* GreaterThanGreaterThanEqualsToken */ ;
+            this.tokenInfo.Kind = 109 /* GreaterThanGreaterThanEqualsToken */ ;
         } else {
             if(character === 62 /* greaterThan */ ) {
                 this.scanGreaterThanGreaterThanGreaterThanToken();
             } else {
-                this.tokenInfo.Kind = 91 /* GreaterThanGreaterThanToken */ ;
+                this.tokenInfo.Kind = 92 /* GreaterThanGreaterThanToken */ ;
             }
         }
     };
@@ -4840,27 +4868,27 @@ var Scanner = (function (_super) {
         var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 109 /* GreaterThanGreaterThanGreaterThanEqualsToken */ ;
+            this.tokenInfo.Kind = 110 /* GreaterThanGreaterThanGreaterThanEqualsToken */ ;
         } else {
-            this.tokenInfo.Kind = 92 /* GreaterThanGreaterThanGreaterThanToken */ ;
+            this.tokenInfo.Kind = 93 /* GreaterThanGreaterThanGreaterThanToken */ ;
         }
     };
     Scanner.prototype.scanLessThanToken = function () {
         this.moveToNextItem();
         if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 77 /* LessThanEqualsToken */ ;
+            this.tokenInfo.Kind = 78 /* LessThanEqualsToken */ ;
         } else {
             if(this.currentCharCode() === 60 /* lessThan */ ) {
                 this.moveToNextItem();
                 if(this.currentCharCode() === 61 /* equals */ ) {
                     this.moveToNextItem();
-                    this.tokenInfo.Kind = 107 /* LessThanLessThanEqualsToken */ ;
+                    this.tokenInfo.Kind = 108 /* LessThanLessThanEqualsToken */ ;
                 } else {
-                    this.tokenInfo.Kind = 90 /* LessThanLessThanToken */ ;
+                    this.tokenInfo.Kind = 91 /* LessThanLessThanToken */ ;
                 }
             } else {
-                this.tokenInfo.Kind = 75 /* LessThanToken */ ;
+                this.tokenInfo.Kind = 76 /* LessThanToken */ ;
             }
         }
     };
@@ -4868,13 +4896,13 @@ var Scanner = (function (_super) {
         this.moveToNextItem();
         if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 111 /* BarEqualsToken */ ;
+            this.tokenInfo.Kind = 112 /* BarEqualsToken */ ;
         } else {
             if(this.currentCharCode() === 124 /* bar */ ) {
                 this.moveToNextItem();
-                this.tokenInfo.Kind = 99 /* BarBarToken */ ;
+                this.tokenInfo.Kind = 100 /* BarBarToken */ ;
             } else {
-                this.tokenInfo.Kind = 94 /* BarToken */ ;
+                this.tokenInfo.Kind = 95 /* BarToken */ ;
             }
         }
     };
@@ -4882,9 +4910,9 @@ var Scanner = (function (_super) {
         this.moveToNextItem();
         if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 112 /* CaretEqualsToken */ ;
+            this.tokenInfo.Kind = 113 /* CaretEqualsToken */ ;
         } else {
-            this.tokenInfo.Kind = 95 /* CaretToken */ ;
+            this.tokenInfo.Kind = 96 /* CaretToken */ ;
         }
     };
     Scanner.prototype.scanAmpersandToken = function () {
@@ -4892,13 +4920,13 @@ var Scanner = (function (_super) {
         var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 110 /* AmpersandEqualsToken */ ;
+            this.tokenInfo.Kind = 111 /* AmpersandEqualsToken */ ;
         } else {
             if(this.currentCharCode() === 38 /* ampersand */ ) {
                 this.moveToNextItem();
-                this.tokenInfo.Kind = 98 /* AmpersandAmpersandToken */ ;
+                this.tokenInfo.Kind = 99 /* AmpersandAmpersandToken */ ;
             } else {
-                this.tokenInfo.Kind = 93 /* AmpersandToken */ ;
+                this.tokenInfo.Kind = 94 /* AmpersandToken */ ;
             }
         }
     };
@@ -4906,9 +4934,9 @@ var Scanner = (function (_super) {
         this.moveToNextItem();
         if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 106 /* PercentEqualsToken */ ;
+            this.tokenInfo.Kind = 107 /* PercentEqualsToken */ ;
         } else {
-            this.tokenInfo.Kind = 87 /* PercentToken */ ;
+            this.tokenInfo.Kind = 88 /* PercentToken */ ;
         }
     };
     Scanner.prototype.scanMinusToken = function () {
@@ -4916,13 +4944,13 @@ var Scanner = (function (_super) {
         var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 104 /* MinusEqualsToken */ ;
+            this.tokenInfo.Kind = 105 /* MinusEqualsToken */ ;
         } else {
             if(character === 45 /* minus */ ) {
                 this.moveToNextItem();
-                this.tokenInfo.Kind = 89 /* MinusMinusToken */ ;
+                this.tokenInfo.Kind = 90 /* MinusMinusToken */ ;
             } else {
-                this.tokenInfo.Kind = 85 /* MinusToken */ ;
+                this.tokenInfo.Kind = 86 /* MinusToken */ ;
             }
         }
     };
@@ -4931,13 +4959,13 @@ var Scanner = (function (_super) {
         var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 103 /* PlusEqualsToken */ ;
+            this.tokenInfo.Kind = 104 /* PlusEqualsToken */ ;
         } else {
             if(character === 43 /* plus */ ) {
                 this.moveToNextItem();
-                this.tokenInfo.Kind = 88 /* PlusPlusToken */ ;
+                this.tokenInfo.Kind = 89 /* PlusPlusToken */ ;
             } else {
-                this.tokenInfo.Kind = 84 /* PlusToken */ ;
+                this.tokenInfo.Kind = 85 /* PlusToken */ ;
             }
         }
     };
@@ -4945,9 +4973,9 @@ var Scanner = (function (_super) {
         this.moveToNextItem();
         if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 105 /* AsteriskEqualsToken */ ;
+            this.tokenInfo.Kind = 106 /* AsteriskEqualsToken */ ;
         } else {
-            this.tokenInfo.Kind = 86 /* AsteriskToken */ ;
+            this.tokenInfo.Kind = 87 /* AsteriskToken */ ;
         }
     };
     Scanner.prototype.scanEqualsToken = function () {
@@ -4957,16 +4985,16 @@ var Scanner = (function (_super) {
             this.moveToNextItem();
             if(this.currentCharCode() === 61 /* equals */ ) {
                 this.moveToNextItem();
-                this.tokenInfo.Kind = 82 /* EqualsEqualsEqualsToken */ ;
+                this.tokenInfo.Kind = 83 /* EqualsEqualsEqualsToken */ ;
             } else {
-                this.tokenInfo.Kind = 79 /* EqualsEqualsToken */ ;
+                this.tokenInfo.Kind = 80 /* EqualsEqualsToken */ ;
             }
         } else {
             if(character === 62 /* greaterThan */ ) {
                 this.moveToNextItem();
-                this.tokenInfo.Kind = 80 /* EqualsGreaterThanToken */ ;
+                this.tokenInfo.Kind = 81 /* EqualsGreaterThanToken */ ;
             } else {
-                this.tokenInfo.Kind = 102 /* EqualsToken */ ;
+                this.tokenInfo.Kind = 103 /* EqualsToken */ ;
             }
         }
     };
@@ -4986,9 +5014,9 @@ var Scanner = (function (_super) {
         if(this.currentCharCode() === 46 /* dot */  && this.peekItemN(1) === 46 /* dot */ ) {
             this.moveToNextItem();
             this.moveToNextItem();
-            this.tokenInfo.Kind = 72 /* DotDotDotToken */ ;
+            this.tokenInfo.Kind = 73 /* DotDotDotToken */ ;
         } else {
-            this.tokenInfo.Kind = 71 /* DotToken */ ;
+            this.tokenInfo.Kind = 72 /* DotToken */ ;
         }
     };
     Scanner.prototype.scanSlashToken = function (allowRegularExpression) {
@@ -4998,9 +5026,9 @@ var Scanner = (function (_super) {
         this.moveToNextItem();
         if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 114 /* SlashEqualsToken */ ;
+            this.tokenInfo.Kind = 115 /* SlashEqualsToken */ ;
         } else {
-            this.tokenInfo.Kind = 113 /* SlashToken */ ;
+            this.tokenInfo.Kind = 114 /* SlashToken */ ;
         }
     };
     Scanner.prototype.tryScanRegularExpressionToken = function () {
@@ -5055,7 +5083,7 @@ var Scanner = (function (_super) {
                 this.moveToNextItem();
             }
             var endIndex = this.absoluteIndex();
-            this.tokenInfo.Kind = 8 /* RegularExpressionLiteral */ ;
+            this.tokenInfo.Kind = 9 /* RegularExpressionLiteral */ ;
             this.tokenInfo.Text = this.substring(startIndex, endIndex, false);
             return true;
         }finally {
@@ -5068,19 +5096,19 @@ var Scanner = (function (_super) {
             this.moveToNextItem();
             if(this.currentCharCode() === 61 /* equals */ ) {
                 this.moveToNextItem();
-                this.tokenInfo.Kind = 83 /* ExclamationEqualsEqualsToken */ ;
+                this.tokenInfo.Kind = 84 /* ExclamationEqualsEqualsToken */ ;
             } else {
-                this.tokenInfo.Kind = 81 /* ExclamationEqualsToken */ ;
+                this.tokenInfo.Kind = 82 /* ExclamationEqualsToken */ ;
             }
         } else {
-            this.tokenInfo.Kind = 96 /* ExclamationToken */ ;
+            this.tokenInfo.Kind = 97 /* ExclamationToken */ ;
         }
     };
     Scanner.prototype.scanDefaultCharacter = function (character, diagnostics) {
         var position = this.absoluteIndex();
         this.moveToNextItem();
         this.tokenInfo.Text = String.fromCharCode(character);
-        this.tokenInfo.Kind = 115 /* ErrorToken */ ;
+        this.tokenInfo.Kind = 116 /* ErrorToken */ ;
         var messageText = this.getErrorMessageText(this.tokenInfo.Text);
         diagnostics.push(new SyntaxDiagnostic(position, 1, 1 /* Unexpected_character_0 */ , [
             messageText
@@ -5188,7 +5216,7 @@ var Scanner = (function (_super) {
         }
         var endIndex = this.absoluteIndex();
         this.tokenInfo.Text = this.substring(startIndex, endIndex, true);
-        this.tokenInfo.Kind = 10 /* StringLiteral */ ;
+        this.tokenInfo.Kind = 11 /* StringLiteral */ ;
         this.releaseAndUnpinAbsoluteIndex(startIndex);
     };
     Scanner.prototype.isUnicodeOrHexEscape = function (character) {
@@ -5665,490 +5693,492 @@ var SyntaxKind;
     SyntaxKind.List = 1;
     SyntaxKind._map[2] = "SeparatedList";
     SyntaxKind.SeparatedList = 2;
-    SyntaxKind._map[3] = "WhitespaceTrivia";
-    SyntaxKind.WhitespaceTrivia = 3;
-    SyntaxKind._map[4] = "NewLineTrivia";
-    SyntaxKind.NewLineTrivia = 4;
-    SyntaxKind._map[5] = "MultiLineCommentTrivia";
-    SyntaxKind.MultiLineCommentTrivia = 5;
-    SyntaxKind._map[6] = "SingleLineCommentTrivia";
-    SyntaxKind.SingleLineCommentTrivia = 6;
-    SyntaxKind._map[7] = "IdentifierNameToken";
-    SyntaxKind.IdentifierNameToken = 7;
-    SyntaxKind._map[8] = "RegularExpressionLiteral";
-    SyntaxKind.RegularExpressionLiteral = 8;
-    SyntaxKind._map[9] = "NumericLiteral";
-    SyntaxKind.NumericLiteral = 9;
-    SyntaxKind._map[10] = "StringLiteral";
-    SyntaxKind.StringLiteral = 10;
-    SyntaxKind._map[11] = "BreakKeyword";
-    SyntaxKind.BreakKeyword = 11;
-    SyntaxKind._map[12] = "CaseKeyword";
-    SyntaxKind.CaseKeyword = 12;
-    SyntaxKind._map[13] = "CatchKeyword";
-    SyntaxKind.CatchKeyword = 13;
-    SyntaxKind._map[14] = "ContinueKeyword";
-    SyntaxKind.ContinueKeyword = 14;
-    SyntaxKind._map[15] = "DebuggerKeyword";
-    SyntaxKind.DebuggerKeyword = 15;
-    SyntaxKind._map[16] = "DefaultKeyword";
-    SyntaxKind.DefaultKeyword = 16;
-    SyntaxKind._map[17] = "DeleteKeyword";
-    SyntaxKind.DeleteKeyword = 17;
-    SyntaxKind._map[18] = "DoKeyword";
-    SyntaxKind.DoKeyword = 18;
-    SyntaxKind._map[19] = "ElseKeyword";
-    SyntaxKind.ElseKeyword = 19;
-    SyntaxKind._map[20] = "FalseKeyword";
-    SyntaxKind.FalseKeyword = 20;
-    SyntaxKind._map[21] = "FinallyKeyword";
-    SyntaxKind.FinallyKeyword = 21;
-    SyntaxKind._map[22] = "ForKeyword";
-    SyntaxKind.ForKeyword = 22;
-    SyntaxKind._map[23] = "FunctionKeyword";
-    SyntaxKind.FunctionKeyword = 23;
-    SyntaxKind._map[24] = "IfKeyword";
-    SyntaxKind.IfKeyword = 24;
-    SyntaxKind._map[25] = "InKeyword";
-    SyntaxKind.InKeyword = 25;
-    SyntaxKind._map[26] = "InstanceOfKeyword";
-    SyntaxKind.InstanceOfKeyword = 26;
-    SyntaxKind._map[27] = "NewKeyword";
-    SyntaxKind.NewKeyword = 27;
-    SyntaxKind._map[28] = "NullKeyword";
-    SyntaxKind.NullKeyword = 28;
-    SyntaxKind._map[29] = "ReturnKeyword";
-    SyntaxKind.ReturnKeyword = 29;
-    SyntaxKind._map[30] = "SwitchKeyword";
-    SyntaxKind.SwitchKeyword = 30;
-    SyntaxKind._map[31] = "ThisKeyword";
-    SyntaxKind.ThisKeyword = 31;
-    SyntaxKind._map[32] = "ThrowKeyword";
-    SyntaxKind.ThrowKeyword = 32;
-    SyntaxKind._map[33] = "TrueKeyword";
-    SyntaxKind.TrueKeyword = 33;
-    SyntaxKind._map[34] = "TryKeyword";
-    SyntaxKind.TryKeyword = 34;
-    SyntaxKind._map[35] = "TypeOfKeyword";
-    SyntaxKind.TypeOfKeyword = 35;
-    SyntaxKind._map[36] = "VarKeyword";
-    SyntaxKind.VarKeyword = 36;
-    SyntaxKind._map[37] = "VoidKeyword";
-    SyntaxKind.VoidKeyword = 37;
-    SyntaxKind._map[38] = "WhileKeyword";
-    SyntaxKind.WhileKeyword = 38;
-    SyntaxKind._map[39] = "WithKeyword";
-    SyntaxKind.WithKeyword = 39;
-    SyntaxKind._map[40] = "ClassKeyword";
-    SyntaxKind.ClassKeyword = 40;
-    SyntaxKind._map[41] = "ConstKeyword";
-    SyntaxKind.ConstKeyword = 41;
-    SyntaxKind._map[42] = "EnumKeyword";
-    SyntaxKind.EnumKeyword = 42;
-    SyntaxKind._map[43] = "ExportKeyword";
-    SyntaxKind.ExportKeyword = 43;
-    SyntaxKind._map[44] = "ExtendsKeyword";
-    SyntaxKind.ExtendsKeyword = 44;
-    SyntaxKind._map[45] = "ImportKeyword";
-    SyntaxKind.ImportKeyword = 45;
-    SyntaxKind._map[46] = "SuperKeyword";
-    SyntaxKind.SuperKeyword = 46;
-    SyntaxKind._map[47] = "ImplementsKeyword";
-    SyntaxKind.ImplementsKeyword = 47;
-    SyntaxKind._map[48] = "InterfaceKeyword";
-    SyntaxKind.InterfaceKeyword = 48;
-    SyntaxKind._map[49] = "LetKeyword";
-    SyntaxKind.LetKeyword = 49;
-    SyntaxKind._map[50] = "PackageKeyword";
-    SyntaxKind.PackageKeyword = 50;
-    SyntaxKind._map[51] = "PrivateKeyword";
-    SyntaxKind.PrivateKeyword = 51;
-    SyntaxKind._map[52] = "ProtectedKeyword";
-    SyntaxKind.ProtectedKeyword = 52;
-    SyntaxKind._map[53] = "PublicKeyword";
-    SyntaxKind.PublicKeyword = 53;
-    SyntaxKind._map[54] = "StaticKeyword";
-    SyntaxKind.StaticKeyword = 54;
-    SyntaxKind._map[55] = "YieldKeyword";
-    SyntaxKind.YieldKeyword = 55;
-    SyntaxKind._map[56] = "AnyKeyword";
-    SyntaxKind.AnyKeyword = 56;
-    SyntaxKind._map[57] = "BoolKeyword";
-    SyntaxKind.BoolKeyword = 57;
-    SyntaxKind._map[58] = "ConstructorKeyword";
-    SyntaxKind.ConstructorKeyword = 58;
-    SyntaxKind._map[59] = "DeclareKeyword";
-    SyntaxKind.DeclareKeyword = 59;
-    SyntaxKind._map[60] = "GetKeyword";
-    SyntaxKind.GetKeyword = 60;
-    SyntaxKind._map[61] = "ModuleKeyword";
-    SyntaxKind.ModuleKeyword = 61;
-    SyntaxKind._map[62] = "NumberKeyword";
-    SyntaxKind.NumberKeyword = 62;
-    SyntaxKind._map[63] = "SetKeyword";
-    SyntaxKind.SetKeyword = 63;
-    SyntaxKind._map[64] = "StringKeyword";
-    SyntaxKind.StringKeyword = 64;
-    SyntaxKind._map[65] = "OpenBraceToken";
-    SyntaxKind.OpenBraceToken = 65;
-    SyntaxKind._map[66] = "CloseBraceToken";
-    SyntaxKind.CloseBraceToken = 66;
-    SyntaxKind._map[67] = "OpenParenToken";
-    SyntaxKind.OpenParenToken = 67;
-    SyntaxKind._map[68] = "CloseParenToken";
-    SyntaxKind.CloseParenToken = 68;
-    SyntaxKind._map[69] = "OpenBracketToken";
-    SyntaxKind.OpenBracketToken = 69;
-    SyntaxKind._map[70] = "CloseBracketToken";
-    SyntaxKind.CloseBracketToken = 70;
-    SyntaxKind._map[71] = "DotToken";
-    SyntaxKind.DotToken = 71;
-    SyntaxKind._map[72] = "DotDotDotToken";
-    SyntaxKind.DotDotDotToken = 72;
-    SyntaxKind._map[73] = "SemicolonToken";
-    SyntaxKind.SemicolonToken = 73;
-    SyntaxKind._map[74] = "CommaToken";
-    SyntaxKind.CommaToken = 74;
-    SyntaxKind._map[75] = "LessThanToken";
-    SyntaxKind.LessThanToken = 75;
-    SyntaxKind._map[76] = "GreaterThanToken";
-    SyntaxKind.GreaterThanToken = 76;
-    SyntaxKind._map[77] = "LessThanEqualsToken";
-    SyntaxKind.LessThanEqualsToken = 77;
-    SyntaxKind._map[78] = "GreaterThanEqualsToken";
-    SyntaxKind.GreaterThanEqualsToken = 78;
-    SyntaxKind._map[79] = "EqualsEqualsToken";
-    SyntaxKind.EqualsEqualsToken = 79;
-    SyntaxKind._map[80] = "EqualsGreaterThanToken";
-    SyntaxKind.EqualsGreaterThanToken = 80;
-    SyntaxKind._map[81] = "ExclamationEqualsToken";
-    SyntaxKind.ExclamationEqualsToken = 81;
-    SyntaxKind._map[82] = "EqualsEqualsEqualsToken";
-    SyntaxKind.EqualsEqualsEqualsToken = 82;
-    SyntaxKind._map[83] = "ExclamationEqualsEqualsToken";
-    SyntaxKind.ExclamationEqualsEqualsToken = 83;
-    SyntaxKind._map[84] = "PlusToken";
-    SyntaxKind.PlusToken = 84;
-    SyntaxKind._map[85] = "MinusToken";
-    SyntaxKind.MinusToken = 85;
-    SyntaxKind._map[86] = "AsteriskToken";
-    SyntaxKind.AsteriskToken = 86;
-    SyntaxKind._map[87] = "PercentToken";
-    SyntaxKind.PercentToken = 87;
-    SyntaxKind._map[88] = "PlusPlusToken";
-    SyntaxKind.PlusPlusToken = 88;
-    SyntaxKind._map[89] = "MinusMinusToken";
-    SyntaxKind.MinusMinusToken = 89;
-    SyntaxKind._map[90] = "LessThanLessThanToken";
-    SyntaxKind.LessThanLessThanToken = 90;
-    SyntaxKind._map[91] = "GreaterThanGreaterThanToken";
-    SyntaxKind.GreaterThanGreaterThanToken = 91;
-    SyntaxKind._map[92] = "GreaterThanGreaterThanGreaterThanToken";
-    SyntaxKind.GreaterThanGreaterThanGreaterThanToken = 92;
-    SyntaxKind._map[93] = "AmpersandToken";
-    SyntaxKind.AmpersandToken = 93;
-    SyntaxKind._map[94] = "BarToken";
-    SyntaxKind.BarToken = 94;
-    SyntaxKind._map[95] = "CaretToken";
-    SyntaxKind.CaretToken = 95;
-    SyntaxKind._map[96] = "ExclamationToken";
-    SyntaxKind.ExclamationToken = 96;
-    SyntaxKind._map[97] = "TildeToken";
-    SyntaxKind.TildeToken = 97;
-    SyntaxKind._map[98] = "AmpersandAmpersandToken";
-    SyntaxKind.AmpersandAmpersandToken = 98;
-    SyntaxKind._map[99] = "BarBarToken";
-    SyntaxKind.BarBarToken = 99;
-    SyntaxKind._map[100] = "QuestionToken";
-    SyntaxKind.QuestionToken = 100;
-    SyntaxKind._map[101] = "ColonToken";
-    SyntaxKind.ColonToken = 101;
-    SyntaxKind._map[102] = "EqualsToken";
-    SyntaxKind.EqualsToken = 102;
-    SyntaxKind._map[103] = "PlusEqualsToken";
-    SyntaxKind.PlusEqualsToken = 103;
-    SyntaxKind._map[104] = "MinusEqualsToken";
-    SyntaxKind.MinusEqualsToken = 104;
-    SyntaxKind._map[105] = "AsteriskEqualsToken";
-    SyntaxKind.AsteriskEqualsToken = 105;
-    SyntaxKind._map[106] = "PercentEqualsToken";
-    SyntaxKind.PercentEqualsToken = 106;
-    SyntaxKind._map[107] = "LessThanLessThanEqualsToken";
-    SyntaxKind.LessThanLessThanEqualsToken = 107;
-    SyntaxKind._map[108] = "GreaterThanGreaterThanEqualsToken";
-    SyntaxKind.GreaterThanGreaterThanEqualsToken = 108;
-    SyntaxKind._map[109] = "GreaterThanGreaterThanGreaterThanEqualsToken";
-    SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken = 109;
-    SyntaxKind._map[110] = "AmpersandEqualsToken";
-    SyntaxKind.AmpersandEqualsToken = 110;
-    SyntaxKind._map[111] = "BarEqualsToken";
-    SyntaxKind.BarEqualsToken = 111;
-    SyntaxKind._map[112] = "CaretEqualsToken";
-    SyntaxKind.CaretEqualsToken = 112;
-    SyntaxKind._map[113] = "SlashToken";
-    SyntaxKind.SlashToken = 113;
-    SyntaxKind._map[114] = "SlashEqualsToken";
-    SyntaxKind.SlashEqualsToken = 114;
-    SyntaxKind._map[115] = "ErrorToken";
-    SyntaxKind.ErrorToken = 115;
-    SyntaxKind._map[116] = "EndOfFileToken";
-    SyntaxKind.EndOfFileToken = 116;
-    SyntaxKind._map[117] = "SourceUnit";
-    SyntaxKind.SourceUnit = 117;
-    SyntaxKind._map[118] = "IdentifierName";
-    SyntaxKind.IdentifierName = 118;
-    SyntaxKind._map[119] = "QualifiedName";
-    SyntaxKind.QualifiedName = 119;
-    SyntaxKind._map[120] = "ObjectType";
-    SyntaxKind.ObjectType = 120;
-    SyntaxKind._map[121] = "PredefinedType";
-    SyntaxKind.PredefinedType = 121;
-    SyntaxKind._map[122] = "FunctionType";
-    SyntaxKind.FunctionType = 122;
-    SyntaxKind._map[123] = "ArrayType";
-    SyntaxKind.ArrayType = 123;
-    SyntaxKind._map[124] = "ConstructorType";
-    SyntaxKind.ConstructorType = 124;
-    SyntaxKind._map[125] = "InterfaceDeclaration";
-    SyntaxKind.InterfaceDeclaration = 125;
-    SyntaxKind._map[126] = "FunctionDeclaration";
-    SyntaxKind.FunctionDeclaration = 126;
-    SyntaxKind._map[127] = "ModuleDeclaration";
-    SyntaxKind.ModuleDeclaration = 127;
-    SyntaxKind._map[128] = "ClassDeclaration";
-    SyntaxKind.ClassDeclaration = 128;
-    SyntaxKind._map[129] = "EnumDeclaration";
-    SyntaxKind.EnumDeclaration = 129;
-    SyntaxKind._map[130] = "ImportDeclaration";
-    SyntaxKind.ImportDeclaration = 130;
-    SyntaxKind._map[131] = "MemberFunctionDeclaration";
-    SyntaxKind.MemberFunctionDeclaration = 131;
-    SyntaxKind._map[132] = "MemberVariableDeclaration";
-    SyntaxKind.MemberVariableDeclaration = 132;
-    SyntaxKind._map[133] = "ConstructorDeclaration";
-    SyntaxKind.ConstructorDeclaration = 133;
-    SyntaxKind._map[134] = "GetMemberAccessorDeclaration";
-    SyntaxKind.GetMemberAccessorDeclaration = 134;
-    SyntaxKind._map[135] = "SetMemberAccessorDeclaration";
-    SyntaxKind.SetMemberAccessorDeclaration = 135;
-    SyntaxKind._map[136] = "Block";
-    SyntaxKind.Block = 136;
-    SyntaxKind._map[137] = "IfStatement";
-    SyntaxKind.IfStatement = 137;
-    SyntaxKind._map[138] = "VariableStatement";
-    SyntaxKind.VariableStatement = 138;
-    SyntaxKind._map[139] = "ExpressionStatement";
-    SyntaxKind.ExpressionStatement = 139;
-    SyntaxKind._map[140] = "ReturnStatement";
-    SyntaxKind.ReturnStatement = 140;
-    SyntaxKind._map[141] = "SwitchStatement";
-    SyntaxKind.SwitchStatement = 141;
-    SyntaxKind._map[142] = "BreakStatement";
-    SyntaxKind.BreakStatement = 142;
-    SyntaxKind._map[143] = "ContinueStatement";
-    SyntaxKind.ContinueStatement = 143;
-    SyntaxKind._map[144] = "ForStatement";
-    SyntaxKind.ForStatement = 144;
-    SyntaxKind._map[145] = "ForInStatement";
-    SyntaxKind.ForInStatement = 145;
-    SyntaxKind._map[146] = "EmptyStatement";
-    SyntaxKind.EmptyStatement = 146;
-    SyntaxKind._map[147] = "ThrowStatement";
-    SyntaxKind.ThrowStatement = 147;
-    SyntaxKind._map[148] = "WhileStatement";
-    SyntaxKind.WhileStatement = 148;
-    SyntaxKind._map[149] = "TryStatement";
-    SyntaxKind.TryStatement = 149;
-    SyntaxKind._map[150] = "LabeledStatement";
-    SyntaxKind.LabeledStatement = 150;
-    SyntaxKind._map[151] = "DoStatement";
-    SyntaxKind.DoStatement = 151;
-    SyntaxKind._map[152] = "DebuggerStatement";
-    SyntaxKind.DebuggerStatement = 152;
-    SyntaxKind._map[153] = "WithStatement";
-    SyntaxKind.WithStatement = 153;
-    SyntaxKind._map[154] = "PlusExpression";
-    SyntaxKind.PlusExpression = 154;
-    SyntaxKind._map[155] = "NegateExpression";
-    SyntaxKind.NegateExpression = 155;
-    SyntaxKind._map[156] = "BitwiseNotExpression";
-    SyntaxKind.BitwiseNotExpression = 156;
-    SyntaxKind._map[157] = "LogicalNotExpression";
-    SyntaxKind.LogicalNotExpression = 157;
-    SyntaxKind._map[158] = "PreIncrementExpression";
-    SyntaxKind.PreIncrementExpression = 158;
-    SyntaxKind._map[159] = "PreDecrementExpression";
-    SyntaxKind.PreDecrementExpression = 159;
-    SyntaxKind._map[160] = "DeleteExpression";
-    SyntaxKind.DeleteExpression = 160;
-    SyntaxKind._map[161] = "TypeOfExpression";
-    SyntaxKind.TypeOfExpression = 161;
-    SyntaxKind._map[162] = "VoidExpression";
-    SyntaxKind.VoidExpression = 162;
-    SyntaxKind._map[163] = "BooleanLiteralExpression";
-    SyntaxKind.BooleanLiteralExpression = 163;
-    SyntaxKind._map[164] = "NullLiteralExpression";
-    SyntaxKind.NullLiteralExpression = 164;
-    SyntaxKind._map[165] = "NumericLiteralExpression";
-    SyntaxKind.NumericLiteralExpression = 165;
-    SyntaxKind._map[166] = "RegularExpressionLiteralExpression";
-    SyntaxKind.RegularExpressionLiteralExpression = 166;
-    SyntaxKind._map[167] = "StringLiteralExpression";
-    SyntaxKind.StringLiteralExpression = 167;
-    SyntaxKind._map[168] = "CommaExpression";
-    SyntaxKind.CommaExpression = 168;
-    SyntaxKind._map[169] = "AssignmentExpression";
-    SyntaxKind.AssignmentExpression = 169;
-    SyntaxKind._map[170] = "AddAssignmentExpression";
-    SyntaxKind.AddAssignmentExpression = 170;
-    SyntaxKind._map[171] = "SubtractAssignmentExpression";
-    SyntaxKind.SubtractAssignmentExpression = 171;
-    SyntaxKind._map[172] = "MultiplyAssignmentExpression";
-    SyntaxKind.MultiplyAssignmentExpression = 172;
-    SyntaxKind._map[173] = "DivideAssignmentExpression";
-    SyntaxKind.DivideAssignmentExpression = 173;
-    SyntaxKind._map[174] = "ModuloAssignmentExpression";
-    SyntaxKind.ModuloAssignmentExpression = 174;
-    SyntaxKind._map[175] = "AndAssignmentExpression";
-    SyntaxKind.AndAssignmentExpression = 175;
-    SyntaxKind._map[176] = "ExclusiveOrAssignmentExpression";
-    SyntaxKind.ExclusiveOrAssignmentExpression = 176;
-    SyntaxKind._map[177] = "OrAssignmentExpression";
-    SyntaxKind.OrAssignmentExpression = 177;
-    SyntaxKind._map[178] = "LeftShiftAssignmentExpression";
-    SyntaxKind.LeftShiftAssignmentExpression = 178;
-    SyntaxKind._map[179] = "SignedRightShiftAssignmentExpression";
-    SyntaxKind.SignedRightShiftAssignmentExpression = 179;
-    SyntaxKind._map[180] = "UnsignedRightShiftAssignmentExpression";
-    SyntaxKind.UnsignedRightShiftAssignmentExpression = 180;
-    SyntaxKind._map[181] = "ConditionalExpression";
-    SyntaxKind.ConditionalExpression = 181;
-    SyntaxKind._map[182] = "LogicalOrExpression";
-    SyntaxKind.LogicalOrExpression = 182;
-    SyntaxKind._map[183] = "LogicalAndExpression";
-    SyntaxKind.LogicalAndExpression = 183;
-    SyntaxKind._map[184] = "BitwiseOrExpression";
-    SyntaxKind.BitwiseOrExpression = 184;
-    SyntaxKind._map[185] = "BitwiseExclusiveOrExpression";
-    SyntaxKind.BitwiseExclusiveOrExpression = 185;
-    SyntaxKind._map[186] = "BitwiseAndExpression";
-    SyntaxKind.BitwiseAndExpression = 186;
-    SyntaxKind._map[187] = "EqualsWithTypeConversionExpression";
-    SyntaxKind.EqualsWithTypeConversionExpression = 187;
-    SyntaxKind._map[188] = "NotEqualsWithTypeConversionExpression";
-    SyntaxKind.NotEqualsWithTypeConversionExpression = 188;
-    SyntaxKind._map[189] = "EqualsExpression";
-    SyntaxKind.EqualsExpression = 189;
-    SyntaxKind._map[190] = "NotEqualsExpression";
-    SyntaxKind.NotEqualsExpression = 190;
-    SyntaxKind._map[191] = "LessThanExpression";
-    SyntaxKind.LessThanExpression = 191;
-    SyntaxKind._map[192] = "GreaterThanExpression";
-    SyntaxKind.GreaterThanExpression = 192;
-    SyntaxKind._map[193] = "LessThanOrEqualExpression";
-    SyntaxKind.LessThanOrEqualExpression = 193;
-    SyntaxKind._map[194] = "GreaterThanOrEqualExpression";
-    SyntaxKind.GreaterThanOrEqualExpression = 194;
-    SyntaxKind._map[195] = "InstanceOfExpression";
-    SyntaxKind.InstanceOfExpression = 195;
-    SyntaxKind._map[196] = "InExpression";
-    SyntaxKind.InExpression = 196;
-    SyntaxKind._map[197] = "LeftShiftExpression";
-    SyntaxKind.LeftShiftExpression = 197;
-    SyntaxKind._map[198] = "SignedRightShiftExpression";
-    SyntaxKind.SignedRightShiftExpression = 198;
-    SyntaxKind._map[199] = "UnsignedRightShiftExpression";
-    SyntaxKind.UnsignedRightShiftExpression = 199;
-    SyntaxKind._map[200] = "MultiplyExpression";
-    SyntaxKind.MultiplyExpression = 200;
-    SyntaxKind._map[201] = "DivideExpression";
-    SyntaxKind.DivideExpression = 201;
-    SyntaxKind._map[202] = "ModuloExpression";
-    SyntaxKind.ModuloExpression = 202;
-    SyntaxKind._map[203] = "AddExpression";
-    SyntaxKind.AddExpression = 203;
-    SyntaxKind._map[204] = "SubtractExpression";
-    SyntaxKind.SubtractExpression = 204;
-    SyntaxKind._map[205] = "PostIncrementExpression";
-    SyntaxKind.PostIncrementExpression = 205;
-    SyntaxKind._map[206] = "PostDecrementExpression";
-    SyntaxKind.PostDecrementExpression = 206;
-    SyntaxKind._map[207] = "MemberAccessExpression";
-    SyntaxKind.MemberAccessExpression = 207;
-    SyntaxKind._map[208] = "InvocationExpression";
-    SyntaxKind.InvocationExpression = 208;
-    SyntaxKind._map[209] = "ThisExpression";
-    SyntaxKind.ThisExpression = 209;
-    SyntaxKind._map[210] = "ArrayLiteralExpression";
-    SyntaxKind.ArrayLiteralExpression = 210;
-    SyntaxKind._map[211] = "ObjectLiteralExpression";
-    SyntaxKind.ObjectLiteralExpression = 211;
-    SyntaxKind._map[212] = "ObjectCreationExpression";
-    SyntaxKind.ObjectCreationExpression = 212;
-    SyntaxKind._map[213] = "ParenthesizedExpression";
-    SyntaxKind.ParenthesizedExpression = 213;
-    SyntaxKind._map[214] = "ParenthesizedArrowFunctionExpression";
-    SyntaxKind.ParenthesizedArrowFunctionExpression = 214;
-    SyntaxKind._map[215] = "SimpleArrowFunctionExpression";
-    SyntaxKind.SimpleArrowFunctionExpression = 215;
-    SyntaxKind._map[216] = "CastExpression";
-    SyntaxKind.CastExpression = 216;
-    SyntaxKind._map[217] = "ElementAccessExpression";
-    SyntaxKind.ElementAccessExpression = 217;
-    SyntaxKind._map[218] = "FunctionExpression";
-    SyntaxKind.FunctionExpression = 218;
-    SyntaxKind._map[219] = "SuperExpression";
-    SyntaxKind.SuperExpression = 219;
-    SyntaxKind._map[220] = "OmittedExpression";
-    SyntaxKind.OmittedExpression = 220;
-    SyntaxKind._map[221] = "VariableDeclaration";
-    SyntaxKind.VariableDeclaration = 221;
-    SyntaxKind._map[222] = "VariableDeclarator";
-    SyntaxKind.VariableDeclarator = 222;
-    SyntaxKind._map[223] = "ParameterList";
-    SyntaxKind.ParameterList = 223;
-    SyntaxKind._map[224] = "ArgumentList";
-    SyntaxKind.ArgumentList = 224;
-    SyntaxKind._map[225] = "ImplementsClause";
-    SyntaxKind.ImplementsClause = 225;
-    SyntaxKind._map[226] = "ExtendsClause";
-    SyntaxKind.ExtendsClause = 226;
-    SyntaxKind._map[227] = "EqualsValueClause";
-    SyntaxKind.EqualsValueClause = 227;
-    SyntaxKind._map[228] = "CaseSwitchClause";
-    SyntaxKind.CaseSwitchClause = 228;
-    SyntaxKind._map[229] = "DefaultSwitchClause";
-    SyntaxKind.DefaultSwitchClause = 229;
-    SyntaxKind._map[230] = "ElseClause";
-    SyntaxKind.ElseClause = 230;
-    SyntaxKind._map[231] = "CatchClause";
-    SyntaxKind.CatchClause = 231;
-    SyntaxKind._map[232] = "FinallyClause";
-    SyntaxKind.FinallyClause = 232;
-    SyntaxKind._map[233] = "PropertySignature";
-    SyntaxKind.PropertySignature = 233;
-    SyntaxKind._map[234] = "CallSignature";
-    SyntaxKind.CallSignature = 234;
-    SyntaxKind._map[235] = "ConstructSignature";
-    SyntaxKind.ConstructSignature = 235;
-    SyntaxKind._map[236] = "IndexSignature";
-    SyntaxKind.IndexSignature = 236;
-    SyntaxKind._map[237] = "FunctionSignature";
-    SyntaxKind.FunctionSignature = 237;
-    SyntaxKind._map[238] = "Parameter";
-    SyntaxKind.Parameter = 238;
-    SyntaxKind._map[239] = "TypeAnnotation";
-    SyntaxKind.TypeAnnotation = 239;
-    SyntaxKind._map[240] = "SimplePropertyAssignment";
-    SyntaxKind.SimplePropertyAssignment = 240;
-    SyntaxKind._map[241] = "ExternalModuleReference";
-    SyntaxKind.ExternalModuleReference = 241;
-    SyntaxKind._map[242] = "ModuleNameModuleReference";
-    SyntaxKind.ModuleNameModuleReference = 242;
-    SyntaxKind._map[243] = "GetAccessorPropertyAssignment";
-    SyntaxKind.GetAccessorPropertyAssignment = 243;
-    SyntaxKind._map[244] = "SetAccessorPropertyAssignment";
-    SyntaxKind.SetAccessorPropertyAssignment = 244;
+    SyntaxKind._map[3] = "TriviaList";
+    SyntaxKind.TriviaList = 3;
+    SyntaxKind._map[4] = "WhitespaceTrivia";
+    SyntaxKind.WhitespaceTrivia = 4;
+    SyntaxKind._map[5] = "NewLineTrivia";
+    SyntaxKind.NewLineTrivia = 5;
+    SyntaxKind._map[6] = "MultiLineCommentTrivia";
+    SyntaxKind.MultiLineCommentTrivia = 6;
+    SyntaxKind._map[7] = "SingleLineCommentTrivia";
+    SyntaxKind.SingleLineCommentTrivia = 7;
+    SyntaxKind._map[8] = "IdentifierNameToken";
+    SyntaxKind.IdentifierNameToken = 8;
+    SyntaxKind._map[9] = "RegularExpressionLiteral";
+    SyntaxKind.RegularExpressionLiteral = 9;
+    SyntaxKind._map[10] = "NumericLiteral";
+    SyntaxKind.NumericLiteral = 10;
+    SyntaxKind._map[11] = "StringLiteral";
+    SyntaxKind.StringLiteral = 11;
+    SyntaxKind._map[12] = "BreakKeyword";
+    SyntaxKind.BreakKeyword = 12;
+    SyntaxKind._map[13] = "CaseKeyword";
+    SyntaxKind.CaseKeyword = 13;
+    SyntaxKind._map[14] = "CatchKeyword";
+    SyntaxKind.CatchKeyword = 14;
+    SyntaxKind._map[15] = "ContinueKeyword";
+    SyntaxKind.ContinueKeyword = 15;
+    SyntaxKind._map[16] = "DebuggerKeyword";
+    SyntaxKind.DebuggerKeyword = 16;
+    SyntaxKind._map[17] = "DefaultKeyword";
+    SyntaxKind.DefaultKeyword = 17;
+    SyntaxKind._map[18] = "DeleteKeyword";
+    SyntaxKind.DeleteKeyword = 18;
+    SyntaxKind._map[19] = "DoKeyword";
+    SyntaxKind.DoKeyword = 19;
+    SyntaxKind._map[20] = "ElseKeyword";
+    SyntaxKind.ElseKeyword = 20;
+    SyntaxKind._map[21] = "FalseKeyword";
+    SyntaxKind.FalseKeyword = 21;
+    SyntaxKind._map[22] = "FinallyKeyword";
+    SyntaxKind.FinallyKeyword = 22;
+    SyntaxKind._map[23] = "ForKeyword";
+    SyntaxKind.ForKeyword = 23;
+    SyntaxKind._map[24] = "FunctionKeyword";
+    SyntaxKind.FunctionKeyword = 24;
+    SyntaxKind._map[25] = "IfKeyword";
+    SyntaxKind.IfKeyword = 25;
+    SyntaxKind._map[26] = "InKeyword";
+    SyntaxKind.InKeyword = 26;
+    SyntaxKind._map[27] = "InstanceOfKeyword";
+    SyntaxKind.InstanceOfKeyword = 27;
+    SyntaxKind._map[28] = "NewKeyword";
+    SyntaxKind.NewKeyword = 28;
+    SyntaxKind._map[29] = "NullKeyword";
+    SyntaxKind.NullKeyword = 29;
+    SyntaxKind._map[30] = "ReturnKeyword";
+    SyntaxKind.ReturnKeyword = 30;
+    SyntaxKind._map[31] = "SwitchKeyword";
+    SyntaxKind.SwitchKeyword = 31;
+    SyntaxKind._map[32] = "ThisKeyword";
+    SyntaxKind.ThisKeyword = 32;
+    SyntaxKind._map[33] = "ThrowKeyword";
+    SyntaxKind.ThrowKeyword = 33;
+    SyntaxKind._map[34] = "TrueKeyword";
+    SyntaxKind.TrueKeyword = 34;
+    SyntaxKind._map[35] = "TryKeyword";
+    SyntaxKind.TryKeyword = 35;
+    SyntaxKind._map[36] = "TypeOfKeyword";
+    SyntaxKind.TypeOfKeyword = 36;
+    SyntaxKind._map[37] = "VarKeyword";
+    SyntaxKind.VarKeyword = 37;
+    SyntaxKind._map[38] = "VoidKeyword";
+    SyntaxKind.VoidKeyword = 38;
+    SyntaxKind._map[39] = "WhileKeyword";
+    SyntaxKind.WhileKeyword = 39;
+    SyntaxKind._map[40] = "WithKeyword";
+    SyntaxKind.WithKeyword = 40;
+    SyntaxKind._map[41] = "ClassKeyword";
+    SyntaxKind.ClassKeyword = 41;
+    SyntaxKind._map[42] = "ConstKeyword";
+    SyntaxKind.ConstKeyword = 42;
+    SyntaxKind._map[43] = "EnumKeyword";
+    SyntaxKind.EnumKeyword = 43;
+    SyntaxKind._map[44] = "ExportKeyword";
+    SyntaxKind.ExportKeyword = 44;
+    SyntaxKind._map[45] = "ExtendsKeyword";
+    SyntaxKind.ExtendsKeyword = 45;
+    SyntaxKind._map[46] = "ImportKeyword";
+    SyntaxKind.ImportKeyword = 46;
+    SyntaxKind._map[47] = "SuperKeyword";
+    SyntaxKind.SuperKeyword = 47;
+    SyntaxKind._map[48] = "ImplementsKeyword";
+    SyntaxKind.ImplementsKeyword = 48;
+    SyntaxKind._map[49] = "InterfaceKeyword";
+    SyntaxKind.InterfaceKeyword = 49;
+    SyntaxKind._map[50] = "LetKeyword";
+    SyntaxKind.LetKeyword = 50;
+    SyntaxKind._map[51] = "PackageKeyword";
+    SyntaxKind.PackageKeyword = 51;
+    SyntaxKind._map[52] = "PrivateKeyword";
+    SyntaxKind.PrivateKeyword = 52;
+    SyntaxKind._map[53] = "ProtectedKeyword";
+    SyntaxKind.ProtectedKeyword = 53;
+    SyntaxKind._map[54] = "PublicKeyword";
+    SyntaxKind.PublicKeyword = 54;
+    SyntaxKind._map[55] = "StaticKeyword";
+    SyntaxKind.StaticKeyword = 55;
+    SyntaxKind._map[56] = "YieldKeyword";
+    SyntaxKind.YieldKeyword = 56;
+    SyntaxKind._map[57] = "AnyKeyword";
+    SyntaxKind.AnyKeyword = 57;
+    SyntaxKind._map[58] = "BoolKeyword";
+    SyntaxKind.BoolKeyword = 58;
+    SyntaxKind._map[59] = "ConstructorKeyword";
+    SyntaxKind.ConstructorKeyword = 59;
+    SyntaxKind._map[60] = "DeclareKeyword";
+    SyntaxKind.DeclareKeyword = 60;
+    SyntaxKind._map[61] = "GetKeyword";
+    SyntaxKind.GetKeyword = 61;
+    SyntaxKind._map[62] = "ModuleKeyword";
+    SyntaxKind.ModuleKeyword = 62;
+    SyntaxKind._map[63] = "NumberKeyword";
+    SyntaxKind.NumberKeyword = 63;
+    SyntaxKind._map[64] = "SetKeyword";
+    SyntaxKind.SetKeyword = 64;
+    SyntaxKind._map[65] = "StringKeyword";
+    SyntaxKind.StringKeyword = 65;
+    SyntaxKind._map[66] = "OpenBraceToken";
+    SyntaxKind.OpenBraceToken = 66;
+    SyntaxKind._map[67] = "CloseBraceToken";
+    SyntaxKind.CloseBraceToken = 67;
+    SyntaxKind._map[68] = "OpenParenToken";
+    SyntaxKind.OpenParenToken = 68;
+    SyntaxKind._map[69] = "CloseParenToken";
+    SyntaxKind.CloseParenToken = 69;
+    SyntaxKind._map[70] = "OpenBracketToken";
+    SyntaxKind.OpenBracketToken = 70;
+    SyntaxKind._map[71] = "CloseBracketToken";
+    SyntaxKind.CloseBracketToken = 71;
+    SyntaxKind._map[72] = "DotToken";
+    SyntaxKind.DotToken = 72;
+    SyntaxKind._map[73] = "DotDotDotToken";
+    SyntaxKind.DotDotDotToken = 73;
+    SyntaxKind._map[74] = "SemicolonToken";
+    SyntaxKind.SemicolonToken = 74;
+    SyntaxKind._map[75] = "CommaToken";
+    SyntaxKind.CommaToken = 75;
+    SyntaxKind._map[76] = "LessThanToken";
+    SyntaxKind.LessThanToken = 76;
+    SyntaxKind._map[77] = "GreaterThanToken";
+    SyntaxKind.GreaterThanToken = 77;
+    SyntaxKind._map[78] = "LessThanEqualsToken";
+    SyntaxKind.LessThanEqualsToken = 78;
+    SyntaxKind._map[79] = "GreaterThanEqualsToken";
+    SyntaxKind.GreaterThanEqualsToken = 79;
+    SyntaxKind._map[80] = "EqualsEqualsToken";
+    SyntaxKind.EqualsEqualsToken = 80;
+    SyntaxKind._map[81] = "EqualsGreaterThanToken";
+    SyntaxKind.EqualsGreaterThanToken = 81;
+    SyntaxKind._map[82] = "ExclamationEqualsToken";
+    SyntaxKind.ExclamationEqualsToken = 82;
+    SyntaxKind._map[83] = "EqualsEqualsEqualsToken";
+    SyntaxKind.EqualsEqualsEqualsToken = 83;
+    SyntaxKind._map[84] = "ExclamationEqualsEqualsToken";
+    SyntaxKind.ExclamationEqualsEqualsToken = 84;
+    SyntaxKind._map[85] = "PlusToken";
+    SyntaxKind.PlusToken = 85;
+    SyntaxKind._map[86] = "MinusToken";
+    SyntaxKind.MinusToken = 86;
+    SyntaxKind._map[87] = "AsteriskToken";
+    SyntaxKind.AsteriskToken = 87;
+    SyntaxKind._map[88] = "PercentToken";
+    SyntaxKind.PercentToken = 88;
+    SyntaxKind._map[89] = "PlusPlusToken";
+    SyntaxKind.PlusPlusToken = 89;
+    SyntaxKind._map[90] = "MinusMinusToken";
+    SyntaxKind.MinusMinusToken = 90;
+    SyntaxKind._map[91] = "LessThanLessThanToken";
+    SyntaxKind.LessThanLessThanToken = 91;
+    SyntaxKind._map[92] = "GreaterThanGreaterThanToken";
+    SyntaxKind.GreaterThanGreaterThanToken = 92;
+    SyntaxKind._map[93] = "GreaterThanGreaterThanGreaterThanToken";
+    SyntaxKind.GreaterThanGreaterThanGreaterThanToken = 93;
+    SyntaxKind._map[94] = "AmpersandToken";
+    SyntaxKind.AmpersandToken = 94;
+    SyntaxKind._map[95] = "BarToken";
+    SyntaxKind.BarToken = 95;
+    SyntaxKind._map[96] = "CaretToken";
+    SyntaxKind.CaretToken = 96;
+    SyntaxKind._map[97] = "ExclamationToken";
+    SyntaxKind.ExclamationToken = 97;
+    SyntaxKind._map[98] = "TildeToken";
+    SyntaxKind.TildeToken = 98;
+    SyntaxKind._map[99] = "AmpersandAmpersandToken";
+    SyntaxKind.AmpersandAmpersandToken = 99;
+    SyntaxKind._map[100] = "BarBarToken";
+    SyntaxKind.BarBarToken = 100;
+    SyntaxKind._map[101] = "QuestionToken";
+    SyntaxKind.QuestionToken = 101;
+    SyntaxKind._map[102] = "ColonToken";
+    SyntaxKind.ColonToken = 102;
+    SyntaxKind._map[103] = "EqualsToken";
+    SyntaxKind.EqualsToken = 103;
+    SyntaxKind._map[104] = "PlusEqualsToken";
+    SyntaxKind.PlusEqualsToken = 104;
+    SyntaxKind._map[105] = "MinusEqualsToken";
+    SyntaxKind.MinusEqualsToken = 105;
+    SyntaxKind._map[106] = "AsteriskEqualsToken";
+    SyntaxKind.AsteriskEqualsToken = 106;
+    SyntaxKind._map[107] = "PercentEqualsToken";
+    SyntaxKind.PercentEqualsToken = 107;
+    SyntaxKind._map[108] = "LessThanLessThanEqualsToken";
+    SyntaxKind.LessThanLessThanEqualsToken = 108;
+    SyntaxKind._map[109] = "GreaterThanGreaterThanEqualsToken";
+    SyntaxKind.GreaterThanGreaterThanEqualsToken = 109;
+    SyntaxKind._map[110] = "GreaterThanGreaterThanGreaterThanEqualsToken";
+    SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken = 110;
+    SyntaxKind._map[111] = "AmpersandEqualsToken";
+    SyntaxKind.AmpersandEqualsToken = 111;
+    SyntaxKind._map[112] = "BarEqualsToken";
+    SyntaxKind.BarEqualsToken = 112;
+    SyntaxKind._map[113] = "CaretEqualsToken";
+    SyntaxKind.CaretEqualsToken = 113;
+    SyntaxKind._map[114] = "SlashToken";
+    SyntaxKind.SlashToken = 114;
+    SyntaxKind._map[115] = "SlashEqualsToken";
+    SyntaxKind.SlashEqualsToken = 115;
+    SyntaxKind._map[116] = "ErrorToken";
+    SyntaxKind.ErrorToken = 116;
+    SyntaxKind._map[117] = "EndOfFileToken";
+    SyntaxKind.EndOfFileToken = 117;
+    SyntaxKind._map[118] = "SourceUnit";
+    SyntaxKind.SourceUnit = 118;
+    SyntaxKind._map[119] = "IdentifierName";
+    SyntaxKind.IdentifierName = 119;
+    SyntaxKind._map[120] = "QualifiedName";
+    SyntaxKind.QualifiedName = 120;
+    SyntaxKind._map[121] = "ObjectType";
+    SyntaxKind.ObjectType = 121;
+    SyntaxKind._map[122] = "PredefinedType";
+    SyntaxKind.PredefinedType = 122;
+    SyntaxKind._map[123] = "FunctionType";
+    SyntaxKind.FunctionType = 123;
+    SyntaxKind._map[124] = "ArrayType";
+    SyntaxKind.ArrayType = 124;
+    SyntaxKind._map[125] = "ConstructorType";
+    SyntaxKind.ConstructorType = 125;
+    SyntaxKind._map[126] = "InterfaceDeclaration";
+    SyntaxKind.InterfaceDeclaration = 126;
+    SyntaxKind._map[127] = "FunctionDeclaration";
+    SyntaxKind.FunctionDeclaration = 127;
+    SyntaxKind._map[128] = "ModuleDeclaration";
+    SyntaxKind.ModuleDeclaration = 128;
+    SyntaxKind._map[129] = "ClassDeclaration";
+    SyntaxKind.ClassDeclaration = 129;
+    SyntaxKind._map[130] = "EnumDeclaration";
+    SyntaxKind.EnumDeclaration = 130;
+    SyntaxKind._map[131] = "ImportDeclaration";
+    SyntaxKind.ImportDeclaration = 131;
+    SyntaxKind._map[132] = "MemberFunctionDeclaration";
+    SyntaxKind.MemberFunctionDeclaration = 132;
+    SyntaxKind._map[133] = "MemberVariableDeclaration";
+    SyntaxKind.MemberVariableDeclaration = 133;
+    SyntaxKind._map[134] = "ConstructorDeclaration";
+    SyntaxKind.ConstructorDeclaration = 134;
+    SyntaxKind._map[135] = "GetMemberAccessorDeclaration";
+    SyntaxKind.GetMemberAccessorDeclaration = 135;
+    SyntaxKind._map[136] = "SetMemberAccessorDeclaration";
+    SyntaxKind.SetMemberAccessorDeclaration = 136;
+    SyntaxKind._map[137] = "Block";
+    SyntaxKind.Block = 137;
+    SyntaxKind._map[138] = "IfStatement";
+    SyntaxKind.IfStatement = 138;
+    SyntaxKind._map[139] = "VariableStatement";
+    SyntaxKind.VariableStatement = 139;
+    SyntaxKind._map[140] = "ExpressionStatement";
+    SyntaxKind.ExpressionStatement = 140;
+    SyntaxKind._map[141] = "ReturnStatement";
+    SyntaxKind.ReturnStatement = 141;
+    SyntaxKind._map[142] = "SwitchStatement";
+    SyntaxKind.SwitchStatement = 142;
+    SyntaxKind._map[143] = "BreakStatement";
+    SyntaxKind.BreakStatement = 143;
+    SyntaxKind._map[144] = "ContinueStatement";
+    SyntaxKind.ContinueStatement = 144;
+    SyntaxKind._map[145] = "ForStatement";
+    SyntaxKind.ForStatement = 145;
+    SyntaxKind._map[146] = "ForInStatement";
+    SyntaxKind.ForInStatement = 146;
+    SyntaxKind._map[147] = "EmptyStatement";
+    SyntaxKind.EmptyStatement = 147;
+    SyntaxKind._map[148] = "ThrowStatement";
+    SyntaxKind.ThrowStatement = 148;
+    SyntaxKind._map[149] = "WhileStatement";
+    SyntaxKind.WhileStatement = 149;
+    SyntaxKind._map[150] = "TryStatement";
+    SyntaxKind.TryStatement = 150;
+    SyntaxKind._map[151] = "LabeledStatement";
+    SyntaxKind.LabeledStatement = 151;
+    SyntaxKind._map[152] = "DoStatement";
+    SyntaxKind.DoStatement = 152;
+    SyntaxKind._map[153] = "DebuggerStatement";
+    SyntaxKind.DebuggerStatement = 153;
+    SyntaxKind._map[154] = "WithStatement";
+    SyntaxKind.WithStatement = 154;
+    SyntaxKind._map[155] = "PlusExpression";
+    SyntaxKind.PlusExpression = 155;
+    SyntaxKind._map[156] = "NegateExpression";
+    SyntaxKind.NegateExpression = 156;
+    SyntaxKind._map[157] = "BitwiseNotExpression";
+    SyntaxKind.BitwiseNotExpression = 157;
+    SyntaxKind._map[158] = "LogicalNotExpression";
+    SyntaxKind.LogicalNotExpression = 158;
+    SyntaxKind._map[159] = "PreIncrementExpression";
+    SyntaxKind.PreIncrementExpression = 159;
+    SyntaxKind._map[160] = "PreDecrementExpression";
+    SyntaxKind.PreDecrementExpression = 160;
+    SyntaxKind._map[161] = "DeleteExpression";
+    SyntaxKind.DeleteExpression = 161;
+    SyntaxKind._map[162] = "TypeOfExpression";
+    SyntaxKind.TypeOfExpression = 162;
+    SyntaxKind._map[163] = "VoidExpression";
+    SyntaxKind.VoidExpression = 163;
+    SyntaxKind._map[164] = "BooleanLiteralExpression";
+    SyntaxKind.BooleanLiteralExpression = 164;
+    SyntaxKind._map[165] = "NullLiteralExpression";
+    SyntaxKind.NullLiteralExpression = 165;
+    SyntaxKind._map[166] = "NumericLiteralExpression";
+    SyntaxKind.NumericLiteralExpression = 166;
+    SyntaxKind._map[167] = "RegularExpressionLiteralExpression";
+    SyntaxKind.RegularExpressionLiteralExpression = 167;
+    SyntaxKind._map[168] = "StringLiteralExpression";
+    SyntaxKind.StringLiteralExpression = 168;
+    SyntaxKind._map[169] = "CommaExpression";
+    SyntaxKind.CommaExpression = 169;
+    SyntaxKind._map[170] = "AssignmentExpression";
+    SyntaxKind.AssignmentExpression = 170;
+    SyntaxKind._map[171] = "AddAssignmentExpression";
+    SyntaxKind.AddAssignmentExpression = 171;
+    SyntaxKind._map[172] = "SubtractAssignmentExpression";
+    SyntaxKind.SubtractAssignmentExpression = 172;
+    SyntaxKind._map[173] = "MultiplyAssignmentExpression";
+    SyntaxKind.MultiplyAssignmentExpression = 173;
+    SyntaxKind._map[174] = "DivideAssignmentExpression";
+    SyntaxKind.DivideAssignmentExpression = 174;
+    SyntaxKind._map[175] = "ModuloAssignmentExpression";
+    SyntaxKind.ModuloAssignmentExpression = 175;
+    SyntaxKind._map[176] = "AndAssignmentExpression";
+    SyntaxKind.AndAssignmentExpression = 176;
+    SyntaxKind._map[177] = "ExclusiveOrAssignmentExpression";
+    SyntaxKind.ExclusiveOrAssignmentExpression = 177;
+    SyntaxKind._map[178] = "OrAssignmentExpression";
+    SyntaxKind.OrAssignmentExpression = 178;
+    SyntaxKind._map[179] = "LeftShiftAssignmentExpression";
+    SyntaxKind.LeftShiftAssignmentExpression = 179;
+    SyntaxKind._map[180] = "SignedRightShiftAssignmentExpression";
+    SyntaxKind.SignedRightShiftAssignmentExpression = 180;
+    SyntaxKind._map[181] = "UnsignedRightShiftAssignmentExpression";
+    SyntaxKind.UnsignedRightShiftAssignmentExpression = 181;
+    SyntaxKind._map[182] = "ConditionalExpression";
+    SyntaxKind.ConditionalExpression = 182;
+    SyntaxKind._map[183] = "LogicalOrExpression";
+    SyntaxKind.LogicalOrExpression = 183;
+    SyntaxKind._map[184] = "LogicalAndExpression";
+    SyntaxKind.LogicalAndExpression = 184;
+    SyntaxKind._map[185] = "BitwiseOrExpression";
+    SyntaxKind.BitwiseOrExpression = 185;
+    SyntaxKind._map[186] = "BitwiseExclusiveOrExpression";
+    SyntaxKind.BitwiseExclusiveOrExpression = 186;
+    SyntaxKind._map[187] = "BitwiseAndExpression";
+    SyntaxKind.BitwiseAndExpression = 187;
+    SyntaxKind._map[188] = "EqualsWithTypeConversionExpression";
+    SyntaxKind.EqualsWithTypeConversionExpression = 188;
+    SyntaxKind._map[189] = "NotEqualsWithTypeConversionExpression";
+    SyntaxKind.NotEqualsWithTypeConversionExpression = 189;
+    SyntaxKind._map[190] = "EqualsExpression";
+    SyntaxKind.EqualsExpression = 190;
+    SyntaxKind._map[191] = "NotEqualsExpression";
+    SyntaxKind.NotEqualsExpression = 191;
+    SyntaxKind._map[192] = "LessThanExpression";
+    SyntaxKind.LessThanExpression = 192;
+    SyntaxKind._map[193] = "GreaterThanExpression";
+    SyntaxKind.GreaterThanExpression = 193;
+    SyntaxKind._map[194] = "LessThanOrEqualExpression";
+    SyntaxKind.LessThanOrEqualExpression = 194;
+    SyntaxKind._map[195] = "GreaterThanOrEqualExpression";
+    SyntaxKind.GreaterThanOrEqualExpression = 195;
+    SyntaxKind._map[196] = "InstanceOfExpression";
+    SyntaxKind.InstanceOfExpression = 196;
+    SyntaxKind._map[197] = "InExpression";
+    SyntaxKind.InExpression = 197;
+    SyntaxKind._map[198] = "LeftShiftExpression";
+    SyntaxKind.LeftShiftExpression = 198;
+    SyntaxKind._map[199] = "SignedRightShiftExpression";
+    SyntaxKind.SignedRightShiftExpression = 199;
+    SyntaxKind._map[200] = "UnsignedRightShiftExpression";
+    SyntaxKind.UnsignedRightShiftExpression = 200;
+    SyntaxKind._map[201] = "MultiplyExpression";
+    SyntaxKind.MultiplyExpression = 201;
+    SyntaxKind._map[202] = "DivideExpression";
+    SyntaxKind.DivideExpression = 202;
+    SyntaxKind._map[203] = "ModuloExpression";
+    SyntaxKind.ModuloExpression = 203;
+    SyntaxKind._map[204] = "AddExpression";
+    SyntaxKind.AddExpression = 204;
+    SyntaxKind._map[205] = "SubtractExpression";
+    SyntaxKind.SubtractExpression = 205;
+    SyntaxKind._map[206] = "PostIncrementExpression";
+    SyntaxKind.PostIncrementExpression = 206;
+    SyntaxKind._map[207] = "PostDecrementExpression";
+    SyntaxKind.PostDecrementExpression = 207;
+    SyntaxKind._map[208] = "MemberAccessExpression";
+    SyntaxKind.MemberAccessExpression = 208;
+    SyntaxKind._map[209] = "InvocationExpression";
+    SyntaxKind.InvocationExpression = 209;
+    SyntaxKind._map[210] = "ThisExpression";
+    SyntaxKind.ThisExpression = 210;
+    SyntaxKind._map[211] = "ArrayLiteralExpression";
+    SyntaxKind.ArrayLiteralExpression = 211;
+    SyntaxKind._map[212] = "ObjectLiteralExpression";
+    SyntaxKind.ObjectLiteralExpression = 212;
+    SyntaxKind._map[213] = "ObjectCreationExpression";
+    SyntaxKind.ObjectCreationExpression = 213;
+    SyntaxKind._map[214] = "ParenthesizedExpression";
+    SyntaxKind.ParenthesizedExpression = 214;
+    SyntaxKind._map[215] = "ParenthesizedArrowFunctionExpression";
+    SyntaxKind.ParenthesizedArrowFunctionExpression = 215;
+    SyntaxKind._map[216] = "SimpleArrowFunctionExpression";
+    SyntaxKind.SimpleArrowFunctionExpression = 216;
+    SyntaxKind._map[217] = "CastExpression";
+    SyntaxKind.CastExpression = 217;
+    SyntaxKind._map[218] = "ElementAccessExpression";
+    SyntaxKind.ElementAccessExpression = 218;
+    SyntaxKind._map[219] = "FunctionExpression";
+    SyntaxKind.FunctionExpression = 219;
+    SyntaxKind._map[220] = "SuperExpression";
+    SyntaxKind.SuperExpression = 220;
+    SyntaxKind._map[221] = "OmittedExpression";
+    SyntaxKind.OmittedExpression = 221;
+    SyntaxKind._map[222] = "VariableDeclaration";
+    SyntaxKind.VariableDeclaration = 222;
+    SyntaxKind._map[223] = "VariableDeclarator";
+    SyntaxKind.VariableDeclarator = 223;
+    SyntaxKind._map[224] = "ParameterList";
+    SyntaxKind.ParameterList = 224;
+    SyntaxKind._map[225] = "ArgumentList";
+    SyntaxKind.ArgumentList = 225;
+    SyntaxKind._map[226] = "ImplementsClause";
+    SyntaxKind.ImplementsClause = 226;
+    SyntaxKind._map[227] = "ExtendsClause";
+    SyntaxKind.ExtendsClause = 227;
+    SyntaxKind._map[228] = "EqualsValueClause";
+    SyntaxKind.EqualsValueClause = 228;
+    SyntaxKind._map[229] = "CaseSwitchClause";
+    SyntaxKind.CaseSwitchClause = 229;
+    SyntaxKind._map[230] = "DefaultSwitchClause";
+    SyntaxKind.DefaultSwitchClause = 230;
+    SyntaxKind._map[231] = "ElseClause";
+    SyntaxKind.ElseClause = 231;
+    SyntaxKind._map[232] = "CatchClause";
+    SyntaxKind.CatchClause = 232;
+    SyntaxKind._map[233] = "FinallyClause";
+    SyntaxKind.FinallyClause = 233;
+    SyntaxKind._map[234] = "PropertySignature";
+    SyntaxKind.PropertySignature = 234;
+    SyntaxKind._map[235] = "CallSignature";
+    SyntaxKind.CallSignature = 235;
+    SyntaxKind._map[236] = "ConstructSignature";
+    SyntaxKind.ConstructSignature = 236;
+    SyntaxKind._map[237] = "IndexSignature";
+    SyntaxKind.IndexSignature = 237;
+    SyntaxKind._map[238] = "FunctionSignature";
+    SyntaxKind.FunctionSignature = 238;
+    SyntaxKind._map[239] = "Parameter";
+    SyntaxKind.Parameter = 239;
+    SyntaxKind._map[240] = "TypeAnnotation";
+    SyntaxKind.TypeAnnotation = 240;
+    SyntaxKind._map[241] = "SimplePropertyAssignment";
+    SyntaxKind.SimplePropertyAssignment = 241;
+    SyntaxKind._map[242] = "ExternalModuleReference";
+    SyntaxKind.ExternalModuleReference = 242;
+    SyntaxKind._map[243] = "ModuleNameModuleReference";
+    SyntaxKind.ModuleNameModuleReference = 243;
+    SyntaxKind._map[244] = "GetAccessorPropertyAssignment";
+    SyntaxKind.GetAccessorPropertyAssignment = 244;
+    SyntaxKind._map[245] = "SetAccessorPropertyAssignment";
+    SyntaxKind.SetAccessorPropertyAssignment = 245;
     SyntaxKind.FirstStandardKeyword = SyntaxKind.BreakKeyword;
     SyntaxKind.LastStandardKeyword = SyntaxKind.WithKeyword;
     SyntaxKind.FirstFutureReservedKeyword = SyntaxKind.ClassKeyword;
@@ -6167,110 +6197,110 @@ var SyntaxKind;
 var SyntaxFacts = (function () {
     function SyntaxFacts() { }
     SyntaxFacts.textToKeywordKind = {
-        "any": 56 /* AnyKeyword */ ,
-        "bool": 57 /* BoolKeyword */ ,
-        "break": 11 /* BreakKeyword */ ,
-        "case": 12 /* CaseKeyword */ ,
-        "catch": 13 /* CatchKeyword */ ,
-        "class": 40 /* ClassKeyword */ ,
-        "continue": 14 /* ContinueKeyword */ ,
-        "const": 41 /* ConstKeyword */ ,
-        "constructor": 58 /* ConstructorKeyword */ ,
-        "debugger": 15 /* DebuggerKeyword */ ,
-        "declare": 59 /* DeclareKeyword */ ,
-        "default": 16 /* DefaultKeyword */ ,
-        "delete": 17 /* DeleteKeyword */ ,
-        "do": 18 /* DoKeyword */ ,
-        "else": 19 /* ElseKeyword */ ,
-        "enum": 42 /* EnumKeyword */ ,
-        "export": 43 /* ExportKeyword */ ,
-        "extends": 44 /* ExtendsKeyword */ ,
-        "false": 20 /* FalseKeyword */ ,
-        "finally": 21 /* FinallyKeyword */ ,
-        "for": 22 /* ForKeyword */ ,
-        "function": 23 /* FunctionKeyword */ ,
-        "get": 60 /* GetKeyword */ ,
-        "if": 24 /* IfKeyword */ ,
-        "implements": 47 /* ImplementsKeyword */ ,
-        "import": 45 /* ImportKeyword */ ,
-        "in": 25 /* InKeyword */ ,
-        "instanceof": 26 /* InstanceOfKeyword */ ,
-        "interface": 48 /* InterfaceKeyword */ ,
-        "let": 49 /* LetKeyword */ ,
-        "module": 61 /* ModuleKeyword */ ,
-        "new": 27 /* NewKeyword */ ,
-        "null": 28 /* NullKeyword */ ,
-        "number": 62 /* NumberKeyword */ ,
-        "package": 50 /* PackageKeyword */ ,
-        "private": 51 /* PrivateKeyword */ ,
-        "protected": 52 /* ProtectedKeyword */ ,
-        "public": 53 /* PublicKeyword */ ,
-        "return": 29 /* ReturnKeyword */ ,
-        "set": 63 /* SetKeyword */ ,
-        "static": 54 /* StaticKeyword */ ,
-        "string": 64 /* StringKeyword */ ,
-        "super": 46 /* SuperKeyword */ ,
-        "switch": 30 /* SwitchKeyword */ ,
-        "this": 31 /* ThisKeyword */ ,
-        "throw": 32 /* ThrowKeyword */ ,
-        "true": 33 /* TrueKeyword */ ,
-        "try": 34 /* TryKeyword */ ,
-        "typeof": 35 /* TypeOfKeyword */ ,
-        "var": 36 /* VarKeyword */ ,
-        "void": 37 /* VoidKeyword */ ,
-        "while": 38 /* WhileKeyword */ ,
-        "with": 39 /* WithKeyword */ ,
-        "yield": 55 /* YieldKeyword */ ,
-        "{": 65 /* OpenBraceToken */ ,
-        "}": 66 /* CloseBraceToken */ ,
-        "(": 67 /* OpenParenToken */ ,
-        ")": 68 /* CloseParenToken */ ,
-        "[": 69 /* OpenBracketToken */ ,
-        "]": 70 /* CloseBracketToken */ ,
-        ".": 71 /* DotToken */ ,
-        "...": 72 /* DotDotDotToken */ ,
-        ";": 73 /* SemicolonToken */ ,
-        ",": 74 /* CommaToken */ ,
-        "<": 75 /* LessThanToken */ ,
-        ">": 76 /* GreaterThanToken */ ,
-        "<=": 77 /* LessThanEqualsToken */ ,
-        ">=": 78 /* GreaterThanEqualsToken */ ,
-        "==": 79 /* EqualsEqualsToken */ ,
-        "=>": 80 /* EqualsGreaterThanToken */ ,
-        "!=": 81 /* ExclamationEqualsToken */ ,
-        "===": 82 /* EqualsEqualsEqualsToken */ ,
-        "!==": 83 /* ExclamationEqualsEqualsToken */ ,
-        "+": 84 /* PlusToken */ ,
-        "-": 85 /* MinusToken */ ,
-        "*": 86 /* AsteriskToken */ ,
-        "%": 87 /* PercentToken */ ,
-        "++": 88 /* PlusPlusToken */ ,
-        "--": 89 /* MinusMinusToken */ ,
-        "<<": 90 /* LessThanLessThanToken */ ,
-        ">>": 91 /* GreaterThanGreaterThanToken */ ,
-        ">>>": 92 /* GreaterThanGreaterThanGreaterThanToken */ ,
-        "&": 93 /* AmpersandToken */ ,
-        "|": 94 /* BarToken */ ,
-        "^": 95 /* CaretToken */ ,
-        "!": 96 /* ExclamationToken */ ,
-        "~": 97 /* TildeToken */ ,
-        "&&": 98 /* AmpersandAmpersandToken */ ,
-        "||": 99 /* BarBarToken */ ,
-        "?": 100 /* QuestionToken */ ,
-        ":": 101 /* ColonToken */ ,
-        "=": 102 /* EqualsToken */ ,
-        "+=": 103 /* PlusEqualsToken */ ,
-        "-=": 104 /* MinusEqualsToken */ ,
-        "*=": 105 /* AsteriskEqualsToken */ ,
-        "%=": 106 /* PercentEqualsToken */ ,
-        "<<=": 107 /* LessThanLessThanEqualsToken */ ,
-        ">>=": 108 /* GreaterThanGreaterThanEqualsToken */ ,
-        ">>>=": 109 /* GreaterThanGreaterThanGreaterThanEqualsToken */ ,
-        "&=": 110 /* AmpersandEqualsToken */ ,
-        "|=": 111 /* BarEqualsToken */ ,
-        "^=": 112 /* CaretEqualsToken */ ,
-        "/": 113 /* SlashToken */ ,
-        "/=": 114 /* SlashEqualsToken */ 
+        "any": 57 /* AnyKeyword */ ,
+        "bool": 58 /* BoolKeyword */ ,
+        "break": 12 /* BreakKeyword */ ,
+        "case": 13 /* CaseKeyword */ ,
+        "catch": 14 /* CatchKeyword */ ,
+        "class": 41 /* ClassKeyword */ ,
+        "continue": 15 /* ContinueKeyword */ ,
+        "const": 42 /* ConstKeyword */ ,
+        "constructor": 59 /* ConstructorKeyword */ ,
+        "debugger": 16 /* DebuggerKeyword */ ,
+        "declare": 60 /* DeclareKeyword */ ,
+        "default": 17 /* DefaultKeyword */ ,
+        "delete": 18 /* DeleteKeyword */ ,
+        "do": 19 /* DoKeyword */ ,
+        "else": 20 /* ElseKeyword */ ,
+        "enum": 43 /* EnumKeyword */ ,
+        "export": 44 /* ExportKeyword */ ,
+        "extends": 45 /* ExtendsKeyword */ ,
+        "false": 21 /* FalseKeyword */ ,
+        "finally": 22 /* FinallyKeyword */ ,
+        "for": 23 /* ForKeyword */ ,
+        "function": 24 /* FunctionKeyword */ ,
+        "get": 61 /* GetKeyword */ ,
+        "if": 25 /* IfKeyword */ ,
+        "implements": 48 /* ImplementsKeyword */ ,
+        "import": 46 /* ImportKeyword */ ,
+        "in": 26 /* InKeyword */ ,
+        "instanceof": 27 /* InstanceOfKeyword */ ,
+        "interface": 49 /* InterfaceKeyword */ ,
+        "let": 50 /* LetKeyword */ ,
+        "module": 62 /* ModuleKeyword */ ,
+        "new": 28 /* NewKeyword */ ,
+        "null": 29 /* NullKeyword */ ,
+        "number": 63 /* NumberKeyword */ ,
+        "package": 51 /* PackageKeyword */ ,
+        "private": 52 /* PrivateKeyword */ ,
+        "protected": 53 /* ProtectedKeyword */ ,
+        "public": 54 /* PublicKeyword */ ,
+        "return": 30 /* ReturnKeyword */ ,
+        "set": 64 /* SetKeyword */ ,
+        "static": 55 /* StaticKeyword */ ,
+        "string": 65 /* StringKeyword */ ,
+        "super": 47 /* SuperKeyword */ ,
+        "switch": 31 /* SwitchKeyword */ ,
+        "this": 32 /* ThisKeyword */ ,
+        "throw": 33 /* ThrowKeyword */ ,
+        "true": 34 /* TrueKeyword */ ,
+        "try": 35 /* TryKeyword */ ,
+        "typeof": 36 /* TypeOfKeyword */ ,
+        "var": 37 /* VarKeyword */ ,
+        "void": 38 /* VoidKeyword */ ,
+        "while": 39 /* WhileKeyword */ ,
+        "with": 40 /* WithKeyword */ ,
+        "yield": 56 /* YieldKeyword */ ,
+        "{": 66 /* OpenBraceToken */ ,
+        "}": 67 /* CloseBraceToken */ ,
+        "(": 68 /* OpenParenToken */ ,
+        ")": 69 /* CloseParenToken */ ,
+        "[": 70 /* OpenBracketToken */ ,
+        "]": 71 /* CloseBracketToken */ ,
+        ".": 72 /* DotToken */ ,
+        "...": 73 /* DotDotDotToken */ ,
+        ";": 74 /* SemicolonToken */ ,
+        ",": 75 /* CommaToken */ ,
+        "<": 76 /* LessThanToken */ ,
+        ">": 77 /* GreaterThanToken */ ,
+        "<=": 78 /* LessThanEqualsToken */ ,
+        ">=": 79 /* GreaterThanEqualsToken */ ,
+        "==": 80 /* EqualsEqualsToken */ ,
+        "=>": 81 /* EqualsGreaterThanToken */ ,
+        "!=": 82 /* ExclamationEqualsToken */ ,
+        "===": 83 /* EqualsEqualsEqualsToken */ ,
+        "!==": 84 /* ExclamationEqualsEqualsToken */ ,
+        "+": 85 /* PlusToken */ ,
+        "-": 86 /* MinusToken */ ,
+        "*": 87 /* AsteriskToken */ ,
+        "%": 88 /* PercentToken */ ,
+        "++": 89 /* PlusPlusToken */ ,
+        "--": 90 /* MinusMinusToken */ ,
+        "<<": 91 /* LessThanLessThanToken */ ,
+        ">>": 92 /* GreaterThanGreaterThanToken */ ,
+        ">>>": 93 /* GreaterThanGreaterThanGreaterThanToken */ ,
+        "&": 94 /* AmpersandToken */ ,
+        "|": 95 /* BarToken */ ,
+        "^": 96 /* CaretToken */ ,
+        "!": 97 /* ExclamationToken */ ,
+        "~": 98 /* TildeToken */ ,
+        "&&": 99 /* AmpersandAmpersandToken */ ,
+        "||": 100 /* BarBarToken */ ,
+        "?": 101 /* QuestionToken */ ,
+        ":": 102 /* ColonToken */ ,
+        "=": 103 /* EqualsToken */ ,
+        "+=": 104 /* PlusEqualsToken */ ,
+        "-=": 105 /* MinusEqualsToken */ ,
+        "*=": 106 /* AsteriskEqualsToken */ ,
+        "%=": 107 /* PercentEqualsToken */ ,
+        "<<=": 108 /* LessThanLessThanEqualsToken */ ,
+        ">>=": 109 /* GreaterThanGreaterThanEqualsToken */ ,
+        ">>>=": 110 /* GreaterThanGreaterThanGreaterThanEqualsToken */ ,
+        "&=": 111 /* AmpersandEqualsToken */ ,
+        "|=": 112 /* BarEqualsToken */ ,
+        "^=": 113 /* CaretEqualsToken */ ,
+        "/": 114 /* SlashToken */ ,
+        "/=": 115 /* SlashEqualsToken */ 
     };
     SyntaxFacts.kindToText = [];
     SyntaxFacts.initializeStaticData = function initializeStaticData() {
@@ -6281,7 +6311,7 @@ var SyntaxFacts = (function () {
                     SyntaxFacts.kindToText[SyntaxFacts.textToKeywordKind[name]] = name;
                 }
             }
-            SyntaxFacts.kindToText[58 /* ConstructorKeyword */ ] = "constructor";
+            SyntaxFacts.kindToText[59 /* ConstructorKeyword */ ] = "constructor";
         }
     }
     SyntaxFacts.getTokenKind = function getTokenKind(text) {
@@ -6318,40 +6348,40 @@ var SyntaxFacts = (function () {
     }
     SyntaxFacts.getPrefixUnaryExpression = function getPrefixUnaryExpression(tokenKind) {
         switch(tokenKind) {
-            case 84 /* PlusToken */ : {
-                return 154 /* PlusExpression */ ;
+            case 85 /* PlusToken */ : {
+                return 155 /* PlusExpression */ ;
 
             }
-            case 85 /* MinusToken */ : {
-                return 155 /* NegateExpression */ ;
+            case 86 /* MinusToken */ : {
+                return 156 /* NegateExpression */ ;
 
             }
-            case 97 /* TildeToken */ : {
-                return 156 /* BitwiseNotExpression */ ;
+            case 98 /* TildeToken */ : {
+                return 157 /* BitwiseNotExpression */ ;
 
             }
-            case 96 /* ExclamationToken */ : {
-                return 157 /* LogicalNotExpression */ ;
+            case 97 /* ExclamationToken */ : {
+                return 158 /* LogicalNotExpression */ ;
 
             }
-            case 88 /* PlusPlusToken */ : {
-                return 158 /* PreIncrementExpression */ ;
+            case 89 /* PlusPlusToken */ : {
+                return 159 /* PreIncrementExpression */ ;
 
             }
-            case 89 /* MinusMinusToken */ : {
-                return 159 /* PreDecrementExpression */ ;
+            case 90 /* MinusMinusToken */ : {
+                return 160 /* PreDecrementExpression */ ;
 
             }
-            case 17 /* DeleteKeyword */ : {
-                return 160 /* DeleteExpression */ ;
+            case 18 /* DeleteKeyword */ : {
+                return 161 /* DeleteExpression */ ;
 
             }
-            case 35 /* TypeOfKeyword */ : {
-                return 161 /* TypeOfExpression */ ;
+            case 36 /* TypeOfKeyword */ : {
+                return 162 /* TypeOfExpression */ ;
 
             }
-            case 37 /* VoidKeyword */ : {
-                return 162 /* VoidExpression */ ;
+            case 38 /* VoidKeyword */ : {
+                return 163 /* VoidExpression */ ;
 
             }
             default: {
@@ -6362,12 +6392,12 @@ var SyntaxFacts = (function () {
     }
     SyntaxFacts.getPostfixUnaryExpressionFromOperatorToken = function getPostfixUnaryExpressionFromOperatorToken(tokenKind) {
         switch(tokenKind) {
-            case 88 /* PlusPlusToken */ : {
-                return 205 /* PostIncrementExpression */ ;
+            case 89 /* PlusPlusToken */ : {
+                return 206 /* PostIncrementExpression */ ;
 
             }
-            case 89 /* MinusMinusToken */ : {
-                return 206 /* PostDecrementExpression */ ;
+            case 90 /* MinusMinusToken */ : {
+                return 207 /* PostDecrementExpression */ ;
 
             }
             default: {
@@ -6381,148 +6411,148 @@ var SyntaxFacts = (function () {
     }
     SyntaxFacts.getBinaryExpressionFromOperatorToken = function getBinaryExpressionFromOperatorToken(tokenKind) {
         switch(tokenKind) {
-            case 86 /* AsteriskToken */ : {
-                return 200 /* MultiplyExpression */ ;
+            case 87 /* AsteriskToken */ : {
+                return 201 /* MultiplyExpression */ ;
 
             }
-            case 113 /* SlashToken */ : {
-                return 201 /* DivideExpression */ ;
+            case 114 /* SlashToken */ : {
+                return 202 /* DivideExpression */ ;
 
             }
-            case 87 /* PercentToken */ : {
-                return 202 /* ModuloExpression */ ;
+            case 88 /* PercentToken */ : {
+                return 203 /* ModuloExpression */ ;
 
             }
-            case 84 /* PlusToken */ : {
-                return 203 /* AddExpression */ ;
+            case 85 /* PlusToken */ : {
+                return 204 /* AddExpression */ ;
 
             }
-            case 85 /* MinusToken */ : {
-                return 204 /* SubtractExpression */ ;
+            case 86 /* MinusToken */ : {
+                return 205 /* SubtractExpression */ ;
 
             }
-            case 90 /* LessThanLessThanToken */ : {
-                return 197 /* LeftShiftExpression */ ;
+            case 91 /* LessThanLessThanToken */ : {
+                return 198 /* LeftShiftExpression */ ;
 
             }
-            case 91 /* GreaterThanGreaterThanToken */ : {
-                return 198 /* SignedRightShiftExpression */ ;
+            case 92 /* GreaterThanGreaterThanToken */ : {
+                return 199 /* SignedRightShiftExpression */ ;
 
             }
-            case 92 /* GreaterThanGreaterThanGreaterThanToken */ : {
-                return 199 /* UnsignedRightShiftExpression */ ;
+            case 93 /* GreaterThanGreaterThanGreaterThanToken */ : {
+                return 200 /* UnsignedRightShiftExpression */ ;
 
             }
-            case 75 /* LessThanToken */ : {
-                return 191 /* LessThanExpression */ ;
+            case 76 /* LessThanToken */ : {
+                return 192 /* LessThanExpression */ ;
 
             }
-            case 76 /* GreaterThanToken */ : {
-                return 192 /* GreaterThanExpression */ ;
+            case 77 /* GreaterThanToken */ : {
+                return 193 /* GreaterThanExpression */ ;
 
             }
-            case 77 /* LessThanEqualsToken */ : {
-                return 193 /* LessThanOrEqualExpression */ ;
+            case 78 /* LessThanEqualsToken */ : {
+                return 194 /* LessThanOrEqualExpression */ ;
 
             }
-            case 78 /* GreaterThanEqualsToken */ : {
-                return 194 /* GreaterThanOrEqualExpression */ ;
+            case 79 /* GreaterThanEqualsToken */ : {
+                return 195 /* GreaterThanOrEqualExpression */ ;
 
             }
-            case 26 /* InstanceOfKeyword */ : {
-                return 195 /* InstanceOfExpression */ ;
+            case 27 /* InstanceOfKeyword */ : {
+                return 196 /* InstanceOfExpression */ ;
 
             }
-            case 25 /* InKeyword */ : {
-                return 196 /* InExpression */ ;
+            case 26 /* InKeyword */ : {
+                return 197 /* InExpression */ ;
 
             }
-            case 79 /* EqualsEqualsToken */ : {
-                return 187 /* EqualsWithTypeConversionExpression */ ;
+            case 80 /* EqualsEqualsToken */ : {
+                return 188 /* EqualsWithTypeConversionExpression */ ;
 
             }
-            case 81 /* ExclamationEqualsToken */ : {
-                return 188 /* NotEqualsWithTypeConversionExpression */ ;
+            case 82 /* ExclamationEqualsToken */ : {
+                return 189 /* NotEqualsWithTypeConversionExpression */ ;
 
             }
-            case 82 /* EqualsEqualsEqualsToken */ : {
-                return 189 /* EqualsExpression */ ;
+            case 83 /* EqualsEqualsEqualsToken */ : {
+                return 190 /* EqualsExpression */ ;
 
             }
-            case 83 /* ExclamationEqualsEqualsToken */ : {
-                return 190 /* NotEqualsExpression */ ;
+            case 84 /* ExclamationEqualsEqualsToken */ : {
+                return 191 /* NotEqualsExpression */ ;
 
             }
-            case 93 /* AmpersandToken */ : {
-                return 186 /* BitwiseAndExpression */ ;
+            case 94 /* AmpersandToken */ : {
+                return 187 /* BitwiseAndExpression */ ;
 
             }
-            case 95 /* CaretToken */ : {
-                return 185 /* BitwiseExclusiveOrExpression */ ;
+            case 96 /* CaretToken */ : {
+                return 186 /* BitwiseExclusiveOrExpression */ ;
 
             }
-            case 94 /* BarToken */ : {
-                return 184 /* BitwiseOrExpression */ ;
+            case 95 /* BarToken */ : {
+                return 185 /* BitwiseOrExpression */ ;
 
             }
-            case 98 /* AmpersandAmpersandToken */ : {
-                return 183 /* LogicalAndExpression */ ;
+            case 99 /* AmpersandAmpersandToken */ : {
+                return 184 /* LogicalAndExpression */ ;
 
             }
-            case 99 /* BarBarToken */ : {
-                return 182 /* LogicalOrExpression */ ;
+            case 100 /* BarBarToken */ : {
+                return 183 /* LogicalOrExpression */ ;
 
             }
-            case 111 /* BarEqualsToken */ : {
-                return 177 /* OrAssignmentExpression */ ;
+            case 112 /* BarEqualsToken */ : {
+                return 178 /* OrAssignmentExpression */ ;
 
             }
-            case 110 /* AmpersandEqualsToken */ : {
-                return 175 /* AndAssignmentExpression */ ;
+            case 111 /* AmpersandEqualsToken */ : {
+                return 176 /* AndAssignmentExpression */ ;
 
             }
-            case 112 /* CaretEqualsToken */ : {
-                return 176 /* ExclusiveOrAssignmentExpression */ ;
+            case 113 /* CaretEqualsToken */ : {
+                return 177 /* ExclusiveOrAssignmentExpression */ ;
 
             }
-            case 107 /* LessThanLessThanEqualsToken */ : {
-                return 178 /* LeftShiftAssignmentExpression */ ;
+            case 108 /* LessThanLessThanEqualsToken */ : {
+                return 179 /* LeftShiftAssignmentExpression */ ;
 
             }
-            case 108 /* GreaterThanGreaterThanEqualsToken */ : {
-                return 179 /* SignedRightShiftAssignmentExpression */ ;
+            case 109 /* GreaterThanGreaterThanEqualsToken */ : {
+                return 180 /* SignedRightShiftAssignmentExpression */ ;
 
             }
-            case 109 /* GreaterThanGreaterThanGreaterThanEqualsToken */ : {
-                return 180 /* UnsignedRightShiftAssignmentExpression */ ;
+            case 110 /* GreaterThanGreaterThanGreaterThanEqualsToken */ : {
+                return 181 /* UnsignedRightShiftAssignmentExpression */ ;
 
             }
-            case 103 /* PlusEqualsToken */ : {
-                return 170 /* AddAssignmentExpression */ ;
+            case 104 /* PlusEqualsToken */ : {
+                return 171 /* AddAssignmentExpression */ ;
 
             }
-            case 104 /* MinusEqualsToken */ : {
-                return 171 /* SubtractAssignmentExpression */ ;
+            case 105 /* MinusEqualsToken */ : {
+                return 172 /* SubtractAssignmentExpression */ ;
 
             }
-            case 105 /* AsteriskEqualsToken */ : {
-                return 172 /* MultiplyAssignmentExpression */ ;
+            case 106 /* AsteriskEqualsToken */ : {
+                return 173 /* MultiplyAssignmentExpression */ ;
 
             }
-            case 114 /* SlashEqualsToken */ : {
-                return 173 /* DivideAssignmentExpression */ ;
+            case 115 /* SlashEqualsToken */ : {
+                return 174 /* DivideAssignmentExpression */ ;
 
             }
-            case 106 /* PercentEqualsToken */ : {
-                return 174 /* ModuloAssignmentExpression */ ;
+            case 107 /* PercentEqualsToken */ : {
+                return 175 /* ModuloAssignmentExpression */ ;
 
             }
-            case 102 /* EqualsToken */ : {
-                return 169 /* AssignmentExpression */ ;
+            case 103 /* EqualsToken */ : {
+                return 170 /* AssignmentExpression */ ;
 
             }
-            case 74 /* CommaToken */ : {
-                return 168 /* CommaExpression */ ;
+            case 75 /* CommaToken */ : {
+                return 169 /* CommaExpression */ ;
 
             }
             default: {
@@ -6550,6 +6580,9 @@ var SyntaxNode = (function () {
     SyntaxNode.prototype.isTrivia = function () {
         return false;
     };
+    SyntaxNode.prototype.isTriviaList = function () {
+        return false;
+    };
     SyntaxNode.prototype.kind = function () {
         throw Errors.abstract();
     };
@@ -6574,10 +6607,26 @@ var SyntaxNode = (function () {
     SyntaxNode.prototype.accept1 = function (visitor) {
         throw Errors.abstract();
     };
+    SyntaxNode.prototype.realize = function (text) {
+        return this.accept1(new SyntaxRealizer(text));
+    };
+    SyntaxNode.prototype.collectTextElements = function (text, elements) {
+        throw Errors.abstract();
+    };
+    SyntaxNode.prototype.fullText = function (text) {
+        var elements = [];
+        this.collectTextElements(text, elements);
+        return elements.join("");
+    };
     return SyntaxNode;
 })();
 var SyntaxList;
 (function (SyntaxList) {
+    function collectTextElements(text, elements, list) {
+        for(var i = 0, n = list.count(); i < n; i++) {
+            list.syntaxNodeAt(i).collectTextElements(text, elements);
+        }
+    }
     var EmptySyntaxList = (function () {
         function EmptySyntaxList() { }
         EmptySyntaxList.prototype.isToken = function () {
@@ -6595,6 +6644,9 @@ var SyntaxList;
         EmptySyntaxList.prototype.isTrivia = function () {
             return false;
         };
+        EmptySyntaxList.prototype.isTriviaList = function () {
+            return false;
+        };
         EmptySyntaxList.prototype.kind = function () {
             return 1 /* List */ ;
         };
@@ -6609,6 +6661,9 @@ var SyntaxList;
         };
         EmptySyntaxList.prototype.syntaxNodeAt = function (index) {
             throw Errors.argumentOutOfRange("index");
+        };
+        EmptySyntaxList.prototype.collectTextElements = function (text, elements) {
+            return collectTextElements(text, elements, this);
         };
         return EmptySyntaxList;
     })();    
@@ -6632,6 +6687,9 @@ var SyntaxList;
         SingletonSyntaxList.prototype.isTrivia = function () {
             return false;
         };
+        SingletonSyntaxList.prototype.isTriviaList = function () {
+            return false;
+        };
         SingletonSyntaxList.prototype.kind = function () {
             return 1 /* List */ ;
         };
@@ -6652,6 +6710,9 @@ var SyntaxList;
             }
             return this._item;
         };
+        SingletonSyntaxList.prototype.collectTextElements = function (text, elements) {
+            return collectTextElements(text, elements, this);
+        };
         return SingletonSyntaxList;
     })();    
     var NormalSyntaxList = (function () {
@@ -6671,6 +6732,9 @@ var SyntaxList;
             return false;
         };
         NormalSyntaxList.prototype.isTrivia = function () {
+            return false;
+        };
+        NormalSyntaxList.prototype.isTriviaList = function () {
             return false;
         };
         NormalSyntaxList.prototype.kind = function () {
@@ -6696,6 +6760,9 @@ var SyntaxList;
             }
             return this.nodes[index];
         };
+        NormalSyntaxList.prototype.collectTextElements = function (text, elements) {
+            return collectTextElements(text, elements, this);
+        };
         return NormalSyntaxList;
     })();    
     function create(nodes) {
@@ -6717,7 +6784,7 @@ var SourceUnitSyntax = (function (_super) {
         if(moduleElements === null) {
             throw Errors.argumentNull('moduleElements');
         }
-        if(endOfFileToken.kind() !== 116 /* EndOfFileToken */ ) {
+        if(endOfFileToken.kind() !== 117 /* EndOfFileToken */ ) {
             throw Errors.argument('endOfFileToken');
         }
         this._moduleElements = moduleElements;
@@ -6733,7 +6800,7 @@ var SourceUnitSyntax = (function (_super) {
         return visitor.visitSourceUnit(this);
     };
     SourceUnitSyntax.prototype.kind = function () {
-        return 117 /* SourceUnit */ ;
+        return 118 /* SourceUnit */ ;
     };
     SourceUnitSyntax.prototype.isMissing = function () {
         if(!this._moduleElements.isMissing()) {
@@ -6756,6 +6823,10 @@ var SourceUnitSyntax = (function (_super) {
         }
         return new SourceUnitSyntax(moduleElements, endOfFileToken);
     };
+    SourceUnitSyntax.prototype.collectTextElements = function (text, elements) {
+        this._moduleElements.collectTextElements(text, elements);
+        this._endOfFileToken.collectTextElements(text, elements);
+    };
     return SourceUnitSyntax;
 })(SyntaxNode);
 var ModuleElementSyntax = (function (_super) {
@@ -6776,16 +6847,16 @@ var ExternalModuleReferenceSyntax = (function (_super) {
     __extends(ExternalModuleReferenceSyntax, _super);
     function ExternalModuleReferenceSyntax(moduleKeyword, openParenToken, stringLiteral, closeParenToken) {
         _super.call(this);
-        if(moduleKeyword.keywordKind() !== 61 /* ModuleKeyword */ ) {
+        if(moduleKeyword.keywordKind() !== 62 /* ModuleKeyword */ ) {
             throw Errors.argument('moduleKeyword');
         }
-        if(openParenToken.kind() !== 67 /* OpenParenToken */ ) {
+        if(openParenToken.kind() !== 68 /* OpenParenToken */ ) {
             throw Errors.argument('openParenToken');
         }
-        if(stringLiteral.kind() !== 10 /* StringLiteral */ ) {
+        if(stringLiteral.kind() !== 11 /* StringLiteral */ ) {
             throw Errors.argument('stringLiteral');
         }
-        if(closeParenToken.kind() !== 68 /* CloseParenToken */ ) {
+        if(closeParenToken.kind() !== 69 /* CloseParenToken */ ) {
             throw Errors.argument('closeParenToken');
         }
         this._moduleKeyword = moduleKeyword;
@@ -6800,7 +6871,7 @@ var ExternalModuleReferenceSyntax = (function (_super) {
         return visitor.visitExternalModuleReference(this);
     };
     ExternalModuleReferenceSyntax.prototype.kind = function () {
-        return 241 /* ExternalModuleReference */ ;
+        return 242 /* ExternalModuleReference */ ;
     };
     ExternalModuleReferenceSyntax.prototype.isMissing = function () {
         if(!this._moduleKeyword.isMissing()) {
@@ -6835,6 +6906,12 @@ var ExternalModuleReferenceSyntax = (function (_super) {
         }
         return new ExternalModuleReferenceSyntax(moduleKeyword, openParenToken, stringLiteral, closeParenToken);
     };
+    ExternalModuleReferenceSyntax.prototype.collectTextElements = function (text, elements) {
+        this._moduleKeyword.collectTextElements(text, elements);
+        this._openParenToken.collectTextElements(text, elements);
+        this._stringLiteral.collectTextElements(text, elements);
+        this._closeParenToken.collectTextElements(text, elements);
+    };
     return ExternalModuleReferenceSyntax;
 })(ModuleReferenceSyntax);
 var ModuleNameModuleReferenceSyntax = (function (_super) {
@@ -6853,7 +6930,7 @@ var ModuleNameModuleReferenceSyntax = (function (_super) {
         return visitor.visitModuleNameModuleReference(this);
     };
     ModuleNameModuleReferenceSyntax.prototype.kind = function () {
-        return 242 /* ModuleNameModuleReference */ ;
+        return 243 /* ModuleNameModuleReference */ ;
     };
     ModuleNameModuleReferenceSyntax.prototype.isMissing = function () {
         if(!this._moduleName.isMissing()) {
@@ -6870,6 +6947,9 @@ var ModuleNameModuleReferenceSyntax = (function (_super) {
         }
         return new ModuleNameModuleReferenceSyntax(moduleName);
     };
+    ModuleNameModuleReferenceSyntax.prototype.collectTextElements = function (text, elements) {
+        this._moduleName.collectTextElements(text, elements);
+    };
     return ModuleNameModuleReferenceSyntax;
 })(ModuleReferenceSyntax);
 var ImportDeclarationSyntax = (function (_super) {
@@ -6879,16 +6959,16 @@ var ImportDeclarationSyntax = (function (_super) {
         if(moduleReference === null) {
             throw Errors.argumentNull('moduleReference');
         }
-        if(importKeyword.keywordKind() !== 45 /* ImportKeyword */ ) {
+        if(importKeyword.keywordKind() !== 46 /* ImportKeyword */ ) {
             throw Errors.argument('importKeyword');
         }
-        if(identifier.kind() !== 7 /* IdentifierNameToken */ ) {
+        if(identifier.kind() !== 8 /* IdentifierNameToken */ ) {
             throw Errors.argument('identifier');
         }
-        if(equalsToken.kind() !== 102 /* EqualsToken */ ) {
+        if(equalsToken.kind() !== 103 /* EqualsToken */ ) {
             throw Errors.argument('equalsToken');
         }
-        if(semicolonToken.kind() !== 73 /* SemicolonToken */ ) {
+        if(semicolonToken.kind() !== 74 /* SemicolonToken */ ) {
             throw Errors.argument('semicolonToken');
         }
         this._importKeyword = importKeyword;
@@ -6904,7 +6984,7 @@ var ImportDeclarationSyntax = (function (_super) {
         return visitor.visitImportDeclaration(this);
     };
     ImportDeclarationSyntax.prototype.kind = function () {
-        return 130 /* ImportDeclaration */ ;
+        return 131 /* ImportDeclaration */ ;
     };
     ImportDeclarationSyntax.prototype.isMissing = function () {
         if(!this._importKeyword.isMissing()) {
@@ -6945,6 +7025,13 @@ var ImportDeclarationSyntax = (function (_super) {
         }
         return new ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken);
     };
+    ImportDeclarationSyntax.prototype.collectTextElements = function (text, elements) {
+        this._importKeyword.collectTextElements(text, elements);
+        this._identifier.collectTextElements(text, elements);
+        this._equalsToken.collectTextElements(text, elements);
+        this._moduleReference.collectTextElements(text, elements);
+        this._semicolonToken.collectTextElements(text, elements);
+    };
     return ImportDeclarationSyntax;
 })(ModuleElementSyntax);
 var ClassDeclarationSyntax = (function (_super) {
@@ -6955,25 +7042,25 @@ var ClassDeclarationSyntax = (function (_super) {
             throw Errors.argumentNull('classElements');
         }
         if(exportKeyword !== null) {
-            if(exportKeyword.keywordKind() !== 43 /* ExportKeyword */ ) {
+            if(exportKeyword.keywordKind() !== 44 /* ExportKeyword */ ) {
                 throw Errors.argument('exportKeyword');
             }
         }
         if(declareKeyword !== null) {
-            if(declareKeyword.keywordKind() !== 59 /* DeclareKeyword */ ) {
+            if(declareKeyword.keywordKind() !== 60 /* DeclareKeyword */ ) {
                 throw Errors.argument('declareKeyword');
             }
         }
-        if(classKeyword.keywordKind() !== 40 /* ClassKeyword */ ) {
+        if(classKeyword.keywordKind() !== 41 /* ClassKeyword */ ) {
             throw Errors.argument('classKeyword');
         }
-        if(identifier.kind() !== 7 /* IdentifierNameToken */ ) {
+        if(identifier.kind() !== 8 /* IdentifierNameToken */ ) {
             throw Errors.argument('identifier');
         }
-        if(openBraceToken.kind() !== 65 /* OpenBraceToken */ ) {
+        if(openBraceToken.kind() !== 66 /* OpenBraceToken */ ) {
             throw Errors.argument('openBraceToken');
         }
-        if(closeBraceToken.kind() !== 66 /* CloseBraceToken */ ) {
+        if(closeBraceToken.kind() !== 67 /* CloseBraceToken */ ) {
             throw Errors.argument('closeBraceToken');
         }
         this._exportKeyword = exportKeyword;
@@ -6996,7 +7083,7 @@ var ClassDeclarationSyntax = (function (_super) {
         return visitor.visitClassDeclaration(this);
     };
     ClassDeclarationSyntax.prototype.kind = function () {
-        return 128 /* ClassDeclaration */ ;
+        return 129 /* ClassDeclaration */ ;
     };
     ClassDeclarationSyntax.prototype.isMissing = function () {
         if(this._exportKeyword !== null && !this._exportKeyword.isMissing()) {
@@ -7061,6 +7148,25 @@ var ClassDeclarationSyntax = (function (_super) {
         }
         return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken);
     };
+    ClassDeclarationSyntax.prototype.collectTextElements = function (text, elements) {
+        if(this._exportKeyword !== null) {
+            this._exportKeyword.collectTextElements(text, elements);
+        }
+        if(this._declareKeyword !== null) {
+            this._declareKeyword.collectTextElements(text, elements);
+        }
+        this._classKeyword.collectTextElements(text, elements);
+        this._identifier.collectTextElements(text, elements);
+        if(this._extendsClause !== null) {
+            this._extendsClause.collectTextElements(text, elements);
+        }
+        if(this._implementsClause !== null) {
+            this._implementsClause.collectTextElements(text, elements);
+        }
+        this._openBraceToken.collectTextElements(text, elements);
+        this._classElements.collectTextElements(text, elements);
+        this._closeBraceToken.collectTextElements(text, elements);
+    };
     return ClassDeclarationSyntax;
 })(ModuleElementSyntax);
 var InterfaceDeclarationSyntax = (function (_super) {
@@ -7071,14 +7177,14 @@ var InterfaceDeclarationSyntax = (function (_super) {
             throw Errors.argumentNull('body');
         }
         if(exportKeyword !== null) {
-            if(exportKeyword.keywordKind() !== 43 /* ExportKeyword */ ) {
+            if(exportKeyword.keywordKind() !== 44 /* ExportKeyword */ ) {
                 throw Errors.argument('exportKeyword');
             }
         }
-        if(interfaceKeyword.keywordKind() !== 48 /* InterfaceKeyword */ ) {
+        if(interfaceKeyword.keywordKind() !== 49 /* InterfaceKeyword */ ) {
             throw Errors.argument('interfaceKeyword');
         }
-        if(identifier.kind() !== 7 /* IdentifierNameToken */ ) {
+        if(identifier.kind() !== 8 /* IdentifierNameToken */ ) {
             throw Errors.argument('identifier');
         }
         this._exportKeyword = exportKeyword;
@@ -7097,7 +7203,7 @@ var InterfaceDeclarationSyntax = (function (_super) {
         return visitor.visitInterfaceDeclaration(this);
     };
     InterfaceDeclarationSyntax.prototype.kind = function () {
-        return 125 /* InterfaceDeclaration */ ;
+        return 126 /* InterfaceDeclaration */ ;
     };
     InterfaceDeclarationSyntax.prototype.isMissing = function () {
         if(this._exportKeyword !== null && !this._exportKeyword.isMissing()) {
@@ -7138,6 +7244,17 @@ var InterfaceDeclarationSyntax = (function (_super) {
         }
         return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, extendsClause, body);
     };
+    InterfaceDeclarationSyntax.prototype.collectTextElements = function (text, elements) {
+        if(this._exportKeyword !== null) {
+            this._exportKeyword.collectTextElements(text, elements);
+        }
+        this._interfaceKeyword.collectTextElements(text, elements);
+        this._identifier.collectTextElements(text, elements);
+        if(this._extendsClause !== null) {
+            this._extendsClause.collectTextElements(text, elements);
+        }
+        this._body.collectTextElements(text, elements);
+    };
     return InterfaceDeclarationSyntax;
 })(ModuleElementSyntax);
 var ExtendsClauseSyntax = (function (_super) {
@@ -7147,7 +7264,7 @@ var ExtendsClauseSyntax = (function (_super) {
         if(typeNames === null) {
             throw Errors.argumentNull('typeNames');
         }
-        if(extendsKeyword.keywordKind() !== 44 /* ExtendsKeyword */ ) {
+        if(extendsKeyword.keywordKind() !== 45 /* ExtendsKeyword */ ) {
             throw Errors.argument('extendsKeyword');
         }
         this._extendsKeyword = extendsKeyword;
@@ -7163,7 +7280,7 @@ var ExtendsClauseSyntax = (function (_super) {
         return visitor.visitExtendsClause(this);
     };
     ExtendsClauseSyntax.prototype.kind = function () {
-        return 226 /* ExtendsClause */ ;
+        return 227 /* ExtendsClause */ ;
     };
     ExtendsClauseSyntax.prototype.isMissing = function () {
         if(!this._extendsKeyword.isMissing()) {
@@ -7186,6 +7303,10 @@ var ExtendsClauseSyntax = (function (_super) {
         }
         return new ExtendsClauseSyntax(extendsKeyword, typeNames);
     };
+    ExtendsClauseSyntax.prototype.collectTextElements = function (text, elements) {
+        this._extendsKeyword.collectTextElements(text, elements);
+        this._typeNames.collectTextElements(text, elements);
+    };
     return ExtendsClauseSyntax;
 })(SyntaxNode);
 var ImplementsClauseSyntax = (function (_super) {
@@ -7195,7 +7316,7 @@ var ImplementsClauseSyntax = (function (_super) {
         if(typeNames === null) {
             throw Errors.argumentNull('typeNames');
         }
-        if(implementsKeyword.keywordKind() !== 47 /* ImplementsKeyword */ ) {
+        if(implementsKeyword.keywordKind() !== 48 /* ImplementsKeyword */ ) {
             throw Errors.argument('implementsKeyword');
         }
         this._implementsKeyword = implementsKeyword;
@@ -7211,7 +7332,7 @@ var ImplementsClauseSyntax = (function (_super) {
         return visitor.visitImplementsClause(this);
     };
     ImplementsClauseSyntax.prototype.kind = function () {
-        return 225 /* ImplementsClause */ ;
+        return 226 /* ImplementsClause */ ;
     };
     ImplementsClauseSyntax.prototype.isMissing = function () {
         if(!this._implementsKeyword.isMissing()) {
@@ -7234,6 +7355,10 @@ var ImplementsClauseSyntax = (function (_super) {
         }
         return new ImplementsClauseSyntax(implementsKeyword, typeNames);
     };
+    ImplementsClauseSyntax.prototype.collectTextElements = function (text, elements) {
+        this._implementsKeyword.collectTextElements(text, elements);
+        this._typeNames.collectTextElements(text, elements);
+    };
     return ImplementsClauseSyntax;
 })(SyntaxNode);
 var ModuleDeclarationSyntax = (function (_super) {
@@ -7244,27 +7369,27 @@ var ModuleDeclarationSyntax = (function (_super) {
             throw Errors.argumentNull('moduleElements');
         }
         if(exportKeyword !== null) {
-            if(exportKeyword.keywordKind() !== 43 /* ExportKeyword */ ) {
+            if(exportKeyword.keywordKind() !== 44 /* ExportKeyword */ ) {
                 throw Errors.argument('exportKeyword');
             }
         }
         if(declareKeyword !== null) {
-            if(declareKeyword.keywordKind() !== 59 /* DeclareKeyword */ ) {
+            if(declareKeyword.keywordKind() !== 60 /* DeclareKeyword */ ) {
                 throw Errors.argument('declareKeyword');
             }
         }
-        if(moduleKeyword.keywordKind() !== 61 /* ModuleKeyword */ ) {
+        if(moduleKeyword.keywordKind() !== 62 /* ModuleKeyword */ ) {
             throw Errors.argument('moduleKeyword');
         }
         if(stringLiteral !== null) {
-            if(stringLiteral.kind() !== 10 /* StringLiteral */ ) {
+            if(stringLiteral.kind() !== 11 /* StringLiteral */ ) {
                 throw Errors.argument('stringLiteral');
             }
         }
-        if(openBraceToken.kind() !== 65 /* OpenBraceToken */ ) {
+        if(openBraceToken.kind() !== 66 /* OpenBraceToken */ ) {
             throw Errors.argument('openBraceToken');
         }
-        if(closeBraceToken.kind() !== 66 /* CloseBraceToken */ ) {
+        if(closeBraceToken.kind() !== 67 /* CloseBraceToken */ ) {
             throw Errors.argument('closeBraceToken');
         }
         this._exportKeyword = exportKeyword;
@@ -7286,7 +7411,7 @@ var ModuleDeclarationSyntax = (function (_super) {
         return visitor.visitModuleDeclaration(this);
     };
     ModuleDeclarationSyntax.prototype.kind = function () {
-        return 127 /* ModuleDeclaration */ ;
+        return 128 /* ModuleDeclaration */ ;
     };
     ModuleDeclarationSyntax.prototype.isMissing = function () {
         if(this._exportKeyword !== null && !this._exportKeyword.isMissing()) {
@@ -7345,6 +7470,24 @@ var ModuleDeclarationSyntax = (function (_super) {
         }
         return new ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken);
     };
+    ModuleDeclarationSyntax.prototype.collectTextElements = function (text, elements) {
+        if(this._exportKeyword !== null) {
+            this._exportKeyword.collectTextElements(text, elements);
+        }
+        if(this._declareKeyword !== null) {
+            this._declareKeyword.collectTextElements(text, elements);
+        }
+        this._moduleKeyword.collectTextElements(text, elements);
+        if(this._moduleName !== null) {
+            this._moduleName.collectTextElements(text, elements);
+        }
+        if(this._stringLiteral !== null) {
+            this._stringLiteral.collectTextElements(text, elements);
+        }
+        this._openBraceToken.collectTextElements(text, elements);
+        this._moduleElements.collectTextElements(text, elements);
+        this._closeBraceToken.collectTextElements(text, elements);
+    };
     return ModuleDeclarationSyntax;
 })(ModuleElementSyntax);
 var StatementSyntax = (function (_super) {
@@ -7362,20 +7505,20 @@ var FunctionDeclarationSyntax = (function (_super) {
             throw Errors.argumentNull('functionSignature');
         }
         if(exportKeyword !== null) {
-            if(exportKeyword.keywordKind() !== 43 /* ExportKeyword */ ) {
+            if(exportKeyword.keywordKind() !== 44 /* ExportKeyword */ ) {
                 throw Errors.argument('exportKeyword');
             }
         }
         if(declareKeyword !== null) {
-            if(declareKeyword.keywordKind() !== 59 /* DeclareKeyword */ ) {
+            if(declareKeyword.keywordKind() !== 60 /* DeclareKeyword */ ) {
                 throw Errors.argument('declareKeyword');
             }
         }
-        if(functionKeyword.keywordKind() !== 23 /* FunctionKeyword */ ) {
+        if(functionKeyword.keywordKind() !== 24 /* FunctionKeyword */ ) {
             throw Errors.argument('functionKeyword');
         }
         if(semicolonToken !== null) {
-            if(semicolonToken.kind() !== 73 /* SemicolonToken */ ) {
+            if(semicolonToken.kind() !== 74 /* SemicolonToken */ ) {
                 throw Errors.argument('semicolonToken');
             }
         }
@@ -7396,7 +7539,7 @@ var FunctionDeclarationSyntax = (function (_super) {
         return visitor.visitFunctionDeclaration(this);
     };
     FunctionDeclarationSyntax.prototype.kind = function () {
-        return 126 /* FunctionDeclaration */ ;
+        return 127 /* FunctionDeclaration */ ;
     };
     FunctionDeclarationSyntax.prototype.isMissing = function () {
         if(this._exportKeyword !== null && !this._exportKeyword.isMissing()) {
@@ -7443,6 +7586,22 @@ var FunctionDeclarationSyntax = (function (_super) {
         }
         return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken);
     };
+    FunctionDeclarationSyntax.prototype.collectTextElements = function (text, elements) {
+        if(this._exportKeyword !== null) {
+            this._exportKeyword.collectTextElements(text, elements);
+        }
+        if(this._declareKeyword !== null) {
+            this._declareKeyword.collectTextElements(text, elements);
+        }
+        this._functionKeyword.collectTextElements(text, elements);
+        this._functionSignature.collectTextElements(text, elements);
+        if(this._block !== null) {
+            this._block.collectTextElements(text, elements);
+        }
+        if(this._semicolonToken !== null) {
+            this._semicolonToken.collectTextElements(text, elements);
+        }
+    };
     return FunctionDeclarationSyntax;
 })(StatementSyntax);
 var VariableStatementSyntax = (function (_super) {
@@ -7453,16 +7612,16 @@ var VariableStatementSyntax = (function (_super) {
             throw Errors.argumentNull('variableDeclaration');
         }
         if(exportKeyword !== null) {
-            if(exportKeyword.keywordKind() !== 43 /* ExportKeyword */ ) {
+            if(exportKeyword.keywordKind() !== 44 /* ExportKeyword */ ) {
                 throw Errors.argument('exportKeyword');
             }
         }
         if(declareKeyword !== null) {
-            if(declareKeyword.keywordKind() !== 59 /* DeclareKeyword */ ) {
+            if(declareKeyword.keywordKind() !== 60 /* DeclareKeyword */ ) {
                 throw Errors.argument('declareKeyword');
             }
         }
-        if(semicolonToken.kind() !== 73 /* SemicolonToken */ ) {
+        if(semicolonToken.kind() !== 74 /* SemicolonToken */ ) {
             throw Errors.argument('semicolonToken');
         }
         this._exportKeyword = exportKeyword;
@@ -7480,7 +7639,7 @@ var VariableStatementSyntax = (function (_super) {
         return visitor.visitVariableStatement(this);
     };
     VariableStatementSyntax.prototype.kind = function () {
-        return 138 /* VariableStatement */ ;
+        return 139 /* VariableStatement */ ;
     };
     VariableStatementSyntax.prototype.isMissing = function () {
         if(this._exportKeyword !== null && !this._exportKeyword.isMissing()) {
@@ -7515,6 +7674,16 @@ var VariableStatementSyntax = (function (_super) {
         }
         return new VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken);
     };
+    VariableStatementSyntax.prototype.collectTextElements = function (text, elements) {
+        if(this._exportKeyword !== null) {
+            this._exportKeyword.collectTextElements(text, elements);
+        }
+        if(this._declareKeyword !== null) {
+            this._declareKeyword.collectTextElements(text, elements);
+        }
+        this._variableDeclaration.collectTextElements(text, elements);
+        this._semicolonToken.collectTextElements(text, elements);
+    };
     return VariableStatementSyntax;
 })(StatementSyntax);
 var ExpressionSyntax = (function (_super) {
@@ -7538,7 +7707,7 @@ var VariableDeclarationSyntax = (function (_super) {
         if(variableDeclarators === null) {
             throw Errors.argumentNull('variableDeclarators');
         }
-        if(varKeyword.keywordKind() !== 36 /* VarKeyword */ ) {
+        if(varKeyword.keywordKind() !== 37 /* VarKeyword */ ) {
             throw Errors.argument('varKeyword');
         }
         this._varKeyword = varKeyword;
@@ -7554,7 +7723,7 @@ var VariableDeclarationSyntax = (function (_super) {
         return visitor.visitVariableDeclaration(this);
     };
     VariableDeclarationSyntax.prototype.kind = function () {
-        return 221 /* VariableDeclaration */ ;
+        return 222 /* VariableDeclaration */ ;
     };
     VariableDeclarationSyntax.prototype.isMissing = function () {
         if(!this._varKeyword.isMissing()) {
@@ -7577,13 +7746,17 @@ var VariableDeclarationSyntax = (function (_super) {
         }
         return new VariableDeclarationSyntax(varKeyword, variableDeclarators);
     };
+    VariableDeclarationSyntax.prototype.collectTextElements = function (text, elements) {
+        this._varKeyword.collectTextElements(text, elements);
+        this._variableDeclarators.collectTextElements(text, elements);
+    };
     return VariableDeclarationSyntax;
 })(SyntaxNode);
 var VariableDeclaratorSyntax = (function (_super) {
     __extends(VariableDeclaratorSyntax, _super);
     function VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause) {
         _super.call(this);
-        if(identifier.kind() !== 7 /* IdentifierNameToken */ ) {
+        if(identifier.kind() !== 8 /* IdentifierNameToken */ ) {
             throw Errors.argument('identifier');
         }
         this._identifier = identifier;
@@ -7600,7 +7773,7 @@ var VariableDeclaratorSyntax = (function (_super) {
         return visitor.visitVariableDeclarator(this);
     };
     VariableDeclaratorSyntax.prototype.kind = function () {
-        return 222 /* VariableDeclarator */ ;
+        return 223 /* VariableDeclarator */ ;
     };
     VariableDeclaratorSyntax.prototype.isMissing = function () {
         if(!this._identifier.isMissing()) {
@@ -7629,6 +7802,15 @@ var VariableDeclaratorSyntax = (function (_super) {
         }
         return new VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause);
     };
+    VariableDeclaratorSyntax.prototype.collectTextElements = function (text, elements) {
+        this._identifier.collectTextElements(text, elements);
+        if(this._typeAnnotation !== null) {
+            this._typeAnnotation.collectTextElements(text, elements);
+        }
+        if(this._equalsValueClause !== null) {
+            this._equalsValueClause.collectTextElements(text, elements);
+        }
+    };
     return VariableDeclaratorSyntax;
 })(SyntaxNode);
 var EqualsValueClauseSyntax = (function (_super) {
@@ -7638,7 +7820,7 @@ var EqualsValueClauseSyntax = (function (_super) {
         if(value === null) {
             throw Errors.argumentNull('value');
         }
-        if(equalsToken.kind() !== 102 /* EqualsToken */ ) {
+        if(equalsToken.kind() !== 103 /* EqualsToken */ ) {
             throw Errors.argument('equalsToken');
         }
         this._equalsToken = equalsToken;
@@ -7651,7 +7833,7 @@ var EqualsValueClauseSyntax = (function (_super) {
         return visitor.visitEqualsValueClause(this);
     };
     EqualsValueClauseSyntax.prototype.kind = function () {
-        return 227 /* EqualsValueClause */ ;
+        return 228 /* EqualsValueClause */ ;
     };
     EqualsValueClauseSyntax.prototype.isMissing = function () {
         if(!this._equalsToken.isMissing()) {
@@ -7674,6 +7856,10 @@ var EqualsValueClauseSyntax = (function (_super) {
         }
         return new EqualsValueClauseSyntax(equalsToken, value);
     };
+    EqualsValueClauseSyntax.prototype.collectTextElements = function (text, elements) {
+        this._equalsToken.collectTextElements(text, elements);
+        this._value.collectTextElements(text, elements);
+    };
     return EqualsValueClauseSyntax;
 })(SyntaxNode);
 var PrefixUnaryExpressionSyntax = (function (_super) {
@@ -7687,12 +7873,12 @@ var PrefixUnaryExpressionSyntax = (function (_super) {
             throw Errors.argumentNull('operand');
         }
         switch(operatorToken.kind()) {
-            case 88 /* PlusPlusToken */ :
-            case 89 /* MinusMinusToken */ :
-            case 84 /* PlusToken */ :
-            case 85 /* MinusToken */ :
-            case 97 /* TildeToken */ :
-            case 96 /* ExclamationToken */ : {
+            case 89 /* PlusPlusToken */ :
+            case 90 /* MinusMinusToken */ :
+            case 85 /* PlusToken */ :
+            case 86 /* MinusToken */ :
+            case 98 /* TildeToken */ :
+            case 97 /* ExclamationToken */ : {
                 break;
 
             }
@@ -7735,13 +7921,17 @@ var PrefixUnaryExpressionSyntax = (function (_super) {
         }
         return new PrefixUnaryExpressionSyntax(kind, operatorToken, operand);
     };
+    PrefixUnaryExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._operatorToken.collectTextElements(text, elements);
+        this._operand.collectTextElements(text, elements);
+    };
     return PrefixUnaryExpressionSyntax;
 })(UnaryExpressionSyntax);
 var ThisExpressionSyntax = (function (_super) {
     __extends(ThisExpressionSyntax, _super);
     function ThisExpressionSyntax(thisKeyword) {
         _super.call(this);
-        if(thisKeyword.keywordKind() !== 31 /* ThisKeyword */ ) {
+        if(thisKeyword.keywordKind() !== 32 /* ThisKeyword */ ) {
             throw Errors.argument('thisKeyword');
         }
         this._thisKeyword = thisKeyword;
@@ -7753,7 +7943,7 @@ var ThisExpressionSyntax = (function (_super) {
         return visitor.visitThisExpression(this);
     };
     ThisExpressionSyntax.prototype.kind = function () {
-        return 209 /* ThisExpression */ ;
+        return 210 /* ThisExpression */ ;
     };
     ThisExpressionSyntax.prototype.isMissing = function () {
         if(!this._thisKeyword.isMissing()) {
@@ -7770,6 +7960,9 @@ var ThisExpressionSyntax = (function (_super) {
         }
         return new ThisExpressionSyntax(thisKeyword);
     };
+    ThisExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._thisKeyword.collectTextElements(text, elements);
+    };
     return ThisExpressionSyntax;
 })(UnaryExpressionSyntax);
 var LiteralExpressionSyntax = (function (_super) {
@@ -7780,17 +7973,17 @@ var LiteralExpressionSyntax = (function (_super) {
             throw Errors.argumentNull('kind');
         }
         switch(literalToken.kind()) {
-            case 8 /* RegularExpressionLiteral */ :
-            case 10 /* StringLiteral */ :
-            case 9 /* NumericLiteral */ : {
+            case 9 /* RegularExpressionLiteral */ :
+            case 11 /* StringLiteral */ :
+            case 10 /* NumericLiteral */ : {
                 break;
 
             }
-            case 7 /* IdentifierNameToken */ : {
+            case 8 /* IdentifierNameToken */ : {
                 switch(literalToken.keywordKind()) {
-                    case 20 /* FalseKeyword */ :
-                    case 33 /* TrueKeyword */ :
-                    case 28 /* NullKeyword */ : {
+                    case 21 /* FalseKeyword */ :
+                    case 34 /* TrueKeyword */ :
+                    case 29 /* NullKeyword */ : {
                         break;
 
                     }
@@ -7834,6 +8027,9 @@ var LiteralExpressionSyntax = (function (_super) {
         }
         return new LiteralExpressionSyntax(kind, literalToken);
     };
+    LiteralExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._literalToken.collectTextElements(text, elements);
+    };
     return LiteralExpressionSyntax;
 })(UnaryExpressionSyntax);
 var ArrayLiteralExpressionSyntax = (function (_super) {
@@ -7843,10 +8039,10 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
         if(expressions === null) {
             throw Errors.argumentNull('expressions');
         }
-        if(openBracketToken.kind() !== 69 /* OpenBracketToken */ ) {
+        if(openBracketToken.kind() !== 70 /* OpenBracketToken */ ) {
             throw Errors.argument('openBracketToken');
         }
-        if(closeBracketToken.kind() !== 70 /* CloseBracketToken */ ) {
+        if(closeBracketToken.kind() !== 71 /* CloseBracketToken */ ) {
             throw Errors.argument('closeBracketToken');
         }
         this._openBracketToken = openBracketToken;
@@ -7863,7 +8059,7 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
         return visitor.visitArrayLiteralExpression(this);
     };
     ArrayLiteralExpressionSyntax.prototype.kind = function () {
-        return 210 /* ArrayLiteralExpression */ ;
+        return 211 /* ArrayLiteralExpression */ ;
     };
     ArrayLiteralExpressionSyntax.prototype.isMissing = function () {
         if(!this._openBracketToken.isMissing()) {
@@ -7892,6 +8088,11 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
         }
         return new ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken);
     };
+    ArrayLiteralExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._openBracketToken.collectTextElements(text, elements);
+        this._expressions.collectTextElements(text, elements);
+        this._closeBracketToken.collectTextElements(text, elements);
+    };
     return ArrayLiteralExpressionSyntax;
 })(UnaryExpressionSyntax);
 var OmittedExpressionSyntax = (function (_super) {
@@ -7906,13 +8107,15 @@ var OmittedExpressionSyntax = (function (_super) {
         return visitor.visitOmittedExpression(this);
     };
     OmittedExpressionSyntax.prototype.kind = function () {
-        return 220 /* OmittedExpression */ ;
+        return 221 /* OmittedExpression */ ;
     };
     OmittedExpressionSyntax.prototype.isMissing = function () {
         return true;
     };
     OmittedExpressionSyntax.prototype.update = function () {
         return this;
+    };
+    OmittedExpressionSyntax.prototype.collectTextElements = function (text, elements) {
     };
     return OmittedExpressionSyntax;
 })(ExpressionSyntax);
@@ -7923,10 +8126,10 @@ var ParenthesizedExpressionSyntax = (function (_super) {
         if(expression === null) {
             throw Errors.argumentNull('expression');
         }
-        if(openParenToken.kind() !== 67 /* OpenParenToken */ ) {
+        if(openParenToken.kind() !== 68 /* OpenParenToken */ ) {
             throw Errors.argument('openParenToken');
         }
-        if(closeParenToken.kind() !== 68 /* CloseParenToken */ ) {
+        if(closeParenToken.kind() !== 69 /* CloseParenToken */ ) {
             throw Errors.argument('closeParenToken');
         }
         this._openParenToken = openParenToken;
@@ -7940,7 +8143,7 @@ var ParenthesizedExpressionSyntax = (function (_super) {
         return visitor.visitParenthesizedExpression(this);
     };
     ParenthesizedExpressionSyntax.prototype.kind = function () {
-        return 213 /* ParenthesizedExpression */ ;
+        return 214 /* ParenthesizedExpression */ ;
     };
     ParenthesizedExpressionSyntax.prototype.isMissing = function () {
         if(!this._openParenToken.isMissing()) {
@@ -7969,6 +8172,11 @@ var ParenthesizedExpressionSyntax = (function (_super) {
         }
         return new ParenthesizedExpressionSyntax(openParenToken, expression, closeParenToken);
     };
+    ParenthesizedExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._openParenToken.collectTextElements(text, elements);
+        this._expression.collectTextElements(text, elements);
+        this._closeParenToken.collectTextElements(text, elements);
+    };
     return ParenthesizedExpressionSyntax;
 })(UnaryExpressionSyntax);
 var ArrowFunctionExpressionSyntax = (function (_super) {
@@ -7985,10 +8193,10 @@ var SimpleArrowFunctionExpression = (function (_super) {
         if(body === null) {
             throw Errors.argumentNull('body');
         }
-        if(identifier.kind() !== 7 /* IdentifierNameToken */ ) {
+        if(identifier.kind() !== 8 /* IdentifierNameToken */ ) {
             throw Errors.argument('identifier');
         }
-        if(equalsGreaterThanToken.kind() !== 80 /* EqualsGreaterThanToken */ ) {
+        if(equalsGreaterThanToken.kind() !== 81 /* EqualsGreaterThanToken */ ) {
             throw Errors.argument('equalsGreaterThanToken');
         }
         this._identifier = identifier;
@@ -8002,7 +8210,7 @@ var SimpleArrowFunctionExpression = (function (_super) {
         return visitor.visitSimpleArrowFunctionExpression(this);
     };
     SimpleArrowFunctionExpression.prototype.kind = function () {
-        return 215 /* SimpleArrowFunctionExpression */ ;
+        return 216 /* SimpleArrowFunctionExpression */ ;
     };
     SimpleArrowFunctionExpression.prototype.isMissing = function () {
         if(!this._identifier.isMissing()) {
@@ -8031,6 +8239,11 @@ var SimpleArrowFunctionExpression = (function (_super) {
         }
         return new SimpleArrowFunctionExpression(identifier, equalsGreaterThanToken, body);
     };
+    SimpleArrowFunctionExpression.prototype.collectTextElements = function (text, elements) {
+        this._identifier.collectTextElements(text, elements);
+        this._equalsGreaterThanToken.collectTextElements(text, elements);
+        this._body.collectTextElements(text, elements);
+    };
     return SimpleArrowFunctionExpression;
 })(ArrowFunctionExpressionSyntax);
 var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
@@ -8043,7 +8256,7 @@ var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
         if(body === null) {
             throw Errors.argumentNull('body');
         }
-        if(equalsGreaterThanToken.kind() !== 80 /* EqualsGreaterThanToken */ ) {
+        if(equalsGreaterThanToken.kind() !== 81 /* EqualsGreaterThanToken */ ) {
             throw Errors.argument('equalsGreaterThanToken');
         }
         this._callSignature = callSignature;
@@ -8057,7 +8270,7 @@ var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
         return visitor.visitParenthesizedArrowFunctionExpression(this);
     };
     ParenthesizedArrowFunctionExpressionSyntax.prototype.kind = function () {
-        return 214 /* ParenthesizedArrowFunctionExpression */ ;
+        return 215 /* ParenthesizedArrowFunctionExpression */ ;
     };
     ParenthesizedArrowFunctionExpressionSyntax.prototype.isMissing = function () {
         if(!this._callSignature.isMissing()) {
@@ -8086,6 +8299,11 @@ var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
         }
         return new ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body);
     };
+    ParenthesizedArrowFunctionExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._callSignature.collectTextElements(text, elements);
+        this._equalsGreaterThanToken.collectTextElements(text, elements);
+        this._body.collectTextElements(text, elements);
+    };
     return ParenthesizedArrowFunctionExpressionSyntax;
 })(ArrowFunctionExpressionSyntax);
 var TypeSyntax = (function (_super) {
@@ -8106,7 +8324,7 @@ var IdentifierNameSyntax = (function (_super) {
     __extends(IdentifierNameSyntax, _super);
     function IdentifierNameSyntax(identifier) {
         _super.call(this);
-        if(identifier.kind() !== 7 /* IdentifierNameToken */ ) {
+        if(identifier.kind() !== 8 /* IdentifierNameToken */ ) {
             throw Errors.argument('identifier');
         }
         this._identifier = identifier;
@@ -8118,7 +8336,7 @@ var IdentifierNameSyntax = (function (_super) {
         return visitor.visitIdentifierName(this);
     };
     IdentifierNameSyntax.prototype.kind = function () {
-        return 118 /* IdentifierName */ ;
+        return 119 /* IdentifierName */ ;
     };
     IdentifierNameSyntax.prototype.isMissing = function () {
         if(!this._identifier.isMissing()) {
@@ -8135,6 +8353,9 @@ var IdentifierNameSyntax = (function (_super) {
         }
         return new IdentifierNameSyntax(identifier);
     };
+    IdentifierNameSyntax.prototype.collectTextElements = function (text, elements) {
+        this._identifier.collectTextElements(text, elements);
+    };
     return IdentifierNameSyntax;
 })(NameSyntax);
 var QualifiedNameSyntax = (function (_super) {
@@ -8147,7 +8368,7 @@ var QualifiedNameSyntax = (function (_super) {
         if(right === null) {
             throw Errors.argumentNull('right');
         }
-        if(dotToken.kind() !== 71 /* DotToken */ ) {
+        if(dotToken.kind() !== 72 /* DotToken */ ) {
             throw Errors.argument('dotToken');
         }
         this._left = left;
@@ -8161,7 +8382,7 @@ var QualifiedNameSyntax = (function (_super) {
         return visitor.visitQualifiedName(this);
     };
     QualifiedNameSyntax.prototype.kind = function () {
-        return 119 /* QualifiedName */ ;
+        return 120 /* QualifiedName */ ;
     };
     QualifiedNameSyntax.prototype.isMissing = function () {
         if(!this._left.isMissing()) {
@@ -8190,6 +8411,11 @@ var QualifiedNameSyntax = (function (_super) {
         }
         return new QualifiedNameSyntax(left, dotToken, right);
     };
+    QualifiedNameSyntax.prototype.collectTextElements = function (text, elements) {
+        this._left.collectTextElements(text, elements);
+        this._dotToken.collectTextElements(text, elements);
+        this._right.collectTextElements(text, elements);
+    };
     return QualifiedNameSyntax;
 })(NameSyntax);
 var ConstructorTypeSyntax = (function (_super) {
@@ -8202,10 +8428,10 @@ var ConstructorTypeSyntax = (function (_super) {
         if(type === null) {
             throw Errors.argumentNull('type');
         }
-        if(newKeyword.keywordKind() !== 27 /* NewKeyword */ ) {
+        if(newKeyword.keywordKind() !== 28 /* NewKeyword */ ) {
             throw Errors.argument('newKeyword');
         }
-        if(equalsGreaterThanToken.kind() !== 80 /* EqualsGreaterThanToken */ ) {
+        if(equalsGreaterThanToken.kind() !== 81 /* EqualsGreaterThanToken */ ) {
             throw Errors.argument('equalsGreaterThanToken');
         }
         this._newKeyword = newKeyword;
@@ -8220,7 +8446,7 @@ var ConstructorTypeSyntax = (function (_super) {
         return visitor.visitConstructorType(this);
     };
     ConstructorTypeSyntax.prototype.kind = function () {
-        return 124 /* ConstructorType */ ;
+        return 125 /* ConstructorType */ ;
     };
     ConstructorTypeSyntax.prototype.isMissing = function () {
         if(!this._newKeyword.isMissing()) {
@@ -8255,6 +8481,12 @@ var ConstructorTypeSyntax = (function (_super) {
         }
         return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type);
     };
+    ConstructorTypeSyntax.prototype.collectTextElements = function (text, elements) {
+        this._newKeyword.collectTextElements(text, elements);
+        this._parameterList.collectTextElements(text, elements);
+        this._equalsGreaterThanToken.collectTextElements(text, elements);
+        this._type.collectTextElements(text, elements);
+    };
     return ConstructorTypeSyntax;
 })(TypeSyntax);
 var FunctionTypeSyntax = (function (_super) {
@@ -8267,7 +8499,7 @@ var FunctionTypeSyntax = (function (_super) {
         if(type === null) {
             throw Errors.argumentNull('type');
         }
-        if(equalsGreaterThanToken.kind() !== 80 /* EqualsGreaterThanToken */ ) {
+        if(equalsGreaterThanToken.kind() !== 81 /* EqualsGreaterThanToken */ ) {
             throw Errors.argument('equalsGreaterThanToken');
         }
         this._parameterList = parameterList;
@@ -8281,7 +8513,7 @@ var FunctionTypeSyntax = (function (_super) {
         return visitor.visitFunctionType(this);
     };
     FunctionTypeSyntax.prototype.kind = function () {
-        return 122 /* FunctionType */ ;
+        return 123 /* FunctionType */ ;
     };
     FunctionTypeSyntax.prototype.isMissing = function () {
         if(!this._parameterList.isMissing()) {
@@ -8310,6 +8542,11 @@ var FunctionTypeSyntax = (function (_super) {
         }
         return new FunctionTypeSyntax(parameterList, equalsGreaterThanToken, type);
     };
+    FunctionTypeSyntax.prototype.collectTextElements = function (text, elements) {
+        this._parameterList.collectTextElements(text, elements);
+        this._equalsGreaterThanToken.collectTextElements(text, elements);
+        this._type.collectTextElements(text, elements);
+    };
     return FunctionTypeSyntax;
 })(TypeSyntax);
 var ObjectTypeSyntax = (function (_super) {
@@ -8319,10 +8556,10 @@ var ObjectTypeSyntax = (function (_super) {
         if(typeMembers === null) {
             throw Errors.argumentNull('typeMembers');
         }
-        if(openBraceToken.kind() !== 65 /* OpenBraceToken */ ) {
+        if(openBraceToken.kind() !== 66 /* OpenBraceToken */ ) {
             throw Errors.argument('openBraceToken');
         }
-        if(closeBraceToken.kind() !== 66 /* CloseBraceToken */ ) {
+        if(closeBraceToken.kind() !== 67 /* CloseBraceToken */ ) {
             throw Errors.argument('closeBraceToken');
         }
         this._openBraceToken = openBraceToken;
@@ -8339,7 +8576,7 @@ var ObjectTypeSyntax = (function (_super) {
         return visitor.visitObjectType(this);
     };
     ObjectTypeSyntax.prototype.kind = function () {
-        return 120 /* ObjectType */ ;
+        return 121 /* ObjectType */ ;
     };
     ObjectTypeSyntax.prototype.isMissing = function () {
         if(!this._openBraceToken.isMissing()) {
@@ -8368,6 +8605,11 @@ var ObjectTypeSyntax = (function (_super) {
         }
         return new ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken);
     };
+    ObjectTypeSyntax.prototype.collectTextElements = function (text, elements) {
+        this._openBraceToken.collectTextElements(text, elements);
+        this._typeMembers.collectTextElements(text, elements);
+        this._closeBraceToken.collectTextElements(text, elements);
+    };
     return ObjectTypeSyntax;
 })(TypeSyntax);
 var ArrayTypeSyntax = (function (_super) {
@@ -8377,10 +8619,10 @@ var ArrayTypeSyntax = (function (_super) {
         if(type === null) {
             throw Errors.argumentNull('type');
         }
-        if(openBracketToken.kind() !== 69 /* OpenBracketToken */ ) {
+        if(openBracketToken.kind() !== 70 /* OpenBracketToken */ ) {
             throw Errors.argument('openBracketToken');
         }
-        if(closeBracketToken.kind() !== 70 /* CloseBracketToken */ ) {
+        if(closeBracketToken.kind() !== 71 /* CloseBracketToken */ ) {
             throw Errors.argument('closeBracketToken');
         }
         this._type = type;
@@ -8394,7 +8636,7 @@ var ArrayTypeSyntax = (function (_super) {
         return visitor.visitArrayType(this);
     };
     ArrayTypeSyntax.prototype.kind = function () {
-        return 123 /* ArrayType */ ;
+        return 124 /* ArrayType */ ;
     };
     ArrayTypeSyntax.prototype.isMissing = function () {
         if(!this._type.isMissing()) {
@@ -8423,6 +8665,11 @@ var ArrayTypeSyntax = (function (_super) {
         }
         return new ArrayTypeSyntax(type, openBracketToken, closeBracketToken);
     };
+    ArrayTypeSyntax.prototype.collectTextElements = function (text, elements) {
+        this._type.collectTextElements(text, elements);
+        this._openBracketToken.collectTextElements(text, elements);
+        this._closeBracketToken.collectTextElements(text, elements);
+    };
     return ArrayTypeSyntax;
 })(TypeSyntax);
 var PredefinedTypeSyntax = (function (_super) {
@@ -8430,11 +8677,11 @@ var PredefinedTypeSyntax = (function (_super) {
     function PredefinedTypeSyntax(keyword) {
         _super.call(this);
         switch(keyword.keywordKind()) {
-            case 56 /* AnyKeyword */ :
-            case 57 /* BoolKeyword */ :
-            case 62 /* NumberKeyword */ :
-            case 64 /* StringKeyword */ :
-            case 37 /* VoidKeyword */ : {
+            case 57 /* AnyKeyword */ :
+            case 58 /* BoolKeyword */ :
+            case 63 /* NumberKeyword */ :
+            case 65 /* StringKeyword */ :
+            case 38 /* VoidKeyword */ : {
                 break;
 
             }
@@ -8452,7 +8699,7 @@ var PredefinedTypeSyntax = (function (_super) {
         return visitor.visitPredefinedType(this);
     };
     PredefinedTypeSyntax.prototype.kind = function () {
-        return 121 /* PredefinedType */ ;
+        return 122 /* PredefinedType */ ;
     };
     PredefinedTypeSyntax.prototype.isMissing = function () {
         if(!this._keyword.isMissing()) {
@@ -8469,6 +8716,9 @@ var PredefinedTypeSyntax = (function (_super) {
         }
         return new PredefinedTypeSyntax(keyword);
     };
+    PredefinedTypeSyntax.prototype.collectTextElements = function (text, elements) {
+        this._keyword.collectTextElements(text, elements);
+    };
     return PredefinedTypeSyntax;
 })(TypeSyntax);
 var TypeAnnotationSyntax = (function (_super) {
@@ -8478,7 +8728,7 @@ var TypeAnnotationSyntax = (function (_super) {
         if(type === null) {
             throw Errors.argumentNull('type');
         }
-        if(colonToken.kind() !== 101 /* ColonToken */ ) {
+        if(colonToken.kind() !== 102 /* ColonToken */ ) {
             throw Errors.argument('colonToken');
         }
         this._colonToken = colonToken;
@@ -8491,7 +8741,7 @@ var TypeAnnotationSyntax = (function (_super) {
         return visitor.visitTypeAnnotation(this);
     };
     TypeAnnotationSyntax.prototype.kind = function () {
-        return 239 /* TypeAnnotation */ ;
+        return 240 /* TypeAnnotation */ ;
     };
     TypeAnnotationSyntax.prototype.isMissing = function () {
         if(!this._colonToken.isMissing()) {
@@ -8514,6 +8764,10 @@ var TypeAnnotationSyntax = (function (_super) {
         }
         return new TypeAnnotationSyntax(colonToken, type);
     };
+    TypeAnnotationSyntax.prototype.collectTextElements = function (text, elements) {
+        this._colonToken.collectTextElements(text, elements);
+        this._type.collectTextElements(text, elements);
+    };
     return TypeAnnotationSyntax;
 })(SyntaxNode);
 var BlockSyntax = (function (_super) {
@@ -8523,10 +8777,10 @@ var BlockSyntax = (function (_super) {
         if(statements === null) {
             throw Errors.argumentNull('statements');
         }
-        if(openBraceToken.kind() !== 65 /* OpenBraceToken */ ) {
+        if(openBraceToken.kind() !== 66 /* OpenBraceToken */ ) {
             throw Errors.argument('openBraceToken');
         }
-        if(closeBraceToken.kind() !== 66 /* CloseBraceToken */ ) {
+        if(closeBraceToken.kind() !== 67 /* CloseBraceToken */ ) {
             throw Errors.argument('closeBraceToken');
         }
         this._openBraceToken = openBraceToken;
@@ -8543,7 +8797,7 @@ var BlockSyntax = (function (_super) {
         return visitor.visitBlock(this);
     };
     BlockSyntax.prototype.kind = function () {
-        return 136 /* Block */ ;
+        return 137 /* Block */ ;
     };
     BlockSyntax.prototype.isMissing = function () {
         if(!this._openBraceToken.isMissing()) {
@@ -8572,6 +8826,11 @@ var BlockSyntax = (function (_super) {
         }
         return new BlockSyntax(openBraceToken, statements, closeBraceToken);
     };
+    BlockSyntax.prototype.collectTextElements = function (text, elements) {
+        this._openBraceToken.collectTextElements(text, elements);
+        this._statements.collectTextElements(text, elements);
+        this._closeBraceToken.collectTextElements(text, elements);
+    };
     return BlockSyntax;
 })(StatementSyntax);
 var ParameterSyntax = (function (_super) {
@@ -8579,20 +8838,20 @@ var ParameterSyntax = (function (_super) {
     function ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause) {
         _super.call(this);
         if(dotDotDotToken !== null) {
-            if(dotDotDotToken.kind() !== 72 /* DotDotDotToken */ ) {
+            if(dotDotDotToken.kind() !== 73 /* DotDotDotToken */ ) {
                 throw Errors.argument('dotDotDotToken');
             }
         }
         if(publicOrPrivateKeyword !== null) {
-            if(publicOrPrivateKeyword.keywordKind() !== 53 /* PublicKeyword */  && publicOrPrivateKeyword.keywordKind() !== 51 /* PrivateKeyword */ ) {
+            if(publicOrPrivateKeyword.keywordKind() !== 54 /* PublicKeyword */  && publicOrPrivateKeyword.keywordKind() !== 52 /* PrivateKeyword */ ) {
                 throw Errors.argument('publicOrPrivateKeyword');
             }
         }
-        if(identifier.kind() !== 7 /* IdentifierNameToken */ ) {
+        if(identifier.kind() !== 8 /* IdentifierNameToken */ ) {
             throw Errors.argument('identifier');
         }
         if(questionToken !== null) {
-            if(questionToken.kind() !== 100 /* QuestionToken */ ) {
+            if(questionToken.kind() !== 101 /* QuestionToken */ ) {
                 throw Errors.argument('questionToken');
             }
         }
@@ -8613,7 +8872,7 @@ var ParameterSyntax = (function (_super) {
         return visitor.visitParameter(this);
     };
     ParameterSyntax.prototype.kind = function () {
-        return 238 /* Parameter */ ;
+        return 239 /* Parameter */ ;
     };
     ParameterSyntax.prototype.isMissing = function () {
         if(this._dotDotDotToken !== null && !this._dotDotDotToken.isMissing()) {
@@ -8660,6 +8919,24 @@ var ParameterSyntax = (function (_super) {
         }
         return new ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause);
     };
+    ParameterSyntax.prototype.collectTextElements = function (text, elements) {
+        if(this._dotDotDotToken !== null) {
+            this._dotDotDotToken.collectTextElements(text, elements);
+        }
+        if(this._publicOrPrivateKeyword !== null) {
+            this._publicOrPrivateKeyword.collectTextElements(text, elements);
+        }
+        this._identifier.collectTextElements(text, elements);
+        if(this._questionToken !== null) {
+            this._questionToken.collectTextElements(text, elements);
+        }
+        if(this._typeAnnotation !== null) {
+            this._typeAnnotation.collectTextElements(text, elements);
+        }
+        if(this._equalsValueClause !== null) {
+            this._equalsValueClause.collectTextElements(text, elements);
+        }
+    };
     return ParameterSyntax;
 })(SyntaxNode);
 var MemberAccessExpressionSyntax = (function (_super) {
@@ -8672,7 +8949,7 @@ var MemberAccessExpressionSyntax = (function (_super) {
         if(identifierName === null) {
             throw Errors.argumentNull('identifierName');
         }
-        if(dotToken.kind() !== 71 /* DotToken */ ) {
+        if(dotToken.kind() !== 72 /* DotToken */ ) {
             throw Errors.argument('dotToken');
         }
         this._expression = expression;
@@ -8686,7 +8963,7 @@ var MemberAccessExpressionSyntax = (function (_super) {
         return visitor.visitMemberAccessExpression(this);
     };
     MemberAccessExpressionSyntax.prototype.kind = function () {
-        return 207 /* MemberAccessExpression */ ;
+        return 208 /* MemberAccessExpression */ ;
     };
     MemberAccessExpressionSyntax.prototype.isMissing = function () {
         if(!this._expression.isMissing()) {
@@ -8715,6 +8992,11 @@ var MemberAccessExpressionSyntax = (function (_super) {
         }
         return new MemberAccessExpressionSyntax(expression, dotToken, identifierName);
     };
+    MemberAccessExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._expression.collectTextElements(text, elements);
+        this._dotToken.collectTextElements(text, elements);
+        this._identifierName.collectTextElements(text, elements);
+    };
     return MemberAccessExpressionSyntax;
 })(UnaryExpressionSyntax);
 var PostfixUnaryExpressionSyntax = (function (_super) {
@@ -8727,7 +9009,7 @@ var PostfixUnaryExpressionSyntax = (function (_super) {
         if(operand === null) {
             throw Errors.argumentNull('operand');
         }
-        if(operatorToken.kind() !== 88 /* PlusPlusToken */  && operatorToken.kind() !== 89 /* MinusMinusToken */ ) {
+        if(operatorToken.kind() !== 89 /* PlusPlusToken */  && operatorToken.kind() !== 90 /* MinusMinusToken */ ) {
             throw Errors.argument('operatorToken');
         }
         this._kind = kind;
@@ -8764,6 +9046,10 @@ var PostfixUnaryExpressionSyntax = (function (_super) {
         }
         return new PostfixUnaryExpressionSyntax(kind, operand, operatorToken);
     };
+    PostfixUnaryExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._operand.collectTextElements(text, elements);
+        this._operatorToken.collectTextElements(text, elements);
+    };
     return PostfixUnaryExpressionSyntax;
 })(UnaryExpressionSyntax);
 var ElementAccessExpressionSyntax = (function (_super) {
@@ -8776,10 +9062,10 @@ var ElementAccessExpressionSyntax = (function (_super) {
         if(argumentExpression === null) {
             throw Errors.argumentNull('argumentExpression');
         }
-        if(openBracketToken.kind() !== 69 /* OpenBracketToken */ ) {
+        if(openBracketToken.kind() !== 70 /* OpenBracketToken */ ) {
             throw Errors.argument('openBracketToken');
         }
-        if(closeBracketToken.kind() !== 70 /* CloseBracketToken */ ) {
+        if(closeBracketToken.kind() !== 71 /* CloseBracketToken */ ) {
             throw Errors.argument('closeBracketToken');
         }
         this._expression = expression;
@@ -8794,7 +9080,7 @@ var ElementAccessExpressionSyntax = (function (_super) {
         return visitor.visitElementAccessExpression(this);
     };
     ElementAccessExpressionSyntax.prototype.kind = function () {
-        return 217 /* ElementAccessExpression */ ;
+        return 218 /* ElementAccessExpression */ ;
     };
     ElementAccessExpressionSyntax.prototype.isMissing = function () {
         if(!this._expression.isMissing()) {
@@ -8829,6 +9115,12 @@ var ElementAccessExpressionSyntax = (function (_super) {
         }
         return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken);
     };
+    ElementAccessExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._expression.collectTextElements(text, elements);
+        this._openBracketToken.collectTextElements(text, elements);
+        this._argumentExpression.collectTextElements(text, elements);
+        this._closeBracketToken.collectTextElements(text, elements);
+    };
     return ElementAccessExpressionSyntax;
 })(UnaryExpressionSyntax);
 var InvocationExpressionSyntax = (function (_super) {
@@ -8851,7 +9143,7 @@ var InvocationExpressionSyntax = (function (_super) {
         return visitor.visitInvocationExpression(this);
     };
     InvocationExpressionSyntax.prototype.kind = function () {
-        return 208 /* InvocationExpression */ ;
+        return 209 /* InvocationExpression */ ;
     };
     InvocationExpressionSyntax.prototype.isMissing = function () {
         if(!this._expression.isMissing()) {
@@ -8874,6 +9166,10 @@ var InvocationExpressionSyntax = (function (_super) {
         }
         return new InvocationExpressionSyntax(expression, argumentList);
     };
+    InvocationExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._expression.collectTextElements(text, elements);
+        this._argumentList.collectTextElements(text, elements);
+    };
     return InvocationExpressionSyntax;
 })(UnaryExpressionSyntax);
 var ArgumentListSyntax = (function (_super) {
@@ -8883,10 +9179,10 @@ var ArgumentListSyntax = (function (_super) {
         if(arguments === null) {
             throw Errors.argumentNull('arguments');
         }
-        if(openParenToken.kind() !== 67 /* OpenParenToken */ ) {
+        if(openParenToken.kind() !== 68 /* OpenParenToken */ ) {
             throw Errors.argument('openParenToken');
         }
-        if(closeParenToken.kind() !== 68 /* CloseParenToken */ ) {
+        if(closeParenToken.kind() !== 69 /* CloseParenToken */ ) {
             throw Errors.argument('closeParenToken');
         }
         this._openParenToken = openParenToken;
@@ -8903,7 +9199,7 @@ var ArgumentListSyntax = (function (_super) {
         return visitor.visitArgumentList(this);
     };
     ArgumentListSyntax.prototype.kind = function () {
-        return 224 /* ArgumentList */ ;
+        return 225 /* ArgumentList */ ;
     };
     ArgumentListSyntax.prototype.isMissing = function () {
         if(!this._openParenToken.isMissing()) {
@@ -8932,6 +9228,11 @@ var ArgumentListSyntax = (function (_super) {
         }
         return new ArgumentListSyntax(openParenToken, _arguments, closeParenToken);
     };
+    ArgumentListSyntax.prototype.collectTextElements = function (text, elements) {
+        this._openParenToken.collectTextElements(text, elements);
+        this._arguments.collectTextElements(text, elements);
+        this._closeParenToken.collectTextElements(text, elements);
+    };
     return ArgumentListSyntax;
 })(SyntaxNode);
 var BinaryExpressionSyntax = (function (_super) {
@@ -8948,45 +9249,45 @@ var BinaryExpressionSyntax = (function (_super) {
             throw Errors.argumentNull('right');
         }
         switch(operatorToken.kind()) {
-            case 86 /* AsteriskToken */ :
-            case 113 /* SlashToken */ :
-            case 87 /* PercentToken */ :
-            case 84 /* PlusToken */ :
-            case 85 /* MinusToken */ :
-            case 90 /* LessThanLessThanToken */ :
-            case 91 /* GreaterThanGreaterThanToken */ :
-            case 92 /* GreaterThanGreaterThanGreaterThanToken */ :
-            case 75 /* LessThanToken */ :
-            case 76 /* GreaterThanToken */ :
-            case 77 /* LessThanEqualsToken */ :
-            case 78 /* GreaterThanEqualsToken */ :
-            case 79 /* EqualsEqualsToken */ :
-            case 81 /* ExclamationEqualsToken */ :
-            case 82 /* EqualsEqualsEqualsToken */ :
-            case 83 /* ExclamationEqualsEqualsToken */ :
-            case 93 /* AmpersandToken */ :
-            case 95 /* CaretToken */ :
-            case 94 /* BarToken */ :
-            case 98 /* AmpersandAmpersandToken */ :
-            case 99 /* BarBarToken */ :
-            case 111 /* BarEqualsToken */ :
-            case 110 /* AmpersandEqualsToken */ :
-            case 112 /* CaretEqualsToken */ :
-            case 107 /* LessThanLessThanEqualsToken */ :
-            case 108 /* GreaterThanGreaterThanEqualsToken */ :
-            case 109 /* GreaterThanGreaterThanGreaterThanEqualsToken */ :
-            case 103 /* PlusEqualsToken */ :
-            case 104 /* MinusEqualsToken */ :
-            case 105 /* AsteriskEqualsToken */ :
-            case 114 /* SlashEqualsToken */ :
-            case 106 /* PercentEqualsToken */ :
-            case 102 /* EqualsToken */ :
-            case 74 /* CommaToken */ : {
+            case 87 /* AsteriskToken */ :
+            case 114 /* SlashToken */ :
+            case 88 /* PercentToken */ :
+            case 85 /* PlusToken */ :
+            case 86 /* MinusToken */ :
+            case 91 /* LessThanLessThanToken */ :
+            case 92 /* GreaterThanGreaterThanToken */ :
+            case 93 /* GreaterThanGreaterThanGreaterThanToken */ :
+            case 76 /* LessThanToken */ :
+            case 77 /* GreaterThanToken */ :
+            case 78 /* LessThanEqualsToken */ :
+            case 79 /* GreaterThanEqualsToken */ :
+            case 80 /* EqualsEqualsToken */ :
+            case 82 /* ExclamationEqualsToken */ :
+            case 83 /* EqualsEqualsEqualsToken */ :
+            case 84 /* ExclamationEqualsEqualsToken */ :
+            case 94 /* AmpersandToken */ :
+            case 96 /* CaretToken */ :
+            case 95 /* BarToken */ :
+            case 99 /* AmpersandAmpersandToken */ :
+            case 100 /* BarBarToken */ :
+            case 112 /* BarEqualsToken */ :
+            case 111 /* AmpersandEqualsToken */ :
+            case 113 /* CaretEqualsToken */ :
+            case 108 /* LessThanLessThanEqualsToken */ :
+            case 109 /* GreaterThanGreaterThanEqualsToken */ :
+            case 110 /* GreaterThanGreaterThanGreaterThanEqualsToken */ :
+            case 104 /* PlusEqualsToken */ :
+            case 105 /* MinusEqualsToken */ :
+            case 106 /* AsteriskEqualsToken */ :
+            case 115 /* SlashEqualsToken */ :
+            case 107 /* PercentEqualsToken */ :
+            case 103 /* EqualsToken */ :
+            case 75 /* CommaToken */ : {
                 break;
 
             }
-            case 7 /* IdentifierNameToken */ : {
-                if(operatorToken.keywordKind() !== 26 /* InstanceOfKeyword */  && operatorToken.keywordKind() !== 25 /* InKeyword */ ) {
+            case 8 /* IdentifierNameToken */ : {
+                if(operatorToken.keywordKind() !== 27 /* InstanceOfKeyword */  && operatorToken.keywordKind() !== 26 /* InKeyword */ ) {
                     throw Errors.argument('operatorToken');
                 }
                 break;
@@ -9038,6 +9339,11 @@ var BinaryExpressionSyntax = (function (_super) {
         }
         return new BinaryExpressionSyntax(kind, left, operatorToken, right);
     };
+    BinaryExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._left.collectTextElements(text, elements);
+        this._operatorToken.collectTextElements(text, elements);
+        this._right.collectTextElements(text, elements);
+    };
     return BinaryExpressionSyntax;
 })(ExpressionSyntax);
 var ConditionalExpressionSyntax = (function (_super) {
@@ -9053,10 +9359,10 @@ var ConditionalExpressionSyntax = (function (_super) {
         if(whenFalse === null) {
             throw Errors.argumentNull('whenFalse');
         }
-        if(questionToken.kind() !== 100 /* QuestionToken */ ) {
+        if(questionToken.kind() !== 101 /* QuestionToken */ ) {
             throw Errors.argument('questionToken');
         }
-        if(colonToken.kind() !== 101 /* ColonToken */ ) {
+        if(colonToken.kind() !== 102 /* ColonToken */ ) {
             throw Errors.argument('colonToken');
         }
         this._condition = condition;
@@ -9072,7 +9378,7 @@ var ConditionalExpressionSyntax = (function (_super) {
         return visitor.visitConditionalExpression(this);
     };
     ConditionalExpressionSyntax.prototype.kind = function () {
-        return 181 /* ConditionalExpression */ ;
+        return 182 /* ConditionalExpression */ ;
     };
     ConditionalExpressionSyntax.prototype.isMissing = function () {
         if(!this._condition.isMissing()) {
@@ -9113,6 +9419,13 @@ var ConditionalExpressionSyntax = (function (_super) {
         }
         return new ConditionalExpressionSyntax(condition, questionToken, whenTrue, colonToken, whenFalse);
     };
+    ConditionalExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._condition.collectTextElements(text, elements);
+        this._questionToken.collectTextElements(text, elements);
+        this._whenTrue.collectTextElements(text, elements);
+        this._colonToken.collectTextElements(text, elements);
+        this._whenFalse.collectTextElements(text, elements);
+    };
     return ConditionalExpressionSyntax;
 })(ExpressionSyntax);
 var TypeMemberSyntax = (function (_super) {
@@ -9129,7 +9442,7 @@ var ConstructSignatureSyntax = (function (_super) {
         if(parameterList === null) {
             throw Errors.argumentNull('parameterList');
         }
-        if(newKeyword.keywordKind() !== 27 /* NewKeyword */ ) {
+        if(newKeyword.keywordKind() !== 28 /* NewKeyword */ ) {
             throw Errors.argument('newKeyword');
         }
         this._newKeyword = newKeyword;
@@ -9146,7 +9459,7 @@ var ConstructSignatureSyntax = (function (_super) {
         return visitor.visitConstructSignature(this);
     };
     ConstructSignatureSyntax.prototype.kind = function () {
-        return 235 /* ConstructSignature */ ;
+        return 236 /* ConstructSignature */ ;
     };
     ConstructSignatureSyntax.prototype.isMissing = function () {
         if(!this._newKeyword.isMissing()) {
@@ -9175,6 +9488,13 @@ var ConstructSignatureSyntax = (function (_super) {
         }
         return new ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation);
     };
+    ConstructSignatureSyntax.prototype.collectTextElements = function (text, elements) {
+        this._newKeyword.collectTextElements(text, elements);
+        this._parameterList.collectTextElements(text, elements);
+        if(this._typeAnnotation !== null) {
+            this._typeAnnotation.collectTextElements(text, elements);
+        }
+    };
     return ConstructSignatureSyntax;
 })(TypeMemberSyntax);
 var FunctionSignatureSyntax = (function (_super) {
@@ -9184,11 +9504,11 @@ var FunctionSignatureSyntax = (function (_super) {
         if(parameterList === null) {
             throw Errors.argumentNull('parameterList');
         }
-        if(identifier.kind() !== 7 /* IdentifierNameToken */ ) {
+        if(identifier.kind() !== 8 /* IdentifierNameToken */ ) {
             throw Errors.argument('identifier');
         }
         if(questionToken !== null) {
-            if(questionToken.kind() !== 100 /* QuestionToken */ ) {
+            if(questionToken.kind() !== 101 /* QuestionToken */ ) {
                 throw Errors.argument('questionToken');
             }
         }
@@ -9207,7 +9527,7 @@ var FunctionSignatureSyntax = (function (_super) {
         return visitor.visitFunctionSignature(this);
     };
     FunctionSignatureSyntax.prototype.kind = function () {
-        return 237 /* FunctionSignature */ ;
+        return 238 /* FunctionSignature */ ;
     };
     FunctionSignatureSyntax.prototype.isMissing = function () {
         if(!this._identifier.isMissing()) {
@@ -9242,6 +9562,16 @@ var FunctionSignatureSyntax = (function (_super) {
         }
         return new FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation);
     };
+    FunctionSignatureSyntax.prototype.collectTextElements = function (text, elements) {
+        this._identifier.collectTextElements(text, elements);
+        if(this._questionToken !== null) {
+            this._questionToken.collectTextElements(text, elements);
+        }
+        this._parameterList.collectTextElements(text, elements);
+        if(this._typeAnnotation !== null) {
+            this._typeAnnotation.collectTextElements(text, elements);
+        }
+    };
     return FunctionSignatureSyntax;
 })(TypeMemberSyntax);
 var IndexSignatureSyntax = (function (_super) {
@@ -9251,10 +9581,10 @@ var IndexSignatureSyntax = (function (_super) {
         if(parameter === null) {
             throw Errors.argumentNull('parameter');
         }
-        if(openBracketToken.kind() !== 69 /* OpenBracketToken */ ) {
+        if(openBracketToken.kind() !== 70 /* OpenBracketToken */ ) {
             throw Errors.argument('openBracketToken');
         }
-        if(closeBracketToken.kind() !== 70 /* CloseBracketToken */ ) {
+        if(closeBracketToken.kind() !== 71 /* CloseBracketToken */ ) {
             throw Errors.argument('closeBracketToken');
         }
         this._openBracketToken = openBracketToken;
@@ -9272,7 +9602,7 @@ var IndexSignatureSyntax = (function (_super) {
         return visitor.visitIndexSignature(this);
     };
     IndexSignatureSyntax.prototype.kind = function () {
-        return 236 /* IndexSignature */ ;
+        return 237 /* IndexSignature */ ;
     };
     IndexSignatureSyntax.prototype.isMissing = function () {
         if(!this._openBracketToken.isMissing()) {
@@ -9307,17 +9637,25 @@ var IndexSignatureSyntax = (function (_super) {
         }
         return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation);
     };
+    IndexSignatureSyntax.prototype.collectTextElements = function (text, elements) {
+        this._openBracketToken.collectTextElements(text, elements);
+        this._parameter.collectTextElements(text, elements);
+        this._closeBracketToken.collectTextElements(text, elements);
+        if(this._typeAnnotation !== null) {
+            this._typeAnnotation.collectTextElements(text, elements);
+        }
+    };
     return IndexSignatureSyntax;
 })(TypeMemberSyntax);
 var PropertySignatureSyntax = (function (_super) {
     __extends(PropertySignatureSyntax, _super);
     function PropertySignatureSyntax(identifier, questionToken, typeAnnotation) {
         _super.call(this);
-        if(identifier.kind() !== 7 /* IdentifierNameToken */ ) {
+        if(identifier.kind() !== 8 /* IdentifierNameToken */ ) {
             throw Errors.argument('identifier');
         }
         if(questionToken !== null) {
-            if(questionToken.kind() !== 100 /* QuestionToken */ ) {
+            if(questionToken.kind() !== 101 /* QuestionToken */ ) {
                 throw Errors.argument('questionToken');
             }
         }
@@ -9335,7 +9673,7 @@ var PropertySignatureSyntax = (function (_super) {
         return visitor.visitPropertySignature(this);
     };
     PropertySignatureSyntax.prototype.kind = function () {
-        return 233 /* PropertySignature */ ;
+        return 234 /* PropertySignature */ ;
     };
     PropertySignatureSyntax.prototype.isMissing = function () {
         if(!this._identifier.isMissing()) {
@@ -9364,6 +9702,15 @@ var PropertySignatureSyntax = (function (_super) {
         }
         return new PropertySignatureSyntax(identifier, questionToken, typeAnnotation);
     };
+    PropertySignatureSyntax.prototype.collectTextElements = function (text, elements) {
+        this._identifier.collectTextElements(text, elements);
+        if(this._questionToken !== null) {
+            this._questionToken.collectTextElements(text, elements);
+        }
+        if(this._typeAnnotation !== null) {
+            this._typeAnnotation.collectTextElements(text, elements);
+        }
+    };
     return PropertySignatureSyntax;
 })(TypeMemberSyntax);
 var ParameterListSyntax = (function (_super) {
@@ -9373,10 +9720,10 @@ var ParameterListSyntax = (function (_super) {
         if(parameters === null) {
             throw Errors.argumentNull('parameters');
         }
-        if(openParenToken.kind() !== 67 /* OpenParenToken */ ) {
+        if(openParenToken.kind() !== 68 /* OpenParenToken */ ) {
             throw Errors.argument('openParenToken');
         }
-        if(closeParenToken.kind() !== 68 /* CloseParenToken */ ) {
+        if(closeParenToken.kind() !== 69 /* CloseParenToken */ ) {
             throw Errors.argument('closeParenToken');
         }
         this._openParenToken = openParenToken;
@@ -9393,7 +9740,7 @@ var ParameterListSyntax = (function (_super) {
         return visitor.visitParameterList(this);
     };
     ParameterListSyntax.prototype.kind = function () {
-        return 223 /* ParameterList */ ;
+        return 224 /* ParameterList */ ;
     };
     ParameterListSyntax.prototype.isMissing = function () {
         if(!this._openParenToken.isMissing()) {
@@ -9422,6 +9769,11 @@ var ParameterListSyntax = (function (_super) {
         }
         return new ParameterListSyntax(openParenToken, parameters, closeParenToken);
     };
+    ParameterListSyntax.prototype.collectTextElements = function (text, elements) {
+        this._openParenToken.collectTextElements(text, elements);
+        this._parameters.collectTextElements(text, elements);
+        this._closeParenToken.collectTextElements(text, elements);
+    };
     return ParameterListSyntax;
 })(SyntaxNode);
 var CallSignatureSyntax = (function (_super) {
@@ -9444,7 +9796,7 @@ var CallSignatureSyntax = (function (_super) {
         return visitor.visitCallSignature(this);
     };
     CallSignatureSyntax.prototype.kind = function () {
-        return 234 /* CallSignature */ ;
+        return 235 /* CallSignature */ ;
     };
     CallSignatureSyntax.prototype.isMissing = function () {
         if(!this._parameterList.isMissing()) {
@@ -9467,6 +9819,12 @@ var CallSignatureSyntax = (function (_super) {
         }
         return new CallSignatureSyntax(parameterList, typeAnnotation);
     };
+    CallSignatureSyntax.prototype.collectTextElements = function (text, elements) {
+        this._parameterList.collectTextElements(text, elements);
+        if(this._typeAnnotation !== null) {
+            this._typeAnnotation.collectTextElements(text, elements);
+        }
+    };
     return CallSignatureSyntax;
 })(TypeMemberSyntax);
 var ElseClauseSyntax = (function (_super) {
@@ -9476,7 +9834,7 @@ var ElseClauseSyntax = (function (_super) {
         if(statement === null) {
             throw Errors.argumentNull('statement');
         }
-        if(elseKeyword.keywordKind() !== 19 /* ElseKeyword */ ) {
+        if(elseKeyword.keywordKind() !== 20 /* ElseKeyword */ ) {
             throw Errors.argument('elseKeyword');
         }
         this._elseKeyword = elseKeyword;
@@ -9489,7 +9847,7 @@ var ElseClauseSyntax = (function (_super) {
         return visitor.visitElseClause(this);
     };
     ElseClauseSyntax.prototype.kind = function () {
-        return 230 /* ElseClause */ ;
+        return 231 /* ElseClause */ ;
     };
     ElseClauseSyntax.prototype.isMissing = function () {
         if(!this._elseKeyword.isMissing()) {
@@ -9512,6 +9870,10 @@ var ElseClauseSyntax = (function (_super) {
         }
         return new ElseClauseSyntax(elseKeyword, statement);
     };
+    ElseClauseSyntax.prototype.collectTextElements = function (text, elements) {
+        this._elseKeyword.collectTextElements(text, elements);
+        this._statement.collectTextElements(text, elements);
+    };
     return ElseClauseSyntax;
 })(SyntaxNode);
 var IfStatementSyntax = (function (_super) {
@@ -9524,13 +9886,13 @@ var IfStatementSyntax = (function (_super) {
         if(statement === null) {
             throw Errors.argumentNull('statement');
         }
-        if(ifKeyword.keywordKind() !== 24 /* IfKeyword */ ) {
+        if(ifKeyword.keywordKind() !== 25 /* IfKeyword */ ) {
             throw Errors.argument('ifKeyword');
         }
-        if(openParenToken.kind() !== 67 /* OpenParenToken */ ) {
+        if(openParenToken.kind() !== 68 /* OpenParenToken */ ) {
             throw Errors.argument('openParenToken');
         }
-        if(closeParenToken.kind() !== 68 /* CloseParenToken */ ) {
+        if(closeParenToken.kind() !== 69 /* CloseParenToken */ ) {
             throw Errors.argument('closeParenToken');
         }
         this._ifKeyword = ifKeyword;
@@ -9550,7 +9912,7 @@ var IfStatementSyntax = (function (_super) {
         return visitor.visitIfStatement(this);
     };
     IfStatementSyntax.prototype.kind = function () {
-        return 137 /* IfStatement */ ;
+        return 138 /* IfStatement */ ;
     };
     IfStatementSyntax.prototype.isMissing = function () {
         if(!this._ifKeyword.isMissing()) {
@@ -9597,6 +9959,16 @@ var IfStatementSyntax = (function (_super) {
         }
         return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause);
     };
+    IfStatementSyntax.prototype.collectTextElements = function (text, elements) {
+        this._ifKeyword.collectTextElements(text, elements);
+        this._openParenToken.collectTextElements(text, elements);
+        this._condition.collectTextElements(text, elements);
+        this._closeParenToken.collectTextElements(text, elements);
+        this._statement.collectTextElements(text, elements);
+        if(this._elseClause !== null) {
+            this._elseClause.collectTextElements(text, elements);
+        }
+    };
     return IfStatementSyntax;
 })(StatementSyntax);
 var ExpressionStatementSyntax = (function (_super) {
@@ -9606,7 +9978,7 @@ var ExpressionStatementSyntax = (function (_super) {
         if(expression === null) {
             throw Errors.argumentNull('expression');
         }
-        if(semicolonToken.kind() !== 73 /* SemicolonToken */ ) {
+        if(semicolonToken.kind() !== 74 /* SemicolonToken */ ) {
             throw Errors.argument('semicolonToken');
         }
         this._expression = expression;
@@ -9619,7 +9991,7 @@ var ExpressionStatementSyntax = (function (_super) {
         return visitor.visitExpressionStatement(this);
     };
     ExpressionStatementSyntax.prototype.kind = function () {
-        return 139 /* ExpressionStatement */ ;
+        return 140 /* ExpressionStatement */ ;
     };
     ExpressionStatementSyntax.prototype.isMissing = function () {
         if(!this._expression.isMissing()) {
@@ -9642,6 +10014,10 @@ var ExpressionStatementSyntax = (function (_super) {
         }
         return new ExpressionStatementSyntax(expression, semicolonToken);
     };
+    ExpressionStatementSyntax.prototype.collectTextElements = function (text, elements) {
+        this._expression.collectTextElements(text, elements);
+        this._semicolonToken.collectTextElements(text, elements);
+    };
     return ExpressionStatementSyntax;
 })(StatementSyntax);
 var ClassElementSyntax = (function (_super) {
@@ -9658,11 +10034,11 @@ var ConstructorDeclarationSyntax = (function (_super) {
         if(parameterList === null) {
             throw Errors.argumentNull('parameterList');
         }
-        if(constructorKeyword.keywordKind() !== 58 /* ConstructorKeyword */ ) {
+        if(constructorKeyword.keywordKind() !== 59 /* ConstructorKeyword */ ) {
             throw Errors.argument('constructorKeyword');
         }
         if(semicolonToken !== null) {
-            if(semicolonToken.kind() !== 73 /* SemicolonToken */ ) {
+            if(semicolonToken.kind() !== 74 /* SemicolonToken */ ) {
                 throw Errors.argument('semicolonToken');
             }
         }
@@ -9681,7 +10057,7 @@ var ConstructorDeclarationSyntax = (function (_super) {
         return visitor.visitConstructorDeclaration(this);
     };
     ConstructorDeclarationSyntax.prototype.kind = function () {
-        return 133 /* ConstructorDeclaration */ ;
+        return 134 /* ConstructorDeclaration */ ;
     };
     ConstructorDeclarationSyntax.prototype.isMissing = function () {
         if(!this._constructorKeyword.isMissing()) {
@@ -9716,6 +10092,16 @@ var ConstructorDeclarationSyntax = (function (_super) {
         }
         return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken);
     };
+    ConstructorDeclarationSyntax.prototype.collectTextElements = function (text, elements) {
+        this._constructorKeyword.collectTextElements(text, elements);
+        this._parameterList.collectTextElements(text, elements);
+        if(this._block !== null) {
+            this._block.collectTextElements(text, elements);
+        }
+        if(this._semicolonToken !== null) {
+            this._semicolonToken.collectTextElements(text, elements);
+        }
+    };
     return ConstructorDeclarationSyntax;
 })(ClassElementSyntax);
 var MemberDeclarationSyntax = (function (_super) {
@@ -9733,17 +10119,17 @@ var MemberFunctionDeclarationSyntax = (function (_super) {
             throw Errors.argumentNull('functionSignature');
         }
         if(publicOrPrivateKeyword !== null) {
-            if(publicOrPrivateKeyword.keywordKind() !== 53 /* PublicKeyword */  && publicOrPrivateKeyword.keywordKind() !== 51 /* PrivateKeyword */ ) {
+            if(publicOrPrivateKeyword.keywordKind() !== 54 /* PublicKeyword */  && publicOrPrivateKeyword.keywordKind() !== 52 /* PrivateKeyword */ ) {
                 throw Errors.argument('publicOrPrivateKeyword');
             }
         }
         if(staticKeyword !== null) {
-            if(staticKeyword.keywordKind() !== 54 /* StaticKeyword */ ) {
+            if(staticKeyword.keywordKind() !== 55 /* StaticKeyword */ ) {
                 throw Errors.argument('staticKeyword');
             }
         }
         if(semicolonToken !== null) {
-            if(semicolonToken.kind() !== 73 /* SemicolonToken */ ) {
+            if(semicolonToken.kind() !== 74 /* SemicolonToken */ ) {
                 throw Errors.argument('semicolonToken');
             }
         }
@@ -9763,7 +10149,7 @@ var MemberFunctionDeclarationSyntax = (function (_super) {
         return visitor.visitMemberFunctionDeclaration(this);
     };
     MemberFunctionDeclarationSyntax.prototype.kind = function () {
-        return 131 /* MemberFunctionDeclaration */ ;
+        return 132 /* MemberFunctionDeclaration */ ;
     };
     MemberFunctionDeclarationSyntax.prototype.isMissing = function () {
         if(this._publicOrPrivateKeyword !== null && !this._publicOrPrivateKeyword.isMissing()) {
@@ -9804,6 +10190,21 @@ var MemberFunctionDeclarationSyntax = (function (_super) {
         }
         return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken);
     };
+    MemberFunctionDeclarationSyntax.prototype.collectTextElements = function (text, elements) {
+        if(this._publicOrPrivateKeyword !== null) {
+            this._publicOrPrivateKeyword.collectTextElements(text, elements);
+        }
+        if(this._staticKeyword !== null) {
+            this._staticKeyword.collectTextElements(text, elements);
+        }
+        this._functionSignature.collectTextElements(text, elements);
+        if(this._block !== null) {
+            this._block.collectTextElements(text, elements);
+        }
+        if(this._semicolonToken !== null) {
+            this._semicolonToken.collectTextElements(text, elements);
+        }
+    };
     return MemberFunctionDeclarationSyntax;
 })(MemberDeclarationSyntax);
 var MemberAccessorDeclarationSyntax = (function (_super) {
@@ -9824,19 +10225,19 @@ var GetMemberAccessorDeclarationSyntax = (function (_super) {
             throw Errors.argumentNull('block');
         }
         if(publicOrPrivateKeyword !== null) {
-            if(publicOrPrivateKeyword.keywordKind() !== 53 /* PublicKeyword */  && publicOrPrivateKeyword.keywordKind() !== 51 /* PrivateKeyword */ ) {
+            if(publicOrPrivateKeyword.keywordKind() !== 54 /* PublicKeyword */  && publicOrPrivateKeyword.keywordKind() !== 52 /* PrivateKeyword */ ) {
                 throw Errors.argument('publicOrPrivateKeyword');
             }
         }
         if(staticKeyword !== null) {
-            if(staticKeyword.keywordKind() !== 54 /* StaticKeyword */ ) {
+            if(staticKeyword.keywordKind() !== 55 /* StaticKeyword */ ) {
                 throw Errors.argument('staticKeyword');
             }
         }
-        if(getKeyword.keywordKind() !== 60 /* GetKeyword */ ) {
+        if(getKeyword.keywordKind() !== 61 /* GetKeyword */ ) {
             throw Errors.argument('getKeyword');
         }
-        if(identifier.kind() !== 7 /* IdentifierNameToken */ ) {
+        if(identifier.kind() !== 8 /* IdentifierNameToken */ ) {
             throw Errors.argument('identifier');
         }
         this._publicOrPrivateKeyword = publicOrPrivateKeyword;
@@ -9857,7 +10258,7 @@ var GetMemberAccessorDeclarationSyntax = (function (_super) {
         return visitor.visitGetMemberAccessorDeclaration(this);
     };
     GetMemberAccessorDeclarationSyntax.prototype.kind = function () {
-        return 134 /* GetMemberAccessorDeclaration */ ;
+        return 135 /* GetMemberAccessorDeclaration */ ;
     };
     GetMemberAccessorDeclarationSyntax.prototype.isMissing = function () {
         if(this._publicOrPrivateKeyword !== null && !this._publicOrPrivateKeyword.isMissing()) {
@@ -9910,6 +10311,21 @@ var GetMemberAccessorDeclarationSyntax = (function (_super) {
         }
         return new GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block);
     };
+    GetMemberAccessorDeclarationSyntax.prototype.collectTextElements = function (text, elements) {
+        if(this._publicOrPrivateKeyword !== null) {
+            this._publicOrPrivateKeyword.collectTextElements(text, elements);
+        }
+        if(this._staticKeyword !== null) {
+            this._staticKeyword.collectTextElements(text, elements);
+        }
+        this._getKeyword.collectTextElements(text, elements);
+        this._identifier.collectTextElements(text, elements);
+        this._parameterList.collectTextElements(text, elements);
+        if(this._typeAnnotation !== null) {
+            this._typeAnnotation.collectTextElements(text, elements);
+        }
+        this._block.collectTextElements(text, elements);
+    };
     return GetMemberAccessorDeclarationSyntax;
 })(MemberAccessorDeclarationSyntax);
 var SetMemberAccessorDeclarationSyntax = (function (_super) {
@@ -9923,19 +10339,19 @@ var SetMemberAccessorDeclarationSyntax = (function (_super) {
             throw Errors.argumentNull('block');
         }
         if(publicOrPrivateKeyword !== null) {
-            if(publicOrPrivateKeyword.keywordKind() !== 53 /* PublicKeyword */  && publicOrPrivateKeyword.keywordKind() !== 51 /* PrivateKeyword */ ) {
+            if(publicOrPrivateKeyword.keywordKind() !== 54 /* PublicKeyword */  && publicOrPrivateKeyword.keywordKind() !== 52 /* PrivateKeyword */ ) {
                 throw Errors.argument('publicOrPrivateKeyword');
             }
         }
         if(staticKeyword !== null) {
-            if(staticKeyword.keywordKind() !== 54 /* StaticKeyword */ ) {
+            if(staticKeyword.keywordKind() !== 55 /* StaticKeyword */ ) {
                 throw Errors.argument('staticKeyword');
             }
         }
-        if(setKeyword.keywordKind() !== 63 /* SetKeyword */ ) {
+        if(setKeyword.keywordKind() !== 64 /* SetKeyword */ ) {
             throw Errors.argument('setKeyword');
         }
-        if(identifier.kind() !== 7 /* IdentifierNameToken */ ) {
+        if(identifier.kind() !== 8 /* IdentifierNameToken */ ) {
             throw Errors.argument('identifier');
         }
         this._publicOrPrivateKeyword = publicOrPrivateKeyword;
@@ -9955,7 +10371,7 @@ var SetMemberAccessorDeclarationSyntax = (function (_super) {
         return visitor.visitSetMemberAccessorDeclaration(this);
     };
     SetMemberAccessorDeclarationSyntax.prototype.kind = function () {
-        return 135 /* SetMemberAccessorDeclaration */ ;
+        return 136 /* SetMemberAccessorDeclaration */ ;
     };
     SetMemberAccessorDeclarationSyntax.prototype.isMissing = function () {
         if(this._publicOrPrivateKeyword !== null && !this._publicOrPrivateKeyword.isMissing()) {
@@ -10002,6 +10418,18 @@ var SetMemberAccessorDeclarationSyntax = (function (_super) {
         }
         return new SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block);
     };
+    SetMemberAccessorDeclarationSyntax.prototype.collectTextElements = function (text, elements) {
+        if(this._publicOrPrivateKeyword !== null) {
+            this._publicOrPrivateKeyword.collectTextElements(text, elements);
+        }
+        if(this._staticKeyword !== null) {
+            this._staticKeyword.collectTextElements(text, elements);
+        }
+        this._setKeyword.collectTextElements(text, elements);
+        this._identifier.collectTextElements(text, elements);
+        this._parameterList.collectTextElements(text, elements);
+        this._block.collectTextElements(text, elements);
+    };
     return SetMemberAccessorDeclarationSyntax;
 })(MemberAccessorDeclarationSyntax);
 var MemberVariableDeclarationSyntax = (function (_super) {
@@ -10012,16 +10440,16 @@ var MemberVariableDeclarationSyntax = (function (_super) {
             throw Errors.argumentNull('variableDeclarator');
         }
         if(publicOrPrivateKeyword !== null) {
-            if(publicOrPrivateKeyword.keywordKind() !== 53 /* PublicKeyword */  && publicOrPrivateKeyword.keywordKind() !== 51 /* PrivateKeyword */ ) {
+            if(publicOrPrivateKeyword.keywordKind() !== 54 /* PublicKeyword */  && publicOrPrivateKeyword.keywordKind() !== 52 /* PrivateKeyword */ ) {
                 throw Errors.argument('publicOrPrivateKeyword');
             }
         }
         if(staticKeyword !== null) {
-            if(staticKeyword.keywordKind() !== 54 /* StaticKeyword */ ) {
+            if(staticKeyword.keywordKind() !== 55 /* StaticKeyword */ ) {
                 throw Errors.argument('staticKeyword');
             }
         }
-        if(semicolonToken.kind() !== 73 /* SemicolonToken */ ) {
+        if(semicolonToken.kind() !== 74 /* SemicolonToken */ ) {
             throw Errors.argument('semicolonToken');
         }
         this._publicOrPrivateKeyword = publicOrPrivateKeyword;
@@ -10039,7 +10467,7 @@ var MemberVariableDeclarationSyntax = (function (_super) {
         return visitor.visitMemberVariableDeclaration(this);
     };
     MemberVariableDeclarationSyntax.prototype.kind = function () {
-        return 132 /* MemberVariableDeclaration */ ;
+        return 133 /* MemberVariableDeclaration */ ;
     };
     MemberVariableDeclarationSyntax.prototype.isMissing = function () {
         if(this._publicOrPrivateKeyword !== null && !this._publicOrPrivateKeyword.isMissing()) {
@@ -10074,6 +10502,16 @@ var MemberVariableDeclarationSyntax = (function (_super) {
         }
         return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolonToken);
     };
+    MemberVariableDeclarationSyntax.prototype.collectTextElements = function (text, elements) {
+        if(this._publicOrPrivateKeyword !== null) {
+            this._publicOrPrivateKeyword.collectTextElements(text, elements);
+        }
+        if(this._staticKeyword !== null) {
+            this._staticKeyword.collectTextElements(text, elements);
+        }
+        this._variableDeclarator.collectTextElements(text, elements);
+        this._semicolonToken.collectTextElements(text, elements);
+    };
     return MemberVariableDeclarationSyntax;
 })(MemberDeclarationSyntax);
 var ThrowStatementSyntax = (function (_super) {
@@ -10083,10 +10521,10 @@ var ThrowStatementSyntax = (function (_super) {
         if(expression === null) {
             throw Errors.argumentNull('expression');
         }
-        if(throwKeyword.keywordKind() !== 32 /* ThrowKeyword */ ) {
+        if(throwKeyword.keywordKind() !== 33 /* ThrowKeyword */ ) {
             throw Errors.argument('throwKeyword');
         }
-        if(semicolonToken.kind() !== 73 /* SemicolonToken */ ) {
+        if(semicolonToken.kind() !== 74 /* SemicolonToken */ ) {
             throw Errors.argument('semicolonToken');
         }
         this._throwKeyword = throwKeyword;
@@ -10100,7 +10538,7 @@ var ThrowStatementSyntax = (function (_super) {
         return visitor.visitThrowStatement(this);
     };
     ThrowStatementSyntax.prototype.kind = function () {
-        return 147 /* ThrowStatement */ ;
+        return 148 /* ThrowStatement */ ;
     };
     ThrowStatementSyntax.prototype.isMissing = function () {
         if(!this._throwKeyword.isMissing()) {
@@ -10129,16 +10567,21 @@ var ThrowStatementSyntax = (function (_super) {
         }
         return new ThrowStatementSyntax(throwKeyword, expression, semicolonToken);
     };
+    ThrowStatementSyntax.prototype.collectTextElements = function (text, elements) {
+        this._throwKeyword.collectTextElements(text, elements);
+        this._expression.collectTextElements(text, elements);
+        this._semicolonToken.collectTextElements(text, elements);
+    };
     return ThrowStatementSyntax;
 })(StatementSyntax);
 var ReturnStatementSyntax = (function (_super) {
     __extends(ReturnStatementSyntax, _super);
     function ReturnStatementSyntax(returnKeyword, expression, semicolonToken) {
         _super.call(this);
-        if(returnKeyword.keywordKind() !== 29 /* ReturnKeyword */ ) {
+        if(returnKeyword.keywordKind() !== 30 /* ReturnKeyword */ ) {
             throw Errors.argument('returnKeyword');
         }
-        if(semicolonToken.kind() !== 73 /* SemicolonToken */ ) {
+        if(semicolonToken.kind() !== 74 /* SemicolonToken */ ) {
             throw Errors.argument('semicolonToken');
         }
         this._returnKeyword = returnKeyword;
@@ -10155,7 +10598,7 @@ var ReturnStatementSyntax = (function (_super) {
         return visitor.visitReturnStatement(this);
     };
     ReturnStatementSyntax.prototype.kind = function () {
-        return 140 /* ReturnStatement */ ;
+        return 141 /* ReturnStatement */ ;
     };
     ReturnStatementSyntax.prototype.isMissing = function () {
         if(!this._returnKeyword.isMissing()) {
@@ -10184,6 +10627,13 @@ var ReturnStatementSyntax = (function (_super) {
         }
         return new ReturnStatementSyntax(returnKeyword, expression, semicolonToken);
     };
+    ReturnStatementSyntax.prototype.collectTextElements = function (text, elements) {
+        this._returnKeyword.collectTextElements(text, elements);
+        if(this._expression !== null) {
+            this._expression.collectTextElements(text, elements);
+        }
+        this._semicolonToken.collectTextElements(text, elements);
+    };
     return ReturnStatementSyntax;
 })(StatementSyntax);
 var ObjectCreationExpressionSyntax = (function (_super) {
@@ -10193,7 +10643,7 @@ var ObjectCreationExpressionSyntax = (function (_super) {
         if(expression === null) {
             throw Errors.argumentNull('expression');
         }
-        if(newKeyword.keywordKind() !== 27 /* NewKeyword */ ) {
+        if(newKeyword.keywordKind() !== 28 /* NewKeyword */ ) {
             throw Errors.argument('newKeyword');
         }
         this._newKeyword = newKeyword;
@@ -10210,7 +10660,7 @@ var ObjectCreationExpressionSyntax = (function (_super) {
         return visitor.visitObjectCreationExpression(this);
     };
     ObjectCreationExpressionSyntax.prototype.kind = function () {
-        return 212 /* ObjectCreationExpression */ ;
+        return 213 /* ObjectCreationExpression */ ;
     };
     ObjectCreationExpressionSyntax.prototype.isMissing = function () {
         if(!this._newKeyword.isMissing()) {
@@ -10239,6 +10689,13 @@ var ObjectCreationExpressionSyntax = (function (_super) {
         }
         return new ObjectCreationExpressionSyntax(newKeyword, expression, argumentList);
     };
+    ObjectCreationExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._newKeyword.collectTextElements(text, elements);
+        this._expression.collectTextElements(text, elements);
+        if(this._argumentList !== null) {
+            this._argumentList.collectTextElements(text, elements);
+        }
+    };
     return ObjectCreationExpressionSyntax;
 })(UnaryExpressionSyntax);
 var SwitchStatementSyntax = (function (_super) {
@@ -10251,19 +10708,19 @@ var SwitchStatementSyntax = (function (_super) {
         if(caseClauses === null) {
             throw Errors.argumentNull('caseClauses');
         }
-        if(switchKeyword.keywordKind() !== 30 /* SwitchKeyword */ ) {
+        if(switchKeyword.keywordKind() !== 31 /* SwitchKeyword */ ) {
             throw Errors.argument('switchKeyword');
         }
-        if(openParenToken.kind() !== 67 /* OpenParenToken */ ) {
+        if(openParenToken.kind() !== 68 /* OpenParenToken */ ) {
             throw Errors.argument('openParenToken');
         }
-        if(closeParenToken.kind() !== 68 /* CloseParenToken */ ) {
+        if(closeParenToken.kind() !== 69 /* CloseParenToken */ ) {
             throw Errors.argument('closeParenToken');
         }
-        if(openBraceToken.kind() !== 65 /* OpenBraceToken */ ) {
+        if(openBraceToken.kind() !== 66 /* OpenBraceToken */ ) {
             throw Errors.argument('openBraceToken');
         }
-        if(closeBraceToken.kind() !== 66 /* CloseBraceToken */ ) {
+        if(closeBraceToken.kind() !== 67 /* CloseBraceToken */ ) {
             throw Errors.argument('closeBraceToken');
         }
         this._switchKeyword = switchKeyword;
@@ -10284,7 +10741,7 @@ var SwitchStatementSyntax = (function (_super) {
         return visitor.visitSwitchStatement(this);
     };
     SwitchStatementSyntax.prototype.kind = function () {
-        return 141 /* SwitchStatement */ ;
+        return 142 /* SwitchStatement */ ;
     };
     SwitchStatementSyntax.prototype.isMissing = function () {
         if(!this._switchKeyword.isMissing()) {
@@ -10337,6 +10794,15 @@ var SwitchStatementSyntax = (function (_super) {
         }
         return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, caseClauses, closeBraceToken);
     };
+    SwitchStatementSyntax.prototype.collectTextElements = function (text, elements) {
+        this._switchKeyword.collectTextElements(text, elements);
+        this._openParenToken.collectTextElements(text, elements);
+        this._expression.collectTextElements(text, elements);
+        this._closeParenToken.collectTextElements(text, elements);
+        this._openBraceToken.collectTextElements(text, elements);
+        this._caseClauses.collectTextElements(text, elements);
+        this._closeBraceToken.collectTextElements(text, elements);
+    };
     return SwitchStatementSyntax;
 })(StatementSyntax);
 var SwitchClauseSyntax = (function (_super) {
@@ -10356,10 +10822,10 @@ var CaseSwitchClauseSyntax = (function (_super) {
         if(statements === null) {
             throw Errors.argumentNull('statements');
         }
-        if(caseKeyword.keywordKind() !== 12 /* CaseKeyword */ ) {
+        if(caseKeyword.keywordKind() !== 13 /* CaseKeyword */ ) {
             throw Errors.argument('caseKeyword');
         }
-        if(colonToken.kind() !== 101 /* ColonToken */ ) {
+        if(colonToken.kind() !== 102 /* ColonToken */ ) {
             throw Errors.argument('colonToken');
         }
         this._caseKeyword = caseKeyword;
@@ -10377,7 +10843,7 @@ var CaseSwitchClauseSyntax = (function (_super) {
         return visitor.visitCaseSwitchClause(this);
     };
     CaseSwitchClauseSyntax.prototype.kind = function () {
-        return 228 /* CaseSwitchClause */ ;
+        return 229 /* CaseSwitchClause */ ;
     };
     CaseSwitchClauseSyntax.prototype.isMissing = function () {
         if(!this._caseKeyword.isMissing()) {
@@ -10412,6 +10878,12 @@ var CaseSwitchClauseSyntax = (function (_super) {
         }
         return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements);
     };
+    CaseSwitchClauseSyntax.prototype.collectTextElements = function (text, elements) {
+        this._caseKeyword.collectTextElements(text, elements);
+        this._expression.collectTextElements(text, elements);
+        this._colonToken.collectTextElements(text, elements);
+        this._statements.collectTextElements(text, elements);
+    };
     return CaseSwitchClauseSyntax;
 })(SwitchClauseSyntax);
 var DefaultSwitchClauseSyntax = (function (_super) {
@@ -10421,10 +10893,10 @@ var DefaultSwitchClauseSyntax = (function (_super) {
         if(statements === null) {
             throw Errors.argumentNull('statements');
         }
-        if(defaultKeyword.keywordKind() !== 16 /* DefaultKeyword */ ) {
+        if(defaultKeyword.keywordKind() !== 17 /* DefaultKeyword */ ) {
             throw Errors.argument('defaultKeyword');
         }
-        if(colonToken.kind() !== 101 /* ColonToken */ ) {
+        if(colonToken.kind() !== 102 /* ColonToken */ ) {
             throw Errors.argument('colonToken');
         }
         this._defaultKeyword = defaultKeyword;
@@ -10441,7 +10913,7 @@ var DefaultSwitchClauseSyntax = (function (_super) {
         return visitor.visitDefaultSwitchClause(this);
     };
     DefaultSwitchClauseSyntax.prototype.kind = function () {
-        return 229 /* DefaultSwitchClause */ ;
+        return 230 /* DefaultSwitchClause */ ;
     };
     DefaultSwitchClauseSyntax.prototype.isMissing = function () {
         if(!this._defaultKeyword.isMissing()) {
@@ -10470,21 +10942,26 @@ var DefaultSwitchClauseSyntax = (function (_super) {
         }
         return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements);
     };
+    DefaultSwitchClauseSyntax.prototype.collectTextElements = function (text, elements) {
+        this._defaultKeyword.collectTextElements(text, elements);
+        this._colonToken.collectTextElements(text, elements);
+        this._statements.collectTextElements(text, elements);
+    };
     return DefaultSwitchClauseSyntax;
 })(SwitchClauseSyntax);
 var BreakStatementSyntax = (function (_super) {
     __extends(BreakStatementSyntax, _super);
     function BreakStatementSyntax(breakKeyword, identifier, semicolonToken) {
         _super.call(this);
-        if(breakKeyword.keywordKind() !== 11 /* BreakKeyword */ ) {
+        if(breakKeyword.keywordKind() !== 12 /* BreakKeyword */ ) {
             throw Errors.argument('breakKeyword');
         }
         if(identifier !== null) {
-            if(identifier.kind() !== 7 /* IdentifierNameToken */ ) {
+            if(identifier.kind() !== 8 /* IdentifierNameToken */ ) {
                 throw Errors.argument('identifier');
             }
         }
-        if(semicolonToken.kind() !== 73 /* SemicolonToken */ ) {
+        if(semicolonToken.kind() !== 74 /* SemicolonToken */ ) {
             throw Errors.argument('semicolonToken');
         }
         this._breakKeyword = breakKeyword;
@@ -10501,7 +10978,7 @@ var BreakStatementSyntax = (function (_super) {
         return visitor.visitBreakStatement(this);
     };
     BreakStatementSyntax.prototype.kind = function () {
-        return 142 /* BreakStatement */ ;
+        return 143 /* BreakStatement */ ;
     };
     BreakStatementSyntax.prototype.isMissing = function () {
         if(!this._breakKeyword.isMissing()) {
@@ -10530,21 +11007,28 @@ var BreakStatementSyntax = (function (_super) {
         }
         return new BreakStatementSyntax(breakKeyword, identifier, semicolonToken);
     };
+    BreakStatementSyntax.prototype.collectTextElements = function (text, elements) {
+        this._breakKeyword.collectTextElements(text, elements);
+        if(this._identifier !== null) {
+            this._identifier.collectTextElements(text, elements);
+        }
+        this._semicolonToken.collectTextElements(text, elements);
+    };
     return BreakStatementSyntax;
 })(StatementSyntax);
 var ContinueStatementSyntax = (function (_super) {
     __extends(ContinueStatementSyntax, _super);
     function ContinueStatementSyntax(continueKeyword, identifier, semicolonToken) {
         _super.call(this);
-        if(continueKeyword.keywordKind() !== 14 /* ContinueKeyword */ ) {
+        if(continueKeyword.keywordKind() !== 15 /* ContinueKeyword */ ) {
             throw Errors.argument('continueKeyword');
         }
         if(identifier !== null) {
-            if(identifier.kind() !== 7 /* IdentifierNameToken */ ) {
+            if(identifier.kind() !== 8 /* IdentifierNameToken */ ) {
                 throw Errors.argument('identifier');
             }
         }
-        if(semicolonToken.kind() !== 73 /* SemicolonToken */ ) {
+        if(semicolonToken.kind() !== 74 /* SemicolonToken */ ) {
             throw Errors.argument('semicolonToken');
         }
         this._continueKeyword = continueKeyword;
@@ -10561,7 +11045,7 @@ var ContinueStatementSyntax = (function (_super) {
         return visitor.visitContinueStatement(this);
     };
     ContinueStatementSyntax.prototype.kind = function () {
-        return 143 /* ContinueStatement */ ;
+        return 144 /* ContinueStatement */ ;
     };
     ContinueStatementSyntax.prototype.isMissing = function () {
         if(!this._continueKeyword.isMissing()) {
@@ -10590,6 +11074,13 @@ var ContinueStatementSyntax = (function (_super) {
         }
         return new ContinueStatementSyntax(continueKeyword, identifier, semicolonToken);
     };
+    ContinueStatementSyntax.prototype.collectTextElements = function (text, elements) {
+        this._continueKeyword.collectTextElements(text, elements);
+        if(this._identifier !== null) {
+            this._identifier.collectTextElements(text, elements);
+        }
+        this._semicolonToken.collectTextElements(text, elements);
+    };
     return ContinueStatementSyntax;
 })(StatementSyntax);
 var IterationStatementSyntax = (function (_super) {
@@ -10613,19 +11104,19 @@ var ForStatementSyntax = (function (_super) {
         if(statement === null) {
             throw Errors.argumentNull('statement');
         }
-        if(forKeyword.keywordKind() !== 22 /* ForKeyword */ ) {
+        if(forKeyword.keywordKind() !== 23 /* ForKeyword */ ) {
             throw Errors.argument('forKeyword');
         }
-        if(openParenToken.kind() !== 67 /* OpenParenToken */ ) {
+        if(openParenToken.kind() !== 68 /* OpenParenToken */ ) {
             throw Errors.argument('openParenToken');
         }
-        if(firstSemicolonToken.kind() !== 73 /* SemicolonToken */ ) {
+        if(firstSemicolonToken.kind() !== 74 /* SemicolonToken */ ) {
             throw Errors.argument('firstSemicolonToken');
         }
-        if(secondSemicolonToken.kind() !== 73 /* SemicolonToken */ ) {
+        if(secondSemicolonToken.kind() !== 74 /* SemicolonToken */ ) {
             throw Errors.argument('secondSemicolonToken');
         }
-        if(closeParenToken.kind() !== 68 /* CloseParenToken */ ) {
+        if(closeParenToken.kind() !== 69 /* CloseParenToken */ ) {
             throw Errors.argument('closeParenToken');
         }
         this._forKeyword = forKeyword;
@@ -10649,7 +11140,7 @@ var ForStatementSyntax = (function (_super) {
         return visitor.visitForStatement(this);
     };
     ForStatementSyntax.prototype.kind = function () {
-        return 144 /* ForStatement */ ;
+        return 145 /* ForStatement */ ;
     };
     ForStatementSyntax.prototype.isMissing = function () {
         if(!this._forKeyword.isMissing()) {
@@ -10720,6 +11211,26 @@ var ForStatementSyntax = (function (_super) {
         }
         return new ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement);
     };
+    ForStatementSyntax.prototype.collectTextElements = function (text, elements) {
+        this._forKeyword.collectTextElements(text, elements);
+        this._openParenToken.collectTextElements(text, elements);
+        if(this._variableDeclaration !== null) {
+            this._variableDeclaration.collectTextElements(text, elements);
+        }
+        if(this._initializer !== null) {
+            this._initializer.collectTextElements(text, elements);
+        }
+        this._firstSemicolonToken.collectTextElements(text, elements);
+        if(this._condition !== null) {
+            this._condition.collectTextElements(text, elements);
+        }
+        this._secondSemicolonToken.collectTextElements(text, elements);
+        if(this._incrementor !== null) {
+            this._incrementor.collectTextElements(text, elements);
+        }
+        this._closeParenToken.collectTextElements(text, elements);
+        this._statement.collectTextElements(text, elements);
+    };
     return ForStatementSyntax;
 })(BaseForStatementSyntax);
 var ForInStatementSyntax = (function (_super) {
@@ -10732,16 +11243,16 @@ var ForInStatementSyntax = (function (_super) {
         if(statement === null) {
             throw Errors.argumentNull('statement');
         }
-        if(forKeyword.keywordKind() !== 22 /* ForKeyword */ ) {
+        if(forKeyword.keywordKind() !== 23 /* ForKeyword */ ) {
             throw Errors.argument('forKeyword');
         }
-        if(openParenToken.kind() !== 67 /* OpenParenToken */ ) {
+        if(openParenToken.kind() !== 68 /* OpenParenToken */ ) {
             throw Errors.argument('openParenToken');
         }
-        if(inKeyword.keywordKind() !== 25 /* InKeyword */ ) {
+        if(inKeyword.keywordKind() !== 26 /* InKeyword */ ) {
             throw Errors.argument('inKeyword');
         }
-        if(closeParenToken.kind() !== 68 /* CloseParenToken */ ) {
+        if(closeParenToken.kind() !== 69 /* CloseParenToken */ ) {
             throw Errors.argument('closeParenToken');
         }
         this._forKeyword = forKeyword;
@@ -10763,7 +11274,7 @@ var ForInStatementSyntax = (function (_super) {
         return visitor.visitForInStatement(this);
     };
     ForInStatementSyntax.prototype.kind = function () {
-        return 145 /* ForInStatement */ ;
+        return 146 /* ForInStatement */ ;
     };
     ForInStatementSyntax.prototype.isMissing = function () {
         if(!this._forKeyword.isMissing()) {
@@ -10822,6 +11333,20 @@ var ForInStatementSyntax = (function (_super) {
         }
         return new ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration, left, inKeyword, expression, closeParenToken, statement);
     };
+    ForInStatementSyntax.prototype.collectTextElements = function (text, elements) {
+        this._forKeyword.collectTextElements(text, elements);
+        this._openParenToken.collectTextElements(text, elements);
+        if(this._variableDeclaration !== null) {
+            this._variableDeclaration.collectTextElements(text, elements);
+        }
+        if(this._left !== null) {
+            this._left.collectTextElements(text, elements);
+        }
+        this._inKeyword.collectTextElements(text, elements);
+        this._expression.collectTextElements(text, elements);
+        this._closeParenToken.collectTextElements(text, elements);
+        this._statement.collectTextElements(text, elements);
+    };
     return ForInStatementSyntax;
 })(BaseForStatementSyntax);
 var WhileStatementSyntax = (function (_super) {
@@ -10834,13 +11359,13 @@ var WhileStatementSyntax = (function (_super) {
         if(statement === null) {
             throw Errors.argumentNull('statement');
         }
-        if(whileKeyword.keywordKind() !== 38 /* WhileKeyword */ ) {
+        if(whileKeyword.keywordKind() !== 39 /* WhileKeyword */ ) {
             throw Errors.argument('whileKeyword');
         }
-        if(openParenToken.kind() !== 67 /* OpenParenToken */ ) {
+        if(openParenToken.kind() !== 68 /* OpenParenToken */ ) {
             throw Errors.argument('openParenToken');
         }
-        if(closeParenToken.kind() !== 68 /* CloseParenToken */ ) {
+        if(closeParenToken.kind() !== 69 /* CloseParenToken */ ) {
             throw Errors.argument('closeParenToken');
         }
         this._whileKeyword = whileKeyword;
@@ -10856,7 +11381,7 @@ var WhileStatementSyntax = (function (_super) {
         return visitor.visitWhileStatement(this);
     };
     WhileStatementSyntax.prototype.kind = function () {
-        return 148 /* WhileStatement */ ;
+        return 149 /* WhileStatement */ ;
     };
     WhileStatementSyntax.prototype.isMissing = function () {
         if(!this._whileKeyword.isMissing()) {
@@ -10897,6 +11422,13 @@ var WhileStatementSyntax = (function (_super) {
         }
         return new WhileStatementSyntax(whileKeyword, openParenToken, condition, closeParenToken, statement);
     };
+    WhileStatementSyntax.prototype.collectTextElements = function (text, elements) {
+        this._whileKeyword.collectTextElements(text, elements);
+        this._openParenToken.collectTextElements(text, elements);
+        this._condition.collectTextElements(text, elements);
+        this._closeParenToken.collectTextElements(text, elements);
+        this._statement.collectTextElements(text, elements);
+    };
     return WhileStatementSyntax;
 })(IterationStatementSyntax);
 var WithStatementSyntax = (function (_super) {
@@ -10909,13 +11441,13 @@ var WithStatementSyntax = (function (_super) {
         if(statement === null) {
             throw Errors.argumentNull('statement');
         }
-        if(withKeyword.keywordKind() !== 39 /* WithKeyword */ ) {
+        if(withKeyword.keywordKind() !== 40 /* WithKeyword */ ) {
             throw Errors.argument('withKeyword');
         }
-        if(openParenToken.kind() !== 67 /* OpenParenToken */ ) {
+        if(openParenToken.kind() !== 68 /* OpenParenToken */ ) {
             throw Errors.argument('openParenToken');
         }
-        if(closeParenToken.kind() !== 68 /* CloseParenToken */ ) {
+        if(closeParenToken.kind() !== 69 /* CloseParenToken */ ) {
             throw Errors.argument('closeParenToken');
         }
         this._withKeyword = withKeyword;
@@ -10931,7 +11463,7 @@ var WithStatementSyntax = (function (_super) {
         return visitor.visitWithStatement(this);
     };
     WithStatementSyntax.prototype.kind = function () {
-        return 153 /* WithStatement */ ;
+        return 154 /* WithStatement */ ;
     };
     WithStatementSyntax.prototype.isMissing = function () {
         if(!this._withKeyword.isMissing()) {
@@ -10972,6 +11504,13 @@ var WithStatementSyntax = (function (_super) {
         }
         return new WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement);
     };
+    WithStatementSyntax.prototype.collectTextElements = function (text, elements) {
+        this._withKeyword.collectTextElements(text, elements);
+        this._openParenToken.collectTextElements(text, elements);
+        this._condition.collectTextElements(text, elements);
+        this._closeParenToken.collectTextElements(text, elements);
+        this._statement.collectTextElements(text, elements);
+    };
     return WithStatementSyntax;
 })(StatementSyntax);
 var EnumDeclarationSyntax = (function (_super) {
@@ -10982,20 +11521,20 @@ var EnumDeclarationSyntax = (function (_super) {
             throw Errors.argumentNull('variableDeclarators');
         }
         if(exportKeyword !== null) {
-            if(exportKeyword.keywordKind() !== 43 /* ExportKeyword */ ) {
+            if(exportKeyword.keywordKind() !== 44 /* ExportKeyword */ ) {
                 throw Errors.argument('exportKeyword');
             }
         }
-        if(enumKeyword.keywordKind() !== 42 /* EnumKeyword */ ) {
+        if(enumKeyword.keywordKind() !== 43 /* EnumKeyword */ ) {
             throw Errors.argument('enumKeyword');
         }
-        if(identifier.kind() !== 7 /* IdentifierNameToken */ ) {
+        if(identifier.kind() !== 8 /* IdentifierNameToken */ ) {
             throw Errors.argument('identifier');
         }
-        if(openBraceToken.kind() !== 65 /* OpenBraceToken */ ) {
+        if(openBraceToken.kind() !== 66 /* OpenBraceToken */ ) {
             throw Errors.argument('openBraceToken');
         }
-        if(closeBraceToken.kind() !== 66 /* CloseBraceToken */ ) {
+        if(closeBraceToken.kind() !== 67 /* CloseBraceToken */ ) {
             throw Errors.argument('closeBraceToken');
         }
         this._exportKeyword = exportKeyword;
@@ -11015,7 +11554,7 @@ var EnumDeclarationSyntax = (function (_super) {
         return visitor.visitEnumDeclaration(this);
     };
     EnumDeclarationSyntax.prototype.kind = function () {
-        return 129 /* EnumDeclaration */ ;
+        return 130 /* EnumDeclaration */ ;
     };
     EnumDeclarationSyntax.prototype.isMissing = function () {
         if(this._exportKeyword !== null && !this._exportKeyword.isMissing()) {
@@ -11062,6 +11601,16 @@ var EnumDeclarationSyntax = (function (_super) {
         }
         return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken);
     };
+    EnumDeclarationSyntax.prototype.collectTextElements = function (text, elements) {
+        if(this._exportKeyword !== null) {
+            this._exportKeyword.collectTextElements(text, elements);
+        }
+        this._enumKeyword.collectTextElements(text, elements);
+        this._identifier.collectTextElements(text, elements);
+        this._openBraceToken.collectTextElements(text, elements);
+        this._variableDeclarators.collectTextElements(text, elements);
+        this._closeBraceToken.collectTextElements(text, elements);
+    };
     return EnumDeclarationSyntax;
 })(ModuleElementSyntax);
 var CastExpressionSyntax = (function (_super) {
@@ -11074,10 +11623,10 @@ var CastExpressionSyntax = (function (_super) {
         if(expression === null) {
             throw Errors.argumentNull('expression');
         }
-        if(lessThanToken.kind() !== 75 /* LessThanToken */ ) {
+        if(lessThanToken.kind() !== 76 /* LessThanToken */ ) {
             throw Errors.argument('lessThanToken');
         }
-        if(greaterThanToken.kind() !== 76 /* GreaterThanToken */ ) {
+        if(greaterThanToken.kind() !== 77 /* GreaterThanToken */ ) {
             throw Errors.argument('greaterThanToken');
         }
         this._lessThanToken = lessThanToken;
@@ -11092,7 +11641,7 @@ var CastExpressionSyntax = (function (_super) {
         return visitor.visitCastExpression(this);
     };
     CastExpressionSyntax.prototype.kind = function () {
-        return 216 /* CastExpression */ ;
+        return 217 /* CastExpression */ ;
     };
     CastExpressionSyntax.prototype.isMissing = function () {
         if(!this._lessThanToken.isMissing()) {
@@ -11127,6 +11676,12 @@ var CastExpressionSyntax = (function (_super) {
         }
         return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression);
     };
+    CastExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._lessThanToken.collectTextElements(text, elements);
+        this._type.collectTextElements(text, elements);
+        this._greaterThanToken.collectTextElements(text, elements);
+        this._expression.collectTextElements(text, elements);
+    };
     return CastExpressionSyntax;
 })(UnaryExpressionSyntax);
 var ObjectLiteralExpressionSyntax = (function (_super) {
@@ -11136,10 +11691,10 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
         if(propertyAssignments === null) {
             throw Errors.argumentNull('propertyAssignments');
         }
-        if(openBraceToken.kind() !== 65 /* OpenBraceToken */ ) {
+        if(openBraceToken.kind() !== 66 /* OpenBraceToken */ ) {
             throw Errors.argument('openBraceToken');
         }
-        if(closeBraceToken.kind() !== 66 /* CloseBraceToken */ ) {
+        if(closeBraceToken.kind() !== 67 /* CloseBraceToken */ ) {
             throw Errors.argument('closeBraceToken');
         }
         this._openBraceToken = openBraceToken;
@@ -11156,7 +11711,7 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
         return visitor.visitObjectLiteralExpression(this);
     };
     ObjectLiteralExpressionSyntax.prototype.kind = function () {
-        return 211 /* ObjectLiteralExpression */ ;
+        return 212 /* ObjectLiteralExpression */ ;
     };
     ObjectLiteralExpressionSyntax.prototype.isMissing = function () {
         if(!this._openBraceToken.isMissing()) {
@@ -11185,6 +11740,11 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
         }
         return new ObjectLiteralExpressionSyntax(openBraceToken, propertyAssignments, closeBraceToken);
     };
+    ObjectLiteralExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._openBraceToken.collectTextElements(text, elements);
+        this._propertyAssignments.collectTextElements(text, elements);
+        this._closeBraceToken.collectTextElements(text, elements);
+    };
     return ObjectLiteralExpressionSyntax;
 })(UnaryExpressionSyntax);
 var PropertyAssignmentSyntax = (function (_super) {
@@ -11202,9 +11762,9 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
             throw Errors.argumentNull('expression');
         }
         switch(propertyName.kind()) {
-            case 7 /* IdentifierNameToken */ :
-            case 10 /* StringLiteral */ :
-            case 9 /* NumericLiteral */ : {
+            case 8 /* IdentifierNameToken */ :
+            case 11 /* StringLiteral */ :
+            case 10 /* NumericLiteral */ : {
                 break;
 
             }
@@ -11213,7 +11773,7 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
 
             }
         }
-        if(colonToken.kind() !== 101 /* ColonToken */ ) {
+        if(colonToken.kind() !== 102 /* ColonToken */ ) {
             throw Errors.argument('colonToken');
         }
         this._propertyName = propertyName;
@@ -11227,7 +11787,7 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
         return visitor.visitSimplePropertyAssignment(this);
     };
     SimplePropertyAssignmentSyntax.prototype.kind = function () {
-        return 240 /* SimplePropertyAssignment */ ;
+        return 241 /* SimplePropertyAssignment */ ;
     };
     SimplePropertyAssignmentSyntax.prototype.isMissing = function () {
         if(!this._propertyName.isMissing()) {
@@ -11256,6 +11816,11 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
         }
         return new SimplePropertyAssignmentSyntax(propertyName, colonToken, expression);
     };
+    SimplePropertyAssignmentSyntax.prototype.collectTextElements = function (text, elements) {
+        this._propertyName.collectTextElements(text, elements);
+        this._colonToken.collectTextElements(text, elements);
+        this._expression.collectTextElements(text, elements);
+    };
     return SimplePropertyAssignmentSyntax;
 })(PropertyAssignmentSyntax);
 var AccessorPropertyAssignmentSyntax = (function (_super) {
@@ -11272,16 +11837,16 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
         if(block === null) {
             throw Errors.argumentNull('block');
         }
-        if(getKeyword.keywordKind() !== 60 /* GetKeyword */ ) {
+        if(getKeyword.keywordKind() !== 61 /* GetKeyword */ ) {
             throw Errors.argument('getKeyword');
         }
-        if(propertyName.kind() !== 7 /* IdentifierNameToken */ ) {
+        if(propertyName.kind() !== 8 /* IdentifierNameToken */ ) {
             throw Errors.argument('propertyName');
         }
-        if(openParenToken.kind() !== 67 /* OpenParenToken */ ) {
+        if(openParenToken.kind() !== 68 /* OpenParenToken */ ) {
             throw Errors.argument('openParenToken');
         }
-        if(closeParenToken.kind() !== 68 /* CloseParenToken */ ) {
+        if(closeParenToken.kind() !== 69 /* CloseParenToken */ ) {
             throw Errors.argument('closeParenToken');
         }
         this._getKeyword = getKeyword;
@@ -11297,7 +11862,7 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
         return visitor.visitGetAccessorPropertyAssignment(this);
     };
     GetAccessorPropertyAssignmentSyntax.prototype.kind = function () {
-        return 243 /* GetAccessorPropertyAssignment */ ;
+        return 244 /* GetAccessorPropertyAssignment */ ;
     };
     GetAccessorPropertyAssignmentSyntax.prototype.isMissing = function () {
         if(!this._getKeyword.isMissing()) {
@@ -11338,6 +11903,13 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
         }
         return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block);
     };
+    GetAccessorPropertyAssignmentSyntax.prototype.collectTextElements = function (text, elements) {
+        this._getKeyword.collectTextElements(text, elements);
+        this._propertyName.collectTextElements(text, elements);
+        this._openParenToken.collectTextElements(text, elements);
+        this._closeParenToken.collectTextElements(text, elements);
+        this._block.collectTextElements(text, elements);
+    };
     return GetAccessorPropertyAssignmentSyntax;
 })(AccessorPropertyAssignmentSyntax);
 var SetAccessorPropertyAssignmentSyntax = (function (_super) {
@@ -11347,19 +11919,19 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
         if(block === null) {
             throw Errors.argumentNull('block');
         }
-        if(setKeyword.keywordKind() !== 63 /* SetKeyword */ ) {
+        if(setKeyword.keywordKind() !== 64 /* SetKeyword */ ) {
             throw Errors.argument('setKeyword');
         }
-        if(propertyName.kind() !== 7 /* IdentifierNameToken */ ) {
+        if(propertyName.kind() !== 8 /* IdentifierNameToken */ ) {
             throw Errors.argument('propertyName');
         }
-        if(openParenToken.kind() !== 67 /* OpenParenToken */ ) {
+        if(openParenToken.kind() !== 68 /* OpenParenToken */ ) {
             throw Errors.argument('openParenToken');
         }
-        if(parameterName.kind() !== 7 /* IdentifierNameToken */ ) {
+        if(parameterName.kind() !== 8 /* IdentifierNameToken */ ) {
             throw Errors.argument('parameterName');
         }
-        if(closeParenToken.kind() !== 68 /* CloseParenToken */ ) {
+        if(closeParenToken.kind() !== 69 /* CloseParenToken */ ) {
             throw Errors.argument('closeParenToken');
         }
         this._setKeyword = setKeyword;
@@ -11376,7 +11948,7 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
         return visitor.visitSetAccessorPropertyAssignment(this);
     };
     SetAccessorPropertyAssignmentSyntax.prototype.kind = function () {
-        return 244 /* SetAccessorPropertyAssignment */ ;
+        return 245 /* SetAccessorPropertyAssignment */ ;
     };
     SetAccessorPropertyAssignmentSyntax.prototype.isMissing = function () {
         if(!this._setKeyword.isMissing()) {
@@ -11423,6 +11995,14 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
         }
         return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block);
     };
+    SetAccessorPropertyAssignmentSyntax.prototype.collectTextElements = function (text, elements) {
+        this._setKeyword.collectTextElements(text, elements);
+        this._propertyName.collectTextElements(text, elements);
+        this._openParenToken.collectTextElements(text, elements);
+        this._parameterName.collectTextElements(text, elements);
+        this._closeParenToken.collectTextElements(text, elements);
+        this._block.collectTextElements(text, elements);
+    };
     return SetAccessorPropertyAssignmentSyntax;
 })(AccessorPropertyAssignmentSyntax);
 var FunctionExpressionSyntax = (function (_super) {
@@ -11435,11 +12015,11 @@ var FunctionExpressionSyntax = (function (_super) {
         if(block === null) {
             throw Errors.argumentNull('block');
         }
-        if(functionKeyword.keywordKind() !== 23 /* FunctionKeyword */ ) {
+        if(functionKeyword.keywordKind() !== 24 /* FunctionKeyword */ ) {
             throw Errors.argument('functionKeyword');
         }
         if(identifier !== null) {
-            if(identifier.kind() !== 7 /* IdentifierNameToken */ ) {
+            if(identifier.kind() !== 8 /* IdentifierNameToken */ ) {
                 throw Errors.argument('identifier');
             }
         }
@@ -11458,7 +12038,7 @@ var FunctionExpressionSyntax = (function (_super) {
         return visitor.visitFunctionExpression(this);
     };
     FunctionExpressionSyntax.prototype.kind = function () {
-        return 218 /* FunctionExpression */ ;
+        return 219 /* FunctionExpression */ ;
     };
     FunctionExpressionSyntax.prototype.isMissing = function () {
         if(!this._functionKeyword.isMissing()) {
@@ -11493,13 +12073,21 @@ var FunctionExpressionSyntax = (function (_super) {
         }
         return new FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block);
     };
+    FunctionExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._functionKeyword.collectTextElements(text, elements);
+        if(this._identifier !== null) {
+            this._identifier.collectTextElements(text, elements);
+        }
+        this._callSignature.collectTextElements(text, elements);
+        this._block.collectTextElements(text, elements);
+    };
     return FunctionExpressionSyntax;
 })(UnaryExpressionSyntax);
 var EmptyStatementSyntax = (function (_super) {
     __extends(EmptyStatementSyntax, _super);
     function EmptyStatementSyntax(semicolonToken) {
         _super.call(this);
-        if(semicolonToken.kind() !== 73 /* SemicolonToken */ ) {
+        if(semicolonToken.kind() !== 74 /* SemicolonToken */ ) {
             throw Errors.argument('semicolonToken');
         }
         this._semicolonToken = semicolonToken;
@@ -11511,7 +12099,7 @@ var EmptyStatementSyntax = (function (_super) {
         return visitor.visitEmptyStatement(this);
     };
     EmptyStatementSyntax.prototype.kind = function () {
-        return 146 /* EmptyStatement */ ;
+        return 147 /* EmptyStatement */ ;
     };
     EmptyStatementSyntax.prototype.isMissing = function () {
         if(!this._semicolonToken.isMissing()) {
@@ -11528,13 +12116,16 @@ var EmptyStatementSyntax = (function (_super) {
         }
         return new EmptyStatementSyntax(semicolonToken);
     };
+    EmptyStatementSyntax.prototype.collectTextElements = function (text, elements) {
+        this._semicolonToken.collectTextElements(text, elements);
+    };
     return EmptyStatementSyntax;
 })(StatementSyntax);
 var SuperExpressionSyntax = (function (_super) {
     __extends(SuperExpressionSyntax, _super);
     function SuperExpressionSyntax(superKeyword) {
         _super.call(this);
-        if(superKeyword.keywordKind() !== 46 /* SuperKeyword */ ) {
+        if(superKeyword.keywordKind() !== 47 /* SuperKeyword */ ) {
             throw Errors.argument('superKeyword');
         }
         this._superKeyword = superKeyword;
@@ -11546,7 +12137,7 @@ var SuperExpressionSyntax = (function (_super) {
         return visitor.visitSuperExpression(this);
     };
     SuperExpressionSyntax.prototype.kind = function () {
-        return 219 /* SuperExpression */ ;
+        return 220 /* SuperExpression */ ;
     };
     SuperExpressionSyntax.prototype.isMissing = function () {
         if(!this._superKeyword.isMissing()) {
@@ -11563,6 +12154,9 @@ var SuperExpressionSyntax = (function (_super) {
         }
         return new SuperExpressionSyntax(superKeyword);
     };
+    SuperExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._superKeyword.collectTextElements(text, elements);
+    };
     return SuperExpressionSyntax;
 })(UnaryExpressionSyntax);
 var TryStatementSyntax = (function (_super) {
@@ -11572,7 +12166,7 @@ var TryStatementSyntax = (function (_super) {
         if(block === null) {
             throw Errors.argumentNull('block');
         }
-        if(tryKeyword.keywordKind() !== 34 /* TryKeyword */ ) {
+        if(tryKeyword.keywordKind() !== 35 /* TryKeyword */ ) {
             throw Errors.argument('tryKeyword');
         }
         this._tryKeyword = tryKeyword;
@@ -11590,7 +12184,7 @@ var TryStatementSyntax = (function (_super) {
         return visitor.visitTryStatement(this);
     };
     TryStatementSyntax.prototype.kind = function () {
-        return 149 /* TryStatement */ ;
+        return 150 /* TryStatement */ ;
     };
     TryStatementSyntax.prototype.isMissing = function () {
         if(!this._tryKeyword.isMissing()) {
@@ -11625,6 +12219,16 @@ var TryStatementSyntax = (function (_super) {
         }
         return new TryStatementSyntax(tryKeyword, block, catchClause, finallyClause);
     };
+    TryStatementSyntax.prototype.collectTextElements = function (text, elements) {
+        this._tryKeyword.collectTextElements(text, elements);
+        this._block.collectTextElements(text, elements);
+        if(this._catchClause !== null) {
+            this._catchClause.collectTextElements(text, elements);
+        }
+        if(this._finallyClause !== null) {
+            this._finallyClause.collectTextElements(text, elements);
+        }
+    };
     return TryStatementSyntax;
 })(StatementSyntax);
 var CatchClauseSyntax = (function (_super) {
@@ -11634,16 +12238,16 @@ var CatchClauseSyntax = (function (_super) {
         if(block === null) {
             throw Errors.argumentNull('block');
         }
-        if(catchKeyword.keywordKind() !== 13 /* CatchKeyword */ ) {
+        if(catchKeyword.keywordKind() !== 14 /* CatchKeyword */ ) {
             throw Errors.argument('catchKeyword');
         }
-        if(openParenToken.kind() !== 67 /* OpenParenToken */ ) {
+        if(openParenToken.kind() !== 68 /* OpenParenToken */ ) {
             throw Errors.argument('openParenToken');
         }
-        if(identifier.kind() !== 7 /* IdentifierNameToken */ ) {
+        if(identifier.kind() !== 8 /* IdentifierNameToken */ ) {
             throw Errors.argument('identifier');
         }
-        if(closeParenToken.kind() !== 68 /* CloseParenToken */ ) {
+        if(closeParenToken.kind() !== 69 /* CloseParenToken */ ) {
             throw Errors.argument('closeParenToken');
         }
         this._catchKeyword = catchKeyword;
@@ -11659,7 +12263,7 @@ var CatchClauseSyntax = (function (_super) {
         return visitor.visitCatchClause(this);
     };
     CatchClauseSyntax.prototype.kind = function () {
-        return 231 /* CatchClause */ ;
+        return 232 /* CatchClause */ ;
     };
     CatchClauseSyntax.prototype.isMissing = function () {
         if(!this._catchKeyword.isMissing()) {
@@ -11700,6 +12304,13 @@ var CatchClauseSyntax = (function (_super) {
         }
         return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block);
     };
+    CatchClauseSyntax.prototype.collectTextElements = function (text, elements) {
+        this._catchKeyword.collectTextElements(text, elements);
+        this._openParenToken.collectTextElements(text, elements);
+        this._identifier.collectTextElements(text, elements);
+        this._closeParenToken.collectTextElements(text, elements);
+        this._block.collectTextElements(text, elements);
+    };
     return CatchClauseSyntax;
 })(SyntaxNode);
 var FinallyClauseSyntax = (function (_super) {
@@ -11709,7 +12320,7 @@ var FinallyClauseSyntax = (function (_super) {
         if(block === null) {
             throw Errors.argumentNull('block');
         }
-        if(finallyKeyword.keywordKind() !== 21 /* FinallyKeyword */ ) {
+        if(finallyKeyword.keywordKind() !== 22 /* FinallyKeyword */ ) {
             throw Errors.argument('finallyKeyword');
         }
         this._finallyKeyword = finallyKeyword;
@@ -11722,7 +12333,7 @@ var FinallyClauseSyntax = (function (_super) {
         return visitor.visitFinallyClause(this);
     };
     FinallyClauseSyntax.prototype.kind = function () {
-        return 232 /* FinallyClause */ ;
+        return 233 /* FinallyClause */ ;
     };
     FinallyClauseSyntax.prototype.isMissing = function () {
         if(!this._finallyKeyword.isMissing()) {
@@ -11745,6 +12356,10 @@ var FinallyClauseSyntax = (function (_super) {
         }
         return new FinallyClauseSyntax(finallyKeyword, block);
     };
+    FinallyClauseSyntax.prototype.collectTextElements = function (text, elements) {
+        this._finallyKeyword.collectTextElements(text, elements);
+        this._block.collectTextElements(text, elements);
+    };
     return FinallyClauseSyntax;
 })(SyntaxNode);
 var LabeledStatement = (function (_super) {
@@ -11754,10 +12369,10 @@ var LabeledStatement = (function (_super) {
         if(statement === null) {
             throw Errors.argumentNull('statement');
         }
-        if(identifier.kind() !== 7 /* IdentifierNameToken */ ) {
+        if(identifier.kind() !== 8 /* IdentifierNameToken */ ) {
             throw Errors.argument('identifier');
         }
-        if(colonToken.kind() !== 101 /* ColonToken */ ) {
+        if(colonToken.kind() !== 102 /* ColonToken */ ) {
             throw Errors.argument('colonToken');
         }
         this._identifier = identifier;
@@ -11771,7 +12386,7 @@ var LabeledStatement = (function (_super) {
         return visitor.visitLabeledStatement(this);
     };
     LabeledStatement.prototype.kind = function () {
-        return 150 /* LabeledStatement */ ;
+        return 151 /* LabeledStatement */ ;
     };
     LabeledStatement.prototype.isMissing = function () {
         if(!this._identifier.isMissing()) {
@@ -11800,6 +12415,11 @@ var LabeledStatement = (function (_super) {
         }
         return new LabeledStatement(identifier, colonToken, statement);
     };
+    LabeledStatement.prototype.collectTextElements = function (text, elements) {
+        this._identifier.collectTextElements(text, elements);
+        this._colonToken.collectTextElements(text, elements);
+        this._statement.collectTextElements(text, elements);
+    };
     return LabeledStatement;
 })(StatementSyntax);
 var DoStatementSyntax = (function (_super) {
@@ -11812,19 +12432,19 @@ var DoStatementSyntax = (function (_super) {
         if(condition === null) {
             throw Errors.argumentNull('condition');
         }
-        if(doKeyword.keywordKind() !== 18 /* DoKeyword */ ) {
+        if(doKeyword.keywordKind() !== 19 /* DoKeyword */ ) {
             throw Errors.argument('doKeyword');
         }
-        if(whileKeyword.keywordKind() !== 38 /* WhileKeyword */ ) {
+        if(whileKeyword.keywordKind() !== 39 /* WhileKeyword */ ) {
             throw Errors.argument('whileKeyword');
         }
-        if(openParenToken.kind() !== 67 /* OpenParenToken */ ) {
+        if(openParenToken.kind() !== 68 /* OpenParenToken */ ) {
             throw Errors.argument('openParenToken');
         }
-        if(closeParenToken.kind() !== 68 /* CloseParenToken */ ) {
+        if(closeParenToken.kind() !== 69 /* CloseParenToken */ ) {
             throw Errors.argument('closeParenToken');
         }
-        if(semicolonToken.kind() !== 73 /* SemicolonToken */ ) {
+        if(semicolonToken.kind() !== 74 /* SemicolonToken */ ) {
             throw Errors.argument('semicolonToken');
         }
         this._doKeyword = doKeyword;
@@ -11842,7 +12462,7 @@ var DoStatementSyntax = (function (_super) {
         return visitor.visitDoStatement(this);
     };
     DoStatementSyntax.prototype.kind = function () {
-        return 151 /* DoStatement */ ;
+        return 152 /* DoStatement */ ;
     };
     DoStatementSyntax.prototype.isMissing = function () {
         if(!this._doKeyword.isMissing()) {
@@ -11895,6 +12515,15 @@ var DoStatementSyntax = (function (_super) {
         }
         return new DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken);
     };
+    DoStatementSyntax.prototype.collectTextElements = function (text, elements) {
+        this._doKeyword.collectTextElements(text, elements);
+        this._statement.collectTextElements(text, elements);
+        this._whileKeyword.collectTextElements(text, elements);
+        this._openParenToken.collectTextElements(text, elements);
+        this._condition.collectTextElements(text, elements);
+        this._closeParenToken.collectTextElements(text, elements);
+        this._semicolonToken.collectTextElements(text, elements);
+    };
     return DoStatementSyntax;
 })(IterationStatementSyntax);
 var TypeOfExpressionSyntax = (function (_super) {
@@ -11904,7 +12533,7 @@ var TypeOfExpressionSyntax = (function (_super) {
         if(expression === null) {
             throw Errors.argumentNull('expression');
         }
-        if(typeOfKeyword.keywordKind() !== 35 /* TypeOfKeyword */ ) {
+        if(typeOfKeyword.keywordKind() !== 36 /* TypeOfKeyword */ ) {
             throw Errors.argument('typeOfKeyword');
         }
         this._typeOfKeyword = typeOfKeyword;
@@ -11917,7 +12546,7 @@ var TypeOfExpressionSyntax = (function (_super) {
         return visitor.visitTypeOfExpression(this);
     };
     TypeOfExpressionSyntax.prototype.kind = function () {
-        return 161 /* TypeOfExpression */ ;
+        return 162 /* TypeOfExpression */ ;
     };
     TypeOfExpressionSyntax.prototype.isMissing = function () {
         if(!this._typeOfKeyword.isMissing()) {
@@ -11940,6 +12569,10 @@ var TypeOfExpressionSyntax = (function (_super) {
         }
         return new TypeOfExpressionSyntax(typeOfKeyword, expression);
     };
+    TypeOfExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._typeOfKeyword.collectTextElements(text, elements);
+        this._expression.collectTextElements(text, elements);
+    };
     return TypeOfExpressionSyntax;
 })(UnaryExpressionSyntax);
 var DeleteExpressionSyntax = (function (_super) {
@@ -11949,7 +12582,7 @@ var DeleteExpressionSyntax = (function (_super) {
         if(expression === null) {
             throw Errors.argumentNull('expression');
         }
-        if(deleteKeyword.keywordKind() !== 17 /* DeleteKeyword */ ) {
+        if(deleteKeyword.keywordKind() !== 18 /* DeleteKeyword */ ) {
             throw Errors.argument('deleteKeyword');
         }
         this._deleteKeyword = deleteKeyword;
@@ -11962,7 +12595,7 @@ var DeleteExpressionSyntax = (function (_super) {
         return visitor.visitDeleteExpression(this);
     };
     DeleteExpressionSyntax.prototype.kind = function () {
-        return 160 /* DeleteExpression */ ;
+        return 161 /* DeleteExpression */ ;
     };
     DeleteExpressionSyntax.prototype.isMissing = function () {
         if(!this._deleteKeyword.isMissing()) {
@@ -11985,6 +12618,10 @@ var DeleteExpressionSyntax = (function (_super) {
         }
         return new DeleteExpressionSyntax(deleteKeyword, expression);
     };
+    DeleteExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._deleteKeyword.collectTextElements(text, elements);
+        this._expression.collectTextElements(text, elements);
+    };
     return DeleteExpressionSyntax;
 })(UnaryExpressionSyntax);
 var VoidExpressionSyntax = (function (_super) {
@@ -11994,7 +12631,7 @@ var VoidExpressionSyntax = (function (_super) {
         if(expression === null) {
             throw Errors.argumentNull('expression');
         }
-        if(voidKeyword.keywordKind() !== 37 /* VoidKeyword */ ) {
+        if(voidKeyword.keywordKind() !== 38 /* VoidKeyword */ ) {
             throw Errors.argument('voidKeyword');
         }
         this._voidKeyword = voidKeyword;
@@ -12007,7 +12644,7 @@ var VoidExpressionSyntax = (function (_super) {
         return visitor.visitVoidExpression(this);
     };
     VoidExpressionSyntax.prototype.kind = function () {
-        return 162 /* VoidExpression */ ;
+        return 163 /* VoidExpression */ ;
     };
     VoidExpressionSyntax.prototype.isMissing = function () {
         if(!this._voidKeyword.isMissing()) {
@@ -12030,16 +12667,20 @@ var VoidExpressionSyntax = (function (_super) {
         }
         return new VoidExpressionSyntax(voidKeyword, expression);
     };
+    VoidExpressionSyntax.prototype.collectTextElements = function (text, elements) {
+        this._voidKeyword.collectTextElements(text, elements);
+        this._expression.collectTextElements(text, elements);
+    };
     return VoidExpressionSyntax;
 })(UnaryExpressionSyntax);
 var DebuggerStatementSyntax = (function (_super) {
     __extends(DebuggerStatementSyntax, _super);
     function DebuggerStatementSyntax(debuggerKeyword, semicolonToken) {
         _super.call(this);
-        if(debuggerKeyword.keywordKind() !== 15 /* DebuggerKeyword */ ) {
+        if(debuggerKeyword.keywordKind() !== 16 /* DebuggerKeyword */ ) {
             throw Errors.argument('debuggerKeyword');
         }
-        if(semicolonToken.kind() !== 73 /* SemicolonToken */ ) {
+        if(semicolonToken.kind() !== 74 /* SemicolonToken */ ) {
             throw Errors.argument('semicolonToken');
         }
         this._debuggerKeyword = debuggerKeyword;
@@ -12052,7 +12693,7 @@ var DebuggerStatementSyntax = (function (_super) {
         return visitor.visitDebuggerStatement(this);
     };
     DebuggerStatementSyntax.prototype.kind = function () {
-        return 152 /* DebuggerStatement */ ;
+        return 153 /* DebuggerStatement */ ;
     };
     DebuggerStatementSyntax.prototype.isMissing = function () {
         if(!this._debuggerKeyword.isMissing()) {
@@ -12074,6 +12715,10 @@ var DebuggerStatementSyntax = (function (_super) {
             return this;
         }
         return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken);
+    };
+    DebuggerStatementSyntax.prototype.collectTextElements = function (text, elements) {
+        this._debuggerKeyword.collectTextElements(text, elements);
+        this._semicolonToken.collectTextElements(text, elements);
     };
     return DebuggerStatementSyntax;
 })(StatementSyntax);
@@ -12396,10 +13041,10 @@ var Emitter = (function (_super) {
         return new SourceUnitSyntax(SyntaxList.create(moduleElements), node.endOfFileToken());
     };
     Emitter.leftmostName = function leftmostName(name) {
-        if(name.kind() === 118 /* IdentifierName */ ) {
+        if(name.kind() === 119 /* IdentifierName */ ) {
             return name;
         } else {
-            if(name.kind() === 119 /* QualifiedName */ ) {
+            if(name.kind() === 120 /* QualifiedName */ ) {
                 return Emitter.leftmostName((name).left());
             } else {
                 throw Errors.invalidOperation();
@@ -12409,55 +13054,64 @@ var Emitter = (function (_super) {
     Emitter.prototype.visitModuleDeclaration = function (node) {
         var identifierName = Emitter.leftmostName(node.moduleName());
         var variableStatement = VariableStatementSyntax.create(new VariableDeclarationSyntax(SyntaxToken.createElasticKeyword({
-            kind: 36 /* VarKeyword */ ,
+            kind: 37 /* VarKeyword */ ,
             trailingTrivia: [
                 SyntaxTrivia.space
             ]
         }), SeparatedSyntaxList.create([
             VariableDeclaratorSyntax.create(identifierName.identifier())
         ])), SyntaxToken.createElastic({
-            kind: 73 /* SemicolonToken */ 
+            kind: 74 /* SemicolonToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.carriageReturnLineFeed
+            ]
         }));
         var functionExpression = FunctionExpressionSyntax.create(SyntaxToken.createElasticKeyword({
-            kind: 23 /* FunctionKeyword */ 
+            kind: 24 /* FunctionKeyword */ 
         }), CallSignatureSyntax.create(new ParameterListSyntax(SyntaxToken.createElastic({
-            kind: 67 /* OpenParenToken */ 
+            kind: 68 /* OpenParenToken */ 
         }), SeparatedSyntaxList.create([
             ParameterSyntax.create(identifierName.identifier())
         ]), SyntaxToken.createElastic({
-            kind: 68 /* CloseParenToken */ 
+            kind: 69 /* CloseParenToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.space
+            ]
         }))), new BlockSyntax(SyntaxToken.createElastic({
-            kind: 67 /* OpenParenToken */ 
+            kind: 68 /* OpenParenToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.carriageReturnLineFeed
+            ]
         }), SyntaxList.empty, SyntaxToken.createElastic({
-            kind: 68 /* CloseParenToken */ 
+            kind: 69 /* CloseParenToken */ 
         })));
         var parenthesizedFunctionExpression = new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
-            kind: 67 /* OpenParenToken */ 
+            kind: 68 /* OpenParenToken */ 
         }), functionExpression, SyntaxToken.createElastic({
-            kind: 68 /* CloseParenToken */ 
+            kind: 69 /* CloseParenToken */ 
         }));
-        var logicalOrExpression = new BinaryExpressionSyntax(182 /* LogicalOrExpression */ , identifierName, SyntaxToken.createElastic({
-            kind: 99 /* BarBarToken */ 
+        var logicalOrExpression = new BinaryExpressionSyntax(183 /* LogicalOrExpression */ , identifierName, SyntaxToken.createElastic({
+            kind: 100 /* BarBarToken */ 
         }), new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
-            kind: 67 /* OpenParenToken */ 
-        }), new BinaryExpressionSyntax(169 /* AssignmentExpression */ , identifierName, SyntaxToken.createElastic({
-            kind: 102 /* EqualsToken */ 
+            kind: 68 /* OpenParenToken */ 
+        }), new BinaryExpressionSyntax(170 /* AssignmentExpression */ , identifierName, SyntaxToken.createElastic({
+            kind: 103 /* EqualsToken */ 
         }), new ObjectLiteralExpressionSyntax(SyntaxToken.createElastic({
-            kind: 65 /* OpenBraceToken */ 
+            kind: 66 /* OpenBraceToken */ 
         }), SeparatedSyntaxList.empty, SyntaxToken.createElastic({
-            kind: 66 /* CloseBraceToken */ 
+            kind: 67 /* CloseBraceToken */ 
         }))), SyntaxToken.createElastic({
-            kind: 68 /* CloseParenToken */ 
+            kind: 69 /* CloseParenToken */ 
         })));
         var invocationExpression = new InvocationExpressionSyntax(parenthesizedFunctionExpression, new ArgumentListSyntax(SyntaxToken.createElastic({
-            kind: 67 /* OpenParenToken */ 
+            kind: 68 /* OpenParenToken */ 
         }), SeparatedSyntaxList.create([
             logicalOrExpression
         ]), SyntaxToken.createElastic({
-            kind: 67 /* OpenParenToken */ 
+            kind: 68 /* OpenParenToken */ 
         })));
         var expressionStatement = new ExpressionStatementSyntax(invocationExpression, SyntaxToken.createElastic({
-            kind: 73 /* SemicolonToken */ 
+            kind: 74 /* SemicolonToken */ 
         }));
         return [
             variableStatement, 
@@ -12465,6 +13119,17 @@ var Emitter = (function (_super) {
         ];
     };
     return Emitter;
+})(SyntaxRewriter);
+var SyntaxRealizer = (function (_super) {
+    __extends(SyntaxRealizer, _super);
+    function SyntaxRealizer(text) {
+        _super.call(this);
+        this.text = text;
+    }
+    SyntaxRealizer.prototype.visitToken = function (token) {
+        return token.realize(this.text);
+    };
+    return SyntaxRealizer;
 })(SyntaxRewriter);
 var SyntaxToken;
 (function (SyntaxToken) {
@@ -12482,6 +13147,14 @@ var SyntaxToken;
     }
     function end(token) {
         return token.start() + token.width();
+    }
+    function realize(token, text) {
+        return new RealizedToken(token, text);
+    }
+    function collectTextElements(text, elements, token) {
+        token.leadingTrivia(text).collectTextElements(text, elements);
+        elements.push(token.text());
+        token.trailingTrivia(text).collectTextElements(text, elements);
     }
     function toJSON(token) {
         var result = {
@@ -12553,6 +13226,9 @@ var SyntaxToken;
         EmptyToken.prototype.isTrivia = function () {
             return false;
         };
+        EmptyToken.prototype.isTriviaList = function () {
+            return false;
+        };
         EmptyToken.prototype.kind = function () {
             return this.tokenKind;
         };
@@ -12619,6 +13295,12 @@ var SyntaxToken;
         EmptyToken.prototype.trailingTrivia = function (text) {
             return SyntaxTriviaList.empty;
         };
+        EmptyToken.prototype.realize = function (text) {
+            return realize(this, text);
+        };
+        EmptyToken.prototype.collectTextElements = function (text, elements) {
+            collectTextElements(text, elements, this);
+        };
         return EmptyToken;
     })();    
     var FixedWidthTokenWithNoTrivia = (function () {
@@ -12639,6 +13321,9 @@ var SyntaxToken;
             return false;
         };
         FixedWidthTokenWithNoTrivia.prototype.isTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.isTriviaList = function () {
             return false;
         };
         FixedWidthTokenWithNoTrivia.prototype.kind = function () {
@@ -12707,6 +13392,12 @@ var SyntaxToken;
         FixedWidthTokenWithNoTrivia.prototype.trailingTrivia = function (text) {
             return SyntaxTriviaList.empty;
         };
+        FixedWidthTokenWithNoTrivia.prototype.realize = function (text) {
+            return realize(this, text);
+        };
+        FixedWidthTokenWithNoTrivia.prototype.collectTextElements = function (text, elements) {
+            collectTextElements(text, elements, this);
+        };
         return FixedWidthTokenWithNoTrivia;
     })();    
     var FixedWidthTokenWithLeadingTrivia = (function () {
@@ -12728,6 +13419,9 @@ var SyntaxToken;
             return false;
         };
         FixedWidthTokenWithLeadingTrivia.prototype.isTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.isTriviaList = function () {
             return false;
         };
         FixedWidthTokenWithLeadingTrivia.prototype.kind = function () {
@@ -12796,6 +13490,12 @@ var SyntaxToken;
         FixedWidthTokenWithLeadingTrivia.prototype.trailingTrivia = function (text) {
             return SyntaxTriviaList.empty;
         };
+        FixedWidthTokenWithLeadingTrivia.prototype.realize = function (text) {
+            return realize(this, text);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (text, elements) {
+            collectTextElements(text, elements, this);
+        };
         return FixedWidthTokenWithLeadingTrivia;
     })();    
     var FixedWidthTokenWithTrailingTrivia = (function () {
@@ -12817,6 +13517,9 @@ var SyntaxToken;
             return false;
         };
         FixedWidthTokenWithTrailingTrivia.prototype.isTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.isTriviaList = function () {
             return false;
         };
         FixedWidthTokenWithTrailingTrivia.prototype.kind = function () {
@@ -12885,6 +13588,12 @@ var SyntaxToken;
         FixedWidthTokenWithTrailingTrivia.prototype.trailingTrivia = function (text) {
             throw Errors.notYetImplemented();
         };
+        FixedWidthTokenWithTrailingTrivia.prototype.realize = function (text) {
+            return realize(this, text);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (text, elements) {
+            collectTextElements(text, elements, this);
+        };
         return FixedWidthTokenWithTrailingTrivia;
     })();    
     var FixedWidthTokenWithLeadingAndTrailingTrivia = (function () {
@@ -12907,6 +13616,9 @@ var SyntaxToken;
             return false;
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isTriviaList = function () {
             return false;
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.kind = function () {
@@ -12975,11 +13687,17 @@ var SyntaxToken;
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.trailingTrivia = function (text) {
             throw Errors.notYetImplemented();
         };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.realize = function (text) {
+            return realize(this, text);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (text, elements) {
+            collectTextElements(text, elements, this);
+        };
         return FixedWidthTokenWithLeadingAndTrailingTrivia;
     })();    
     var FixedWidthKeywordWithNoTrivia = (function () {
         function FixedWidthKeywordWithNoTrivia(kind, fullStart) {
-            this.tokenKind = 7 /* IdentifierNameToken */ ;
+            this.tokenKind = 8 /* IdentifierNameToken */ ;
             this._keywordKind = kind;
             this._fullStart = fullStart;
         }
@@ -12998,8 +13716,11 @@ var SyntaxToken;
         FixedWidthKeywordWithNoTrivia.prototype.isTrivia = function () {
             return false;
         };
+        FixedWidthKeywordWithNoTrivia.prototype.isTriviaList = function () {
+            return false;
+        };
         FixedWidthKeywordWithNoTrivia.prototype.kind = function () {
-            return 7 /* IdentifierNameToken */ ;
+            return 8 /* IdentifierNameToken */ ;
         };
         FixedWidthKeywordWithNoTrivia.prototype.toJSON = function (key) {
             return toJSON(this);
@@ -13064,11 +13785,17 @@ var SyntaxToken;
         FixedWidthKeywordWithNoTrivia.prototype.trailingTrivia = function (text) {
             return SyntaxTriviaList.empty;
         };
+        FixedWidthKeywordWithNoTrivia.prototype.realize = function (text) {
+            return realize(this, text);
+        };
+        FixedWidthKeywordWithNoTrivia.prototype.collectTextElements = function (text, elements) {
+            collectTextElements(text, elements, this);
+        };
         return FixedWidthKeywordWithNoTrivia;
     })();    
     var FixedWidthKeywordWithLeadingTrivia = (function () {
         function FixedWidthKeywordWithLeadingTrivia(kind, fullStart, leadingTriviaInfo) {
-            this.tokenKind = 7 /* IdentifierNameToken */ ;
+            this.tokenKind = 8 /* IdentifierNameToken */ ;
             this._keywordKind = kind;
             this._fullStart = fullStart;
             this._leadingTriviaInfo = leadingTriviaInfo;
@@ -13088,8 +13815,11 @@ var SyntaxToken;
         FixedWidthKeywordWithLeadingTrivia.prototype.isTrivia = function () {
             return false;
         };
+        FixedWidthKeywordWithLeadingTrivia.prototype.isTriviaList = function () {
+            return false;
+        };
         FixedWidthKeywordWithLeadingTrivia.prototype.kind = function () {
-            return 7 /* IdentifierNameToken */ ;
+            return 8 /* IdentifierNameToken */ ;
         };
         FixedWidthKeywordWithLeadingTrivia.prototype.toJSON = function (key) {
             return toJSON(this);
@@ -13154,11 +13884,17 @@ var SyntaxToken;
         FixedWidthKeywordWithLeadingTrivia.prototype.trailingTrivia = function (text) {
             return SyntaxTriviaList.empty;
         };
+        FixedWidthKeywordWithLeadingTrivia.prototype.realize = function (text) {
+            return realize(this, text);
+        };
+        FixedWidthKeywordWithLeadingTrivia.prototype.collectTextElements = function (text, elements) {
+            collectTextElements(text, elements, this);
+        };
         return FixedWidthKeywordWithLeadingTrivia;
     })();    
     var FixedWidthKeywordWithTrailingTrivia = (function () {
         function FixedWidthKeywordWithTrailingTrivia(kind, fullStart, trailingTriviaInfo) {
-            this.tokenKind = 7 /* IdentifierNameToken */ ;
+            this.tokenKind = 8 /* IdentifierNameToken */ ;
             this._keywordKind = kind;
             this._fullStart = fullStart;
             this._trailingTriviaInfo = trailingTriviaInfo;
@@ -13178,8 +13914,11 @@ var SyntaxToken;
         FixedWidthKeywordWithTrailingTrivia.prototype.isTrivia = function () {
             return false;
         };
+        FixedWidthKeywordWithTrailingTrivia.prototype.isTriviaList = function () {
+            return false;
+        };
         FixedWidthKeywordWithTrailingTrivia.prototype.kind = function () {
-            return 7 /* IdentifierNameToken */ ;
+            return 8 /* IdentifierNameToken */ ;
         };
         FixedWidthKeywordWithTrailingTrivia.prototype.toJSON = function (key) {
             return toJSON(this);
@@ -13244,11 +13983,17 @@ var SyntaxToken;
         FixedWidthKeywordWithTrailingTrivia.prototype.trailingTrivia = function (text) {
             throw Errors.notYetImplemented();
         };
+        FixedWidthKeywordWithTrailingTrivia.prototype.realize = function (text) {
+            return realize(this, text);
+        };
+        FixedWidthKeywordWithTrailingTrivia.prototype.collectTextElements = function (text, elements) {
+            collectTextElements(text, elements, this);
+        };
         return FixedWidthKeywordWithTrailingTrivia;
     })();    
     var FixedWidthKeywordWithLeadingAndTrailingTrivia = (function () {
         function FixedWidthKeywordWithLeadingAndTrailingTrivia(kind, fullStart, leadingTriviaInfo, trailingTriviaInfo) {
-            this.tokenKind = 7 /* IdentifierNameToken */ ;
+            this.tokenKind = 8 /* IdentifierNameToken */ ;
             this._keywordKind = kind;
             this._fullStart = fullStart;
             this._leadingTriviaInfo = leadingTriviaInfo;
@@ -13269,8 +14014,11 @@ var SyntaxToken;
         FixedWidthKeywordWithLeadingAndTrailingTrivia.prototype.isTrivia = function () {
             return false;
         };
+        FixedWidthKeywordWithLeadingAndTrailingTrivia.prototype.isTriviaList = function () {
+            return false;
+        };
         FixedWidthKeywordWithLeadingAndTrailingTrivia.prototype.kind = function () {
-            return 7 /* IdentifierNameToken */ ;
+            return 8 /* IdentifierNameToken */ ;
         };
         FixedWidthKeywordWithLeadingAndTrailingTrivia.prototype.toJSON = function (key) {
             return toJSON(this);
@@ -13335,6 +14083,12 @@ var SyntaxToken;
         FixedWidthKeywordWithLeadingAndTrailingTrivia.prototype.trailingTrivia = function (text) {
             throw Errors.notYetImplemented();
         };
+        FixedWidthKeywordWithLeadingAndTrailingTrivia.prototype.realize = function (text) {
+            return realize(this, text);
+        };
+        FixedWidthKeywordWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (text, elements) {
+            collectTextElements(text, elements, this);
+        };
         return FixedWidthKeywordWithLeadingAndTrailingTrivia;
     })();    
     var VariableWidthTokenWithNoTrivia = (function () {
@@ -13357,6 +14111,9 @@ var SyntaxToken;
             return false;
         };
         VariableWidthTokenWithNoTrivia.prototype.isTrivia = function () {
+            return false;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.isTriviaList = function () {
             return false;
         };
         VariableWidthTokenWithNoTrivia.prototype.kind = function () {
@@ -13425,6 +14182,12 @@ var SyntaxToken;
         VariableWidthTokenWithNoTrivia.prototype.trailingTrivia = function (text) {
             return SyntaxTriviaList.empty;
         };
+        VariableWidthTokenWithNoTrivia.prototype.realize = function (text) {
+            return realize(this, text);
+        };
+        VariableWidthTokenWithNoTrivia.prototype.collectTextElements = function (text, elements) {
+            collectTextElements(text, elements, this);
+        };
         return VariableWidthTokenWithNoTrivia;
     })();    
     var VariableWidthTokenWithLeadingTrivia = (function () {
@@ -13448,6 +14211,9 @@ var SyntaxToken;
             return false;
         };
         VariableWidthTokenWithLeadingTrivia.prototype.isTrivia = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.isTriviaList = function () {
             return false;
         };
         VariableWidthTokenWithLeadingTrivia.prototype.kind = function () {
@@ -13516,6 +14282,12 @@ var SyntaxToken;
         VariableWidthTokenWithLeadingTrivia.prototype.trailingTrivia = function (text) {
             return SyntaxTriviaList.empty;
         };
+        VariableWidthTokenWithLeadingTrivia.prototype.realize = function (text) {
+            return realize(this, text);
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (text, elements) {
+            collectTextElements(text, elements, this);
+        };
         return VariableWidthTokenWithLeadingTrivia;
     })();    
     var VariableWidthTokenWithTrailingTrivia = (function () {
@@ -13539,6 +14311,9 @@ var SyntaxToken;
             return false;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.isTrivia = function () {
+            return false;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.isTriviaList = function () {
             return false;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.kind = function () {
@@ -13607,6 +14382,12 @@ var SyntaxToken;
         VariableWidthTokenWithTrailingTrivia.prototype.trailingTrivia = function (text) {
             throw Errors.notYetImplemented();
         };
+        VariableWidthTokenWithTrailingTrivia.prototype.realize = function (text) {
+            return realize(this, text);
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (text, elements) {
+            collectTextElements(text, elements, this);
+        };
         return VariableWidthTokenWithTrailingTrivia;
     })();    
     var VariableWidthTokenWithLeadingAndTrailingTrivia = (function () {
@@ -13631,6 +14412,9 @@ var SyntaxToken;
             return false;
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isTrivia = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isTriviaList = function () {
             return false;
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.kind = function () {
@@ -13698,6 +14482,12 @@ var SyntaxToken;
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.trailingTrivia = function (text) {
             throw Errors.notYetImplemented();
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.realize = function (text) {
+            return realize(this, text);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (text, elements) {
+            collectTextElements(text, elements, this);
         };
         return VariableWidthTokenWithLeadingAndTrailingTrivia;
     })();    
@@ -13787,6 +14577,9 @@ var SyntaxToken;
         ElasticToken.prototype.isTrivia = function () {
             return false;
         };
+        ElasticToken.prototype.isTriviaList = function () {
+            return false;
+        };
         ElasticToken.prototype.isMissing = function () {
             return false;
         };
@@ -13850,11 +14643,112 @@ var SyntaxToken;
         ElasticToken.prototype.trailingTrivia = function (text) {
             return this._trailingTrivia;
         };
+        ElasticToken.prototype.realize = function (text) {
+            return realize(this, text);
+        };
+        ElasticToken.prototype.collectTextElements = function (text, elements) {
+            collectTextElements(text, elements, this);
+        };
         return ElasticToken;
+    })();    
+    var RealizedToken = (function () {
+        function RealizedToken(token, text) {
+            this.tokenKind = token.tokenKind;
+            this._token = token;
+            this._text = text;
+        }
+        RealizedToken.prototype.kind = function () {
+            return this._token.kind();
+        };
+        RealizedToken.prototype.isToken = function () {
+            return this._token.isToken();
+        };
+        RealizedToken.prototype.isNode = function () {
+            return this._token.isNode();
+        };
+        RealizedToken.prototype.isList = function () {
+            return this._token.isList();
+        };
+        RealizedToken.prototype.isSeparatedList = function () {
+            return this._token.isSeparatedList();
+        };
+        RealizedToken.prototype.isTrivia = function () {
+            return this._token.isTrivia();
+        };
+        RealizedToken.prototype.isTriviaList = function () {
+            return this._token.isTriviaList();
+        };
+        RealizedToken.prototype.isMissing = function () {
+            return this._token.isMissing();
+        };
+        RealizedToken.prototype.keywordKind = function () {
+            return this._token.keywordKind();
+        };
+        RealizedToken.prototype.fullStart = function () {
+            return this._token.fullStart();
+        };
+        RealizedToken.prototype.fullWidth = function () {
+            return this._token.fullWidth();
+        };
+        RealizedToken.prototype.fullEnd = function () {
+            return this._token.fullEnd();
+        };
+        RealizedToken.prototype.start = function () {
+            return this._token.start();
+        };
+        RealizedToken.prototype.width = function () {
+            return this._token.width();
+        };
+        RealizedToken.prototype.end = function () {
+            return this._token.end();
+        };
+        RealizedToken.prototype.text = function () {
+            return this._token.text();
+        };
+        RealizedToken.prototype.fullText = function (text) {
+            return this._token.fullText(this._text);
+        };
+        RealizedToken.prototype.value = function () {
+            return this._token.value();
+        };
+        RealizedToken.prototype.valueText = function () {
+            return this._token.value();
+        };
+        RealizedToken.prototype.hasLeadingTrivia = function () {
+            return this._token.hasLeadingTrivia();
+        };
+        RealizedToken.prototype.hasLeadingCommentTrivia = function () {
+            return this._token.hasLeadingCommentTrivia();
+        };
+        RealizedToken.prototype.hasLeadingNewLineTrivia = function () {
+            return this._token.hasLeadingNewLineTrivia();
+        };
+        RealizedToken.prototype.hasTrailingTrivia = function () {
+            return this._token.hasTrailingTrivia();
+        };
+        RealizedToken.prototype.hasTrailingCommentTrivia = function () {
+            return this._token.hasTrailingCommentTrivia();
+        };
+        RealizedToken.prototype.hasTrailingNewLineTrivia = function () {
+            return this._token.hasTrailingNewLineTrivia();
+        };
+        RealizedToken.prototype.leadingTrivia = function (text) {
+            return this._token.leadingTrivia(this._text);
+        };
+        RealizedToken.prototype.trailingTrivia = function (text) {
+            return this._token.trailingTrivia(this._text);
+        };
+        RealizedToken.prototype.realize = function (text) {
+            return this;
+        };
+        RealizedToken.prototype.collectTextElements = function (text, elements) {
+            collectTextElements(text, elements, this);
+        };
+        return RealizedToken;
     })();    
     function createElasticKeyword(token) {
         token.keywordKind = token.kind;
-        token.kind = 7 /* IdentifierNameToken */ ;
+        token.kind = 8 /* IdentifierNameToken */ ;
         return createElastic(token);
     }
     SyntaxToken.createElasticKeyword = createElasticKeyword;
@@ -13921,6 +14815,9 @@ var SyntaxTrivia;
         SimpleSyntaxTrivia.prototype.isTrivia = function () {
             return true;
         };
+        SimpleSyntaxTrivia.prototype.isTriviaList = function () {
+            return false;
+        };
         SimpleSyntaxTrivia.prototype.isMissing = function () {
             return false;
         };
@@ -13936,22 +14833,54 @@ var SyntaxTrivia;
         SimpleSyntaxTrivia.prototype.fullText = function (text) {
             return this._text;
         };
+        SimpleSyntaxTrivia.prototype.collectTextElements = function (text, elements) {
+            elements.push(this.fullText(text));
+        };
         return SimpleSyntaxTrivia;
     })();    
     function createTrivia(kind, text) {
-        Debug.assert(kind === 5 /* MultiLineCommentTrivia */  || kind === 4 /* NewLineTrivia */  || kind === 6 /* SingleLineCommentTrivia */  || kind === 3 /* WhitespaceTrivia */ );
+        Debug.assert(kind === 6 /* MultiLineCommentTrivia */  || kind === 5 /* NewLineTrivia */  || kind === 7 /* SingleLineCommentTrivia */  || kind === 4 /* WhitespaceTrivia */ );
         return new SimpleSyntaxTrivia(kind, text);
     }
     SyntaxTrivia.createTrivia = createTrivia;
-    SyntaxTrivia.space = createTrivia(3 /* WhitespaceTrivia */ , " ");
-    SyntaxTrivia.lineFeed = createTrivia(4 /* NewLineTrivia */ , "\n");
-    SyntaxTrivia.carriageReturn = createTrivia(4 /* NewLineTrivia */ , "\r");
-    SyntaxTrivia.carriageReturnLineFeed = createTrivia(4 /* NewLineTrivia */ , "\r\n");
+    SyntaxTrivia.space = createTrivia(4 /* WhitespaceTrivia */ , " ");
+    SyntaxTrivia.lineFeed = createTrivia(5 /* NewLineTrivia */ , "\n");
+    SyntaxTrivia.carriageReturn = createTrivia(5 /* NewLineTrivia */ , "\r");
+    SyntaxTrivia.carriageReturnLineFeed = createTrivia(5 /* NewLineTrivia */ , "\r\n");
 })(SyntaxTrivia || (SyntaxTrivia = {}));
 var SyntaxTriviaList;
 (function (SyntaxTriviaList) {
+    function collectTextElements(text, elements, list) {
+        for(var i = 0, n = list.count(); i < n; i++) {
+            list.syntaxTriviaAt(i).collectTextElements(text, elements);
+        }
+    }
     var EmptySyntaxTriviaList = (function () {
         function EmptySyntaxTriviaList() { }
+        EmptySyntaxTriviaList.prototype.kind = function () {
+            return 3 /* TriviaList */ ;
+        };
+        EmptySyntaxTriviaList.prototype.isToken = function () {
+            return false;
+        };
+        EmptySyntaxTriviaList.prototype.isNode = function () {
+            return false;
+        };
+        EmptySyntaxTriviaList.prototype.isList = function () {
+            return false;
+        };
+        EmptySyntaxTriviaList.prototype.isSeparatedList = function () {
+            return false;
+        };
+        EmptySyntaxTriviaList.prototype.isTriviaList = function () {
+            return true;
+        };
+        EmptySyntaxTriviaList.prototype.isTrivia = function () {
+            return false;
+        };
+        EmptySyntaxTriviaList.prototype.isMissing = function () {
+            return true;
+        };
         EmptySyntaxTriviaList.prototype.count = function () {
             return 0;
         };
@@ -13973,16 +14902,43 @@ var SyntaxTriviaList;
         EmptySyntaxTriviaList.prototype.toJSON = function (key) {
             return [];
         };
+        EmptySyntaxTriviaList.prototype.collectTextElements = function (text, elements) {
+            collectTextElements(text, elements, this);
+        };
         return EmptySyntaxTriviaList;
     })();    
     SyntaxTriviaList.empty = new EmptySyntaxTriviaList();
     function isComment(trivia) {
-        return trivia.kind() === 5 /* MultiLineCommentTrivia */  || trivia.kind() === 6 /* SingleLineCommentTrivia */ ;
+        return trivia.kind() === 6 /* MultiLineCommentTrivia */  || trivia.kind() === 7 /* SingleLineCommentTrivia */ ;
     }
     var SingletonSyntaxTriviaList = (function () {
         function SingletonSyntaxTriviaList(item) {
             this.item = item;
         }
+        SingletonSyntaxTriviaList.prototype.isToken = function () {
+            return false;
+        };
+        SingletonSyntaxTriviaList.prototype.isNode = function () {
+            return false;
+        };
+        SingletonSyntaxTriviaList.prototype.isList = function () {
+            return false;
+        };
+        SingletonSyntaxTriviaList.prototype.isSeparatedList = function () {
+            return false;
+        };
+        SingletonSyntaxTriviaList.prototype.isTriviaList = function () {
+            return true;
+        };
+        SingletonSyntaxTriviaList.prototype.isTrivia = function () {
+            return false;
+        };
+        SingletonSyntaxTriviaList.prototype.isMissing = function () {
+            return this.item.isMissing();
+        };
+        SingletonSyntaxTriviaList.prototype.kind = function () {
+            return 3 /* TriviaList */ ;
+        };
         SingletonSyntaxTriviaList.prototype.count = function () {
             return 1;
         };
@@ -14002,12 +14958,15 @@ var SyntaxTriviaList;
             return isComment(this.item);
         };
         SingletonSyntaxTriviaList.prototype.hasNewLine = function () {
-            return this.item.kind() === 4 /* NewLineTrivia */ ;
+            return this.item.kind() === 5 /* NewLineTrivia */ ;
         };
         SingletonSyntaxTriviaList.prototype.toJSON = function (key) {
             return [
                 this.item
             ];
+        };
+        SingletonSyntaxTriviaList.prototype.collectTextElements = function (text, elements) {
+            collectTextElements(text, elements, this);
         };
         return SingletonSyntaxTriviaList;
     })();    
@@ -14015,6 +14974,35 @@ var SyntaxTriviaList;
         function NormalSyntaxTriviaList(trivia) {
             this.trivia = trivia;
         }
+        NormalSyntaxTriviaList.prototype.kind = function () {
+            return 3 /* TriviaList */ ;
+        };
+        NormalSyntaxTriviaList.prototype.isToken = function () {
+            return false;
+        };
+        NormalSyntaxTriviaList.prototype.isNode = function () {
+            return false;
+        };
+        NormalSyntaxTriviaList.prototype.isList = function () {
+            return false;
+        };
+        NormalSyntaxTriviaList.prototype.isSeparatedList = function () {
+            return false;
+        };
+        NormalSyntaxTriviaList.prototype.isTriviaList = function () {
+            return true;
+        };
+        NormalSyntaxTriviaList.prototype.isTrivia = function () {
+            return false;
+        };
+        NormalSyntaxTriviaList.prototype.isMissing = function () {
+            for(var i = 0, n = this.trivia.length; i < n; i++) {
+                if(!this.trivia[i].isMissing()) {
+                    return false;
+                }
+            }
+            return true;
+        };
         NormalSyntaxTriviaList.prototype.count = function () {
             return this.trivia.length;
         };
@@ -14041,11 +15029,14 @@ var SyntaxTriviaList;
         };
         NormalSyntaxTriviaList.prototype.hasNewLine = function () {
             return ArrayUtilities.any(this.trivia, function (t) {
-                return t.kind() === 4 /* NewLineTrivia */ ;
+                return t.kind() === 5 /* NewLineTrivia */ ;
             });
         };
         NormalSyntaxTriviaList.prototype.toJSON = function (key) {
             return this.trivia;
+        };
+        NormalSyntaxTriviaList.prototype.collectTextElements = function (text, elements) {
+            collectTextElements(text, elements, this);
         };
         return NormalSyntaxTriviaList;
     })();    
@@ -42219,6 +43210,10 @@ var Program = (function () {
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
             return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
         });
+        environment.standardOut.WriteLine("Testing emitter.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5", function (filePath) {
+            return _this.runEmitter(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
+        });
         environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests(environment, "C:\\temp\\monoco-files", function (filePath) {
             return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
@@ -42255,6 +43250,49 @@ var Program = (function () {
             }
         }
     };
+    Program.prototype.runEmitter = function (environment, filePath, languageVersion, verify, generateBaseline, printDots) {
+        if (typeof generateBaseline === "undefined") { generateBaseline = false; }
+        if (typeof printDots === "undefined") { printDots = false; }
+        if(true) {
+            return;
+        }
+        if(!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
+            return;
+        }
+        if(filePath.indexOf("RealSource") >= 0) {
+            return;
+        }
+        var contents = environment.readFile(filePath, true);
+        if(printDots) {
+        }
+        var start, end;
+        start = new Date().getTime();
+        totalSize += contents.length;
+        var text = new StringText(contents);
+        var parser = new Parser(text, languageVersion, stringTable);
+        var tree = parser.parseSyntaxTree();
+        var emitted = new Emitter(true).emit(tree.sourceUnit().realize(text));
+        if(generateBaseline) {
+            var actualResult = emitted.fullText(null);
+            var expectedFile = filePath + ".expected";
+            environment.writeFile(expectedFile, actualResult, true);
+        } else {
+            if(verify) {
+                var actualResult = emitted.fullText(null);
+                var expectedFile = filePath + ".expected";
+                var actualFile = filePath + ".actual";
+                var expectedResult = environment.readFile(expectedFile, true);
+                if(expectedResult !== actualResult) {
+                    if(printDots) {
+                    }
+                    environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
+                    environment.writeFile(actualFile, actualResult, true);
+                }
+            }
+        }
+        end = new Date().getTime();
+        totalTime += (end - start);
+    };
     Program.prototype.runParser = function (environment, filePath, languageVersion, useTypeScript, verify, allowErrors, generateBaseline, printDots) {
         if (typeof generateBaseline === "undefined") { generateBaseline = false; }
         if (typeof printDots === "undefined") { printDots = false; }
@@ -42277,8 +43315,7 @@ var Program = (function () {
             var unit1 = parser1.parse(text1, filePath, 0);
         } else {
             var text = new StringText(contents);
-            var scanner = new Scanner(text, languageVersion, stringTable);
-            var parser = new Parser(scanner);
+            var parser = new Parser(text, languageVersion, stringTable);
             var unit = parser.parseSyntaxTree();
             if(!allowErrors) {
                 if(unit.diagnostics() && unit.diagnostics().length) {
@@ -42334,7 +43371,7 @@ var Program = (function () {
                         throw new Error("Token invariant broken!");
                     }
                 }
-                if(token.tokenKind === 116 /* EndOfFileToken */ ) {
+                if(token.tokenKind === 117 /* EndOfFileToken */ ) {
                     break;
                 }
             }
@@ -42393,8 +43430,7 @@ var Program = (function () {
                 testCount++;
                 try  {
                     var stringText = new StringText(contents);
-                    var scanner = new Scanner(stringText, 1 /* EcmaScript5 */ , stringTable);
-                    var parser = new Parser(scanner);
+                    var parser = new Parser(stringText, 1 /* EcmaScript5 */ , stringTable);
                     var syntaxTree = parser.parseSyntaxTree();
                     if(isNegative) {
                         var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
@@ -42457,8 +43493,7 @@ var Program = (function () {
                 testCount++;
                 try  {
                     var stringText = new StringText(contents);
-                    var scanner = new Scanner(stringText, 1 /* EcmaScript5 */ , stringTable);
-                    var parser = new Parser(scanner);
+                    var parser = new Parser(stringText, 1 /* EcmaScript5 */ , stringTable);
                     var syntaxTree = parser.parseSyntaxTree();
                     if(canParseSuccessfully) {
                         if(syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {

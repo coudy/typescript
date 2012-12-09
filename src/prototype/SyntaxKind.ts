@@ -4,6 +4,7 @@ enum SyntaxKind {
     None,
     List,
     SeparatedList,
+    TriviaList,
 
     // Trivia
     WhitespaceTrivia,

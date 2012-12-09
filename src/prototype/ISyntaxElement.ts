@@ -7,6 +7,9 @@ interface ISyntaxElement {
     isNode(): bool;
     isList(): bool;
     isSeparatedList(): bool;
+    isTriviaList(): bool;
     isTrivia(): bool;
     isMissing(): bool;
+
+    collectTextElements(text: IText, elements: string[]): void;
 }

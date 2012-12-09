@@ -15,6 +15,7 @@ module SyntaxTrivia {
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return true; }
+        public isTriviaList(): bool { return false; }
         public isMissing(): bool { return false; }
 
         public kind(): SyntaxKind {
@@ -31,6 +32,10 @@ module SyntaxTrivia {
 
         public fullText(text: IText): string {
             return this._text;
+        }
+
+        public collectTextElements(text: IText, elements: string[]): void {
+            elements.push(this.fullText(text));
         }
     }
 
