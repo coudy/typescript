@@ -57,7 +57,7 @@
 // Emitter depends on SyntaxRewriter
 ///<reference path='Emitter.ts' />
 
-///<reference path='SyntaxTokenFactory.ts' />
+///<reference path='SyntaxToken.ts' />
 ///<reference path='SyntaxTree.ts' />
 ///<reference path='SyntaxTrivia.ts' />
 ///<reference path='SyntaxTriviaList.ts' />
