@@ -1,3 +1,4 @@
+var generateArgumentChecks = true;
 var definitions = [
     {
         name: 'SourceUnitSyntax',
@@ -70,7 +71,10 @@ var definitions = [
             }, 
             {
                 name: 'identifier',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'equalsToken',
@@ -107,7 +111,10 @@ var definitions = [
             }, 
             {
                 name: 'identifier',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'extendsClause',
@@ -149,7 +156,10 @@ var definitions = [
             }, 
             {
                 name: 'identifier',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'extendsClause',
@@ -331,7 +341,10 @@ var definitions = [
         children: [
             {
                 name: 'identifier',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'typeAnnotation',
@@ -370,7 +383,15 @@ var definitions = [
             }, 
             {
                 name: 'operatorToken',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "PlusPlusToken", 
+                    "MinusMinusToken", 
+                    "PlusToken", 
+                    "MinusToken", 
+                    "TildeToken", 
+                    "ExclamationToken"
+                ]
             }, 
             {
                 name: 'operand',
@@ -400,7 +421,15 @@ var definitions = [
             }, 
             {
                 name: 'literalToken',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "RegularExpressionLiteral", 
+                    "StringLiteral", 
+                    "NumericLiteral", 
+                    "FalseKeyword", 
+                    "TrueKeyword", 
+                    "NullKeyword"
+                ]
             }, 
             
         ]
@@ -460,7 +489,10 @@ var definitions = [
         children: [
             {
                 name: 'identifier',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'equalsGreaterThanToken',
@@ -510,7 +542,10 @@ var definitions = [
         children: [
             {
                 name: 'identifier',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             
         ]
@@ -620,7 +655,13 @@ var definitions = [
         children: [
             {
                 name: 'keyword',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "AnyKeyword", 
+                    "BoolKeyword", 
+                    "NumberKeyword", 
+                    "StringKeyword"
+                ]
             }, 
             
         ]
@@ -671,11 +712,18 @@ var definitions = [
             {
                 name: 'publicOrPrivateKeyword',
                 isToken: true,
-                isOptional: true
+                isOptional: true,
+                tokenKinds: [
+                    "PublicKeyword", 
+                    "PrivateKeyword"
+                ]
             }, 
             {
                 name: 'identifier',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'questionToken',
@@ -728,7 +776,11 @@ var definitions = [
             }, 
             {
                 name: 'operatorToken',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "PlusPlusToken", 
+                    "MinusMinusToken"
+                ]
             }, 
             
         ]
@@ -804,7 +856,45 @@ var definitions = [
             }, 
             {
                 name: 'operatorToken',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "AsteriskToken", 
+                    "SlashToken", 
+                    "PercentToken", 
+                    "PlusToken", 
+                    "MinusToken", 
+                    "LessThanLessThanToken", 
+                    "GreaterThanGreaterThanToken", 
+                    "GreaterThanGreaterThanGreaterThanToken", 
+                    "LessThanToken", 
+                    "GreaterThanToken", 
+                    "LessThanEqualsToken", 
+                    "GreaterThanEqualsToken", 
+                    "InstanceOfKeyword", 
+                    "InKeyword", 
+                    "EqualsEqualsToken", 
+                    "ExclamationEqualsToken", 
+                    "EqualsEqualsEqualsToken", 
+                    "ExclamationEqualsEqualsToken", 
+                    "AmpersandToken", 
+                    "CaretToken", 
+                    "BarToken", 
+                    "AmpersandAmpersandToken", 
+                    "BarBarToken", 
+                    "BarEqualsToken", 
+                    "AmpersandEqualsToken", 
+                    "CaretEqualsToken", 
+                    "LessThanLessThanEqualsToken", 
+                    "GreaterThanGreaterThanEqualsToken", 
+                    "GreaterThanGreaterThanGreaterThanEqualsToken", 
+                    "PlusEqualsToken", 
+                    "MinusEqualsToken", 
+                    "AsteriskEqualsToken", 
+                    "SlashEqualsToken", 
+                    "PercentEqualsToken", 
+                    "EqualsToken", 
+                    "CommaToken"
+                ]
             }, 
             {
                 name: 'right',
@@ -872,7 +962,10 @@ var definitions = [
         children: [
             {
                 name: 'identifier',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'questionToken',
@@ -921,7 +1014,10 @@ var definitions = [
         children: [
             {
                 name: 'identifier',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'questionToken',
@@ -1077,7 +1173,11 @@ var definitions = [
             {
                 name: 'publicOrPrivateKeyword',
                 isToken: true,
-                isOptional: true
+                isOptional: true,
+                tokenKinds: [
+                    "PublicKeyword", 
+                    "PrivateKeyword"
+                ]
             }, 
             {
                 name: 'staticKeyword',
@@ -1114,7 +1214,11 @@ var definitions = [
             {
                 name: 'publicOrPrivateKeyword',
                 isToken: true,
-                isOptional: true
+                isOptional: true,
+                tokenKinds: [
+                    "PublicKeyword", 
+                    "PrivateKeyword"
+                ]
             }, 
             {
                 name: 'staticKeyword',
@@ -1127,7 +1231,10 @@ var definitions = [
             }, 
             {
                 name: 'identifier',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'parameterList',
@@ -1152,7 +1259,11 @@ var definitions = [
             {
                 name: 'publicOrPrivateKeyword',
                 isToken: true,
-                isOptional: true
+                isOptional: true,
+                tokenKinds: [
+                    "PublicKeyword", 
+                    "PrivateKeyword"
+                ]
             }, 
             {
                 name: 'staticKeyword',
@@ -1165,7 +1276,10 @@ var definitions = [
             }, 
             {
                 name: 'identifier',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'parameterList',
@@ -1185,7 +1299,11 @@ var definitions = [
             {
                 name: 'publicOrPrivateKeyword',
                 isToken: true,
-                isOptional: true
+                isOptional: true,
+                tokenKinds: [
+                    "PublicKeyword", 
+                    "PrivateKeyword"
+                ]
             }, 
             {
                 name: 'staticKeyword',
@@ -1356,7 +1474,10 @@ var definitions = [
             {
                 name: 'identifier',
                 isToken: true,
-                isOptional: true
+                isOptional: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'semicolonToken',
@@ -1376,7 +1497,10 @@ var definitions = [
             {
                 name: 'identifier',
                 isToken: true,
-                isOptional: true
+                isOptional: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'semicolonToken',
@@ -1421,7 +1545,10 @@ var definitions = [
             }, 
             {
                 name: 'firstSemicolonToken',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "SemicolonToken"
+                ]
             }, 
             {
                 name: 'condition',
@@ -1430,7 +1557,10 @@ var definitions = [
             }, 
             {
                 name: 'secondSemicolonToken',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "SemicolonToken"
+                ]
             }, 
             {
                 name: 'incrementor',
@@ -1557,7 +1687,10 @@ var definitions = [
             }, 
             {
                 name: 'identifier',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'openBraceToken',
@@ -1628,7 +1761,10 @@ var definitions = [
         children: [
             {
                 name: 'propertyName',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'colonToken',
@@ -1657,7 +1793,10 @@ var definitions = [
             }, 
             {
                 name: 'propertyName',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'openParenToken',
@@ -1684,7 +1823,10 @@ var definitions = [
             }, 
             {
                 name: 'propertyName',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'openParenToken',
@@ -1692,7 +1834,10 @@ var definitions = [
             }, 
             {
                 name: 'parameterName',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'closeParenToken',
@@ -1716,7 +1861,10 @@ var definitions = [
             {
                 name: 'identifier',
                 isToken: true,
-                isOptional: true
+                isOptional: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'callSignature',
@@ -1790,7 +1938,10 @@ var definitions = [
             }, 
             {
                 name: 'identifier',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'closeParenToken',
@@ -1824,7 +1975,10 @@ var definitions = [
         children: [
             {
                 name: 'identifier',
-                isToken: true
+                isToken: true,
+                tokenKinds: [
+                    "IdentifierNameToken"
+                ]
             }, 
             {
                 name: 'colonToken',
@@ -2002,6 +2156,48 @@ function generateConstructor(definition) {
     if(definition.children.length > 0) {
         result += "\r\n";
     }
+    if(generateArgumentChecks) {
+        for(var i = 0; i < definition.children.length; i++) {
+            var child = definition.children[i];
+            if(child === undefined) {
+                continue;
+            }
+            if(!child.isOptional && !child.isToken) {
+                result += "        if (" + child.name + " === null) { throw Errors.argumentNull('" + child.name + "'); }\r\n";
+            }
+        }
+        for(var i = 0; i < definition.children.length; i++) {
+            var child = definition.children[i];
+            if(child === undefined) {
+                continue;
+            }
+            if(child.isToken) {
+                result += "        if (";
+                if(child.isOptional) {
+                    result += child.name + " !== null && ";
+                }
+                var tokenKinds = child.tokenKinds ? child.tokenKinds : [
+                    child.name.substr(0, 1).toUpperCase() + child.name.substr(1)
+                ];
+                for(var j = 0; j < tokenKinds.length; j++) {
+                    var tokenKind = tokenKinds[j];
+                    var isKeyword = tokenKind.indexOf("Keyword") >= 0;
+                    if(j > 0) {
+                        result += " && ";
+                    }
+                    if(isKeyword) {
+                        result += child.name + ".keywordKind() !== SyntaxKind." + tokenKind;
+                    } else {
+                        result += child.name + ".kind() !== SyntaxKind." + tokenKind;
+                    }
+                }
+                result += ") { throw Errors.argument('" + child.name + "'); }\r\n";
+            }
+        }
+    }
+    if(definition.children.length > 0) {
+        result += "\r\n";
+    }
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
         if(child === undefined) {
@@ -2141,15 +2337,13 @@ function generateNode(definition) {
     return result;
 }
 function generateNodes() {
-    var result = "";
+    var result = "///<reference path='References.ts' />";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         if(definition === undefined) {
             continue;
         }
-        if(result !== "") {
-            result += "\r\n\r\n";
-        }
+        result += "\r\n\r\n";
         result += generateNode(definition);
     }
     return result;
