@@ -353,7 +353,8 @@ var definitions = [
             }, 
             {
                 name: 'equalsValueClause',
-                type: 'EqualsValueClauseSyntax'
+                type: 'EqualsValueClauseSyntax',
+                isOptional: true
             }, 
             
         ]

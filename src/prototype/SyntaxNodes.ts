@@ -908,7 +908,6 @@ class VariableDeclaratorSyntax extends SyntaxNode {
                 equalsValueClause: EqualsValueClauseSyntax) {
         super();
 
-        if (equalsValueClause === null) { throw Errors.argumentNull('equalsValueClause'); }
         if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
 
         this._identifier = identifier;
@@ -931,7 +930,7 @@ class VariableDeclaratorSyntax extends SyntaxNode {
     public isMissing(): bool {
         if (!this._identifier.isMissing()) { return false; }
         if (this._typeAnnotation !== null && !this._typeAnnotation.isMissing()) { return false; }
-        if (!this._equalsValueClause.isMissing()) { return false; }
+        if (this._equalsValueClause !== null && !this._equalsValueClause.isMissing()) { return false; }
         return true;
     }
 
