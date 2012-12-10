@@ -1296,12 +1296,61 @@ function generateIsMissingMethod(definition: ITypeDefinition): string {
     return result;
 }
 
+function generateFirstMethod(definition: ITypeDefinition): string {
+    var result = "";
+
+    if (!definition.isAbstract) {
+
+        result += "\r\n";
+        result += "    public firstToken(): ISyntaxToken {\r\n";
+        result += "        var token = null;\r\n";
+
+        for (var i = 0; i < definition.children.length; i++) {
+            var child: IMemberDefinition = definition.children[i];
+
+            if (getType(child) === "SyntaxKind") {
+                continue;
+            }
+
+            if (child.name === "endOfFileToken") {
+                continue;
+            }
+
+            result += "        if (";
+
+            if (child.isOptional) {
+                result += getPropertyAccess(child) + " !== null && ";
+            }
+
+            if (child.isToken) {
+                result += getPropertyAccess(child) + ".width() > 0";
+            }
+            else {
+                result += "(token = " + getPropertyAccess(child) + ".firstToken()) !== null";
+            }
+
+            result += ") { return token; }\r\n";
+        }
+
+        if (definition.name === "SourceUnitSyntax") {
+            result += "        return this._endOfFileToken;\r\n";
+        }
+        else {
+            result += "        return null;\r\n";
+        }
+
+        result += "    }\r\n";
+    }
+
+    return result;
+}
+
 function generateAccessors(definition: ITypeDefinition): string {
     var result = "";
 
     for (var i = 0; i < definition.children.length; i++) {
         var child: IMemberDefinition = definition.children[i];
-
+        
         result += "\r\n";
         result += "    public " + child.name + "(): " + getType(child) + " {\r\n";
         result += "        return " + getPropertyAccess(child) + ";\r\n";
@@ -1519,6 +1568,7 @@ function generateNode(definition: ITypeDefinition): string {
     result += generateAcceptMethods(definition);
     result += generateKindMethod(definition);
     result += generateIsMissingMethod(definition);
+    result += generateFirstMethod(definition);
     result += generateAccessors(definition);
     result += generateUpdateMethod(definition);
     result += generateWithMethods(definition);

@@ -9,4 +9,6 @@ interface ISeparatedSyntaxList extends ISyntaxElement {
 
     separatorCount();
     separatorAt(index: number): ISyntaxToken;
+
+    firstToken(): ISyntaxToken;
 }

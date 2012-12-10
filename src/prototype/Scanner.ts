@@ -1210,6 +1210,8 @@ class Scanner extends SlidingWindow {
     public substring(start: number, end: number, intern: bool): string {
         var length = end - start;
         var offset = start - this.windowAbsoluteStartIndex;
+
+        Debug.assert(offset >= 0);
         if (intern) {
             return this.stringTable.addCharArray(this.window, offset, length);
         }

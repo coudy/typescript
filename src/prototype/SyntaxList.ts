@@ -39,6 +39,10 @@ module SyntaxList {
         public toArray(): SyntaxNode[] {
             return [];
         }
+
+        public firstToken(): ISyntaxToken {
+            return null;
+        }
     }
 
     export var empty: ISyntaxList = new EmptySyntaxList();
@@ -81,6 +85,10 @@ module SyntaxList {
 
         public toArray(): SyntaxNode[] {
             return [this._item];
+        }
+
+        public firstToken(): ISyntaxToken {
+            return this._item.firstToken();
         }
     }
 
@@ -131,6 +139,17 @@ module SyntaxList {
 
         public toArray(): SyntaxNode[] {
             return (<any>this.nodes).slice();
+        }
+
+        public firstToken(): ISyntaxToken {
+            for (var i = 0, n = this.nodes.length; i < n; i++) {
+                var token = this.nodes[i].firstToken();
+                if (token !== null) {
+                    return token;
+                }
+            }
+
+            return null;
         }
     }
 

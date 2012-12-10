@@ -117,6 +117,17 @@ enum ListParsingState {
     LastListParsingState = ParameterList_Parameters,
 }
 
+// Information we collect in the parser when we skip a token.
+interface ParserSkippedToken {
+    // The token we skipped.
+    skippedToken: ISyntaxToken;
+
+    // The token that we will attach the skipped token to.  Can be null in the case where we 
+    // haven't seen a single token yet.  In that case, the skipped token will be added to the
+    // first token in the tree.
+    owningToken: ISyntaxToken;
+}
+
 class Parser extends SlidingWindow {
     // The scanner we're pulling tokens from.
     private scanner: Scanner;

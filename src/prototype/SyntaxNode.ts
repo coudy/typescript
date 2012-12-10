@@ -16,6 +16,11 @@ class SyntaxNode implements ISyntaxElement {
         throw Errors.abstract();
     }
 
+    // Returns the first non-missing token inside this node (or null if there are no such tokens).
+    public firstToken(): ISyntaxToken {
+        throw Errors.abstract();
+    }
+
     public toJSON(key) {
         var result: any = { kind: (<any>SyntaxKind)._map[this.kind()] };
 
