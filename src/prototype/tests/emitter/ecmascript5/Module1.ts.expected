@@ -1,5 +1,10 @@
 {
-    "fullText": "var M;\r\n(function(M) {\r\n})(M||(M={}));",
+    "fullText": [
+        "var M;",
+        "(function(M) {",
+        "})(M||(M={}));",
+        ""
+    ],
     "sourceUnit": {
         "kind": "SourceUnit",
         "_moduleElements": [
@@ -238,13 +243,23 @@
                     "kind": "SemicolonToken",
                     "start": 37,
                     "width": 1,
-                    "text": ";"
+                    "fullWidth": 3,
+                    "text": ";",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLineTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 38,
+                            "text": "\r\n"
+                        }
+                    ]
                 }
             }
         ],
         "_endOfFileToken": {
             "kind": "EndOfFileToken",
-            "start": 38,
+            "start": 40,
             "width": 0,
             "text": ""
         }

@@ -123,7 +123,7 @@ class Program {
         var tree = parser.parseSyntaxTree();
         var emitted = new Emitter(true).emit(<SourceUnitSyntax>tree.sourceUnit());
         
-        var result = { fullText: emitted.fullText(), sourceUnit: emitted };
+        var result = { fullText: emitted.fullText().split("\r\n"), sourceUnit: emitted };
         this.checkResult(filePath, result, verify, generateBaseline);
 
         end = new Date().getTime();

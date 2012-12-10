@@ -14061,9 +14061,11 @@ var Emitter = (function (_super) {
     __extends(Emitter, _super);
     function Emitter(syntaxOnly) {
         _super.call(this);
-        this.indentation = 0;
+        this.inputNestingLevel = 0;
+        this.outputNestingLevel = 0;
         this.syntaxOnly = syntaxOnly;
     }
+    Emitter.spacesPerNestingLevel = 4;
     Emitter.prototype.emit = function (input) {
         var sourceUnit = input.accept1(this);
         return sourceUnit.accept1(new FullStartNormalizer(0));
@@ -14111,17 +14113,31 @@ var Emitter = (function (_super) {
     }
     Emitter.prototype.visitModuleDeclaration = function (node) {
         var names = Emitter.splitModuleName(node.moduleName());
-        this.indentation += names.length;
+        this.outputNestingLevel += names.length;
+        this.inputNestingLevel += 1;
         var moduleElements = node.moduleElements().toArray();
         for(var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
-            var moduleElements = this.convertModuleDeclaration(names[nameIndex], moduleElements);
-            this.indentation--;
+            moduleElements = this.convertModuleDeclaration(names[nameIndex], moduleElements);
+            this.outputNestingLevel--;
         }
+        this.inputNestingLevel -= 1;
         return moduleElements;
+    };
+    Emitter.prototype.createIndentationTriviaList = function () {
+        var nestingOffset = this.outputNestingLevel - this.inputNestingLevel;
+        if(nestingOffset <= 0) {
+            return [];
+        }
+        var spaces = Array(nestingOffset * Emitter.spacesPerNestingLevel).join(" ");
+        return [
+            SyntaxTrivia.create(4 /* WhitespaceTrivia */ , 0, spaces)
+        ];
     };
     Emitter.prototype.convertModuleDeclaration = function (name, moduleElements) {
         name = name.withIdentifier(name.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty));
+        var indentationTrivia = this.createIndentationTriviaList();
         var variableStatement = VariableStatementSyntax.create(new VariableDeclarationSyntax(SyntaxToken.createElasticKeyword({
+            leadingTrivia: indentationTrivia,
             kind: 37 /* VarKeyword */ ,
             trailingTrivia: [
                 SyntaxTrivia.space
@@ -14150,10 +14166,12 @@ var Emitter = (function (_super) {
             trailingTrivia: [
                 SyntaxTrivia.carriageReturnLineFeed
             ]
-        }), SyntaxList.empty, SyntaxToken.createElastic({
+        }), SyntaxList.create(moduleElements), SyntaxToken.createElastic({
+            leadingTrivia: indentationTrivia,
             kind: 67 /* CloseBraceToken */ 
         })));
         var parenthesizedFunctionExpression = new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
+            leadingTrivia: indentationTrivia,
             kind: 68 /* OpenParenToken */ 
         }), functionExpression, SyntaxToken.createElastic({
             kind: 69 /* CloseParenToken */ 
@@ -14179,7 +14197,10 @@ var Emitter = (function (_super) {
             kind: 69 /* CloseParenToken */ 
         })));
         var expressionStatement = new ExpressionStatementSyntax(invocationExpression, SyntaxToken.createElastic({
-            kind: 74 /* SemicolonToken */ 
+            kind: 74 /* SemicolonToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.carriageReturnLineFeed
+            ]
         }));
         return [
             variableStatement, 
@@ -44536,7 +44557,7 @@ var Program = (function () {
         var tree = parser.parseSyntaxTree();
         var emitted = new Emitter(true).emit(tree.sourceUnit());
         var result = {
-            fullText: emitted.fullText(),
+            fullText: emitted.fullText().split("\r\n"),
             sourceUnit: emitted
         };
         this.checkResult(filePath, result, verify, generateBaseline);
