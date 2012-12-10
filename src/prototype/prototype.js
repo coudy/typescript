@@ -13318,8 +13318,14 @@ var SyntaxToken;
             result.hasTrailingNewLineTrivia = true;
         }
         if(includeRealTrivia) {
-            result.leadingTrivia = token.leadingTrivia(null);
-            result.trailingTrivia = token.trailingTrivia(null);
+            var trivia = token.leadingTrivia(null);
+            if(trivia.count() > 0) {
+                result.leadingTrivia = trivia;
+            }
+            trivia = token.trailingTrivia(null);
+            if(trivia.count() > 0) {
+                result.trailingTrivia = trivia;
+            }
         }
         return result;
     }
