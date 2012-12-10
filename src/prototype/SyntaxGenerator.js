@@ -2629,9 +2629,6 @@ function generateAccessors(definition) {
     return result;
 }
 function generateWithMethod(definition, child) {
-    if(child.type === "SyntaxKind") {
-        return "";
-    }
     var result = "";
     result += "\r\n";
     result += "    public with" + pascalCase(child.name) + "(" + getSafeName(child) + ": " + getType(child) + "): " + definition.name + " {\r\n";

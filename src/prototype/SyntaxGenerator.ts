@@ -1312,10 +1312,6 @@ function generateAccessors(definition: ITypeDefinition): string {
 }
 
 function generateWithMethod(definition: ITypeDefinition, child: IMemberDefinition): string {
-    if (child.type === "SyntaxKind") {
-        return "";
-    }
-
     var result = "";
     result += "\r\n";
     result += "    public with" + pascalCase(child.name) + "(" + getSafeName(child) + ": " + getType(child) + "): " + definition.name + " {\r\n";

@@ -1460,6 +1460,10 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
         return new PrefixUnaryExpressionSyntax(kind, operatorToken, operand);
     }
 
+    public withKind(kind: SyntaxKind): PrefixUnaryExpressionSyntax {
+        return this.update(kind, this._operatorToken, this._operand);
+    }
+
     public withOperatorToken(operatorToken: ISyntaxToken): PrefixUnaryExpressionSyntax {
         return this.update(this._kind, operatorToken, this._operand);
     }
@@ -1583,6 +1587,10 @@ class LiteralExpressionSyntax extends UnaryExpressionSyntax {
         }
 
         return new LiteralExpressionSyntax(kind, literalToken);
+    }
+
+    public withKind(kind: SyntaxKind): LiteralExpressionSyntax {
+        return this.update(kind, this._literalToken);
     }
 
     public withLiteralToken(literalToken: ISyntaxToken): LiteralExpressionSyntax {
@@ -2898,6 +2906,10 @@ class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
         return new PostfixUnaryExpressionSyntax(kind, operand, operatorToken);
     }
 
+    public withKind(kind: SyntaxKind): PostfixUnaryExpressionSyntax {
+        return this.update(kind, this._operand, this._operatorToken);
+    }
+
     public withOperand(operand: ExpressionSyntax): PostfixUnaryExpressionSyntax {
         return this.update(this._kind, operand, this._operatorToken);
     }
@@ -3258,6 +3270,10 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
         }
 
         return new BinaryExpressionSyntax(kind, left, operatorToken, right);
+    }
+
+    public withKind(kind: SyntaxKind): BinaryExpressionSyntax {
+        return this.update(kind, this._left, this._operatorToken, this._right);
     }
 
     public withLeft(left: ExpressionSyntax): BinaryExpressionSyntax {
