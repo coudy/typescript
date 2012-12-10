@@ -2,7 +2,9 @@
 
 module SyntaxToken {
     export function realize(token: ISyntaxToken, text: IText): ISyntaxToken {
-        return new RealizedToken(token, text);
+        return new RealizedToken(token.tokenKind, token.keywordKind(), token.fullStart(),
+            token.leadingTrivia(text), token.text(), token.value(), token.valueText(), token.trailingTrivia(text),
+            token.isMissing());
     }
 
     export function collectTextElements(token: ISyntaxToken, text: IText, elements: string[]): void {
@@ -136,6 +138,18 @@ module SyntaxToken {
         public trailingTrivia(text: IText): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
         public realize(text: IText): ISyntaxToken { return realize(this, text); }
         public collectTextElements(text: IText, elements: string[]): void { collectTextElements(this, text, elements); }
+
+        public withFullStart(fullStart: number): ISyntaxToken {
+            return new EmptyToken(fullStart, this.kind(), this.keywordKind());
+        }
+
+        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
     }
 
     export function createEmpty(fullStart: number, kind: SyntaxKind, keywordKind: SyntaxKind): ISyntaxToken {
@@ -173,7 +187,7 @@ module SyntaxToken {
         public kind(): SyntaxKind { return this.tokenKind; }
         public keywordKind(): SyntaxKind { return this._keywordKind; }
 
-        public fullStart(): number { throw Errors.notYetImplemented(); }
+        public fullStart(): number { return 0; }
         public fullEnd(): number { throw Errors.notYetImplemented(); }
 
         public start(): number { throw Errors.notYetImplemented(); }
@@ -192,7 +206,7 @@ module SyntaxToken {
         }
 
         public fullText(text: IText): string {
-            return this._leadingTrivia.fullText(text) + this.text() + this._trailingTrivia.fullText(text);
+            return this._leadingTrivia.fullText() + this.text() + this._trailingTrivia.fullText();
         }
 
         public value(): any {
@@ -232,60 +246,113 @@ module SyntaxToken {
         
         public realize(text: IText): ISyntaxToken { return realize(this, text); }
         public collectTextElements(text: IText, elements: string[]): void { collectTextElements(this, text, elements); }
+
+        public withFullStart(fullStart: number): ISyntaxToken {
+            throw Errors.invalidOperation("Can not call on a non-realized token.");
+        }
+
+        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
     }
 
     class RealizedToken implements ISyntaxToken {
         public tokenKind: SyntaxKind;
-        private _token: ISyntaxToken;
-        private _text: IText;
+        private _keywordKind: SyntaxKind;
+        private _fullStart: number;
+        private _leadingTrivia: ISyntaxTriviaList;
+        private _text: string;
+        private _value: any;
+        private _valueText: string;
+        private _trailingTrivia: ISyntaxTriviaList;
+        private _isMissing: bool;
 
-        constructor(token: ISyntaxToken,
-            text: IText) {
-            this.tokenKind = token.tokenKind;
-            this._token = token;
+        constructor(tokenKind: SyntaxKind,
+                    keywordKind: SyntaxKind,
+                    fullStart: number,
+                    leadingTrivia: ISyntaxTriviaList,
+                    text: string,
+                    value: any,
+                    valueText: string,
+                    trailingTrivia: ISyntaxTriviaList,
+                    isMissing: bool) {
+            this.tokenKind = tokenKind;
+            this._keywordKind = keywordKind;
+            this._fullStart = fullStart;
+            this._leadingTrivia = leadingTrivia;
             this._text = text;
+            this._value = value;
+            this._valueText = valueText;
+            this._trailingTrivia = trailingTrivia;
+            this._isMissing = isMissing;
         }
 
-        public kind(): SyntaxKind { return this._token.kind(); }
+        public kind(): SyntaxKind { return this.tokenKind; }
         public toJSON(key) { return toJSON(this, true); }
 
-        public isToken(): bool { return this._token.isToken(); }
-        public isNode(): bool { return this._token.isNode(); }
-        public isList(): bool { return this._token.isList(); }
-        public isSeparatedList(): bool { return this._token.isSeparatedList(); }
-        public isTrivia(): bool { return this._token.isTrivia(); }
-        public isTriviaList(): bool { return this._token.isTriviaList(); }
-        public isMissing(): bool { return this._token.isMissing(); }
+        public isToken(): bool { return true; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return false; }
+        public isSeparatedList(): bool { return false; }
+        public isTrivia(): bool { return false; }
+        public isTriviaList(): bool { return false; }
+        public isMissing(): bool { return this._isMissing; }
 
-        public keywordKind(): SyntaxKind { return this._token.keywordKind(); }
+        public keywordKind(): SyntaxKind { return this._keywordKind; }
 
-        public fullStart(): number { return this._token.fullStart(); }
-        public fullWidth(): number { return this._token.fullWidth(); }
-        public fullEnd(): number { return this._token.fullEnd(); }
+        public fullStart(): number { return this._fullStart; }
+        public fullWidth(): number { return this._leadingTrivia.fullWidth() + this.width() + this._trailingTrivia.fullWidth(); }
+        public fullEnd(): number { return this.fullStart() + this.fullWidth(); }
 
-        public start(): number { return this._token.start(); }
-        public width(): number { return this._token.width(); }
-        public end(): number { return this._token.end(); }
+        public start(): number { return this.fullStart() + this._leadingTrivia.fullWidth(); }
+        public width(): number { return this.text().length; }
+        public end(): number { return this.start() + this.width(); }
 
-        public text(): string { return this._token.text(); }
-        public fullText(text: IText): string { return this._token.fullText(this._text); }
+        public text(): string { return this._text; }
+        public fullText(text: IText): string { return this._leadingTrivia.fullText() + this.text() + this._trailingTrivia.fullText(); }
 
-        public value(): any { return this._token.value(); }
-        public valueText(): string { return this._token.value(); }
+        public value(): any { return this._value; }
+        public valueText(): string { return this._valueText; }
 
-        public hasLeadingTrivia(): bool { return this._token.hasLeadingTrivia(); }
-        public hasLeadingCommentTrivia(): bool { return this._token.hasLeadingCommentTrivia(); }
-        public hasLeadingNewLineTrivia(): bool { return this._token.hasLeadingNewLineTrivia(); }
+        public hasLeadingTrivia(): bool { return this._leadingTrivia.count() > 0; }
+        public hasLeadingCommentTrivia(): bool { return this._leadingTrivia.hasComment(); }
+        public hasLeadingNewLineTrivia(): bool { return this._leadingTrivia.hasNewLine(); }
 
-        public hasTrailingTrivia(): bool { return this._token.hasTrailingTrivia(); }
-        public hasTrailingCommentTrivia(): bool { return this._token.hasTrailingCommentTrivia(); }
-        public hasTrailingNewLineTrivia(): bool { return this._token.hasTrailingNewLineTrivia(); }
+        public hasTrailingTrivia(): bool { return this._trailingTrivia.count() > 0; }
+        public hasTrailingCommentTrivia(): bool { return this._trailingTrivia.hasComment(); }
+        public hasTrailingNewLineTrivia(): bool { return this._trailingTrivia.hasNewLine(); }
 
-        public leadingTrivia(text: IText): ISyntaxTriviaList { return this._token.leadingTrivia(this._text); }
-        public trailingTrivia(text: IText): ISyntaxTriviaList { return this._token.trailingTrivia(this._text); }
+        public leadingTrivia(text: IText): ISyntaxTriviaList { return this._leadingTrivia; }
+        public trailingTrivia(text: IText): ISyntaxTriviaList { return this._trailingTrivia; }
 
         public realize(text: IText): ISyntaxToken { return this; }
         public collectTextElements(text: IText, elements: string[]): void { collectTextElements(this, text, elements); }
+
+        public withFullStart(fullStart: number): ISyntaxToken {
+            return new RealizedToken(
+                this.tokenKind, this._keywordKind,
+                fullStart,
+                this._leadingTrivia, this._text, this._value,
+                this._valueText, this._trailingTrivia, this._isMissing);
+        }
+
+        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            return new RealizedToken(
+                this.tokenKind, this._keywordKind, this._fullStart,
+                leadingTrivia, this._text, this._value,
+                this._valueText, this._trailingTrivia, this._isMissing);
+        }
+
+        public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            return new RealizedToken(
+                this.tokenKind, this._keywordKind, this._fullStart,
+                this._leadingTrivia, this._text, this._value,
+                this._valueText, trailingTrivia, this._isMissing);
+        }
     }
 
     export function createElasticKeyword(token: IElasticToken): ISyntaxToken {

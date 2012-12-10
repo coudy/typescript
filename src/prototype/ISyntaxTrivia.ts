@@ -3,6 +3,7 @@
 interface ISyntaxTrivia extends ISyntaxElement {
     fullStart(): number;
     fullWidth(): number;
+    fullText(): string;
 
-    fullText(text: IText): string;
+    withFullStart(fullStart: number): ISyntaxTrivia;
 }

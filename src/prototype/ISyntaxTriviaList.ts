@@ -5,7 +5,7 @@ interface ISyntaxTriviaList extends ISyntaxElement {
     syntaxTriviaAt(index: number): ISyntaxTrivia;
 
     fullWidth(): number;
-    fullText(text: IText): string;
+    fullText(): string;
 
     hasComment(): bool;
     hasNewLine(): bool;

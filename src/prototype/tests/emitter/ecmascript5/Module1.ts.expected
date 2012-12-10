@@ -8,14 +8,18 @@
                 "_variableDeclaration": {
                     "kind": "VariableDeclaration",
                     "_varKeyword": {
-                        "tokenKind": 8,
-                        "_keywordKind": 37,
-                        "_leadingTrivia": [],
-                        "_text": "var",
-                        "_trailingTrivia": [
+                        "kind": "IdentifierNameToken",
+                        "keywordKind": "VarKeyword",
+                        "start": 0,
+                        "width": 3,
+                        "fullWidth": 4,
+                        "text": "var",
+                        "hasTrailingTrivia": true,
+                        "leadingTrivia": [],
+                        "trailingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 0,
+                                "fullStart": 3,
                                 "text": " "
                             }
                         ]
@@ -25,7 +29,7 @@
                             "kind": "VariableDeclarator",
                             "_identifier": {
                                 "kind": "IdentifierNameToken",
-                                "start": 7,
+                                "start": 4,
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "M",
@@ -35,7 +39,7 @@
                                 "trailingTrivia": [
                                     {
                                         "kind": "WhitespaceTrivia",
-                                        "fullStart": 0,
+                                        "fullStart": 5,
                                         "text": " "
                                     }
                                 ]
@@ -44,14 +48,18 @@
                     ]
                 },
                 "_semicolonToken": {
-                    "tokenKind": 74,
-                    "_keywordKind": 0,
-                    "_leadingTrivia": [],
-                    "_text": ";",
-                    "_trailingTrivia": [
+                    "kind": "SemicolonToken",
+                    "start": 6,
+                    "width": 1,
+                    "fullWidth": 3,
+                    "text": ";",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLineTrivia": true,
+                    "leadingTrivia": [],
+                    "trailingTrivia": [
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 0,
+                            "fullStart": 7,
                             "text": "\r\n"
                         }
                     ]
@@ -64,38 +72,42 @@
                     "_expression": {
                         "kind": "ParenthesizedExpression",
                         "_openParenToken": {
-                            "tokenKind": 68,
-                            "_keywordKind": 0,
-                            "_leadingTrivia": [],
-                            "_text": "(",
-                            "_trailingTrivia": []
+                            "kind": "OpenParenToken",
+                            "start": 9,
+                            "width": 1,
+                            "text": "(",
+                            "leadingTrivia": [],
+                            "trailingTrivia": []
                         },
                         "_expression": {
                             "kind": "FunctionExpression",
                             "_functionKeyword": {
-                                "tokenKind": 8,
-                                "_keywordKind": 24,
-                                "_leadingTrivia": [],
-                                "_text": "function",
-                                "_trailingTrivia": []
+                                "kind": "IdentifierNameToken",
+                                "keywordKind": "FunctionKeyword",
+                                "start": 10,
+                                "width": 8,
+                                "text": "function",
+                                "leadingTrivia": [],
+                                "trailingTrivia": []
                             },
                             "_callSignature": {
                                 "kind": "CallSignature",
                                 "_parameterList": {
                                     "kind": "ParameterList",
                                     "_openParenToken": {
-                                        "tokenKind": 68,
-                                        "_keywordKind": 0,
-                                        "_leadingTrivia": [],
-                                        "_text": "(",
-                                        "_trailingTrivia": []
+                                        "kind": "OpenParenToken",
+                                        "start": 18,
+                                        "width": 1,
+                                        "text": "(",
+                                        "leadingTrivia": [],
+                                        "trailingTrivia": []
                                     },
                                     "_parameters": [
                                         {
                                             "kind": "Parameter",
                                             "_identifier": {
                                                 "kind": "IdentifierNameToken",
-                                                "start": 7,
+                                                "start": 19,
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "M",
@@ -105,7 +117,7 @@
                                                 "trailingTrivia": [
                                                     {
                                                         "kind": "WhitespaceTrivia",
-                                                        "fullStart": 0,
+                                                        "fullStart": 20,
                                                         "text": " "
                                                     }
                                                 ]
@@ -113,14 +125,17 @@
                                         }
                                     ],
                                     "_closeParenToken": {
-                                        "tokenKind": 69,
-                                        "_keywordKind": 0,
-                                        "_leadingTrivia": [],
-                                        "_text": ")",
-                                        "_trailingTrivia": [
+                                        "kind": "CloseParenToken",
+                                        "start": 21,
+                                        "width": 1,
+                                        "fullWidth": 2,
+                                        "text": ")",
+                                        "hasTrailingTrivia": true,
+                                        "leadingTrivia": [],
+                                        "trailingTrivia": [
                                             {
                                                 "kind": "WhitespaceTrivia",
-                                                "fullStart": 0,
+                                                "fullStart": 22,
                                                 "text": " "
                                             }
                                         ]
@@ -130,44 +145,51 @@
                             "_block": {
                                 "kind": "Block",
                                 "_openBraceToken": {
-                                    "tokenKind": 66,
-                                    "_keywordKind": 0,
-                                    "_leadingTrivia": [],
-                                    "_text": "{",
-                                    "_trailingTrivia": [
+                                    "kind": "OpenBraceToken",
+                                    "start": 23,
+                                    "width": 1,
+                                    "fullWidth": 3,
+                                    "text": "{",
+                                    "hasTrailingTrivia": true,
+                                    "hasTrailingNewLineTrivia": true,
+                                    "leadingTrivia": [],
+                                    "trailingTrivia": [
                                         {
                                             "kind": "NewLineTrivia",
-                                            "fullStart": 0,
+                                            "fullStart": 24,
                                             "text": "\r\n"
                                         }
                                     ]
                                 },
                                 "_statements": [],
                                 "_closeBraceToken": {
-                                    "tokenKind": 67,
-                                    "_keywordKind": 0,
-                                    "_leadingTrivia": [],
-                                    "_text": "}",
-                                    "_trailingTrivia": []
+                                    "kind": "CloseBraceToken",
+                                    "start": 26,
+                                    "width": 1,
+                                    "text": "}",
+                                    "leadingTrivia": [],
+                                    "trailingTrivia": []
                                 }
                             }
                         },
                         "_closeParenToken": {
-                            "tokenKind": 69,
-                            "_keywordKind": 0,
-                            "_leadingTrivia": [],
-                            "_text": ")",
-                            "_trailingTrivia": []
+                            "kind": "CloseParenToken",
+                            "start": 27,
+                            "width": 1,
+                            "text": ")",
+                            "leadingTrivia": [],
+                            "trailingTrivia": []
                         }
                     },
                     "_argumentList": {
                         "kind": "ArgumentList",
                         "_openParenToken": {
-                            "tokenKind": 68,
-                            "_keywordKind": 0,
-                            "_leadingTrivia": [],
-                            "_text": "(",
-                            "_trailingTrivia": []
+                            "kind": "OpenParenToken",
+                            "start": 28,
+                            "width": 1,
+                            "text": "(",
+                            "leadingTrivia": [],
+                            "trailingTrivia": []
                         },
                         "_arguments": [
                             {
@@ -176,7 +198,7 @@
                                     "kind": "IdentifierName",
                                     "_identifier": {
                                         "kind": "IdentifierNameToken",
-                                        "start": 7,
+                                        "start": 29,
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "M",
@@ -186,27 +208,29 @@
                                         "trailingTrivia": [
                                             {
                                                 "kind": "WhitespaceTrivia",
-                                                "fullStart": 0,
+                                                "fullStart": 30,
                                                 "text": " "
                                             }
                                         ]
                                     }
                                 },
                                 "_operatorToken": {
-                                    "tokenKind": 100,
-                                    "_keywordKind": 0,
-                                    "_leadingTrivia": [],
-                                    "_text": "||",
-                                    "_trailingTrivia": []
+                                    "kind": "BarBarToken",
+                                    "start": 31,
+                                    "width": 2,
+                                    "text": "||",
+                                    "leadingTrivia": [],
+                                    "trailingTrivia": []
                                 },
                                 "_right": {
                                     "kind": "ParenthesizedExpression",
                                     "_openParenToken": {
-                                        "tokenKind": 68,
-                                        "_keywordKind": 0,
-                                        "_leadingTrivia": [],
-                                        "_text": "(",
-                                        "_trailingTrivia": []
+                                        "kind": "OpenParenToken",
+                                        "start": 33,
+                                        "width": 1,
+                                        "text": "(",
+                                        "leadingTrivia": [],
+                                        "trailingTrivia": []
                                     },
                                     "_expression": {
                                         "kind": "AssignmentExpression",
@@ -214,7 +238,7 @@
                                             "kind": "IdentifierName",
                                             "_identifier": {
                                                 "kind": "IdentifierNameToken",
-                                                "start": 7,
+                                                "start": 34,
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "M",
@@ -224,69 +248,75 @@
                                                 "trailingTrivia": [
                                                     {
                                                         "kind": "WhitespaceTrivia",
-                                                        "fullStart": 0,
+                                                        "fullStart": 35,
                                                         "text": " "
                                                     }
                                                 ]
                                             }
                                         },
                                         "_operatorToken": {
-                                            "tokenKind": 103,
-                                            "_keywordKind": 0,
-                                            "_leadingTrivia": [],
-                                            "_text": "=",
-                                            "_trailingTrivia": []
+                                            "kind": "EqualsToken",
+                                            "start": 36,
+                                            "width": 1,
+                                            "text": "=",
+                                            "leadingTrivia": [],
+                                            "trailingTrivia": []
                                         },
                                         "_right": {
                                             "kind": "ObjectLiteralExpression",
                                             "_openBraceToken": {
-                                                "tokenKind": 66,
-                                                "_keywordKind": 0,
-                                                "_leadingTrivia": [],
-                                                "_text": "{",
-                                                "_trailingTrivia": []
+                                                "kind": "OpenBraceToken",
+                                                "start": 37,
+                                                "width": 1,
+                                                "text": "{",
+                                                "leadingTrivia": [],
+                                                "trailingTrivia": []
                                             },
                                             "_propertyAssignments": [],
                                             "_closeBraceToken": {
-                                                "tokenKind": 67,
-                                                "_keywordKind": 0,
-                                                "_leadingTrivia": [],
-                                                "_text": "}",
-                                                "_trailingTrivia": []
+                                                "kind": "CloseBraceToken",
+                                                "start": 38,
+                                                "width": 1,
+                                                "text": "}",
+                                                "leadingTrivia": [],
+                                                "trailingTrivia": []
                                             }
                                         }
                                     },
                                     "_closeParenToken": {
-                                        "tokenKind": 69,
-                                        "_keywordKind": 0,
-                                        "_leadingTrivia": [],
-                                        "_text": ")",
-                                        "_trailingTrivia": []
+                                        "kind": "CloseParenToken",
+                                        "start": 39,
+                                        "width": 1,
+                                        "text": ")",
+                                        "leadingTrivia": [],
+                                        "trailingTrivia": []
                                     }
                                 }
                             }
                         ],
                         "_closeParenToken": {
-                            "tokenKind": 69,
-                            "_keywordKind": 0,
-                            "_leadingTrivia": [],
-                            "_text": ")",
-                            "_trailingTrivia": []
+                            "kind": "CloseParenToken",
+                            "start": 40,
+                            "width": 1,
+                            "text": ")",
+                            "leadingTrivia": [],
+                            "trailingTrivia": []
                         }
                     }
                 },
                 "_semicolonToken": {
-                    "tokenKind": 74,
-                    "_keywordKind": 0,
-                    "_leadingTrivia": [],
-                    "_text": ";",
-                    "_trailingTrivia": []
+                    "kind": "SemicolonToken",
+                    "start": 41,
+                    "width": 1,
+                    "text": ";",
+                    "leadingTrivia": [],
+                    "trailingTrivia": []
                 }
             }
         ],
         "_endOfFileToken": {
             "kind": "EndOfFileToken",
-            "start": 13,
+            "start": 42,
             "width": 0,
             "text": "",
             "leadingTrivia": [],

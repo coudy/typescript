@@ -29,7 +29,7 @@ module SyntaxTriviaList {
             return 0;
         }
 
-        public fullText(text: IText): string {
+        public fullText(): string {
             return "";
         }
 
@@ -86,8 +86,8 @@ module SyntaxTriviaList {
             return this.item.fullWidth();
         }
 
-        public fullText(text: IText): string {
-            return this.item.fullText(text);
+        public fullText(): string {
+            return this.item.fullText();
         }
 
         public hasComment(): bool {
@@ -146,11 +146,11 @@ module SyntaxTriviaList {
             return ArrayUtilities.sum(this.trivia, t => t.fullWidth());
         }
 
-        public fullText(text: IText): string {
+        public fullText(): string {
             var result = "";
 
             for (var i = 0, n = this.trivia.length; i < n; i++) {
-                result += this.trivia[i].fullText(text);
+                result += this.trivia[i].fullText();
             }
 
             return result;

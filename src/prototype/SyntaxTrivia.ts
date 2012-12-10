@@ -40,12 +40,16 @@ module SyntaxTrivia {
             return this._text.length;
         }
 
-        public fullText(text: IText): string {
+        public fullText(): string {
             return this._text;
         }
 
         public collectTextElements(text: IText, elements: string[]): void {
-            elements.push(this.fullText(text));
+            elements.push(this.fullText());
+        }
+
+        public withFullStart(fullStart: number): ISyntaxTrivia {
+            return new SimpleSyntaxTrivia(this._kind, fullStart, this._text);
         }
     }
 

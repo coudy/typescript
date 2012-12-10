@@ -21,7 +21,7 @@ class Errors {
         return new Error("Not yet implemented.");
     }
 
-    public static invalidOperation(): Error {
-        return new Error("Invalid operation.");
+    public static invalidOperation(message?: string): Error {
+        return new Error(message ? ("Invalid operation: " + message) :"Invalid operation.");
     }
 }

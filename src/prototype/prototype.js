@@ -661,8 +661,8 @@ var Errors = (function () {
     Errors.notYetImplemented = function notYetImplemented() {
         return new Error("Not yet implemented.");
     }
-    Errors.invalidOperation = function invalidOperation() {
-        return new Error("Invalid operation.");
+    Errors.invalidOperation = function invalidOperation(message) {
+        return new Error(message ? ("Invalid operation: " + message) : "Invalid operation.");
     }
     return Errors;
 })();
@@ -13110,6 +13110,42 @@ var SyntaxRewriter = (function () {
     };
     return SyntaxRewriter;
 })();
+var FullStartNormalizer = (function (_super) {
+    __extends(FullStartNormalizer, _super);
+    function FullStartNormalizer(initialFullStart) {
+        _super.call(this);
+        this.currentFullStart = initialFullStart;
+    }
+    FullStartNormalizer.prototype.visitTriviaList = function (list) {
+        var newTriviaList = null;
+        for(var i = 0, n = list.count(); i < n; i++) {
+            var trivia = list.syntaxTriviaAt(i);
+            var newTrivia = trivia.withFullStart(this.currentFullStart);
+            if(newTrivia !== trivia && newTriviaList === null) {
+                newTriviaList = [];
+                for(var j = 0; j < i; j++) {
+                    newTriviaList.push(list.syntaxTriviaAt(j));
+                }
+            }
+            if(newTriviaList) {
+                newTriviaList.push(newTrivia);
+            }
+            this.currentFullStart += trivia.fullWidth();
+        }
+        return newTriviaList === null ? list : SyntaxTriviaList.create(newTriviaList);
+    };
+    FullStartNormalizer.prototype.visitToken = function (token) {
+        var tokenFullStart = this.currentFullStart;
+        var leadingTrivia = this.visitTriviaList(token.leadingTrivia(null));
+        this.currentFullStart += token.width();
+        var trailingTrivia = this.visitTriviaList(token.trailingTrivia(null));
+        if(token.leadingTrivia(null) === leadingTrivia && token.fullStart() === tokenFullStart && token.trailingTrivia(null) === trailingTrivia) {
+            return token;
+        }
+        return token.withFullStart(tokenFullStart).withLeadingTrivia(leadingTrivia).withTrailingTrivia(trailingTrivia);
+    };
+    return FullStartNormalizer;
+})(SyntaxRewriter);
 var Emitter = (function (_super) {
     __extends(Emitter, _super);
     function Emitter(syntaxOnly) {
@@ -13119,7 +13155,8 @@ var Emitter = (function (_super) {
     }
     Emitter.prototype.emit = function (input) {
         var sourceUnit = input.accept1(this);
-        return sourceUnit;
+        sourceUnit = sourceUnit.realize(null);
+        return sourceUnit.accept1(new FullStartNormalizer(0));
     };
     Emitter.prototype.visitSourceUnit = function (node) {
         var moduleElements = [];
@@ -13228,7 +13265,7 @@ var SyntaxRealizer = (function (_super) {
 var SyntaxToken;
 (function (SyntaxToken) {
     function realize(token, text) {
-        return new RealizedToken(token, text);
+        return new RealizedToken(token.tokenKind, token.keywordKind(), token.fullStart(), token.leadingTrivia(text), token.text(), token.value(), token.valueText(), token.trailingTrivia(text), token.isMissing());
     }
     SyntaxToken.realize = realize;
     function collectTextElements(token, text, elements) {
@@ -13392,6 +13429,15 @@ var SyntaxToken;
         EmptyToken.prototype.collectTextElements = function (text, elements) {
             collectTextElements(this, text, elements);
         };
+        EmptyToken.prototype.withFullStart = function (fullStart) {
+            return new EmptyToken(fullStart, this.kind(), this.keywordKind());
+        };
+        EmptyToken.prototype.withLeadingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        EmptyToken.prototype.withTrailingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
         return EmptyToken;
     })();    
     function createEmpty(fullStart, kind, keywordKind) {
@@ -13434,7 +13480,7 @@ var SyntaxToken;
             return this._keywordKind;
         };
         ElasticToken.prototype.fullStart = function () {
-            throw Errors.notYetImplemented();
+            return 0;
         };
         ElasticToken.prototype.fullEnd = function () {
             throw Errors.notYetImplemented();
@@ -13455,7 +13501,7 @@ var SyntaxToken;
             return this._text;
         };
         ElasticToken.prototype.fullText = function (text) {
-            return this._leadingTrivia.fullText(text) + this.text() + this._trailingTrivia.fullText(text);
+            return this._leadingTrivia.fullText() + this.text() + this._trailingTrivia.fullText();
         };
         ElasticToken.prototype.value = function () {
             return null;
@@ -13493,103 +13539,127 @@ var SyntaxToken;
         ElasticToken.prototype.collectTextElements = function (text, elements) {
             collectTextElements(this, text, elements);
         };
+        ElasticToken.prototype.withFullStart = function (fullStart) {
+            throw Errors.invalidOperation("Can not call on a non-realized token.");
+        };
+        ElasticToken.prototype.withLeadingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        ElasticToken.prototype.withTrailingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
         return ElasticToken;
     })();    
     var RealizedToken = (function () {
-        function RealizedToken(token, text) {
-            this.tokenKind = token.tokenKind;
-            this._token = token;
+        function RealizedToken(tokenKind, keywordKind, fullStart, leadingTrivia, text, value, valueText, trailingTrivia, isMissing) {
+            this.tokenKind = tokenKind;
+            this._keywordKind = keywordKind;
+            this._fullStart = fullStart;
+            this._leadingTrivia = leadingTrivia;
             this._text = text;
+            this._value = value;
+            this._valueText = valueText;
+            this._trailingTrivia = trailingTrivia;
+            this._isMissing = isMissing;
         }
         RealizedToken.prototype.kind = function () {
-            return this._token.kind();
+            return this.tokenKind;
         };
         RealizedToken.prototype.toJSON = function (key) {
             return toJSON(this, true);
         };
         RealizedToken.prototype.isToken = function () {
-            return this._token.isToken();
+            return true;
         };
         RealizedToken.prototype.isNode = function () {
-            return this._token.isNode();
+            return false;
         };
         RealizedToken.prototype.isList = function () {
-            return this._token.isList();
+            return false;
         };
         RealizedToken.prototype.isSeparatedList = function () {
-            return this._token.isSeparatedList();
+            return false;
         };
         RealizedToken.prototype.isTrivia = function () {
-            return this._token.isTrivia();
+            return false;
         };
         RealizedToken.prototype.isTriviaList = function () {
-            return this._token.isTriviaList();
+            return false;
         };
         RealizedToken.prototype.isMissing = function () {
-            return this._token.isMissing();
+            return this._isMissing;
         };
         RealizedToken.prototype.keywordKind = function () {
-            return this._token.keywordKind();
+            return this._keywordKind;
         };
         RealizedToken.prototype.fullStart = function () {
-            return this._token.fullStart();
+            return this._fullStart;
         };
         RealizedToken.prototype.fullWidth = function () {
-            return this._token.fullWidth();
+            return this._leadingTrivia.fullWidth() + this.width() + this._trailingTrivia.fullWidth();
         };
         RealizedToken.prototype.fullEnd = function () {
-            return this._token.fullEnd();
+            return this.fullStart() + this.fullWidth();
         };
         RealizedToken.prototype.start = function () {
-            return this._token.start();
+            return this.fullStart() + this._leadingTrivia.fullWidth();
         };
         RealizedToken.prototype.width = function () {
-            return this._token.width();
+            return this.text().length;
         };
         RealizedToken.prototype.end = function () {
-            return this._token.end();
+            return this.start() + this.width();
         };
         RealizedToken.prototype.text = function () {
-            return this._token.text();
+            return this._text;
         };
         RealizedToken.prototype.fullText = function (text) {
-            return this._token.fullText(this._text);
+            return this._leadingTrivia.fullText() + this.text() + this._trailingTrivia.fullText();
         };
         RealizedToken.prototype.value = function () {
-            return this._token.value();
+            return this._value;
         };
         RealizedToken.prototype.valueText = function () {
-            return this._token.value();
+            return this._valueText;
         };
         RealizedToken.prototype.hasLeadingTrivia = function () {
-            return this._token.hasLeadingTrivia();
+            return this._leadingTrivia.count() > 0;
         };
         RealizedToken.prototype.hasLeadingCommentTrivia = function () {
-            return this._token.hasLeadingCommentTrivia();
+            return this._leadingTrivia.hasComment();
         };
         RealizedToken.prototype.hasLeadingNewLineTrivia = function () {
-            return this._token.hasLeadingNewLineTrivia();
+            return this._leadingTrivia.hasNewLine();
         };
         RealizedToken.prototype.hasTrailingTrivia = function () {
-            return this._token.hasTrailingTrivia();
+            return this._trailingTrivia.count() > 0;
         };
         RealizedToken.prototype.hasTrailingCommentTrivia = function () {
-            return this._token.hasTrailingCommentTrivia();
+            return this._trailingTrivia.hasComment();
         };
         RealizedToken.prototype.hasTrailingNewLineTrivia = function () {
-            return this._token.hasTrailingNewLineTrivia();
+            return this._trailingTrivia.hasNewLine();
         };
         RealizedToken.prototype.leadingTrivia = function (text) {
-            return this._token.leadingTrivia(this._text);
+            return this._leadingTrivia;
         };
         RealizedToken.prototype.trailingTrivia = function (text) {
-            return this._token.trailingTrivia(this._text);
+            return this._trailingTrivia;
         };
         RealizedToken.prototype.realize = function (text) {
             return this;
         };
         RealizedToken.prototype.collectTextElements = function (text, elements) {
             collectTextElements(this, text, elements);
+        };
+        RealizedToken.prototype.withFullStart = function (fullStart) {
+            return new RealizedToken(this.tokenKind, this._keywordKind, fullStart, this._leadingTrivia, this._text, this._value, this._valueText, this._trailingTrivia, this._isMissing);
+        };
+        RealizedToken.prototype.withLeadingTrivia = function (leadingTrivia) {
+            return new RealizedToken(this.tokenKind, this._keywordKind, this._fullStart, leadingTrivia, this._text, this._value, this._valueText, this._trailingTrivia, this._isMissing);
+        };
+        RealizedToken.prototype.withTrailingTrivia = function (trailingTrivia) {
+            return new RealizedToken(this.tokenKind, this._keywordKind, this._fullStart, this._leadingTrivia, this._text, this._value, this._valueText, trailingTrivia, this._isMissing);
         };
         return RealizedToken;
     })();    
@@ -13704,6 +13774,15 @@ var SyntaxToken;
         VariableWidthTokenWithNoTrivia.prototype.collectTextElements = function (text, elements) {
             SyntaxToken.collectTextElements(this, text, elements);
         };
+        VariableWidthTokenWithNoTrivia.prototype.withFullStart = function (fullStart) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        VariableWidthTokenWithNoTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        VariableWidthTokenWithNoTrivia.prototype.withTrailingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
         return VariableWidthTokenWithNoTrivia;
     })();    
     var VariableWidthTokenWithLeadingTrivia = (function () {
@@ -13804,6 +13883,15 @@ var SyntaxToken;
         VariableWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (text, elements) {
             SyntaxToken.collectTextElements(this, text, elements);
         };
+        VariableWidthTokenWithLeadingTrivia.prototype.withFullStart = function (fullStart) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.withTrailingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
         return VariableWidthTokenWithLeadingTrivia;
     })();    
     var VariableWidthTokenWithTrailingTrivia = (function () {
@@ -13903,6 +13991,15 @@ var SyntaxToken;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (text, elements) {
             SyntaxToken.collectTextElements(this, text, elements);
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.withFullStart = function (fullStart) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.withTrailingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
         };
         return VariableWidthTokenWithTrailingTrivia;
     })();    
@@ -14005,6 +14102,15 @@ var SyntaxToken;
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (text, elements) {
             SyntaxToken.collectTextElements(this, text, elements);
         };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.withFullStart = function (fullStart) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.withTrailingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
         return VariableWidthTokenWithLeadingAndTrailingTrivia;
     })();    
     var FixedWidthTokenWithNoTrivia = (function () {
@@ -14101,6 +14207,15 @@ var SyntaxToken;
         };
         FixedWidthTokenWithNoTrivia.prototype.collectTextElements = function (text, elements) {
             SyntaxToken.collectTextElements(this, text, elements);
+        };
+        FixedWidthTokenWithNoTrivia.prototype.withFullStart = function (fullStart) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        FixedWidthTokenWithNoTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        FixedWidthTokenWithNoTrivia.prototype.withTrailingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
         };
         return FixedWidthTokenWithNoTrivia;
     })();    
@@ -14200,6 +14315,15 @@ var SyntaxToken;
         FixedWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (text, elements) {
             SyntaxToken.collectTextElements(this, text, elements);
         };
+        FixedWidthTokenWithLeadingTrivia.prototype.withFullStart = function (fullStart) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.withTrailingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
         return FixedWidthTokenWithLeadingTrivia;
     })();    
     var FixedWidthTokenWithTrailingTrivia = (function () {
@@ -14297,6 +14421,15 @@ var SyntaxToken;
         };
         FixedWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (text, elements) {
             SyntaxToken.collectTextElements(this, text, elements);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.withFullStart = function (fullStart) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.withTrailingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
         };
         return FixedWidthTokenWithTrailingTrivia;
     })();    
@@ -14397,6 +14530,15 @@ var SyntaxToken;
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (text, elements) {
             SyntaxToken.collectTextElements(this, text, elements);
         };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.withFullStart = function (fullStart) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.withTrailingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
         return FixedWidthTokenWithLeadingAndTrailingTrivia;
     })();    
     var KeywordWithNoTrivia = (function () {
@@ -14494,6 +14636,15 @@ var SyntaxToken;
         };
         KeywordWithNoTrivia.prototype.collectTextElements = function (text, elements) {
             SyntaxToken.collectTextElements(this, text, elements);
+        };
+        KeywordWithNoTrivia.prototype.withFullStart = function (fullStart) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        KeywordWithNoTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        KeywordWithNoTrivia.prototype.withTrailingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
         };
         return KeywordWithNoTrivia;
     })();    
@@ -14594,6 +14745,15 @@ var SyntaxToken;
         KeywordWithLeadingTrivia.prototype.collectTextElements = function (text, elements) {
             SyntaxToken.collectTextElements(this, text, elements);
         };
+        KeywordWithLeadingTrivia.prototype.withFullStart = function (fullStart) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        KeywordWithLeadingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        KeywordWithLeadingTrivia.prototype.withTrailingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
         return KeywordWithLeadingTrivia;
     })();    
     var KeywordWithTrailingTrivia = (function () {
@@ -14692,6 +14852,15 @@ var SyntaxToken;
         };
         KeywordWithTrailingTrivia.prototype.collectTextElements = function (text, elements) {
             SyntaxToken.collectTextElements(this, text, elements);
+        };
+        KeywordWithTrailingTrivia.prototype.withFullStart = function (fullStart) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        KeywordWithTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        KeywordWithTrailingTrivia.prototype.withTrailingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
         };
         return KeywordWithTrailingTrivia;
     })();    
@@ -14792,6 +14961,15 @@ var SyntaxToken;
         };
         KeywordWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (text, elements) {
             SyntaxToken.collectTextElements(this, text, elements);
+        };
+        KeywordWithLeadingAndTrailingTrivia.prototype.withFullStart = function (fullStart) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        KeywordWithLeadingAndTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        };
+        KeywordWithLeadingAndTrailingTrivia.prototype.withTrailingTrivia = function (leadingTrivia) {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
         };
         return KeywordWithLeadingAndTrailingTrivia;
     })();    
@@ -14945,11 +15123,14 @@ var SyntaxTrivia;
         SimpleSyntaxTrivia.prototype.fullWidth = function () {
             return this._text.length;
         };
-        SimpleSyntaxTrivia.prototype.fullText = function (text) {
+        SimpleSyntaxTrivia.prototype.fullText = function () {
             return this._text;
         };
         SimpleSyntaxTrivia.prototype.collectTextElements = function (text, elements) {
-            elements.push(this.fullText(text));
+            elements.push(this.fullText());
+        };
+        SimpleSyntaxTrivia.prototype.withFullStart = function (fullStart) {
+            return new SimpleSyntaxTrivia(this._kind, fullStart, this._text);
         };
         return SimpleSyntaxTrivia;
     })();    
@@ -15006,7 +15187,7 @@ var SyntaxTriviaList;
         EmptySyntaxTriviaList.prototype.fullWidth = function () {
             return 0;
         };
-        EmptySyntaxTriviaList.prototype.fullText = function (text) {
+        EmptySyntaxTriviaList.prototype.fullText = function () {
             return "";
         };
         EmptySyntaxTriviaList.prototype.hasComment = function () {
@@ -15067,8 +15248,8 @@ var SyntaxTriviaList;
         SingletonSyntaxTriviaList.prototype.fullWidth = function () {
             return this.item.fullWidth();
         };
-        SingletonSyntaxTriviaList.prototype.fullText = function (text) {
-            return this.item.fullText(text);
+        SingletonSyntaxTriviaList.prototype.fullText = function () {
+            return this.item.fullText();
         };
         SingletonSyntaxTriviaList.prototype.hasComment = function () {
             return isComment(this.item);
@@ -15133,10 +15314,10 @@ var SyntaxTriviaList;
                 return t.fullWidth();
             });
         };
-        NormalSyntaxTriviaList.prototype.fullText = function (text) {
+        NormalSyntaxTriviaList.prototype.fullText = function () {
             var result = "";
             for(var i = 0, n = this.trivia.length; i < n; i++) {
-                result += this.trivia[i].fullText(text);
+                result += this.trivia[i].fullText();
             }
             return result;
         };

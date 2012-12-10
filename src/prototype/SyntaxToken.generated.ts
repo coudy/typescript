@@ -51,6 +51,18 @@ module SyntaxToken {
         public toJSON(key) { return toJSON(this, /*includeRealTrivia:*/ false); }
         public realize(text: IText): ISyntaxToken { return realize(this, text); }
         public collectTextElements(text: IText, elements: string[]): void { collectTextElements(this, text, elements); }
+
+        public withFullStart(fullStart: number): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
     }
 
     class VariableWidthTokenWithLeadingTrivia implements ISyntaxToken {
@@ -105,6 +117,18 @@ module SyntaxToken {
         public toJSON(key) { return toJSON(this, /*includeRealTrivia:*/ false); }
         public realize(text: IText): ISyntaxToken { return realize(this, text); }
         public collectTextElements(text: IText, elements: string[]): void { collectTextElements(this, text, elements); }
+
+        public withFullStart(fullStart: number): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
     }
 
     class VariableWidthTokenWithTrailingTrivia implements ISyntaxToken {
@@ -159,6 +183,18 @@ module SyntaxToken {
         public toJSON(key) { return toJSON(this, /*includeRealTrivia:*/ false); }
         public realize(text: IText): ISyntaxToken { return realize(this, text); }
         public collectTextElements(text: IText, elements: string[]): void { collectTextElements(this, text, elements); }
+
+        public withFullStart(fullStart: number): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
     }
 
     class VariableWidthTokenWithLeadingAndTrailingTrivia implements ISyntaxToken {
@@ -215,6 +251,18 @@ module SyntaxToken {
         public toJSON(key) { return toJSON(this, /*includeRealTrivia:*/ false); }
         public realize(text: IText): ISyntaxToken { return realize(this, text); }
         public collectTextElements(text: IText, elements: string[]): void { collectTextElements(this, text, elements); }
+
+        public withFullStart(fullStart: number): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
     }
 
     class FixedWidthTokenWithNoTrivia implements ISyntaxToken {
@@ -263,6 +311,18 @@ module SyntaxToken {
         public toJSON(key) { return toJSON(this, /*includeRealTrivia:*/ false); }
         public realize(text: IText): ISyntaxToken { return realize(this, text); }
         public collectTextElements(text: IText, elements: string[]): void { collectTextElements(this, text, elements); }
+
+        public withFullStart(fullStart: number): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
     }
 
     class FixedWidthTokenWithLeadingTrivia implements ISyntaxToken {
@@ -313,6 +373,18 @@ module SyntaxToken {
         public toJSON(key) { return toJSON(this, /*includeRealTrivia:*/ false); }
         public realize(text: IText): ISyntaxToken { return realize(this, text); }
         public collectTextElements(text: IText, elements: string[]): void { collectTextElements(this, text, elements); }
+
+        public withFullStart(fullStart: number): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
     }
 
     class FixedWidthTokenWithTrailingTrivia implements ISyntaxToken {
@@ -363,6 +435,18 @@ module SyntaxToken {
         public toJSON(key) { return toJSON(this, /*includeRealTrivia:*/ false); }
         public realize(text: IText): ISyntaxToken { return realize(this, text); }
         public collectTextElements(text: IText, elements: string[]): void { collectTextElements(this, text, elements); }
+
+        public withFullStart(fullStart: number): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
     }
 
     class FixedWidthTokenWithLeadingAndTrailingTrivia implements ISyntaxToken {
@@ -415,6 +499,18 @@ module SyntaxToken {
         public toJSON(key) { return toJSON(this, /*includeRealTrivia:*/ false); }
         public realize(text: IText): ISyntaxToken { return realize(this, text); }
         public collectTextElements(text: IText, elements: string[]): void { collectTextElements(this, text, elements); }
+
+        public withFullStart(fullStart: number): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
     }
 
     class KeywordWithNoTrivia implements ISyntaxToken {
@@ -465,6 +561,18 @@ module SyntaxToken {
         public toJSON(key) { return toJSON(this, /*includeRealTrivia:*/ false); }
         public realize(text: IText): ISyntaxToken { return realize(this, text); }
         public collectTextElements(text: IText, elements: string[]): void { collectTextElements(this, text, elements); }
+
+        public withFullStart(fullStart: number): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
     }
 
     class KeywordWithLeadingTrivia implements ISyntaxToken {
@@ -517,6 +625,18 @@ module SyntaxToken {
         public toJSON(key) { return toJSON(this, /*includeRealTrivia:*/ false); }
         public realize(text: IText): ISyntaxToken { return realize(this, text); }
         public collectTextElements(text: IText, elements: string[]): void { collectTextElements(this, text, elements); }
+
+        public withFullStart(fullStart: number): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
     }
 
     class KeywordWithTrailingTrivia implements ISyntaxToken {
@@ -569,6 +689,18 @@ module SyntaxToken {
         public toJSON(key) { return toJSON(this, /*includeRealTrivia:*/ false); }
         public realize(text: IText): ISyntaxToken { return realize(this, text); }
         public collectTextElements(text: IText, elements: string[]): void { collectTextElements(this, text, elements); }
+
+        public withFullStart(fullStart: number): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
     }
 
     class KeywordWithLeadingAndTrailingTrivia implements ISyntaxToken {
@@ -623,6 +755,18 @@ module SyntaxToken {
         public toJSON(key) { return toJSON(this, /*includeRealTrivia:*/ false); }
         public realize(text: IText): ISyntaxToken { return realize(this, text); }
         public collectTextElements(text: IText, elements: string[]): void { collectTextElements(this, text, elements); }
+
+        public withFullStart(fullStart: number): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
+
+        public withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        }
     }
 
 

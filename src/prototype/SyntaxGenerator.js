@@ -2867,7 +2867,8 @@ function generateToken(isPunctuation, isKeyword, leading, trailing) {
     result += "        public hasTrailingCommentTrivia(): bool { return " + (trailing ? "hasTriviaComment(this._trailingTriviaInfo)" : "false") + "; }\r\n";
     result += "        public hasTrailingNewLineTrivia(): bool { return " + (trailing ? "hasTriviaNewLine(this._trailingTriviaInfo)" : "false") + "; }\r\n";
     result += "        public trailingTrivia(text: IText): ISyntaxTriviaList { return " + (trailing ? "Scanner.scanTrivia(text, this.end(), getTriviaLength(this._trailingTriviaInfo), /*isTrailing:*/ true)" : "SyntaxTriviaList.empty") + "; }\r\n\r\n";
-    result += "        public toJSON(key) { return toJSON(this, /*includeRealTrivia:*/ false); }\r\n" + "        public realize(text: IText): ISyntaxToken { return realize(this, text); }\r\n" + "        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(this, text, elements); }\r\n";
+    result += "        public toJSON(key) { return toJSON(this, /*includeRealTrivia:*/ false); }\r\n" + "        public realize(text: IText): ISyntaxToken { return realize(this, text); }\r\n" + "        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(this, text, elements); }\r\n\r\n";
+    result += "        public withFullStart(fullStart: number): ISyntaxToken {\r\n" + "            throw Errors.invalidOperation('Can not call on a non-realized token.');\r\n" + "        }\r\n" + "\r\n" + "        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" + "            throw Errors.invalidOperation('Can not call on a non-realized token.');\r\n" + "        }\r\n" + "\r\n" + "        public withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" + "            throw Errors.invalidOperation('Can not call on a non-realized token.');\r\n" + "        }\r\n";
     result += "    }\r\n";
     return result;
 }

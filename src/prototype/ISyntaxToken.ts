@@ -31,6 +31,10 @@ interface ISyntaxToken extends ISyntaxElement {
     trailingTrivia(text: IText): ISyntaxTriviaList;
 
     realize(text: IText): ISyntaxToken;
+
+    withFullStart(fullStart: number): ISyntaxToken;
+    withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken;
+    withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken;
 }
 
 interface IElasticToken {
