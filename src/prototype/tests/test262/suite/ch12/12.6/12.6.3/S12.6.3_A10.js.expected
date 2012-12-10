@@ -1,4 +1,4 @@
-﻿{
+{
     "_sourceUnit": {
         "kind": "SourceUnit",
         "_moduleElements": [
@@ -15,7 +15,76 @@
                     "hasLeadingTrivia": true,
                     "hasLeadingCommentTrivia": true,
                     "hasLeadingNewLineTrivia": true,
-                    "hasTrailingTrivia": true
+                    "hasTrailingTrivia": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "fullStart": 0,
+                            "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 60,
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "fullStart": 61,
+                            "text": "// This code is governed by the BSD license found in the LICENSE file."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 131,
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 132,
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "MultiLineCommentTrivia",
+                            "fullStart": 133,
+                            "text": "/**\n * Nested \"var-loops\" nine blocks depth is evaluated properly\n *\n * @path ch12/12.6/12.6.3/S12.6.3_A10.js\n * @description Checking if executing nested \"var-loops\" nine blocks depth is evaluated properly\n */"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 343,
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 344,
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "fullStart": 345,
+                            "text": "//////////////////////////////////////////////////////////////////////////////"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 423,
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "fullStart": 424,
+                            "text": "//CHECK#"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 432,
+                            "text": "\n"
+                        }
+                    ],
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 0,
+                            "text": " "
+                        }
+                    ]
                 },
                 "_block": {
                     "kind": "Block",
@@ -26,7 +95,14 @@
                         "fullWidth": 2,
                         "text": "{",
                         "hasTrailingTrivia": true,
-                        "hasTrailingNewLineTrivia": true
+                        "hasTrailingNewLineTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "fullStart": 0,
+                                "text": "\n"
+                            }
+                        ]
                     },
                     "_statements": [
                         {
@@ -43,7 +119,14 @@
                                         "fullWidth": 20,
                                         "text": "__in__deepest__loop",
                                         "valueText": "__in__deepest__loop",
-                                        "hasLeadingTrivia": true
+                                        "hasLeadingTrivia": true,
+                                        "leadingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "fullStart": 0,
+                                                "text": "\t"
+                                            }
+                                        ]
                                     }
                                 },
                                 "_operatorToken": {
@@ -70,7 +153,14 @@
                                 "fullWidth": 2,
                                 "text": ";",
                                 "hasTrailingTrivia": true,
-                                "hasTrailingNewLineTrivia": true
+                                "hasTrailingNewLineTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "fullStart": 0,
+                                        "text": "\n"
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -80,7 +170,14 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "}",
-                        "hasTrailingTrivia": true
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "fullStart": 0,
+                                "text": " "
+                            }
+                        ]
                     }
                 },
                 "_catchClause": {
@@ -92,7 +189,14 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "catch",
-                        "hasTrailingTrivia": true
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "fullStart": 0,
+                                "text": " "
+                            }
+                        ]
                     },
                     "_openParenToken": {
                         "kind": "OpenParenToken",
@@ -113,7 +217,14 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": ")",
-                        "hasTrailingTrivia": true
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "fullStart": 0,
+                                "text": " "
+                            }
+                        ]
                     },
                     "_block": {
                         "kind": "Block",
@@ -124,7 +235,14 @@
                             "fullWidth": 2,
                             "text": "{",
                             "hasTrailingTrivia": true,
-                            "hasTrailingNewLineTrivia": true
+                            "hasTrailingNewLineTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "fullStart": 0,
+                                    "text": "\n"
+                                }
+                            ]
                         },
                         "_statements": [
                             {
@@ -141,7 +259,14 @@
                                             "fullWidth": 7,
                                             "text": "$ERROR",
                                             "valueText": "$ERROR",
-                                            "hasLeadingTrivia": true
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "fullStart": 0,
+                                                    "text": "\t"
+                                                }
+                                            ]
                                         }
                                     },
                                     "_argumentList": {
@@ -178,7 +303,14 @@
                                     "fullWidth": 2,
                                     "text": ";",
                                     "hasTrailingTrivia": true,
-                                    "hasTrailingNewLineTrivia": true
+                                    "hasTrailingNewLineTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "fullStart": 0,
+                                            "text": "\n"
+                                        }
+                                    ]
                                 }
                             }
                         ],
@@ -189,7 +321,14 @@
                             "fullWidth": 2,
                             "text": "}",
                             "hasTrailingTrivia": true,
-                            "hasTrailingNewLineTrivia": true
+                            "hasTrailingNewLineTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "fullStart": 0,
+                                    "text": "\n"
+                                }
+                            ]
                         }
                     }
                 }
@@ -210,7 +349,34 @@
                             "valueText": "__str",
                             "hasLeadingTrivia": true,
                             "hasLeadingCommentTrivia": true,
-                            "hasLeadingNewLineTrivia": true
+                            "hasLeadingNewLineTrivia": true,
+                            "leadingTrivia": [
+                                {
+                                    "kind": "SingleLineCommentTrivia",
+                                    "fullStart": 0,
+                                    "text": "//"
+                                },
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "fullStart": 2,
+                                    "text": "\n"
+                                },
+                                {
+                                    "kind": "SingleLineCommentTrivia",
+                                    "fullStart": 3,
+                                    "text": "//////////////////////////////////////////////////////////////////////////////"
+                                },
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "fullStart": 81,
+                                    "text": "\n"
+                                },
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "fullStart": 82,
+                                    "text": "\n"
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -236,7 +402,14 @@
                     "fullWidth": 2,
                     "text": ";",
                     "hasTrailingTrivia": true,
-                    "hasTrailingNewLineTrivia": true
+                    "hasTrailingNewLineTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 0,
+                            "text": "\n"
+                        }
+                    ]
                 }
             },
             {
@@ -250,7 +423,14 @@
                     "fullWidth": 4,
                     "text": "for",
                     "hasLeadingTrivia": true,
-                    "hasLeadingNewLineTrivia": true
+                    "hasLeadingNewLineTrivia": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 0,
+                            "text": "\n"
+                        }
+                    ]
                 },
                 "_openParenToken": {
                     "kind": "OpenParenToken",
@@ -258,7 +438,14 @@
                     "width": 1,
                     "fullWidth": 2,
                     "text": "(",
-                    "hasTrailingTrivia": true
+                    "hasTrailingTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 0,
+                            "text": " "
+                        }
+                    ]
                 },
                 "_initializer": {
                     "kind": "AssignmentExpression",
@@ -294,7 +481,14 @@
                     "width": 1,
                     "fullWidth": 2,
                     "text": ";",
-                    "hasTrailingTrivia": true
+                    "hasTrailingTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 0,
+                            "text": " "
+                        }
+                    ]
                 },
                 "_condition": {
                     "kind": "LessThanOrEqualExpression",
@@ -330,7 +524,14 @@
                     "width": 1,
                     "fullWidth": 2,
                     "text": ";",
-                    "hasTrailingTrivia": true
+                    "hasTrailingTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 0,
+                            "text": " "
+                        }
+                    ]
                 },
                 "_incrementor": {
                     "kind": "PostIncrementExpression",
@@ -357,7 +558,14 @@
                     "width": 1,
                     "fullWidth": 2,
                     "text": ")",
-                    "hasTrailingTrivia": true
+                    "hasTrailingTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 0,
+                            "text": " "
+                        }
+                    ]
                 },
                 "_statement": {
                     "kind": "Block",
@@ -368,7 +576,14 @@
                         "fullWidth": 2,
                         "text": "{",
                         "hasTrailingTrivia": true,
-                        "hasTrailingNewLineTrivia": true
+                        "hasTrailingNewLineTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "fullStart": 0,
+                                "text": "\n"
+                            }
+                        ]
                     },
                     "_statements": [
                         {
@@ -381,7 +596,14 @@
                                 "width": 3,
                                 "fullWidth": 4,
                                 "text": "for",
-                                "hasLeadingTrivia": true
+                                "hasLeadingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "fullStart": 0,
+                                        "text": "\t"
+                                    }
+                                ]
                             },
                             "_openParenToken": {
                                 "kind": "OpenParenToken",
@@ -389,7 +611,14 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "(",
-                                "hasTrailingTrivia": true
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "fullStart": 0,
+                                        "text": " "
+                                    }
+                                ]
                             },
                             "_initializer": {
                                 "kind": "AssignmentExpression",
@@ -425,7 +654,14 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": ";",
-                                "hasTrailingTrivia": true
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "fullStart": 0,
+                                        "text": " "
+                                    }
+                                ]
                             },
                             "_condition": {
                                 "kind": "LessThanOrEqualExpression",
@@ -462,7 +698,14 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": ";",
-                                "hasTrailingTrivia": true
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "fullStart": 0,
+                                        "text": " "
+                                    }
+                                ]
                             },
                             "_incrementor": {
                                 "kind": "PostIncrementExpression",
@@ -489,7 +732,14 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": ")",
-                                "hasTrailingTrivia": true
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "fullStart": 0,
+                                        "text": " "
+                                    }
+                                ]
                             },
                             "_statement": {
                                 "kind": "Block",
@@ -500,7 +750,14 @@
                                     "fullWidth": 2,
                                     "text": "{",
                                     "hasTrailingTrivia": true,
-                                    "hasTrailingNewLineTrivia": true
+                                    "hasTrailingNewLineTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "fullStart": 0,
+                                            "text": "\n"
+                                        }
+                                    ]
                                 },
                                 "_statements": [
                                     {
@@ -513,7 +770,14 @@
                                             "width": 3,
                                             "fullWidth": 5,
                                             "text": "for",
-                                            "hasLeadingTrivia": true
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "fullStart": 0,
+                                                    "text": "\t\t"
+                                                }
+                                            ]
                                         },
                                         "_openParenToken": {
                                             "kind": "OpenParenToken",
@@ -521,7 +785,14 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "(",
-                                            "hasTrailingTrivia": true
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "fullStart": 0,
+                                                    "text": " "
+                                                }
+                                            ]
                                         },
                                         "_initializer": {
                                             "kind": "AssignmentExpression",
@@ -557,7 +828,14 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": ";",
-                                            "hasTrailingTrivia": true
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "fullStart": 0,
+                                                    "text": " "
+                                                }
+                                            ]
                                         },
                                         "_condition": {
                                             "kind": "LessThanOrEqualExpression",
@@ -594,7 +872,14 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": ";",
-                                            "hasTrailingTrivia": true
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "fullStart": 0,
+                                                    "text": " "
+                                                }
+                                            ]
                                         },
                                         "_incrementor": {
                                             "kind": "PostIncrementExpression",
@@ -621,7 +906,14 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": ")",
-                                            "hasTrailingTrivia": true
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "fullStart": 0,
+                                                    "text": " "
+                                                }
+                                            ]
                                         },
                                         "_statement": {
                                             "kind": "Block",
@@ -632,7 +924,14 @@
                                                 "fullWidth": 2,
                                                 "text": "{",
                                                 "hasTrailingTrivia": true,
-                                                "hasTrailingNewLineTrivia": true
+                                                "hasTrailingNewLineTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "NewLineTrivia",
+                                                        "fullStart": 0,
+                                                        "text": "\n"
+                                                    }
+                                                ]
                                             },
                                             "_statements": [
                                                 {
@@ -645,7 +944,14 @@
                                                         "width": 3,
                                                         "fullWidth": 6,
                                                         "text": "for",
-                                                        "hasLeadingTrivia": true
+                                                        "hasLeadingTrivia": true,
+                                                        "leadingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "fullStart": 0,
+                                                                "text": "\t\t\t"
+                                                            }
+                                                        ]
                                                     },
                                                     "_openParenToken": {
                                                         "kind": "OpenParenToken",
@@ -653,7 +959,14 @@
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": "(",
-                                                        "hasTrailingTrivia": true
+                                                        "hasTrailingTrivia": true,
+                                                        "trailingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "fullStart": 0,
+                                                                "text": " "
+                                                            }
+                                                        ]
                                                     },
                                                     "_initializer": {
                                                         "kind": "AssignmentExpression",
@@ -689,7 +1002,14 @@
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": ";",
-                                                        "hasTrailingTrivia": true
+                                                        "hasTrailingTrivia": true,
+                                                        "trailingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "fullStart": 0,
+                                                                "text": " "
+                                                            }
+                                                        ]
                                                     },
                                                     "_condition": {
                                                         "kind": "LessThanOrEqualExpression",
@@ -726,7 +1046,14 @@
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": ";",
-                                                        "hasTrailingTrivia": true
+                                                        "hasTrailingTrivia": true,
+                                                        "trailingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "fullStart": 0,
+                                                                "text": " "
+                                                            }
+                                                        ]
                                                     },
                                                     "_incrementor": {
                                                         "kind": "PostIncrementExpression",
@@ -753,7 +1080,14 @@
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": ")",
-                                                        "hasTrailingTrivia": true
+                                                        "hasTrailingTrivia": true,
+                                                        "trailingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "fullStart": 0,
+                                                                "text": " "
+                                                            }
+                                                        ]
                                                     },
                                                     "_statement": {
                                                         "kind": "Block",
@@ -764,7 +1098,14 @@
                                                             "fullWidth": 2,
                                                             "text": "{",
                                                             "hasTrailingTrivia": true,
-                                                            "hasTrailingNewLineTrivia": true
+                                                            "hasTrailingNewLineTrivia": true,
+                                                            "trailingTrivia": [
+                                                                {
+                                                                    "kind": "NewLineTrivia",
+                                                                    "fullStart": 0,
+                                                                    "text": "\n"
+                                                                }
+                                                            ]
                                                         },
                                                         "_statements": [
                                                             {
@@ -777,7 +1118,14 @@
                                                                     "width": 3,
                                                                     "fullWidth": 7,
                                                                     "text": "for",
-                                                                    "hasLeadingTrivia": true
+                                                                    "hasLeadingTrivia": true,
+                                                                    "leadingTrivia": [
+                                                                        {
+                                                                            "kind": "WhitespaceTrivia",
+                                                                            "fullStart": 0,
+                                                                            "text": "\t\t\t\t"
+                                                                        }
+                                                                    ]
                                                                 },
                                                                 "_openParenToken": {
                                                                     "kind": "OpenParenToken",
@@ -785,7 +1133,14 @@
                                                                     "width": 1,
                                                                     "fullWidth": 2,
                                                                     "text": "(",
-                                                                    "hasTrailingTrivia": true
+                                                                    "hasTrailingTrivia": true,
+                                                                    "trailingTrivia": [
+                                                                        {
+                                                                            "kind": "WhitespaceTrivia",
+                                                                            "fullStart": 0,
+                                                                            "text": " "
+                                                                        }
+                                                                    ]
                                                                 },
                                                                 "_initializer": {
                                                                     "kind": "AssignmentExpression",
@@ -821,7 +1176,14 @@
                                                                     "width": 1,
                                                                     "fullWidth": 2,
                                                                     "text": ";",
-                                                                    "hasTrailingTrivia": true
+                                                                    "hasTrailingTrivia": true,
+                                                                    "trailingTrivia": [
+                                                                        {
+                                                                            "kind": "WhitespaceTrivia",
+                                                                            "fullStart": 0,
+                                                                            "text": " "
+                                                                        }
+                                                                    ]
                                                                 },
                                                                 "_condition": {
                                                                     "kind": "LessThanOrEqualExpression",
@@ -858,7 +1220,14 @@
                                                                     "width": 1,
                                                                     "fullWidth": 2,
                                                                     "text": ";",
-                                                                    "hasTrailingTrivia": true
+                                                                    "hasTrailingTrivia": true,
+                                                                    "trailingTrivia": [
+                                                                        {
+                                                                            "kind": "WhitespaceTrivia",
+                                                                            "fullStart": 0,
+                                                                            "text": " "
+                                                                        }
+                                                                    ]
                                                                 },
                                                                 "_incrementor": {
                                                                     "kind": "PostIncrementExpression",
@@ -885,7 +1254,14 @@
                                                                     "width": 1,
                                                                     "fullWidth": 2,
                                                                     "text": ")",
-                                                                    "hasTrailingTrivia": true
+                                                                    "hasTrailingTrivia": true,
+                                                                    "trailingTrivia": [
+                                                                        {
+                                                                            "kind": "WhitespaceTrivia",
+                                                                            "fullStart": 0,
+                                                                            "text": " "
+                                                                        }
+                                                                    ]
                                                                 },
                                                                 "_statement": {
                                                                     "kind": "Block",
@@ -896,7 +1272,14 @@
                                                                         "fullWidth": 2,
                                                                         "text": "{",
                                                                         "hasTrailingTrivia": true,
-                                                                        "hasTrailingNewLineTrivia": true
+                                                                        "hasTrailingNewLineTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "NewLineTrivia",
+                                                                                "fullStart": 0,
+                                                                                "text": "\n"
+                                                                            }
+                                                                        ]
                                                                     },
                                                                     "_statements": [
                                                                         {
@@ -909,7 +1292,14 @@
                                                                                 "width": 3,
                                                                                 "fullWidth": 8,
                                                                                 "text": "for",
-                                                                                "hasLeadingTrivia": true
+                                                                                "hasLeadingTrivia": true,
+                                                                                "leadingTrivia": [
+                                                                                    {
+                                                                                        "kind": "WhitespaceTrivia",
+                                                                                        "fullStart": 0,
+                                                                                        "text": "\t\t\t\t\t"
+                                                                                    }
+                                                                                ]
                                                                             },
                                                                             "_openParenToken": {
                                                                                 "kind": "OpenParenToken",
@@ -917,7 +1307,14 @@
                                                                                 "width": 1,
                                                                                 "fullWidth": 2,
                                                                                 "text": "(",
-                                                                                "hasTrailingTrivia": true
+                                                                                "hasTrailingTrivia": true,
+                                                                                "trailingTrivia": [
+                                                                                    {
+                                                                                        "kind": "WhitespaceTrivia",
+                                                                                        "fullStart": 0,
+                                                                                        "text": " "
+                                                                                    }
+                                                                                ]
                                                                             },
                                                                             "_initializer": {
                                                                                 "kind": "AssignmentExpression",
@@ -953,7 +1350,14 @@
                                                                                 "width": 1,
                                                                                 "fullWidth": 2,
                                                                                 "text": ";",
-                                                                                "hasTrailingTrivia": true
+                                                                                "hasTrailingTrivia": true,
+                                                                                "trailingTrivia": [
+                                                                                    {
+                                                                                        "kind": "WhitespaceTrivia",
+                                                                                        "fullStart": 0,
+                                                                                        "text": " "
+                                                                                    }
+                                                                                ]
                                                                             },
                                                                             "_condition": {
                                                                                 "kind": "LessThanOrEqualExpression",
@@ -990,7 +1394,14 @@
                                                                                 "width": 1,
                                                                                 "fullWidth": 2,
                                                                                 "text": ";",
-                                                                                "hasTrailingTrivia": true
+                                                                                "hasTrailingTrivia": true,
+                                                                                "trailingTrivia": [
+                                                                                    {
+                                                                                        "kind": "WhitespaceTrivia",
+                                                                                        "fullStart": 0,
+                                                                                        "text": " "
+                                                                                    }
+                                                                                ]
                                                                             },
                                                                             "_incrementor": {
                                                                                 "kind": "PostIncrementExpression",
@@ -1017,7 +1428,14 @@
                                                                                 "width": 1,
                                                                                 "fullWidth": 2,
                                                                                 "text": ")",
-                                                                                "hasTrailingTrivia": true
+                                                                                "hasTrailingTrivia": true,
+                                                                                "trailingTrivia": [
+                                                                                    {
+                                                                                        "kind": "WhitespaceTrivia",
+                                                                                        "fullStart": 0,
+                                                                                        "text": " "
+                                                                                    }
+                                                                                ]
                                                                             },
                                                                             "_statement": {
                                                                                 "kind": "Block",
@@ -1028,7 +1446,14 @@
                                                                                     "fullWidth": 2,
                                                                                     "text": "{",
                                                                                     "hasTrailingTrivia": true,
-                                                                                    "hasTrailingNewLineTrivia": true
+                                                                                    "hasTrailingNewLineTrivia": true,
+                                                                                    "trailingTrivia": [
+                                                                                        {
+                                                                                            "kind": "NewLineTrivia",
+                                                                                            "fullStart": 0,
+                                                                                            "text": "\n"
+                                                                                        }
+                                                                                    ]
                                                                                 },
                                                                                 "_statements": [
                                                                                     {
@@ -1041,7 +1466,14 @@
                                                                                             "width": 3,
                                                                                             "fullWidth": 9,
                                                                                             "text": "for",
-                                                                                            "hasLeadingTrivia": true
+                                                                                            "hasLeadingTrivia": true,
+                                                                                            "leadingTrivia": [
+                                                                                                {
+                                                                                                    "kind": "WhitespaceTrivia",
+                                                                                                    "fullStart": 0,
+                                                                                                    "text": "\t\t\t\t\t\t"
+                                                                                                }
+                                                                                            ]
                                                                                         },
                                                                                         "_openParenToken": {
                                                                                             "kind": "OpenParenToken",
@@ -1049,7 +1481,14 @@
                                                                                             "width": 1,
                                                                                             "fullWidth": 2,
                                                                                             "text": "(",
-                                                                                            "hasTrailingTrivia": true
+                                                                                            "hasTrailingTrivia": true,
+                                                                                            "trailingTrivia": [
+                                                                                                {
+                                                                                                    "kind": "WhitespaceTrivia",
+                                                                                                    "fullStart": 0,
+                                                                                                    "text": " "
+                                                                                                }
+                                                                                            ]
                                                                                         },
                                                                                         "_initializer": {
                                                                                             "kind": "AssignmentExpression",
@@ -1085,7 +1524,14 @@
                                                                                             "width": 1,
                                                                                             "fullWidth": 2,
                                                                                             "text": ";",
-                                                                                            "hasTrailingTrivia": true
+                                                                                            "hasTrailingTrivia": true,
+                                                                                            "trailingTrivia": [
+                                                                                                {
+                                                                                                    "kind": "WhitespaceTrivia",
+                                                                                                    "fullStart": 0,
+                                                                                                    "text": " "
+                                                                                                }
+                                                                                            ]
                                                                                         },
                                                                                         "_condition": {
                                                                                             "kind": "LessThanOrEqualExpression",
@@ -1122,7 +1568,14 @@
                                                                                             "width": 1,
                                                                                             "fullWidth": 2,
                                                                                             "text": ";",
-                                                                                            "hasTrailingTrivia": true
+                                                                                            "hasTrailingTrivia": true,
+                                                                                            "trailingTrivia": [
+                                                                                                {
+                                                                                                    "kind": "WhitespaceTrivia",
+                                                                                                    "fullStart": 0,
+                                                                                                    "text": " "
+                                                                                                }
+                                                                                            ]
                                                                                         },
                                                                                         "_incrementor": {
                                                                                             "kind": "PostIncrementExpression",
@@ -1149,7 +1602,14 @@
                                                                                             "width": 1,
                                                                                             "fullWidth": 2,
                                                                                             "text": ")",
-                                                                                            "hasTrailingTrivia": true
+                                                                                            "hasTrailingTrivia": true,
+                                                                                            "trailingTrivia": [
+                                                                                                {
+                                                                                                    "kind": "WhitespaceTrivia",
+                                                                                                    "fullStart": 0,
+                                                                                                    "text": " "
+                                                                                                }
+                                                                                            ]
                                                                                         },
                                                                                         "_statement": {
                                                                                             "kind": "Block",
@@ -1160,7 +1620,14 @@
                                                                                                 "fullWidth": 2,
                                                                                                 "text": "{",
                                                                                                 "hasTrailingTrivia": true,
-                                                                                                "hasTrailingNewLineTrivia": true
+                                                                                                "hasTrailingNewLineTrivia": true,
+                                                                                                "trailingTrivia": [
+                                                                                                    {
+                                                                                                        "kind": "NewLineTrivia",
+                                                                                                        "fullStart": 0,
+                                                                                                        "text": "\n"
+                                                                                                    }
+                                                                                                ]
                                                                                             },
                                                                                             "_statements": [
                                                                                                 {
@@ -1173,7 +1640,14 @@
                                                                                                         "width": 3,
                                                                                                         "fullWidth": 10,
                                                                                                         "text": "for",
-                                                                                                        "hasLeadingTrivia": true
+                                                                                                        "hasLeadingTrivia": true,
+                                                                                                        "leadingTrivia": [
+                                                                                                            {
+                                                                                                                "kind": "WhitespaceTrivia",
+                                                                                                                "fullStart": 0,
+                                                                                                                "text": "\t\t\t\t\t\t\t"
+                                                                                                            }
+                                                                                                        ]
                                                                                                     },
                                                                                                     "_openParenToken": {
                                                                                                         "kind": "OpenParenToken",
@@ -1181,7 +1655,14 @@
                                                                                                         "width": 1,
                                                                                                         "fullWidth": 2,
                                                                                                         "text": "(",
-                                                                                                        "hasTrailingTrivia": true
+                                                                                                        "hasTrailingTrivia": true,
+                                                                                                        "trailingTrivia": [
+                                                                                                            {
+                                                                                                                "kind": "WhitespaceTrivia",
+                                                                                                                "fullStart": 0,
+                                                                                                                "text": " "
+                                                                                                            }
+                                                                                                        ]
                                                                                                     },
                                                                                                     "_initializer": {
                                                                                                         "kind": "AssignmentExpression",
@@ -1217,7 +1698,14 @@
                                                                                                         "width": 1,
                                                                                                         "fullWidth": 2,
                                                                                                         "text": ";",
-                                                                                                        "hasTrailingTrivia": true
+                                                                                                        "hasTrailingTrivia": true,
+                                                                                                        "trailingTrivia": [
+                                                                                                            {
+                                                                                                                "kind": "WhitespaceTrivia",
+                                                                                                                "fullStart": 0,
+                                                                                                                "text": " "
+                                                                                                            }
+                                                                                                        ]
                                                                                                     },
                                                                                                     "_condition": {
                                                                                                         "kind": "LessThanOrEqualExpression",
@@ -1254,7 +1742,14 @@
                                                                                                         "width": 1,
                                                                                                         "fullWidth": 2,
                                                                                                         "text": ";",
-                                                                                                        "hasTrailingTrivia": true
+                                                                                                        "hasTrailingTrivia": true,
+                                                                                                        "trailingTrivia": [
+                                                                                                            {
+                                                                                                                "kind": "WhitespaceTrivia",
+                                                                                                                "fullStart": 0,
+                                                                                                                "text": " "
+                                                                                                            }
+                                                                                                        ]
                                                                                                     },
                                                                                                     "_incrementor": {
                                                                                                         "kind": "PostIncrementExpression",
@@ -1281,7 +1776,14 @@
                                                                                                         "width": 1,
                                                                                                         "fullWidth": 2,
                                                                                                         "text": ")",
-                                                                                                        "hasTrailingTrivia": true
+                                                                                                        "hasTrailingTrivia": true,
+                                                                                                        "trailingTrivia": [
+                                                                                                            {
+                                                                                                                "kind": "WhitespaceTrivia",
+                                                                                                                "fullStart": 0,
+                                                                                                                "text": " "
+                                                                                                            }
+                                                                                                        ]
                                                                                                     },
                                                                                                     "_statement": {
                                                                                                         "kind": "Block",
@@ -1292,7 +1794,14 @@
                                                                                                             "fullWidth": 2,
                                                                                                             "text": "{",
                                                                                                             "hasTrailingTrivia": true,
-                                                                                                            "hasTrailingNewLineTrivia": true
+                                                                                                            "hasTrailingNewLineTrivia": true,
+                                                                                                            "trailingTrivia": [
+                                                                                                                {
+                                                                                                                    "kind": "NewLineTrivia",
+                                                                                                                    "fullStart": 0,
+                                                                                                                    "text": "\n"
+                                                                                                                }
+                                                                                                            ]
                                                                                                         },
                                                                                                         "_statements": [
                                                                                                             {
@@ -1305,7 +1814,14 @@
                                                                                                                     "width": 3,
                                                                                                                     "fullWidth": 11,
                                                                                                                     "text": "for",
-                                                                                                                    "hasLeadingTrivia": true
+                                                                                                                    "hasLeadingTrivia": true,
+                                                                                                                    "leadingTrivia": [
+                                                                                                                        {
+                                                                                                                            "kind": "WhitespaceTrivia",
+                                                                                                                            "fullStart": 0,
+                                                                                                                            "text": "\t\t\t\t\t\t\t\t"
+                                                                                                                        }
+                                                                                                                    ]
                                                                                                                 },
                                                                                                                 "_openParenToken": {
                                                                                                                     "kind": "OpenParenToken",
@@ -1313,7 +1829,14 @@
                                                                                                                     "width": 1,
                                                                                                                     "fullWidth": 2,
                                                                                                                     "text": "(",
-                                                                                                                    "hasTrailingTrivia": true
+                                                                                                                    "hasTrailingTrivia": true,
+                                                                                                                    "trailingTrivia": [
+                                                                                                                        {
+                                                                                                                            "kind": "WhitespaceTrivia",
+                                                                                                                            "fullStart": 0,
+                                                                                                                            "text": " "
+                                                                                                                        }
+                                                                                                                    ]
                                                                                                                 },
                                                                                                                 "_initializer": {
                                                                                                                     "kind": "AssignmentExpression",
@@ -1349,7 +1872,14 @@
                                                                                                                     "width": 1,
                                                                                                                     "fullWidth": 2,
                                                                                                                     "text": ";",
-                                                                                                                    "hasTrailingTrivia": true
+                                                                                                                    "hasTrailingTrivia": true,
+                                                                                                                    "trailingTrivia": [
+                                                                                                                        {
+                                                                                                                            "kind": "WhitespaceTrivia",
+                                                                                                                            "fullStart": 0,
+                                                                                                                            "text": " "
+                                                                                                                        }
+                                                                                                                    ]
                                                                                                                 },
                                                                                                                 "_condition": {
                                                                                                                     "kind": "LessThanOrEqualExpression",
@@ -1386,7 +1916,14 @@
                                                                                                                     "width": 1,
                                                                                                                     "fullWidth": 2,
                                                                                                                     "text": ";",
-                                                                                                                    "hasTrailingTrivia": true
+                                                                                                                    "hasTrailingTrivia": true,
+                                                                                                                    "trailingTrivia": [
+                                                                                                                        {
+                                                                                                                            "kind": "WhitespaceTrivia",
+                                                                                                                            "fullStart": 0,
+                                                                                                                            "text": " "
+                                                                                                                        }
+                                                                                                                    ]
                                                                                                                 },
                                                                                                                 "_incrementor": {
                                                                                                                     "kind": "PostIncrementExpression",
@@ -1413,7 +1950,14 @@
                                                                                                                     "width": 1,
                                                                                                                     "fullWidth": 2,
                                                                                                                     "text": ")",
-                                                                                                                    "hasTrailingTrivia": true
+                                                                                                                    "hasTrailingTrivia": true,
+                                                                                                                    "trailingTrivia": [
+                                                                                                                        {
+                                                                                                                            "kind": "WhitespaceTrivia",
+                                                                                                                            "fullStart": 0,
+                                                                                                                            "text": " "
+                                                                                                                        }
+                                                                                                                    ]
                                                                                                                 },
                                                                                                                 "_statement": {
                                                                                                                     "kind": "Block",
@@ -1424,7 +1968,14 @@
                                                                                                                         "fullWidth": 2,
                                                                                                                         "text": "{",
                                                                                                                         "hasTrailingTrivia": true,
-                                                                                                                        "hasTrailingNewLineTrivia": true
+                                                                                                                        "hasTrailingNewLineTrivia": true,
+                                                                                                                        "trailingTrivia": [
+                                                                                                                            {
+                                                                                                                                "kind": "NewLineTrivia",
+                                                                                                                                "fullStart": 0,
+                                                                                                                                "text": "\n"
+                                                                                                                            }
+                                                                                                                        ]
                                                                                                                     },
                                                                                                                     "_statements": [
                                                                                                                         {
@@ -1440,7 +1991,21 @@
                                                                                                                                     "fullWidth": 13,
                                                                                                                                     "text": "var",
                                                                                                                                     "hasLeadingTrivia": true,
-                                                                                                                                    "hasTrailingTrivia": true
+                                                                                                                                    "hasTrailingTrivia": true,
+                                                                                                                                    "leadingTrivia": [
+                                                                                                                                        {
+                                                                                                                                            "kind": "WhitespaceTrivia",
+                                                                                                                                            "fullStart": 0,
+                                                                                                                                            "text": "\t\t\t\t\t\t\t\t\t"
+                                                                                                                                        }
+                                                                                                                                    ],
+                                                                                                                                    "trailingTrivia": [
+                                                                                                                                        {
+                                                                                                                                            "kind": "WhitespaceTrivia",
+                                                                                                                                            "fullStart": 0,
+                                                                                                                                            "text": " "
+                                                                                                                                        }
+                                                                                                                                    ]
                                                                                                                                 },
                                                                                                                                 "_variableDeclarators": [
                                                                                                                                     {
@@ -1462,7 +2027,14 @@
                                                                                                                                 "fullWidth": 2,
                                                                                                                                 "text": ";",
                                                                                                                                 "hasTrailingTrivia": true,
-                                                                                                                                "hasTrailingNewLineTrivia": true
+                                                                                                                                "hasTrailingNewLineTrivia": true,
+                                                                                                                                "trailingTrivia": [
+                                                                                                                                    {
+                                                                                                                                        "kind": "NewLineTrivia",
+                                                                                                                                        "fullStart": 0,
+                                                                                                                                        "text": "\n"
+                                                                                                                                    }
+                                                                                                                                ]
                                                                                                                             }
                                                                                                                         },
                                                                                                                         {
@@ -1479,7 +2051,14 @@
                                                                                                                                         "fullWidth": 14,
                                                                                                                                         "text": "__str",
                                                                                                                                         "valueText": "__str",
-                                                                                                                                        "hasLeadingTrivia": true
+                                                                                                                                        "hasLeadingTrivia": true,
+                                                                                                                                        "leadingTrivia": [
+                                                                                                                                            {
+                                                                                                                                                "kind": "WhitespaceTrivia",
+                                                                                                                                                "fullStart": 0,
+                                                                                                                                                "text": "\t\t\t\t\t\t\t\t\t"
+                                                                                                                                            }
+                                                                                                                                        ]
                                                                                                                                     }
                                                                                                                                 },
                                                                                                                                 "_operatorToken": {
@@ -1694,7 +2273,14 @@
                                                                                                                                 "fullWidth": 2,
                                                                                                                                 "text": ";",
                                                                                                                                 "hasTrailingTrivia": true,
-                                                                                                                                "hasTrailingNewLineTrivia": true
+                                                                                                                                "hasTrailingNewLineTrivia": true,
+                                                                                                                                "trailingTrivia": [
+                                                                                                                                    {
+                                                                                                                                        "kind": "NewLineTrivia",
+                                                                                                                                        "fullStart": 0,
+                                                                                                                                        "text": "\n"
+                                                                                                                                    }
+                                                                                                                                ]
                                                                                                                             }
                                                                                                                         }
                                                                                                                     ],
@@ -1707,7 +2293,21 @@
                                                                                                                         "text": "}",
                                                                                                                         "hasLeadingTrivia": true,
                                                                                                                         "hasTrailingTrivia": true,
-                                                                                                                        "hasTrailingNewLineTrivia": true
+                                                                                                                        "hasTrailingNewLineTrivia": true,
+                                                                                                                        "leadingTrivia": [
+                                                                                                                            {
+                                                                                                                                "kind": "WhitespaceTrivia",
+                                                                                                                                "fullStart": 0,
+                                                                                                                                "text": "\t\t\t\t\t\t\t\t"
+                                                                                                                            }
+                                                                                                                        ],
+                                                                                                                        "trailingTrivia": [
+                                                                                                                            {
+                                                                                                                                "kind": "NewLineTrivia",
+                                                                                                                                "fullStart": 0,
+                                                                                                                                "text": "\n"
+                                                                                                                            }
+                                                                                                                        ]
                                                                                                                     }
                                                                                                                 }
                                                                                                             }
@@ -1721,7 +2321,21 @@
                                                                                                             "text": "}",
                                                                                                             "hasLeadingTrivia": true,
                                                                                                             "hasTrailingTrivia": true,
-                                                                                                            "hasTrailingNewLineTrivia": true
+                                                                                                            "hasTrailingNewLineTrivia": true,
+                                                                                                            "leadingTrivia": [
+                                                                                                                {
+                                                                                                                    "kind": "WhitespaceTrivia",
+                                                                                                                    "fullStart": 0,
+                                                                                                                    "text": "\t\t\t\t\t\t\t"
+                                                                                                                }
+                                                                                                            ],
+                                                                                                            "trailingTrivia": [
+                                                                                                                {
+                                                                                                                    "kind": "NewLineTrivia",
+                                                                                                                    "fullStart": 0,
+                                                                                                                    "text": "\n"
+                                                                                                                }
+                                                                                                            ]
                                                                                                         }
                                                                                                     }
                                                                                                 }
@@ -1735,7 +2349,21 @@
                                                                                                 "text": "}",
                                                                                                 "hasLeadingTrivia": true,
                                                                                                 "hasTrailingTrivia": true,
-                                                                                                "hasTrailingNewLineTrivia": true
+                                                                                                "hasTrailingNewLineTrivia": true,
+                                                                                                "leadingTrivia": [
+                                                                                                    {
+                                                                                                        "kind": "WhitespaceTrivia",
+                                                                                                        "fullStart": 0,
+                                                                                                        "text": "\t\t\t\t\t\t"
+                                                                                                    }
+                                                                                                ],
+                                                                                                "trailingTrivia": [
+                                                                                                    {
+                                                                                                        "kind": "NewLineTrivia",
+                                                                                                        "fullStart": 0,
+                                                                                                        "text": "\n"
+                                                                                                    }
+                                                                                                ]
                                                                                             }
                                                                                         }
                                                                                     }
@@ -1749,7 +2377,21 @@
                                                                                     "text": "}",
                                                                                     "hasLeadingTrivia": true,
                                                                                     "hasTrailingTrivia": true,
-                                                                                    "hasTrailingNewLineTrivia": true
+                                                                                    "hasTrailingNewLineTrivia": true,
+                                                                                    "leadingTrivia": [
+                                                                                        {
+                                                                                            "kind": "WhitespaceTrivia",
+                                                                                            "fullStart": 0,
+                                                                                            "text": "\t\t\t\t\t"
+                                                                                        }
+                                                                                    ],
+                                                                                    "trailingTrivia": [
+                                                                                        {
+                                                                                            "kind": "NewLineTrivia",
+                                                                                            "fullStart": 0,
+                                                                                            "text": "\n"
+                                                                                        }
+                                                                                    ]
                                                                                 }
                                                                             }
                                                                         }
@@ -1763,7 +2405,21 @@
                                                                         "text": "}",
                                                                         "hasLeadingTrivia": true,
                                                                         "hasTrailingTrivia": true,
-                                                                        "hasTrailingNewLineTrivia": true
+                                                                        "hasTrailingNewLineTrivia": true,
+                                                                        "leadingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "fullStart": 0,
+                                                                                "text": "\t\t\t\t"
+                                                                            }
+                                                                        ],
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "NewLineTrivia",
+                                                                                "fullStart": 0,
+                                                                                "text": "\n"
+                                                                            }
+                                                                        ]
                                                                     }
                                                                 }
                                                             }
@@ -1777,7 +2433,21 @@
                                                             "text": "}",
                                                             "hasLeadingTrivia": true,
                                                             "hasTrailingTrivia": true,
-                                                            "hasTrailingNewLineTrivia": true
+                                                            "hasTrailingNewLineTrivia": true,
+                                                            "leadingTrivia": [
+                                                                {
+                                                                    "kind": "WhitespaceTrivia",
+                                                                    "fullStart": 0,
+                                                                    "text": "\t\t\t"
+                                                                }
+                                                            ],
+                                                            "trailingTrivia": [
+                                                                {
+                                                                    "kind": "NewLineTrivia",
+                                                                    "fullStart": 0,
+                                                                    "text": "\n"
+                                                                }
+                                                            ]
                                                         }
                                                     }
                                                 }
@@ -1791,7 +2461,21 @@
                                                 "text": "}",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
-                                                "hasTrailingNewLineTrivia": true
+                                                "hasTrailingNewLineTrivia": true,
+                                                "leadingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "fullStart": 0,
+                                                        "text": "\t\t"
+                                                    }
+                                                ],
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "NewLineTrivia",
+                                                        "fullStart": 0,
+                                                        "text": "\n"
+                                                    }
+                                                ]
                                             }
                                         }
                                     }
@@ -1805,7 +2489,21 @@
                                     "text": "}",
                                     "hasLeadingTrivia": true,
                                     "hasTrailingTrivia": true,
-                                    "hasTrailingNewLineTrivia": true
+                                    "hasTrailingNewLineTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "fullStart": 0,
+                                            "text": "\t"
+                                        }
+                                    ],
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "fullStart": 0,
+                                            "text": "\n"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -1817,7 +2515,14 @@
                         "fullWidth": 2,
                         "text": "}",
                         "hasTrailingTrivia": true,
-                        "hasTrailingNewLineTrivia": true
+                        "hasTrailingNewLineTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "fullStart": 0,
+                                "text": "\n"
+                            }
+                        ]
                     }
                 }
             },
@@ -1834,7 +2539,41 @@
                     "hasLeadingTrivia": true,
                     "hasLeadingCommentTrivia": true,
                     "hasLeadingNewLineTrivia": true,
-                    "hasTrailingTrivia": true
+                    "hasTrailingTrivia": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 0,
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "fullStart": 1,
+                            "text": "//////////////////////////////////////////////////////////////////////////////"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 79,
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "fullStart": 80,
+                            "text": "//CHECK#2"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 89,
+                            "text": "\n"
+                        }
+                    ],
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 0,
+                            "text": " "
+                        }
+                    ]
                 },
                 "_openParenToken": {
                     "kind": "OpenParenToken",
@@ -1860,7 +2599,14 @@
                         "width": 3,
                         "fullWidth": 4,
                         "text": "!==",
-                        "hasTrailingTrivia": true
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "fullStart": 0,
+                                "text": " "
+                            }
+                        ]
                     },
                     "_right": {
                         "kind": "StringLiteralExpression",
@@ -1878,7 +2624,14 @@
                     "width": 1,
                     "fullWidth": 2,
                     "text": ")",
-                    "hasTrailingTrivia": true
+                    "hasTrailingTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 0,
+                            "text": " "
+                        }
+                    ]
                 },
                 "_statement": {
                     "kind": "Block",
@@ -1889,7 +2642,14 @@
                         "fullWidth": 2,
                         "text": "{",
                         "hasTrailingTrivia": true,
-                        "hasTrailingNewLineTrivia": true
+                        "hasTrailingNewLineTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "fullStart": 0,
+                                "text": "\n"
+                            }
+                        ]
                     },
                     "_statements": [
                         {
@@ -1906,7 +2666,14 @@
                                         "fullWidth": 7,
                                         "text": "$ERROR",
                                         "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true
+                                        "hasLeadingTrivia": true,
+                                        "leadingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "fullStart": 0,
+                                                "text": "\t"
+                                            }
+                                        ]
                                     }
                                 },
                                 "_argumentList": {
@@ -1935,7 +2702,14 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "+",
-                                                "hasTrailingTrivia": true
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "fullStart": 0,
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_right": {
                                                 "kind": "IdentifierName",
@@ -1946,7 +2720,14 @@
                                                     "fullWidth": 7,
                                                     "text": "__str",
                                                     "valueText": "__str",
-                                                    "hasTrailingTrivia": true
+                                                    "hasTrailingTrivia": true,
+                                                    "trailingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "fullStart": 0,
+                                                            "text": "  "
+                                                        }
+                                                    ]
                                                 }
                                             }
                                         }
@@ -1966,7 +2747,14 @@
                                 "fullWidth": 2,
                                 "text": ";",
                                 "hasTrailingTrivia": true,
-                                "hasTrailingNewLineTrivia": true
+                                "hasTrailingNewLineTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "fullStart": 0,
+                                        "text": "\n"
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -1977,7 +2765,14 @@
                         "fullWidth": 2,
                         "text": "}",
                         "hasTrailingTrivia": true,
-                        "hasTrailingNewLineTrivia": true
+                        "hasTrailingNewLineTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "fullStart": 0,
+                                "text": "\n"
+                            }
+                        ]
                     }
                 }
             }
@@ -1991,7 +2786,34 @@
             "text": "",
             "hasLeadingTrivia": true,
             "hasLeadingCommentTrivia": true,
-            "hasLeadingNewLineTrivia": true
+            "hasLeadingNewLineTrivia": true,
+            "leadingTrivia": [
+                {
+                    "kind": "SingleLineCommentTrivia",
+                    "fullStart": 0,
+                    "text": "//"
+                },
+                {
+                    "kind": "NewLineTrivia",
+                    "fullStart": 2,
+                    "text": "\n"
+                },
+                {
+                    "kind": "SingleLineCommentTrivia",
+                    "fullStart": 3,
+                    "text": "//////////////////////////////////////////////////////////////////////////////"
+                },
+                {
+                    "kind": "NewLineTrivia",
+                    "fullStart": 81,
+                    "text": "\n"
+                },
+                {
+                    "kind": "NewLineTrivia",
+                    "fullStart": 82,
+                    "text": "\n"
+                }
+            ]
         }
     }
 }

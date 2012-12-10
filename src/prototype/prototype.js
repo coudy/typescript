@@ -43522,11 +43522,11 @@ var Program = (function () {
         });
         environment.standardOut.WriteLine("Testing scanner.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
-            return _this.runScanner(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
+            return _this.runScanner(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, false);
         });
         environment.standardOut.WriteLine("Testing parser.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
+            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, false);
         });
         environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests(environment, "C:\\temp\\monoco-files", function (filePath) {
@@ -43534,7 +43534,7 @@ var Program = (function () {
         });
         environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false, true);
+            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, true, true, true);
         });
     };
     Program.prototype.handleException = function (environment, filePath, e) {

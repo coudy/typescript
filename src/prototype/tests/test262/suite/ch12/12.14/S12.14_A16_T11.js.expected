@@ -1,4 +1,4 @@
-﻿{
+{
     "_skippedTokens": [
         {
             "kind": "IdentifierNameToken",
@@ -8,7 +8,14 @@
             "width": 5,
             "fullWidth": 7,
             "text": "catch",
-            "hasLeadingTrivia": true
+            "hasLeadingTrivia": true,
+            "leadingTrivia": [
+                {
+                    "kind": "WhitespaceTrivia",
+                    "fullStart": 0,
+                    "text": "  "
+                }
+            ]
         },
         {
             "kind": "IdentifierNameToken",
@@ -18,7 +25,14 @@
             "width": 7,
             "fullWidth": 9,
             "text": "finally",
-            "hasLeadingTrivia": true
+            "hasLeadingTrivia": true,
+            "leadingTrivia": [
+                {
+                    "kind": "WhitespaceTrivia",
+                    "fullStart": 0,
+                    "text": "  "
+                }
+            ]
         }
     ],
     "_diagnostics": [
@@ -62,7 +76,59 @@
                     "text": "try",
                     "hasLeadingTrivia": true,
                     "hasLeadingCommentTrivia": true,
-                    "hasLeadingNewLineTrivia": true
+                    "hasLeadingNewLineTrivia": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "fullStart": 0,
+                            "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 60,
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "fullStart": 61,
+                            "text": "// This code is governed by the BSD license found in the LICENSE file."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 131,
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 132,
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "MultiLineCommentTrivia",
+                            "fullStart": 133,
+                            "text": "/**\n * TryStatement: \"try Block Catch\" or \"try Block Finally\" or \"try Block Catch Finally\"\n *\n * @path ch12/12.14/S12.14_A16_T11.js\n * @description Catch and Finally are placed into the Block of \"try\" (whitle expected outside)\n * @negative\n */"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 376,
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 377,
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "fullStart": 378,
+                            "text": "// CHECK#1"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 388,
+                            "text": "\n"
+                        }
+                    ]
                 },
                 "_block": {
                     "kind": "Block",
@@ -73,7 +139,14 @@
                         "fullWidth": 2,
                         "text": "{",
                         "hasTrailingTrivia": true,
-                        "hasTrailingNewLineTrivia": true
+                        "hasTrailingNewLineTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "fullStart": 0,
+                                "text": "\n"
+                            }
+                        ]
                     },
                     "_statements": [
                         {
@@ -87,7 +160,21 @@
                                 "text": "{",
                                 "hasLeadingTrivia": true,
                                 "hasTrailingTrivia": true,
-                                "hasTrailingNewLineTrivia": true
+                                "hasTrailingNewLineTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "fullStart": 0,
+                                        "text": "  "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "fullStart": 0,
+                                        "text": "\n"
+                                    }
+                                ]
                             },
                             "_statements": [],
                             "_closeBraceToken": {
@@ -99,7 +186,21 @@
                                 "text": "}",
                                 "hasLeadingTrivia": true,
                                 "hasTrailingTrivia": true,
-                                "hasTrailingNewLineTrivia": true
+                                "hasTrailingNewLineTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "fullStart": 0,
+                                        "text": "  "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "fullStart": 0,
+                                        "text": "\n"
+                                    }
+                                ]
                             }
                         },
                         {
@@ -153,7 +254,14 @@
                                 "fullWidth": 2,
                                 "text": "}",
                                 "hasTrailingTrivia": true,
-                                "hasTrailingNewLineTrivia": true
+                                "hasTrailingNewLineTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "fullStart": 0,
+                                        "text": "\n"
+                                    }
+                                ]
                             }
                         },
                         {
@@ -172,7 +280,14 @@
                                 "fullWidth": 2,
                                 "text": "}",
                                 "hasTrailingTrivia": true,
-                                "hasTrailingNewLineTrivia": true
+                                "hasTrailingNewLineTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "fullStart": 0,
+                                        "text": "\n"
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -183,7 +298,14 @@
                         "fullWidth": 2,
                         "text": "}",
                         "hasTrailingTrivia": true,
-                        "hasTrailingNewLineTrivia": true
+                        "hasTrailingNewLineTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "fullStart": 0,
+                                "text": "\n"
+                            }
+                        ]
                     }
                 }
             }
@@ -196,7 +318,19 @@
             "fullWidth": 2,
             "text": "",
             "hasLeadingTrivia": true,
-            "hasLeadingNewLineTrivia": true
+            "hasLeadingNewLineTrivia": true,
+            "leadingTrivia": [
+                {
+                    "kind": "NewLineTrivia",
+                    "fullStart": 0,
+                    "text": "\n"
+                },
+                {
+                    "kind": "NewLineTrivia",
+                    "fullStart": 1,
+                    "text": "\n"
+                }
+            ]
         }
     }
 }

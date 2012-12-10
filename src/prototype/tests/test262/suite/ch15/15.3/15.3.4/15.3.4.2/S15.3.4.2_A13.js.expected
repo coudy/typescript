@@ -1,4 +1,4 @@
-﻿{
+{
     "_sourceUnit": {
         "kind": "SourceUnit",
         "_moduleElements": [
@@ -24,7 +24,49 @@
                                         "valueText": "Function",
                                         "hasLeadingTrivia": true,
                                         "hasLeadingCommentTrivia": true,
-                                        "hasLeadingNewLineTrivia": true
+                                        "hasLeadingNewLineTrivia": true,
+                                        "leadingTrivia": [
+                                            {
+                                                "kind": "SingleLineCommentTrivia",
+                                                "fullStart": 0,
+                                                "text": "// Copyright 2011 the Sputnik authors.  All rights reserved."
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "fullStart": 60,
+                                                "text": "\n"
+                                            },
+                                            {
+                                                "kind": "SingleLineCommentTrivia",
+                                                "fullStart": 61,
+                                                "text": "// This code is governed by the BSD license found in the LICENSE file."
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "fullStart": 131,
+                                                "text": "\n"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "fullStart": 132,
+                                                "text": "\n"
+                                            },
+                                            {
+                                                "kind": "MultiLineCommentTrivia",
+                                                "fullStart": 133,
+                                                "text": "/**\n * @path ch15/15.3/15.3.4/15.3.4.2/S15.3.4.2_A13.js\n * @description The toString function is not generic; it throws a TypeError exception if its this value is not a Function object.\n * @negative TypeError\n */"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "fullStart": 345,
+                                                "text": "\n"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "fullStart": 346,
+                                                "text": "\n"
+                                            }
+                                        ]
                                     }
                                 },
                                 "_dotToken": {
@@ -113,7 +155,14 @@
                     "fullWidth": 2,
                     "text": ";",
                     "hasTrailingTrivia": true,
-                    "hasTrailingNewLineTrivia": true
+                    "hasTrailingNewLineTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 0,
+                            "text": "\n"
+                        }
+                    ]
                 }
             }
         ],
@@ -125,7 +174,14 @@
             "fullWidth": 1,
             "text": "",
             "hasLeadingTrivia": true,
-            "hasLeadingNewLineTrivia": true
+            "hasLeadingNewLineTrivia": true,
+            "leadingTrivia": [
+                {
+                    "kind": "NewLineTrivia",
+                    "fullStart": 0,
+                    "text": "\n"
+                }
+            ]
         }
     }
 }

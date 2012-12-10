@@ -1,4 +1,4 @@
-﻿{
+{
     "_sourceUnit": {
         "kind": "SourceUnit",
         "_moduleElements": [
@@ -22,7 +22,69 @@
                                     "valueText": "Error",
                                     "hasLeadingTrivia": true,
                                     "hasLeadingCommentTrivia": true,
-                                    "hasLeadingNewLineTrivia": true
+                                    "hasLeadingNewLineTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "SingleLineCommentTrivia",
+                                            "fullStart": 0,
+                                            "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                                        },
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "fullStart": 60,
+                                            "text": "\n"
+                                        },
+                                        {
+                                            "kind": "SingleLineCommentTrivia",
+                                            "fullStart": 61,
+                                            "text": "// This code is governed by the BSD license found in the LICENSE file."
+                                        },
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "fullStart": 131,
+                                            "text": "\n"
+                                        },
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "fullStart": 132,
+                                            "text": "\n"
+                                        },
+                                        {
+                                            "kind": "MultiLineCommentTrivia",
+                                            "fullStart": 133,
+                                            "text": "/**\n * The function call Error(...) is equivalent to the object creation expression new\n * Error(...) with the same arguments\n *\n * @path ch15/15.11/15.11.1/S15.11.1_A1_T1.js\n * @description Checking constructor of the newly constructed Error object\n */"
+                                        },
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "fullStart": 386,
+                                            "text": "\n"
+                                        },
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "fullStart": 387,
+                                            "text": "\n"
+                                        },
+                                        {
+                                            "kind": "SingleLineCommentTrivia",
+                                            "fullStart": 388,
+                                            "text": "//////////////////////////////////////////////////////////////////////////////"
+                                        },
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "fullStart": 466,
+                                            "text": "\n"
+                                        },
+                                        {
+                                            "kind": "SingleLineCommentTrivia",
+                                            "fullStart": 467,
+                                            "text": "//CHECK#1"
+                                        },
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "fullStart": 476,
+                                            "text": "\n"
+                                        }
+                                    ]
                                 }
                             },
                             "_dotToken": {
@@ -121,7 +183,14 @@
                     "fullWidth": 2,
                     "text": ";",
                     "hasTrailingTrivia": true,
-                    "hasTrailingNewLineTrivia": true
+                    "hasTrailingNewLineTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 0,
+                            "text": "\n"
+                        }
+                    ]
                 }
             },
             {
@@ -135,7 +204,14 @@
                         "width": 3,
                         "fullWidth": 4,
                         "text": "var",
-                        "hasTrailingTrivia": true
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "fullStart": 0,
+                                "text": " "
+                            }
+                        ]
                     },
                     "_variableDeclarators": [
                         {
@@ -195,7 +271,14 @@
                     "fullWidth": 2,
                     "text": ";",
                     "hasTrailingTrivia": true,
-                    "hasTrailingNewLineTrivia": true
+                    "hasTrailingNewLineTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 0,
+                            "text": "\n"
+                        }
+                    ]
                 }
             },
             {
@@ -276,7 +359,14 @@
                         "fullWidth": 2,
                         "text": "{",
                         "hasTrailingTrivia": true,
-                        "hasTrailingNewLineTrivia": true
+                        "hasTrailingNewLineTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "fullStart": 0,
+                                "text": "\n"
+                            }
+                        ]
                     },
                     "_statements": [
                         {
@@ -293,7 +383,14 @@
                                         "fullWidth": 8,
                                         "text": "$ERROR",
                                         "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true
+                                        "hasLeadingTrivia": true,
+                                        "leadingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "fullStart": 0,
+                                                "text": "  "
+                                            }
+                                        ]
                                     }
                                 },
                                 "_argumentList": {
@@ -368,7 +465,14 @@
                                 "fullWidth": 2,
                                 "text": ";",
                                 "hasTrailingTrivia": true,
-                                "hasTrailingNewLineTrivia": true
+                                "hasTrailingNewLineTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "fullStart": 0,
+                                        "text": "\n"
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -379,7 +483,14 @@
                         "fullWidth": 2,
                         "text": "}",
                         "hasTrailingTrivia": true,
-                        "hasTrailingNewLineTrivia": true
+                        "hasTrailingNewLineTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "fullStart": 0,
+                                "text": "\n"
+                            }
+                        ]
                     }
                 }
             }
@@ -393,7 +504,34 @@
             "text": "",
             "hasLeadingTrivia": true,
             "hasLeadingCommentTrivia": true,
-            "hasLeadingNewLineTrivia": true
+            "hasLeadingNewLineTrivia": true,
+            "leadingTrivia": [
+                {
+                    "kind": "SingleLineCommentTrivia",
+                    "fullStart": 0,
+                    "text": "//"
+                },
+                {
+                    "kind": "NewLineTrivia",
+                    "fullStart": 2,
+                    "text": "\n"
+                },
+                {
+                    "kind": "SingleLineCommentTrivia",
+                    "fullStart": 3,
+                    "text": "//////////////////////////////////////////////////////////////////////////////"
+                },
+                {
+                    "kind": "NewLineTrivia",
+                    "fullStart": 81,
+                    "text": "\n"
+                },
+                {
+                    "kind": "NewLineTrivia",
+                    "fullStart": 82,
+                    "text": "\n"
+                }
+            ]
         }
     }
 }

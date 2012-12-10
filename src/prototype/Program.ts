@@ -23,11 +23,11 @@ class Program {
 
         environment.standardOut.WriteLine("Testing scanner.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
-            filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ true));
+            filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ false));
             
         environment.standardOut.WriteLine("Testing parser.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ true));
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ false));
             
         environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests(environment, "C:\\temp\\monoco-files",

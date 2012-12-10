@@ -1,4 +1,4 @@
-﻿{
+{
     "_sourceUnit": {
         "kind": "SourceUnit",
         "_moduleElements": [
@@ -24,7 +24,49 @@
                                         "valueText": "Object",
                                         "hasLeadingTrivia": true,
                                         "hasLeadingCommentTrivia": true,
-                                        "hasLeadingNewLineTrivia": true
+                                        "hasLeadingNewLineTrivia": true,
+                                        "leadingTrivia": [
+                                            {
+                                                "kind": "SingleLineCommentTrivia",
+                                                "fullStart": 0,
+                                                "text": "// Copyright 2011 the Sputnik authors.  All rights reserved."
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "fullStart": 60,
+                                                "text": "\n"
+                                            },
+                                            {
+                                                "kind": "SingleLineCommentTrivia",
+                                                "fullStart": 61,
+                                                "text": "// This code is governed by the BSD license found in the LICENSE file."
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "fullStart": 131,
+                                                "text": "\n"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "fullStart": 132,
+                                                "text": "\n"
+                                            },
+                                            {
+                                                "kind": "MultiLineCommentTrivia",
+                                                "fullStart": 133,
+                                                "text": "/**\n * Let O be the result of calling ToObject passing the this value as the argument.\n *\n * @path ch15/15.2/15.2.4/15.2.4.4/S15.2.4.4_A13.js\n * @description Checking Object.prototype.valueOf invoked by the 'call' property.\n * @negative\n */"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "fullStart": 373,
+                                                "text": "\n"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "fullStart": 374,
+                                                "text": "\n"
+                                            }
+                                        ]
                                     }
                                 },
                                 "_dotToken": {
@@ -113,7 +155,14 @@
                     "fullWidth": 2,
                     "text": ";",
                     "hasTrailingTrivia": true,
-                    "hasTrailingNewLineTrivia": true
+                    "hasTrailingNewLineTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 0,
+                            "text": "\n"
+                        }
+                    ]
                 }
             }
         ],
@@ -125,7 +174,14 @@
             "fullWidth": 1,
             "text": "",
             "hasLeadingTrivia": true,
-            "hasLeadingNewLineTrivia": true
+            "hasLeadingNewLineTrivia": true,
+            "leadingTrivia": [
+                {
+                    "kind": "NewLineTrivia",
+                    "fullStart": 0,
+                    "text": "\n"
+                }
+            ]
         }
     }
 }

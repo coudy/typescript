@@ -1,4 +1,4 @@
-﻿{
+{
     "_skippedTokens": [
         {
             "kind": "ErrorToken",
@@ -66,7 +66,59 @@
                         "text": "/",
                         "hasLeadingTrivia": true,
                         "hasLeadingCommentTrivia": true,
-                        "hasLeadingNewLineTrivia": true
+                        "hasLeadingNewLineTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "fullStart": 0,
+                                "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "fullStart": 60,
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "fullStart": 61,
+                                "text": "// This code is governed by the BSD license found in the LICENSE file."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "fullStart": 131,
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "fullStart": 132,
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "MultiLineCommentTrivia",
+                                "fullStart": 133,
+                                "text": "/**\n * RegularExpressionChar :: \\ or / is incorrect\n *\n * @path ch07/7.8/7.8.5/S7.8.5_A2.2_T1.js\n * @description \\\n * @negative\n */"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "fullStart": 264,
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "fullStart": 265,
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "fullStart": 266,
+                                "text": "//CHECK#1"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "fullStart": 275,
+                                "text": "\n"
+                            }
+                        ]
                     },
                     "_right": {
                         "kind": "IdentifierName",
@@ -107,7 +159,14 @@
                         "fullWidth": 2,
                         "text": "/",
                         "hasTrailingTrivia": true,
-                        "hasTrailingNewLineTrivia": true
+                        "hasTrailingNewLineTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "fullStart": 0,
+                                "text": "\n"
+                            }
+                        ]
                     },
                     "_right": {
                         "kind": "IdentifierName",
@@ -137,7 +196,14 @@
             "fullWidth": 1,
             "text": "",
             "hasLeadingTrivia": true,
-            "hasLeadingNewLineTrivia": true
+            "hasLeadingNewLineTrivia": true,
+            "leadingTrivia": [
+                {
+                    "kind": "NewLineTrivia",
+                    "fullStart": 0,
+                    "text": "\n"
+                }
+            ]
         }
     }
 }
