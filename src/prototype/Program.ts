@@ -35,7 +35,7 @@ class Program {
             
         environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*generateBaselines:*/ false, /*printDots:*/ true));
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*generateBaselines:*/ false));
     }
 
     private handleException(environment: IEnvironment, filePath: string, e: Error): void {
@@ -51,15 +51,10 @@ class Program {
     private runTests(
         environment: IEnvironment,
         path: string,
-        action: (filePath: string) => void,
-        printDots: bool = false) {
+        action: (filePath: string) => void) {
 
         var testFiles = environment.listFiles(path, null, { recursive: true });
         for (var index in testFiles) {
-            if (printDots) {
-                // environment.standardOut.Write(".");
-            }
-
             var filePath = testFiles[index];
             if (specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
                 continue;
@@ -79,8 +74,7 @@ class Program {
                filePath: string,
                languageVersion: LanguageVersion,
                verify: bool,
-               generateBaseline?: bool = false,
-               printDots?: bool = false): void {
+               generateBaseline?: bool = false): void {
         if (true) {
             // return;
         }
@@ -93,12 +87,8 @@ class Program {
             return;
         }
 
-        // environment.standardOut.WriteLine("Running Parser: " + filePath);
         var contents = environment.readFile(filePath, /*useUTF8:*/ true);
-        if (printDots) {
-            // environment.standardOut.Write(".");
-            // environment.standardOut.WriteLine(filePath);
-        }
+        // environment.standardOut.WriteLine(filePath);
 
         var start: number, end: number;
         start = new Date().getTime();
@@ -130,10 +120,6 @@ class Program {
             var expectedResult = environment.readFile(expectedFile, /*useUTF8:*/ true);
 
             if (expectedResult !== actualResult) {
-                if (printDots) {
-                    // environment.standardOut.WriteLine("");
-                }
-
                 environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
                 environment.writeFile(actualFile, actualResult, /*useUTF8:*/ true);
             }
@@ -148,8 +134,7 @@ class Program {
               languageVersion: LanguageVersion,
               useTypeScript: bool,
               verify: bool,
-              generateBaseline?: bool = false,
-              printDots?: bool = false): void {
+              generateBaseline?: bool = false): void {
         if (!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
             return;
         }
@@ -158,12 +143,8 @@ class Program {
             return;
         }
 
-        // environment.standardOut.WriteLine("Running Parser: " + filePath);
         var contents = environment.readFile(filePath, /*useUTF8:*/ true);
-        if (printDots) {
-            // environment.standardOut.Write(".");
-            // environment.standardOut.WriteLine(filePath);
-        }
+        // environment.standardOut.WriteLine(filePath);
         
         var start: number, end: number;
         start = new Date().getTime();
@@ -202,10 +183,6 @@ class Program {
                 var expectedResult = environment.readFile(expectedFile, /*useUTF8:*/ true);
 
                 if (expectedResult !== actualResult) {
-                    if (printDots) {
-                        // environment.standardOut.WriteLine("");
-                    }
-
                     environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
                     environment.writeFile(actualFile, actualResult, /*useUTF8:*/ true);
                 }
