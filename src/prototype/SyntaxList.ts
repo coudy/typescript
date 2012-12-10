@@ -35,6 +35,10 @@ module SyntaxList {
         public collectTextElements(elements: string[]): void {
             return collectTextElements(elements, this);
         }
+
+        public toArray(): SyntaxNode[] {
+            return [];
+        }
     }
 
     export var empty: ISyntaxList = new EmptySyntaxList();
@@ -73,6 +77,10 @@ module SyntaxList {
 
         public collectTextElements(elements: string[]): void {
             return collectTextElements(elements, this);
+        }
+
+        public toArray(): SyntaxNode[] {
+            return [this._item];
         }
     }
 
@@ -119,6 +127,10 @@ module SyntaxList {
 
         public collectTextElements(elements: string[]): void {
             return collectTextElements(elements, this);
+        }
+
+        public toArray(): SyntaxNode[] {
+            return (<any>this.nodes).slice();
         }
     }
 

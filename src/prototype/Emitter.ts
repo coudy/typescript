@@ -96,18 +96,52 @@ class Emitter extends SyntaxRewriter {
         }
     }
 
-    private visitModuleDeclaration(node: ModuleDeclarationSyntax): StatementSyntax[] {
-        // TODO: Handle the case where this is a dotted name.  Note: existing typescript transpiler
-        // does not seem to handle this.
-        var identifierName = Emitter.leftmostName(node.moduleName());
-        identifierName = identifierName.withIdentifier(
-            identifierName.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty));
+    private static splitModuleName(name: NameSyntax): IdentifierNameSyntax[] {
+        var result: IdentifierNameSyntax[] = [];
+        while (true) {
+            if (name.kind() === SyntaxKind.IdentifierName) {
+                result.unshift(<IdentifierNameSyntax>name);
+                return result;
+            }
+            else if (name.kind() === SyntaxKind.QualifiedName) {
+                var qualifiedName = <QualifiedNameSyntax>name;
+                result.unshift(qualifiedName.right());
+                name = qualifiedName.left();
+            }
+            else {
+                throw Errors.invalidOperation();
+            }
+        }
+    }
+
+    private visitModuleDeclaration(node: ModuleDeclarationSyntax): ModuleElementSyntax[] {
+        // Break up the dotted name into pieces.
+        var names = Emitter.splitModuleName(node.moduleName());
+
+        // Start with the rightmost piece.  This will be hte one that actually containers the 
+        // members declared in the module.
+        this.indentation += names.length;
+
+        var moduleElements: ModuleElementSyntax[] = <ModuleElementSyntax[]>node.moduleElements().toArray();
+
+        // Then, for all the names left of that name, wrap what we've created in a larger module.
+        for (var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
+            var moduleElements = this.convertModuleDeclaration(names[nameIndex], moduleElements);
+            this.indentation--;
+        }
+
+        return moduleElements;
+    }
+
+    private convertModuleDeclaration(name: IdentifierNameSyntax, moduleElements: ModuleElementSyntax[]): ModuleElementSyntax[] {
+        name = name.withIdentifier(
+            name.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty));
 
         var variableStatement = VariableStatementSyntax.create(
             new VariableDeclarationSyntax(
                 SyntaxToken.createElasticKeyword({ kind: SyntaxKind.VarKeyword, trailingTrivia: [SyntaxTrivia.space] }),
                 SeparatedSyntaxList.create(
-                    [VariableDeclaratorSyntax.create(identifierName.identifier())])),
+                    [VariableDeclaratorSyntax.create(name.identifier())])),
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
 
         var functionExpression = FunctionExpressionSyntax.create(
@@ -116,7 +150,7 @@ class Emitter extends SyntaxRewriter {
                 new ParameterListSyntax(
                     SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
                     SeparatedSyntaxList.create([
-                        ParameterSyntax.create(identifierName.identifier())]),
+                        ParameterSyntax.create(name.identifier())]),
                     SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken, trailingTrivia: [SyntaxTrivia.space]  }))),
             new BlockSyntax(
                 SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed]  }),
@@ -130,13 +164,13 @@ class Emitter extends SyntaxRewriter {
         
         var logicalOrExpression = new BinaryExpressionSyntax(
             SyntaxKind.LogicalOrExpression,
-            identifierName,
+            name,
             SyntaxToken.createElastic({ kind: SyntaxKind.BarBarToken }),
             new ParenthesizedExpressionSyntax(
                 SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
                 new BinaryExpressionSyntax(
                     SyntaxKind.AssignmentExpression,
-                    identifierName,
+                    name,
                     SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken }),
                     new ObjectLiteralExpressionSyntax(
                         SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken }),

@@ -6758,6 +6758,9 @@ var SyntaxList;
         EmptySyntaxList.prototype.collectTextElements = function (elements) {
             return collectTextElements(elements, this);
         };
+        EmptySyntaxList.prototype.toArray = function () {
+            return [];
+        };
         return EmptySyntaxList;
     })();    
     SyntaxList.empty = new EmptySyntaxList();
@@ -6805,6 +6808,11 @@ var SyntaxList;
         };
         SingletonSyntaxList.prototype.collectTextElements = function (elements) {
             return collectTextElements(elements, this);
+        };
+        SingletonSyntaxList.prototype.toArray = function () {
+            return [
+                this._item
+            ];
         };
         return SingletonSyntaxList;
     })();    
@@ -6855,6 +6863,9 @@ var SyntaxList;
         };
         NormalSyntaxList.prototype.collectTextElements = function (elements) {
             return collectTextElements(elements, this);
+        };
+        NormalSyntaxList.prototype.toArray = function () {
+            return (this.nodes).slice();
         };
         return NormalSyntaxList;
     })();    
@@ -14081,16 +14092,42 @@ var Emitter = (function (_super) {
             }
         }
     }
+    Emitter.splitModuleName = function splitModuleName(name) {
+        var result = [];
+        while(true) {
+            if(name.kind() === 119 /* IdentifierName */ ) {
+                result.unshift(name);
+                return result;
+            } else {
+                if(name.kind() === 120 /* QualifiedName */ ) {
+                    var qualifiedName = name;
+                    result.unshift(qualifiedName.right());
+                    name = qualifiedName.left();
+                } else {
+                    throw Errors.invalidOperation();
+                }
+            }
+        }
+    }
     Emitter.prototype.visitModuleDeclaration = function (node) {
-        var identifierName = Emitter.leftmostName(node.moduleName());
-        identifierName = identifierName.withIdentifier(identifierName.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty));
+        var names = Emitter.splitModuleName(node.moduleName());
+        this.indentation += names.length;
+        var moduleElements = node.moduleElements().toArray();
+        for(var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
+            var moduleElements = this.convertModuleDeclaration(names[nameIndex], moduleElements);
+            this.indentation--;
+        }
+        return moduleElements;
+    };
+    Emitter.prototype.convertModuleDeclaration = function (name, moduleElements) {
+        name = name.withIdentifier(name.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty));
         var variableStatement = VariableStatementSyntax.create(new VariableDeclarationSyntax(SyntaxToken.createElasticKeyword({
             kind: 37 /* VarKeyword */ ,
             trailingTrivia: [
                 SyntaxTrivia.space
             ]
         }), SeparatedSyntaxList.create([
-            VariableDeclaratorSyntax.create(identifierName.identifier())
+            VariableDeclaratorSyntax.create(name.identifier())
         ])), SyntaxToken.createElastic({
             kind: 74 /* SemicolonToken */ ,
             trailingTrivia: [
@@ -14102,7 +14139,7 @@ var Emitter = (function (_super) {
         }), CallSignatureSyntax.create(new ParameterListSyntax(SyntaxToken.createElastic({
             kind: 68 /* OpenParenToken */ 
         }), SeparatedSyntaxList.create([
-            ParameterSyntax.create(identifierName.identifier())
+            ParameterSyntax.create(name.identifier())
         ]), SyntaxToken.createElastic({
             kind: 69 /* CloseParenToken */ ,
             trailingTrivia: [
@@ -14121,11 +14158,11 @@ var Emitter = (function (_super) {
         }), functionExpression, SyntaxToken.createElastic({
             kind: 69 /* CloseParenToken */ 
         }));
-        var logicalOrExpression = new BinaryExpressionSyntax(183 /* LogicalOrExpression */ , identifierName, SyntaxToken.createElastic({
+        var logicalOrExpression = new BinaryExpressionSyntax(183 /* LogicalOrExpression */ , name, SyntaxToken.createElastic({
             kind: 100 /* BarBarToken */ 
         }), new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
             kind: 68 /* OpenParenToken */ 
-        }), new BinaryExpressionSyntax(170 /* AssignmentExpression */ , identifierName, SyntaxToken.createElastic({
+        }), new BinaryExpressionSyntax(170 /* AssignmentExpression */ , name, SyntaxToken.createElastic({
             kind: 103 /* EqualsToken */ 
         }), new ObjectLiteralExpressionSyntax(SyntaxToken.createElastic({
             kind: 66 /* OpenBraceToken */ 
