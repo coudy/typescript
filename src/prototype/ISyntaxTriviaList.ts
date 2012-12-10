@@ -9,4 +9,6 @@ interface ISyntaxTriviaList extends ISyntaxElement {
 
     hasComment(): bool;
     hasNewLine(): bool;
+
+    last(): ISyntaxTrivia;
 }

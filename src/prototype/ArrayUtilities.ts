@@ -13,6 +13,16 @@ class ArrayUtilities {
         return result;
     }
 
+    public static select(values: any[], func: (v: any) => any): any[] {
+        var result = [];
+
+        for (var i = 0; i < values.length; i++) {
+            result.push(func(values[i]));
+        }
+
+        return result;
+    }
+
     public static where(values: any[], func: (v: any) => bool): any[] {
         var result = [];
 

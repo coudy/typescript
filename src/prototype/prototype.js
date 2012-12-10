@@ -166,6 +166,13 @@ var ArrayUtilities = (function () {
         }
         return result;
     }
+    ArrayUtilities.select = function select(values, func) {
+        var result = [];
+        for(var i = 0; i < values.length; i++) {
+            result.push(func(values[i]));
+        }
+        return result;
+    }
     ArrayUtilities.where = function where(values, func) {
         var result = [];
         for(var i = 0; i < values.length; i++) {
@@ -14057,6 +14064,37 @@ var FullStartNormalizer = (function (_super) {
     };
     return FullStartNormalizer;
 })(SyntaxRewriter);
+var AdjustIndentationRewriter = (function (_super) {
+    __extends(AdjustIndentationRewriter, _super);
+    function AdjustIndentationRewriter(indentationTrivia) {
+        _super.call(this);
+        this.lastTriviaWasNewLine = true;
+        this.indentationTrivia = indentationTrivia;
+    }
+    AdjustIndentationRewriter.prototype.visitToken = function (token) {
+        var result = token;
+        if(this.lastTriviaWasNewLine) {
+            result = token.withLeadingTrivia(this.adjustIndentation(token.leadingTrivia()));
+        }
+        var trailingTrivia = token.trailingTrivia();
+        this.lastTriviaWasNewLine = trailingTrivia.count() > 0 && trailingTrivia.last().kind() === 5 /* NewLineTrivia */ ;
+        return result;
+    };
+    AdjustIndentationRewriter.prototype.adjustIndentation = function (triviaList) {
+        var result = [
+            this.indentationTrivia
+        ];
+        for(var i = 0, n = triviaList.count(); i < n; i++) {
+            var trivia = triviaList.syntaxTriviaAt(i);
+            result.push(trivia);
+            if(trivia.kind() === 5 /* NewLineTrivia */ ) {
+                result.push(this.indentationTrivia);
+            }
+        }
+        return SyntaxTriviaList.create(result);
+    };
+    return AdjustIndentationRewriter;
+})(SyntaxRewriter);
 var Emitter = (function (_super) {
     __extends(Emitter, _super);
     function Emitter(syntaxOnly) {
@@ -14111,11 +14149,34 @@ var Emitter = (function (_super) {
             }
         }
     }
+    Emitter.prototype.adjustNodeIndentation = function (node) {
+        var nestingOffset = this.outputNestingLevel - this.inputNestingLevel;
+        if(nestingOffset <= 0) {
+            return node;
+        }
+        var indentation = this.createIndentationTrivia();
+        return node.accept1(new AdjustIndentationRewriter(indentation));
+    };
+    Emitter.prototype.adjustListIndentation = function (nodes) {
+        var _this = this;
+        var nestingOffset = this.outputNestingLevel - this.inputNestingLevel;
+        if(nestingOffset <= 0) {
+            return nodes;
+        }
+        return ArrayUtilities.select(nodes, function (n) {
+            return _this.adjustNodeIndentation(n);
+        });
+    };
     Emitter.prototype.visitModuleDeclaration = function (node) {
+        var _this = this;
         var names = Emitter.splitModuleName(node.moduleName());
         this.outputNestingLevel += names.length;
         this.inputNestingLevel += 1;
         var moduleElements = node.moduleElements().toArray();
+        moduleElements = ArrayUtilities.select(moduleElements, function (m) {
+            return m.accept1(_this);
+        });
+        moduleElements = this.adjustListIndentation(moduleElements);
         for(var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
             moduleElements = this.convertModuleDeclaration(names[nameIndex], moduleElements);
             this.outputNestingLevel--;
@@ -14123,14 +14184,19 @@ var Emitter = (function (_super) {
         this.inputNestingLevel -= 1;
         return moduleElements;
     };
+    Emitter.prototype.createIndentationTrivia = function () {
+        var nestingOffset = this.outputNestingLevel - this.inputNestingLevel;
+        Debug.assert(nestingOffset > 0);
+        var spaces = Array(nestingOffset * Emitter.spacesPerNestingLevel).join(" ");
+        return SyntaxTrivia.create(4 /* WhitespaceTrivia */ , 0, spaces);
+    };
     Emitter.prototype.createIndentationTriviaList = function () {
         var nestingOffset = this.outputNestingLevel - this.inputNestingLevel;
         if(nestingOffset <= 0) {
             return [];
         }
-        var spaces = Array(nestingOffset * Emitter.spacesPerNestingLevel).join(" ");
         return [
-            SyntaxTrivia.create(4 /* WhitespaceTrivia */ , 0, spaces)
+            this.createIndentationTrivia()
         ];
     };
     Emitter.prototype.convertModuleDeclaration = function (name, moduleElements) {
@@ -16156,6 +16222,9 @@ var SyntaxTriviaList;
         EmptySyntaxTriviaList.prototype.syntaxTriviaAt = function (index) {
             throw Errors.argumentOutOfRange("index");
         };
+        EmptySyntaxTriviaList.prototype.last = function () {
+            throw Errors.argumentOutOfRange("index");
+        };
         EmptySyntaxTriviaList.prototype.fullWidth = function () {
             return 0;
         };
@@ -16215,6 +16284,9 @@ var SyntaxTriviaList;
             if(index !== 0) {
                 throw Errors.argumentOutOfRange("index");
             }
+            return this.item;
+        };
+        SingletonSyntaxTriviaList.prototype.last = function () {
             return this.item;
         };
         SingletonSyntaxTriviaList.prototype.fullWidth = function () {
@@ -16280,6 +16352,9 @@ var SyntaxTriviaList;
                 throw Errors.argumentOutOfRange("index");
             }
             return this.trivia[index];
+        };
+        NormalSyntaxTriviaList.prototype.last = function () {
+            return this.trivia[this.trivia.length - 1];
         };
         NormalSyntaxTriviaList.prototype.fullWidth = function () {
             return ArrayUtilities.sum(this.trivia, function (t) {

@@ -25,6 +25,10 @@ module SyntaxTriviaList {
             throw Errors.argumentOutOfRange("index");
         }
 
+        public last(): ISyntaxTrivia {
+            throw Errors.argumentOutOfRange("index");
+        }
+
         public fullWidth(): number {
             return 0;
         }
@@ -79,6 +83,10 @@ module SyntaxTriviaList {
                 throw Errors.argumentOutOfRange("index");
             }
 
+            return this.item;
+        }
+
+        public last(): ISyntaxTrivia {
             return this.item;
         }
 
@@ -140,6 +148,10 @@ module SyntaxTriviaList {
             }
 
             return this.trivia[index];
+        }
+
+        public last(): ISyntaxTrivia {
+            return this.trivia[this.trivia.length - 1];
         }
 
         public fullWidth(): number {
