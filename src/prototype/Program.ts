@@ -23,7 +23,7 @@ class Program {
 
         environment.standardOut.WriteLine("Testing scanner.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
-            filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ false));
+            filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false));
             
         environment.standardOut.WriteLine("Testing parser.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
@@ -70,6 +70,28 @@ class Program {
         }
     }
 
+    private checkResult(filePath: string, result: any, verify: bool, generateBaseline: bool): void {
+        if (generateBaseline) {
+            var actualResult = JSON2.stringify(result, null, 4);
+            var expectedFile = filePath + ".expected";
+
+            // environment.standardOut.WriteLine("Generating baseline for: " + filePath);
+            Environment.writeFile(expectedFile, actualResult, /*useUTF8:*/ true);
+        }
+        else if (verify) {
+            var actualResult = JSON2.stringify(result, null, 4);
+            var expectedFile = filePath + ".expected";
+            var actualFile = filePath + ".actual";
+
+            var expectedResult = Environment.readFile(expectedFile, /*useUTF8:*/ true);
+
+            if (expectedResult !== actualResult) {
+                Environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
+                Environment.writeFile(actualFile, actualResult, /*useUTF8:*/ true);
+            }
+        }
+    }
+
     runEmitter(environment: IEnvironment,
                filePath: string,
                languageVersion: LanguageVersion,
@@ -100,30 +122,9 @@ class Program {
         var parser = new Parser(text, languageVersion, stringTable);
         var tree = parser.parseSyntaxTree();
         var emitted = new Emitter(true).emit(<SourceUnitSyntax>tree.sourceUnit());
-
-        if (generateBaseline) {
-            var result = { fullText: emitted.fullText(), sourceUnit: emitted };
-            var actualResult = JSON2.stringify(result, null, 4);
-
-            var expectedFile = filePath + ".expected";
-
-            // environment.standardOut.WriteLine("Generating baseline for: " + filePath);
-            environment.writeFile(expectedFile, actualResult, /*useUTF8:*/ true);
-        }
-        else if (verify) {
-            var result = { fullText: emitted.fullText(), sourceUnit: emitted };
-            var actualResult = JSON2.stringify(result, null, 4);
-
-            var expectedFile = filePath + ".expected";
-            var actualFile = filePath + ".actual";
-
-            var expectedResult = environment.readFile(expectedFile, /*useUTF8:*/ true);
-
-            if (expectedResult !== actualResult) {
-                environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
-                environment.writeFile(actualFile, actualResult, /*useUTF8:*/ true);
-            }
-        }
+        
+        var result = { fullText: emitted.fullText(), sourceUnit: emitted };
+        this.checkResult(filePath, result, verify, generateBaseline);
 
         end = new Date().getTime();
         totalTime += (end - start);
@@ -162,38 +163,15 @@ class Program {
             var parser = new Parser(text, languageVersion, stringTable);
             var unit = parser.parseSyntaxTree();
 
-            //if (!allowErrors) {
-            //    if (unit.diagnostics() && unit.diagnostics().length) {
-            //        throw new Error("File had unexpected error!");
-            //    }
-            //}
-
-            if (generateBaseline) {
-                var actualResult = JSON2.stringify(unit, null, 4);
-                var expectedFile = filePath + ".expected";
-
-                // environment.standardOut.WriteLine("Generating baseline for: " + filePath);
-                environment.writeFile(expectedFile, actualResult, /*useUTF8:*/ true);
-            }
-            else if (verify) {
-                var actualResult = JSON2.stringify(unit, null, 4);
-                var expectedFile = filePath + ".expected";
-                var actualFile = filePath + ".actual";
-
-                var expectedResult = environment.readFile(expectedFile, /*useUTF8:*/ true);
-
-                if (expectedResult !== actualResult) {
-                    environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
-                    environment.writeFile(actualFile, actualResult, /*useUTF8:*/ true);
-                }
-            }
+            this.checkResult(filePath, unit, verify, generateBaseline);
         }
-        
+
         end = new Date().getTime();
         totalTime += (end - start);
     }
 
-    runTrivia(environment: IEnvironment, filePath: string, languageVersion: LanguageVersion, verify: bool): void {
+    runTrivia(environment: IEnvironment, filePath: string,
+              languageVersion: LanguageVersion, verify: bool, generateBaseline = false): void {
         if (!StringUtilities.endsWith(filePath, ".ts")) {
             return;
         }
@@ -202,49 +180,32 @@ class Program {
 
         var start: number, end: number;
         start = new Date().getTime();
-        try {
-            var text = new StringText(contents);
-            var scanner = Scanner.create(text, languageVersion);
 
-            var tokens: ISyntaxToken[] = [];
-            var textArray: string[] = [];
-            var diagnostics: SyntaxDiagnostic[] = [];
+        var text = new StringText(contents);
+        var scanner = Scanner.create(text, languageVersion);
 
-            while (true) {
-                var token = scanner.scan(diagnostics, /*allowRegularExpression:*/ false);
-                tokens.push(token.realize());
+        var tokens: ISyntaxToken[] = [];
+        var textArray: string[] = [];
+        var diagnostics: SyntaxDiagnostic[] = [];
 
-                if (token.tokenKind === SyntaxKind.EndOfFileToken) {
-                    break;
-                }
-            }
+        while (true) {
+            var token = scanner.scan(diagnostics, /*allowRegularExpression:*/ false);
+            tokens.push(token.realize());
 
-            if (verify) {
-                var actualResult = JSON2.stringify(tokens, null, 4);
-                var expectedFile = filePath + ".expected";
-                var actualFile = filePath + ".actual";
-
-                var expectedResult = environment.readFile(expectedFile, /*useUTF8:*/ true);
-
-                if (expectedResult !== actualResult) {
-                    environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
-                    environment.writeFile(actualFile, actualResult, true);
-                }
+            if (token.tokenKind === SyntaxKind.EndOfFileToken) {
+                break;
             }
         }
-        finally {
-            end = new Date().getTime();
-            totalTime += (end - start);
-        }
+
+        this.checkResult(filePath, tokens, verify, generateBaseline);
+
+        end = new Date().getTime();
+        totalTime += (end - start);
     }
 
     runScanner(environment: IEnvironment,
-              filePath: string, languageVersion: LanguageVersion, useTypeScript: bool, verify: bool, generateBaseline: bool): void {
+              filePath: string, languageVersion: LanguageVersion, verify: bool, generateBaseline: bool): void {
         if (!StringUtilities.endsWith(filePath, ".ts")) {
-            return;
-        }
-
-        if (useTypeScript) {
             return;
         }
 
@@ -281,31 +242,7 @@ class Program {
             }
 
             var result = diagnostics.length === 0 ? <any>tokens : { diagnostics: diagnostics, tokens: tokens };
-
-            if (generateBaseline) {
-                var actualResult = JSON2.stringify(result, null, 4);
-                var expectedFile = filePath + ".expected";
-
-                environment.writeFile(expectedFile, actualResult, /*useUTF8:*/ true);
-            }
-            if (verify) {
-                var fullText = textArray.join("");
-
-                if (contents !== fullText) {
-                    throw new Error("Full text didn't match!");
-                }
-
-                var actualResult = JSON2.stringify(result, null, 4);
-                var expectedFile = filePath + ".expected";
-                var actualFile = filePath + ".actual";
-
-                var expectedResult = environment.readFile(expectedFile, /*useUTF8:*/ true);
-
-                if (expectedResult !== actualResult) {
-                    environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
-                    environment.writeFile(actualFile, actualResult, true);
-                }
-            }
+            this.checkResult(filePath, result, verify, generateBaseline);
         }
         finally {
             end = new Date().getTime();
@@ -358,7 +295,6 @@ class Program {
                     var parser = new Parser(stringText, LanguageVersion.EcmaScript5, stringTable);
 
                     var syntaxTree = parser.parseSyntaxTree();
-            //environment.standardOut.Write(".");
 
                     if (isNegative) {
                         var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
