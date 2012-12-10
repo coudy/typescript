@@ -253,15 +253,15 @@ module SyntaxToken {
         public collectTextElements(elements: string[]): void { collectTextElements(this, elements); }
 
         public withFullStart(fullStart: number): ISyntaxToken {
-            throw Errors.invalidOperation("Can not call on a non-realized token.");
+            return this.realize().withFullStart(fullStart);
         }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
-            throw Errors.invalidOperation('Can not call on a non-realized token.');
+            return this.realize().withLeadingTrivia(leadingTrivia);
         }
 
-        public withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
-            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            return this.realize().withTrailingTrivia(trailingTrivia);
         }
     }
 

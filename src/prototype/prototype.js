@@ -13542,13 +13542,13 @@ var SyntaxToken;
             collectTextElements(this, elements);
         };
         ElasticToken.prototype.withFullStart = function (fullStart) {
-            throw Errors.invalidOperation("Can not call on a non-realized token.");
+            return this.realize().withFullStart(fullStart);
         };
         ElasticToken.prototype.withLeadingTrivia = function (leadingTrivia) {
-            throw Errors.invalidOperation('Can not call on a non-realized token.');
+            return this.realize().withLeadingTrivia(leadingTrivia);
         };
-        ElasticToken.prototype.withTrailingTrivia = function (leadingTrivia) {
-            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        ElasticToken.prototype.withTrailingTrivia = function (trailingTrivia) {
+            return this.realize().withTrailingTrivia(trailingTrivia);
         };
         return ElasticToken;
     })();    
