@@ -11,5 +11,5 @@ interface ISyntaxElement {
     isTrivia(): bool;
     isMissing(): bool;
 
-    collectTextElements(text: IText, elements: string[]): void;
+    collectTextElements(elements: string[]): void;
 }

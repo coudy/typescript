@@ -1,9 +1,9 @@
 ///<reference path='References.ts' />
 
 module SyntaxList {
-    function collectTextElements(text: IText, elements: string[], list: ISyntaxList): void {
+    function collectTextElements(elements: string[], list: ISyntaxList): void {
         for (var i = 0, n = list.count(); i < n; i++) {
-            list.syntaxNodeAt(i).collectTextElements(text, elements);
+            list.syntaxNodeAt(i).collectTextElements(elements);
         }
     }
 
@@ -32,8 +32,8 @@ module SyntaxList {
             throw Errors.argumentOutOfRange("index");
         }
 
-        public collectTextElements(text: IText, elements: string[]): void {
-            return collectTextElements(text, elements, this);
+        public collectTextElements(elements: string[]): void {
+            return collectTextElements(elements, this);
         }
     }
 
@@ -71,8 +71,8 @@ module SyntaxList {
             return this._item;
         }
 
-        public collectTextElements(text: IText, elements: string[]): void {
-            return collectTextElements(text, elements, this);
+        public collectTextElements(elements: string[]): void {
+            return collectTextElements(elements, this);
         }
     }
 
@@ -117,8 +117,8 @@ module SyntaxList {
             return this.nodes[index];
         }
 
-        public collectTextElements(text: IText, elements: string[]): void {
-            return collectTextElements(text, elements, this);
+        public collectTextElements(elements: string[]): void {
+            return collectTextElements(elements, this);
         }
     }
 

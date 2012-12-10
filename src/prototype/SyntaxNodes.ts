@@ -54,9 +54,9 @@ class SourceUnitSyntax extends SyntaxNode {
         return new SourceUnitSyntax(moduleElements, endOfFileToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._moduleElements.collectTextElements(text, elements);
-        this._endOfFileToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._moduleElements.collectTextElements(elements);
+        this._endOfFileToken.collectTextElements(elements);
     }
 }
 
@@ -142,11 +142,11 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         return new ExternalModuleReferenceSyntax(moduleKeyword, openParenToken, stringLiteral, closeParenToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._moduleKeyword.collectTextElements(text, elements);
-        this._openParenToken.collectTextElements(text, elements);
-        this._stringLiteral.collectTextElements(text, elements);
-        this._closeParenToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._moduleKeyword.collectTextElements(elements);
+        this._openParenToken.collectTextElements(elements);
+        this._stringLiteral.collectTextElements(elements);
+        this._closeParenToken.collectTextElements(elements);
     }
 }
 
@@ -190,8 +190,8 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         return new ModuleNameModuleReferenceSyntax(moduleName);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._moduleName.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._moduleName.collectTextElements(elements);
     }
 }
 
@@ -275,12 +275,12 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
         return new ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._importKeyword.collectTextElements(text, elements);
-        this._identifier.collectTextElements(text, elements);
-        this._equalsToken.collectTextElements(text, elements);
-        this._moduleReference.collectTextElements(text, elements);
-        this._semicolonToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._importKeyword.collectTextElements(elements);
+        this._identifier.collectTextElements(elements);
+        this._equalsToken.collectTextElements(elements);
+        this._moduleReference.collectTextElements(elements);
+        this._semicolonToken.collectTextElements(elements);
     }
 }
 
@@ -413,16 +413,16 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
         return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(text, elements); }
-        if (this._declareKeyword !== null) { this._declareKeyword.collectTextElements(text, elements); }
-        this._classKeyword.collectTextElements(text, elements);
-        this._identifier.collectTextElements(text, elements);
-        if (this._extendsClause !== null) { this._extendsClause.collectTextElements(text, elements); }
-        if (this._implementsClause !== null) { this._implementsClause.collectTextElements(text, elements); }
-        this._openBraceToken.collectTextElements(text, elements);
-        this._classElements.collectTextElements(text, elements);
-        this._closeBraceToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(elements); }
+        if (this._declareKeyword !== null) { this._declareKeyword.collectTextElements(elements); }
+        this._classKeyword.collectTextElements(elements);
+        this._identifier.collectTextElements(elements);
+        if (this._extendsClause !== null) { this._extendsClause.collectTextElements(elements); }
+        if (this._implementsClause !== null) { this._implementsClause.collectTextElements(elements); }
+        this._openBraceToken.collectTextElements(elements);
+        this._classElements.collectTextElements(elements);
+        this._closeBraceToken.collectTextElements(elements);
     }
 }
 
@@ -513,12 +513,12 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
         return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, extendsClause, body);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(text, elements); }
-        this._interfaceKeyword.collectTextElements(text, elements);
-        this._identifier.collectTextElements(text, elements);
-        if (this._extendsClause !== null) { this._extendsClause.collectTextElements(text, elements); }
-        this._body.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(elements); }
+        this._interfaceKeyword.collectTextElements(elements);
+        this._identifier.collectTextElements(elements);
+        if (this._extendsClause !== null) { this._extendsClause.collectTextElements(elements); }
+        this._body.collectTextElements(elements);
     }
 }
 
@@ -576,9 +576,9 @@ class ExtendsClauseSyntax extends SyntaxNode {
         return new ExtendsClauseSyntax(extendsKeyword, typeNames);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._extendsKeyword.collectTextElements(text, elements);
-        this._typeNames.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._extendsKeyword.collectTextElements(elements);
+        this._typeNames.collectTextElements(elements);
     }
 }
 
@@ -636,9 +636,9 @@ class ImplementsClauseSyntax extends SyntaxNode {
         return new ImplementsClauseSyntax(implementsKeyword, typeNames);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._implementsKeyword.collectTextElements(text, elements);
-        this._typeNames.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._implementsKeyword.collectTextElements(elements);
+        this._typeNames.collectTextElements(elements);
     }
 }
 
@@ -763,15 +763,15 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
         return new ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(text, elements); }
-        if (this._declareKeyword !== null) { this._declareKeyword.collectTextElements(text, elements); }
-        this._moduleKeyword.collectTextElements(text, elements);
-        if (this._moduleName !== null) { this._moduleName.collectTextElements(text, elements); }
-        if (this._stringLiteral !== null) { this._stringLiteral.collectTextElements(text, elements); }
-        this._openBraceToken.collectTextElements(text, elements);
-        this._moduleElements.collectTextElements(text, elements);
-        this._closeBraceToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(elements); }
+        if (this._declareKeyword !== null) { this._declareKeyword.collectTextElements(elements); }
+        this._moduleKeyword.collectTextElements(elements);
+        if (this._moduleName !== null) { this._moduleName.collectTextElements(elements); }
+        if (this._stringLiteral !== null) { this._stringLiteral.collectTextElements(elements); }
+        this._openBraceToken.collectTextElements(elements);
+        this._moduleElements.collectTextElements(elements);
+        this._closeBraceToken.collectTextElements(elements);
     }
 }
 
@@ -881,13 +881,13 @@ class FunctionDeclarationSyntax extends StatementSyntax {
         return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(text, elements); }
-        if (this._declareKeyword !== null) { this._declareKeyword.collectTextElements(text, elements); }
-        this._functionKeyword.collectTextElements(text, elements);
-        this._functionSignature.collectTextElements(text, elements);
-        if (this._block !== null) { this._block.collectTextElements(text, elements); }
-        if (this._semicolonToken !== null) { this._semicolonToken.collectTextElements(text, elements); }
+    private collectTextElements(elements: string[]) {
+        if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(elements); }
+        if (this._declareKeyword !== null) { this._declareKeyword.collectTextElements(elements); }
+        this._functionKeyword.collectTextElements(elements);
+        this._functionSignature.collectTextElements(elements);
+        if (this._block !== null) { this._block.collectTextElements(elements); }
+        if (this._semicolonToken !== null) { this._semicolonToken.collectTextElements(elements); }
     }
 }
 
@@ -970,11 +970,11 @@ class VariableStatementSyntax extends StatementSyntax {
         return new VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(text, elements); }
-        if (this._declareKeyword !== null) { this._declareKeyword.collectTextElements(text, elements); }
-        this._variableDeclaration.collectTextElements(text, elements);
-        this._semicolonToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(elements); }
+        if (this._declareKeyword !== null) { this._declareKeyword.collectTextElements(elements); }
+        this._variableDeclaration.collectTextElements(elements);
+        this._semicolonToken.collectTextElements(elements);
     }
 }
 
@@ -1044,9 +1044,9 @@ class VariableDeclarationSyntax extends SyntaxNode {
         return new VariableDeclarationSyntax(varKeyword, variableDeclarators);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._varKeyword.collectTextElements(text, elements);
-        this._variableDeclarators.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._varKeyword.collectTextElements(elements);
+        this._variableDeclarators.collectTextElements(elements);
     }
 }
 
@@ -1112,10 +1112,10 @@ class VariableDeclaratorSyntax extends SyntaxNode {
         return new VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._identifier.collectTextElements(text, elements);
-        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(text, elements); }
-        if (this._equalsValueClause !== null) { this._equalsValueClause.collectTextElements(text, elements); }
+    private collectTextElements(elements: string[]) {
+        this._identifier.collectTextElements(elements);
+        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(elements); }
+        if (this._equalsValueClause !== null) { this._equalsValueClause.collectTextElements(elements); }
     }
 }
 
@@ -1169,9 +1169,9 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         return new EqualsValueClauseSyntax(equalsToken, value);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._equalsToken.collectTextElements(text, elements);
-        this._value.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._equalsToken.collectTextElements(elements);
+        this._value.collectTextElements(elements);
     }
 }
 
@@ -1240,9 +1240,9 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
         return new PrefixUnaryExpressionSyntax(kind, operatorToken, operand);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._operatorToken.collectTextElements(text, elements);
-        this._operand.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._operatorToken.collectTextElements(elements);
+        this._operand.collectTextElements(elements);
     }
 }
 
@@ -1286,8 +1286,8 @@ class ThisExpressionSyntax extends UnaryExpressionSyntax {
         return new ThisExpressionSyntax(thisKeyword);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._thisKeyword.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._thisKeyword.collectTextElements(elements);
     }
 }
 
@@ -1353,8 +1353,8 @@ class LiteralExpressionSyntax extends UnaryExpressionSyntax {
         return new LiteralExpressionSyntax(kind, literalToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._literalToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._literalToken.collectTextElements(elements);
     }
 }
 
@@ -1423,10 +1423,10 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
         return new ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._openBracketToken.collectTextElements(text, elements);
-        this._expressions.collectTextElements(text, elements);
-        this._closeBracketToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._openBracketToken.collectTextElements(elements);
+        this._expressions.collectTextElements(elements);
+        this._closeBracketToken.collectTextElements(elements);
     }
 }
 
@@ -1455,7 +1455,7 @@ class OmittedExpressionSyntax extends ExpressionSyntax {
         return this;
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
+    private collectTextElements(elements: string[]) {
     }
 }
 
@@ -1519,10 +1519,10 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
         return new ParenthesizedExpressionSyntax(openParenToken, expression, closeParenToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._openParenToken.collectTextElements(text, elements);
-        this._expression.collectTextElements(text, elements);
-        this._closeParenToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._openParenToken.collectTextElements(elements);
+        this._expression.collectTextElements(elements);
+        this._closeParenToken.collectTextElements(elements);
     }
 }
 
@@ -1592,10 +1592,10 @@ class SimpleArrowFunctionExpression extends ArrowFunctionExpressionSyntax {
         return new SimpleArrowFunctionExpression(identifier, equalsGreaterThanToken, body);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._identifier.collectTextElements(text, elements);
-        this._equalsGreaterThanToken.collectTextElements(text, elements);
-        this._body.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._identifier.collectTextElements(elements);
+        this._equalsGreaterThanToken.collectTextElements(elements);
+        this._body.collectTextElements(elements);
     }
 }
 
@@ -1659,10 +1659,10 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
         return new ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._callSignature.collectTextElements(text, elements);
-        this._equalsGreaterThanToken.collectTextElements(text, elements);
-        this._body.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._callSignature.collectTextElements(elements);
+        this._equalsGreaterThanToken.collectTextElements(elements);
+        this._body.collectTextElements(elements);
     }
 }
 
@@ -1718,8 +1718,8 @@ class IdentifierNameSyntax extends NameSyntax {
         return new IdentifierNameSyntax(identifier);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._identifier.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._identifier.collectTextElements(elements);
     }
 }
 
@@ -1783,10 +1783,10 @@ class QualifiedNameSyntax extends NameSyntax {
         return new QualifiedNameSyntax(left, dotToken, right);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._left.collectTextElements(text, elements);
-        this._dotToken.collectTextElements(text, elements);
-        this._right.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._left.collectTextElements(elements);
+        this._dotToken.collectTextElements(elements);
+        this._right.collectTextElements(elements);
     }
 }
 
@@ -1860,11 +1860,11 @@ class ConstructorTypeSyntax extends TypeSyntax {
         return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._newKeyword.collectTextElements(text, elements);
-        this._parameterList.collectTextElements(text, elements);
-        this._equalsGreaterThanToken.collectTextElements(text, elements);
-        this._type.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._newKeyword.collectTextElements(elements);
+        this._parameterList.collectTextElements(elements);
+        this._equalsGreaterThanToken.collectTextElements(elements);
+        this._type.collectTextElements(elements);
     }
 }
 
@@ -1928,10 +1928,10 @@ class FunctionTypeSyntax extends TypeSyntax {
         return new FunctionTypeSyntax(parameterList, equalsGreaterThanToken, type);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._parameterList.collectTextElements(text, elements);
-        this._equalsGreaterThanToken.collectTextElements(text, elements);
-        this._type.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._parameterList.collectTextElements(elements);
+        this._equalsGreaterThanToken.collectTextElements(elements);
+        this._type.collectTextElements(elements);
     }
 }
 
@@ -2000,10 +2000,10 @@ class ObjectTypeSyntax extends TypeSyntax {
         return new ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._openBraceToken.collectTextElements(text, elements);
-        this._typeMembers.collectTextElements(text, elements);
-        this._closeBraceToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._openBraceToken.collectTextElements(elements);
+        this._typeMembers.collectTextElements(elements);
+        this._closeBraceToken.collectTextElements(elements);
     }
 }
 
@@ -2067,10 +2067,10 @@ class ArrayTypeSyntax extends TypeSyntax {
         return new ArrayTypeSyntax(type, openBracketToken, closeBracketToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._type.collectTextElements(text, elements);
-        this._openBracketToken.collectTextElements(text, elements);
-        this._closeBracketToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._type.collectTextElements(elements);
+        this._openBracketToken.collectTextElements(elements);
+        this._closeBracketToken.collectTextElements(elements);
     }
 }
 
@@ -2123,8 +2123,8 @@ class PredefinedTypeSyntax extends TypeSyntax {
         return new PredefinedTypeSyntax(keyword);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._keyword.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._keyword.collectTextElements(elements);
     }
 }
 
@@ -2178,9 +2178,9 @@ class TypeAnnotationSyntax extends SyntaxNode {
         return new TypeAnnotationSyntax(colonToken, type);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._colonToken.collectTextElements(text, elements);
-        this._type.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._colonToken.collectTextElements(elements);
+        this._type.collectTextElements(elements);
     }
 }
 
@@ -2249,10 +2249,10 @@ class BlockSyntax extends StatementSyntax {
         return new BlockSyntax(openBraceToken, statements, closeBraceToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._openBraceToken.collectTextElements(text, elements);
-        this._statements.collectTextElements(text, elements);
-        this._closeBraceToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._openBraceToken.collectTextElements(elements);
+        this._statements.collectTextElements(elements);
+        this._closeBraceToken.collectTextElements(elements);
     }
 }
 
@@ -2354,13 +2354,13 @@ class ParameterSyntax extends SyntaxNode {
         return new ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        if (this._dotDotDotToken !== null) { this._dotDotDotToken.collectTextElements(text, elements); }
-        if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(text, elements); }
-        this._identifier.collectTextElements(text, elements);
-        if (this._questionToken !== null) { this._questionToken.collectTextElements(text, elements); }
-        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(text, elements); }
-        if (this._equalsValueClause !== null) { this._equalsValueClause.collectTextElements(text, elements); }
+    private collectTextElements(elements: string[]) {
+        if (this._dotDotDotToken !== null) { this._dotDotDotToken.collectTextElements(elements); }
+        if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(elements); }
+        this._identifier.collectTextElements(elements);
+        if (this._questionToken !== null) { this._questionToken.collectTextElements(elements); }
+        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(elements); }
+        if (this._equalsValueClause !== null) { this._equalsValueClause.collectTextElements(elements); }
     }
 }
 
@@ -2424,10 +2424,10 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
         return new MemberAccessExpressionSyntax(expression, dotToken, identifierName);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._expression.collectTextElements(text, elements);
-        this._dotToken.collectTextElements(text, elements);
-        this._identifierName.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._expression.collectTextElements(elements);
+        this._dotToken.collectTextElements(elements);
+        this._identifierName.collectTextElements(elements);
     }
 }
 
@@ -2486,9 +2486,9 @@ class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
         return new PostfixUnaryExpressionSyntax(kind, operand, operatorToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._operand.collectTextElements(text, elements);
-        this._operatorToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._operand.collectTextElements(elements);
+        this._operatorToken.collectTextElements(elements);
     }
 }
 
@@ -2562,11 +2562,11 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
         return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._expression.collectTextElements(text, elements);
-        this._openBracketToken.collectTextElements(text, elements);
-        this._argumentExpression.collectTextElements(text, elements);
-        this._closeBracketToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._expression.collectTextElements(elements);
+        this._openBracketToken.collectTextElements(elements);
+        this._argumentExpression.collectTextElements(elements);
+        this._closeBracketToken.collectTextElements(elements);
     }
 }
 
@@ -2620,9 +2620,9 @@ class InvocationExpressionSyntax extends UnaryExpressionSyntax {
         return new InvocationExpressionSyntax(expression, argumentList);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._expression.collectTextElements(text, elements);
-        this._argumentList.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._expression.collectTextElements(elements);
+        this._argumentList.collectTextElements(elements);
     }
 }
 
@@ -2691,10 +2691,10 @@ class ArgumentListSyntax extends SyntaxNode {
         return new ArgumentListSyntax(openParenToken, _arguments, closeParenToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._openParenToken.collectTextElements(text, elements);
-        this._arguments.collectTextElements(text, elements);
-        this._closeParenToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._openParenToken.collectTextElements(elements);
+        this._arguments.collectTextElements(elements);
+        this._closeParenToken.collectTextElements(elements);
     }
 }
 
@@ -2804,10 +2804,10 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
         return new BinaryExpressionSyntax(kind, left, operatorToken, right);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._left.collectTextElements(text, elements);
-        this._operatorToken.collectTextElements(text, elements);
-        this._right.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._left.collectTextElements(elements);
+        this._operatorToken.collectTextElements(elements);
+        this._right.collectTextElements(elements);
     }
 }
 
@@ -2891,12 +2891,12 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
         return new ConditionalExpressionSyntax(condition, questionToken, whenTrue, colonToken, whenFalse);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._condition.collectTextElements(text, elements);
-        this._questionToken.collectTextElements(text, elements);
-        this._whenTrue.collectTextElements(text, elements);
-        this._colonToken.collectTextElements(text, elements);
-        this._whenFalse.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._condition.collectTextElements(elements);
+        this._questionToken.collectTextElements(elements);
+        this._whenTrue.collectTextElements(elements);
+        this._colonToken.collectTextElements(elements);
+        this._whenFalse.collectTextElements(elements);
     }
 }
 
@@ -2970,10 +2970,10 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         return new ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._newKeyword.collectTextElements(text, elements);
-        this._parameterList.collectTextElements(text, elements);
-        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(text, elements); }
+    private collectTextElements(elements: string[]) {
+        this._newKeyword.collectTextElements(elements);
+        this._parameterList.collectTextElements(elements);
+        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(elements); }
     }
 }
 
@@ -3053,11 +3053,11 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         return new FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._identifier.collectTextElements(text, elements);
-        if (this._questionToken !== null) { this._questionToken.collectTextElements(text, elements); }
-        this._parameterList.collectTextElements(text, elements);
-        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(text, elements); }
+    private collectTextElements(elements: string[]) {
+        this._identifier.collectTextElements(elements);
+        if (this._questionToken !== null) { this._questionToken.collectTextElements(elements); }
+        this._parameterList.collectTextElements(elements);
+        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(elements); }
     }
 }
 
@@ -3136,11 +3136,11 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._openBracketToken.collectTextElements(text, elements);
-        this._parameter.collectTextElements(text, elements);
-        this._closeBracketToken.collectTextElements(text, elements);
-        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(text, elements); }
+    private collectTextElements(elements: string[]) {
+        this._openBracketToken.collectTextElements(elements);
+        this._parameter.collectTextElements(elements);
+        this._closeBracketToken.collectTextElements(elements);
+        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(elements); }
     }
 }
 
@@ -3209,10 +3209,10 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         return new PropertySignatureSyntax(identifier, questionToken, typeAnnotation);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._identifier.collectTextElements(text, elements);
-        if (this._questionToken !== null) { this._questionToken.collectTextElements(text, elements); }
-        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(text, elements); }
+    private collectTextElements(elements: string[]) {
+        this._identifier.collectTextElements(elements);
+        if (this._questionToken !== null) { this._questionToken.collectTextElements(elements); }
+        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(elements); }
     }
 }
 
@@ -3281,10 +3281,10 @@ class ParameterListSyntax extends SyntaxNode {
         return new ParameterListSyntax(openParenToken, parameters, closeParenToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._openParenToken.collectTextElements(text, elements);
-        this._parameters.collectTextElements(text, elements);
-        this._closeParenToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._openParenToken.collectTextElements(elements);
+        this._parameters.collectTextElements(elements);
+        this._closeParenToken.collectTextElements(elements);
     }
 }
 
@@ -3341,9 +3341,9 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         return new CallSignatureSyntax(parameterList, typeAnnotation);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._parameterList.collectTextElements(text, elements);
-        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(text, elements); }
+    private collectTextElements(elements: string[]) {
+        this._parameterList.collectTextElements(elements);
+        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(elements); }
     }
 }
 
@@ -3397,9 +3397,9 @@ class ElseClauseSyntax extends SyntaxNode {
         return new ElseClauseSyntax(elseKeyword, statement);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._elseKeyword.collectTextElements(text, elements);
-        this._statement.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._elseKeyword.collectTextElements(elements);
+        this._statement.collectTextElements(elements);
     }
 }
 
@@ -3500,13 +3500,13 @@ class IfStatementSyntax extends StatementSyntax {
         return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._ifKeyword.collectTextElements(text, elements);
-        this._openParenToken.collectTextElements(text, elements);
-        this._condition.collectTextElements(text, elements);
-        this._closeParenToken.collectTextElements(text, elements);
-        this._statement.collectTextElements(text, elements);
-        if (this._elseClause !== null) { this._elseClause.collectTextElements(text, elements); }
+    private collectTextElements(elements: string[]) {
+        this._ifKeyword.collectTextElements(elements);
+        this._openParenToken.collectTextElements(elements);
+        this._condition.collectTextElements(elements);
+        this._closeParenToken.collectTextElements(elements);
+        this._statement.collectTextElements(elements);
+        if (this._elseClause !== null) { this._elseClause.collectTextElements(elements); }
     }
 }
 
@@ -3560,9 +3560,9 @@ class ExpressionStatementSyntax extends StatementSyntax {
         return new ExpressionStatementSyntax(expression, semicolonToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._expression.collectTextElements(text, elements);
-        this._semicolonToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._expression.collectTextElements(elements);
+        this._semicolonToken.collectTextElements(elements);
     }
 }
 
@@ -3648,11 +3648,11 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
         return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._constructorKeyword.collectTextElements(text, elements);
-        this._parameterList.collectTextElements(text, elements);
-        if (this._block !== null) { this._block.collectTextElements(text, elements); }
-        if (this._semicolonToken !== null) { this._semicolonToken.collectTextElements(text, elements); }
+    private collectTextElements(elements: string[]) {
+        this._constructorKeyword.collectTextElements(elements);
+        this._parameterList.collectTextElements(elements);
+        if (this._block !== null) { this._block.collectTextElements(elements); }
+        if (this._semicolonToken !== null) { this._semicolonToken.collectTextElements(elements); }
     }
 }
 
@@ -3751,12 +3751,12 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
         return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(text, elements); }
-        if (this._staticKeyword !== null) { this._staticKeyword.collectTextElements(text, elements); }
-        this._functionSignature.collectTextElements(text, elements);
-        if (this._block !== null) { this._block.collectTextElements(text, elements); }
-        if (this._semicolonToken !== null) { this._semicolonToken.collectTextElements(text, elements); }
+    private collectTextElements(elements: string[]) {
+        if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(elements); }
+        if (this._staticKeyword !== null) { this._staticKeyword.collectTextElements(elements); }
+        this._functionSignature.collectTextElements(elements);
+        if (this._block !== null) { this._block.collectTextElements(elements); }
+        if (this._semicolonToken !== null) { this._semicolonToken.collectTextElements(elements); }
     }
 }
 
@@ -3876,14 +3876,14 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return new GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(text, elements); }
-        if (this._staticKeyword !== null) { this._staticKeyword.collectTextElements(text, elements); }
-        this._getKeyword.collectTextElements(text, elements);
-        this._identifier.collectTextElements(text, elements);
-        this._parameterList.collectTextElements(text, elements);
-        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(text, elements); }
-        this._block.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(elements); }
+        if (this._staticKeyword !== null) { this._staticKeyword.collectTextElements(elements); }
+        this._getKeyword.collectTextElements(elements);
+        this._identifier.collectTextElements(elements);
+        this._parameterList.collectTextElements(elements);
+        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(elements); }
+        this._block.collectTextElements(elements);
     }
 }
 
@@ -3988,13 +3988,13 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return new SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(text, elements); }
-        if (this._staticKeyword !== null) { this._staticKeyword.collectTextElements(text, elements); }
-        this._setKeyword.collectTextElements(text, elements);
-        this._identifier.collectTextElements(text, elements);
-        this._parameterList.collectTextElements(text, elements);
-        this._block.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(elements); }
+        if (this._staticKeyword !== null) { this._staticKeyword.collectTextElements(elements); }
+        this._setKeyword.collectTextElements(elements);
+        this._identifier.collectTextElements(elements);
+        this._parameterList.collectTextElements(elements);
+        this._block.collectTextElements(elements);
     }
 }
 
@@ -4077,11 +4077,11 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
         return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolonToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(text, elements); }
-        if (this._staticKeyword !== null) { this._staticKeyword.collectTextElements(text, elements); }
-        this._variableDeclarator.collectTextElements(text, elements);
-        this._semicolonToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(elements); }
+        if (this._staticKeyword !== null) { this._staticKeyword.collectTextElements(elements); }
+        this._variableDeclarator.collectTextElements(elements);
+        this._semicolonToken.collectTextElements(elements);
     }
 }
 
@@ -4145,10 +4145,10 @@ class ThrowStatementSyntax extends StatementSyntax {
         return new ThrowStatementSyntax(throwKeyword, expression, semicolonToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._throwKeyword.collectTextElements(text, elements);
-        this._expression.collectTextElements(text, elements);
-        this._semicolonToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._throwKeyword.collectTextElements(elements);
+        this._expression.collectTextElements(elements);
+        this._semicolonToken.collectTextElements(elements);
     }
 }
 
@@ -4216,10 +4216,10 @@ class ReturnStatementSyntax extends StatementSyntax {
         return new ReturnStatementSyntax(returnKeyword, expression, semicolonToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._returnKeyword.collectTextElements(text, elements);
-        if (this._expression !== null) { this._expression.collectTextElements(text, elements); }
-        this._semicolonToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._returnKeyword.collectTextElements(elements);
+        if (this._expression !== null) { this._expression.collectTextElements(elements); }
+        this._semicolonToken.collectTextElements(elements);
     }
 }
 
@@ -4287,10 +4287,10 @@ class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
         return new ObjectCreationExpressionSyntax(newKeyword, expression, argumentList);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._newKeyword.collectTextElements(text, elements);
-        this._expression.collectTextElements(text, elements);
-        if (this._argumentList !== null) { this._argumentList.collectTextElements(text, elements); }
+    private collectTextElements(elements: string[]) {
+        this._newKeyword.collectTextElements(elements);
+        this._expression.collectTextElements(elements);
+        if (this._argumentList !== null) { this._argumentList.collectTextElements(elements); }
     }
 }
 
@@ -4403,14 +4403,14 @@ class SwitchStatementSyntax extends StatementSyntax {
         return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, caseClauses, closeBraceToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._switchKeyword.collectTextElements(text, elements);
-        this._openParenToken.collectTextElements(text, elements);
-        this._expression.collectTextElements(text, elements);
-        this._closeParenToken.collectTextElements(text, elements);
-        this._openBraceToken.collectTextElements(text, elements);
-        this._caseClauses.collectTextElements(text, elements);
-        this._closeBraceToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._switchKeyword.collectTextElements(elements);
+        this._openParenToken.collectTextElements(elements);
+        this._expression.collectTextElements(elements);
+        this._closeParenToken.collectTextElements(elements);
+        this._openBraceToken.collectTextElements(elements);
+        this._caseClauses.collectTextElements(elements);
+        this._closeBraceToken.collectTextElements(elements);
     }
 }
 
@@ -4496,11 +4496,11 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._caseKeyword.collectTextElements(text, elements);
-        this._expression.collectTextElements(text, elements);
-        this._colonToken.collectTextElements(text, elements);
-        this._statements.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._caseKeyword.collectTextElements(elements);
+        this._expression.collectTextElements(elements);
+        this._colonToken.collectTextElements(elements);
+        this._statements.collectTextElements(elements);
     }
 }
 
@@ -4569,10 +4569,10 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._defaultKeyword.collectTextElements(text, elements);
-        this._colonToken.collectTextElements(text, elements);
-        this._statements.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._defaultKeyword.collectTextElements(elements);
+        this._colonToken.collectTextElements(elements);
+        this._statements.collectTextElements(elements);
     }
 }
 
@@ -4643,10 +4643,10 @@ class BreakStatementSyntax extends StatementSyntax {
         return new BreakStatementSyntax(breakKeyword, identifier, semicolonToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._breakKeyword.collectTextElements(text, elements);
-        if (this._identifier !== null) { this._identifier.collectTextElements(text, elements); }
-        this._semicolonToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._breakKeyword.collectTextElements(elements);
+        if (this._identifier !== null) { this._identifier.collectTextElements(elements); }
+        this._semicolonToken.collectTextElements(elements);
     }
 }
 
@@ -4717,10 +4717,10 @@ class ContinueStatementSyntax extends StatementSyntax {
         return new ContinueStatementSyntax(continueKeyword, identifier, semicolonToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._continueKeyword.collectTextElements(text, elements);
-        if (this._identifier !== null) { this._identifier.collectTextElements(text, elements); }
-        this._semicolonToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._continueKeyword.collectTextElements(elements);
+        if (this._identifier !== null) { this._identifier.collectTextElements(elements); }
+        this._semicolonToken.collectTextElements(elements);
     }
 }
 
@@ -4871,17 +4871,17 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         return new ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._forKeyword.collectTextElements(text, elements);
-        this._openParenToken.collectTextElements(text, elements);
-        if (this._variableDeclaration !== null) { this._variableDeclaration.collectTextElements(text, elements); }
-        if (this._initializer !== null) { this._initializer.collectTextElements(text, elements); }
-        this._firstSemicolonToken.collectTextElements(text, elements);
-        if (this._condition !== null) { this._condition.collectTextElements(text, elements); }
-        this._secondSemicolonToken.collectTextElements(text, elements);
-        if (this._incrementor !== null) { this._incrementor.collectTextElements(text, elements); }
-        this._closeParenToken.collectTextElements(text, elements);
-        this._statement.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._forKeyword.collectTextElements(elements);
+        this._openParenToken.collectTextElements(elements);
+        if (this._variableDeclaration !== null) { this._variableDeclaration.collectTextElements(elements); }
+        if (this._initializer !== null) { this._initializer.collectTextElements(elements); }
+        this._firstSemicolonToken.collectTextElements(elements);
+        if (this._condition !== null) { this._condition.collectTextElements(elements); }
+        this._secondSemicolonToken.collectTextElements(elements);
+        if (this._incrementor !== null) { this._incrementor.collectTextElements(elements); }
+        this._closeParenToken.collectTextElements(elements);
+        this._statement.collectTextElements(elements);
     }
 }
 
@@ -5002,15 +5002,15 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         return new ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration, left, inKeyword, expression, closeParenToken, statement);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._forKeyword.collectTextElements(text, elements);
-        this._openParenToken.collectTextElements(text, elements);
-        if (this._variableDeclaration !== null) { this._variableDeclaration.collectTextElements(text, elements); }
-        if (this._left !== null) { this._left.collectTextElements(text, elements); }
-        this._inKeyword.collectTextElements(text, elements);
-        this._expression.collectTextElements(text, elements);
-        this._closeParenToken.collectTextElements(text, elements);
-        this._statement.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._forKeyword.collectTextElements(elements);
+        this._openParenToken.collectTextElements(elements);
+        if (this._variableDeclaration !== null) { this._variableDeclaration.collectTextElements(elements); }
+        if (this._left !== null) { this._left.collectTextElements(elements); }
+        this._inKeyword.collectTextElements(elements);
+        this._expression.collectTextElements(elements);
+        this._closeParenToken.collectTextElements(elements);
+        this._statement.collectTextElements(elements);
     }
 }
 
@@ -5094,12 +5094,12 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         return new WhileStatementSyntax(whileKeyword, openParenToken, condition, closeParenToken, statement);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._whileKeyword.collectTextElements(text, elements);
-        this._openParenToken.collectTextElements(text, elements);
-        this._condition.collectTextElements(text, elements);
-        this._closeParenToken.collectTextElements(text, elements);
-        this._statement.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._whileKeyword.collectTextElements(elements);
+        this._openParenToken.collectTextElements(elements);
+        this._condition.collectTextElements(elements);
+        this._closeParenToken.collectTextElements(elements);
+        this._statement.collectTextElements(elements);
     }
 }
 
@@ -5183,12 +5183,12 @@ class WithStatementSyntax extends StatementSyntax {
         return new WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._withKeyword.collectTextElements(text, elements);
-        this._openParenToken.collectTextElements(text, elements);
-        this._condition.collectTextElements(text, elements);
-        this._closeParenToken.collectTextElements(text, elements);
-        this._statement.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._withKeyword.collectTextElements(elements);
+        this._openParenToken.collectTextElements(elements);
+        this._condition.collectTextElements(elements);
+        this._closeParenToken.collectTextElements(elements);
+        this._statement.collectTextElements(elements);
     }
 }
 
@@ -5291,13 +5291,13 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
         return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(text, elements); }
-        this._enumKeyword.collectTextElements(text, elements);
-        this._identifier.collectTextElements(text, elements);
-        this._openBraceToken.collectTextElements(text, elements);
-        this._variableDeclarators.collectTextElements(text, elements);
-        this._closeBraceToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(elements); }
+        this._enumKeyword.collectTextElements(elements);
+        this._identifier.collectTextElements(elements);
+        this._openBraceToken.collectTextElements(elements);
+        this._variableDeclarators.collectTextElements(elements);
+        this._closeBraceToken.collectTextElements(elements);
     }
 }
 
@@ -5371,11 +5371,11 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
         return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._lessThanToken.collectTextElements(text, elements);
-        this._type.collectTextElements(text, elements);
-        this._greaterThanToken.collectTextElements(text, elements);
-        this._expression.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._lessThanToken.collectTextElements(elements);
+        this._type.collectTextElements(elements);
+        this._greaterThanToken.collectTextElements(elements);
+        this._expression.collectTextElements(elements);
     }
 }
 
@@ -5444,10 +5444,10 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
         return new ObjectLiteralExpressionSyntax(openBraceToken, propertyAssignments, closeBraceToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._openBraceToken.collectTextElements(text, elements);
-        this._propertyAssignments.collectTextElements(text, elements);
-        this._closeBraceToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._openBraceToken.collectTextElements(elements);
+        this._propertyAssignments.collectTextElements(elements);
+        this._closeBraceToken.collectTextElements(elements);
     }
 }
 
@@ -5524,10 +5524,10 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         return new SimplePropertyAssignmentSyntax(propertyName, colonToken, expression);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._propertyName.collectTextElements(text, elements);
-        this._colonToken.collectTextElements(text, elements);
-        this._expression.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._propertyName.collectTextElements(elements);
+        this._colonToken.collectTextElements(elements);
+        this._expression.collectTextElements(elements);
     }
 }
 
@@ -5617,12 +5617,12 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._getKeyword.collectTextElements(text, elements);
-        this._propertyName.collectTextElements(text, elements);
-        this._openParenToken.collectTextElements(text, elements);
-        this._closeParenToken.collectTextElements(text, elements);
-        this._block.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._getKeyword.collectTextElements(elements);
+        this._propertyName.collectTextElements(elements);
+        this._openParenToken.collectTextElements(elements);
+        this._closeParenToken.collectTextElements(elements);
+        this._block.collectTextElements(elements);
     }
 }
 
@@ -5716,13 +5716,13 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._setKeyword.collectTextElements(text, elements);
-        this._propertyName.collectTextElements(text, elements);
-        this._openParenToken.collectTextElements(text, elements);
-        this._parameterName.collectTextElements(text, elements);
-        this._closeParenToken.collectTextElements(text, elements);
-        this._block.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._setKeyword.collectTextElements(elements);
+        this._propertyName.collectTextElements(elements);
+        this._openParenToken.collectTextElements(elements);
+        this._parameterName.collectTextElements(elements);
+        this._closeParenToken.collectTextElements(elements);
+        this._block.collectTextElements(elements);
     }
 }
 
@@ -5804,11 +5804,11 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
         return new FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._functionKeyword.collectTextElements(text, elements);
-        if (this._identifier !== null) { this._identifier.collectTextElements(text, elements); }
-        this._callSignature.collectTextElements(text, elements);
-        this._block.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._functionKeyword.collectTextElements(elements);
+        if (this._identifier !== null) { this._identifier.collectTextElements(elements); }
+        this._callSignature.collectTextElements(elements);
+        this._block.collectTextElements(elements);
     }
 }
 
@@ -5852,8 +5852,8 @@ class EmptyStatementSyntax extends StatementSyntax {
         return new EmptyStatementSyntax(semicolonToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._semicolonToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._semicolonToken.collectTextElements(elements);
     }
 }
 
@@ -5897,8 +5897,8 @@ class SuperExpressionSyntax extends UnaryExpressionSyntax {
         return new SuperExpressionSyntax(superKeyword);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._superKeyword.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._superKeyword.collectTextElements(elements);
     }
 }
 
@@ -5975,11 +5975,11 @@ class TryStatementSyntax extends StatementSyntax {
         return new TryStatementSyntax(tryKeyword, block, catchClause, finallyClause);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._tryKeyword.collectTextElements(text, elements);
-        this._block.collectTextElements(text, elements);
-        if (this._catchClause !== null) { this._catchClause.collectTextElements(text, elements); }
-        if (this._finallyClause !== null) { this._finallyClause.collectTextElements(text, elements); }
+    private collectTextElements(elements: string[]) {
+        this._tryKeyword.collectTextElements(elements);
+        this._block.collectTextElements(elements);
+        if (this._catchClause !== null) { this._catchClause.collectTextElements(elements); }
+        if (this._finallyClause !== null) { this._finallyClause.collectTextElements(elements); }
     }
 }
 
@@ -6063,12 +6063,12 @@ class CatchClauseSyntax extends SyntaxNode {
         return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._catchKeyword.collectTextElements(text, elements);
-        this._openParenToken.collectTextElements(text, elements);
-        this._identifier.collectTextElements(text, elements);
-        this._closeParenToken.collectTextElements(text, elements);
-        this._block.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._catchKeyword.collectTextElements(elements);
+        this._openParenToken.collectTextElements(elements);
+        this._identifier.collectTextElements(elements);
+        this._closeParenToken.collectTextElements(elements);
+        this._block.collectTextElements(elements);
     }
 }
 
@@ -6122,9 +6122,9 @@ class FinallyClauseSyntax extends SyntaxNode {
         return new FinallyClauseSyntax(finallyKeyword, block);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._finallyKeyword.collectTextElements(text, elements);
-        this._block.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._finallyKeyword.collectTextElements(elements);
+        this._block.collectTextElements(elements);
     }
 }
 
@@ -6188,10 +6188,10 @@ class LabeledStatement extends StatementSyntax {
         return new LabeledStatement(identifier, colonToken, statement);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._identifier.collectTextElements(text, elements);
-        this._colonToken.collectTextElements(text, elements);
-        this._statement.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._identifier.collectTextElements(elements);
+        this._colonToken.collectTextElements(elements);
+        this._statement.collectTextElements(elements);
     }
 }
 
@@ -6295,14 +6295,14 @@ class DoStatementSyntax extends IterationStatementSyntax {
         return new DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._doKeyword.collectTextElements(text, elements);
-        this._statement.collectTextElements(text, elements);
-        this._whileKeyword.collectTextElements(text, elements);
-        this._openParenToken.collectTextElements(text, elements);
-        this._condition.collectTextElements(text, elements);
-        this._closeParenToken.collectTextElements(text, elements);
-        this._semicolonToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._doKeyword.collectTextElements(elements);
+        this._statement.collectTextElements(elements);
+        this._whileKeyword.collectTextElements(elements);
+        this._openParenToken.collectTextElements(elements);
+        this._condition.collectTextElements(elements);
+        this._closeParenToken.collectTextElements(elements);
+        this._semicolonToken.collectTextElements(elements);
     }
 }
 
@@ -6356,9 +6356,9 @@ class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
         return new TypeOfExpressionSyntax(typeOfKeyword, expression);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._typeOfKeyword.collectTextElements(text, elements);
-        this._expression.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._typeOfKeyword.collectTextElements(elements);
+        this._expression.collectTextElements(elements);
     }
 }
 
@@ -6412,9 +6412,9 @@ class DeleteExpressionSyntax extends UnaryExpressionSyntax {
         return new DeleteExpressionSyntax(deleteKeyword, expression);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._deleteKeyword.collectTextElements(text, elements);
-        this._expression.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._deleteKeyword.collectTextElements(elements);
+        this._expression.collectTextElements(elements);
     }
 }
 
@@ -6468,9 +6468,9 @@ class VoidExpressionSyntax extends UnaryExpressionSyntax {
         return new VoidExpressionSyntax(voidKeyword, expression);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._voidKeyword.collectTextElements(text, elements);
-        this._expression.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._voidKeyword.collectTextElements(elements);
+        this._expression.collectTextElements(elements);
     }
 }
 
@@ -6524,8 +6524,8 @@ class DebuggerStatementSyntax extends StatementSyntax {
         return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken);
     }
 
-    private collectTextElements(text: IText, elements: string[]) {
-        this._debuggerKeyword.collectTextElements(text, elements);
-        this._semicolonToken.collectTextElements(text, elements);
+    private collectTextElements(elements: string[]) {
+        this._debuggerKeyword.collectTextElements(elements);
+        this._semicolonToken.collectTextElements(elements);
     }
 }

@@ -44,7 +44,7 @@ module SyntaxTrivia {
             return this._text;
         }
 
-        public collectTextElements(text: IText, elements: string[]): void {
+        public collectTextElements(elements: string[]): void {
             elements.push(this.fullText());
         }
 

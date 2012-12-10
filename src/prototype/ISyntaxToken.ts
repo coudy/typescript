@@ -14,7 +14,7 @@ interface ISyntaxToken extends ISyntaxElement {
     end(): number;
 
     text(): string;
-    fullText(text: IText): string;
+    fullText(): string;
 
     value(): any;
     valueText(): string;
@@ -27,10 +27,10 @@ interface ISyntaxToken extends ISyntaxElement {
     hasTrailingCommentTrivia(): bool;
     hasTrailingNewLineTrivia(): bool;
 
-    leadingTrivia(text: IText): ISyntaxTriviaList;
-    trailingTrivia(text: IText): ISyntaxTriviaList;
+    leadingTrivia(): ISyntaxTriviaList;
+    trailingTrivia(): ISyntaxTriviaList;
 
-    realize(text: IText): ISyntaxToken;
+    realize(): ISyntaxToken;
 
     withFullStart(fullStart: number): ISyntaxToken;
     withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken;

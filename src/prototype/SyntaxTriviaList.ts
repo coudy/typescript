@@ -1,9 +1,9 @@
 ///<reference path='References.ts' />
 
 module SyntaxTriviaList {
-    function collectTextElements(text: IText, elements: string[], list: ISyntaxTriviaList): void {
+    function collectTextElements(elements: string[], list: ISyntaxTriviaList): void {
         for (var i = 0, n = list.count(); i < n; i++) {
-            list.syntaxTriviaAt(i).collectTextElements(text, elements);
+            list.syntaxTriviaAt(i).collectTextElements(elements);
         }
     }
 
@@ -45,7 +45,7 @@ module SyntaxTriviaList {
             return [];
         }
 
-        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(text, elements, this); }
+        public collectTextElements(elements: string[]): void { collectTextElements(elements, this); }
     }
 
     export var empty: ISyntaxTriviaList = new EmptySyntaxTriviaList();
@@ -102,7 +102,7 @@ module SyntaxTriviaList {
             return [this.item];
         }
 
-        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(text, elements, this); }
+        public collectTextElements(elements: string[]): void { collectTextElements(elements, this); }
     }
 
     class NormalSyntaxTriviaList implements ISyntaxTriviaList {
@@ -168,7 +168,7 @@ module SyntaxTriviaList {
             return this.trivia;
         }
 
-        public collectTextElements(text: IText, elements: string[]): void { collectTextElements(text, elements, this); }
+        public collectTextElements(elements: string[]): void { collectTextElements(elements, this); }
     }
 
     export function create(trivia: ISyntaxTrivia[]): ISyntaxTriviaList {

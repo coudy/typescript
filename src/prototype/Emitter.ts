@@ -36,14 +36,14 @@ class FullStartNormalizer extends SyntaxRewriter {
 
     public visitToken(token: ISyntaxToken): ISyntaxToken {
         var tokenFullStart = this.currentFullStart;
-        var leadingTrivia = this.visitTriviaList(token.leadingTrivia(null));
+        var leadingTrivia = this.visitTriviaList(token.leadingTrivia());
 
         this.currentFullStart += token.width();
-        var trailingTrivia = this.visitTriviaList(token.trailingTrivia(null));
+        var trailingTrivia = this.visitTriviaList(token.trailingTrivia());
 
-        if (token.leadingTrivia(null) === leadingTrivia &&
+        if (token.leadingTrivia() === leadingTrivia &&
             token.fullStart() === tokenFullStart &&
-            token.trailingTrivia(null) === trailingTrivia) {
+            token.trailingTrivia() === trailingTrivia) {
             return token;
         }
 
@@ -63,7 +63,6 @@ class Emitter extends SyntaxRewriter {
 
     public emit(input: SourceUnitSyntax): SourceUnitSyntax {
         var sourceUnit = input.accept1(this);
-        sourceUnit = sourceUnit.realize(null);
         return sourceUnit.accept1(new FullStartNormalizer(0));
     }
 

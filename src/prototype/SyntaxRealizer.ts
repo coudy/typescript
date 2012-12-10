@@ -1,15 +1,11 @@
 ///<reference path='References.ts' />
 
 class SyntaxRealizer extends SyntaxRewriter {
-    private text: IText;
-
-    constructor(text: IText) {
+    constructor() {
         super();
-
-        this.text = text;
     }
 
     public visitToken(token: ISyntaxToken): ISyntaxToken {
-        return token.realize(this.text);
+        return token.realize();
     }
 }

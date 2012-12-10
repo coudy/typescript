@@ -81,7 +81,7 @@ class Scanner extends SlidingWindow {
         var leadingTriviaInfo = this.scanTriviaInfo(diagnostics, /*isTrailing: */ false);
         this.scanSyntaxToken(diagnostics, allowRegularExpression);
         var trailingTriviaInfo = this.scanTriviaInfo(diagnostics,/*isTrailing: */true);
-        return SyntaxToken.create(fullStart, leadingTriviaInfo, this.tokenInfo, trailingTriviaInfo);
+        return SyntaxToken.create(this.text, fullStart, leadingTriviaInfo, this.tokenInfo, trailingTriviaInfo);
     }
 
     public static scanTrivia(text: IText, start: number, length: number, isTrailing: bool): ISyntaxTriviaList {

@@ -1,9 +1,9 @@
 ///<reference path='References.ts' />
 
 module SeparatedSyntaxList {
-    function collectTextElements(text: IText, elements: string[], list: ISeparatedSyntaxList): void {
+    function collectTextElements(elements: string[], list: ISeparatedSyntaxList): void {
         for (var i = 0, n = list.count(); i < n; i++) {
-            list.itemAt(i).collectTextElements(text, elements);
+            list.itemAt(i).collectTextElements(elements);
         }
     }
 
@@ -35,8 +35,8 @@ module SeparatedSyntaxList {
             throw Errors.argumentOutOfRange("index");
         }
 
-        public collectTextElements(text: IText, elements: string[]): void {
-            return collectTextElements(text, elements, this);
+        public collectTextElements(elements: string[]): void {
+            return collectTextElements(elements, this);
         }
     }
 
@@ -84,8 +84,8 @@ module SeparatedSyntaxList {
             throw Errors.argumentOutOfRange("index");
         }
 
-        public collectTextElements(text: IText, elements: string[]): void {
-            return collectTextElements(text, elements, this);
+        public collectTextElements(elements: string[]): void {
+            return collectTextElements(elements, this);
         }
     }
 
@@ -145,8 +145,8 @@ module SeparatedSyntaxList {
             return <ISyntaxToken>this.nodes[value];
         }
 
-        public collectTextElements(text: IText, elements: string[]): void {
-            return collectTextElements(text, elements, this);
+        public collectTextElements(elements: string[]): void {
+            return collectTextElements(elements, this);
         }
     }
 

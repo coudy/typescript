@@ -109,10 +109,10 @@ class Program {
 
         var parser = new Parser(text, languageVersion, stringTable);
         var tree = parser.parseSyntaxTree();
-        var emitted = new Emitter(true).emit(<SourceUnitSyntax>tree.sourceUnit().realize(text));
+        var emitted = new Emitter(true).emit(<SourceUnitSyntax>tree.sourceUnit());
 
         if (generateBaseline) {
-            var result = { fullText: emitted.fullText(null), sourceUnit: emitted };
+            var result = { fullText: emitted.fullText(), sourceUnit: emitted };
             var actualResult = JSON2.stringify(result, null, 4);
 
             var expectedFile = filePath + ".expected";
@@ -121,7 +121,7 @@ class Program {
             environment.writeFile(expectedFile, actualResult, /*useUTF8:*/ true);
         }
         else if (verify) {
-            var result = { fullText: emitted.fullText(null), sourceUnit: emitted };
+            var result = { fullText: emitted.fullText(), sourceUnit: emitted };
             var actualResult = JSON2.stringify(result, null, 4);
 
             var expectedFile = filePath + ".expected";
@@ -236,7 +236,7 @@ class Program {
 
             while (true) {
                 var token = scanner.scan(diagnostics, /*allowRegularExpression:*/ false);
-                tokens.push(token.realize(text));
+                tokens.push(token.realize());
 
                 if (token.tokenKind === SyntaxKind.EndOfFileToken) {
                     break;
@@ -289,7 +289,7 @@ class Program {
 
                 if (verify) {
                     var tokenText = token.text();
-                    var tokenFullText = token.fullText(text);
+                    var tokenFullText = token.fullText();
 
                     textArray.push(tokenFullText);
 

@@ -37,17 +37,17 @@ class SyntaxNode implements ISyntaxElement {
         throw Errors.abstract();
     }
 
-    public realize(text: IText): SyntaxNode {
-        return this.accept1(new SyntaxRealizer(text));
+    public realize(): SyntaxNode {
+        return this.accept1(new SyntaxRealizer());
     }
 
-    public collectTextElements(text: IText, elements: string[]): void {
+    public collectTextElements(elements: string[]): void {
         throw Errors.abstract();
     }
 
-    public fullText(text: IText): string {
+    public fullText(): string {
         var elements: string[] = [];
-        this.collectTextElements(text, elements);
+        this.collectTextElements(elements);
         return elements.join("");
     }
 }
