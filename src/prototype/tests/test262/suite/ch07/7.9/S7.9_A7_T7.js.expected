@@ -9,8 +9,6 @@
                     "_varKeyword": {
                         "kind": "IdentifierNameToken",
                         "keywordKind": "VarKeyword",
-                        "start": 318,
-                        "fullStart": 0,
                         "width": 3,
                         "fullWidth": 322,
                         "text": "var",
@@ -21,59 +19,48 @@
                         "leadingTrivia": [
                             {
                                 "kind": "SingleLineCommentTrivia",
-                                "fullStart": 0,
                                 "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 60,
                                 "text": "\n"
                             },
                             {
                                 "kind": "SingleLineCommentTrivia",
-                                "fullStart": 61,
                                 "text": "// This code is governed by the BSD license found in the LICENSE file."
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 131,
                                 "text": "\n"
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 132,
                                 "text": "\n"
                             },
                             {
                                 "kind": "MultiLineCommentTrivia",
-                                "fullStart": 133,
                                 "text": "/**\n * Check Var Statement for automatic semicolon insertion\n *\n * @path ch07/7.9/S7.9_A7_T7.js\n * @description Checking if execution of \"var x \\n y\" passes\n * @negative\n */"
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 306,
                                 "text": "\n"
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 307,
                                 "text": "\n"
                             },
                             {
                                 "kind": "SingleLineCommentTrivia",
-                                "fullStart": 308,
                                 "text": "//CHECK#1"
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 317,
                                 "text": "\n"
                             }
                         ],
                         "trailingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 0,
                                 "text": " "
                             }
                         ]
@@ -83,7 +70,6 @@
                             "kind": "VariableDeclarator",
                             "_identifier": {
                                 "kind": "IdentifierNameToken",
-                                "start": 322,
                                 "width": 1,
                                 "fullWidth": 3,
                                 "text": "x",
@@ -93,12 +79,10 @@
                                 "trailingTrivia": [
                                     {
                                         "kind": "WhitespaceTrivia",
-                                        "fullStart": 0,
                                         "text": " "
                                     },
                                     {
                                         "kind": "NewLineTrivia",
-                                        "fullStart": 1,
                                         "text": "\n"
                                     }
                                 ]
@@ -108,7 +92,6 @@
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
-                    "start": 325,
                     "width": 0,
                     "isMissing": true,
                     "text": ""
@@ -120,7 +103,6 @@
                     "kind": "IdentifierName",
                     "_identifier": {
                         "kind": "IdentifierNameToken",
-                        "start": 325,
                         "width": 1,
                         "fullWidth": 3,
                         "text": "y",
@@ -130,12 +112,10 @@
                         "trailingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 0,
                                 "text": " "
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 1,
                                 "text": "\n"
                             }
                         ]
@@ -143,7 +123,6 @@
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
-                    "start": 328,
                     "width": 0,
                     "isMissing": true,
                     "text": ""
@@ -152,8 +131,6 @@
         ],
         "_endOfFileToken": {
             "kind": "EndOfFileToken",
-            "start": 330,
-            "fullStart": 328,
             "width": 0,
             "fullWidth": 2,
             "text": "",
@@ -162,12 +139,10 @@
             "leadingTrivia": [
                 {
                     "kind": "NewLineTrivia",
-                    "fullStart": 0,
                     "text": "\n"
                 },
                 {
                     "kind": "NewLineTrivia",
-                    "fullStart": 1,
                     "text": "\n"
                 }
             ]

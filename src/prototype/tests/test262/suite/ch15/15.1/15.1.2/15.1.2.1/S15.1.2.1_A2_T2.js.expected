@@ -9,8 +9,6 @@
                     "_varKeyword": {
                         "kind": "IdentifierNameToken",
                         "keywordKind": "VarKeyword",
-                        "start": 374,
-                        "fullStart": 0,
                         "width": 3,
                         "fullWidth": 378,
                         "text": "var",
@@ -21,59 +19,48 @@
                         "leadingTrivia": [
                             {
                                 "kind": "SingleLineCommentTrivia",
-                                "fullStart": 0,
                                 "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 60,
                                 "text": "\n"
                             },
                             {
                                 "kind": "SingleLineCommentTrivia",
-                                "fullStart": 61,
                                 "text": "// This code is governed by the BSD license found in the LICENSE file."
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 131,
                                 "text": "\n"
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 132,
                                 "text": "\n"
                             },
                             {
                                 "kind": "MultiLineCommentTrivia",
-                                "fullStart": 133,
                                 "text": "/**\n * If the parse fails, throw a SyntaxError exception (but see also clause 16)\n *\n * @path ch15/15.1/15.1.2/15.1.2.1/S15.1.2.1_A2_T2.js\n * @description Checking if execution of \"eval(\"x = 1; x\\u000A++\")\" fails\n * @negative\n */"
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 362,
                                 "text": "\n"
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 363,
                                 "text": "\n"
                             },
                             {
                                 "kind": "SingleLineCommentTrivia",
-                                "fullStart": 364,
                                 "text": "//CHECK#1"
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 373,
                                 "text": "\n"
                             }
                         ],
                         "trailingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 0,
                                 "text": " "
                             }
                         ]
@@ -83,7 +70,6 @@
                             "kind": "VariableDeclarator",
                             "_identifier": {
                                 "kind": "IdentifierNameToken",
-                                "start": 378,
                                 "width": 1,
                                 "text": "x",
                                 "valueText": "x"
@@ -93,7 +79,6 @@
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
-                    "start": 379,
                     "width": 1,
                     "fullWidth": 2,
                     "text": ";",
@@ -102,7 +87,6 @@
                     "trailingTrivia": [
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 0,
                             "text": "\n"
                         }
                     ]
@@ -116,7 +100,6 @@
                         "kind": "IdentifierName",
                         "_identifier": {
                             "kind": "IdentifierNameToken",
-                            "start": 381,
                             "width": 4,
                             "text": "eval",
                             "valueText": "eval"
@@ -126,7 +109,6 @@
                         "kind": "ArgumentList",
                         "_openParenToken": {
                             "kind": "OpenParenToken",
-                            "start": 385,
                             "width": 1,
                             "text": "("
                         },
@@ -135,7 +117,6 @@
                                 "kind": "StringLiteralExpression",
                                 "_literalToken": {
                                     "kind": "StringLiteral",
-                                    "start": 386,
                                     "width": 18,
                                     "text": "\"x = 1; x\\u000A++\""
                                 }
@@ -143,7 +124,6 @@
                         ],
                         "_closeParenToken": {
                             "kind": "CloseParenToken",
-                            "start": 404,
                             "width": 1,
                             "text": ")"
                         }
@@ -151,7 +131,6 @@
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
-                    "start": 405,
                     "width": 1,
                     "fullWidth": 3,
                     "text": ";",
@@ -160,12 +139,10 @@
                     "trailingTrivia": [
                         {
                             "kind": "WhitespaceTrivia",
-                            "fullStart": 0,
                             "text": " "
                         },
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 1,
                             "text": "\n"
                         }
                     ]
@@ -174,8 +151,6 @@
         ],
         "_endOfFileToken": {
             "kind": "EndOfFileToken",
-            "start": 409,
-            "fullStart": 408,
             "width": 0,
             "fullWidth": 1,
             "text": "",
@@ -184,7 +159,6 @@
             "leadingTrivia": [
                 {
                     "kind": "NewLineTrivia",
-                    "fullStart": 0,
                     "text": "\n"
                 }
             ]

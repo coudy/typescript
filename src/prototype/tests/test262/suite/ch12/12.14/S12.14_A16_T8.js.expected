@@ -3,7 +3,6 @@
         {
             "kind": "IdentifierNameToken",
             "keywordKind": "FinallyKeyword",
-            "start": 445,
             "width": 7,
             "text": "finally"
         }
@@ -39,8 +38,6 @@
                 "_tryKeyword": {
                     "kind": "IdentifierNameToken",
                     "keywordKind": "TryKeyword",
-                    "start": 430,
-                    "fullStart": 0,
                     "width": 3,
                     "fullWidth": 433,
                     "text": "try",
@@ -50,52 +47,42 @@
                     "leadingTrivia": [
                         {
                             "kind": "SingleLineCommentTrivia",
-                            "fullStart": 0,
                             "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
                         },
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 60,
                             "text": "\n"
                         },
                         {
                             "kind": "SingleLineCommentTrivia",
-                            "fullStart": 61,
                             "text": "// This code is governed by the BSD license found in the LICENSE file."
                         },
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 131,
                             "text": "\n"
                         },
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 132,
                             "text": "\n"
                         },
                         {
                             "kind": "MultiLineCommentTrivia",
-                            "fullStart": 133,
                             "text": "/**\n * TryStatement: \"try Block Catch\" or \"try Block Finally\" or \"try Block Catch Finally\"\n *\n * @path ch12/12.14/S12.14_A16_T8.js\n * @description Block: \"{ StatementList }\". Catch: \"catch (Identifier ) Block\". Checking if execution of \"try{} catch(){finally{}\" fails\n * @negative\n */"
                         },
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 417,
                             "text": "\n"
                         },
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 418,
                             "text": "\n"
                         },
                         {
                             "kind": "SingleLineCommentTrivia",
-                            "fullStart": 419,
                             "text": "// CHECK#1"
                         },
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 429,
                             "text": "\n"
                         }
                     ]
@@ -104,14 +91,12 @@
                     "kind": "Block",
                     "_openBraceToken": {
                         "kind": "OpenBraceToken",
-                        "start": 433,
                         "width": 1,
                         "text": "{"
                     },
                     "_statements": [],
                     "_closeBraceToken": {
                         "kind": "CloseBraceToken",
-                        "start": 434,
                         "width": 1,
                         "fullWidth": 2,
                         "text": "}",
@@ -120,7 +105,6 @@
                         "trailingTrivia": [
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 0,
                                 "text": "\n"
                             }
                         ]
@@ -131,26 +115,22 @@
                     "_catchKeyword": {
                         "kind": "IdentifierNameToken",
                         "keywordKind": "CatchKeyword",
-                        "start": 436,
                         "width": 5,
                         "text": "catch"
                     },
                     "_openParenToken": {
                         "kind": "OpenParenToken",
-                        "start": 441,
                         "width": 1,
                         "text": "("
                     },
                     "_identifier": {
                         "kind": "IdentifierNameToken",
-                        "start": 442,
                         "width": 0,
                         "isMissing": true,
                         "text": ""
                     },
                     "_closeParenToken": {
                         "kind": "CloseParenToken",
-                        "start": 442,
                         "width": 1,
                         "text": ")"
                     },
@@ -158,7 +138,6 @@
                         "kind": "Block",
                         "_openBraceToken": {
                             "kind": "OpenBraceToken",
-                            "start": 443,
                             "width": 1,
                             "fullWidth": 2,
                             "text": "{",
@@ -167,7 +146,6 @@
                             "trailingTrivia": [
                                 {
                                     "kind": "NewLineTrivia",
-                                    "fullStart": 0,
                                     "text": "\n"
                                 }
                             ]
@@ -177,14 +155,12 @@
                                 "kind": "Block",
                                 "_openBraceToken": {
                                     "kind": "OpenBraceToken",
-                                    "start": 452,
                                     "width": 1,
                                     "text": "{"
                                 },
                                 "_statements": [],
                                 "_closeBraceToken": {
                                     "kind": "CloseBraceToken",
-                                    "start": 453,
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": "}",
@@ -193,7 +169,6 @@
                                     "trailingTrivia": [
                                         {
                                             "kind": "NewLineTrivia",
-                                            "fullStart": 0,
                                             "text": "\n"
                                         }
                                     ]
@@ -202,7 +177,6 @@
                         ],
                         "_closeBraceToken": {
                             "kind": "CloseBraceToken",
-                            "start": 455,
                             "width": 0,
                             "isMissing": true,
                             "text": ""
@@ -213,8 +187,6 @@
         ],
         "_endOfFileToken": {
             "kind": "EndOfFileToken",
-            "start": 458,
-            "fullStart": 455,
             "width": 0,
             "fullWidth": 3,
             "text": "",
@@ -223,17 +195,14 @@
             "leadingTrivia": [
                 {
                     "kind": "NewLineTrivia",
-                    "fullStart": 0,
                     "text": "\n"
                 },
                 {
                     "kind": "NewLineTrivia",
-                    "fullStart": 1,
                     "text": "\n"
                 },
                 {
                     "kind": "NewLineTrivia",
-                    "fullStart": 2,
                     "text": "\n"
                 }
             ]

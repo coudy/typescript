@@ -2,7 +2,6 @@
     "_skippedTokens": [
         {
             "kind": "EqualsToken",
-            "start": 321,
             "width": 1,
             "fullWidth": 2,
             "text": "=",
@@ -10,7 +9,6 @@
             "trailingTrivia": [
                 {
                     "kind": "WhitespaceTrivia",
-                    "fullStart": 0,
                     "text": " "
                 }
             ]
@@ -34,8 +32,6 @@
                 "_breakKeyword": {
                     "kind": "IdentifierNameToken",
                     "keywordKind": "BreakKeyword",
-                    "start": 315,
-                    "fullStart": 0,
                     "width": 5,
                     "fullWidth": 321,
                     "text": "break",
@@ -46,56 +42,46 @@
                     "leadingTrivia": [
                         {
                             "kind": "SingleLineCommentTrivia",
-                            "fullStart": 0,
                             "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
                         },
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 60,
                             "text": "\n"
                         },
                         {
                             "kind": "SingleLineCommentTrivia",
-                            "fullStart": 61,
                             "text": "// This code is governed by the BSD license found in the LICENSE file."
                         },
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 131,
                             "text": "\n"
                         },
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 132,
                             "text": "\n"
                         },
                         {
                             "kind": "MultiLineCommentTrivia",
-                            "fullStart": 133,
                             "text": "/**\n * The \"break\" token can not be used as identifier\n *\n * @path ch07/7.6/7.6.1/7.6.1.1/S7.6.1.1_A1.1.js\n * @description Checking if execution of \"break=1\" fails\n * @negative\n */"
                         },
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 313,
                             "text": "\n"
                         },
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 314,
                             "text": "\n"
                         }
                     ],
                     "trailingTrivia": [
                         {
                             "kind": "WhitespaceTrivia",
-                            "fullStart": 0,
                             "text": " "
                         }
                     ]
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
-                    "start": 321,
                     "width": 0,
                     "isMissing": true,
                     "text": ""
@@ -107,14 +93,12 @@
                     "kind": "NumericLiteralExpression",
                     "_literalToken": {
                         "kind": "NumericLiteral",
-                        "start": 323,
                         "width": 1,
                         "text": "1"
                     }
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
-                    "start": 324,
                     "width": 1,
                     "fullWidth": 2,
                     "text": ";",
@@ -123,7 +107,6 @@
                     "trailingTrivia": [
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 0,
                             "text": "\n"
                         }
                     ]
@@ -132,8 +115,6 @@
         ],
         "_endOfFileToken": {
             "kind": "EndOfFileToken",
-            "start": 327,
-            "fullStart": 326,
             "width": 0,
             "fullWidth": 1,
             "text": "",
@@ -142,7 +123,6 @@
             "leadingTrivia": [
                 {
                     "kind": "NewLineTrivia",
-                    "fullStart": 0,
                     "text": "\n"
                 }
             ]

@@ -9,8 +9,6 @@
                     "_varKeyword": {
                         "kind": "IdentifierNameToken",
                         "keywordKind": "VarKeyword",
-                        "start": 499,
-                        "fullStart": 0,
                         "width": 3,
                         "fullWidth": 503,
                         "text": "var",
@@ -21,49 +19,40 @@
                         "leadingTrivia": [
                             {
                                 "kind": "SingleLineCommentTrivia",
-                                "fullStart": 0,
                                 "text": "// Copyright 2011 the Sputnik authors.  All rights reserved."
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 60,
                                 "text": "\n"
                             },
                             {
                                 "kind": "SingleLineCommentTrivia",
-                                "fullStart": 61,
                                 "text": "// This code is governed by the BSD license found in the LICENSE file."
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 131,
                                 "text": "\n"
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 132,
                                 "text": "\n"
                             },
                             {
                                 "kind": "MultiLineCommentTrivia",
-                                "fullStart": 133,
                                 "text": "/**\n * The toString function is not generic; it throws a TypeError exception if its this value is not a Function object.\n *\n * @path ch15/15.3/15.3.4/15.3.4.2/S15.3.4.2_A16.js\n * @description The String constructor, given an object, should invoke that object's toString method as a method, i.e., with its this value bound to that object.\n * @negative TypeError\n */"
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 497,
                                 "text": "\n"
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 498,
                                 "text": "\n"
                             }
                         ],
                         "trailingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 0,
                                 "text": " "
                             }
                         ]
@@ -73,7 +62,6 @@
                             "kind": "VariableDeclarator",
                             "_identifier": {
                                 "kind": "IdentifierNameToken",
-                                "start": 503,
                                 "width": 3,
                                 "fullWidth": 4,
                                 "text": "obj",
@@ -82,7 +70,6 @@
                                 "trailingTrivia": [
                                     {
                                         "kind": "WhitespaceTrivia",
-                                        "fullStart": 0,
                                         "text": " "
                                     }
                                 ]
@@ -91,7 +78,6 @@
                                 "kind": "EqualsValueClause",
                                 "_equalsToken": {
                                     "kind": "EqualsToken",
-                                    "start": 507,
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": "=",
@@ -99,7 +85,6 @@
                                     "trailingTrivia": [
                                         {
                                             "kind": "WhitespaceTrivia",
-                                            "fullStart": 0,
                                             "text": " "
                                         }
                                     ]
@@ -108,7 +93,6 @@
                                     "kind": "ObjectLiteralExpression",
                                     "_openBraceToken": {
                                         "kind": "OpenBraceToken",
-                                        "start": 509,
                                         "width": 1,
                                         "text": "{"
                                     },
@@ -117,14 +101,12 @@
                                             "kind": "SimplePropertyAssignment",
                                             "_propertyName": {
                                                 "kind": "IdentifierNameToken",
-                                                "start": 510,
                                                 "width": 8,
                                                 "text": "toString",
                                                 "valueText": "toString"
                                             },
                                             "_colonToken": {
                                                 "kind": "ColonToken",
-                                                "start": 518,
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": ":",
@@ -132,7 +114,6 @@
                                                 "trailingTrivia": [
                                                     {
                                                         "kind": "WhitespaceTrivia",
-                                                        "fullStart": 0,
                                                         "text": " "
                                                     }
                                                 ]
@@ -145,7 +126,6 @@
                                                         "kind": "IdentifierName",
                                                         "_identifier": {
                                                             "kind": "IdentifierNameToken",
-                                                            "start": 520,
                                                             "width": 8,
                                                             "text": "Function",
                                                             "valueText": "Function"
@@ -153,7 +133,6 @@
                                                     },
                                                     "_dotToken": {
                                                         "kind": "DotToken",
-                                                        "start": 528,
                                                         "width": 1,
                                                         "text": "."
                                                     },
@@ -161,7 +140,6 @@
                                                         "kind": "IdentifierName",
                                                         "_identifier": {
                                                             "kind": "IdentifierNameToken",
-                                                            "start": 529,
                                                             "width": 9,
                                                             "text": "prototype",
                                                             "valueText": "prototype"
@@ -170,7 +148,6 @@
                                                 },
                                                 "_dotToken": {
                                                     "kind": "DotToken",
-                                                    "start": 538,
                                                     "width": 1,
                                                     "text": "."
                                                 },
@@ -178,7 +155,6 @@
                                                     "kind": "IdentifierName",
                                                     "_identifier": {
                                                         "kind": "IdentifierNameToken",
-                                                        "start": 539,
                                                         "width": 8,
                                                         "text": "toString",
                                                         "valueText": "toString"
@@ -189,7 +165,6 @@
                                     ],
                                     "_closeBraceToken": {
                                         "kind": "CloseBraceToken",
-                                        "start": 547,
                                         "width": 1,
                                         "text": "}"
                                     }
@@ -200,7 +175,6 @@
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
-                    "start": 548,
                     "width": 1,
                     "fullWidth": 2,
                     "text": ";",
@@ -209,7 +183,6 @@
                     "trailingTrivia": [
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 0,
                             "text": "\n"
                         }
                     ]
@@ -223,8 +196,6 @@
                         "kind": "IdentifierName",
                         "_identifier": {
                             "kind": "IdentifierNameToken",
-                            "start": 551,
-                            "fullStart": 550,
                             "width": 6,
                             "fullWidth": 7,
                             "text": "String",
@@ -234,7 +205,6 @@
                             "leadingTrivia": [
                                 {
                                     "kind": "NewLineTrivia",
-                                    "fullStart": 0,
                                     "text": "\n"
                                 }
                             ]
@@ -244,7 +214,6 @@
                         "kind": "ArgumentList",
                         "_openParenToken": {
                             "kind": "OpenParenToken",
-                            "start": 557,
                             "width": 1,
                             "text": "("
                         },
@@ -253,7 +222,6 @@
                                 "kind": "IdentifierName",
                                 "_identifier": {
                                     "kind": "IdentifierNameToken",
-                                    "start": 558,
                                     "width": 3,
                                     "text": "obj",
                                     "valueText": "obj"
@@ -262,7 +230,6 @@
                         ],
                         "_closeParenToken": {
                             "kind": "CloseParenToken",
-                            "start": 561,
                             "width": 1,
                             "text": ")"
                         }
@@ -270,7 +237,6 @@
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
-                    "start": 562,
                     "width": 1,
                     "fullWidth": 2,
                     "text": ";",
@@ -279,7 +245,6 @@
                     "trailingTrivia": [
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 0,
                             "text": "\n"
                         }
                     ]
@@ -288,8 +253,6 @@
         ],
         "_endOfFileToken": {
             "kind": "EndOfFileToken",
-            "start": 565,
-            "fullStart": 564,
             "width": 0,
             "fullWidth": 1,
             "text": "",
@@ -298,7 +261,6 @@
             "leadingTrivia": [
                 {
                     "kind": "NewLineTrivia",
-                    "fullStart": 0,
                     "text": "\n"
                 }
             ]

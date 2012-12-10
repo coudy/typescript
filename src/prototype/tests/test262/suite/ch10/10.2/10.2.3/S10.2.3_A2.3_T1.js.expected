@@ -9,8 +9,6 @@
                     "_varKeyword": {
                         "kind": "IdentifierNameToken",
                         "keywordKind": "VarKeyword",
-                        "start": 307,
-                        "fullStart": 0,
                         "width": 3,
                         "fullWidth": 311,
                         "text": "var",
@@ -21,49 +19,40 @@
                         "leadingTrivia": [
                             {
                                 "kind": "SingleLineCommentTrivia",
-                                "fullStart": 0,
                                 "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 60,
                                 "text": "\n"
                             },
                             {
                                 "kind": "SingleLineCommentTrivia",
-                                "fullStart": 61,
                                 "text": "// This code is governed by the BSD license found in the LICENSE file."
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 131,
                                 "text": "\n"
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 132,
                                 "text": "\n"
                             },
                             {
                                 "kind": "MultiLineCommentTrivia",
-                                "fullStart": 133,
                                 "text": "/**\n * Global object properties have attributes { DontEnum }\n *\n * @path ch10/10.2/10.2.3/S10.2.3_A2.3_T1.js\n * @description Global execution context - Value Properties\n */"
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 305,
                                 "text": "\n"
                             },
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 306,
                                 "text": "\n"
                             }
                         ],
                         "trailingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 0,
                                 "text": " "
                             }
                         ]
@@ -73,7 +62,6 @@
                             "kind": "VariableDeclarator",
                             "_identifier": {
                                 "kind": "IdentifierNameToken",
-                                "start": 311,
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "evalStr",
@@ -82,7 +70,6 @@
                                 "trailingTrivia": [
                                     {
                                         "kind": "WhitespaceTrivia",
-                                        "fullStart": 0,
                                         "text": " "
                                     }
                                 ]
@@ -91,7 +78,6 @@
                                 "kind": "EqualsValueClause",
                                 "_equalsToken": {
                                     "kind": "EqualsToken",
-                                    "start": 319,
                                     "width": 1,
                                     "fullWidth": 3,
                                     "text": "=",
@@ -100,12 +86,10 @@
                                     "trailingTrivia": [
                                         {
                                             "kind": "WhitespaceTrivia",
-                                            "fullStart": 0,
                                             "text": " "
                                         },
                                         {
                                             "kind": "NewLineTrivia",
-                                            "fullStart": 1,
                                             "text": "\n"
                                         }
                                     ]
@@ -132,14 +116,12 @@
                                                                         "kind": "StringLiteralExpression",
                                                                         "_literalToken": {
                                                                             "kind": "StringLiteral",
-                                                                            "start": 322,
                                                                             "width": 13,
                                                                             "text": "'//CHECK#1\\n'"
                                                                         }
                                                                     },
                                                                     "_operatorToken": {
                                                                         "kind": "PlusToken",
-                                                                        "start": 335,
                                                                         "width": 1,
                                                                         "fullWidth": 2,
                                                                         "text": "+",
@@ -148,7 +130,6 @@
                                                                         "trailingTrivia": [
                                                                             {
                                                                                 "kind": "NewLineTrivia",
-                                                                                "fullStart": 0,
                                                                                 "text": "\n"
                                                                             }
                                                                         ]
@@ -157,7 +138,6 @@
                                                                         "kind": "StringLiteralExpression",
                                                                         "_literalToken": {
                                                                             "kind": "StringLiteral",
-                                                                            "start": 337,
                                                                             "width": 25,
                                                                             "text": "'for (var x in this) {\\n'"
                                                                         }
@@ -165,7 +145,6 @@
                                                                 },
                                                                 "_operatorToken": {
                                                                     "kind": "PlusToken",
-                                                                    "start": 362,
                                                                     "width": 1,
                                                                     "fullWidth": 2,
                                                                     "text": "+",
@@ -174,7 +153,6 @@
                                                                     "trailingTrivia": [
                                                                         {
                                                                             "kind": "NewLineTrivia",
-                                                                            "fullStart": 0,
                                                                             "text": "\n"
                                                                         }
                                                                     ]
@@ -183,7 +161,6 @@
                                                                     "kind": "StringLiteralExpression",
                                                                     "_literalToken": {
                                                                         "kind": "StringLiteral",
-                                                                        "start": 364,
                                                                         "width": 28,
                                                                         "text": "'  if ( x === \\'NaN\\' ) {\\n'"
                                                                     }
@@ -191,7 +168,6 @@
                                                             },
                                                             "_operatorToken": {
                                                                 "kind": "PlusToken",
-                                                                "start": 392,
                                                                 "width": 1,
                                                                 "fullWidth": 2,
                                                                 "text": "+",
@@ -200,7 +176,6 @@
                                                                 "trailingTrivia": [
                                                                     {
                                                                         "kind": "NewLineTrivia",
-                                                                        "fullStart": 0,
                                                                         "text": "\n"
                                                                     }
                                                                 ]
@@ -209,7 +184,6 @@
                                                                 "kind": "StringLiteralExpression",
                                                                 "_literalToken": {
                                                                     "kind": "StringLiteral",
-                                                                    "start": 394,
                                                                     "width": 54,
                                                                     "text": "'    $ERROR(\"#1: \\'NaN\\' have attribute DontEnum\");\\n'"
                                                                 }
@@ -217,7 +191,6 @@
                                                         },
                                                         "_operatorToken": {
                                                             "kind": "PlusToken",
-                                                            "start": 448,
                                                             "width": 1,
                                                             "fullWidth": 2,
                                                             "text": "+",
@@ -226,7 +199,6 @@
                                                             "trailingTrivia": [
                                                                 {
                                                                     "kind": "NewLineTrivia",
-                                                                    "fullStart": 0,
                                                                     "text": "\n"
                                                                 }
                                                             ]
@@ -235,7 +207,6 @@
                                                             "kind": "StringLiteralExpression",
                                                             "_literalToken": {
                                                                 "kind": "StringLiteral",
-                                                                "start": 450,
                                                                 "width": 40,
                                                                 "text": "'  } else if ( x === \\'Infinity\\' ) {\\n'"
                                                             }
@@ -243,7 +214,6 @@
                                                     },
                                                     "_operatorToken": {
                                                         "kind": "PlusToken",
-                                                        "start": 490,
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": "+",
@@ -252,7 +222,6 @@
                                                         "trailingTrivia": [
                                                             {
                                                                 "kind": "NewLineTrivia",
-                                                                "fullStart": 0,
                                                                 "text": "\n"
                                                             }
                                                         ]
@@ -261,7 +230,6 @@
                                                         "kind": "StringLiteralExpression",
                                                         "_literalToken": {
                                                             "kind": "StringLiteral",
-                                                            "start": 492,
                                                             "width": 59,
                                                             "text": "'    $ERROR(\"#1: \\'Infinity\\' have attribute DontEnum\");\\n'"
                                                         }
@@ -269,7 +237,6 @@
                                                 },
                                                 "_operatorToken": {
                                                     "kind": "PlusToken",
-                                                    "start": 551,
                                                     "width": 1,
                                                     "fullWidth": 2,
                                                     "text": "+",
@@ -278,7 +245,6 @@
                                                     "trailingTrivia": [
                                                         {
                                                             "kind": "NewLineTrivia",
-                                                            "fullStart": 0,
                                                             "text": "\n"
                                                         }
                                                     ]
@@ -287,7 +253,6 @@
                                                     "kind": "StringLiteralExpression",
                                                     "_literalToken": {
                                                         "kind": "StringLiteral",
-                                                        "start": 553,
                                                         "width": 41,
                                                         "text": "'  } else if ( x === \\'undefined\\' ) {\\n'"
                                                     }
@@ -295,7 +260,6 @@
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
-                                                "start": 594,
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "+",
@@ -304,7 +268,6 @@
                                                 "trailingTrivia": [
                                                     {
                                                         "kind": "NewLineTrivia",
-                                                        "fullStart": 0,
                                                         "text": "\n"
                                                     }
                                                 ]
@@ -313,7 +276,6 @@
                                                 "kind": "StringLiteralExpression",
                                                 "_literalToken": {
                                                     "kind": "StringLiteral",
-                                                    "start": 596,
                                                     "width": 60,
                                                     "text": "'    $ERROR(\"#1: \\'undefined\\' have attribute DontEnum\");\\n'"
                                                 }
@@ -321,7 +283,6 @@
                                         },
                                         "_operatorToken": {
                                             "kind": "PlusToken",
-                                            "start": 656,
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "+",
@@ -330,7 +291,6 @@
                                             "trailingTrivia": [
                                                 {
                                                     "kind": "NewLineTrivia",
-                                                    "fullStart": 0,
                                                     "text": "\n"
                                                 }
                                             ]
@@ -339,7 +299,6 @@
                                             "kind": "StringLiteralExpression",
                                             "_literalToken": {
                                                 "kind": "StringLiteral",
-                                                "start": 658,
                                                 "width": 7,
                                                 "text": "'  }\\n'"
                                             }
@@ -347,7 +306,6 @@
                                     },
                                     "_operatorToken": {
                                         "kind": "PlusToken",
-                                        "start": 665,
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "+",
@@ -356,7 +314,6 @@
                                         "trailingTrivia": [
                                             {
                                                 "kind": "NewLineTrivia",
-                                                "fullStart": 0,
                                                 "text": "\n"
                                             }
                                         ]
@@ -365,7 +322,6 @@
                                         "kind": "StringLiteralExpression",
                                         "_literalToken": {
                                             "kind": "StringLiteral",
-                                            "start": 667,
                                             "width": 5,
                                             "text": "'}\\n'"
                                         }
@@ -377,7 +333,6 @@
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
-                    "start": 672,
                     "width": 1,
                     "fullWidth": 2,
                     "text": ";",
@@ -386,7 +341,6 @@
                     "trailingTrivia": [
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 0,
                             "text": "\n"
                         }
                     ]
@@ -400,8 +354,6 @@
                         "kind": "IdentifierName",
                         "_identifier": {
                             "kind": "IdentifierNameToken",
-                            "start": 675,
-                            "fullStart": 674,
                             "width": 4,
                             "fullWidth": 5,
                             "text": "eval",
@@ -411,7 +363,6 @@
                             "leadingTrivia": [
                                 {
                                     "kind": "NewLineTrivia",
-                                    "fullStart": 0,
                                     "text": "\n"
                                 }
                             ]
@@ -421,7 +372,6 @@
                         "kind": "ArgumentList",
                         "_openParenToken": {
                             "kind": "OpenParenToken",
-                            "start": 679,
                             "width": 1,
                             "text": "("
                         },
@@ -430,7 +380,6 @@
                                 "kind": "IdentifierName",
                                 "_identifier": {
                                     "kind": "IdentifierNameToken",
-                                    "start": 680,
                                     "width": 7,
                                     "text": "evalStr",
                                     "valueText": "evalStr"
@@ -439,7 +388,6 @@
                         ],
                         "_closeParenToken": {
                             "kind": "CloseParenToken",
-                            "start": 687,
                             "width": 1,
                             "text": ")"
                         }
@@ -447,7 +395,6 @@
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
-                    "start": 688,
                     "width": 1,
                     "fullWidth": 2,
                     "text": ";",
@@ -456,7 +403,6 @@
                     "trailingTrivia": [
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 0,
                             "text": "\n"
                         }
                     ]
@@ -465,8 +411,6 @@
         ],
         "_endOfFileToken": {
             "kind": "EndOfFileToken",
-            "start": 691,
-            "fullStart": 690,
             "width": 0,
             "fullWidth": 1,
             "text": "",
@@ -475,7 +419,6 @@
             "leadingTrivia": [
                 {
                     "kind": "NewLineTrivia",
-                    "fullStart": 0,
                     "text": "\n"
                 }
             ]

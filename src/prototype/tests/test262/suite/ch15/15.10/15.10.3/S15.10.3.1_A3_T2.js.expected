@@ -10,8 +10,6 @@
                         "kind": "IdentifierName",
                         "_identifier": {
                             "kind": "IdentifierNameToken",
-                            "start": 468,
-                            "fullStart": 0,
                             "width": 10,
                             "fullWidth": 479,
                             "text": "__instance",
@@ -23,49 +21,40 @@
                             "leadingTrivia": [
                                 {
                                     "kind": "SingleLineCommentTrivia",
-                                    "fullStart": 0,
                                     "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
                                 },
                                 {
                                     "kind": "NewLineTrivia",
-                                    "fullStart": 60,
                                     "text": "\n"
                                 },
                                 {
                                     "kind": "SingleLineCommentTrivia",
-                                    "fullStart": 61,
                                     "text": "// This code is governed by the BSD license found in the LICENSE file."
                                 },
                                 {
                                     "kind": "NewLineTrivia",
-                                    "fullStart": 131,
                                     "text": "\n"
                                 },
                                 {
                                     "kind": "NewLineTrivia",
-                                    "fullStart": 132,
                                     "text": "\n"
                                 },
                                 {
                                     "kind": "MultiLineCommentTrivia",
-                                    "fullStart": 133,
                                     "text": "/**\n * If pattern and flags are defined, then\n * call the RegExp constructor (15.10.4.1), passing it the pattern and flags arguments and return the object constructed by that constructor\n *\n * @path ch15/15.10/15.10.3/S15.10.3.1_A3_T2.js\n * @description R is {toString:function(){return \"[a-c]*\";}} and instance is RegExp(R,\"gm\")\n */"
                                 },
                                 {
                                     "kind": "NewLineTrivia",
-                                    "fullStart": 466,
                                     "text": "\n"
                                 },
                                 {
                                     "kind": "NewLineTrivia",
-                                    "fullStart": 467,
                                     "text": "\n"
                                 }
                             ],
                             "trailingTrivia": [
                                 {
                                     "kind": "WhitespaceTrivia",
-                                    "fullStart": 0,
                                     "text": " "
                                 }
                             ]
@@ -73,7 +62,6 @@
                     },
                     "_operatorToken": {
                         "kind": "EqualsToken",
-                        "start": 479,
                         "width": 1,
                         "fullWidth": 2,
                         "text": "=",
@@ -81,7 +69,6 @@
                         "trailingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 0,
                                 "text": " "
                             }
                         ]
@@ -92,7 +79,6 @@
                             "kind": "IdentifierName",
                             "_identifier": {
                                 "kind": "IdentifierNameToken",
-                                "start": 481,
                                 "width": 6,
                                 "text": "RegExp",
                                 "valueText": "RegExp"
@@ -102,7 +88,6 @@
                             "kind": "ArgumentList",
                             "_openParenToken": {
                                 "kind": "OpenParenToken",
-                                "start": 487,
                                 "width": 1,
                                 "text": "("
                             },
@@ -111,7 +96,6 @@
                                     "kind": "ObjectLiteralExpression",
                                     "_openBraceToken": {
                                         "kind": "OpenBraceToken",
-                                        "start": 488,
                                         "width": 1,
                                         "text": "{"
                                     },
@@ -120,14 +104,12 @@
                                             "kind": "SimplePropertyAssignment",
                                             "_propertyName": {
                                                 "kind": "IdentifierNameToken",
-                                                "start": 489,
                                                 "width": 8,
                                                 "text": "toString",
                                                 "valueText": "toString"
                                             },
                                             "_colonToken": {
                                                 "kind": "ColonToken",
-                                                "start": 497,
                                                 "width": 1,
                                                 "text": ":"
                                             },
@@ -136,7 +118,6 @@
                                                 "_functionKeyword": {
                                                     "kind": "IdentifierNameToken",
                                                     "keywordKind": "FunctionKeyword",
-                                                    "start": 498,
                                                     "width": 8,
                                                     "text": "function"
                                                 },
@@ -146,14 +127,12 @@
                                                         "kind": "ParameterList",
                                                         "_openParenToken": {
                                                             "kind": "OpenParenToken",
-                                                            "start": 506,
                                                             "width": 1,
                                                             "text": "("
                                                         },
                                                         "_parameters": [],
                                                         "_closeParenToken": {
                                                             "kind": "CloseParenToken",
-                                                            "start": 507,
                                                             "width": 1,
                                                             "text": ")"
                                                         }
@@ -163,7 +142,6 @@
                                                     "kind": "Block",
                                                     "_openBraceToken": {
                                                         "kind": "OpenBraceToken",
-                                                        "start": 508,
                                                         "width": 1,
                                                         "text": "{"
                                                     },
@@ -173,7 +151,6 @@
                                                             "_returnKeyword": {
                                                                 "kind": "IdentifierNameToken",
                                                                 "keywordKind": "ReturnKeyword",
-                                                                "start": 509,
                                                                 "width": 6,
                                                                 "fullWidth": 7,
                                                                 "text": "return",
@@ -181,7 +158,6 @@
                                                                 "trailingTrivia": [
                                                                     {
                                                                         "kind": "WhitespaceTrivia",
-                                                                        "fullStart": 0,
                                                                         "text": " "
                                                                     }
                                                                 ]
@@ -190,14 +166,12 @@
                                                                 "kind": "StringLiteralExpression",
                                                                 "_literalToken": {
                                                                     "kind": "StringLiteral",
-                                                                    "start": 516,
                                                                     "width": 8,
                                                                     "text": "\"[a-c]*\""
                                                                 }
                                                             },
                                                             "_semicolonToken": {
                                                                 "kind": "SemicolonToken",
-                                                                "start": 524,
                                                                 "width": 1,
                                                                 "text": ";"
                                                             }
@@ -205,7 +179,6 @@
                                                     ],
                                                     "_closeBraceToken": {
                                                         "kind": "CloseBraceToken",
-                                                        "start": 525,
                                                         "width": 1,
                                                         "text": "}"
                                                     }
@@ -215,14 +188,12 @@
                                     ],
                                     "_closeBraceToken": {
                                         "kind": "CloseBraceToken",
-                                        "start": 526,
                                         "width": 1,
                                         "text": "}"
                                     }
                                 },
                                 {
                                     "kind": "CommaToken",
-                                    "start": 527,
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": ",",
@@ -230,7 +201,6 @@
                                     "trailingTrivia": [
                                         {
                                             "kind": "WhitespaceTrivia",
-                                            "fullStart": 0,
                                             "text": " "
                                         }
                                     ]
@@ -239,7 +209,6 @@
                                     "kind": "StringLiteralExpression",
                                     "_literalToken": {
                                         "kind": "StringLiteral",
-                                        "start": 529,
                                         "width": 4,
                                         "text": "\"gm\""
                                     }
@@ -247,7 +216,6 @@
                             ],
                             "_closeParenToken": {
                                 "kind": "CloseParenToken",
-                                "start": 533,
                                 "width": 1,
                                 "text": ")"
                             }
@@ -256,7 +224,6 @@
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
-                    "start": 534,
                     "width": 1,
                     "fullWidth": 2,
                     "text": ";",
@@ -265,7 +232,6 @@
                     "trailingTrivia": [
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 0,
                             "text": "\n"
                         }
                     ]
@@ -276,8 +242,6 @@
                 "_ifKeyword": {
                     "kind": "IdentifierNameToken",
                     "keywordKind": "IfKeyword",
-                    "start": 547,
-                    "fullStart": 536,
                     "width": 2,
                     "fullWidth": 14,
                     "text": "if",
@@ -288,31 +252,26 @@
                     "leadingTrivia": [
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 0,
                             "text": "\n"
                         },
                         {
                             "kind": "SingleLineCommentTrivia",
-                            "fullStart": 1,
                             "text": "//CHECK#1"
                         },
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 10,
                             "text": "\n"
                         }
                     ],
                     "trailingTrivia": [
                         {
                             "kind": "WhitespaceTrivia",
-                            "fullStart": 0,
                             "text": " "
                         }
                     ]
                 },
                 "_openParenToken": {
                     "kind": "OpenParenToken",
-                    "start": 550,
                     "width": 1,
                     "text": "("
                 },
@@ -324,7 +283,6 @@
                             "kind": "IdentifierName",
                             "_identifier": {
                                 "kind": "IdentifierNameToken",
-                                "start": 551,
                                 "width": 10,
                                 "text": "__instance",
                                 "valueText": "__instance"
@@ -332,7 +290,6 @@
                         },
                         "_dotToken": {
                             "kind": "DotToken",
-                            "start": 561,
                             "width": 1,
                             "text": "."
                         },
@@ -341,7 +298,6 @@
                             "_identifier": {
                                 "kind": "IdentifierNameToken",
                                 "keywordKind": "ConstructorKeyword",
-                                "start": 562,
                                 "width": 11,
                                 "fullWidth": 12,
                                 "text": "constructor",
@@ -349,7 +305,6 @@
                                 "trailingTrivia": [
                                     {
                                         "kind": "WhitespaceTrivia",
-                                        "fullStart": 0,
                                         "text": " "
                                     }
                                 ]
@@ -358,7 +313,6 @@
                     },
                     "_operatorToken": {
                         "kind": "ExclamationEqualsEqualsToken",
-                        "start": 574,
                         "width": 3,
                         "fullWidth": 4,
                         "text": "!==",
@@ -366,7 +320,6 @@
                         "trailingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 0,
                                 "text": " "
                             }
                         ]
@@ -375,7 +328,6 @@
                         "kind": "IdentifierName",
                         "_identifier": {
                             "kind": "IdentifierNameToken",
-                            "start": 578,
                             "width": 6,
                             "text": "RegExp",
                             "valueText": "RegExp"
@@ -384,7 +336,6 @@
                 },
                 "_closeParenToken": {
                     "kind": "CloseParenToken",
-                    "start": 584,
                     "width": 1,
                     "fullWidth": 2,
                     "text": ")",
@@ -392,7 +343,6 @@
                     "trailingTrivia": [
                         {
                             "kind": "WhitespaceTrivia",
-                            "fullStart": 0,
                             "text": " "
                         }
                     ]
@@ -401,7 +351,6 @@
                     "kind": "Block",
                     "_openBraceToken": {
                         "kind": "OpenBraceToken",
-                        "start": 586,
                         "width": 1,
                         "fullWidth": 2,
                         "text": "{",
@@ -410,7 +359,6 @@
                         "trailingTrivia": [
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 0,
                                 "text": "\n"
                             }
                         ]
@@ -424,8 +372,6 @@
                                     "kind": "IdentifierName",
                                     "_identifier": {
                                         "kind": "IdentifierNameToken",
-                                        "start": 589,
-                                        "fullStart": 588,
                                         "width": 6,
                                         "fullWidth": 7,
                                         "text": "$ERROR",
@@ -434,7 +380,6 @@
                                         "leadingTrivia": [
                                             {
                                                 "kind": "WhitespaceTrivia",
-                                                "fullStart": 0,
                                                 "text": "\t"
                                             }
                                         ]
@@ -444,7 +389,6 @@
                                     "kind": "ArgumentList",
                                     "_openParenToken": {
                                         "kind": "OpenParenToken",
-                                        "start": 595,
                                         "width": 1,
                                         "text": "("
                                     },
@@ -455,7 +399,6 @@
                                                 "kind": "StringLiteralExpression",
                                                 "_literalToken": {
                                                     "kind": "StringLiteral",
-                                                    "start": 596,
                                                     "width": 117,
                                                     "fullWidth": 118,
                                                     "text": "'#1: __instance = RegExp({toString:function(){return \"[a-c]*\";}}, \"gm\"); __instance.constructor === RegExp. Actual: '",
@@ -463,7 +406,6 @@
                                                     "trailingTrivia": [
                                                         {
                                                             "kind": "WhitespaceTrivia",
-                                                            "fullStart": 0,
                                                             "text": " "
                                                         }
                                                     ]
@@ -471,7 +413,6 @@
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
-                                                "start": 714,
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "+",
@@ -479,7 +420,6 @@
                                                 "trailingTrivia": [
                                                     {
                                                         "kind": "WhitespaceTrivia",
-                                                        "fullStart": 0,
                                                         "text": " "
                                                     }
                                                 ]
@@ -488,7 +428,6 @@
                                                 "kind": "ParenthesizedExpression",
                                                 "_openParenToken": {
                                                     "kind": "OpenParenToken",
-                                                    "start": 716,
                                                     "width": 1,
                                                     "text": "("
                                                 },
@@ -498,7 +437,6 @@
                                                         "kind": "IdentifierName",
                                                         "_identifier": {
                                                             "kind": "IdentifierNameToken",
-                                                            "start": 717,
                                                             "width": 10,
                                                             "text": "__instance",
                                                             "valueText": "__instance"
@@ -506,7 +444,6 @@
                                                     },
                                                     "_dotToken": {
                                                         "kind": "DotToken",
-                                                        "start": 727,
                                                         "width": 1,
                                                         "text": "."
                                                     },
@@ -515,7 +452,6 @@
                                                         "_identifier": {
                                                             "kind": "IdentifierNameToken",
                                                             "keywordKind": "ConstructorKeyword",
-                                                            "start": 728,
                                                             "width": 11,
                                                             "text": "constructor"
                                                         }
@@ -523,7 +459,6 @@
                                                 },
                                                 "_closeParenToken": {
                                                     "kind": "CloseParenToken",
-                                                    "start": 739,
                                                     "width": 1,
                                                     "text": ")"
                                                 }
@@ -532,7 +467,6 @@
                                     ],
                                     "_closeParenToken": {
                                         "kind": "CloseParenToken",
-                                        "start": 740,
                                         "width": 1,
                                         "text": ")"
                                     }
@@ -540,7 +474,6 @@
                             },
                             "_semicolonToken": {
                                 "kind": "SemicolonToken",
-                                "start": 741,
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": ";",
@@ -549,7 +482,6 @@
                                 "trailingTrivia": [
                                     {
                                         "kind": "NewLineTrivia",
-                                        "fullStart": 0,
                                         "text": "\n"
                                     }
                                 ]
@@ -558,7 +490,6 @@
                     ],
                     "_closeBraceToken": {
                         "kind": "CloseBraceToken",
-                        "start": 743,
                         "width": 1,
                         "fullWidth": 2,
                         "text": "}",
@@ -567,7 +498,6 @@
                         "trailingTrivia": [
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 0,
                                 "text": "\n"
                             }
                         ]
@@ -579,8 +509,6 @@
                 "_ifKeyword": {
                     "kind": "IdentifierNameToken",
                     "keywordKind": "IfKeyword",
-                    "start": 756,
-                    "fullStart": 745,
                     "width": 2,
                     "fullWidth": 14,
                     "text": "if",
@@ -591,31 +519,26 @@
                     "leadingTrivia": [
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 0,
                             "text": "\n"
                         },
                         {
                             "kind": "SingleLineCommentTrivia",
-                            "fullStart": 1,
                             "text": "//CHECK#2"
                         },
                         {
                             "kind": "NewLineTrivia",
-                            "fullStart": 10,
                             "text": "\n"
                         }
                     ],
                     "trailingTrivia": [
                         {
                             "kind": "WhitespaceTrivia",
-                            "fullStart": 0,
                             "text": " "
                         }
                     ]
                 },
                 "_openParenToken": {
                     "kind": "OpenParenToken",
-                    "start": 759,
                     "width": 1,
                     "text": "("
                 },
@@ -627,7 +550,6 @@
                             "kind": "IdentifierName",
                             "_identifier": {
                                 "kind": "IdentifierNameToken",
-                                "start": 760,
                                 "width": 10,
                                 "text": "__instance",
                                 "valueText": "__instance"
@@ -635,7 +557,6 @@
                         },
                         "_dotToken": {
                             "kind": "DotToken",
-                            "start": 770,
                             "width": 1,
                             "text": "."
                         },
@@ -643,7 +564,6 @@
                             "kind": "IdentifierName",
                             "_identifier": {
                                 "kind": "IdentifierNameToken",
-                                "start": 771,
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "source",
@@ -652,7 +572,6 @@
                                 "trailingTrivia": [
                                     {
                                         "kind": "WhitespaceTrivia",
-                                        "fullStart": 0,
                                         "text": " "
                                     }
                                 ]
@@ -661,7 +580,6 @@
                     },
                     "_operatorToken": {
                         "kind": "ExclamationEqualsEqualsToken",
-                        "start": 778,
                         "width": 3,
                         "fullWidth": 4,
                         "text": "!==",
@@ -669,7 +587,6 @@
                         "trailingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 0,
                                 "text": " "
                             }
                         ]
@@ -678,7 +595,6 @@
                         "kind": "StringLiteralExpression",
                         "_literalToken": {
                             "kind": "StringLiteral",
-                            "start": 782,
                             "width": 8,
                             "text": "\"[a-c]*\""
                         }
@@ -686,7 +602,6 @@
                 },
                 "_closeParenToken": {
                     "kind": "CloseParenToken",
-                    "start": 790,
                     "width": 1,
                     "fullWidth": 2,
                     "text": ")",
@@ -694,7 +609,6 @@
                     "trailingTrivia": [
                         {
                             "kind": "WhitespaceTrivia",
-                            "fullStart": 0,
                             "text": " "
                         }
                     ]
@@ -703,7 +617,6 @@
                     "kind": "Block",
                     "_openBraceToken": {
                         "kind": "OpenBraceToken",
-                        "start": 792,
                         "width": 1,
                         "fullWidth": 2,
                         "text": "{",
@@ -712,7 +625,6 @@
                         "trailingTrivia": [
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 0,
                                 "text": "\n"
                             }
                         ]
@@ -726,8 +638,6 @@
                                     "kind": "IdentifierName",
                                     "_identifier": {
                                         "kind": "IdentifierNameToken",
-                                        "start": 795,
-                                        "fullStart": 794,
                                         "width": 6,
                                         "fullWidth": 7,
                                         "text": "$ERROR",
@@ -736,7 +646,6 @@
                                         "leadingTrivia": [
                                             {
                                                 "kind": "WhitespaceTrivia",
-                                                "fullStart": 0,
                                                 "text": "\t"
                                             }
                                         ]
@@ -746,7 +655,6 @@
                                     "kind": "ArgumentList",
                                     "_openParenToken": {
                                         "kind": "OpenParenToken",
-                                        "start": 801,
                                         "width": 1,
                                         "text": "("
                                     },
@@ -757,14 +665,12 @@
                                                 "kind": "StringLiteralExpression",
                                                 "_literalToken": {
                                                     "kind": "StringLiteral",
-                                                    "start": 802,
                                                     "width": 114,
                                                     "text": "'#2: __instance = RegExp({toString:function(){return \"[a-c]*\";}}, \"gm\"); __instance.source === \"[a-c]*\". Actual: '"
                                                 }
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
-                                                "start": 916,
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "+",
@@ -772,7 +678,6 @@
                                                 "trailingTrivia": [
                                                     {
                                                         "kind": "WhitespaceTrivia",
-                                                        "fullStart": 0,
                                                         "text": " "
                                                     }
                                                 ]
@@ -781,7 +686,6 @@
                                                 "kind": "ParenthesizedExpression",
                                                 "_openParenToken": {
                                                     "kind": "OpenParenToken",
-                                                    "start": 918,
                                                     "width": 1,
                                                     "text": "("
                                                 },
@@ -791,7 +695,6 @@
                                                         "kind": "IdentifierName",
                                                         "_identifier": {
                                                             "kind": "IdentifierNameToken",
-                                                            "start": 919,
                                                             "width": 10,
                                                             "text": "__instance",
                                                             "valueText": "__instance"
@@ -799,7 +702,6 @@
                                                     },
                                                     "_dotToken": {
                                                         "kind": "DotToken",
-                                                        "start": 929,
                                                         "width": 1,
                                                         "text": "."
                                                     },
@@ -807,7 +709,6 @@
                                                         "kind": "IdentifierName",
                                                         "_identifier": {
                                                             "kind": "IdentifierNameToken",
-                                                            "start": 930,
                                                             "width": 6,
                                                             "text": "source",
                                                             "valueText": "source"
@@ -816,7 +717,6 @@
                                                 },
                                                 "_closeParenToken": {
                                                     "kind": "CloseParenToken",
-                                                    "start": 936,
                                                     "width": 1,
                                                     "text": ")"
                                                 }
@@ -825,7 +725,6 @@
                                     ],
                                     "_closeParenToken": {
                                         "kind": "CloseParenToken",
-                                        "start": 937,
                                         "width": 1,
                                         "text": ")"
                                     }
@@ -833,7 +732,6 @@
                             },
                             "_semicolonToken": {
                                 "kind": "SemicolonToken",
-                                "start": 938,
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": ";",
@@ -842,7 +740,6 @@
                                 "trailingTrivia": [
                                     {
                                         "kind": "NewLineTrivia",
-                                        "fullStart": 0,
                                         "text": "\n"
                                     }
                                 ]
@@ -851,7 +748,6 @@
                     ],
                     "_closeBraceToken": {
                         "kind": "CloseBraceToken",
-                        "start": 940,
                         "width": 1,
                         "fullWidth": 2,
                         "text": "}",
@@ -860,7 +756,6 @@
                         "trailingTrivia": [
                             {
                                 "kind": "NewLineTrivia",
-                                "fullStart": 0,
                                 "text": "\n"
                             }
                         ]
@@ -870,8 +765,6 @@
         ],
         "_endOfFileToken": {
             "kind": "EndOfFileToken",
-            "start": 944,
-            "fullStart": 942,
             "width": 0,
             "fullWidth": 2,
             "text": "",
@@ -880,12 +773,10 @@
             "leadingTrivia": [
                 {
                     "kind": "NewLineTrivia",
-                    "fullStart": 0,
                     "text": "\n"
                 },
                 {
                     "kind": "NewLineTrivia",
-                    "fullStart": 1,
                     "text": "\n"
                 }
             ]
