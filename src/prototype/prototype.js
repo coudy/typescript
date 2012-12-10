@@ -43522,7 +43522,7 @@ var Program = (function () {
         });
         environment.standardOut.WriteLine("Testing scanner.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
-            return _this.runScanner(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify);
+            return _this.runScanner(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
         });
         environment.standardOut.WriteLine("Testing parser.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
@@ -43534,7 +43534,7 @@ var Program = (function () {
         });
         environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true, false, true);
+            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false, true);
         });
     };
     Program.prototype.handleException = function (environment, filePath, e) {
@@ -43614,7 +43614,7 @@ var Program = (function () {
         end = new Date().getTime();
         totalTime += (end - start);
     };
-    Program.prototype.runParser = function (environment, filePath, languageVersion, useTypeScript, verify, allowErrors, generateBaseline, printDots) {
+    Program.prototype.runParser = function (environment, filePath, languageVersion, useTypeScript, verify, generateBaseline, printDots) {
         if (typeof generateBaseline === "undefined") { generateBaseline = false; }
         if (typeof printDots === "undefined") { printDots = false; }
         if(!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
@@ -43638,11 +43638,6 @@ var Program = (function () {
             var text = new StringText(contents);
             var parser = new Parser(text, languageVersion, stringTable);
             var unit = parser.parseSyntaxTree();
-            if(!allowErrors) {
-                if(unit.diagnostics() && unit.diagnostics().length) {
-                    throw new Error("File had unexpected error!");
-                }
-            }
             if(generateBaseline) {
                 var actualResult = JSON2.stringify(unit, null, 4);
                 var expectedFile = filePath + ".expected";
@@ -43700,7 +43695,7 @@ var Program = (function () {
             totalTime += (end - start);
         }
     };
-    Program.prototype.runScanner = function (environment, filePath, languageVersion, useTypeScript, verify) {
+    Program.prototype.runScanner = function (environment, filePath, languageVersion, useTypeScript, verify, generateBaseline) {
         if(!StringUtilities.endsWith(filePath, ".ts")) {
             return;
         }
@@ -43731,15 +43726,20 @@ var Program = (function () {
                     break;
                 }
             }
+            var result = diagnostics.length === 0 ? tokens : {
+                diagnostics: diagnostics,
+                tokens: tokens
+            };
+            if(generateBaseline) {
+                var actualResult = JSON2.stringify(result, null, 4);
+                var expectedFile = filePath + ".expected";
+                environment.writeFile(expectedFile, actualResult, true);
+            }
             if(verify) {
                 var fullText = textArray.join("");
                 if(contents !== fullText) {
                     throw new Error("Full text didn't match!");
                 }
-                var result = diagnostics.length === 0 ? tokens : {
-                    diagnostics: diagnostics,
-                    tokens: tokens
-                };
                 var actualResult = JSON2.stringify(result, null, 4);
                 var expectedFile = filePath + ".expected";
                 var actualFile = filePath + ".actual";

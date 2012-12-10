@@ -1,4 +1,4 @@
-﻿{
+{
     "_diagnostics": [
         {
             "_position": 128,
@@ -21,7 +21,14 @@
                     "width": 5,
                     "fullWidth": 6,
                     "text": "class",
-                    "hasTrailingTrivia": true
+                    "hasTrailingTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 0,
+                            "text": " "
+                        }
+                    ]
                 },
                 "_identifier": {
                     "kind": "IdentifierNameToken",
@@ -30,7 +37,14 @@
                     "fullWidth": 2,
                     "text": "C",
                     "valueText": "C",
-                    "hasTrailingTrivia": true
+                    "hasTrailingTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 0,
+                            "text": " "
+                        }
+                    ]
                 },
                 "_openBraceToken": {
                     "kind": "OpenBraceToken",
@@ -39,7 +53,14 @@
                     "fullWidth": 3,
                     "text": "{",
                     "hasTrailingTrivia": true,
-                    "hasTrailingNewLineTrivia": true
+                    "hasTrailingNewLineTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 0,
+                            "text": "\r\n"
+                        }
+                    ]
                 },
                 "_classElements": [],
                 "_closeBraceToken": {
@@ -63,7 +84,41 @@
                     "hasLeadingTrivia": true,
                     "hasLeadingCommentTrivia": true,
                     "hasLeadingNewLineTrivia": true,
-                    "hasTrailingTrivia": true
+                    "hasTrailingTrivia": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 0,
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "fullStart": 2,
+                            "text": "// Classes can't be nested.  So we should bail out of parsing here and recover"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 80,
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "fullStart": 82,
+                            "text": "// this as a source unit element."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 115,
+                            "text": "\r\n"
+                        }
+                    ],
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 0,
+                            "text": " "
+                        }
+                    ]
                 },
                 "_identifier": {
                     "kind": "IdentifierNameToken",
@@ -72,7 +127,14 @@
                     "fullWidth": 2,
                     "text": "D",
                     "valueText": "D",
-                    "hasTrailingTrivia": true
+                    "hasTrailingTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 0,
+                            "text": " "
+                        }
+                    ]
                 },
                 "_openBraceToken": {
                     "kind": "OpenBraceToken",
@@ -81,7 +143,14 @@
                     "fullWidth": 3,
                     "text": "{",
                     "hasTrailingTrivia": true,
-                    "hasTrailingNewLineTrivia": true
+                    "hasTrailingNewLineTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 0,
+                            "text": "\r\n"
+                        }
+                    ]
                 },
                 "_classElements": [],
                 "_closeBraceToken": {

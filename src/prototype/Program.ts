@@ -23,11 +23,11 @@ class Program {
 
         environment.standardOut.WriteLine("Testing scanner.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
-            filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify));
+            filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ true));
             
         environment.standardOut.WriteLine("Testing parser.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*allowErrors:*/ true));
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ true));
             
         environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests(environment, "C:\\temp\\monoco-files",
@@ -35,7 +35,7 @@ class Program {
             
         environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ true, /*generateBaselines:*/ false, /*printDots:*/ true));
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*generateBaselines:*/ false, /*printDots:*/ true));
     }
 
     private handleException(environment: IEnvironment, filePath: string, e: Error): void {
@@ -148,7 +148,6 @@ class Program {
               languageVersion: LanguageVersion,
               useTypeScript: bool,
               verify: bool,
-              allowErrors: bool,
               generateBaseline?: bool = false,
               printDots?: bool = false): void {
         if (!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
@@ -182,11 +181,11 @@ class Program {
             var parser = new Parser(text, languageVersion, stringTable);
             var unit = parser.parseSyntaxTree();
 
-            if (!allowErrors) {
-                if (unit.diagnostics() && unit.diagnostics().length) {
-                    throw new Error("File had unexpected error!");
-                }
-            }
+            //if (!allowErrors) {
+            //    if (unit.diagnostics() && unit.diagnostics().length) {
+            //        throw new Error("File had unexpected error!");
+            //    }
+            //}
 
             if (generateBaseline) {
                 var actualResult = JSON2.stringify(unit, null, 4);
@@ -262,7 +261,8 @@ class Program {
         }
     }
 
-    runScanner(environment: IEnvironment, filePath: string, languageVersion: LanguageVersion, useTypeScript: bool, verify: bool): void {
+    runScanner(environment: IEnvironment,
+              filePath: string, languageVersion: LanguageVersion, useTypeScript: bool, verify: bool, generateBaseline: bool): void {
         if (!StringUtilities.endsWith(filePath, ".ts")) {
             return;
         }
@@ -303,14 +303,20 @@ class Program {
                 }
             }
 
+            var result = diagnostics.length === 0 ? <any>tokens : { diagnostics: diagnostics, tokens: tokens };
+
+            if (generateBaseline) {
+                var actualResult = JSON2.stringify(result, null, 4);
+                var expectedFile = filePath + ".expected";
+
+                environment.writeFile(expectedFile, actualResult, /*useUTF8:*/ true);
+            }
             if (verify) {
                 var fullText = textArray.join("");
 
                 if (contents !== fullText) {
                     throw new Error("Full text didn't match!");
                 }
-
-                var result = diagnostics.length === 0 ? <any>tokens : { diagnostics: diagnostics, tokens: tokens };
 
                 var actualResult = JSON2.stringify(result, null, 4);
                 var expectedFile = filePath + ".expected";

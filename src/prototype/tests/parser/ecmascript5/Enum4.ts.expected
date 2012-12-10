@@ -9,7 +9,21 @@
             "text": ",",
             "hasLeadingTrivia": true,
             "hasTrailingTrivia": true,
-            "hasTrailingNewLineTrivia": true
+            "hasTrailingNewLineTrivia": true,
+            "leadingTrivia": [
+                {
+                    "kind": "WhitespaceTrivia",
+                    "fullStart": 0,
+                    "text": "        "
+                }
+            ],
+            "trailingTrivia": [
+                {
+                    "kind": "NewLineTrivia",
+                    "fullStart": 0,
+                    "text": "\r\n"
+                }
+            ]
         }
     ],
     "_diagnostics": [
@@ -37,7 +51,31 @@
                     "text": "export",
                     "hasLeadingTrivia": true,
                     "hasLeadingNewLineTrivia": true,
-                    "hasTrailingTrivia": true
+                    "hasTrailingTrivia": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 0,
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 2,
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 4,
+                            "text": "    "
+                        }
+                    ],
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 0,
+                            "text": " "
+                        }
+                    ]
                 },
                 "_enumKeyword": {
                     "kind": "IdentifierNameToken",
@@ -46,7 +84,14 @@
                     "width": 4,
                     "fullWidth": 5,
                     "text": "enum",
-                    "hasTrailingTrivia": true
+                    "hasTrailingTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 0,
+                            "text": " "
+                        }
+                    ]
                 },
                 "_identifier": {
                     "kind": "IdentifierNameToken",
@@ -55,7 +100,14 @@
                     "fullWidth": 15,
                     "text": "SignatureFlags",
                     "valueText": "SignatureFlags",
-                    "hasTrailingTrivia": true
+                    "hasTrailingTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 0,
+                            "text": " "
+                        }
+                    ]
                 },
                 "_openBraceToken": {
                     "kind": "OpenBraceToken",
@@ -64,7 +116,14 @@
                     "fullWidth": 3,
                     "text": "{",
                     "hasTrailingTrivia": true,
-                    "hasTrailingNewLineTrivia": true
+                    "hasTrailingNewLineTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 0,
+                            "text": "\r\n"
+                        }
+                    ]
                 },
                 "_variableDeclarators": [],
                 "_closeBraceToken": {
@@ -74,7 +133,14 @@
                     "width": 1,
                     "fullWidth": 5,
                     "text": "}",
-                    "hasLeadingTrivia": true
+                    "hasLeadingTrivia": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 0,
+                            "text": "    "
+                        }
+                    ]
                 }
             }
         ],
