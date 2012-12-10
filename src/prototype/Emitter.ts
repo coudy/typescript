@@ -11,7 +11,8 @@ class Emitter extends SyntaxRewriter {
     }
 
     public emit(input: SourceUnitSyntax): SourceUnitSyntax {
-        return input.accept1(this);
+        var sourceUnit = input.accept1(this);
+        return sourceUnit;
     }
 
     private visitSourceUnit(node: SourceUnitSyntax): SourceUnitSyntax {

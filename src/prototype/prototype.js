@@ -4629,12 +4629,12 @@ var Scanner = (function (_super) {
             }
             break;
         }
-        return SyntaxTrivia.create(4 /* WhitespaceTrivia */ , this.substring(start, start + width, false));
+        return SyntaxTrivia.create(4 /* WhitespaceTrivia */ , start, this.substring(start, start + width, false));
     };
     Scanner.prototype.scanSingleLineCommentTrivia = function () {
         var start = this.absoluteIndex();
         var width = this.scanSingleLineCommentTriviaLength();
-        return SyntaxTrivia.create(7 /* SingleLineCommentTrivia */ , this.substring(start, start + width, false));
+        return SyntaxTrivia.create(7 /* SingleLineCommentTrivia */ , start, this.substring(start, start + width, false));
     };
     Scanner.prototype.scanSingleLineCommentTriviaLength = function () {
         this.moveToNextItem();
@@ -4651,7 +4651,7 @@ var Scanner = (function (_super) {
     Scanner.prototype.scanMultiLineCommentTrivia = function () {
         var start = this.absoluteIndex();
         var width = this.scanMultiLineCommentTriviaLength(null);
-        return SyntaxTrivia.create(6 /* MultiLineCommentTrivia */ , this.substring(start, start + width, false));
+        return SyntaxTrivia.create(6 /* MultiLineCommentTrivia */ , start, this.substring(start, start + width, false));
     };
     Scanner.prototype.scanMultiLineCommentTriviaLength = function (diagnostics) {
         this.moveToNextItem();
@@ -4678,7 +4678,7 @@ var Scanner = (function (_super) {
     Scanner.prototype.scanLineTerminatorSequenceTrivia = function (ch) {
         var start = this.absoluteIndex();
         var width = this.scanLineTerminatorSequenceLength(ch);
-        return SyntaxTrivia.create(5 /* NewLineTrivia */ , this.substring(start, start + width, false));
+        return SyntaxTrivia.create(5 /* NewLineTrivia */ , start, this.substring(start, start + width, false));
     };
     Scanner.prototype.scanLineTerminatorSequenceLength = function (ch) {
         this.moveToNextItem();
@@ -13118,7 +13118,8 @@ var Emitter = (function (_super) {
         this.syntaxOnly = syntaxOnly;
     }
     Emitter.prototype.emit = function (input) {
-        return input.accept1(this);
+        var sourceUnit = input.accept1(this);
+        return sourceUnit;
     };
     Emitter.prototype.visitSourceUnit = function (node) {
         var moduleElements = [];
@@ -14901,14 +14902,16 @@ var SyntaxTree = (function () {
 var SyntaxTrivia;
 (function (SyntaxTrivia) {
     var SimpleSyntaxTrivia = (function () {
-        function SimpleSyntaxTrivia(kind, text) {
+        function SimpleSyntaxTrivia(kind, fullStart, text) {
             this._kind = kind;
+            this._fullStart = fullStart;
             this._text = text;
         }
         SimpleSyntaxTrivia.prototype.toJSON = function (key) {
             var result = {
             };
             result.kind = (SyntaxKind)._map[this._kind];
+            result.fullStart = this._fullStart;
             result.text = this._text;
             return result;
         };
@@ -14937,7 +14940,7 @@ var SyntaxTrivia;
             return this._kind;
         };
         SimpleSyntaxTrivia.prototype.fullStart = function () {
-            throw Errors.notYetImplemented();
+            return this._fullStart;
         };
         SimpleSyntaxTrivia.prototype.fullWidth = function () {
             return this._text.length;
@@ -14950,16 +14953,16 @@ var SyntaxTrivia;
         };
         return SimpleSyntaxTrivia;
     })();    
-    function create(kind, text) {
+    function create(kind, fullStart, text) {
         Debug.assert(kind === 6 /* MultiLineCommentTrivia */  || kind === 5 /* NewLineTrivia */  || kind === 7 /* SingleLineCommentTrivia */  || kind === 4 /* WhitespaceTrivia */ );
         Debug.assert(text.length > 0);
-        return new SimpleSyntaxTrivia(kind, text);
+        return new SimpleSyntaxTrivia(kind, fullStart, text);
     }
     SyntaxTrivia.create = create;
-    SyntaxTrivia.space = create(4 /* WhitespaceTrivia */ , " ");
-    SyntaxTrivia.lineFeed = create(5 /* NewLineTrivia */ , "\n");
-    SyntaxTrivia.carriageReturn = create(5 /* NewLineTrivia */ , "\r");
-    SyntaxTrivia.carriageReturnLineFeed = create(5 /* NewLineTrivia */ , "\r\n");
+    SyntaxTrivia.space = create(4 /* WhitespaceTrivia */ , 0, " ");
+    SyntaxTrivia.lineFeed = create(5 /* NewLineTrivia */ , 0, "\n");
+    SyntaxTrivia.carriageReturn = create(5 /* NewLineTrivia */ , 0, "\r");
+    SyntaxTrivia.carriageReturnLineFeed = create(5 /* NewLineTrivia */ , 0, "\r\n");
 })(SyntaxTrivia || (SyntaxTrivia = {}));
 var SyntaxTriviaList;
 (function (SyntaxTriviaList) {
