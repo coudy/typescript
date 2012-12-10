@@ -13237,7 +13237,6 @@ var SyntaxToken;
     }
     SyntaxToken.collectTextElements = collectTextElements;
     function toJSON(token, includeRealTrivia) {
-        if (typeof includeRealTrivia === "undefined") { includeRealTrivia = false; }
         var result = {
             kind: (SyntaxKind)._map[token.tokenKind]
         };
@@ -13262,28 +13261,27 @@ var SyntaxToken;
         if(token.valueText() !== null) {
             result.valueText = token.valueText();
         }
+        if(token.hasLeadingTrivia()) {
+            result.hasLeadingTrivia = true;
+        }
+        if(token.hasLeadingCommentTrivia()) {
+            result.hasLeadingCommentTrivia = true;
+        }
+        if(token.hasLeadingNewLineTrivia()) {
+            result.hasLeadingNewLineTrivia = true;
+        }
+        if(token.hasTrailingTrivia()) {
+            result.hasTrailingTrivia = true;
+        }
+        if(token.hasTrailingCommentTrivia()) {
+            result.hasTrailingCommentTrivia = true;
+        }
+        if(token.hasTrailingNewLineTrivia()) {
+            result.hasTrailingNewLineTrivia = true;
+        }
         if(includeRealTrivia) {
             result.leadingTrivia = token.leadingTrivia(null);
             result.trailingTrivia = token.trailingTrivia(null);
-        } else {
-            if(token.hasLeadingTrivia()) {
-                result.hasLeadingTrivia = true;
-            }
-            if(token.hasLeadingCommentTrivia()) {
-                result.hasLeadingCommentTrivia = true;
-            }
-            if(token.hasLeadingNewLineTrivia()) {
-                result.hasLeadingNewLineTrivia = true;
-            }
-            if(token.hasTrailingTrivia()) {
-                result.hasTrailingTrivia = true;
-            }
-            if(token.hasTrailingCommentTrivia()) {
-                result.hasTrailingCommentTrivia = true;
-            }
-            if(token.hasTrailingNewLineTrivia()) {
-                result.hasTrailingNewLineTrivia = true;
-            }
         }
         return result;
     }
@@ -13325,7 +13323,7 @@ var SyntaxToken;
             return this.tokenKind;
         };
         EmptyToken.prototype.toJSON = function (key) {
-            return toJSON(this);
+            return toJSON(this, false);
         };
         EmptyToken.prototype.keywordKind = function () {
             return this._keywordKind;

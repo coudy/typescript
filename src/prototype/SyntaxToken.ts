@@ -11,7 +11,7 @@ module SyntaxToken {
         token.trailingTrivia(text).collectTextElements(text, elements);
     }
 
-    export function toJSON(token: ISyntaxToken, includeRealTrivia = false) {
+    export function toJSON(token: ISyntaxToken, includeRealTrivia: bool) {
         var result: any = {
             kind: (<any>SyntaxKind)._map[token.tokenKind]
         };
@@ -44,34 +44,33 @@ module SyntaxToken {
             result.valueText = token.valueText();
         }
 
+        if (token.hasLeadingTrivia()) {
+            result.hasLeadingTrivia = true;
+        }
+
+        if (token.hasLeadingCommentTrivia()) {
+            result.hasLeadingCommentTrivia = true;
+        }
+
+        if (token.hasLeadingNewLineTrivia()) {
+            result.hasLeadingNewLineTrivia = true;
+        }
+
+        if (token.hasTrailingTrivia()) {
+            result.hasTrailingTrivia = true;
+        }
+
+        if (token.hasTrailingCommentTrivia()) {
+            result.hasTrailingCommentTrivia = true;
+        }
+
+        if (token.hasTrailingNewLineTrivia()) {
+            result.hasTrailingNewLineTrivia = true;
+        }
+
         if (includeRealTrivia) {
             result.leadingTrivia = token.leadingTrivia(null);
             result.trailingTrivia = token.trailingTrivia(null);
-        }
-        else {
-            if (token.hasLeadingTrivia()) {
-                result.hasLeadingTrivia = true;
-            }
-
-            if (token.hasLeadingCommentTrivia()) {
-                result.hasLeadingCommentTrivia = true;
-            }
-
-            if (token.hasLeadingNewLineTrivia()) {
-                result.hasLeadingNewLineTrivia = true;
-            }
-
-            if (token.hasTrailingTrivia()) {
-                result.hasTrailingTrivia = true;
-            }
-
-            if (token.hasTrailingCommentTrivia()) {
-                result.hasTrailingCommentTrivia = true;
-            }
-
-            if (token.hasTrailingNewLineTrivia()) {
-                result.hasTrailingNewLineTrivia = true;
-            }
         }
 
         return result;
@@ -114,7 +113,7 @@ module SyntaxToken {
         public isTriviaList(): bool { return false; }
         public kind() { return this.tokenKind; }
 
-        public toJSON(key) { return toJSON(this); }
+        public toJSON(key) { return toJSON(this, false); }
         public keywordKind() { return this._keywordKind; }
         public fullStart() { return this._fullStart; }
         public fullWidth() { return 0; }
