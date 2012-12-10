@@ -5,13 +5,8 @@ interface ISyntaxToken extends ISyntaxElement {
     tokenKind: SyntaxKind;
     keywordKind(): SyntaxKind;
 
-    fullStart(): number;
     fullWidth(): number;
-    fullEnd(): number;
-
-    start(): number;
     width(): number;
-    end(): number;
 
     text(): string;
     fullText(): string;
@@ -22,17 +17,18 @@ interface ISyntaxToken extends ISyntaxElement {
     hasLeadingTrivia(): bool;
     hasLeadingCommentTrivia(): bool;
     hasLeadingNewLineTrivia(): bool;
+    leadingTriviaWidth(): number;
 
     hasTrailingTrivia(): bool;
     hasTrailingCommentTrivia(): bool;
     hasTrailingNewLineTrivia(): bool;
+    trailingTriviaWidth(): number;
 
     leadingTrivia(): ISyntaxTriviaList;
     trailingTrivia(): ISyntaxTriviaList;
 
     realize(): ISyntaxToken;
 
-    withFullStart(fullStart: number): ISyntaxToken;
     withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken;
     withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken;
 }

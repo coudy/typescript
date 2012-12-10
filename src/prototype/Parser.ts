@@ -2,6 +2,7 @@
 
 interface IParserRewindPoint extends IRewindPoint {
     previousToken: ISyntaxToken;
+    previousTokenFullEnd: number;
     isInStrictMode: bool;
     diagnosticsCount: number;
     skippedTokensCount: number;
@@ -137,6 +138,7 @@ class Parser extends SlidingWindow {
 
     // The previous token to the current token.  Set when we advance to the next token.
     private previousToken: ISyntaxToken = null;
+    private previousTokenFullEnd: number = 0;
 
     // The diagnostics we get while scanning.  Note: this never gets rewound when we do a normal
     // rewind.  That's because rewinding doesn't affect the tokens created.  It only affects where
@@ -188,6 +190,7 @@ class Parser extends SlidingWindow {
 
     public storeAdditionalRewindState(rewindPoint: IParserRewindPoint): void {
         rewindPoint.previousToken = this.previousToken;
+        rewindPoint.previousTokenFullEnd = this.previousTokenFullEnd;
         rewindPoint.isInStrictMode = this.isInStrictMode;
         rewindPoint.diagnosticsCount = this.diagnostics.length;
         rewindPoint.skippedTokensCount = this.skippedTokens.length;
@@ -196,6 +199,7 @@ class Parser extends SlidingWindow {
     public restoreStateFromRewindPoint(rewindPoint: IParserRewindPoint): void {
         this._currentToken = null;
         this.previousToken = rewindPoint.previousToken;
+        this.previousTokenFullEnd = rewindPoint.previousTokenFullEnd;
         this.isInStrictMode = rewindPoint.isInStrictMode;
         this.diagnostics.length = rewindPoint.diagnosticsCount;
         this.skippedTokens.length = rewindPoint.skippedTokensCount;
@@ -208,6 +212,28 @@ class Parser extends SlidingWindow {
         return 1;
     }
 
+    private currentTokenStart(): number {
+        return this.previousTokenFullEnd + this.currentToken().leadingTriviaWidth();
+    }
+
+    private previousTokenStart(): number {
+        if (this.previousToken === null) {
+            return 0;
+        }
+
+        return this.previousTokenFullEnd -
+               this.previousToken.fullWidth() +
+               this.previousToken.leadingTriviaWidth();
+    }
+
+    private previousTokenEnd(): number {
+        if (this.previousToken === null) {
+            return 0;
+        }
+
+        return this.previousTokenStart() + this.previousToken.width();
+    }
+    
     private currentToken(): ISyntaxToken {
         var result = this._currentToken;
 
@@ -240,6 +266,7 @@ class Parser extends SlidingWindow {
     }
 
     private moveToNextToken(): void {
+        this.previousTokenFullEnd += this._currentToken.fullWidth();
         this.previousToken = this._currentToken;
         this._currentToken = null;
 
@@ -295,14 +322,13 @@ class Parser extends SlidingWindow {
         if (this.canEatAutomaticSemicolon(allowWithoutNewline)) {
             // Note: the missing token needs to go between real tokens.  So we place it at the 
             // fullstart of the current token.
-            var semicolonToken = SyntaxToken.createEmpty(
-                this.currentToken().fullStart(), SyntaxKind.SemicolonToken, SyntaxKind.None);
+            var semicolonToken = SyntaxToken.createEmpty(SyntaxKind.SemicolonToken, SyntaxKind.None);
 
             if (!this.options.allowAutomaticSemicolonInsertion()) {
                 // Report the missing semicolon at the end of the *previous* token.
 
                 this.addDiagnostic(
-                    new SyntaxDiagnostic(this.previousToken.end(), 0, DiagnosticCode.Automatic_semicolon_insertion_not_allowed, null)); 
+                    new SyntaxDiagnostic(this.previousTokenEnd(), 0, DiagnosticCode.Automatic_semicolon_insertion_not_allowed, null)); 
             }
 
             return semicolonToken;
@@ -411,7 +437,7 @@ class Parser extends SlidingWindow {
 
         // The missing token will be at the full start of the current token.  That way empty tokens
         // will always be between real tokens and not inside an actual token.
-        return SyntaxToken.createEmpty(this.currentToken().fullStart(), expectedKind, expectedKeywordKind);
+        return SyntaxToken.createEmpty(expectedKind, expectedKeywordKind);
     }
 
     private getExpectedTokenDiagnostic(expectedKind: SyntaxKind, expectedKeywordKind: SyntaxKind, actual: ISyntaxToken): SyntaxDiagnostic {
@@ -420,24 +446,24 @@ class Parser extends SlidingWindow {
         if (expectedKind === SyntaxKind.IdentifierNameToken) {
             if (SyntaxFacts.isAnyKeyword(expectedKeywordKind)) {
                 // They wanted a keyword, just report that that keyword was missing.
-                return new SyntaxDiagnostic(token.start(), token.width(), DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKeywordKind)]);
+                return new SyntaxDiagnostic(this.currentTokenStart(), token.width(), DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKeywordKind)]);
             }
             else {
                 // They wanted a real identifier.
 
                 // If the user supplied a keyword, give them a specialized message.
                 if (actual !== null && SyntaxFacts.isAnyKeyword(actual.keywordKind())) {
-                    return new SyntaxDiagnostic(token.start(), token.width(), DiagnosticCode.Identifier_expected__0_is_a_keyword, [SyntaxFacts.getText(actual.keywordKind())]);
+                    return new SyntaxDiagnostic(this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected__0_is_a_keyword, [SyntaxFacts.getText(actual.keywordKind())]);
                 }
                 else {
                     // Otherwise just report that an identifier was expected.
-                    return new SyntaxDiagnostic(token.start(), token.width(), DiagnosticCode.Identifier_expected, null);
+                    return new SyntaxDiagnostic(this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected, null);
                 }
             }
         }
 
         if (SyntaxFacts.isAnyPunctuation(expectedKind)) {
-            return new SyntaxDiagnostic(token.start(), token.width(), DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKind)]);
+            return new SyntaxDiagnostic(this.currentTokenStart(), token.width(), DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKind)]);
         }
 
         throw Errors.notYetImplemented();
@@ -553,7 +579,7 @@ class Parser extends SlidingWindow {
         var allDiagnostics = this.tokenDiagnostics.concat(this.diagnostics);
         allDiagnostics.sort((a: SyntaxDiagnostic, b: SyntaxDiagnostic) => a.position() - b.position());
 
-        this.skippedTokens.sort((a: ISyntaxToken, b: ISyntaxToken) => a.fullStart() - b.fullStart());
+        // this.skippedTokens.sort((a: ISyntaxToken, b: ISyntaxToken) => a.fullStart() - b.fullStart());
 
         return new SyntaxTree(sourceUnit, this.skippedTokens, allDiagnostics);
     }
@@ -2420,7 +2446,7 @@ class Parser extends SlidingWindow {
         // a regular expresion.
 
         // First, remove any diagnostics that came from the slash or afterwards.
-        var slashTokenFullStart = currentToken.fullStart();
+        var slashTokenFullStart = this.previousTokenFullEnd;
         var tokenDiagnosticsLength = this.tokenDiagnostics.length;
         while (tokenDiagnosticsLength > 0) {
             var diagnostic = this.tokenDiagnostics[tokenDiagnosticsLength - 1];
@@ -3231,17 +3257,20 @@ class Parser extends SlidingWindow {
         while (true) {
             var itemsCount = items === null ? 0 : items.length;
             if (this.listIsTerminated(currentListType, itemsCount)) {
+
                 // We've reached the end of the list.  If there was a last separator and we don't 
                 // allow trailing separators, then report an error.  But don't report an error if
                 // the separator is missing.  We'll have already reported it.
                 if (lastSeparator !== null && !allowTrailingSeparator && !lastSeparator.isMissing()) {
+                    Debug.assert(this.previousToken === lastSeparator);
                     this.addDiagnostic(new SyntaxDiagnostic(
-                        lastSeparator.start(), lastSeparator.width(), DiagnosticCode.Trailing_separator_not_allowed, null));
+                        this.previousTokenStart(), lastSeparator.width(), DiagnosticCode.Trailing_separator_not_allowed, null));
                 }
 
                 break;
             }
 
+            lastSeparator = null;
             items = this.tryParseExpectedListItem(currentListType, inErrorRecovery, items, null);
             inErrorRecovery = false;
             
@@ -3429,7 +3458,7 @@ class Parser extends SlidingWindow {
         var token = this.currentToken();
 
         var diagnostic = new SyntaxDiagnostic(
-            token.start(), token.width(), DiagnosticCode.Unexpected_token__0_expected, [this.getExpectedListElementType(listType)]);
+            this.currentTokenStart(), token.width(), DiagnosticCode.Unexpected_token__0_expected, [this.getExpectedListElementType(listType)]);
         this.addDiagnostic(diagnostic);
     }
 

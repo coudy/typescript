@@ -1,55 +1,55 @@
 ///<reference path='References.ts' />
 
-class FullStartNormalizer extends SyntaxRewriter {
-    private currentFullStart: number;
+//class FullStartNormalizer extends SyntaxRewriter {
+//    private currentFullStart: number;
 
-    constructor(initialFullStart: number) {
-        super();
-        this.currentFullStart = initialFullStart;
-    }
+//    constructor(initialFullStart: number) {
+//        super();
+//        this.currentFullStart = initialFullStart;
+//    }
 
-    private visitTriviaList(list: ISyntaxTriviaList): ISyntaxTriviaList {
-        var newTriviaList: ISyntaxTrivia[] = null;
+//    private visitTriviaList(list: ISyntaxTriviaList): ISyntaxTriviaList {
+//        var newTriviaList: ISyntaxTrivia[] = null;
         
-        for (var i = 0, n = list.count(); i < n; i++) {
-            var trivia = list.syntaxTriviaAt(i);
-            var newTrivia = trivia.withFullStart(this.currentFullStart);
+//        for (var i = 0, n = list.count(); i < n; i++) {
+//            var trivia = list.syntaxTriviaAt(i);
+//            var newTrivia = trivia.withFullStart(this.currentFullStart);
 
-            if (newTrivia !== trivia && newTriviaList === null) {
-                newTriviaList = [];
-                for (var j = 0; j < i; j++) {
-                    newTriviaList.push(list.syntaxTriviaAt(j));
-                }
-            }
+//            if (newTrivia !== trivia && newTriviaList === null) {
+//                newTriviaList = [];
+//                for (var j = 0; j < i; j++) {
+//                    newTriviaList.push(list.syntaxTriviaAt(j));
+//                }
+//            }
 
-            if (newTriviaList) {
-                newTriviaList.push(newTrivia);
-            }
+//            if (newTriviaList) {
+//                newTriviaList.push(newTrivia);
+//            }
 
-            this.currentFullStart += trivia.fullWidth();
-        }
+//            this.currentFullStart += trivia.fullWidth();
+//        }
 
-        return newTriviaList === null
-            ? list
-            : SyntaxTriviaList.create(newTriviaList);
-    }
+//        return newTriviaList === null
+//            ? list
+//            : SyntaxTriviaList.create(newTriviaList);
+//    }
 
-    public visitToken(token: ISyntaxToken): ISyntaxToken {
-        var tokenFullStart = this.currentFullStart;
-        var leadingTrivia = this.visitTriviaList(token.leadingTrivia());
+//    public visitToken(token: ISyntaxToken): ISyntaxToken {
+//        var tokenFullStart = this.currentFullStart;
+//        var leadingTrivia = this.visitTriviaList(token.leadingTrivia());
 
-        this.currentFullStart += token.width();
-        var trailingTrivia = this.visitTriviaList(token.trailingTrivia());
+//        this.currentFullStart += token.width();
+//        var trailingTrivia = this.visitTriviaList(token.trailingTrivia());
 
-        if (token.leadingTrivia() === leadingTrivia &&
-            token.fullStart() === tokenFullStart &&
-            token.trailingTrivia() === trailingTrivia) {
-            return token;
-        }
+//        if (token.leadingTrivia() === leadingTrivia &&
+//            token.fullStart() === tokenFullStart &&
+//            token.trailingTrivia() === trailingTrivia) {
+//            return token;
+//        }
 
-        return token.withFullStart(tokenFullStart).withLeadingTrivia(leadingTrivia).withTrailingTrivia(trailingTrivia);
-    }
-}
+//        return token.withFullStart(tokenFullStart).withLeadingTrivia(leadingTrivia).withTrailingTrivia(trailingTrivia);
+//    }
+//}
 
 class AdjustIndentationRewriter extends SyntaxRewriter {
     private lastTriviaWasNewLine = true;
@@ -113,7 +113,7 @@ class Emitter extends SyntaxRewriter {
 
     public emit(input: SourceUnitSyntax): SourceUnitSyntax {
         var sourceUnit = input.accept1(this);
-        return sourceUnit.accept1(new FullStartNormalizer(0));
+        return sourceUnit;
     }
 
     private visitSourceUnit(node: SourceUnitSyntax): SourceUnitSyntax {
@@ -223,7 +223,7 @@ class Emitter extends SyntaxRewriter {
         Debug.assert(nestingOffset > 0);
 
         var spaces = Array(nestingOffset * Emitter.spacesPerNestingLevel).join(" ");
-        return SyntaxTrivia.create(SyntaxKind.WhitespaceTrivia, 0, spaces);
+        return SyntaxTrivia.create(SyntaxKind.WhitespaceTrivia, spaces);
     }
 
     private createIndentationTriviaList(): ISyntaxTrivia[] {

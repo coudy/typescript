@@ -39,11 +39,11 @@ class SyntaxTree {
         return this._diagnostics;
     }
 
-    public findToken(position: number): ISyntaxToken {
-        if (position < 0 || position > this._sourceUnit.endOfFileToken().end()) {
-            throw Errors.argumentOutOfRange("position");
-        }
+    //public findToken(position: number): ISyntaxToken {
+    //    if (position < 0 || position > this._sourceUnit.endOfFileToken().end()) {
+    //        throw Errors.argumentOutOfRange("position");
+    //    }
 
-        return null;
-    }
+    //    return null;
+    //}
 }

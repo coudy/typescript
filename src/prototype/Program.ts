@@ -6,7 +6,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "Trivia11.ts";
+    // "RegularExpression1.ts";
     undefined;
 
 class Program {
@@ -15,23 +15,23 @@ class Program {
             
         environment.standardOut.WriteLine("Testing trivia.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\trivia\\ecmascript5",
-            filePath => this.runTrivia(environment, filePath, LanguageVersion.EcmaScript5, verify));
+            filePath => this.runTrivia(environment, filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ true));
             
         environment.standardOut.WriteLine("Testing emitter.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5",
-            filePath => this.runEmitter(environment, filePath, LanguageVersion.EcmaScript5, verify));
+            filePath => this.runEmitter(environment, filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ true));
 
         environment.standardOut.WriteLine("Testing scanner.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
-            filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false));
+            filePath => this.runScanner(environment, filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ true));
             
         environment.standardOut.WriteLine("Testing parser.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ false));
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ true));
             
         environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests(environment, "C:\\temp\\monoco-files",
-            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*allowErrors:*/ false));
+            filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*generateBaselines:*/ false));
             
         environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262",
@@ -225,19 +225,16 @@ class Program {
                 var token = scanner.scan(diagnostics, /*allowRegularExpression:*/ false);
                 tokens.push(token);
 
-                if (verify) {
-                    var tokenText = token.text();
-                    var tokenFullText = token.fullText();
-
-                    textArray.push(tokenFullText);
-
-                    if (tokenFullText.substr(token.start() - token.fullStart(), token.width()) !== tokenText) {
-                        throw new Error("Token invariant broken!");
-                    }
-                }
-
                 if (token.tokenKind === SyntaxKind.EndOfFileToken) {
                     break;
+                }
+            }
+
+            if (verify) {
+                var tokenText = ArrayUtilities.select(tokens, t => t.fullText()).join("");
+
+                if (tokenText !== contents) {
+                    throw new Error("Token invariant broken!");
                 }
             }
 

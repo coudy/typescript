@@ -246,13 +246,13 @@ class Scanner extends SlidingWindow {
             break;
         }
         
-        return SyntaxTrivia.create(SyntaxKind.WhitespaceTrivia, start, this.substring(start, start + width, /*intern:*/ false));
+        return SyntaxTrivia.create(SyntaxKind.WhitespaceTrivia, this.substring(start, start + width, /*intern:*/ false));
     }
     
     private scanSingleLineCommentTrivia(): ISyntaxTrivia {
         var start = this.absoluteIndex();
         var width = this.scanSingleLineCommentTriviaLength();
-        return SyntaxTrivia.create(SyntaxKind.SingleLineCommentTrivia, start, this.substring(start, start + width, /*intern:*/ false));
+        return SyntaxTrivia.create(SyntaxKind.SingleLineCommentTrivia, this.substring(start, start + width, /*intern:*/ false));
     }
 
     private scanSingleLineCommentTriviaLength(): number {
@@ -274,7 +274,7 @@ class Scanner extends SlidingWindow {
     private scanMultiLineCommentTrivia(): ISyntaxTrivia {
         var start = this.absoluteIndex();
         var width = this.scanMultiLineCommentTriviaLength(null);
-        return SyntaxTrivia.create(SyntaxKind.MultiLineCommentTrivia, start, this.substring(start, start + width, /*intern:*/ false));
+        return SyntaxTrivia.create(SyntaxKind.MultiLineCommentTrivia, this.substring(start, start + width, /*intern:*/ false));
     }
 
     private scanMultiLineCommentTriviaLength(diagnostics: SyntaxDiagnostic[]): number {
@@ -309,7 +309,7 @@ class Scanner extends SlidingWindow {
     private scanLineTerminatorSequenceTrivia(ch: number): ISyntaxTrivia {
         var start = this.absoluteIndex();
         var width = this.scanLineTerminatorSequenceLength(ch);
-        return SyntaxTrivia.create(SyntaxKind.NewLineTrivia, start, this.substring(start, start + width, /*intern:*/ false));
+        return SyntaxTrivia.create(SyntaxKind.NewLineTrivia, this.substring(start, start + width, /*intern:*/ false));
     }
 
     private scanLineTerminatorSequenceLength(ch: number): number {

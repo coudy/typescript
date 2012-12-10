@@ -2,7 +2,7 @@
 
 module SyntaxToken {
     export function realize(token: ISyntaxToken): ISyntaxToken {
-        return new RealizedToken(token.tokenKind, token.keywordKind(), token.fullStart(),
+        return new RealizedToken(token.tokenKind, token.keywordKind(),
             token.leadingTrivia(), token.text(), token.value(), token.valueText(), token.trailingTrivia(),
             token.isMissing());
     }
@@ -20,11 +20,6 @@ module SyntaxToken {
 
         if (token.keywordKind() !== SyntaxKind.None) {
             result.keywordKind = (<any>SyntaxKind)._map[token.keywordKind()];
-        }
-
-        result.start = token.start();
-        if (token.fullStart() !== token.start()) {
-            result.fullStart = token.fullStart();
         }
 
         result.width = token.width();
@@ -102,12 +97,10 @@ module SyntaxToken {
     }
 
     class EmptyToken implements ISyntaxToken {
-        private _fullStart: number;
         public tokenKind: SyntaxKind;
         private _keywordKind: SyntaxKind;
 
-        constructor(fullStart: number, kind: SyntaxKind, keywordKind: SyntaxKind) {
-            this._fullStart = fullStart;
+        constructor(kind: SyntaxKind, keywordKind: SyntaxKind) {
             this.tokenKind = kind;
             this._keywordKind = keywordKind;
         }
@@ -122,12 +115,8 @@ module SyntaxToken {
 
         public toJSON(key) { return toJSON(this); }
         public keywordKind() { return this._keywordKind; }
-        public fullStart() { return this._fullStart; }
         public fullWidth() { return 0; }
-        public start() { return this._fullStart; }
         public width() { return 0; }
-        public fullEnd(): number { return this._fullStart; }
-        public end(): number { return this._fullStart; }
         public isMissing() { return true; }
         public text() { return ""; }
         public fullText(): string { return ""; }
@@ -136,17 +125,15 @@ module SyntaxToken {
         public hasLeadingTrivia() { return false; }
         public hasLeadingCommentTrivia() { return false; }
         public hasLeadingNewLineTrivia() { return false; }
+        public leadingTriviaWidth() { return 0; }
         public hasTrailingTrivia() { return false; }
         public hasTrailingCommentTrivia() { return false; }
         public hasTrailingNewLineTrivia() { return false; }
+        public trailingTriviaWidth() { return 0; }
         public leadingTrivia(): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
         public trailingTrivia(): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
         public realize(): ISyntaxToken { return realize(this); }
         public collectTextElements(elements: string[]): void { collectTextElements(this, elements); }
-
-        public withFullStart(fullStart: number): ISyntaxToken {
-            return new EmptyToken(fullStart, this.kind(), this.keywordKind());
-        }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             throw Errors.invalidOperation('Can not call on a non-realized token.');
@@ -157,8 +144,8 @@ module SyntaxToken {
         }
     }
 
-    export function createEmpty(fullStart: number, kind: SyntaxKind, keywordKind: SyntaxKind): ISyntaxToken {
-        return new EmptyToken(fullStart, kind, keywordKind);
+    export function createEmpty(kind: SyntaxKind, keywordKind: SyntaxKind): ISyntaxToken {
+        return new EmptyToken(kind, keywordKind);
     }
 
     class ElasticToken implements ISyntaxToken {
@@ -188,6 +175,8 @@ module SyntaxToken {
         public isMissing(): bool { return false; }
 
         public tokenKind: SyntaxKind;
+
+        public toJSON(key) { return toJSON(this); }
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public keywordKind(): SyntaxKind { return this._keywordKind; }
@@ -231,7 +220,11 @@ module SyntaxToken {
         }
 
         public hasLeadingNewLineTrivia(): bool {
-            return this._trailingTrivia.hasNewLine();
+            return this._leadingTrivia.hasNewLine();
+        }
+
+        public leadingTriviaWidth(): number {
+            return this._leadingTrivia.fullWidth();
         }
 
         public hasTrailingTrivia(): bool {
@@ -240,6 +233,10 @@ module SyntaxToken {
 
         public hasTrailingCommentTrivia(): bool {
             return this._trailingTrivia.hasComment();
+        }
+
+        public trailingTriviaWidth(): number {
+            return this._trailingTrivia.fullWidth();
         }
 
         public hasTrailingNewLineTrivia(): bool {
@@ -251,10 +248,6 @@ module SyntaxToken {
         
         public realize(): ISyntaxToken { return realize(this); }
         public collectTextElements(elements: string[]): void { collectTextElements(this, elements); }
-
-        public withFullStart(fullStart: number): ISyntaxToken {
-            return this.realize().withFullStart(fullStart);
-        }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -268,7 +261,6 @@ module SyntaxToken {
     class RealizedToken implements ISyntaxToken {
         public tokenKind: SyntaxKind;
         private _keywordKind: SyntaxKind;
-        private _fullStart: number;
         private _leadingTrivia: ISyntaxTriviaList;
         private _text: string;
         private _value: any;
@@ -278,7 +270,6 @@ module SyntaxToken {
 
         constructor(tokenKind: SyntaxKind,
                     keywordKind: SyntaxKind,
-                    fullStart: number,
                     leadingTrivia: ISyntaxTriviaList,
                     text: string,
                     value: any,
@@ -287,7 +278,6 @@ module SyntaxToken {
                     isMissing: bool) {
             this.tokenKind = tokenKind;
             this._keywordKind = keywordKind;
-            this._fullStart = fullStart;
             this._leadingTrivia = leadingTrivia;
             this._text = text;
             this._value = value;
@@ -309,13 +299,8 @@ module SyntaxToken {
 
         public keywordKind(): SyntaxKind { return this._keywordKind; }
 
-        public fullStart(): number { return this._fullStart; }
         public fullWidth(): number { return this._leadingTrivia.fullWidth() + this.width() + this._trailingTrivia.fullWidth(); }
-        public fullEnd(): number { return this.fullStart() + this.fullWidth(); }
-
-        public start(): number { return this.fullStart() + this._leadingTrivia.fullWidth(); }
         public width(): number { return this.text().length; }
-        public end(): number { return this.start() + this.width(); }
 
         public text(): string { return this._text; }
         public fullText(): string { return this._leadingTrivia.fullText() + this.text() + this._trailingTrivia.fullText(); }
@@ -326,10 +311,12 @@ module SyntaxToken {
         public hasLeadingTrivia(): bool { return this._leadingTrivia.count() > 0; }
         public hasLeadingCommentTrivia(): bool { return this._leadingTrivia.hasComment(); }
         public hasLeadingNewLineTrivia(): bool { return this._leadingTrivia.hasNewLine(); }
+        public leadingTriviaWidth(): number { return this._leadingTrivia.fullWidth(); }
 
         public hasTrailingTrivia(): bool { return this._trailingTrivia.count() > 0; }
         public hasTrailingCommentTrivia(): bool { return this._trailingTrivia.hasComment(); }
         public hasTrailingNewLineTrivia(): bool { return this._trailingTrivia.hasNewLine(); }
+        public trailingTriviaWidth(): number { return this._trailingTrivia.fullWidth(); }
 
         public leadingTrivia(): ISyntaxTriviaList { return this._leadingTrivia; }
         public trailingTrivia(): ISyntaxTriviaList { return this._trailingTrivia; }
@@ -337,24 +324,16 @@ module SyntaxToken {
         public realize(): ISyntaxToken { return this; }
         public collectTextElements(elements: string[]): void { collectTextElements(this, elements); }
 
-        public withFullStart(fullStart: number): ISyntaxToken {
-            return new RealizedToken(
-                this.tokenKind, this._keywordKind,
-                fullStart,
-                this._leadingTrivia, this._text, this._value,
-                this._valueText, this._trailingTrivia, this._isMissing);
-        }
-
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return new RealizedToken(
-                this.tokenKind, this._keywordKind, this._fullStart,
+                this.tokenKind, this._keywordKind,
                 leadingTrivia, this._text, this._value,
                 this._valueText, this._trailingTrivia, this._isMissing);
         }
 
         public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return new RealizedToken(
-                this.tokenKind, this._keywordKind, this._fullStart,
+                this.tokenKind, this._keywordKind,
                 this._leadingTrivia, this._text, this._value,
                 this._valueText, trailingTrivia, this._isMissing);
         }
