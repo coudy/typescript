@@ -2,7 +2,7 @@
 
 interface IParserRewindPoint extends IRewindPoint {
     previousToken: ISyntaxToken;
-    previousTokenFullEnd: number;
+    currentTokenFullStart: number;
     isInStrictMode: bool;
     diagnosticsCount: number;
     skippedTokensCount: number;
@@ -138,7 +138,9 @@ class Parser extends SlidingWindow {
 
     // The previous token to the current token.  Set when we advance to the next token.
     private previousToken: ISyntaxToken = null;
-    private previousTokenFullEnd: number = 0;
+
+    // The full start position of the current token the parser is pointing at.
+    private currentTokenFullStart: number = 0;
 
     // The diagnostics we get while scanning.  Note: this never gets rewound when we do a normal
     // rewind.  That's because rewinding doesn't affect the tokens created.  It only affects where
@@ -190,7 +192,7 @@ class Parser extends SlidingWindow {
 
     public storeAdditionalRewindState(rewindPoint: IParserRewindPoint): void {
         rewindPoint.previousToken = this.previousToken;
-        rewindPoint.previousTokenFullEnd = this.previousTokenFullEnd;
+        rewindPoint.currentTokenFullStart = this.currentTokenFullStart;
         rewindPoint.isInStrictMode = this.isInStrictMode;
         rewindPoint.diagnosticsCount = this.diagnostics.length;
         rewindPoint.skippedTokensCount = this.skippedTokens.length;
@@ -199,7 +201,7 @@ class Parser extends SlidingWindow {
     public restoreStateFromRewindPoint(rewindPoint: IParserRewindPoint): void {
         this._currentToken = null;
         this.previousToken = rewindPoint.previousToken;
-        this.previousTokenFullEnd = rewindPoint.previousTokenFullEnd;
+        this.currentTokenFullStart = rewindPoint.currentTokenFullStart;
         this.isInStrictMode = rewindPoint.isInStrictMode;
         this.diagnostics.length = rewindPoint.diagnosticsCount;
         this.skippedTokens.length = rewindPoint.skippedTokensCount;
@@ -213,7 +215,7 @@ class Parser extends SlidingWindow {
     }
 
     private currentTokenStart(): number {
-        return this.previousTokenFullEnd + this.currentToken().leadingTriviaWidth();
+        return this.currentTokenFullStart + this.currentToken().leadingTriviaWidth();
     }
 
     private previousTokenStart(): number {
@@ -221,7 +223,7 @@ class Parser extends SlidingWindow {
             return 0;
         }
 
-        return this.previousTokenFullEnd -
+        return this.currentTokenFullStart -
                this.previousToken.fullWidth() +
                this.previousToken.leadingTriviaWidth();
     }
@@ -266,7 +268,7 @@ class Parser extends SlidingWindow {
     }
 
     private moveToNextToken(): void {
-        this.previousTokenFullEnd += this._currentToken.fullWidth();
+        this.currentTokenFullStart += this._currentToken.fullWidth();
         this.previousToken = this._currentToken;
         this._currentToken = null;
 
@@ -2446,7 +2448,7 @@ class Parser extends SlidingWindow {
         // a regular expresion.
 
         // First, remove any diagnostics that came from the slash or afterwards.
-        var slashTokenFullStart = this.previousTokenFullEnd;
+        var slashTokenFullStart = this.currentTokenFullStart;
         var tokenDiagnosticsLength = this.tokenDiagnostics.length;
         while (tokenDiagnosticsLength > 0) {
             var diagnostic = this.tokenDiagnostics[tokenDiagnosticsLength - 1];

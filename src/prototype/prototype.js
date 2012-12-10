@@ -1786,7 +1786,7 @@ var Parser = (function (_super) {
         this.options = null;
         this._currentToken = null;
         this.previousToken = null;
-        this.previousTokenFullEnd = 0;
+        this.currentTokenFullStart = 0;
         this.tokenDiagnostics = [];
         this.listParsingState = 0;
         this.isInStrictMode = false;
@@ -1801,7 +1801,7 @@ var Parser = (function (_super) {
     };
     Parser.prototype.storeAdditionalRewindState = function (rewindPoint) {
         rewindPoint.previousToken = this.previousToken;
-        rewindPoint.previousTokenFullEnd = this.previousTokenFullEnd;
+        rewindPoint.currentTokenFullStart = this.currentTokenFullStart;
         rewindPoint.isInStrictMode = this.isInStrictMode;
         rewindPoint.diagnosticsCount = this.diagnostics.length;
         rewindPoint.skippedTokensCount = this.skippedTokens.length;
@@ -1809,7 +1809,7 @@ var Parser = (function (_super) {
     Parser.prototype.restoreStateFromRewindPoint = function (rewindPoint) {
         this._currentToken = null;
         this.previousToken = rewindPoint.previousToken;
-        this.previousTokenFullEnd = rewindPoint.previousTokenFullEnd;
+        this.currentTokenFullStart = rewindPoint.currentTokenFullStart;
         this.isInStrictMode = rewindPoint.isInStrictMode;
         this.diagnostics.length = rewindPoint.diagnosticsCount;
         this.skippedTokens.length = rewindPoint.skippedTokensCount;
@@ -1819,13 +1819,13 @@ var Parser = (function (_super) {
         return 1;
     };
     Parser.prototype.currentTokenStart = function () {
-        return this.previousTokenFullEnd + this.currentToken().leadingTriviaWidth();
+        return this.currentTokenFullStart + this.currentToken().leadingTriviaWidth();
     };
     Parser.prototype.previousTokenStart = function () {
         if(this.previousToken === null) {
             return 0;
         }
-        return this.previousTokenFullEnd - this.previousToken.fullWidth() + this.previousToken.leadingTriviaWidth();
+        return this.currentTokenFullStart - this.previousToken.fullWidth() + this.previousToken.leadingTriviaWidth();
     };
     Parser.prototype.previousTokenEnd = function () {
         if(this.previousToken === null) {
@@ -1856,7 +1856,7 @@ var Parser = (function (_super) {
         return token;
     };
     Parser.prototype.moveToNextToken = function () {
-        this.previousTokenFullEnd += this._currentToken.fullWidth();
+        this.currentTokenFullStart += this._currentToken.fullWidth();
         this.previousToken = this._currentToken;
         this._currentToken = null;
         this.moveToNextItem();
@@ -3426,7 +3426,7 @@ var Parser = (function (_super) {
                 }
             }
         }
-        var slashTokenFullStart = this.previousTokenFullEnd;
+        var slashTokenFullStart = this.currentTokenFullStart;
         var tokenDiagnosticsLength = this.tokenDiagnostics.length;
         while(tokenDiagnosticsLength > 0) {
             var diagnostic = this.tokenDiagnostics[tokenDiagnosticsLength - 1];
@@ -44482,7 +44482,7 @@ var Program = (function () {
         });
         environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true);
+            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
     };
     Program.prototype.handleException = function (environment, filePath, e) {
