@@ -14083,6 +14083,7 @@ var Emitter = (function (_super) {
     }
     Emitter.prototype.visitModuleDeclaration = function (node) {
         var identifierName = Emitter.leftmostName(node.moduleName());
+        identifierName = identifierName.withIdentifier(identifierName.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty));
         var variableStatement = VariableStatementSyntax.create(new VariableDeclarationSyntax(SyntaxToken.createElasticKeyword({
             kind: 37 /* VarKeyword */ ,
             trailingTrivia: [
