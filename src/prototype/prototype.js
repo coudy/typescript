@@ -4635,7 +4635,7 @@ var Scanner = (function (_super) {
         }
     };
     Scanner.prototype.scanWhitespaceTrivia = function () {
-        var start = this.absoluteIndex();
+        var absoluteStartIndex = this.getAndPinAbsoluteIndex();
         var width = 0;
         while(true) {
             var ch = this.currentCharCode();
@@ -4654,12 +4654,16 @@ var Scanner = (function (_super) {
             }
             break;
         }
-        return SyntaxTrivia.create(4 /* WhitespaceTrivia */ , this.substring(start, start + width, false));
+        var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, false);
+        this.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
+        return SyntaxTrivia.create(4 /* WhitespaceTrivia */ , text);
     };
     Scanner.prototype.scanSingleLineCommentTrivia = function () {
-        var start = this.absoluteIndex();
+        var absoluteStartIndex = this.getAndPinAbsoluteIndex();
         var width = this.scanSingleLineCommentTriviaLength();
-        return SyntaxTrivia.create(7 /* SingleLineCommentTrivia */ , this.substring(start, start + width, false));
+        var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, false);
+        this.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
+        return SyntaxTrivia.create(7 /* SingleLineCommentTrivia */ , text);
     };
     Scanner.prototype.scanSingleLineCommentTriviaLength = function () {
         this.moveToNextItem();
@@ -4674,9 +4678,11 @@ var Scanner = (function (_super) {
         }
     };
     Scanner.prototype.scanMultiLineCommentTrivia = function () {
-        var start = this.absoluteIndex();
+        var absoluteStartIndex = this.getAndPinAbsoluteIndex();
         var width = this.scanMultiLineCommentTriviaLength(null);
-        return SyntaxTrivia.create(6 /* MultiLineCommentTrivia */ , this.substring(start, start + width, false));
+        var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, false);
+        this.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
+        return SyntaxTrivia.create(6 /* MultiLineCommentTrivia */ , text);
     };
     Scanner.prototype.scanMultiLineCommentTriviaLength = function (diagnostics) {
         this.moveToNextItem();
@@ -4701,9 +4707,11 @@ var Scanner = (function (_super) {
         }
     };
     Scanner.prototype.scanLineTerminatorSequenceTrivia = function (ch) {
-        var start = this.absoluteIndex();
+        var absoluteStartIndex = this.getAndPinAbsoluteIndex();
         var width = this.scanLineTerminatorSequenceLength(ch);
-        return SyntaxTrivia.create(5 /* NewLineTrivia */ , this.substring(start, start + width, false));
+        var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, false);
+        this.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
+        return SyntaxTrivia.create(5 /* NewLineTrivia */ , text);
     };
     Scanner.prototype.scanLineTerminatorSequenceLength = function (ch) {
         this.moveToNextItem();

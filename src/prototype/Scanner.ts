@@ -225,7 +225,10 @@ class Scanner extends SlidingWindow {
     }
 
     private scanWhitespaceTrivia(): ISyntaxTrivia {
-        var start = this.absoluteIndex();
+        // We're going to be extracting text out of sliding window.  Make sure it can't move past
+        // this point.
+        var absoluteStartIndex = this.getAndPinAbsoluteIndex();
+
         var width = 0;
         while (true) {
             var ch = this.currentCharCode();
@@ -246,13 +249,21 @@ class Scanner extends SlidingWindow {
             break;
         }
         
-        return SyntaxTrivia.create(SyntaxKind.WhitespaceTrivia, this.substring(start, start + width, /*intern:*/ false));
+        // TODO: we probably should intern whitespace.
+        var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, /*intern:*/ false);
+        this.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
+
+        return SyntaxTrivia.create(SyntaxKind.WhitespaceTrivia, text);
     }
     
     private scanSingleLineCommentTrivia(): ISyntaxTrivia {
-        var start = this.absoluteIndex();
+        var absoluteStartIndex = this.getAndPinAbsoluteIndex();
         var width = this.scanSingleLineCommentTriviaLength();
-        return SyntaxTrivia.create(SyntaxKind.SingleLineCommentTrivia, this.substring(start, start + width, /*intern:*/ false));
+        
+        var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, /*intern:*/ false);
+        this.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
+
+        return SyntaxTrivia.create(SyntaxKind.SingleLineCommentTrivia, text);
     }
 
     private scanSingleLineCommentTriviaLength(): number {
@@ -272,9 +283,13 @@ class Scanner extends SlidingWindow {
     }
 
     private scanMultiLineCommentTrivia(): ISyntaxTrivia {
-        var start = this.absoluteIndex();
+        var absoluteStartIndex = this.getAndPinAbsoluteIndex();
         var width = this.scanMultiLineCommentTriviaLength(null);
-        return SyntaxTrivia.create(SyntaxKind.MultiLineCommentTrivia, this.substring(start, start + width, /*intern:*/ false));
+        
+        var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, /*intern:*/ false);
+        this.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
+
+        return SyntaxTrivia.create(SyntaxKind.MultiLineCommentTrivia, text);
     }
 
     private scanMultiLineCommentTriviaLength(diagnostics: SyntaxDiagnostic[]): number {
@@ -307,9 +322,13 @@ class Scanner extends SlidingWindow {
     }
 
     private scanLineTerminatorSequenceTrivia(ch: number): ISyntaxTrivia {
-        var start = this.absoluteIndex();
+        var absoluteStartIndex = this.getAndPinAbsoluteIndex();
         var width = this.scanLineTerminatorSequenceLength(ch);
-        return SyntaxTrivia.create(SyntaxKind.NewLineTrivia, this.substring(start, start + width, /*intern:*/ false));
+        
+        var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, /*intern:*/ false);
+        this.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
+
+        return SyntaxTrivia.create(SyntaxKind.NewLineTrivia, text);
     }
 
     private scanLineTerminatorSequenceLength(ch: number): number {
