@@ -948,6 +948,10 @@ function getType(child: IMemberDefinition): string {
 
 var hasKind = false;
 
+function pascalCase(value: string): string {
+    return value.substr(0, 1).toUpperCase() + value.substr(1);
+}
+
 function getSafeName(child: IMemberDefinition) {
     if (child.name === "arguments") {
         return "_" + child.name;
@@ -1096,7 +1100,7 @@ function generateKindCheck(child: IMemberDefinition): string {
 
     var tokenKinds: string[] = child.tokenKinds
         ? child.tokenKinds
-        : [child.name.substr(0, 1).toUpperCase() + child.name.substr(1)];
+        : [pascalCase(child.name)];
 
     if (tokenKinds.length <= 2) {
         result += generateIfKindCheck(child, tokenKinds, indent);
@@ -1307,6 +1311,46 @@ function generateAccessors(definition: ITypeDefinition): string {
     return result;
 }
 
+function generateWithMethod(definition: ITypeDefinition, child: IMemberDefinition): string {
+    if (child.type === "SyntaxKind") {
+        return "";
+    }
+
+    var result = "";
+    result += "\r\n";
+    result += "    public with" + pascalCase(child.name) + "(" + getSafeName(child) + ": " + getType(child) + "): " + definition.name + " {\r\n";
+    result += "        return this.update("
+
+    for (var i = 0; i < definition.children.length; i++) {
+        if (i > 0) {
+            result += ", ";
+        }
+
+        if (definition.children[i] === child) {
+            result += getSafeName(child);
+        }
+        else {
+            result += getPropertyAccess(definition.children[i]);
+        }
+    }
+
+    result += ");\r\n";
+    result += "    }\r\n";
+
+    return result;
+}
+
+function generateWithMethods(definition: ITypeDefinition): string {
+    var result = "";
+
+    for (var i = 0; i < definition.children.length; i++) {
+        var child: IMemberDefinition = definition.children[i];
+        result += this.generateWithMethod(definition, child);
+    }
+
+    return result;
+}
+
 function generateUpdateMethod(definition: ITypeDefinition): string {
     if (definition.isAbstract) {
         return "";
@@ -1472,6 +1516,7 @@ function generateNode(definition: ITypeDefinition): string {
     result += generateIsMissingMethod(definition);
     result += generateAccessors(definition);
     result += generateUpdateMethod(definition);
+    result += generateWithMethods(definition);
     // result += generateRealizeMethod(definition);
     result += generateCollectTextElements(definition);
 

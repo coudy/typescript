@@ -6916,6 +6916,12 @@ var SourceUnitSyntax = (function (_super) {
         }
         return new SourceUnitSyntax(moduleElements, endOfFileToken);
     };
+    SourceUnitSyntax.prototype.withModuleElements = function (moduleElements) {
+        return this.update(moduleElements, this._endOfFileToken);
+    };
+    SourceUnitSyntax.prototype.withEndOfFileToken = function (endOfFileToken) {
+        return this.update(this._moduleElements, endOfFileToken);
+    };
     SourceUnitSyntax.prototype.collectTextElements = function (elements) {
         this._moduleElements.collectTextElements(elements);
         this._endOfFileToken.collectTextElements(elements);
@@ -6999,6 +7005,18 @@ var ExternalModuleReferenceSyntax = (function (_super) {
         }
         return new ExternalModuleReferenceSyntax(moduleKeyword, openParenToken, stringLiteral, closeParenToken);
     };
+    ExternalModuleReferenceSyntax.prototype.withModuleKeyword = function (moduleKeyword) {
+        return this.update(moduleKeyword, this._openParenToken, this._stringLiteral, this._closeParenToken);
+    };
+    ExternalModuleReferenceSyntax.prototype.withOpenParenToken = function (openParenToken) {
+        return this.update(this._moduleKeyword, openParenToken, this._stringLiteral, this._closeParenToken);
+    };
+    ExternalModuleReferenceSyntax.prototype.withStringLiteral = function (stringLiteral) {
+        return this.update(this._moduleKeyword, this._openParenToken, stringLiteral, this._closeParenToken);
+    };
+    ExternalModuleReferenceSyntax.prototype.withCloseParenToken = function (closeParenToken) {
+        return this.update(this._moduleKeyword, this._openParenToken, this._stringLiteral, closeParenToken);
+    };
     ExternalModuleReferenceSyntax.prototype.collectTextElements = function (elements) {
         this._moduleKeyword.collectTextElements(elements);
         this._openParenToken.collectTextElements(elements);
@@ -7039,6 +7057,9 @@ var ModuleNameModuleReferenceSyntax = (function (_super) {
             return this;
         }
         return new ModuleNameModuleReferenceSyntax(moduleName);
+    };
+    ModuleNameModuleReferenceSyntax.prototype.withModuleName = function (moduleName) {
+        return this.update(moduleName);
     };
     ModuleNameModuleReferenceSyntax.prototype.collectTextElements = function (elements) {
         this._moduleName.collectTextElements(elements);
@@ -7117,6 +7138,21 @@ var ImportDeclarationSyntax = (function (_super) {
             return this;
         }
         return new ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken);
+    };
+    ImportDeclarationSyntax.prototype.withImportKeyword = function (importKeyword) {
+        return this.update(importKeyword, this._identifier, this._equalsToken, this._moduleReference, this._semicolonToken);
+    };
+    ImportDeclarationSyntax.prototype.withIdentifier = function (identifier) {
+        return this.update(this._importKeyword, identifier, this._equalsToken, this._moduleReference, this._semicolonToken);
+    };
+    ImportDeclarationSyntax.prototype.withEqualsToken = function (equalsToken) {
+        return this.update(this._importKeyword, this._identifier, equalsToken, this._moduleReference, this._semicolonToken);
+    };
+    ImportDeclarationSyntax.prototype.withModuleReference = function (moduleReference) {
+        return this.update(this._importKeyword, this._identifier, this._equalsToken, moduleReference, this._semicolonToken);
+    };
+    ImportDeclarationSyntax.prototype.withSemicolonToken = function (semicolonToken) {
+        return this.update(this._importKeyword, this._identifier, this._equalsToken, this._moduleReference, semicolonToken);
     };
     ImportDeclarationSyntax.prototype.collectTextElements = function (elements) {
         this._importKeyword.collectTextElements(elements);
@@ -7241,6 +7277,33 @@ var ClassDeclarationSyntax = (function (_super) {
         }
         return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken);
     };
+    ClassDeclarationSyntax.prototype.withExportKeyword = function (exportKeyword) {
+        return this.update(exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+    };
+    ClassDeclarationSyntax.prototype.withDeclareKeyword = function (declareKeyword) {
+        return this.update(this._exportKeyword, declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+    };
+    ClassDeclarationSyntax.prototype.withClassKeyword = function (classKeyword) {
+        return this.update(this._exportKeyword, this._declareKeyword, classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+    };
+    ClassDeclarationSyntax.prototype.withIdentifier = function (identifier) {
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+    };
+    ClassDeclarationSyntax.prototype.withExtendsClause = function (extendsClause) {
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+    };
+    ClassDeclarationSyntax.prototype.withImplementsClause = function (implementsClause) {
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+    };
+    ClassDeclarationSyntax.prototype.withOpenBraceToken = function (openBraceToken) {
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, openBraceToken, this._classElements, this._closeBraceToken);
+    };
+    ClassDeclarationSyntax.prototype.withClassElements = function (classElements) {
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, classElements, this._closeBraceToken);
+    };
+    ClassDeclarationSyntax.prototype.withCloseBraceToken = function (closeBraceToken) {
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, closeBraceToken);
+    };
     ClassDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._exportKeyword !== null) {
             this._exportKeyword.collectTextElements(elements);
@@ -7337,6 +7400,21 @@ var InterfaceDeclarationSyntax = (function (_super) {
         }
         return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, extendsClause, body);
     };
+    InterfaceDeclarationSyntax.prototype.withExportKeyword = function (exportKeyword) {
+        return this.update(exportKeyword, this._interfaceKeyword, this._identifier, this._extendsClause, this._body);
+    };
+    InterfaceDeclarationSyntax.prototype.withInterfaceKeyword = function (interfaceKeyword) {
+        return this.update(this._exportKeyword, interfaceKeyword, this._identifier, this._extendsClause, this._body);
+    };
+    InterfaceDeclarationSyntax.prototype.withIdentifier = function (identifier) {
+        return this.update(this._exportKeyword, this._interfaceKeyword, identifier, this._extendsClause, this._body);
+    };
+    InterfaceDeclarationSyntax.prototype.withExtendsClause = function (extendsClause) {
+        return this.update(this._exportKeyword, this._interfaceKeyword, this._identifier, extendsClause, this._body);
+    };
+    InterfaceDeclarationSyntax.prototype.withBody = function (body) {
+        return this.update(this._exportKeyword, this._interfaceKeyword, this._identifier, this._extendsClause, body);
+    };
     InterfaceDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._exportKeyword !== null) {
             this._exportKeyword.collectTextElements(elements);
@@ -7396,6 +7474,12 @@ var ExtendsClauseSyntax = (function (_super) {
         }
         return new ExtendsClauseSyntax(extendsKeyword, typeNames);
     };
+    ExtendsClauseSyntax.prototype.withExtendsKeyword = function (extendsKeyword) {
+        return this.update(extendsKeyword, this._typeNames);
+    };
+    ExtendsClauseSyntax.prototype.withTypeNames = function (typeNames) {
+        return this.update(this._extendsKeyword, typeNames);
+    };
     ExtendsClauseSyntax.prototype.collectTextElements = function (elements) {
         this._extendsKeyword.collectTextElements(elements);
         this._typeNames.collectTextElements(elements);
@@ -7447,6 +7531,12 @@ var ImplementsClauseSyntax = (function (_super) {
             return this;
         }
         return new ImplementsClauseSyntax(implementsKeyword, typeNames);
+    };
+    ImplementsClauseSyntax.prototype.withImplementsKeyword = function (implementsKeyword) {
+        return this.update(implementsKeyword, this._typeNames);
+    };
+    ImplementsClauseSyntax.prototype.withTypeNames = function (typeNames) {
+        return this.update(this._implementsKeyword, typeNames);
     };
     ImplementsClauseSyntax.prototype.collectTextElements = function (elements) {
         this._implementsKeyword.collectTextElements(elements);
@@ -7562,6 +7652,30 @@ var ModuleDeclarationSyntax = (function (_super) {
             return this;
         }
         return new ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken);
+    };
+    ModuleDeclarationSyntax.prototype.withExportKeyword = function (exportKeyword) {
+        return this.update(exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, this._moduleElements, this._closeBraceToken);
+    };
+    ModuleDeclarationSyntax.prototype.withDeclareKeyword = function (declareKeyword) {
+        return this.update(this._exportKeyword, declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, this._moduleElements, this._closeBraceToken);
+    };
+    ModuleDeclarationSyntax.prototype.withModuleKeyword = function (moduleKeyword) {
+        return this.update(this._exportKeyword, this._declareKeyword, moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, this._moduleElements, this._closeBraceToken);
+    };
+    ModuleDeclarationSyntax.prototype.withModuleName = function (moduleName) {
+        return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, moduleName, this._stringLiteral, this._openBraceToken, this._moduleElements, this._closeBraceToken);
+    };
+    ModuleDeclarationSyntax.prototype.withStringLiteral = function (stringLiteral) {
+        return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, stringLiteral, this._openBraceToken, this._moduleElements, this._closeBraceToken);
+    };
+    ModuleDeclarationSyntax.prototype.withOpenBraceToken = function (openBraceToken) {
+        return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, openBraceToken, this._moduleElements, this._closeBraceToken);
+    };
+    ModuleDeclarationSyntax.prototype.withModuleElements = function (moduleElements) {
+        return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, moduleElements, this._closeBraceToken);
+    };
+    ModuleDeclarationSyntax.prototype.withCloseBraceToken = function (closeBraceToken) {
+        return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, this._moduleElements, closeBraceToken);
     };
     ModuleDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._exportKeyword !== null) {
@@ -7679,6 +7793,24 @@ var FunctionDeclarationSyntax = (function (_super) {
         }
         return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken);
     };
+    FunctionDeclarationSyntax.prototype.withExportKeyword = function (exportKeyword) {
+        return this.update(exportKeyword, this._declareKeyword, this._functionKeyword, this._functionSignature, this._block, this._semicolonToken);
+    };
+    FunctionDeclarationSyntax.prototype.withDeclareKeyword = function (declareKeyword) {
+        return this.update(this._exportKeyword, declareKeyword, this._functionKeyword, this._functionSignature, this._block, this._semicolonToken);
+    };
+    FunctionDeclarationSyntax.prototype.withFunctionKeyword = function (functionKeyword) {
+        return this.update(this._exportKeyword, this._declareKeyword, functionKeyword, this._functionSignature, this._block, this._semicolonToken);
+    };
+    FunctionDeclarationSyntax.prototype.withFunctionSignature = function (functionSignature) {
+        return this.update(this._exportKeyword, this._declareKeyword, this._functionKeyword, functionSignature, this._block, this._semicolonToken);
+    };
+    FunctionDeclarationSyntax.prototype.withBlock = function (block) {
+        return this.update(this._exportKeyword, this._declareKeyword, this._functionKeyword, this._functionSignature, block, this._semicolonToken);
+    };
+    FunctionDeclarationSyntax.prototype.withSemicolonToken = function (semicolonToken) {
+        return this.update(this._exportKeyword, this._declareKeyword, this._functionKeyword, this._functionSignature, this._block, semicolonToken);
+    };
     FunctionDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._exportKeyword !== null) {
             this._exportKeyword.collectTextElements(elements);
@@ -7767,6 +7899,18 @@ var VariableStatementSyntax = (function (_super) {
         }
         return new VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken);
     };
+    VariableStatementSyntax.prototype.withExportKeyword = function (exportKeyword) {
+        return this.update(exportKeyword, this._declareKeyword, this._variableDeclaration, this._semicolonToken);
+    };
+    VariableStatementSyntax.prototype.withDeclareKeyword = function (declareKeyword) {
+        return this.update(this._exportKeyword, declareKeyword, this._variableDeclaration, this._semicolonToken);
+    };
+    VariableStatementSyntax.prototype.withVariableDeclaration = function (variableDeclaration) {
+        return this.update(this._exportKeyword, this._declareKeyword, variableDeclaration, this._semicolonToken);
+    };
+    VariableStatementSyntax.prototype.withSemicolonToken = function (semicolonToken) {
+        return this.update(this._exportKeyword, this._declareKeyword, this._variableDeclaration, semicolonToken);
+    };
     VariableStatementSyntax.prototype.collectTextElements = function (elements) {
         if(this._exportKeyword !== null) {
             this._exportKeyword.collectTextElements(elements);
@@ -7839,6 +7983,12 @@ var VariableDeclarationSyntax = (function (_super) {
         }
         return new VariableDeclarationSyntax(varKeyword, variableDeclarators);
     };
+    VariableDeclarationSyntax.prototype.withVarKeyword = function (varKeyword) {
+        return this.update(varKeyword, this._variableDeclarators);
+    };
+    VariableDeclarationSyntax.prototype.withVariableDeclarators = function (variableDeclarators) {
+        return this.update(this._varKeyword, variableDeclarators);
+    };
     VariableDeclarationSyntax.prototype.collectTextElements = function (elements) {
         this._varKeyword.collectTextElements(elements);
         this._variableDeclarators.collectTextElements(elements);
@@ -7895,6 +8045,15 @@ var VariableDeclaratorSyntax = (function (_super) {
         }
         return new VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause);
     };
+    VariableDeclaratorSyntax.prototype.withIdentifier = function (identifier) {
+        return this.update(identifier, this._typeAnnotation, this._equalsValueClause);
+    };
+    VariableDeclaratorSyntax.prototype.withTypeAnnotation = function (typeAnnotation) {
+        return this.update(this._identifier, typeAnnotation, this._equalsValueClause);
+    };
+    VariableDeclaratorSyntax.prototype.withEqualsValueClause = function (equalsValueClause) {
+        return this.update(this._identifier, this._typeAnnotation, equalsValueClause);
+    };
     VariableDeclaratorSyntax.prototype.collectTextElements = function (elements) {
         this._identifier.collectTextElements(elements);
         if(this._typeAnnotation !== null) {
@@ -7948,6 +8107,12 @@ var EqualsValueClauseSyntax = (function (_super) {
             return this;
         }
         return new EqualsValueClauseSyntax(equalsToken, value);
+    };
+    EqualsValueClauseSyntax.prototype.withEqualsToken = function (equalsToken) {
+        return this.update(equalsToken, this._value);
+    };
+    EqualsValueClauseSyntax.prototype.withValue = function (value) {
+        return this.update(this._equalsToken, value);
     };
     EqualsValueClauseSyntax.prototype.collectTextElements = function (elements) {
         this._equalsToken.collectTextElements(elements);
@@ -8014,6 +8179,12 @@ var PrefixUnaryExpressionSyntax = (function (_super) {
         }
         return new PrefixUnaryExpressionSyntax(kind, operatorToken, operand);
     };
+    PrefixUnaryExpressionSyntax.prototype.withOperatorToken = function (operatorToken) {
+        return this.update(this._kind, operatorToken, this._operand);
+    };
+    PrefixUnaryExpressionSyntax.prototype.withOperand = function (operand) {
+        return this.update(this._kind, this._operatorToken, operand);
+    };
     PrefixUnaryExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._operatorToken.collectTextElements(elements);
         this._operand.collectTextElements(elements);
@@ -8052,6 +8223,9 @@ var ThisExpressionSyntax = (function (_super) {
             return this;
         }
         return new ThisExpressionSyntax(thisKeyword);
+    };
+    ThisExpressionSyntax.prototype.withThisKeyword = function (thisKeyword) {
+        return this.update(thisKeyword);
     };
     ThisExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._thisKeyword.collectTextElements(elements);
@@ -8120,6 +8294,9 @@ var LiteralExpressionSyntax = (function (_super) {
         }
         return new LiteralExpressionSyntax(kind, literalToken);
     };
+    LiteralExpressionSyntax.prototype.withLiteralToken = function (literalToken) {
+        return this.update(this._kind, literalToken);
+    };
     LiteralExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._literalToken.collectTextElements(elements);
     };
@@ -8180,6 +8357,15 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
             return this;
         }
         return new ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken);
+    };
+    ArrayLiteralExpressionSyntax.prototype.withOpenBracketToken = function (openBracketToken) {
+        return this.update(openBracketToken, this._expressions, this._closeBracketToken);
+    };
+    ArrayLiteralExpressionSyntax.prototype.withExpressions = function (expressions) {
+        return this.update(this._openBracketToken, expressions, this._closeBracketToken);
+    };
+    ArrayLiteralExpressionSyntax.prototype.withCloseBracketToken = function (closeBracketToken) {
+        return this.update(this._openBracketToken, this._expressions, closeBracketToken);
     };
     ArrayLiteralExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._openBracketToken.collectTextElements(elements);
@@ -8265,6 +8451,15 @@ var ParenthesizedExpressionSyntax = (function (_super) {
         }
         return new ParenthesizedExpressionSyntax(openParenToken, expression, closeParenToken);
     };
+    ParenthesizedExpressionSyntax.prototype.withOpenParenToken = function (openParenToken) {
+        return this.update(openParenToken, this._expression, this._closeParenToken);
+    };
+    ParenthesizedExpressionSyntax.prototype.withExpression = function (expression) {
+        return this.update(this._openParenToken, expression, this._closeParenToken);
+    };
+    ParenthesizedExpressionSyntax.prototype.withCloseParenToken = function (closeParenToken) {
+        return this.update(this._openParenToken, this._expression, closeParenToken);
+    };
     ParenthesizedExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._openParenToken.collectTextElements(elements);
         this._expression.collectTextElements(elements);
@@ -8332,6 +8527,15 @@ var SimpleArrowFunctionExpression = (function (_super) {
         }
         return new SimpleArrowFunctionExpression(identifier, equalsGreaterThanToken, body);
     };
+    SimpleArrowFunctionExpression.prototype.withIdentifier = function (identifier) {
+        return this.update(identifier, this._equalsGreaterThanToken, this._body);
+    };
+    SimpleArrowFunctionExpression.prototype.withEqualsGreaterThanToken = function (equalsGreaterThanToken) {
+        return this.update(this._identifier, equalsGreaterThanToken, this._body);
+    };
+    SimpleArrowFunctionExpression.prototype.withBody = function (body) {
+        return this.update(this._identifier, this._equalsGreaterThanToken, body);
+    };
     SimpleArrowFunctionExpression.prototype.collectTextElements = function (elements) {
         this._identifier.collectTextElements(elements);
         this._equalsGreaterThanToken.collectTextElements(elements);
@@ -8392,6 +8596,15 @@ var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
         }
         return new ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body);
     };
+    ParenthesizedArrowFunctionExpressionSyntax.prototype.withCallSignature = function (callSignature) {
+        return this.update(callSignature, this._equalsGreaterThanToken, this._body);
+    };
+    ParenthesizedArrowFunctionExpressionSyntax.prototype.withEqualsGreaterThanToken = function (equalsGreaterThanToken) {
+        return this.update(this._callSignature, equalsGreaterThanToken, this._body);
+    };
+    ParenthesizedArrowFunctionExpressionSyntax.prototype.withBody = function (body) {
+        return this.update(this._callSignature, this._equalsGreaterThanToken, body);
+    };
     ParenthesizedArrowFunctionExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._callSignature.collectTextElements(elements);
         this._equalsGreaterThanToken.collectTextElements(elements);
@@ -8445,6 +8658,9 @@ var IdentifierNameSyntax = (function (_super) {
             return this;
         }
         return new IdentifierNameSyntax(identifier);
+    };
+    IdentifierNameSyntax.prototype.withIdentifier = function (identifier) {
+        return this.update(identifier);
     };
     IdentifierNameSyntax.prototype.collectTextElements = function (elements) {
         this._identifier.collectTextElements(elements);
@@ -8503,6 +8719,15 @@ var QualifiedNameSyntax = (function (_super) {
             return this;
         }
         return new QualifiedNameSyntax(left, dotToken, right);
+    };
+    QualifiedNameSyntax.prototype.withLeft = function (left) {
+        return this.update(left, this._dotToken, this._right);
+    };
+    QualifiedNameSyntax.prototype.withDotToken = function (dotToken) {
+        return this.update(this._left, dotToken, this._right);
+    };
+    QualifiedNameSyntax.prototype.withRight = function (right) {
+        return this.update(this._left, this._dotToken, right);
     };
     QualifiedNameSyntax.prototype.collectTextElements = function (elements) {
         this._left.collectTextElements(elements);
@@ -8574,6 +8799,18 @@ var ConstructorTypeSyntax = (function (_super) {
         }
         return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type);
     };
+    ConstructorTypeSyntax.prototype.withNewKeyword = function (newKeyword) {
+        return this.update(newKeyword, this._parameterList, this._equalsGreaterThanToken, this._type);
+    };
+    ConstructorTypeSyntax.prototype.withParameterList = function (parameterList) {
+        return this.update(this._newKeyword, parameterList, this._equalsGreaterThanToken, this._type);
+    };
+    ConstructorTypeSyntax.prototype.withEqualsGreaterThanToken = function (equalsGreaterThanToken) {
+        return this.update(this._newKeyword, this._parameterList, equalsGreaterThanToken, this._type);
+    };
+    ConstructorTypeSyntax.prototype.withType = function (type) {
+        return this.update(this._newKeyword, this._parameterList, this._equalsGreaterThanToken, type);
+    };
     ConstructorTypeSyntax.prototype.collectTextElements = function (elements) {
         this._newKeyword.collectTextElements(elements);
         this._parameterList.collectTextElements(elements);
@@ -8634,6 +8871,15 @@ var FunctionTypeSyntax = (function (_super) {
             return this;
         }
         return new FunctionTypeSyntax(parameterList, equalsGreaterThanToken, type);
+    };
+    FunctionTypeSyntax.prototype.withParameterList = function (parameterList) {
+        return this.update(parameterList, this._equalsGreaterThanToken, this._type);
+    };
+    FunctionTypeSyntax.prototype.withEqualsGreaterThanToken = function (equalsGreaterThanToken) {
+        return this.update(this._parameterList, equalsGreaterThanToken, this._type);
+    };
+    FunctionTypeSyntax.prototype.withType = function (type) {
+        return this.update(this._parameterList, this._equalsGreaterThanToken, type);
     };
     FunctionTypeSyntax.prototype.collectTextElements = function (elements) {
         this._parameterList.collectTextElements(elements);
@@ -8698,6 +8944,15 @@ var ObjectTypeSyntax = (function (_super) {
         }
         return new ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken);
     };
+    ObjectTypeSyntax.prototype.withOpenBraceToken = function (openBraceToken) {
+        return this.update(openBraceToken, this._typeMembers, this._closeBraceToken);
+    };
+    ObjectTypeSyntax.prototype.withTypeMembers = function (typeMembers) {
+        return this.update(this._openBraceToken, typeMembers, this._closeBraceToken);
+    };
+    ObjectTypeSyntax.prototype.withCloseBraceToken = function (closeBraceToken) {
+        return this.update(this._openBraceToken, this._typeMembers, closeBraceToken);
+    };
     ObjectTypeSyntax.prototype.collectTextElements = function (elements) {
         this._openBraceToken.collectTextElements(elements);
         this._typeMembers.collectTextElements(elements);
@@ -8758,6 +9013,15 @@ var ArrayTypeSyntax = (function (_super) {
         }
         return new ArrayTypeSyntax(type, openBracketToken, closeBracketToken);
     };
+    ArrayTypeSyntax.prototype.withType = function (type) {
+        return this.update(type, this._openBracketToken, this._closeBracketToken);
+    };
+    ArrayTypeSyntax.prototype.withOpenBracketToken = function (openBracketToken) {
+        return this.update(this._type, openBracketToken, this._closeBracketToken);
+    };
+    ArrayTypeSyntax.prototype.withCloseBracketToken = function (closeBracketToken) {
+        return this.update(this._type, this._openBracketToken, closeBracketToken);
+    };
     ArrayTypeSyntax.prototype.collectTextElements = function (elements) {
         this._type.collectTextElements(elements);
         this._openBracketToken.collectTextElements(elements);
@@ -8809,6 +9073,9 @@ var PredefinedTypeSyntax = (function (_super) {
         }
         return new PredefinedTypeSyntax(keyword);
     };
+    PredefinedTypeSyntax.prototype.withKeyword = function (keyword) {
+        return this.update(keyword);
+    };
     PredefinedTypeSyntax.prototype.collectTextElements = function (elements) {
         this._keyword.collectTextElements(elements);
     };
@@ -8856,6 +9123,12 @@ var TypeAnnotationSyntax = (function (_super) {
             return this;
         }
         return new TypeAnnotationSyntax(colonToken, type);
+    };
+    TypeAnnotationSyntax.prototype.withColonToken = function (colonToken) {
+        return this.update(colonToken, this._type);
+    };
+    TypeAnnotationSyntax.prototype.withType = function (type) {
+        return this.update(this._colonToken, type);
     };
     TypeAnnotationSyntax.prototype.collectTextElements = function (elements) {
         this._colonToken.collectTextElements(elements);
@@ -8918,6 +9191,15 @@ var BlockSyntax = (function (_super) {
             return this;
         }
         return new BlockSyntax(openBraceToken, statements, closeBraceToken);
+    };
+    BlockSyntax.prototype.withOpenBraceToken = function (openBraceToken) {
+        return this.update(openBraceToken, this._statements, this._closeBraceToken);
+    };
+    BlockSyntax.prototype.withStatements = function (statements) {
+        return this.update(this._openBraceToken, statements, this._closeBraceToken);
+    };
+    BlockSyntax.prototype.withCloseBraceToken = function (closeBraceToken) {
+        return this.update(this._openBraceToken, this._statements, closeBraceToken);
     };
     BlockSyntax.prototype.collectTextElements = function (elements) {
         this._openBraceToken.collectTextElements(elements);
@@ -9012,6 +9294,24 @@ var ParameterSyntax = (function (_super) {
         }
         return new ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause);
     };
+    ParameterSyntax.prototype.withDotDotDotToken = function (dotDotDotToken) {
+        return this.update(dotDotDotToken, this._publicOrPrivateKeyword, this._identifier, this._questionToken, this._typeAnnotation, this._equalsValueClause);
+    };
+    ParameterSyntax.prototype.withPublicOrPrivateKeyword = function (publicOrPrivateKeyword) {
+        return this.update(this._dotDotDotToken, publicOrPrivateKeyword, this._identifier, this._questionToken, this._typeAnnotation, this._equalsValueClause);
+    };
+    ParameterSyntax.prototype.withIdentifier = function (identifier) {
+        return this.update(this._dotDotDotToken, this._publicOrPrivateKeyword, identifier, this._questionToken, this._typeAnnotation, this._equalsValueClause);
+    };
+    ParameterSyntax.prototype.withQuestionToken = function (questionToken) {
+        return this.update(this._dotDotDotToken, this._publicOrPrivateKeyword, this._identifier, questionToken, this._typeAnnotation, this._equalsValueClause);
+    };
+    ParameterSyntax.prototype.withTypeAnnotation = function (typeAnnotation) {
+        return this.update(this._dotDotDotToken, this._publicOrPrivateKeyword, this._identifier, this._questionToken, typeAnnotation, this._equalsValueClause);
+    };
+    ParameterSyntax.prototype.withEqualsValueClause = function (equalsValueClause) {
+        return this.update(this._dotDotDotToken, this._publicOrPrivateKeyword, this._identifier, this._questionToken, this._typeAnnotation, equalsValueClause);
+    };
     ParameterSyntax.prototype.collectTextElements = function (elements) {
         if(this._dotDotDotToken !== null) {
             this._dotDotDotToken.collectTextElements(elements);
@@ -9085,6 +9385,15 @@ var MemberAccessExpressionSyntax = (function (_super) {
         }
         return new MemberAccessExpressionSyntax(expression, dotToken, identifierName);
     };
+    MemberAccessExpressionSyntax.prototype.withExpression = function (expression) {
+        return this.update(expression, this._dotToken, this._identifierName);
+    };
+    MemberAccessExpressionSyntax.prototype.withDotToken = function (dotToken) {
+        return this.update(this._expression, dotToken, this._identifierName);
+    };
+    MemberAccessExpressionSyntax.prototype.withIdentifierName = function (identifierName) {
+        return this.update(this._expression, this._dotToken, identifierName);
+    };
     MemberAccessExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._expression.collectTextElements(elements);
         this._dotToken.collectTextElements(elements);
@@ -9138,6 +9447,12 @@ var PostfixUnaryExpressionSyntax = (function (_super) {
             return this;
         }
         return new PostfixUnaryExpressionSyntax(kind, operand, operatorToken);
+    };
+    PostfixUnaryExpressionSyntax.prototype.withOperand = function (operand) {
+        return this.update(this._kind, operand, this._operatorToken);
+    };
+    PostfixUnaryExpressionSyntax.prototype.withOperatorToken = function (operatorToken) {
+        return this.update(this._kind, this._operand, operatorToken);
     };
     PostfixUnaryExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._operand.collectTextElements(elements);
@@ -9208,6 +9523,18 @@ var ElementAccessExpressionSyntax = (function (_super) {
         }
         return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken);
     };
+    ElementAccessExpressionSyntax.prototype.withExpression = function (expression) {
+        return this.update(expression, this._openBracketToken, this._argumentExpression, this._closeBracketToken);
+    };
+    ElementAccessExpressionSyntax.prototype.withOpenBracketToken = function (openBracketToken) {
+        return this.update(this._expression, openBracketToken, this._argumentExpression, this._closeBracketToken);
+    };
+    ElementAccessExpressionSyntax.prototype.withArgumentExpression = function (argumentExpression) {
+        return this.update(this._expression, this._openBracketToken, argumentExpression, this._closeBracketToken);
+    };
+    ElementAccessExpressionSyntax.prototype.withCloseBracketToken = function (closeBracketToken) {
+        return this.update(this._expression, this._openBracketToken, this._argumentExpression, closeBracketToken);
+    };
     ElementAccessExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._expression.collectTextElements(elements);
         this._openBracketToken.collectTextElements(elements);
@@ -9258,6 +9585,12 @@ var InvocationExpressionSyntax = (function (_super) {
             return this;
         }
         return new InvocationExpressionSyntax(expression, argumentList);
+    };
+    InvocationExpressionSyntax.prototype.withExpression = function (expression) {
+        return this.update(expression, this._argumentList);
+    };
+    InvocationExpressionSyntax.prototype.withArgumentList = function (argumentList) {
+        return this.update(this._expression, argumentList);
     };
     InvocationExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._expression.collectTextElements(elements);
@@ -9320,6 +9653,15 @@ var ArgumentListSyntax = (function (_super) {
             return this;
         }
         return new ArgumentListSyntax(openParenToken, _arguments, closeParenToken);
+    };
+    ArgumentListSyntax.prototype.withOpenParenToken = function (openParenToken) {
+        return this.update(openParenToken, this._arguments, this._closeParenToken);
+    };
+    ArgumentListSyntax.prototype.withArguments = function (_arguments) {
+        return this.update(this._openParenToken, _arguments, this._closeParenToken);
+    };
+    ArgumentListSyntax.prototype.withCloseParenToken = function (closeParenToken) {
+        return this.update(this._openParenToken, this._arguments, closeParenToken);
     };
     ArgumentListSyntax.prototype.collectTextElements = function (elements) {
         this._openParenToken.collectTextElements(elements);
@@ -9432,6 +9774,15 @@ var BinaryExpressionSyntax = (function (_super) {
         }
         return new BinaryExpressionSyntax(kind, left, operatorToken, right);
     };
+    BinaryExpressionSyntax.prototype.withLeft = function (left) {
+        return this.update(this._kind, left, this._operatorToken, this._right);
+    };
+    BinaryExpressionSyntax.prototype.withOperatorToken = function (operatorToken) {
+        return this.update(this._kind, this._left, operatorToken, this._right);
+    };
+    BinaryExpressionSyntax.prototype.withRight = function (right) {
+        return this.update(this._kind, this._left, this._operatorToken, right);
+    };
     BinaryExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._left.collectTextElements(elements);
         this._operatorToken.collectTextElements(elements);
@@ -9512,6 +9863,21 @@ var ConditionalExpressionSyntax = (function (_super) {
         }
         return new ConditionalExpressionSyntax(condition, questionToken, whenTrue, colonToken, whenFalse);
     };
+    ConditionalExpressionSyntax.prototype.withCondition = function (condition) {
+        return this.update(condition, this._questionToken, this._whenTrue, this._colonToken, this._whenFalse);
+    };
+    ConditionalExpressionSyntax.prototype.withQuestionToken = function (questionToken) {
+        return this.update(this._condition, questionToken, this._whenTrue, this._colonToken, this._whenFalse);
+    };
+    ConditionalExpressionSyntax.prototype.withWhenTrue = function (whenTrue) {
+        return this.update(this._condition, this._questionToken, whenTrue, this._colonToken, this._whenFalse);
+    };
+    ConditionalExpressionSyntax.prototype.withColonToken = function (colonToken) {
+        return this.update(this._condition, this._questionToken, this._whenTrue, colonToken, this._whenFalse);
+    };
+    ConditionalExpressionSyntax.prototype.withWhenFalse = function (whenFalse) {
+        return this.update(this._condition, this._questionToken, this._whenTrue, this._colonToken, whenFalse);
+    };
     ConditionalExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._condition.collectTextElements(elements);
         this._questionToken.collectTextElements(elements);
@@ -9580,6 +9946,15 @@ var ConstructSignatureSyntax = (function (_super) {
             return this;
         }
         return new ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation);
+    };
+    ConstructSignatureSyntax.prototype.withNewKeyword = function (newKeyword) {
+        return this.update(newKeyword, this._parameterList, this._typeAnnotation);
+    };
+    ConstructSignatureSyntax.prototype.withParameterList = function (parameterList) {
+        return this.update(this._newKeyword, parameterList, this._typeAnnotation);
+    };
+    ConstructSignatureSyntax.prototype.withTypeAnnotation = function (typeAnnotation) {
+        return this.update(this._newKeyword, this._parameterList, typeAnnotation);
     };
     ConstructSignatureSyntax.prototype.collectTextElements = function (elements) {
         this._newKeyword.collectTextElements(elements);
@@ -9654,6 +10029,18 @@ var FunctionSignatureSyntax = (function (_super) {
             return this;
         }
         return new FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation);
+    };
+    FunctionSignatureSyntax.prototype.withIdentifier = function (identifier) {
+        return this.update(identifier, this._questionToken, this._parameterList, this._typeAnnotation);
+    };
+    FunctionSignatureSyntax.prototype.withQuestionToken = function (questionToken) {
+        return this.update(this._identifier, questionToken, this._parameterList, this._typeAnnotation);
+    };
+    FunctionSignatureSyntax.prototype.withParameterList = function (parameterList) {
+        return this.update(this._identifier, this._questionToken, parameterList, this._typeAnnotation);
+    };
+    FunctionSignatureSyntax.prototype.withTypeAnnotation = function (typeAnnotation) {
+        return this.update(this._identifier, this._questionToken, this._parameterList, typeAnnotation);
     };
     FunctionSignatureSyntax.prototype.collectTextElements = function (elements) {
         this._identifier.collectTextElements(elements);
@@ -9730,6 +10117,18 @@ var IndexSignatureSyntax = (function (_super) {
         }
         return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation);
     };
+    IndexSignatureSyntax.prototype.withOpenBracketToken = function (openBracketToken) {
+        return this.update(openBracketToken, this._parameter, this._closeBracketToken, this._typeAnnotation);
+    };
+    IndexSignatureSyntax.prototype.withParameter = function (parameter) {
+        return this.update(this._openBracketToken, parameter, this._closeBracketToken, this._typeAnnotation);
+    };
+    IndexSignatureSyntax.prototype.withCloseBracketToken = function (closeBracketToken) {
+        return this.update(this._openBracketToken, this._parameter, closeBracketToken, this._typeAnnotation);
+    };
+    IndexSignatureSyntax.prototype.withTypeAnnotation = function (typeAnnotation) {
+        return this.update(this._openBracketToken, this._parameter, this._closeBracketToken, typeAnnotation);
+    };
     IndexSignatureSyntax.prototype.collectTextElements = function (elements) {
         this._openBracketToken.collectTextElements(elements);
         this._parameter.collectTextElements(elements);
@@ -9794,6 +10193,15 @@ var PropertySignatureSyntax = (function (_super) {
             return this;
         }
         return new PropertySignatureSyntax(identifier, questionToken, typeAnnotation);
+    };
+    PropertySignatureSyntax.prototype.withIdentifier = function (identifier) {
+        return this.update(identifier, this._questionToken, this._typeAnnotation);
+    };
+    PropertySignatureSyntax.prototype.withQuestionToken = function (questionToken) {
+        return this.update(this._identifier, questionToken, this._typeAnnotation);
+    };
+    PropertySignatureSyntax.prototype.withTypeAnnotation = function (typeAnnotation) {
+        return this.update(this._identifier, this._questionToken, typeAnnotation);
     };
     PropertySignatureSyntax.prototype.collectTextElements = function (elements) {
         this._identifier.collectTextElements(elements);
@@ -9862,6 +10270,15 @@ var ParameterListSyntax = (function (_super) {
         }
         return new ParameterListSyntax(openParenToken, parameters, closeParenToken);
     };
+    ParameterListSyntax.prototype.withOpenParenToken = function (openParenToken) {
+        return this.update(openParenToken, this._parameters, this._closeParenToken);
+    };
+    ParameterListSyntax.prototype.withParameters = function (parameters) {
+        return this.update(this._openParenToken, parameters, this._closeParenToken);
+    };
+    ParameterListSyntax.prototype.withCloseParenToken = function (closeParenToken) {
+        return this.update(this._openParenToken, this._parameters, closeParenToken);
+    };
     ParameterListSyntax.prototype.collectTextElements = function (elements) {
         this._openParenToken.collectTextElements(elements);
         this._parameters.collectTextElements(elements);
@@ -9911,6 +10328,12 @@ var CallSignatureSyntax = (function (_super) {
             return this;
         }
         return new CallSignatureSyntax(parameterList, typeAnnotation);
+    };
+    CallSignatureSyntax.prototype.withParameterList = function (parameterList) {
+        return this.update(parameterList, this._typeAnnotation);
+    };
+    CallSignatureSyntax.prototype.withTypeAnnotation = function (typeAnnotation) {
+        return this.update(this._parameterList, typeAnnotation);
     };
     CallSignatureSyntax.prototype.collectTextElements = function (elements) {
         this._parameterList.collectTextElements(elements);
@@ -9962,6 +10385,12 @@ var ElseClauseSyntax = (function (_super) {
             return this;
         }
         return new ElseClauseSyntax(elseKeyword, statement);
+    };
+    ElseClauseSyntax.prototype.withElseKeyword = function (elseKeyword) {
+        return this.update(elseKeyword, this._statement);
+    };
+    ElseClauseSyntax.prototype.withStatement = function (statement) {
+        return this.update(this._elseKeyword, statement);
     };
     ElseClauseSyntax.prototype.collectTextElements = function (elements) {
         this._elseKeyword.collectTextElements(elements);
@@ -10052,6 +10481,24 @@ var IfStatementSyntax = (function (_super) {
         }
         return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause);
     };
+    IfStatementSyntax.prototype.withIfKeyword = function (ifKeyword) {
+        return this.update(ifKeyword, this._openParenToken, this._condition, this._closeParenToken, this._statement, this._elseClause);
+    };
+    IfStatementSyntax.prototype.withOpenParenToken = function (openParenToken) {
+        return this.update(this._ifKeyword, openParenToken, this._condition, this._closeParenToken, this._statement, this._elseClause);
+    };
+    IfStatementSyntax.prototype.withCondition = function (condition) {
+        return this.update(this._ifKeyword, this._openParenToken, condition, this._closeParenToken, this._statement, this._elseClause);
+    };
+    IfStatementSyntax.prototype.withCloseParenToken = function (closeParenToken) {
+        return this.update(this._ifKeyword, this._openParenToken, this._condition, closeParenToken, this._statement, this._elseClause);
+    };
+    IfStatementSyntax.prototype.withStatement = function (statement) {
+        return this.update(this._ifKeyword, this._openParenToken, this._condition, this._closeParenToken, statement, this._elseClause);
+    };
+    IfStatementSyntax.prototype.withElseClause = function (elseClause) {
+        return this.update(this._ifKeyword, this._openParenToken, this._condition, this._closeParenToken, this._statement, elseClause);
+    };
     IfStatementSyntax.prototype.collectTextElements = function (elements) {
         this._ifKeyword.collectTextElements(elements);
         this._openParenToken.collectTextElements(elements);
@@ -10106,6 +10553,12 @@ var ExpressionStatementSyntax = (function (_super) {
             return this;
         }
         return new ExpressionStatementSyntax(expression, semicolonToken);
+    };
+    ExpressionStatementSyntax.prototype.withExpression = function (expression) {
+        return this.update(expression, this._semicolonToken);
+    };
+    ExpressionStatementSyntax.prototype.withSemicolonToken = function (semicolonToken) {
+        return this.update(this._expression, semicolonToken);
     };
     ExpressionStatementSyntax.prototype.collectTextElements = function (elements) {
         this._expression.collectTextElements(elements);
@@ -10184,6 +10637,18 @@ var ConstructorDeclarationSyntax = (function (_super) {
             return this;
         }
         return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken);
+    };
+    ConstructorDeclarationSyntax.prototype.withConstructorKeyword = function (constructorKeyword) {
+        return this.update(constructorKeyword, this._parameterList, this._block, this._semicolonToken);
+    };
+    ConstructorDeclarationSyntax.prototype.withParameterList = function (parameterList) {
+        return this.update(this._constructorKeyword, parameterList, this._block, this._semicolonToken);
+    };
+    ConstructorDeclarationSyntax.prototype.withBlock = function (block) {
+        return this.update(this._constructorKeyword, this._parameterList, block, this._semicolonToken);
+    };
+    ConstructorDeclarationSyntax.prototype.withSemicolonToken = function (semicolonToken) {
+        return this.update(this._constructorKeyword, this._parameterList, this._block, semicolonToken);
     };
     ConstructorDeclarationSyntax.prototype.collectTextElements = function (elements) {
         this._constructorKeyword.collectTextElements(elements);
@@ -10282,6 +10747,21 @@ var MemberFunctionDeclarationSyntax = (function (_super) {
             return this;
         }
         return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken);
+    };
+    MemberFunctionDeclarationSyntax.prototype.withPublicOrPrivateKeyword = function (publicOrPrivateKeyword) {
+        return this.update(publicOrPrivateKeyword, this._staticKeyword, this._functionSignature, this._block, this._semicolonToken);
+    };
+    MemberFunctionDeclarationSyntax.prototype.withStaticKeyword = function (staticKeyword) {
+        return this.update(this._publicOrPrivateKeyword, staticKeyword, this._functionSignature, this._block, this._semicolonToken);
+    };
+    MemberFunctionDeclarationSyntax.prototype.withFunctionSignature = function (functionSignature) {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, functionSignature, this._block, this._semicolonToken);
+    };
+    MemberFunctionDeclarationSyntax.prototype.withBlock = function (block) {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._functionSignature, block, this._semicolonToken);
+    };
+    MemberFunctionDeclarationSyntax.prototype.withSemicolonToken = function (semicolonToken) {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._functionSignature, this._block, semicolonToken);
     };
     MemberFunctionDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._publicOrPrivateKeyword !== null) {
@@ -10404,6 +10884,27 @@ var GetMemberAccessorDeclarationSyntax = (function (_super) {
         }
         return new GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block);
     };
+    GetMemberAccessorDeclarationSyntax.prototype.withPublicOrPrivateKeyword = function (publicOrPrivateKeyword) {
+        return this.update(publicOrPrivateKeyword, this._staticKeyword, this._getKeyword, this._identifier, this._parameterList, this._typeAnnotation, this._block);
+    };
+    GetMemberAccessorDeclarationSyntax.prototype.withStaticKeyword = function (staticKeyword) {
+        return this.update(this._publicOrPrivateKeyword, staticKeyword, this._getKeyword, this._identifier, this._parameterList, this._typeAnnotation, this._block);
+    };
+    GetMemberAccessorDeclarationSyntax.prototype.withGetKeyword = function (getKeyword) {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, getKeyword, this._identifier, this._parameterList, this._typeAnnotation, this._block);
+    };
+    GetMemberAccessorDeclarationSyntax.prototype.withIdentifier = function (identifier) {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._getKeyword, identifier, this._parameterList, this._typeAnnotation, this._block);
+    };
+    GetMemberAccessorDeclarationSyntax.prototype.withParameterList = function (parameterList) {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._getKeyword, this._identifier, parameterList, this._typeAnnotation, this._block);
+    };
+    GetMemberAccessorDeclarationSyntax.prototype.withTypeAnnotation = function (typeAnnotation) {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._getKeyword, this._identifier, this._parameterList, typeAnnotation, this._block);
+    };
+    GetMemberAccessorDeclarationSyntax.prototype.withBlock = function (block) {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._getKeyword, this._identifier, this._parameterList, this._typeAnnotation, block);
+    };
     GetMemberAccessorDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._publicOrPrivateKeyword !== null) {
             this._publicOrPrivateKeyword.collectTextElements(elements);
@@ -10511,6 +11012,24 @@ var SetMemberAccessorDeclarationSyntax = (function (_super) {
         }
         return new SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block);
     };
+    SetMemberAccessorDeclarationSyntax.prototype.withPublicOrPrivateKeyword = function (publicOrPrivateKeyword) {
+        return this.update(publicOrPrivateKeyword, this._staticKeyword, this._setKeyword, this._identifier, this._parameterList, this._block);
+    };
+    SetMemberAccessorDeclarationSyntax.prototype.withStaticKeyword = function (staticKeyword) {
+        return this.update(this._publicOrPrivateKeyword, staticKeyword, this._setKeyword, this._identifier, this._parameterList, this._block);
+    };
+    SetMemberAccessorDeclarationSyntax.prototype.withSetKeyword = function (setKeyword) {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, setKeyword, this._identifier, this._parameterList, this._block);
+    };
+    SetMemberAccessorDeclarationSyntax.prototype.withIdentifier = function (identifier) {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._setKeyword, identifier, this._parameterList, this._block);
+    };
+    SetMemberAccessorDeclarationSyntax.prototype.withParameterList = function (parameterList) {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._setKeyword, this._identifier, parameterList, this._block);
+    };
+    SetMemberAccessorDeclarationSyntax.prototype.withBlock = function (block) {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._setKeyword, this._identifier, this._parameterList, block);
+    };
     SetMemberAccessorDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._publicOrPrivateKeyword !== null) {
             this._publicOrPrivateKeyword.collectTextElements(elements);
@@ -10595,6 +11114,18 @@ var MemberVariableDeclarationSyntax = (function (_super) {
         }
         return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolonToken);
     };
+    MemberVariableDeclarationSyntax.prototype.withPublicOrPrivateKeyword = function (publicOrPrivateKeyword) {
+        return this.update(publicOrPrivateKeyword, this._staticKeyword, this._variableDeclarator, this._semicolonToken);
+    };
+    MemberVariableDeclarationSyntax.prototype.withStaticKeyword = function (staticKeyword) {
+        return this.update(this._publicOrPrivateKeyword, staticKeyword, this._variableDeclarator, this._semicolonToken);
+    };
+    MemberVariableDeclarationSyntax.prototype.withVariableDeclarator = function (variableDeclarator) {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, variableDeclarator, this._semicolonToken);
+    };
+    MemberVariableDeclarationSyntax.prototype.withSemicolonToken = function (semicolonToken) {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._variableDeclarator, semicolonToken);
+    };
     MemberVariableDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._publicOrPrivateKeyword !== null) {
             this._publicOrPrivateKeyword.collectTextElements(elements);
@@ -10660,6 +11191,15 @@ var ThrowStatementSyntax = (function (_super) {
         }
         return new ThrowStatementSyntax(throwKeyword, expression, semicolonToken);
     };
+    ThrowStatementSyntax.prototype.withThrowKeyword = function (throwKeyword) {
+        return this.update(throwKeyword, this._expression, this._semicolonToken);
+    };
+    ThrowStatementSyntax.prototype.withExpression = function (expression) {
+        return this.update(this._throwKeyword, expression, this._semicolonToken);
+    };
+    ThrowStatementSyntax.prototype.withSemicolonToken = function (semicolonToken) {
+        return this.update(this._throwKeyword, this._expression, semicolonToken);
+    };
     ThrowStatementSyntax.prototype.collectTextElements = function (elements) {
         this._throwKeyword.collectTextElements(elements);
         this._expression.collectTextElements(elements);
@@ -10719,6 +11259,15 @@ var ReturnStatementSyntax = (function (_super) {
             return this;
         }
         return new ReturnStatementSyntax(returnKeyword, expression, semicolonToken);
+    };
+    ReturnStatementSyntax.prototype.withReturnKeyword = function (returnKeyword) {
+        return this.update(returnKeyword, this._expression, this._semicolonToken);
+    };
+    ReturnStatementSyntax.prototype.withExpression = function (expression) {
+        return this.update(this._returnKeyword, expression, this._semicolonToken);
+    };
+    ReturnStatementSyntax.prototype.withSemicolonToken = function (semicolonToken) {
+        return this.update(this._returnKeyword, this._expression, semicolonToken);
     };
     ReturnStatementSyntax.prototype.collectTextElements = function (elements) {
         this._returnKeyword.collectTextElements(elements);
@@ -10781,6 +11330,15 @@ var ObjectCreationExpressionSyntax = (function (_super) {
             return this;
         }
         return new ObjectCreationExpressionSyntax(newKeyword, expression, argumentList);
+    };
+    ObjectCreationExpressionSyntax.prototype.withNewKeyword = function (newKeyword) {
+        return this.update(newKeyword, this._expression, this._argumentList);
+    };
+    ObjectCreationExpressionSyntax.prototype.withExpression = function (expression) {
+        return this.update(this._newKeyword, expression, this._argumentList);
+    };
+    ObjectCreationExpressionSyntax.prototype.withArgumentList = function (argumentList) {
+        return this.update(this._newKeyword, this._expression, argumentList);
     };
     ObjectCreationExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._newKeyword.collectTextElements(elements);
@@ -10887,6 +11445,27 @@ var SwitchStatementSyntax = (function (_super) {
         }
         return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, caseClauses, closeBraceToken);
     };
+    SwitchStatementSyntax.prototype.withSwitchKeyword = function (switchKeyword) {
+        return this.update(switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._caseClauses, this._closeBraceToken);
+    };
+    SwitchStatementSyntax.prototype.withOpenParenToken = function (openParenToken) {
+        return this.update(this._switchKeyword, openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._caseClauses, this._closeBraceToken);
+    };
+    SwitchStatementSyntax.prototype.withExpression = function (expression) {
+        return this.update(this._switchKeyword, this._openParenToken, expression, this._closeParenToken, this._openBraceToken, this._caseClauses, this._closeBraceToken);
+    };
+    SwitchStatementSyntax.prototype.withCloseParenToken = function (closeParenToken) {
+        return this.update(this._switchKeyword, this._openParenToken, this._expression, closeParenToken, this._openBraceToken, this._caseClauses, this._closeBraceToken);
+    };
+    SwitchStatementSyntax.prototype.withOpenBraceToken = function (openBraceToken) {
+        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, openBraceToken, this._caseClauses, this._closeBraceToken);
+    };
+    SwitchStatementSyntax.prototype.withCaseClauses = function (caseClauses) {
+        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, caseClauses, this._closeBraceToken);
+    };
+    SwitchStatementSyntax.prototype.withCloseBraceToken = function (closeBraceToken) {
+        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._caseClauses, closeBraceToken);
+    };
     SwitchStatementSyntax.prototype.collectTextElements = function (elements) {
         this._switchKeyword.collectTextElements(elements);
         this._openParenToken.collectTextElements(elements);
@@ -10971,6 +11550,18 @@ var CaseSwitchClauseSyntax = (function (_super) {
         }
         return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements);
     };
+    CaseSwitchClauseSyntax.prototype.withCaseKeyword = function (caseKeyword) {
+        return this.update(caseKeyword, this._expression, this._colonToken, this._statements);
+    };
+    CaseSwitchClauseSyntax.prototype.withExpression = function (expression) {
+        return this.update(this._caseKeyword, expression, this._colonToken, this._statements);
+    };
+    CaseSwitchClauseSyntax.prototype.withColonToken = function (colonToken) {
+        return this.update(this._caseKeyword, this._expression, colonToken, this._statements);
+    };
+    CaseSwitchClauseSyntax.prototype.withStatements = function (statements) {
+        return this.update(this._caseKeyword, this._expression, this._colonToken, statements);
+    };
     CaseSwitchClauseSyntax.prototype.collectTextElements = function (elements) {
         this._caseKeyword.collectTextElements(elements);
         this._expression.collectTextElements(elements);
@@ -11034,6 +11625,15 @@ var DefaultSwitchClauseSyntax = (function (_super) {
             return this;
         }
         return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements);
+    };
+    DefaultSwitchClauseSyntax.prototype.withDefaultKeyword = function (defaultKeyword) {
+        return this.update(defaultKeyword, this._colonToken, this._statements);
+    };
+    DefaultSwitchClauseSyntax.prototype.withColonToken = function (colonToken) {
+        return this.update(this._defaultKeyword, colonToken, this._statements);
+    };
+    DefaultSwitchClauseSyntax.prototype.withStatements = function (statements) {
+        return this.update(this._defaultKeyword, this._colonToken, statements);
     };
     DefaultSwitchClauseSyntax.prototype.collectTextElements = function (elements) {
         this._defaultKeyword.collectTextElements(elements);
@@ -11099,6 +11699,15 @@ var BreakStatementSyntax = (function (_super) {
             return this;
         }
         return new BreakStatementSyntax(breakKeyword, identifier, semicolonToken);
+    };
+    BreakStatementSyntax.prototype.withBreakKeyword = function (breakKeyword) {
+        return this.update(breakKeyword, this._identifier, this._semicolonToken);
+    };
+    BreakStatementSyntax.prototype.withIdentifier = function (identifier) {
+        return this.update(this._breakKeyword, identifier, this._semicolonToken);
+    };
+    BreakStatementSyntax.prototype.withSemicolonToken = function (semicolonToken) {
+        return this.update(this._breakKeyword, this._identifier, semicolonToken);
     };
     BreakStatementSyntax.prototype.collectTextElements = function (elements) {
         this._breakKeyword.collectTextElements(elements);
@@ -11166,6 +11775,15 @@ var ContinueStatementSyntax = (function (_super) {
             return this;
         }
         return new ContinueStatementSyntax(continueKeyword, identifier, semicolonToken);
+    };
+    ContinueStatementSyntax.prototype.withContinueKeyword = function (continueKeyword) {
+        return this.update(continueKeyword, this._identifier, this._semicolonToken);
+    };
+    ContinueStatementSyntax.prototype.withIdentifier = function (identifier) {
+        return this.update(this._continueKeyword, identifier, this._semicolonToken);
+    };
+    ContinueStatementSyntax.prototype.withSemicolonToken = function (semicolonToken) {
+        return this.update(this._continueKeyword, this._identifier, semicolonToken);
     };
     ContinueStatementSyntax.prototype.collectTextElements = function (elements) {
         this._continueKeyword.collectTextElements(elements);
@@ -11304,6 +11922,36 @@ var ForStatementSyntax = (function (_super) {
         }
         return new ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement);
     };
+    ForStatementSyntax.prototype.withForKeyword = function (forKeyword) {
+        return this.update(forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+    };
+    ForStatementSyntax.prototype.withOpenParenToken = function (openParenToken) {
+        return this.update(this._forKeyword, openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+    };
+    ForStatementSyntax.prototype.withVariableDeclaration = function (variableDeclaration) {
+        return this.update(this._forKeyword, this._openParenToken, variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+    };
+    ForStatementSyntax.prototype.withInitializer = function (initializer) {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+    };
+    ForStatementSyntax.prototype.withFirstSemicolonToken = function (firstSemicolonToken) {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+    };
+    ForStatementSyntax.prototype.withCondition = function (condition) {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+    };
+    ForStatementSyntax.prototype.withSecondSemicolonToken = function (secondSemicolonToken) {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+    };
+    ForStatementSyntax.prototype.withIncrementor = function (incrementor) {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, incrementor, this._closeParenToken, this._statement);
+    };
+    ForStatementSyntax.prototype.withCloseParenToken = function (closeParenToken) {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, closeParenToken, this._statement);
+    };
+    ForStatementSyntax.prototype.withStatement = function (statement) {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, statement);
+    };
     ForStatementSyntax.prototype.collectTextElements = function (elements) {
         this._forKeyword.collectTextElements(elements);
         this._openParenToken.collectTextElements(elements);
@@ -11426,6 +12074,30 @@ var ForInStatementSyntax = (function (_super) {
         }
         return new ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration, left, inKeyword, expression, closeParenToken, statement);
     };
+    ForInStatementSyntax.prototype.withForKeyword = function (forKeyword) {
+        return this.update(forKeyword, this._openParenToken, this._variableDeclaration, this._left, this._inKeyword, this._expression, this._closeParenToken, this._statement);
+    };
+    ForInStatementSyntax.prototype.withOpenParenToken = function (openParenToken) {
+        return this.update(this._forKeyword, openParenToken, this._variableDeclaration, this._left, this._inKeyword, this._expression, this._closeParenToken, this._statement);
+    };
+    ForInStatementSyntax.prototype.withVariableDeclaration = function (variableDeclaration) {
+        return this.update(this._forKeyword, this._openParenToken, variableDeclaration, this._left, this._inKeyword, this._expression, this._closeParenToken, this._statement);
+    };
+    ForInStatementSyntax.prototype.withLeft = function (left) {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, left, this._inKeyword, this._expression, this._closeParenToken, this._statement);
+    };
+    ForInStatementSyntax.prototype.withInKeyword = function (inKeyword) {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._left, inKeyword, this._expression, this._closeParenToken, this._statement);
+    };
+    ForInStatementSyntax.prototype.withExpression = function (expression) {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._left, this._inKeyword, expression, this._closeParenToken, this._statement);
+    };
+    ForInStatementSyntax.prototype.withCloseParenToken = function (closeParenToken) {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._left, this._inKeyword, this._expression, closeParenToken, this._statement);
+    };
+    ForInStatementSyntax.prototype.withStatement = function (statement) {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._left, this._inKeyword, this._expression, this._closeParenToken, statement);
+    };
     ForInStatementSyntax.prototype.collectTextElements = function (elements) {
         this._forKeyword.collectTextElements(elements);
         this._openParenToken.collectTextElements(elements);
@@ -11515,6 +12187,21 @@ var WhileStatementSyntax = (function (_super) {
         }
         return new WhileStatementSyntax(whileKeyword, openParenToken, condition, closeParenToken, statement);
     };
+    WhileStatementSyntax.prototype.withWhileKeyword = function (whileKeyword) {
+        return this.update(whileKeyword, this._openParenToken, this._condition, this._closeParenToken, this._statement);
+    };
+    WhileStatementSyntax.prototype.withOpenParenToken = function (openParenToken) {
+        return this.update(this._whileKeyword, openParenToken, this._condition, this._closeParenToken, this._statement);
+    };
+    WhileStatementSyntax.prototype.withCondition = function (condition) {
+        return this.update(this._whileKeyword, this._openParenToken, condition, this._closeParenToken, this._statement);
+    };
+    WhileStatementSyntax.prototype.withCloseParenToken = function (closeParenToken) {
+        return this.update(this._whileKeyword, this._openParenToken, this._condition, closeParenToken, this._statement);
+    };
+    WhileStatementSyntax.prototype.withStatement = function (statement) {
+        return this.update(this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, statement);
+    };
     WhileStatementSyntax.prototype.collectTextElements = function (elements) {
         this._whileKeyword.collectTextElements(elements);
         this._openParenToken.collectTextElements(elements);
@@ -11596,6 +12283,21 @@ var WithStatementSyntax = (function (_super) {
             return this;
         }
         return new WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement);
+    };
+    WithStatementSyntax.prototype.withWithKeyword = function (withKeyword) {
+        return this.update(withKeyword, this._openParenToken, this._condition, this._closeParenToken, this._statement);
+    };
+    WithStatementSyntax.prototype.withOpenParenToken = function (openParenToken) {
+        return this.update(this._withKeyword, openParenToken, this._condition, this._closeParenToken, this._statement);
+    };
+    WithStatementSyntax.prototype.withCondition = function (condition) {
+        return this.update(this._withKeyword, this._openParenToken, condition, this._closeParenToken, this._statement);
+    };
+    WithStatementSyntax.prototype.withCloseParenToken = function (closeParenToken) {
+        return this.update(this._withKeyword, this._openParenToken, this._condition, closeParenToken, this._statement);
+    };
+    WithStatementSyntax.prototype.withStatement = function (statement) {
+        return this.update(this._withKeyword, this._openParenToken, this._condition, this._closeParenToken, statement);
     };
     WithStatementSyntax.prototype.collectTextElements = function (elements) {
         this._withKeyword.collectTextElements(elements);
@@ -11694,6 +12396,24 @@ var EnumDeclarationSyntax = (function (_super) {
         }
         return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken);
     };
+    EnumDeclarationSyntax.prototype.withExportKeyword = function (exportKeyword) {
+        return this.update(exportKeyword, this._enumKeyword, this._identifier, this._openBraceToken, this._variableDeclarators, this._closeBraceToken);
+    };
+    EnumDeclarationSyntax.prototype.withEnumKeyword = function (enumKeyword) {
+        return this.update(this._exportKeyword, enumKeyword, this._identifier, this._openBraceToken, this._variableDeclarators, this._closeBraceToken);
+    };
+    EnumDeclarationSyntax.prototype.withIdentifier = function (identifier) {
+        return this.update(this._exportKeyword, this._enumKeyword, identifier, this._openBraceToken, this._variableDeclarators, this._closeBraceToken);
+    };
+    EnumDeclarationSyntax.prototype.withOpenBraceToken = function (openBraceToken) {
+        return this.update(this._exportKeyword, this._enumKeyword, this._identifier, openBraceToken, this._variableDeclarators, this._closeBraceToken);
+    };
+    EnumDeclarationSyntax.prototype.withVariableDeclarators = function (variableDeclarators) {
+        return this.update(this._exportKeyword, this._enumKeyword, this._identifier, this._openBraceToken, variableDeclarators, this._closeBraceToken);
+    };
+    EnumDeclarationSyntax.prototype.withCloseBraceToken = function (closeBraceToken) {
+        return this.update(this._exportKeyword, this._enumKeyword, this._identifier, this._openBraceToken, this._variableDeclarators, closeBraceToken);
+    };
     EnumDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._exportKeyword !== null) {
             this._exportKeyword.collectTextElements(elements);
@@ -11769,6 +12489,18 @@ var CastExpressionSyntax = (function (_super) {
         }
         return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression);
     };
+    CastExpressionSyntax.prototype.withLessThanToken = function (lessThanToken) {
+        return this.update(lessThanToken, this._type, this._greaterThanToken, this._expression);
+    };
+    CastExpressionSyntax.prototype.withType = function (type) {
+        return this.update(this._lessThanToken, type, this._greaterThanToken, this._expression);
+    };
+    CastExpressionSyntax.prototype.withGreaterThanToken = function (greaterThanToken) {
+        return this.update(this._lessThanToken, this._type, greaterThanToken, this._expression);
+    };
+    CastExpressionSyntax.prototype.withExpression = function (expression) {
+        return this.update(this._lessThanToken, this._type, this._greaterThanToken, expression);
+    };
     CastExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._lessThanToken.collectTextElements(elements);
         this._type.collectTextElements(elements);
@@ -11832,6 +12564,15 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
             return this;
         }
         return new ObjectLiteralExpressionSyntax(openBraceToken, propertyAssignments, closeBraceToken);
+    };
+    ObjectLiteralExpressionSyntax.prototype.withOpenBraceToken = function (openBraceToken) {
+        return this.update(openBraceToken, this._propertyAssignments, this._closeBraceToken);
+    };
+    ObjectLiteralExpressionSyntax.prototype.withPropertyAssignments = function (propertyAssignments) {
+        return this.update(this._openBraceToken, propertyAssignments, this._closeBraceToken);
+    };
+    ObjectLiteralExpressionSyntax.prototype.withCloseBraceToken = function (closeBraceToken) {
+        return this.update(this._openBraceToken, this._propertyAssignments, closeBraceToken);
     };
     ObjectLiteralExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._openBraceToken.collectTextElements(elements);
@@ -11908,6 +12649,15 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
             return this;
         }
         return new SimplePropertyAssignmentSyntax(propertyName, colonToken, expression);
+    };
+    SimplePropertyAssignmentSyntax.prototype.withPropertyName = function (propertyName) {
+        return this.update(propertyName, this._colonToken, this._expression);
+    };
+    SimplePropertyAssignmentSyntax.prototype.withColonToken = function (colonToken) {
+        return this.update(this._propertyName, colonToken, this._expression);
+    };
+    SimplePropertyAssignmentSyntax.prototype.withExpression = function (expression) {
+        return this.update(this._propertyName, this._colonToken, expression);
     };
     SimplePropertyAssignmentSyntax.prototype.collectTextElements = function (elements) {
         this._propertyName.collectTextElements(elements);
@@ -11995,6 +12745,21 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
             return this;
         }
         return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block);
+    };
+    GetAccessorPropertyAssignmentSyntax.prototype.withGetKeyword = function (getKeyword) {
+        return this.update(getKeyword, this._propertyName, this._openParenToken, this._closeParenToken, this._block);
+    };
+    GetAccessorPropertyAssignmentSyntax.prototype.withPropertyName = function (propertyName) {
+        return this.update(this._getKeyword, propertyName, this._openParenToken, this._closeParenToken, this._block);
+    };
+    GetAccessorPropertyAssignmentSyntax.prototype.withOpenParenToken = function (openParenToken) {
+        return this.update(this._getKeyword, this._propertyName, openParenToken, this._closeParenToken, this._block);
+    };
+    GetAccessorPropertyAssignmentSyntax.prototype.withCloseParenToken = function (closeParenToken) {
+        return this.update(this._getKeyword, this._propertyName, this._openParenToken, closeParenToken, this._block);
+    };
+    GetAccessorPropertyAssignmentSyntax.prototype.withBlock = function (block) {
+        return this.update(this._getKeyword, this._propertyName, this._openParenToken, this._closeParenToken, block);
     };
     GetAccessorPropertyAssignmentSyntax.prototype.collectTextElements = function (elements) {
         this._getKeyword.collectTextElements(elements);
@@ -12088,6 +12853,24 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
         }
         return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block);
     };
+    SetAccessorPropertyAssignmentSyntax.prototype.withSetKeyword = function (setKeyword) {
+        return this.update(setKeyword, this._propertyName, this._openParenToken, this._parameterName, this._closeParenToken, this._block);
+    };
+    SetAccessorPropertyAssignmentSyntax.prototype.withPropertyName = function (propertyName) {
+        return this.update(this._setKeyword, propertyName, this._openParenToken, this._parameterName, this._closeParenToken, this._block);
+    };
+    SetAccessorPropertyAssignmentSyntax.prototype.withOpenParenToken = function (openParenToken) {
+        return this.update(this._setKeyword, this._propertyName, openParenToken, this._parameterName, this._closeParenToken, this._block);
+    };
+    SetAccessorPropertyAssignmentSyntax.prototype.withParameterName = function (parameterName) {
+        return this.update(this._setKeyword, this._propertyName, this._openParenToken, parameterName, this._closeParenToken, this._block);
+    };
+    SetAccessorPropertyAssignmentSyntax.prototype.withCloseParenToken = function (closeParenToken) {
+        return this.update(this._setKeyword, this._propertyName, this._openParenToken, this._parameterName, closeParenToken, this._block);
+    };
+    SetAccessorPropertyAssignmentSyntax.prototype.withBlock = function (block) {
+        return this.update(this._setKeyword, this._propertyName, this._openParenToken, this._parameterName, this._closeParenToken, block);
+    };
     SetAccessorPropertyAssignmentSyntax.prototype.collectTextElements = function (elements) {
         this._setKeyword.collectTextElements(elements);
         this._propertyName.collectTextElements(elements);
@@ -12166,6 +12949,18 @@ var FunctionExpressionSyntax = (function (_super) {
         }
         return new FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block);
     };
+    FunctionExpressionSyntax.prototype.withFunctionKeyword = function (functionKeyword) {
+        return this.update(functionKeyword, this._identifier, this._callSignature, this._block);
+    };
+    FunctionExpressionSyntax.prototype.withIdentifier = function (identifier) {
+        return this.update(this._functionKeyword, identifier, this._callSignature, this._block);
+    };
+    FunctionExpressionSyntax.prototype.withCallSignature = function (callSignature) {
+        return this.update(this._functionKeyword, this._identifier, callSignature, this._block);
+    };
+    FunctionExpressionSyntax.prototype.withBlock = function (block) {
+        return this.update(this._functionKeyword, this._identifier, this._callSignature, block);
+    };
     FunctionExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._functionKeyword.collectTextElements(elements);
         if(this._identifier !== null) {
@@ -12209,6 +13004,9 @@ var EmptyStatementSyntax = (function (_super) {
         }
         return new EmptyStatementSyntax(semicolonToken);
     };
+    EmptyStatementSyntax.prototype.withSemicolonToken = function (semicolonToken) {
+        return this.update(semicolonToken);
+    };
     EmptyStatementSyntax.prototype.collectTextElements = function (elements) {
         this._semicolonToken.collectTextElements(elements);
     };
@@ -12246,6 +13044,9 @@ var SuperExpressionSyntax = (function (_super) {
             return this;
         }
         return new SuperExpressionSyntax(superKeyword);
+    };
+    SuperExpressionSyntax.prototype.withSuperKeyword = function (superKeyword) {
+        return this.update(superKeyword);
     };
     SuperExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._superKeyword.collectTextElements(elements);
@@ -12311,6 +13112,18 @@ var TryStatementSyntax = (function (_super) {
             return this;
         }
         return new TryStatementSyntax(tryKeyword, block, catchClause, finallyClause);
+    };
+    TryStatementSyntax.prototype.withTryKeyword = function (tryKeyword) {
+        return this.update(tryKeyword, this._block, this._catchClause, this._finallyClause);
+    };
+    TryStatementSyntax.prototype.withBlock = function (block) {
+        return this.update(this._tryKeyword, block, this._catchClause, this._finallyClause);
+    };
+    TryStatementSyntax.prototype.withCatchClause = function (catchClause) {
+        return this.update(this._tryKeyword, this._block, catchClause, this._finallyClause);
+    };
+    TryStatementSyntax.prototype.withFinallyClause = function (finallyClause) {
+        return this.update(this._tryKeyword, this._block, this._catchClause, finallyClause);
     };
     TryStatementSyntax.prototype.collectTextElements = function (elements) {
         this._tryKeyword.collectTextElements(elements);
@@ -12397,6 +13210,21 @@ var CatchClauseSyntax = (function (_super) {
         }
         return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block);
     };
+    CatchClauseSyntax.prototype.withCatchKeyword = function (catchKeyword) {
+        return this.update(catchKeyword, this._openParenToken, this._identifier, this._closeParenToken, this._block);
+    };
+    CatchClauseSyntax.prototype.withOpenParenToken = function (openParenToken) {
+        return this.update(this._catchKeyword, openParenToken, this._identifier, this._closeParenToken, this._block);
+    };
+    CatchClauseSyntax.prototype.withIdentifier = function (identifier) {
+        return this.update(this._catchKeyword, this._openParenToken, identifier, this._closeParenToken, this._block);
+    };
+    CatchClauseSyntax.prototype.withCloseParenToken = function (closeParenToken) {
+        return this.update(this._catchKeyword, this._openParenToken, this._identifier, closeParenToken, this._block);
+    };
+    CatchClauseSyntax.prototype.withBlock = function (block) {
+        return this.update(this._catchKeyword, this._openParenToken, this._identifier, this._closeParenToken, block);
+    };
     CatchClauseSyntax.prototype.collectTextElements = function (elements) {
         this._catchKeyword.collectTextElements(elements);
         this._openParenToken.collectTextElements(elements);
@@ -12448,6 +13276,12 @@ var FinallyClauseSyntax = (function (_super) {
             return this;
         }
         return new FinallyClauseSyntax(finallyKeyword, block);
+    };
+    FinallyClauseSyntax.prototype.withFinallyKeyword = function (finallyKeyword) {
+        return this.update(finallyKeyword, this._block);
+    };
+    FinallyClauseSyntax.prototype.withBlock = function (block) {
+        return this.update(this._finallyKeyword, block);
     };
     FinallyClauseSyntax.prototype.collectTextElements = function (elements) {
         this._finallyKeyword.collectTextElements(elements);
@@ -12507,6 +13341,15 @@ var LabeledStatement = (function (_super) {
             return this;
         }
         return new LabeledStatement(identifier, colonToken, statement);
+    };
+    LabeledStatement.prototype.withIdentifier = function (identifier) {
+        return this.update(identifier, this._colonToken, this._statement);
+    };
+    LabeledStatement.prototype.withColonToken = function (colonToken) {
+        return this.update(this._identifier, colonToken, this._statement);
+    };
+    LabeledStatement.prototype.withStatement = function (statement) {
+        return this.update(this._identifier, this._colonToken, statement);
     };
     LabeledStatement.prototype.collectTextElements = function (elements) {
         this._identifier.collectTextElements(elements);
@@ -12608,6 +13451,27 @@ var DoStatementSyntax = (function (_super) {
         }
         return new DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken);
     };
+    DoStatementSyntax.prototype.withDoKeyword = function (doKeyword) {
+        return this.update(doKeyword, this._statement, this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, this._semicolonToken);
+    };
+    DoStatementSyntax.prototype.withStatement = function (statement) {
+        return this.update(this._doKeyword, statement, this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, this._semicolonToken);
+    };
+    DoStatementSyntax.prototype.withWhileKeyword = function (whileKeyword) {
+        return this.update(this._doKeyword, this._statement, whileKeyword, this._openParenToken, this._condition, this._closeParenToken, this._semicolonToken);
+    };
+    DoStatementSyntax.prototype.withOpenParenToken = function (openParenToken) {
+        return this.update(this._doKeyword, this._statement, this._whileKeyword, openParenToken, this._condition, this._closeParenToken, this._semicolonToken);
+    };
+    DoStatementSyntax.prototype.withCondition = function (condition) {
+        return this.update(this._doKeyword, this._statement, this._whileKeyword, this._openParenToken, condition, this._closeParenToken, this._semicolonToken);
+    };
+    DoStatementSyntax.prototype.withCloseParenToken = function (closeParenToken) {
+        return this.update(this._doKeyword, this._statement, this._whileKeyword, this._openParenToken, this._condition, closeParenToken, this._semicolonToken);
+    };
+    DoStatementSyntax.prototype.withSemicolonToken = function (semicolonToken) {
+        return this.update(this._doKeyword, this._statement, this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, semicolonToken);
+    };
     DoStatementSyntax.prototype.collectTextElements = function (elements) {
         this._doKeyword.collectTextElements(elements);
         this._statement.collectTextElements(elements);
@@ -12662,6 +13526,12 @@ var TypeOfExpressionSyntax = (function (_super) {
         }
         return new TypeOfExpressionSyntax(typeOfKeyword, expression);
     };
+    TypeOfExpressionSyntax.prototype.withTypeOfKeyword = function (typeOfKeyword) {
+        return this.update(typeOfKeyword, this._expression);
+    };
+    TypeOfExpressionSyntax.prototype.withExpression = function (expression) {
+        return this.update(this._typeOfKeyword, expression);
+    };
     TypeOfExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._typeOfKeyword.collectTextElements(elements);
         this._expression.collectTextElements(elements);
@@ -12710,6 +13580,12 @@ var DeleteExpressionSyntax = (function (_super) {
             return this;
         }
         return new DeleteExpressionSyntax(deleteKeyword, expression);
+    };
+    DeleteExpressionSyntax.prototype.withDeleteKeyword = function (deleteKeyword) {
+        return this.update(deleteKeyword, this._expression);
+    };
+    DeleteExpressionSyntax.prototype.withExpression = function (expression) {
+        return this.update(this._deleteKeyword, expression);
     };
     DeleteExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._deleteKeyword.collectTextElements(elements);
@@ -12760,6 +13636,12 @@ var VoidExpressionSyntax = (function (_super) {
         }
         return new VoidExpressionSyntax(voidKeyword, expression);
     };
+    VoidExpressionSyntax.prototype.withVoidKeyword = function (voidKeyword) {
+        return this.update(voidKeyword, this._expression);
+    };
+    VoidExpressionSyntax.prototype.withExpression = function (expression) {
+        return this.update(this._voidKeyword, expression);
+    };
     VoidExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._voidKeyword.collectTextElements(elements);
         this._expression.collectTextElements(elements);
@@ -12808,6 +13690,12 @@ var DebuggerStatementSyntax = (function (_super) {
             return this;
         }
         return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken);
+    };
+    DebuggerStatementSyntax.prototype.withDebuggerKeyword = function (debuggerKeyword) {
+        return this.update(debuggerKeyword, this._semicolonToken);
+    };
+    DebuggerStatementSyntax.prototype.withSemicolonToken = function (semicolonToken) {
+        return this.update(this._debuggerKeyword, semicolonToken);
     };
     DebuggerStatementSyntax.prototype.collectTextElements = function (elements) {
         this._debuggerKeyword.collectTextElements(elements);

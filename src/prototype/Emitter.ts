@@ -100,6 +100,7 @@ class Emitter extends SyntaxRewriter {
         // TODO: Handle the case where this is a dotted name.  Note: existing typescript transpiler
         // does not seem to handle this.
         var identifierName = Emitter.leftmostName(node.moduleName());
+        // var identifierName = new IdentifierNameSyntax(
 
         var variableStatement = VariableStatementSyntax.create(
             new VariableDeclarationSyntax(

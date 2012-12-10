@@ -54,6 +54,14 @@ class SourceUnitSyntax extends SyntaxNode {
         return new SourceUnitSyntax(moduleElements, endOfFileToken);
     }
 
+    public withModuleElements(moduleElements: ISyntaxList): SourceUnitSyntax {
+        return this.update(moduleElements, this._endOfFileToken);
+    }
+
+    public withEndOfFileToken(endOfFileToken: ISyntaxToken): SourceUnitSyntax {
+        return this.update(this._moduleElements, endOfFileToken);
+    }
+
     private collectTextElements(elements: string[]) {
         this._moduleElements.collectTextElements(elements);
         this._endOfFileToken.collectTextElements(elements);
@@ -142,6 +150,22 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         return new ExternalModuleReferenceSyntax(moduleKeyword, openParenToken, stringLiteral, closeParenToken);
     }
 
+    public withModuleKeyword(moduleKeyword: ISyntaxToken): ExternalModuleReferenceSyntax {
+        return this.update(moduleKeyword, this._openParenToken, this._stringLiteral, this._closeParenToken);
+    }
+
+    public withOpenParenToken(openParenToken: ISyntaxToken): ExternalModuleReferenceSyntax {
+        return this.update(this._moduleKeyword, openParenToken, this._stringLiteral, this._closeParenToken);
+    }
+
+    public withStringLiteral(stringLiteral: ISyntaxToken): ExternalModuleReferenceSyntax {
+        return this.update(this._moduleKeyword, this._openParenToken, stringLiteral, this._closeParenToken);
+    }
+
+    public withCloseParenToken(closeParenToken: ISyntaxToken): ExternalModuleReferenceSyntax {
+        return this.update(this._moduleKeyword, this._openParenToken, this._stringLiteral, closeParenToken);
+    }
+
     private collectTextElements(elements: string[]) {
         this._moduleKeyword.collectTextElements(elements);
         this._openParenToken.collectTextElements(elements);
@@ -188,6 +212,10 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         }
 
         return new ModuleNameModuleReferenceSyntax(moduleName);
+    }
+
+    public withModuleName(moduleName: NameSyntax): ModuleNameModuleReferenceSyntax {
+        return this.update(moduleName);
     }
 
     private collectTextElements(elements: string[]) {
@@ -273,6 +301,26 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
         }
 
         return new ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken);
+    }
+
+    public withImportKeyword(importKeyword: ISyntaxToken): ImportDeclarationSyntax {
+        return this.update(importKeyword, this._identifier, this._equalsToken, this._moduleReference, this._semicolonToken);
+    }
+
+    public withIdentifier(identifier: ISyntaxToken): ImportDeclarationSyntax {
+        return this.update(this._importKeyword, identifier, this._equalsToken, this._moduleReference, this._semicolonToken);
+    }
+
+    public withEqualsToken(equalsToken: ISyntaxToken): ImportDeclarationSyntax {
+        return this.update(this._importKeyword, this._identifier, equalsToken, this._moduleReference, this._semicolonToken);
+    }
+
+    public withModuleReference(moduleReference: ModuleReferenceSyntax): ImportDeclarationSyntax {
+        return this.update(this._importKeyword, this._identifier, this._equalsToken, moduleReference, this._semicolonToken);
+    }
+
+    public withSemicolonToken(semicolonToken: ISyntaxToken): ImportDeclarationSyntax {
+        return this.update(this._importKeyword, this._identifier, this._equalsToken, this._moduleReference, semicolonToken);
     }
 
     private collectTextElements(elements: string[]) {
@@ -413,6 +461,42 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
         return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken);
     }
 
+    public withExportKeyword(exportKeyword: ISyntaxToken): ClassDeclarationSyntax {
+        return this.update(exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+    }
+
+    public withDeclareKeyword(declareKeyword: ISyntaxToken): ClassDeclarationSyntax {
+        return this.update(this._exportKeyword, declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+    }
+
+    public withClassKeyword(classKeyword: ISyntaxToken): ClassDeclarationSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+    }
+
+    public withIdentifier(identifier: ISyntaxToken): ClassDeclarationSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+    }
+
+    public withExtendsClause(extendsClause: ExtendsClauseSyntax): ClassDeclarationSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+    }
+
+    public withImplementsClause(implementsClause: ImplementsClauseSyntax): ClassDeclarationSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+    }
+
+    public withOpenBraceToken(openBraceToken: ISyntaxToken): ClassDeclarationSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, openBraceToken, this._classElements, this._closeBraceToken);
+    }
+
+    public withClassElements(classElements: ISyntaxList): ClassDeclarationSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, classElements, this._closeBraceToken);
+    }
+
+    public withCloseBraceToken(closeBraceToken: ISyntaxToken): ClassDeclarationSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, closeBraceToken);
+    }
+
     private collectTextElements(elements: string[]) {
         if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(elements); }
         if (this._declareKeyword !== null) { this._declareKeyword.collectTextElements(elements); }
@@ -513,6 +597,26 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
         return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, extendsClause, body);
     }
 
+    public withExportKeyword(exportKeyword: ISyntaxToken): InterfaceDeclarationSyntax {
+        return this.update(exportKeyword, this._interfaceKeyword, this._identifier, this._extendsClause, this._body);
+    }
+
+    public withInterfaceKeyword(interfaceKeyword: ISyntaxToken): InterfaceDeclarationSyntax {
+        return this.update(this._exportKeyword, interfaceKeyword, this._identifier, this._extendsClause, this._body);
+    }
+
+    public withIdentifier(identifier: ISyntaxToken): InterfaceDeclarationSyntax {
+        return this.update(this._exportKeyword, this._interfaceKeyword, identifier, this._extendsClause, this._body);
+    }
+
+    public withExtendsClause(extendsClause: ExtendsClauseSyntax): InterfaceDeclarationSyntax {
+        return this.update(this._exportKeyword, this._interfaceKeyword, this._identifier, extendsClause, this._body);
+    }
+
+    public withBody(body: ObjectTypeSyntax): InterfaceDeclarationSyntax {
+        return this.update(this._exportKeyword, this._interfaceKeyword, this._identifier, this._extendsClause, body);
+    }
+
     private collectTextElements(elements: string[]) {
         if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(elements); }
         this._interfaceKeyword.collectTextElements(elements);
@@ -576,6 +680,14 @@ class ExtendsClauseSyntax extends SyntaxNode {
         return new ExtendsClauseSyntax(extendsKeyword, typeNames);
     }
 
+    public withExtendsKeyword(extendsKeyword: ISyntaxToken): ExtendsClauseSyntax {
+        return this.update(extendsKeyword, this._typeNames);
+    }
+
+    public withTypeNames(typeNames: ISeparatedSyntaxList): ExtendsClauseSyntax {
+        return this.update(this._extendsKeyword, typeNames);
+    }
+
     private collectTextElements(elements: string[]) {
         this._extendsKeyword.collectTextElements(elements);
         this._typeNames.collectTextElements(elements);
@@ -634,6 +746,14 @@ class ImplementsClauseSyntax extends SyntaxNode {
         }
 
         return new ImplementsClauseSyntax(implementsKeyword, typeNames);
+    }
+
+    public withImplementsKeyword(implementsKeyword: ISyntaxToken): ImplementsClauseSyntax {
+        return this.update(implementsKeyword, this._typeNames);
+    }
+
+    public withTypeNames(typeNames: ISeparatedSyntaxList): ImplementsClauseSyntax {
+        return this.update(this._implementsKeyword, typeNames);
     }
 
     private collectTextElements(elements: string[]) {
@@ -763,6 +883,38 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
         return new ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken);
     }
 
+    public withExportKeyword(exportKeyword: ISyntaxToken): ModuleDeclarationSyntax {
+        return this.update(exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, this._moduleElements, this._closeBraceToken);
+    }
+
+    public withDeclareKeyword(declareKeyword: ISyntaxToken): ModuleDeclarationSyntax {
+        return this.update(this._exportKeyword, declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, this._moduleElements, this._closeBraceToken);
+    }
+
+    public withModuleKeyword(moduleKeyword: ISyntaxToken): ModuleDeclarationSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, this._moduleElements, this._closeBraceToken);
+    }
+
+    public withModuleName(moduleName: NameSyntax): ModuleDeclarationSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, moduleName, this._stringLiteral, this._openBraceToken, this._moduleElements, this._closeBraceToken);
+    }
+
+    public withStringLiteral(stringLiteral: ISyntaxToken): ModuleDeclarationSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, stringLiteral, this._openBraceToken, this._moduleElements, this._closeBraceToken);
+    }
+
+    public withOpenBraceToken(openBraceToken: ISyntaxToken): ModuleDeclarationSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, openBraceToken, this._moduleElements, this._closeBraceToken);
+    }
+
+    public withModuleElements(moduleElements: ISyntaxList): ModuleDeclarationSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, moduleElements, this._closeBraceToken);
+    }
+
+    public withCloseBraceToken(closeBraceToken: ISyntaxToken): ModuleDeclarationSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, this._moduleElements, closeBraceToken);
+    }
+
     private collectTextElements(elements: string[]) {
         if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(elements); }
         if (this._declareKeyword !== null) { this._declareKeyword.collectTextElements(elements); }
@@ -881,6 +1033,30 @@ class FunctionDeclarationSyntax extends StatementSyntax {
         return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken);
     }
 
+    public withExportKeyword(exportKeyword: ISyntaxToken): FunctionDeclarationSyntax {
+        return this.update(exportKeyword, this._declareKeyword, this._functionKeyword, this._functionSignature, this._block, this._semicolonToken);
+    }
+
+    public withDeclareKeyword(declareKeyword: ISyntaxToken): FunctionDeclarationSyntax {
+        return this.update(this._exportKeyword, declareKeyword, this._functionKeyword, this._functionSignature, this._block, this._semicolonToken);
+    }
+
+    public withFunctionKeyword(functionKeyword: ISyntaxToken): FunctionDeclarationSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, functionKeyword, this._functionSignature, this._block, this._semicolonToken);
+    }
+
+    public withFunctionSignature(functionSignature: FunctionSignatureSyntax): FunctionDeclarationSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, this._functionKeyword, functionSignature, this._block, this._semicolonToken);
+    }
+
+    public withBlock(block: BlockSyntax): FunctionDeclarationSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, this._functionKeyword, this._functionSignature, block, this._semicolonToken);
+    }
+
+    public withSemicolonToken(semicolonToken: ISyntaxToken): FunctionDeclarationSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, this._functionKeyword, this._functionSignature, this._block, semicolonToken);
+    }
+
     private collectTextElements(elements: string[]) {
         if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(elements); }
         if (this._declareKeyword !== null) { this._declareKeyword.collectTextElements(elements); }
@@ -970,6 +1146,22 @@ class VariableStatementSyntax extends StatementSyntax {
         return new VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken);
     }
 
+    public withExportKeyword(exportKeyword: ISyntaxToken): VariableStatementSyntax {
+        return this.update(exportKeyword, this._declareKeyword, this._variableDeclaration, this._semicolonToken);
+    }
+
+    public withDeclareKeyword(declareKeyword: ISyntaxToken): VariableStatementSyntax {
+        return this.update(this._exportKeyword, declareKeyword, this._variableDeclaration, this._semicolonToken);
+    }
+
+    public withVariableDeclaration(variableDeclaration: VariableDeclarationSyntax): VariableStatementSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, variableDeclaration, this._semicolonToken);
+    }
+
+    public withSemicolonToken(semicolonToken: ISyntaxToken): VariableStatementSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, this._variableDeclaration, semicolonToken);
+    }
+
     private collectTextElements(elements: string[]) {
         if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(elements); }
         if (this._declareKeyword !== null) { this._declareKeyword.collectTextElements(elements); }
@@ -1044,6 +1236,14 @@ class VariableDeclarationSyntax extends SyntaxNode {
         return new VariableDeclarationSyntax(varKeyword, variableDeclarators);
     }
 
+    public withVarKeyword(varKeyword: ISyntaxToken): VariableDeclarationSyntax {
+        return this.update(varKeyword, this._variableDeclarators);
+    }
+
+    public withVariableDeclarators(variableDeclarators: ISeparatedSyntaxList): VariableDeclarationSyntax {
+        return this.update(this._varKeyword, variableDeclarators);
+    }
+
     private collectTextElements(elements: string[]) {
         this._varKeyword.collectTextElements(elements);
         this._variableDeclarators.collectTextElements(elements);
@@ -1112,6 +1312,18 @@ class VariableDeclaratorSyntax extends SyntaxNode {
         return new VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause);
     }
 
+    public withIdentifier(identifier: ISyntaxToken): VariableDeclaratorSyntax {
+        return this.update(identifier, this._typeAnnotation, this._equalsValueClause);
+    }
+
+    public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): VariableDeclaratorSyntax {
+        return this.update(this._identifier, typeAnnotation, this._equalsValueClause);
+    }
+
+    public withEqualsValueClause(equalsValueClause: EqualsValueClauseSyntax): VariableDeclaratorSyntax {
+        return this.update(this._identifier, this._typeAnnotation, equalsValueClause);
+    }
+
     private collectTextElements(elements: string[]) {
         this._identifier.collectTextElements(elements);
         if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(elements); }
@@ -1167,6 +1379,14 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         }
 
         return new EqualsValueClauseSyntax(equalsToken, value);
+    }
+
+    public withEqualsToken(equalsToken: ISyntaxToken): EqualsValueClauseSyntax {
+        return this.update(equalsToken, this._value);
+    }
+
+    public withValue(value: ExpressionSyntax): EqualsValueClauseSyntax {
+        return this.update(this._equalsToken, value);
     }
 
     private collectTextElements(elements: string[]) {
@@ -1240,6 +1460,14 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
         return new PrefixUnaryExpressionSyntax(kind, operatorToken, operand);
     }
 
+    public withOperatorToken(operatorToken: ISyntaxToken): PrefixUnaryExpressionSyntax {
+        return this.update(this._kind, operatorToken, this._operand);
+    }
+
+    public withOperand(operand: UnaryExpressionSyntax): PrefixUnaryExpressionSyntax {
+        return this.update(this._kind, this._operatorToken, operand);
+    }
+
     private collectTextElements(elements: string[]) {
         this._operatorToken.collectTextElements(elements);
         this._operand.collectTextElements(elements);
@@ -1284,6 +1512,10 @@ class ThisExpressionSyntax extends UnaryExpressionSyntax {
         }
 
         return new ThisExpressionSyntax(thisKeyword);
+    }
+
+    public withThisKeyword(thisKeyword: ISyntaxToken): ThisExpressionSyntax {
+        return this.update(thisKeyword);
     }
 
     private collectTextElements(elements: string[]) {
@@ -1351,6 +1583,10 @@ class LiteralExpressionSyntax extends UnaryExpressionSyntax {
         }
 
         return new LiteralExpressionSyntax(kind, literalToken);
+    }
+
+    public withLiteralToken(literalToken: ISyntaxToken): LiteralExpressionSyntax {
+        return this.update(this._kind, literalToken);
     }
 
     private collectTextElements(elements: string[]) {
@@ -1421,6 +1657,18 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
         }
 
         return new ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken);
+    }
+
+    public withOpenBracketToken(openBracketToken: ISyntaxToken): ArrayLiteralExpressionSyntax {
+        return this.update(openBracketToken, this._expressions, this._closeBracketToken);
+    }
+
+    public withExpressions(expressions: ISeparatedSyntaxList): ArrayLiteralExpressionSyntax {
+        return this.update(this._openBracketToken, expressions, this._closeBracketToken);
+    }
+
+    public withCloseBracketToken(closeBracketToken: ISyntaxToken): ArrayLiteralExpressionSyntax {
+        return this.update(this._openBracketToken, this._expressions, closeBracketToken);
     }
 
     private collectTextElements(elements: string[]) {
@@ -1519,6 +1767,18 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
         return new ParenthesizedExpressionSyntax(openParenToken, expression, closeParenToken);
     }
 
+    public withOpenParenToken(openParenToken: ISyntaxToken): ParenthesizedExpressionSyntax {
+        return this.update(openParenToken, this._expression, this._closeParenToken);
+    }
+
+    public withExpression(expression: ExpressionSyntax): ParenthesizedExpressionSyntax {
+        return this.update(this._openParenToken, expression, this._closeParenToken);
+    }
+
+    public withCloseParenToken(closeParenToken: ISyntaxToken): ParenthesizedExpressionSyntax {
+        return this.update(this._openParenToken, this._expression, closeParenToken);
+    }
+
     private collectTextElements(elements: string[]) {
         this._openParenToken.collectTextElements(elements);
         this._expression.collectTextElements(elements);
@@ -1592,6 +1852,18 @@ class SimpleArrowFunctionExpression extends ArrowFunctionExpressionSyntax {
         return new SimpleArrowFunctionExpression(identifier, equalsGreaterThanToken, body);
     }
 
+    public withIdentifier(identifier: ISyntaxToken): SimpleArrowFunctionExpression {
+        return this.update(identifier, this._equalsGreaterThanToken, this._body);
+    }
+
+    public withEqualsGreaterThanToken(equalsGreaterThanToken: ISyntaxToken): SimpleArrowFunctionExpression {
+        return this.update(this._identifier, equalsGreaterThanToken, this._body);
+    }
+
+    public withBody(body: SyntaxNode): SimpleArrowFunctionExpression {
+        return this.update(this._identifier, this._equalsGreaterThanToken, body);
+    }
+
     private collectTextElements(elements: string[]) {
         this._identifier.collectTextElements(elements);
         this._equalsGreaterThanToken.collectTextElements(elements);
@@ -1659,6 +1931,18 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
         return new ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body);
     }
 
+    public withCallSignature(callSignature: CallSignatureSyntax): ParenthesizedArrowFunctionExpressionSyntax {
+        return this.update(callSignature, this._equalsGreaterThanToken, this._body);
+    }
+
+    public withEqualsGreaterThanToken(equalsGreaterThanToken: ISyntaxToken): ParenthesizedArrowFunctionExpressionSyntax {
+        return this.update(this._callSignature, equalsGreaterThanToken, this._body);
+    }
+
+    public withBody(body: SyntaxNode): ParenthesizedArrowFunctionExpressionSyntax {
+        return this.update(this._callSignature, this._equalsGreaterThanToken, body);
+    }
+
     private collectTextElements(elements: string[]) {
         this._callSignature.collectTextElements(elements);
         this._equalsGreaterThanToken.collectTextElements(elements);
@@ -1716,6 +2000,10 @@ class IdentifierNameSyntax extends NameSyntax {
         }
 
         return new IdentifierNameSyntax(identifier);
+    }
+
+    public withIdentifier(identifier: ISyntaxToken): IdentifierNameSyntax {
+        return this.update(identifier);
     }
 
     private collectTextElements(elements: string[]) {
@@ -1781,6 +2069,18 @@ class QualifiedNameSyntax extends NameSyntax {
         }
 
         return new QualifiedNameSyntax(left, dotToken, right);
+    }
+
+    public withLeft(left: NameSyntax): QualifiedNameSyntax {
+        return this.update(left, this._dotToken, this._right);
+    }
+
+    public withDotToken(dotToken: ISyntaxToken): QualifiedNameSyntax {
+        return this.update(this._left, dotToken, this._right);
+    }
+
+    public withRight(right: IdentifierNameSyntax): QualifiedNameSyntax {
+        return this.update(this._left, this._dotToken, right);
     }
 
     private collectTextElements(elements: string[]) {
@@ -1860,6 +2160,22 @@ class ConstructorTypeSyntax extends TypeSyntax {
         return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type);
     }
 
+    public withNewKeyword(newKeyword: ISyntaxToken): ConstructorTypeSyntax {
+        return this.update(newKeyword, this._parameterList, this._equalsGreaterThanToken, this._type);
+    }
+
+    public withParameterList(parameterList: ParameterListSyntax): ConstructorTypeSyntax {
+        return this.update(this._newKeyword, parameterList, this._equalsGreaterThanToken, this._type);
+    }
+
+    public withEqualsGreaterThanToken(equalsGreaterThanToken: ISyntaxToken): ConstructorTypeSyntax {
+        return this.update(this._newKeyword, this._parameterList, equalsGreaterThanToken, this._type);
+    }
+
+    public withType(type: TypeSyntax): ConstructorTypeSyntax {
+        return this.update(this._newKeyword, this._parameterList, this._equalsGreaterThanToken, type);
+    }
+
     private collectTextElements(elements: string[]) {
         this._newKeyword.collectTextElements(elements);
         this._parameterList.collectTextElements(elements);
@@ -1926,6 +2242,18 @@ class FunctionTypeSyntax extends TypeSyntax {
         }
 
         return new FunctionTypeSyntax(parameterList, equalsGreaterThanToken, type);
+    }
+
+    public withParameterList(parameterList: ParameterListSyntax): FunctionTypeSyntax {
+        return this.update(parameterList, this._equalsGreaterThanToken, this._type);
+    }
+
+    public withEqualsGreaterThanToken(equalsGreaterThanToken: ISyntaxToken): FunctionTypeSyntax {
+        return this.update(this._parameterList, equalsGreaterThanToken, this._type);
+    }
+
+    public withType(type: TypeSyntax): FunctionTypeSyntax {
+        return this.update(this._parameterList, this._equalsGreaterThanToken, type);
     }
 
     private collectTextElements(elements: string[]) {
@@ -2000,6 +2328,18 @@ class ObjectTypeSyntax extends TypeSyntax {
         return new ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken);
     }
 
+    public withOpenBraceToken(openBraceToken: ISyntaxToken): ObjectTypeSyntax {
+        return this.update(openBraceToken, this._typeMembers, this._closeBraceToken);
+    }
+
+    public withTypeMembers(typeMembers: ISeparatedSyntaxList): ObjectTypeSyntax {
+        return this.update(this._openBraceToken, typeMembers, this._closeBraceToken);
+    }
+
+    public withCloseBraceToken(closeBraceToken: ISyntaxToken): ObjectTypeSyntax {
+        return this.update(this._openBraceToken, this._typeMembers, closeBraceToken);
+    }
+
     private collectTextElements(elements: string[]) {
         this._openBraceToken.collectTextElements(elements);
         this._typeMembers.collectTextElements(elements);
@@ -2067,6 +2407,18 @@ class ArrayTypeSyntax extends TypeSyntax {
         return new ArrayTypeSyntax(type, openBracketToken, closeBracketToken);
     }
 
+    public withType(type: TypeSyntax): ArrayTypeSyntax {
+        return this.update(type, this._openBracketToken, this._closeBracketToken);
+    }
+
+    public withOpenBracketToken(openBracketToken: ISyntaxToken): ArrayTypeSyntax {
+        return this.update(this._type, openBracketToken, this._closeBracketToken);
+    }
+
+    public withCloseBracketToken(closeBracketToken: ISyntaxToken): ArrayTypeSyntax {
+        return this.update(this._type, this._openBracketToken, closeBracketToken);
+    }
+
     private collectTextElements(elements: string[]) {
         this._type.collectTextElements(elements);
         this._openBracketToken.collectTextElements(elements);
@@ -2123,6 +2475,10 @@ class PredefinedTypeSyntax extends TypeSyntax {
         return new PredefinedTypeSyntax(keyword);
     }
 
+    public withKeyword(keyword: ISyntaxToken): PredefinedTypeSyntax {
+        return this.update(keyword);
+    }
+
     private collectTextElements(elements: string[]) {
         this._keyword.collectTextElements(elements);
     }
@@ -2176,6 +2532,14 @@ class TypeAnnotationSyntax extends SyntaxNode {
         }
 
         return new TypeAnnotationSyntax(colonToken, type);
+    }
+
+    public withColonToken(colonToken: ISyntaxToken): TypeAnnotationSyntax {
+        return this.update(colonToken, this._type);
+    }
+
+    public withType(type: TypeSyntax): TypeAnnotationSyntax {
+        return this.update(this._colonToken, type);
     }
 
     private collectTextElements(elements: string[]) {
@@ -2247,6 +2611,18 @@ class BlockSyntax extends StatementSyntax {
         }
 
         return new BlockSyntax(openBraceToken, statements, closeBraceToken);
+    }
+
+    public withOpenBraceToken(openBraceToken: ISyntaxToken): BlockSyntax {
+        return this.update(openBraceToken, this._statements, this._closeBraceToken);
+    }
+
+    public withStatements(statements: ISyntaxList): BlockSyntax {
+        return this.update(this._openBraceToken, statements, this._closeBraceToken);
+    }
+
+    public withCloseBraceToken(closeBraceToken: ISyntaxToken): BlockSyntax {
+        return this.update(this._openBraceToken, this._statements, closeBraceToken);
     }
 
     private collectTextElements(elements: string[]) {
@@ -2354,6 +2730,30 @@ class ParameterSyntax extends SyntaxNode {
         return new ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause);
     }
 
+    public withDotDotDotToken(dotDotDotToken: ISyntaxToken): ParameterSyntax {
+        return this.update(dotDotDotToken, this._publicOrPrivateKeyword, this._identifier, this._questionToken, this._typeAnnotation, this._equalsValueClause);
+    }
+
+    public withPublicOrPrivateKeyword(publicOrPrivateKeyword: ISyntaxToken): ParameterSyntax {
+        return this.update(this._dotDotDotToken, publicOrPrivateKeyword, this._identifier, this._questionToken, this._typeAnnotation, this._equalsValueClause);
+    }
+
+    public withIdentifier(identifier: ISyntaxToken): ParameterSyntax {
+        return this.update(this._dotDotDotToken, this._publicOrPrivateKeyword, identifier, this._questionToken, this._typeAnnotation, this._equalsValueClause);
+    }
+
+    public withQuestionToken(questionToken: ISyntaxToken): ParameterSyntax {
+        return this.update(this._dotDotDotToken, this._publicOrPrivateKeyword, this._identifier, questionToken, this._typeAnnotation, this._equalsValueClause);
+    }
+
+    public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): ParameterSyntax {
+        return this.update(this._dotDotDotToken, this._publicOrPrivateKeyword, this._identifier, this._questionToken, typeAnnotation, this._equalsValueClause);
+    }
+
+    public withEqualsValueClause(equalsValueClause: EqualsValueClauseSyntax): ParameterSyntax {
+        return this.update(this._dotDotDotToken, this._publicOrPrivateKeyword, this._identifier, this._questionToken, this._typeAnnotation, equalsValueClause);
+    }
+
     private collectTextElements(elements: string[]) {
         if (this._dotDotDotToken !== null) { this._dotDotDotToken.collectTextElements(elements); }
         if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(elements); }
@@ -2424,6 +2824,18 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
         return new MemberAccessExpressionSyntax(expression, dotToken, identifierName);
     }
 
+    public withExpression(expression: ExpressionSyntax): MemberAccessExpressionSyntax {
+        return this.update(expression, this._dotToken, this._identifierName);
+    }
+
+    public withDotToken(dotToken: ISyntaxToken): MemberAccessExpressionSyntax {
+        return this.update(this._expression, dotToken, this._identifierName);
+    }
+
+    public withIdentifierName(identifierName: IdentifierNameSyntax): MemberAccessExpressionSyntax {
+        return this.update(this._expression, this._dotToken, identifierName);
+    }
+
     private collectTextElements(elements: string[]) {
         this._expression.collectTextElements(elements);
         this._dotToken.collectTextElements(elements);
@@ -2484,6 +2896,14 @@ class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
         }
 
         return new PostfixUnaryExpressionSyntax(kind, operand, operatorToken);
+    }
+
+    public withOperand(operand: ExpressionSyntax): PostfixUnaryExpressionSyntax {
+        return this.update(this._kind, operand, this._operatorToken);
+    }
+
+    public withOperatorToken(operatorToken: ISyntaxToken): PostfixUnaryExpressionSyntax {
+        return this.update(this._kind, this._operand, operatorToken);
     }
 
     private collectTextElements(elements: string[]) {
@@ -2562,6 +2982,22 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
         return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken);
     }
 
+    public withExpression(expression: ExpressionSyntax): ElementAccessExpressionSyntax {
+        return this.update(expression, this._openBracketToken, this._argumentExpression, this._closeBracketToken);
+    }
+
+    public withOpenBracketToken(openBracketToken: ISyntaxToken): ElementAccessExpressionSyntax {
+        return this.update(this._expression, openBracketToken, this._argumentExpression, this._closeBracketToken);
+    }
+
+    public withArgumentExpression(argumentExpression: ExpressionSyntax): ElementAccessExpressionSyntax {
+        return this.update(this._expression, this._openBracketToken, argumentExpression, this._closeBracketToken);
+    }
+
+    public withCloseBracketToken(closeBracketToken: ISyntaxToken): ElementAccessExpressionSyntax {
+        return this.update(this._expression, this._openBracketToken, this._argumentExpression, closeBracketToken);
+    }
+
     private collectTextElements(elements: string[]) {
         this._expression.collectTextElements(elements);
         this._openBracketToken.collectTextElements(elements);
@@ -2618,6 +3054,14 @@ class InvocationExpressionSyntax extends UnaryExpressionSyntax {
         }
 
         return new InvocationExpressionSyntax(expression, argumentList);
+    }
+
+    public withExpression(expression: ExpressionSyntax): InvocationExpressionSyntax {
+        return this.update(expression, this._argumentList);
+    }
+
+    public withArgumentList(argumentList: ArgumentListSyntax): InvocationExpressionSyntax {
+        return this.update(this._expression, argumentList);
     }
 
     private collectTextElements(elements: string[]) {
@@ -2689,6 +3133,18 @@ class ArgumentListSyntax extends SyntaxNode {
         }
 
         return new ArgumentListSyntax(openParenToken, _arguments, closeParenToken);
+    }
+
+    public withOpenParenToken(openParenToken: ISyntaxToken): ArgumentListSyntax {
+        return this.update(openParenToken, this._arguments, this._closeParenToken);
+    }
+
+    public withArguments(_arguments: ISeparatedSyntaxList): ArgumentListSyntax {
+        return this.update(this._openParenToken, _arguments, this._closeParenToken);
+    }
+
+    public withCloseParenToken(closeParenToken: ISyntaxToken): ArgumentListSyntax {
+        return this.update(this._openParenToken, this._arguments, closeParenToken);
     }
 
     private collectTextElements(elements: string[]) {
@@ -2804,6 +3260,18 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
         return new BinaryExpressionSyntax(kind, left, operatorToken, right);
     }
 
+    public withLeft(left: ExpressionSyntax): BinaryExpressionSyntax {
+        return this.update(this._kind, left, this._operatorToken, this._right);
+    }
+
+    public withOperatorToken(operatorToken: ISyntaxToken): BinaryExpressionSyntax {
+        return this.update(this._kind, this._left, operatorToken, this._right);
+    }
+
+    public withRight(right: ExpressionSyntax): BinaryExpressionSyntax {
+        return this.update(this._kind, this._left, this._operatorToken, right);
+    }
+
     private collectTextElements(elements: string[]) {
         this._left.collectTextElements(elements);
         this._operatorToken.collectTextElements(elements);
@@ -2891,6 +3359,26 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
         return new ConditionalExpressionSyntax(condition, questionToken, whenTrue, colonToken, whenFalse);
     }
 
+    public withCondition(condition: ExpressionSyntax): ConditionalExpressionSyntax {
+        return this.update(condition, this._questionToken, this._whenTrue, this._colonToken, this._whenFalse);
+    }
+
+    public withQuestionToken(questionToken: ISyntaxToken): ConditionalExpressionSyntax {
+        return this.update(this._condition, questionToken, this._whenTrue, this._colonToken, this._whenFalse);
+    }
+
+    public withWhenTrue(whenTrue: ExpressionSyntax): ConditionalExpressionSyntax {
+        return this.update(this._condition, this._questionToken, whenTrue, this._colonToken, this._whenFalse);
+    }
+
+    public withColonToken(colonToken: ISyntaxToken): ConditionalExpressionSyntax {
+        return this.update(this._condition, this._questionToken, this._whenTrue, colonToken, this._whenFalse);
+    }
+
+    public withWhenFalse(whenFalse: ExpressionSyntax): ConditionalExpressionSyntax {
+        return this.update(this._condition, this._questionToken, this._whenTrue, this._colonToken, whenFalse);
+    }
+
     private collectTextElements(elements: string[]) {
         this._condition.collectTextElements(elements);
         this._questionToken.collectTextElements(elements);
@@ -2968,6 +3456,18 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         }
 
         return new ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation);
+    }
+
+    public withNewKeyword(newKeyword: ISyntaxToken): ConstructSignatureSyntax {
+        return this.update(newKeyword, this._parameterList, this._typeAnnotation);
+    }
+
+    public withParameterList(parameterList: ParameterListSyntax): ConstructSignatureSyntax {
+        return this.update(this._newKeyword, parameterList, this._typeAnnotation);
+    }
+
+    public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): ConstructSignatureSyntax {
+        return this.update(this._newKeyword, this._parameterList, typeAnnotation);
     }
 
     private collectTextElements(elements: string[]) {
@@ -3053,6 +3553,22 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         return new FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation);
     }
 
+    public withIdentifier(identifier: ISyntaxToken): FunctionSignatureSyntax {
+        return this.update(identifier, this._questionToken, this._parameterList, this._typeAnnotation);
+    }
+
+    public withQuestionToken(questionToken: ISyntaxToken): FunctionSignatureSyntax {
+        return this.update(this._identifier, questionToken, this._parameterList, this._typeAnnotation);
+    }
+
+    public withParameterList(parameterList: ParameterListSyntax): FunctionSignatureSyntax {
+        return this.update(this._identifier, this._questionToken, parameterList, this._typeAnnotation);
+    }
+
+    public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): FunctionSignatureSyntax {
+        return this.update(this._identifier, this._questionToken, this._parameterList, typeAnnotation);
+    }
+
     private collectTextElements(elements: string[]) {
         this._identifier.collectTextElements(elements);
         if (this._questionToken !== null) { this._questionToken.collectTextElements(elements); }
@@ -3136,6 +3652,22 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation);
     }
 
+    public withOpenBracketToken(openBracketToken: ISyntaxToken): IndexSignatureSyntax {
+        return this.update(openBracketToken, this._parameter, this._closeBracketToken, this._typeAnnotation);
+    }
+
+    public withParameter(parameter: ParameterSyntax): IndexSignatureSyntax {
+        return this.update(this._openBracketToken, parameter, this._closeBracketToken, this._typeAnnotation);
+    }
+
+    public withCloseBracketToken(closeBracketToken: ISyntaxToken): IndexSignatureSyntax {
+        return this.update(this._openBracketToken, this._parameter, closeBracketToken, this._typeAnnotation);
+    }
+
+    public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): IndexSignatureSyntax {
+        return this.update(this._openBracketToken, this._parameter, this._closeBracketToken, typeAnnotation);
+    }
+
     private collectTextElements(elements: string[]) {
         this._openBracketToken.collectTextElements(elements);
         this._parameter.collectTextElements(elements);
@@ -3207,6 +3739,18 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         }
 
         return new PropertySignatureSyntax(identifier, questionToken, typeAnnotation);
+    }
+
+    public withIdentifier(identifier: ISyntaxToken): PropertySignatureSyntax {
+        return this.update(identifier, this._questionToken, this._typeAnnotation);
+    }
+
+    public withQuestionToken(questionToken: ISyntaxToken): PropertySignatureSyntax {
+        return this.update(this._identifier, questionToken, this._typeAnnotation);
+    }
+
+    public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): PropertySignatureSyntax {
+        return this.update(this._identifier, this._questionToken, typeAnnotation);
     }
 
     private collectTextElements(elements: string[]) {
@@ -3281,6 +3825,18 @@ class ParameterListSyntax extends SyntaxNode {
         return new ParameterListSyntax(openParenToken, parameters, closeParenToken);
     }
 
+    public withOpenParenToken(openParenToken: ISyntaxToken): ParameterListSyntax {
+        return this.update(openParenToken, this._parameters, this._closeParenToken);
+    }
+
+    public withParameters(parameters: ISeparatedSyntaxList): ParameterListSyntax {
+        return this.update(this._openParenToken, parameters, this._closeParenToken);
+    }
+
+    public withCloseParenToken(closeParenToken: ISyntaxToken): ParameterListSyntax {
+        return this.update(this._openParenToken, this._parameters, closeParenToken);
+    }
+
     private collectTextElements(elements: string[]) {
         this._openParenToken.collectTextElements(elements);
         this._parameters.collectTextElements(elements);
@@ -3341,6 +3897,14 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         return new CallSignatureSyntax(parameterList, typeAnnotation);
     }
 
+    public withParameterList(parameterList: ParameterListSyntax): CallSignatureSyntax {
+        return this.update(parameterList, this._typeAnnotation);
+    }
+
+    public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): CallSignatureSyntax {
+        return this.update(this._parameterList, typeAnnotation);
+    }
+
     private collectTextElements(elements: string[]) {
         this._parameterList.collectTextElements(elements);
         if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(elements); }
@@ -3395,6 +3959,14 @@ class ElseClauseSyntax extends SyntaxNode {
         }
 
         return new ElseClauseSyntax(elseKeyword, statement);
+    }
+
+    public withElseKeyword(elseKeyword: ISyntaxToken): ElseClauseSyntax {
+        return this.update(elseKeyword, this._statement);
+    }
+
+    public withStatement(statement: StatementSyntax): ElseClauseSyntax {
+        return this.update(this._elseKeyword, statement);
     }
 
     private collectTextElements(elements: string[]) {
@@ -3500,6 +4072,30 @@ class IfStatementSyntax extends StatementSyntax {
         return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause);
     }
 
+    public withIfKeyword(ifKeyword: ISyntaxToken): IfStatementSyntax {
+        return this.update(ifKeyword, this._openParenToken, this._condition, this._closeParenToken, this._statement, this._elseClause);
+    }
+
+    public withOpenParenToken(openParenToken: ISyntaxToken): IfStatementSyntax {
+        return this.update(this._ifKeyword, openParenToken, this._condition, this._closeParenToken, this._statement, this._elseClause);
+    }
+
+    public withCondition(condition: ExpressionSyntax): IfStatementSyntax {
+        return this.update(this._ifKeyword, this._openParenToken, condition, this._closeParenToken, this._statement, this._elseClause);
+    }
+
+    public withCloseParenToken(closeParenToken: ISyntaxToken): IfStatementSyntax {
+        return this.update(this._ifKeyword, this._openParenToken, this._condition, closeParenToken, this._statement, this._elseClause);
+    }
+
+    public withStatement(statement: StatementSyntax): IfStatementSyntax {
+        return this.update(this._ifKeyword, this._openParenToken, this._condition, this._closeParenToken, statement, this._elseClause);
+    }
+
+    public withElseClause(elseClause: ElseClauseSyntax): IfStatementSyntax {
+        return this.update(this._ifKeyword, this._openParenToken, this._condition, this._closeParenToken, this._statement, elseClause);
+    }
+
     private collectTextElements(elements: string[]) {
         this._ifKeyword.collectTextElements(elements);
         this._openParenToken.collectTextElements(elements);
@@ -3558,6 +4154,14 @@ class ExpressionStatementSyntax extends StatementSyntax {
         }
 
         return new ExpressionStatementSyntax(expression, semicolonToken);
+    }
+
+    public withExpression(expression: ExpressionSyntax): ExpressionStatementSyntax {
+        return this.update(expression, this._semicolonToken);
+    }
+
+    public withSemicolonToken(semicolonToken: ISyntaxToken): ExpressionStatementSyntax {
+        return this.update(this._expression, semicolonToken);
     }
 
     private collectTextElements(elements: string[]) {
@@ -3646,6 +4250,22 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
         }
 
         return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken);
+    }
+
+    public withConstructorKeyword(constructorKeyword: ISyntaxToken): ConstructorDeclarationSyntax {
+        return this.update(constructorKeyword, this._parameterList, this._block, this._semicolonToken);
+    }
+
+    public withParameterList(parameterList: ParameterListSyntax): ConstructorDeclarationSyntax {
+        return this.update(this._constructorKeyword, parameterList, this._block, this._semicolonToken);
+    }
+
+    public withBlock(block: BlockSyntax): ConstructorDeclarationSyntax {
+        return this.update(this._constructorKeyword, this._parameterList, block, this._semicolonToken);
+    }
+
+    public withSemicolonToken(semicolonToken: ISyntaxToken): ConstructorDeclarationSyntax {
+        return this.update(this._constructorKeyword, this._parameterList, this._block, semicolonToken);
     }
 
     private collectTextElements(elements: string[]) {
@@ -3749,6 +4369,26 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
         }
 
         return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken);
+    }
+
+    public withPublicOrPrivateKeyword(publicOrPrivateKeyword: ISyntaxToken): MemberFunctionDeclarationSyntax {
+        return this.update(publicOrPrivateKeyword, this._staticKeyword, this._functionSignature, this._block, this._semicolonToken);
+    }
+
+    public withStaticKeyword(staticKeyword: ISyntaxToken): MemberFunctionDeclarationSyntax {
+        return this.update(this._publicOrPrivateKeyword, staticKeyword, this._functionSignature, this._block, this._semicolonToken);
+    }
+
+    public withFunctionSignature(functionSignature: FunctionSignatureSyntax): MemberFunctionDeclarationSyntax {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, functionSignature, this._block, this._semicolonToken);
+    }
+
+    public withBlock(block: BlockSyntax): MemberFunctionDeclarationSyntax {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._functionSignature, block, this._semicolonToken);
+    }
+
+    public withSemicolonToken(semicolonToken: ISyntaxToken): MemberFunctionDeclarationSyntax {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._functionSignature, this._block, semicolonToken);
     }
 
     private collectTextElements(elements: string[]) {
@@ -3876,6 +4516,34 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return new GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block);
     }
 
+    public withPublicOrPrivateKeyword(publicOrPrivateKeyword: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
+        return this.update(publicOrPrivateKeyword, this._staticKeyword, this._getKeyword, this._identifier, this._parameterList, this._typeAnnotation, this._block);
+    }
+
+    public withStaticKeyword(staticKeyword: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
+        return this.update(this._publicOrPrivateKeyword, staticKeyword, this._getKeyword, this._identifier, this._parameterList, this._typeAnnotation, this._block);
+    }
+
+    public withGetKeyword(getKeyword: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, getKeyword, this._identifier, this._parameterList, this._typeAnnotation, this._block);
+    }
+
+    public withIdentifier(identifier: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._getKeyword, identifier, this._parameterList, this._typeAnnotation, this._block);
+    }
+
+    public withParameterList(parameterList: ParameterListSyntax): GetMemberAccessorDeclarationSyntax {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._getKeyword, this._identifier, parameterList, this._typeAnnotation, this._block);
+    }
+
+    public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): GetMemberAccessorDeclarationSyntax {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._getKeyword, this._identifier, this._parameterList, typeAnnotation, this._block);
+    }
+
+    public withBlock(block: BlockSyntax): GetMemberAccessorDeclarationSyntax {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._getKeyword, this._identifier, this._parameterList, this._typeAnnotation, block);
+    }
+
     private collectTextElements(elements: string[]) {
         if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(elements); }
         if (this._staticKeyword !== null) { this._staticKeyword.collectTextElements(elements); }
@@ -3988,6 +4656,30 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return new SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block);
     }
 
+    public withPublicOrPrivateKeyword(publicOrPrivateKeyword: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
+        return this.update(publicOrPrivateKeyword, this._staticKeyword, this._setKeyword, this._identifier, this._parameterList, this._block);
+    }
+
+    public withStaticKeyword(staticKeyword: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
+        return this.update(this._publicOrPrivateKeyword, staticKeyword, this._setKeyword, this._identifier, this._parameterList, this._block);
+    }
+
+    public withSetKeyword(setKeyword: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, setKeyword, this._identifier, this._parameterList, this._block);
+    }
+
+    public withIdentifier(identifier: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._setKeyword, identifier, this._parameterList, this._block);
+    }
+
+    public withParameterList(parameterList: ParameterListSyntax): SetMemberAccessorDeclarationSyntax {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._setKeyword, this._identifier, parameterList, this._block);
+    }
+
+    public withBlock(block: BlockSyntax): SetMemberAccessorDeclarationSyntax {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._setKeyword, this._identifier, this._parameterList, block);
+    }
+
     private collectTextElements(elements: string[]) {
         if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(elements); }
         if (this._staticKeyword !== null) { this._staticKeyword.collectTextElements(elements); }
@@ -4077,6 +4769,22 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
         return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolonToken);
     }
 
+    public withPublicOrPrivateKeyword(publicOrPrivateKeyword: ISyntaxToken): MemberVariableDeclarationSyntax {
+        return this.update(publicOrPrivateKeyword, this._staticKeyword, this._variableDeclarator, this._semicolonToken);
+    }
+
+    public withStaticKeyword(staticKeyword: ISyntaxToken): MemberVariableDeclarationSyntax {
+        return this.update(this._publicOrPrivateKeyword, staticKeyword, this._variableDeclarator, this._semicolonToken);
+    }
+
+    public withVariableDeclarator(variableDeclarator: VariableDeclaratorSyntax): MemberVariableDeclarationSyntax {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, variableDeclarator, this._semicolonToken);
+    }
+
+    public withSemicolonToken(semicolonToken: ISyntaxToken): MemberVariableDeclarationSyntax {
+        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._variableDeclarator, semicolonToken);
+    }
+
     private collectTextElements(elements: string[]) {
         if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(elements); }
         if (this._staticKeyword !== null) { this._staticKeyword.collectTextElements(elements); }
@@ -4143,6 +4851,18 @@ class ThrowStatementSyntax extends StatementSyntax {
         }
 
         return new ThrowStatementSyntax(throwKeyword, expression, semicolonToken);
+    }
+
+    public withThrowKeyword(throwKeyword: ISyntaxToken): ThrowStatementSyntax {
+        return this.update(throwKeyword, this._expression, this._semicolonToken);
+    }
+
+    public withExpression(expression: ExpressionSyntax): ThrowStatementSyntax {
+        return this.update(this._throwKeyword, expression, this._semicolonToken);
+    }
+
+    public withSemicolonToken(semicolonToken: ISyntaxToken): ThrowStatementSyntax {
+        return this.update(this._throwKeyword, this._expression, semicolonToken);
     }
 
     private collectTextElements(elements: string[]) {
@@ -4216,6 +4936,18 @@ class ReturnStatementSyntax extends StatementSyntax {
         return new ReturnStatementSyntax(returnKeyword, expression, semicolonToken);
     }
 
+    public withReturnKeyword(returnKeyword: ISyntaxToken): ReturnStatementSyntax {
+        return this.update(returnKeyword, this._expression, this._semicolonToken);
+    }
+
+    public withExpression(expression: ExpressionSyntax): ReturnStatementSyntax {
+        return this.update(this._returnKeyword, expression, this._semicolonToken);
+    }
+
+    public withSemicolonToken(semicolonToken: ISyntaxToken): ReturnStatementSyntax {
+        return this.update(this._returnKeyword, this._expression, semicolonToken);
+    }
+
     private collectTextElements(elements: string[]) {
         this._returnKeyword.collectTextElements(elements);
         if (this._expression !== null) { this._expression.collectTextElements(elements); }
@@ -4285,6 +5017,18 @@ class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
         }
 
         return new ObjectCreationExpressionSyntax(newKeyword, expression, argumentList);
+    }
+
+    public withNewKeyword(newKeyword: ISyntaxToken): ObjectCreationExpressionSyntax {
+        return this.update(newKeyword, this._expression, this._argumentList);
+    }
+
+    public withExpression(expression: ExpressionSyntax): ObjectCreationExpressionSyntax {
+        return this.update(this._newKeyword, expression, this._argumentList);
+    }
+
+    public withArgumentList(argumentList: ArgumentListSyntax): ObjectCreationExpressionSyntax {
+        return this.update(this._newKeyword, this._expression, argumentList);
     }
 
     private collectTextElements(elements: string[]) {
@@ -4403,6 +5147,34 @@ class SwitchStatementSyntax extends StatementSyntax {
         return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, caseClauses, closeBraceToken);
     }
 
+    public withSwitchKeyword(switchKeyword: ISyntaxToken): SwitchStatementSyntax {
+        return this.update(switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._caseClauses, this._closeBraceToken);
+    }
+
+    public withOpenParenToken(openParenToken: ISyntaxToken): SwitchStatementSyntax {
+        return this.update(this._switchKeyword, openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._caseClauses, this._closeBraceToken);
+    }
+
+    public withExpression(expression: ExpressionSyntax): SwitchStatementSyntax {
+        return this.update(this._switchKeyword, this._openParenToken, expression, this._closeParenToken, this._openBraceToken, this._caseClauses, this._closeBraceToken);
+    }
+
+    public withCloseParenToken(closeParenToken: ISyntaxToken): SwitchStatementSyntax {
+        return this.update(this._switchKeyword, this._openParenToken, this._expression, closeParenToken, this._openBraceToken, this._caseClauses, this._closeBraceToken);
+    }
+
+    public withOpenBraceToken(openBraceToken: ISyntaxToken): SwitchStatementSyntax {
+        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, openBraceToken, this._caseClauses, this._closeBraceToken);
+    }
+
+    public withCaseClauses(caseClauses: ISyntaxList): SwitchStatementSyntax {
+        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, caseClauses, this._closeBraceToken);
+    }
+
+    public withCloseBraceToken(closeBraceToken: ISyntaxToken): SwitchStatementSyntax {
+        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._caseClauses, closeBraceToken);
+    }
+
     private collectTextElements(elements: string[]) {
         this._switchKeyword.collectTextElements(elements);
         this._openParenToken.collectTextElements(elements);
@@ -4496,6 +5268,22 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements);
     }
 
+    public withCaseKeyword(caseKeyword: ISyntaxToken): CaseSwitchClauseSyntax {
+        return this.update(caseKeyword, this._expression, this._colonToken, this._statements);
+    }
+
+    public withExpression(expression: ExpressionSyntax): CaseSwitchClauseSyntax {
+        return this.update(this._caseKeyword, expression, this._colonToken, this._statements);
+    }
+
+    public withColonToken(colonToken: ISyntaxToken): CaseSwitchClauseSyntax {
+        return this.update(this._caseKeyword, this._expression, colonToken, this._statements);
+    }
+
+    public withStatements(statements: ISyntaxList): CaseSwitchClauseSyntax {
+        return this.update(this._caseKeyword, this._expression, this._colonToken, statements);
+    }
+
     private collectTextElements(elements: string[]) {
         this._caseKeyword.collectTextElements(elements);
         this._expression.collectTextElements(elements);
@@ -4567,6 +5355,18 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         }
 
         return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements);
+    }
+
+    public withDefaultKeyword(defaultKeyword: ISyntaxToken): DefaultSwitchClauseSyntax {
+        return this.update(defaultKeyword, this._colonToken, this._statements);
+    }
+
+    public withColonToken(colonToken: ISyntaxToken): DefaultSwitchClauseSyntax {
+        return this.update(this._defaultKeyword, colonToken, this._statements);
+    }
+
+    public withStatements(statements: ISyntaxList): DefaultSwitchClauseSyntax {
+        return this.update(this._defaultKeyword, this._colonToken, statements);
     }
 
     private collectTextElements(elements: string[]) {
@@ -4643,6 +5443,18 @@ class BreakStatementSyntax extends StatementSyntax {
         return new BreakStatementSyntax(breakKeyword, identifier, semicolonToken);
     }
 
+    public withBreakKeyword(breakKeyword: ISyntaxToken): BreakStatementSyntax {
+        return this.update(breakKeyword, this._identifier, this._semicolonToken);
+    }
+
+    public withIdentifier(identifier: ISyntaxToken): BreakStatementSyntax {
+        return this.update(this._breakKeyword, identifier, this._semicolonToken);
+    }
+
+    public withSemicolonToken(semicolonToken: ISyntaxToken): BreakStatementSyntax {
+        return this.update(this._breakKeyword, this._identifier, semicolonToken);
+    }
+
     private collectTextElements(elements: string[]) {
         this._breakKeyword.collectTextElements(elements);
         if (this._identifier !== null) { this._identifier.collectTextElements(elements); }
@@ -4715,6 +5527,18 @@ class ContinueStatementSyntax extends StatementSyntax {
         }
 
         return new ContinueStatementSyntax(continueKeyword, identifier, semicolonToken);
+    }
+
+    public withContinueKeyword(continueKeyword: ISyntaxToken): ContinueStatementSyntax {
+        return this.update(continueKeyword, this._identifier, this._semicolonToken);
+    }
+
+    public withIdentifier(identifier: ISyntaxToken): ContinueStatementSyntax {
+        return this.update(this._continueKeyword, identifier, this._semicolonToken);
+    }
+
+    public withSemicolonToken(semicolonToken: ISyntaxToken): ContinueStatementSyntax {
+        return this.update(this._continueKeyword, this._identifier, semicolonToken);
     }
 
     private collectTextElements(elements: string[]) {
@@ -4871,6 +5695,46 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         return new ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement);
     }
 
+    public withForKeyword(forKeyword: ISyntaxToken): ForStatementSyntax {
+        return this.update(forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+    }
+
+    public withOpenParenToken(openParenToken: ISyntaxToken): ForStatementSyntax {
+        return this.update(this._forKeyword, openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+    }
+
+    public withVariableDeclaration(variableDeclaration: VariableDeclarationSyntax): ForStatementSyntax {
+        return this.update(this._forKeyword, this._openParenToken, variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+    }
+
+    public withInitializer(initializer: ExpressionSyntax): ForStatementSyntax {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+    }
+
+    public withFirstSemicolonToken(firstSemicolonToken: ISyntaxToken): ForStatementSyntax {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+    }
+
+    public withCondition(condition: ExpressionSyntax): ForStatementSyntax {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+    }
+
+    public withSecondSemicolonToken(secondSemicolonToken: ISyntaxToken): ForStatementSyntax {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+    }
+
+    public withIncrementor(incrementor: ExpressionSyntax): ForStatementSyntax {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, incrementor, this._closeParenToken, this._statement);
+    }
+
+    public withCloseParenToken(closeParenToken: ISyntaxToken): ForStatementSyntax {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, closeParenToken, this._statement);
+    }
+
+    public withStatement(statement: StatementSyntax): ForStatementSyntax {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, statement);
+    }
+
     private collectTextElements(elements: string[]) {
         this._forKeyword.collectTextElements(elements);
         this._openParenToken.collectTextElements(elements);
@@ -5002,6 +5866,38 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         return new ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration, left, inKeyword, expression, closeParenToken, statement);
     }
 
+    public withForKeyword(forKeyword: ISyntaxToken): ForInStatementSyntax {
+        return this.update(forKeyword, this._openParenToken, this._variableDeclaration, this._left, this._inKeyword, this._expression, this._closeParenToken, this._statement);
+    }
+
+    public withOpenParenToken(openParenToken: ISyntaxToken): ForInStatementSyntax {
+        return this.update(this._forKeyword, openParenToken, this._variableDeclaration, this._left, this._inKeyword, this._expression, this._closeParenToken, this._statement);
+    }
+
+    public withVariableDeclaration(variableDeclaration: VariableDeclarationSyntax): ForInStatementSyntax {
+        return this.update(this._forKeyword, this._openParenToken, variableDeclaration, this._left, this._inKeyword, this._expression, this._closeParenToken, this._statement);
+    }
+
+    public withLeft(left: ExpressionSyntax): ForInStatementSyntax {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, left, this._inKeyword, this._expression, this._closeParenToken, this._statement);
+    }
+
+    public withInKeyword(inKeyword: ISyntaxToken): ForInStatementSyntax {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._left, inKeyword, this._expression, this._closeParenToken, this._statement);
+    }
+
+    public withExpression(expression: ExpressionSyntax): ForInStatementSyntax {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._left, this._inKeyword, expression, this._closeParenToken, this._statement);
+    }
+
+    public withCloseParenToken(closeParenToken: ISyntaxToken): ForInStatementSyntax {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._left, this._inKeyword, this._expression, closeParenToken, this._statement);
+    }
+
+    public withStatement(statement: StatementSyntax): ForInStatementSyntax {
+        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._left, this._inKeyword, this._expression, this._closeParenToken, statement);
+    }
+
     private collectTextElements(elements: string[]) {
         this._forKeyword.collectTextElements(elements);
         this._openParenToken.collectTextElements(elements);
@@ -5094,6 +5990,26 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         return new WhileStatementSyntax(whileKeyword, openParenToken, condition, closeParenToken, statement);
     }
 
+    public withWhileKeyword(whileKeyword: ISyntaxToken): WhileStatementSyntax {
+        return this.update(whileKeyword, this._openParenToken, this._condition, this._closeParenToken, this._statement);
+    }
+
+    public withOpenParenToken(openParenToken: ISyntaxToken): WhileStatementSyntax {
+        return this.update(this._whileKeyword, openParenToken, this._condition, this._closeParenToken, this._statement);
+    }
+
+    public withCondition(condition: ExpressionSyntax): WhileStatementSyntax {
+        return this.update(this._whileKeyword, this._openParenToken, condition, this._closeParenToken, this._statement);
+    }
+
+    public withCloseParenToken(closeParenToken: ISyntaxToken): WhileStatementSyntax {
+        return this.update(this._whileKeyword, this._openParenToken, this._condition, closeParenToken, this._statement);
+    }
+
+    public withStatement(statement: StatementSyntax): WhileStatementSyntax {
+        return this.update(this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, statement);
+    }
+
     private collectTextElements(elements: string[]) {
         this._whileKeyword.collectTextElements(elements);
         this._openParenToken.collectTextElements(elements);
@@ -5181,6 +6097,26 @@ class WithStatementSyntax extends StatementSyntax {
         }
 
         return new WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement);
+    }
+
+    public withWithKeyword(withKeyword: ISyntaxToken): WithStatementSyntax {
+        return this.update(withKeyword, this._openParenToken, this._condition, this._closeParenToken, this._statement);
+    }
+
+    public withOpenParenToken(openParenToken: ISyntaxToken): WithStatementSyntax {
+        return this.update(this._withKeyword, openParenToken, this._condition, this._closeParenToken, this._statement);
+    }
+
+    public withCondition(condition: ExpressionSyntax): WithStatementSyntax {
+        return this.update(this._withKeyword, this._openParenToken, condition, this._closeParenToken, this._statement);
+    }
+
+    public withCloseParenToken(closeParenToken: ISyntaxToken): WithStatementSyntax {
+        return this.update(this._withKeyword, this._openParenToken, this._condition, closeParenToken, this._statement);
+    }
+
+    public withStatement(statement: StatementSyntax): WithStatementSyntax {
+        return this.update(this._withKeyword, this._openParenToken, this._condition, this._closeParenToken, statement);
     }
 
     private collectTextElements(elements: string[]) {
@@ -5291,6 +6227,30 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
         return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken);
     }
 
+    public withExportKeyword(exportKeyword: ISyntaxToken): EnumDeclarationSyntax {
+        return this.update(exportKeyword, this._enumKeyword, this._identifier, this._openBraceToken, this._variableDeclarators, this._closeBraceToken);
+    }
+
+    public withEnumKeyword(enumKeyword: ISyntaxToken): EnumDeclarationSyntax {
+        return this.update(this._exportKeyword, enumKeyword, this._identifier, this._openBraceToken, this._variableDeclarators, this._closeBraceToken);
+    }
+
+    public withIdentifier(identifier: ISyntaxToken): EnumDeclarationSyntax {
+        return this.update(this._exportKeyword, this._enumKeyword, identifier, this._openBraceToken, this._variableDeclarators, this._closeBraceToken);
+    }
+
+    public withOpenBraceToken(openBraceToken: ISyntaxToken): EnumDeclarationSyntax {
+        return this.update(this._exportKeyword, this._enumKeyword, this._identifier, openBraceToken, this._variableDeclarators, this._closeBraceToken);
+    }
+
+    public withVariableDeclarators(variableDeclarators: ISeparatedSyntaxList): EnumDeclarationSyntax {
+        return this.update(this._exportKeyword, this._enumKeyword, this._identifier, this._openBraceToken, variableDeclarators, this._closeBraceToken);
+    }
+
+    public withCloseBraceToken(closeBraceToken: ISyntaxToken): EnumDeclarationSyntax {
+        return this.update(this._exportKeyword, this._enumKeyword, this._identifier, this._openBraceToken, this._variableDeclarators, closeBraceToken);
+    }
+
     private collectTextElements(elements: string[]) {
         if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(elements); }
         this._enumKeyword.collectTextElements(elements);
@@ -5371,6 +6331,22 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
         return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression);
     }
 
+    public withLessThanToken(lessThanToken: ISyntaxToken): CastExpressionSyntax {
+        return this.update(lessThanToken, this._type, this._greaterThanToken, this._expression);
+    }
+
+    public withType(type: TypeSyntax): CastExpressionSyntax {
+        return this.update(this._lessThanToken, type, this._greaterThanToken, this._expression);
+    }
+
+    public withGreaterThanToken(greaterThanToken: ISyntaxToken): CastExpressionSyntax {
+        return this.update(this._lessThanToken, this._type, greaterThanToken, this._expression);
+    }
+
+    public withExpression(expression: UnaryExpressionSyntax): CastExpressionSyntax {
+        return this.update(this._lessThanToken, this._type, this._greaterThanToken, expression);
+    }
+
     private collectTextElements(elements: string[]) {
         this._lessThanToken.collectTextElements(elements);
         this._type.collectTextElements(elements);
@@ -5442,6 +6418,18 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
         }
 
         return new ObjectLiteralExpressionSyntax(openBraceToken, propertyAssignments, closeBraceToken);
+    }
+
+    public withOpenBraceToken(openBraceToken: ISyntaxToken): ObjectLiteralExpressionSyntax {
+        return this.update(openBraceToken, this._propertyAssignments, this._closeBraceToken);
+    }
+
+    public withPropertyAssignments(propertyAssignments: ISeparatedSyntaxList): ObjectLiteralExpressionSyntax {
+        return this.update(this._openBraceToken, propertyAssignments, this._closeBraceToken);
+    }
+
+    public withCloseBraceToken(closeBraceToken: ISyntaxToken): ObjectLiteralExpressionSyntax {
+        return this.update(this._openBraceToken, this._propertyAssignments, closeBraceToken);
     }
 
     private collectTextElements(elements: string[]) {
@@ -5522,6 +6510,18 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         }
 
         return new SimplePropertyAssignmentSyntax(propertyName, colonToken, expression);
+    }
+
+    public withPropertyName(propertyName: ISyntaxToken): SimplePropertyAssignmentSyntax {
+        return this.update(propertyName, this._colonToken, this._expression);
+    }
+
+    public withColonToken(colonToken: ISyntaxToken): SimplePropertyAssignmentSyntax {
+        return this.update(this._propertyName, colonToken, this._expression);
+    }
+
+    public withExpression(expression: ExpressionSyntax): SimplePropertyAssignmentSyntax {
+        return this.update(this._propertyName, this._colonToken, expression);
     }
 
     private collectTextElements(elements: string[]) {
@@ -5615,6 +6615,26 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         }
 
         return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block);
+    }
+
+    public withGetKeyword(getKeyword: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
+        return this.update(getKeyword, this._propertyName, this._openParenToken, this._closeParenToken, this._block);
+    }
+
+    public withPropertyName(propertyName: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
+        return this.update(this._getKeyword, propertyName, this._openParenToken, this._closeParenToken, this._block);
+    }
+
+    public withOpenParenToken(openParenToken: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
+        return this.update(this._getKeyword, this._propertyName, openParenToken, this._closeParenToken, this._block);
+    }
+
+    public withCloseParenToken(closeParenToken: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
+        return this.update(this._getKeyword, this._propertyName, this._openParenToken, closeParenToken, this._block);
+    }
+
+    public withBlock(block: BlockSyntax): GetAccessorPropertyAssignmentSyntax {
+        return this.update(this._getKeyword, this._propertyName, this._openParenToken, this._closeParenToken, block);
     }
 
     private collectTextElements(elements: string[]) {
@@ -5716,6 +6736,30 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block);
     }
 
+    public withSetKeyword(setKeyword: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
+        return this.update(setKeyword, this._propertyName, this._openParenToken, this._parameterName, this._closeParenToken, this._block);
+    }
+
+    public withPropertyName(propertyName: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
+        return this.update(this._setKeyword, propertyName, this._openParenToken, this._parameterName, this._closeParenToken, this._block);
+    }
+
+    public withOpenParenToken(openParenToken: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
+        return this.update(this._setKeyword, this._propertyName, openParenToken, this._parameterName, this._closeParenToken, this._block);
+    }
+
+    public withParameterName(parameterName: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
+        return this.update(this._setKeyword, this._propertyName, this._openParenToken, parameterName, this._closeParenToken, this._block);
+    }
+
+    public withCloseParenToken(closeParenToken: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
+        return this.update(this._setKeyword, this._propertyName, this._openParenToken, this._parameterName, closeParenToken, this._block);
+    }
+
+    public withBlock(block: BlockSyntax): SetAccessorPropertyAssignmentSyntax {
+        return this.update(this._setKeyword, this._propertyName, this._openParenToken, this._parameterName, this._closeParenToken, block);
+    }
+
     private collectTextElements(elements: string[]) {
         this._setKeyword.collectTextElements(elements);
         this._propertyName.collectTextElements(elements);
@@ -5804,6 +6848,22 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
         return new FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block);
     }
 
+    public withFunctionKeyword(functionKeyword: ISyntaxToken): FunctionExpressionSyntax {
+        return this.update(functionKeyword, this._identifier, this._callSignature, this._block);
+    }
+
+    public withIdentifier(identifier: ISyntaxToken): FunctionExpressionSyntax {
+        return this.update(this._functionKeyword, identifier, this._callSignature, this._block);
+    }
+
+    public withCallSignature(callSignature: CallSignatureSyntax): FunctionExpressionSyntax {
+        return this.update(this._functionKeyword, this._identifier, callSignature, this._block);
+    }
+
+    public withBlock(block: BlockSyntax): FunctionExpressionSyntax {
+        return this.update(this._functionKeyword, this._identifier, this._callSignature, block);
+    }
+
     private collectTextElements(elements: string[]) {
         this._functionKeyword.collectTextElements(elements);
         if (this._identifier !== null) { this._identifier.collectTextElements(elements); }
@@ -5852,6 +6912,10 @@ class EmptyStatementSyntax extends StatementSyntax {
         return new EmptyStatementSyntax(semicolonToken);
     }
 
+    public withSemicolonToken(semicolonToken: ISyntaxToken): EmptyStatementSyntax {
+        return this.update(semicolonToken);
+    }
+
     private collectTextElements(elements: string[]) {
         this._semicolonToken.collectTextElements(elements);
     }
@@ -5895,6 +6959,10 @@ class SuperExpressionSyntax extends UnaryExpressionSyntax {
         }
 
         return new SuperExpressionSyntax(superKeyword);
+    }
+
+    public withSuperKeyword(superKeyword: ISyntaxToken): SuperExpressionSyntax {
+        return this.update(superKeyword);
     }
 
     private collectTextElements(elements: string[]) {
@@ -5973,6 +7041,22 @@ class TryStatementSyntax extends StatementSyntax {
         }
 
         return new TryStatementSyntax(tryKeyword, block, catchClause, finallyClause);
+    }
+
+    public withTryKeyword(tryKeyword: ISyntaxToken): TryStatementSyntax {
+        return this.update(tryKeyword, this._block, this._catchClause, this._finallyClause);
+    }
+
+    public withBlock(block: BlockSyntax): TryStatementSyntax {
+        return this.update(this._tryKeyword, block, this._catchClause, this._finallyClause);
+    }
+
+    public withCatchClause(catchClause: CatchClauseSyntax): TryStatementSyntax {
+        return this.update(this._tryKeyword, this._block, catchClause, this._finallyClause);
+    }
+
+    public withFinallyClause(finallyClause: FinallyClauseSyntax): TryStatementSyntax {
+        return this.update(this._tryKeyword, this._block, this._catchClause, finallyClause);
     }
 
     private collectTextElements(elements: string[]) {
@@ -6063,6 +7147,26 @@ class CatchClauseSyntax extends SyntaxNode {
         return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block);
     }
 
+    public withCatchKeyword(catchKeyword: ISyntaxToken): CatchClauseSyntax {
+        return this.update(catchKeyword, this._openParenToken, this._identifier, this._closeParenToken, this._block);
+    }
+
+    public withOpenParenToken(openParenToken: ISyntaxToken): CatchClauseSyntax {
+        return this.update(this._catchKeyword, openParenToken, this._identifier, this._closeParenToken, this._block);
+    }
+
+    public withIdentifier(identifier: ISyntaxToken): CatchClauseSyntax {
+        return this.update(this._catchKeyword, this._openParenToken, identifier, this._closeParenToken, this._block);
+    }
+
+    public withCloseParenToken(closeParenToken: ISyntaxToken): CatchClauseSyntax {
+        return this.update(this._catchKeyword, this._openParenToken, this._identifier, closeParenToken, this._block);
+    }
+
+    public withBlock(block: BlockSyntax): CatchClauseSyntax {
+        return this.update(this._catchKeyword, this._openParenToken, this._identifier, this._closeParenToken, block);
+    }
+
     private collectTextElements(elements: string[]) {
         this._catchKeyword.collectTextElements(elements);
         this._openParenToken.collectTextElements(elements);
@@ -6120,6 +7224,14 @@ class FinallyClauseSyntax extends SyntaxNode {
         }
 
         return new FinallyClauseSyntax(finallyKeyword, block);
+    }
+
+    public withFinallyKeyword(finallyKeyword: ISyntaxToken): FinallyClauseSyntax {
+        return this.update(finallyKeyword, this._block);
+    }
+
+    public withBlock(block: BlockSyntax): FinallyClauseSyntax {
+        return this.update(this._finallyKeyword, block);
     }
 
     private collectTextElements(elements: string[]) {
@@ -6186,6 +7298,18 @@ class LabeledStatement extends StatementSyntax {
         }
 
         return new LabeledStatement(identifier, colonToken, statement);
+    }
+
+    public withIdentifier(identifier: ISyntaxToken): LabeledStatement {
+        return this.update(identifier, this._colonToken, this._statement);
+    }
+
+    public withColonToken(colonToken: ISyntaxToken): LabeledStatement {
+        return this.update(this._identifier, colonToken, this._statement);
+    }
+
+    public withStatement(statement: StatementSyntax): LabeledStatement {
+        return this.update(this._identifier, this._colonToken, statement);
     }
 
     private collectTextElements(elements: string[]) {
@@ -6295,6 +7419,34 @@ class DoStatementSyntax extends IterationStatementSyntax {
         return new DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken);
     }
 
+    public withDoKeyword(doKeyword: ISyntaxToken): DoStatementSyntax {
+        return this.update(doKeyword, this._statement, this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, this._semicolonToken);
+    }
+
+    public withStatement(statement: StatementSyntax): DoStatementSyntax {
+        return this.update(this._doKeyword, statement, this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, this._semicolonToken);
+    }
+
+    public withWhileKeyword(whileKeyword: ISyntaxToken): DoStatementSyntax {
+        return this.update(this._doKeyword, this._statement, whileKeyword, this._openParenToken, this._condition, this._closeParenToken, this._semicolonToken);
+    }
+
+    public withOpenParenToken(openParenToken: ISyntaxToken): DoStatementSyntax {
+        return this.update(this._doKeyword, this._statement, this._whileKeyword, openParenToken, this._condition, this._closeParenToken, this._semicolonToken);
+    }
+
+    public withCondition(condition: ExpressionSyntax): DoStatementSyntax {
+        return this.update(this._doKeyword, this._statement, this._whileKeyword, this._openParenToken, condition, this._closeParenToken, this._semicolonToken);
+    }
+
+    public withCloseParenToken(closeParenToken: ISyntaxToken): DoStatementSyntax {
+        return this.update(this._doKeyword, this._statement, this._whileKeyword, this._openParenToken, this._condition, closeParenToken, this._semicolonToken);
+    }
+
+    public withSemicolonToken(semicolonToken: ISyntaxToken): DoStatementSyntax {
+        return this.update(this._doKeyword, this._statement, this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, semicolonToken);
+    }
+
     private collectTextElements(elements: string[]) {
         this._doKeyword.collectTextElements(elements);
         this._statement.collectTextElements(elements);
@@ -6356,6 +7508,14 @@ class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
         return new TypeOfExpressionSyntax(typeOfKeyword, expression);
     }
 
+    public withTypeOfKeyword(typeOfKeyword: ISyntaxToken): TypeOfExpressionSyntax {
+        return this.update(typeOfKeyword, this._expression);
+    }
+
+    public withExpression(expression: ExpressionSyntax): TypeOfExpressionSyntax {
+        return this.update(this._typeOfKeyword, expression);
+    }
+
     private collectTextElements(elements: string[]) {
         this._typeOfKeyword.collectTextElements(elements);
         this._expression.collectTextElements(elements);
@@ -6410,6 +7570,14 @@ class DeleteExpressionSyntax extends UnaryExpressionSyntax {
         }
 
         return new DeleteExpressionSyntax(deleteKeyword, expression);
+    }
+
+    public withDeleteKeyword(deleteKeyword: ISyntaxToken): DeleteExpressionSyntax {
+        return this.update(deleteKeyword, this._expression);
+    }
+
+    public withExpression(expression: ExpressionSyntax): DeleteExpressionSyntax {
+        return this.update(this._deleteKeyword, expression);
     }
 
     private collectTextElements(elements: string[]) {
@@ -6468,6 +7636,14 @@ class VoidExpressionSyntax extends UnaryExpressionSyntax {
         return new VoidExpressionSyntax(voidKeyword, expression);
     }
 
+    public withVoidKeyword(voidKeyword: ISyntaxToken): VoidExpressionSyntax {
+        return this.update(voidKeyword, this._expression);
+    }
+
+    public withExpression(expression: ExpressionSyntax): VoidExpressionSyntax {
+        return this.update(this._voidKeyword, expression);
+    }
+
     private collectTextElements(elements: string[]) {
         this._voidKeyword.collectTextElements(elements);
         this._expression.collectTextElements(elements);
@@ -6522,6 +7698,14 @@ class DebuggerStatementSyntax extends StatementSyntax {
         }
 
         return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken);
+    }
+
+    public withDebuggerKeyword(debuggerKeyword: ISyntaxToken): DebuggerStatementSyntax {
+        return this.update(debuggerKeyword, this._semicolonToken);
+    }
+
+    public withSemicolonToken(semicolonToken: ISyntaxToken): DebuggerStatementSyntax {
+        return this.update(this._debuggerKeyword, semicolonToken);
     }
 
     private collectTextElements(elements: string[]) {
