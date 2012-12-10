@@ -2661,7 +2661,12 @@ function generateUpdateMethod(definition) {
     }
     var result = "";
     result += "\r\n";
-    result += "    public update(";
+    if(definition.children.length <= 1) {
+        result += "    private ";
+    } else {
+        result += "    public ";
+    }
+    result += "update(";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
         result += getSafeName(child) + ": " + getType(child);
@@ -2751,7 +2756,16 @@ function generateRewriter() {
         }
         result += "\r\n";
         result += "    public visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
-        result += "        return node.update(\r\n";
+        if(definition.children.length === 0) {
+            result += "        return node;\r\n";
+            result += "    }\r\n";
+            continue;
+        }
+        if(definition.children.length === 1) {
+            result += "        return node.with" + pascalCase(definition.children[0].name) + "(\r\n";
+        } else {
+            result += "        return node.update(\r\n";
+        }
         for(var j = 0; j < definition.children.length; j++) {
             var child = definition.children[j];
             result += "            ";

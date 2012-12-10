@@ -70,7 +70,7 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
     }
 
     public visitModuleNameModuleReference(node: ModuleNameModuleReferenceSyntax): any {
-        return node.update(
+        return node.withModuleName(
             <NameSyntax>this.visitNode(node.moduleName()));
     }
 
@@ -174,7 +174,7 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
     }
 
     public visitThisExpression(node: ThisExpressionSyntax): any {
-        return node.update(
+        return node.withThisKeyword(
             this.visitToken(node.thisKeyword()));
     }
 
@@ -192,8 +192,7 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
     }
 
     public visitOmittedExpression(node: OmittedExpressionSyntax): any {
-        return node.update(
-);
+        return node;
     }
 
     public visitParenthesizedExpression(node: ParenthesizedExpressionSyntax): any {
@@ -218,7 +217,7 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
     }
 
     public visitIdentifierName(node: IdentifierNameSyntax): any {
-        return node.update(
+        return node.withIdentifier(
             this.visitToken(node.identifier()));
     }
 
@@ -259,7 +258,7 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
     }
 
     public visitPredefinedType(node: PredefinedTypeSyntax): any {
-        return node.update(
+        return node.withKeyword(
             this.visitToken(node.keyword()));
     }
 
@@ -614,12 +613,12 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
     }
 
     public visitEmptyStatement(node: EmptyStatementSyntax): any {
-        return node.update(
+        return node.withSemicolonToken(
             this.visitToken(node.semicolonToken()));
     }
 
     public visitSuperExpression(node: SuperExpressionSyntax): any {
-        return node.update(
+        return node.withSuperKeyword(
             this.visitToken(node.superKeyword()));
     }
 

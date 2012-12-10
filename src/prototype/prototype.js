@@ -8179,6 +8179,9 @@ var PrefixUnaryExpressionSyntax = (function (_super) {
         }
         return new PrefixUnaryExpressionSyntax(kind, operatorToken, operand);
     };
+    PrefixUnaryExpressionSyntax.prototype.withKind = function (kind) {
+        return this.update(kind, this._operatorToken, this._operand);
+    };
     PrefixUnaryExpressionSyntax.prototype.withOperatorToken = function (operatorToken) {
         return this.update(this._kind, operatorToken, this._operand);
     };
@@ -8293,6 +8296,9 @@ var LiteralExpressionSyntax = (function (_super) {
             return this;
         }
         return new LiteralExpressionSyntax(kind, literalToken);
+    };
+    LiteralExpressionSyntax.prototype.withKind = function (kind) {
+        return this.update(kind, this._literalToken);
     };
     LiteralExpressionSyntax.prototype.withLiteralToken = function (literalToken) {
         return this.update(this._kind, literalToken);
@@ -9448,6 +9454,9 @@ var PostfixUnaryExpressionSyntax = (function (_super) {
         }
         return new PostfixUnaryExpressionSyntax(kind, operand, operatorToken);
     };
+    PostfixUnaryExpressionSyntax.prototype.withKind = function (kind) {
+        return this.update(kind, this._operand, this._operatorToken);
+    };
     PostfixUnaryExpressionSyntax.prototype.withOperand = function (operand) {
         return this.update(this._kind, operand, this._operatorToken);
     };
@@ -9773,6 +9782,9 @@ var BinaryExpressionSyntax = (function (_super) {
             return this;
         }
         return new BinaryExpressionSyntax(kind, left, operatorToken, right);
+    };
+    BinaryExpressionSyntax.prototype.withKind = function (kind) {
+        return this.update(kind, this._left, this._operatorToken, this._right);
     };
     BinaryExpressionSyntax.prototype.withLeft = function (left) {
         return this.update(this._kind, left, this._operatorToken, this._right);
@@ -13754,7 +13766,7 @@ var SyntaxRewriter = (function () {
         return node.update(this.visitToken(node.moduleKeyword()), this.visitToken(node.openParenToken()), this.visitToken(node.stringLiteral()), this.visitToken(node.closeParenToken()));
     };
     SyntaxRewriter.prototype.visitModuleNameModuleReference = function (node) {
-        return node.update(this.visitNode(node.moduleName()));
+        return node.withModuleName(this.visitNode(node.moduleName()));
     };
     SyntaxRewriter.prototype.visitImportDeclaration = function (node) {
         return node.update(this.visitToken(node.importKeyword()), this.visitToken(node.identifier()), this.visitToken(node.equalsToken()), this.visitNode(node.moduleReference()), this.visitToken(node.semicolonToken()));
@@ -13793,7 +13805,7 @@ var SyntaxRewriter = (function () {
         return node.update(node.kind(), this.visitToken(node.operatorToken()), this.visitNode(node.operand()));
     };
     SyntaxRewriter.prototype.visitThisExpression = function (node) {
-        return node.update(this.visitToken(node.thisKeyword()));
+        return node.withThisKeyword(this.visitToken(node.thisKeyword()));
     };
     SyntaxRewriter.prototype.visitLiteralExpression = function (node) {
         return node.update(node.kind(), this.visitToken(node.literalToken()));
@@ -13802,7 +13814,7 @@ var SyntaxRewriter = (function () {
         return node.update(this.visitToken(node.openBracketToken()), this.visitSeparatedList(node.expressions()), this.visitToken(node.closeBracketToken()));
     };
     SyntaxRewriter.prototype.visitOmittedExpression = function (node) {
-        return node.update();
+        return node;
     };
     SyntaxRewriter.prototype.visitParenthesizedExpression = function (node) {
         return node.update(this.visitToken(node.openParenToken()), this.visitNode(node.expression()), this.visitToken(node.closeParenToken()));
@@ -13814,7 +13826,7 @@ var SyntaxRewriter = (function () {
         return node.update(this.visitNode(node.callSignature()), this.visitToken(node.equalsGreaterThanToken()), this.visitNode(node.body()));
     };
     SyntaxRewriter.prototype.visitIdentifierName = function (node) {
-        return node.update(this.visitToken(node.identifier()));
+        return node.withIdentifier(this.visitToken(node.identifier()));
     };
     SyntaxRewriter.prototype.visitQualifiedName = function (node) {
         return node.update(this.visitNode(node.left()), this.visitToken(node.dotToken()), this.visitNode(node.right()));
@@ -13832,7 +13844,7 @@ var SyntaxRewriter = (function () {
         return node.update(this.visitNode(node.type()), this.visitToken(node.openBracketToken()), this.visitToken(node.closeBracketToken()));
     };
     SyntaxRewriter.prototype.visitPredefinedType = function (node) {
-        return node.update(this.visitToken(node.keyword()));
+        return node.withKeyword(this.visitToken(node.keyword()));
     };
     SyntaxRewriter.prototype.visitTypeAnnotation = function (node) {
         return node.update(this.visitToken(node.colonToken()), this.visitNode(node.type()));
@@ -13964,10 +13976,10 @@ var SyntaxRewriter = (function () {
         return node.update(this.visitToken(node.functionKeyword()), node.identifier() === null ? null : this.visitToken(node.identifier()), this.visitNode(node.callSignature()), this.visitNode(node.block()));
     };
     SyntaxRewriter.prototype.visitEmptyStatement = function (node) {
-        return node.update(this.visitToken(node.semicolonToken()));
+        return node.withSemicolonToken(this.visitToken(node.semicolonToken()));
     };
     SyntaxRewriter.prototype.visitSuperExpression = function (node) {
-        return node.update(this.visitToken(node.superKeyword()));
+        return node.withSuperKeyword(this.visitToken(node.superKeyword()));
     };
     SyntaxRewriter.prototype.visitTryStatement = function (node) {
         return node.update(this.visitToken(node.tryKeyword()), this.visitNode(node.block()), this.visitNode(node.catchClause()), this.visitNode(node.finallyClause()));

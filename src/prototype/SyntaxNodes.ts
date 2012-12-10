@@ -206,7 +206,7 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         return this._moduleName;
     }
 
-    public update(moduleName: NameSyntax) {
+    private update(moduleName: NameSyntax) {
         if (this._moduleName === moduleName) {
             return this;
         }
@@ -1510,7 +1510,7 @@ class ThisExpressionSyntax extends UnaryExpressionSyntax {
         return this._thisKeyword;
     }
 
-    public update(thisKeyword: ISyntaxToken) {
+    private update(thisKeyword: ISyntaxToken) {
         if (this._thisKeyword === thisKeyword) {
             return this;
         }
@@ -1707,7 +1707,7 @@ class OmittedExpressionSyntax extends ExpressionSyntax {
         return true;
     }
 
-    public update() {
+    private update() {
         return this;
     }
 
@@ -2002,7 +2002,7 @@ class IdentifierNameSyntax extends NameSyntax {
         return this._identifier;
     }
 
-    public update(identifier: ISyntaxToken) {
+    private update(identifier: ISyntaxToken) {
         if (this._identifier === identifier) {
             return this;
         }
@@ -2475,7 +2475,7 @@ class PredefinedTypeSyntax extends TypeSyntax {
         return this._keyword;
     }
 
-    public update(keyword: ISyntaxToken) {
+    private update(keyword: ISyntaxToken) {
         if (this._keyword === keyword) {
             return this;
         }
@@ -6920,7 +6920,7 @@ class EmptyStatementSyntax extends StatementSyntax {
         return this._semicolonToken;
     }
 
-    public update(semicolonToken: ISyntaxToken) {
+    private update(semicolonToken: ISyntaxToken) {
         if (this._semicolonToken === semicolonToken) {
             return this;
         }
@@ -6969,7 +6969,7 @@ class SuperExpressionSyntax extends UnaryExpressionSyntax {
         return this._superKeyword;
     }
 
-    public update(superKeyword: ISyntaxToken) {
+    private update(superKeyword: ISyntaxToken) {
         if (this._superKeyword === superKeyword) {
             return this;
         }
