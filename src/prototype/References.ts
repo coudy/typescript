@@ -28,9 +28,6 @@
 ///<reference path='SeparatedSyntaxList.ts' />
 ///<reference path='SlidingWindow.ts' />
 
-// Parser depends on SlidingWindow.
-///<reference path='Parser.ts' />
-
 // Scanner depends on SlidingWindow.
 ///<reference path='Scanner.ts' />
 
@@ -56,6 +53,9 @@
 
 // Emitter depends on SyntaxRewriter
 ///<reference path='Emitter.ts' />
+
+// Parser depends on SlidingWindow and SyntaxRewriter.
+///<reference path='Parser.ts' />
 
 // SyntaxRealizer depends on SyntaxRewriter
 ///<reference path='SyntaxRealizer.ts' />

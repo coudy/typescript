@@ -6,7 +6,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "all.references.ts";
+    // "SkippedTokens";
     undefined;
 
 class Program {

@@ -11,4 +11,5 @@ interface ISyntaxTriviaList extends ISyntaxElement {
     hasNewLine(): bool;
 
     last(): ISyntaxTrivia;
+    toArray(): ISyntaxTrivia[];
 }

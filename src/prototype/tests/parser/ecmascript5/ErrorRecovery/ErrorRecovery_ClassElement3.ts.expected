@@ -1,48 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "BarToken",
-            "width": 1,
-            "fullWidth": 6,
-            "text": "|",
-            "hasLeadingTrivia": true,
-            "hasTrailingTrivia": true,
-            "hasTrailingNewLineTrivia": true,
-            "leadingTrivia": [
-                {
-                    "kind": "WhitespaceTrivia",
-                    "text": "   "
-                }
-            ],
-            "trailingTrivia": [
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\r\n"
-                }
-            ]
-        },
-        {
-            "kind": "BarToken",
-            "width": 1,
-            "fullWidth": 6,
-            "text": "|",
-            "hasLeadingTrivia": true,
-            "hasTrailingTrivia": true,
-            "hasTrailingNewLineTrivia": true,
-            "leadingTrivia": [
-                {
-                    "kind": "WhitespaceTrivia",
-                    "text": "   "
-                }
-            ],
-            "trailingTrivia": [
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\r\n"
-                }
-            ]
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 15,
@@ -108,11 +64,23 @@
                 "_openBraceToken": {
                     "kind": "OpenBraceToken",
                     "width": 1,
-                    "fullWidth": 3,
+                    "fullWidth": 9,
                     "text": "{",
                     "hasTrailingTrivia": true,
                     "hasTrailingNewLineTrivia": true,
                     "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "text": "   "
+                        },
+                        {
+                            "kind": "SkippedTextTrivia",
+                            "text": "|"
+                        },
                         {
                             "kind": "NewLineTrivia",
                             "text": "\r\n"
@@ -175,7 +143,7 @@
                         "_closeBraceToken": {
                             "kind": "CloseBraceToken",
                             "width": 1,
-                            "fullWidth": 6,
+                            "fullWidth": 12,
                             "text": "}",
                             "hasLeadingTrivia": true,
                             "hasTrailingTrivia": true,
@@ -187,6 +155,18 @@
                                 }
                             ],
                             "trailingTrivia": [
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "text": "\r\n"
+                                },
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": "   "
+                                },
+                                {
+                                    "kind": "SkippedTextTrivia",
+                                    "text": "|"
+                                },
                                 {
                                     "kind": "NewLineTrivia",
                                     "text": "\r\n"

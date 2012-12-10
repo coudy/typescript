@@ -1,25 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "CloseBraceToken",
-            "width": 1,
-            "fullWidth": 3,
-            "text": "}",
-            "hasTrailingTrivia": true,
-            "hasTrailingNewLineTrivia": true,
-            "trailingTrivia": [
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\r\n"
-                }
-            ]
-        },
-        {
-            "kind": "CloseBraceToken",
-            "width": 1,
-            "text": "}"
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 13,
@@ -69,11 +48,19 @@
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
                     "width": 1,
-                    "fullWidth": 3,
+                    "fullWidth": 6,
                     "text": ";",
                     "hasTrailingTrivia": true,
                     "hasTrailingNewLineTrivia": true,
                     "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "SkippedTextTrivia",
+                            "text": "}"
+                        },
                         {
                             "kind": "NewLineTrivia",
                             "text": "\r\n"
@@ -109,7 +96,7 @@
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
                     "width": 1,
-                    "fullWidth": 3,
+                    "fullWidth": 4,
                     "text": ";",
                     "hasTrailingTrivia": true,
                     "hasTrailingNewLineTrivia": true,
@@ -117,6 +104,10 @@
                         {
                             "kind": "NewLineTrivia",
                             "text": "\r\n"
+                        },
+                        {
+                            "kind": "SkippedTextTrivia",
+                            "text": "}"
                         }
                     ]
                 }

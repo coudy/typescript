@@ -1,11 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "BarToken",
-            "width": 1,
-            "text": "|"
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 13,
@@ -63,7 +56,15 @@
                             {
                                 "kind": "CommaToken",
                                 "width": 1,
-                                "text": ","
+                                "fullWidth": 2,
+                                "text": ",",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "SkippedTextTrivia",
+                                        "text": "|"
+                                    }
+                                ]
                             }
                         ],
                         "_closeParenToken": {

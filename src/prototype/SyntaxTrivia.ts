@@ -46,7 +46,8 @@ module SyntaxTrivia {
         Debug.assert(kind === SyntaxKind.MultiLineCommentTrivia ||
                      kind === SyntaxKind.NewLineTrivia ||
                      kind === SyntaxKind.SingleLineCommentTrivia ||
-                     kind === SyntaxKind.WhitespaceTrivia);
+                     kind === SyntaxKind.WhitespaceTrivia ||
+                     kind === SyntaxKind.SkippedTextTrivia);
         Debug.assert(text.length > 0);
         return new SimpleSyntaxTrivia(kind, text);
     }

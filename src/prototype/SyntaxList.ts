@@ -138,7 +138,7 @@ module SyntaxList {
         }
 
         public toArray(): SyntaxNode[] {
-            return (<any>this.nodes).slice();
+            return this.nodes.slice(0);
         }
 
         public firstToken(): ISyntaxToken {

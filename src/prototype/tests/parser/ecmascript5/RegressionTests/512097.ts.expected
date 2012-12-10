@@ -1,29 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "CloseBraceToken",
-            "width": 1,
-            "fullWidth": 68,
-            "text": "}",
-            "hasTrailingTrivia": true,
-            "hasTrailingCommentTrivia": true,
-            "hasTrailingNewLineTrivia": true,
-            "trailingTrivia": [
-                {
-                    "kind": "WhitespaceTrivia",
-                    "text": " "
-                },
-                {
-                    "kind": "SingleLineCommentTrivia",
-                    "text": "// After this point, no useful parsing occurs in the entire file"
-                },
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\r\n"
-                }
-            ]
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 13,
@@ -156,13 +131,31 @@
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
                     "width": 1,
-                    "fullWidth": 2,
+                    "fullWidth": 70,
                     "text": ";",
                     "hasTrailingTrivia": true,
+                    "hasTrailingCommentTrivia": true,
+                    "hasTrailingNewLineTrivia": true,
                     "trailingTrivia": [
                         {
                             "kind": "WhitespaceTrivia",
                             "text": " "
+                        },
+                        {
+                            "kind": "SkippedTextTrivia",
+                            "text": "}"
+                        },
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "text": " "
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "// After this point, no useful parsing occurs in the entire file"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
                         }
                     ]
                 }

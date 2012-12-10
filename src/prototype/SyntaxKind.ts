@@ -11,6 +11,7 @@ enum SyntaxKind {
     NewLineTrivia,
     MultiLineCommentTrivia,
     SingleLineCommentTrivia,
+    SkippedTextTrivia,
 
     // Tokens
     IdentifierNameToken,

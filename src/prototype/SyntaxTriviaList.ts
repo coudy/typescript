@@ -50,6 +50,10 @@ module SyntaxTriviaList {
         }
 
         public collectTextElements(elements: string[]): void { collectTextElements(elements, this); }
+
+        public toArray(): ISyntaxTrivia[] {
+            return [];
+        }
     }
 
     export var empty: ISyntaxTriviaList = new EmptySyntaxTriviaList();
@@ -111,6 +115,10 @@ module SyntaxTriviaList {
         }
 
         public collectTextElements(elements: string[]): void { collectTextElements(elements, this); }
+
+        public toArray(): ISyntaxTrivia[] {
+            return [this.item];
+        }
     }
 
     class NormalSyntaxTriviaList implements ISyntaxTriviaList {
@@ -149,7 +157,7 @@ module SyntaxTriviaList {
 
             return this.trivia[index];
         }
-
+        
         public last(): ISyntaxTrivia {
             return this.trivia[this.trivia.length - 1];
         }
@@ -181,6 +189,10 @@ module SyntaxTriviaList {
         }
 
         public collectTextElements(elements: string[]): void { collectTextElements(elements, this); }
+
+        public toArray(): ISyntaxTrivia[] {
+            return this.trivia.slice(0);
+        }
     }
 
     export function create(trivia: ISyntaxTrivia[]): ISyntaxTriviaList {

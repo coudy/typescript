@@ -5,11 +5,11 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
         return token;
     }
 
-    private visitNode(node: SyntaxNode): SyntaxNode {
+    public visitNode(node: SyntaxNode): SyntaxNode {
         return node === null ? null : node.accept1(this);
     }
 
-    private visitList(list: ISyntaxList): ISyntaxList {
+    public visitList(list: ISyntaxList): ISyntaxList {
         var newItems: SyntaxNode[] = null;
 
         for (var i = 0, n = list.count(); i < n; i++) {
@@ -32,7 +32,7 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
         return newItems === null ? list : SyntaxList.create(newItems);
     }
 
-    private visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {
+    public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {
         var newItems: any[] = null;
 
         for (var i = 0, n = list.count(); i < n; i++) {
