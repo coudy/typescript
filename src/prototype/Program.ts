@@ -6,7 +6,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "SkippedTokens";
+    "Module4.ts";
     undefined;
 
 class Program {

@@ -58,6 +58,9 @@
 ///<reference path='Parser.ts' />
 
 // SyntaxRealizer depends on SyntaxRewriter
+///<reference path='SyntaxIndenter.ts' />
+
+// SyntaxRealizer depends on SyntaxRewriter
 ///<reference path='SyntaxRealizer.ts' />
 
 ///<reference path='SyntaxToken.ts' />

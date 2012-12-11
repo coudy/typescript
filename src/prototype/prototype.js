@@ -12603,37 +12603,6 @@ var SyntaxRewriter = (function () {
     };
     return SyntaxRewriter;
 })();
-var AdjustIndentationRewriter = (function (_super) {
-    __extends(AdjustIndentationRewriter, _super);
-    function AdjustIndentationRewriter(indentationTrivia) {
-        _super.call(this);
-        this.lastTriviaWasNewLine = true;
-        this.indentationTrivia = indentationTrivia;
-    }
-    AdjustIndentationRewriter.prototype.visitToken = function (token) {
-        var result = token;
-        if(this.lastTriviaWasNewLine) {
-            result = token.withLeadingTrivia(this.adjustIndentation(token.leadingTrivia()));
-        }
-        var trailingTrivia = token.trailingTrivia();
-        this.lastTriviaWasNewLine = trailingTrivia.count() > 0 && trailingTrivia.last().kind() === 5 /* NewLineTrivia */ ;
-        return result;
-    };
-    AdjustIndentationRewriter.prototype.adjustIndentation = function (triviaList) {
-        var result = [
-            this.indentationTrivia
-        ];
-        for(var i = 0, n = triviaList.count(); i < n; i++) {
-            var trivia = triviaList.syntaxTriviaAt(i);
-            result.push(trivia);
-            if(trivia.kind() === 5 /* NewLineTrivia */ ) {
-                result.push(this.indentationTrivia);
-            }
-        }
-        return SyntaxTriviaList.create(result);
-    };
-    return AdjustIndentationRewriter;
-})(SyntaxRewriter);
 var Emitter = (function (_super) {
     __extends(Emitter, _super);
     function Emitter(syntaxOnly) {
@@ -12688,23 +12657,13 @@ var Emitter = (function (_super) {
             }
         }
     }
-    Emitter.prototype.adjustNodeIndentation = function (node) {
-        var nestingOffset = this.outputNestingLevel - this.inputNestingLevel;
-        if(nestingOffset <= 0) {
-            return node;
-        }
-        var indentation = this.createIndentationTrivia();
-        return node.accept1(new AdjustIndentationRewriter(indentation));
-    };
     Emitter.prototype.adjustListIndentation = function (nodes) {
-        var _this = this;
         var nestingOffset = this.outputNestingLevel - this.inputNestingLevel;
         if(nestingOffset <= 0) {
             return nodes;
         }
-        return ArrayUtilities.select(nodes, function (n) {
-            return _this.adjustNodeIndentation(n);
-        });
+        var indentation = this.createIndentationTrivia();
+        return SyntaxIndenter.indentNodes(nodes, true, indentation);
     };
     Emitter.prototype.visitModuleDeclaration = function (node) {
         var _this = this;
@@ -15607,6 +15566,49 @@ var Parser = (function (_super) {
     };
     return Parser;
 })(SlidingWindow);
+var SyntaxIndenter = (function (_super) {
+    __extends(SyntaxIndenter, _super);
+    function SyntaxIndenter(indentFirstToken, indentationTrivia) {
+        _super.call(this);
+        this.lastTriviaWasNewLine = true;
+        this.lastTriviaWasNewLine = indentFirstToken;
+        this.indentationTrivia = indentationTrivia;
+    }
+    SyntaxIndenter.prototype.visitToken = function (token) {
+        var result = token;
+        if(this.lastTriviaWasNewLine) {
+            result = token.withLeadingTrivia(this.adjustIndentation(token.leadingTrivia()));
+        }
+        var trailingTrivia = token.trailingTrivia();
+        this.lastTriviaWasNewLine = trailingTrivia.count() > 0 && trailingTrivia.last().kind() === 5 /* NewLineTrivia */ ;
+        return result;
+    };
+    SyntaxIndenter.prototype.adjustIndentation = function (triviaList) {
+        var result = [
+            this.indentationTrivia
+        ];
+        for(var i = 0, n = triviaList.count(); i < n; i++) {
+            var trivia = triviaList.syntaxTriviaAt(i);
+            result.push(trivia);
+            if(trivia.kind() === 5 /* NewLineTrivia */ ) {
+                result.push(this.indentationTrivia);
+            }
+        }
+        return SyntaxTriviaList.create(result);
+    };
+    SyntaxIndenter.indentNode = function indentNode(node, indentFirstToken, indentTrivia) {
+        var indenter = new SyntaxIndenter(indentFirstToken, indentTrivia);
+        return node.accept1(indenter);
+    }
+    SyntaxIndenter.indentNodes = function indentNodes(nodes, indentFirstToken, indentTrivia) {
+        var indenter = new SyntaxIndenter(indentFirstToken, indentTrivia);
+        var result = ArrayUtilities.select(nodes, function (n) {
+            return n.accept1(indenter);
+        });
+        return result;
+    }
+    return SyntaxIndenter;
+})(SyntaxRewriter);
 var SyntaxRealizer = (function (_super) {
     __extends(SyntaxRealizer, _super);
     function SyntaxRealizer() {
@@ -45808,7 +45810,8 @@ var expectedTop1000Failures = {
     "JSFile800\\fedex_com\\InstantInvite3.js": true
 };
 var stringTable = new StringTable();
-var specificFile = undefined;
+var specificFile = "Module4.ts";
+undefined;
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {

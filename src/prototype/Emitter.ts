@@ -1,97 +1,5 @@
 ///<reference path='References.ts' />
 
-//class FullStartNormalizer extends SyntaxRewriter {
-//    private currentFullStart: number;
-
-//    constructor(initialFullStart: number) {
-//        super();
-//        this.currentFullStart = initialFullStart;
-//    }
-
-//    private visitTriviaList(list: ISyntaxTriviaList): ISyntaxTriviaList {
-//        var newTriviaList: ISyntaxTrivia[] = null;
-        
-//        for (var i = 0, n = list.count(); i < n; i++) {
-//            var trivia = list.syntaxTriviaAt(i);
-//            var newTrivia = trivia.withFullStart(this.currentFullStart);
-
-//            if (newTrivia !== trivia && newTriviaList === null) {
-//                newTriviaList = [];
-//                for (var j = 0; j < i; j++) {
-//                    newTriviaList.push(list.syntaxTriviaAt(j));
-//                }
-//            }
-
-//            if (newTriviaList) {
-//                newTriviaList.push(newTrivia);
-//            }
-
-//            this.currentFullStart += trivia.fullWidth();
-//        }
-
-//        return newTriviaList === null
-//            ? list
-//            : SyntaxTriviaList.create(newTriviaList);
-//    }
-
-//    public visitToken(token: ISyntaxToken): ISyntaxToken {
-//        var tokenFullStart = this.currentFullStart;
-//        var leadingTrivia = this.visitTriviaList(token.leadingTrivia());
-
-//        this.currentFullStart += token.width();
-//        var trailingTrivia = this.visitTriviaList(token.trailingTrivia());
-
-//        if (token.leadingTrivia() === leadingTrivia &&
-//            token.fullStart() === tokenFullStart &&
-//            token.trailingTrivia() === trailingTrivia) {
-//            return token;
-//        }
-
-//        return token.withFullStart(tokenFullStart).withLeadingTrivia(leadingTrivia).withTrailingTrivia(trailingTrivia);
-//    }
-//}
-
-class AdjustIndentationRewriter extends SyntaxRewriter {
-    private lastTriviaWasNewLine = true;
-    private indentationTrivia: ISyntaxTrivia;
-    
-    constructor(indentationTrivia: ISyntaxTrivia) {
-        super();
-        this.indentationTrivia = indentationTrivia;
-    }
-
-    visitToken(token: ISyntaxToken): ISyntaxToken {
-        var result = token;
-        if (this.lastTriviaWasNewLine) {
-            // have to add our indentation to every line that this token hits.
-            result = token.withLeadingTrivia(this.adjustIndentation(token.leadingTrivia()));
-        }
-
-        var trailingTrivia = token.trailingTrivia();
-        this.lastTriviaWasNewLine = 
-            trailingTrivia.count() > 0 && trailingTrivia.last().kind() === SyntaxKind.NewLineTrivia;
-
-        return result;
-    }
-
-    private adjustIndentation(triviaList: ISyntaxTriviaList): ISyntaxTriviaList {
-        var result = [this.indentationTrivia];
-
-        for (var i = 0, n = triviaList.count(); i < n; i++) {
-            var trivia = triviaList.syntaxTriviaAt(i);
-            result.push(trivia);
-
-            if (trivia.kind() === SyntaxKind.NewLineTrivia) {
-                // We hit a newline processing the trivia.  We need to add the indentation to the 
-                // next line as well.
-                result.push(this.indentationTrivia);
-            }
-        }
-
-        return SyntaxTriviaList.create(result);
-    }
-}
-
 class Emitter extends SyntaxRewriter {
     private static spacesPerNestingLevel = 4;
 
@@ -167,15 +75,15 @@ class Emitter extends SyntaxRewriter {
         }
     }
 
-    private adjustNodeIndentation(node: SyntaxNode) {
-        var nestingOffset = this.outputNestingLevel - this.inputNestingLevel;
-        if (nestingOffset <= 0) {
-            return node;
-        }
+    //private adjustNodeIndentation(node: SyntaxNode) {
+    //    var nestingOffset = this.outputNestingLevel - this.inputNestingLevel;
+    //    if (nestingOffset <= 0) {
+    //        return node;
+    //    }
 
-        var indentation = this.createIndentationTrivia();
-        return node.accept1(new AdjustIndentationRewriter(indentation));
-    }
+    //    var indentation = this.createIndentationTrivia();
+    //    return node.accept1(new AdjustIndentationRewriter(indentation));
+    //}
 
     private adjustListIndentation(nodes: SyntaxNode[]): SyntaxNode[] {
         var nestingOffset = this.outputNestingLevel - this.inputNestingLevel;
@@ -183,7 +91,8 @@ class Emitter extends SyntaxRewriter {
             return nodes;
         }
 
-        return ArrayUtilities.select(nodes, n => this.adjustNodeIndentation(n));
+        var indentation = this.createIndentationTrivia();
+        return SyntaxIndenter.indentNodes(nodes, /*indentFirstToken:*/ true, indentation);
     }
 
     private visitModuleDeclaration(node: ModuleDeclarationSyntax): ModuleElementSyntax[] {
