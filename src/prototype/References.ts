@@ -10,6 +10,7 @@
 ///<reference path='Errors.ts' />
 ///<reference path='Contract.ts' />
 ///<reference path='Hash.ts' />
+///<reference path='HashTable.ts' />
 ///<reference path='IntegerUtilities.ts' />
 ///<reference path='IEnvironment.ts' />
 ///<reference path='ISeparatedSyntaxList.ts' />

@@ -6,8 +6,8 @@
         "var M;",
         "(function(M) {",
         "    (function(a) {",
-        "        return 1;",
-        "        });",
+        "    return 1;",
+        "});",
         "})(M||(M={}));",
         ""
     ],
@@ -140,10 +140,6 @@
                                 "text": "}",
                                 "hasLeadingTrivia": true,
                                 "leadingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": ""
-                                    },
                                     {
                                         "kind": "WhitespaceTrivia",
                                         "text": ""
@@ -372,14 +368,14 @@
                                                                 "kind": "IdentifierNameToken",
                                                                 "keywordKind": "ReturnKeyword",
                                                                 "width": 6,
-                                                                "fullWidth": 15,
+                                                                "fullWidth": 11,
                                                                 "text": "return",
                                                                 "hasLeadingTrivia": true,
                                                                 "hasTrailingTrivia": true,
                                                                 "leadingTrivia": [
                                                                     {
                                                                         "kind": "WhitespaceTrivia",
-                                                                        "text": "    "
+                                                                        "text": ""
                                                                     },
                                                                     {
                                                                         "kind": "WhitespaceTrivia",
@@ -420,17 +416,12 @@
                                                     "_closeBraceToken": {
                                                         "kind": "CloseBraceToken",
                                                         "width": 1,
-                                                        "fullWidth": 9,
                                                         "text": "}",
                                                         "hasLeadingTrivia": true,
                                                         "leadingTrivia": [
                                                             {
                                                                 "kind": "WhitespaceTrivia",
-                                                                "text": "    "
-                                                            },
-                                                            {
-                                                                "kind": "WhitespaceTrivia",
-                                                                "text": "    "
+                                                                "text": ""
                                                             }
                                                         ]
                                                     }

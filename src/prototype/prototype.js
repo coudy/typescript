@@ -823,10 +823,123 @@ var Hash = (function () {
     }
     return Hash;
 })();
+var HashTableEntry = (function () {
+    function HashTableEntry(Value, HashCode, Next) {
+        this.Value = Value;
+        this.HashCode = HashCode;
+        this.Next = Next;
+    }
+    return HashTableEntry;
+})();
+var HashTable = (function () {
+    function HashTable(capacity, hash, equals) {
+        if (typeof capacity === "undefined") { capacity = 256; }
+        if (typeof hash === "undefined") { hash = null; }
+        if (typeof equals === "undefined") { equals = null; }
+        this.entries = [];
+        this.count = 0;
+        var size = Hash.getPrime(capacity);
+        this.hash = hash;
+        this.equals = equals;
+        this.entries = ArrayUtilities.createArray(size);
+    }
+    HashTable.prototype.addValue = function (value) {
+        var hashCode = this.hash === null ? value.hashCode() : this.hash(value);
+        hashCode = hashCode % 2147483647;
+        var entry = this.findEntry(value, hashCode);
+        if(entry !== null) {
+            return entry.Value;
+        }
+        return this.addEntry(value, hashCode);
+    };
+    HashTable.prototype.findEntry = function (value, hashCode) {
+        for(var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
+            if(e.HashCode === hashCode) {
+                var equals = this.equals === null ? value === e.Value : this.equals(value, e.Value);
+                if(equals) {
+                    return e;
+                }
+            }
+        }
+        return null;
+    };
+    HashTable.prototype.addEntry = function (value, hashCode) {
+        var index = hashCode % this.entries.length;
+        var e = new HashTableEntry(value, hashCode, this.entries[index]);
+        this.entries[index] = e;
+        if(this.count === this.entries.length) {
+            this.grow();
+        }
+        this.count++;
+        return e.Value;
+    };
+    HashTable.prototype.dumpStats = function () {
+        var standardOut = Environment.standardOut;
+        standardOut.WriteLine("----------------------");
+        standardOut.WriteLine("Hash table stats");
+        standardOut.WriteLine("Count            : " + this.count);
+        standardOut.WriteLine("Entries Length   : " + this.entries.length);
+        var occupiedSlots = 0;
+        for(var i = 0; i < this.entries.length; i++) {
+            if(this.entries[i] !== null) {
+                occupiedSlots++;
+            }
+        }
+        standardOut.WriteLine("Occupied slots   : " + occupiedSlots);
+        standardOut.WriteLine("Avg Length/Slot  : " + (this.count / occupiedSlots));
+        standardOut.WriteLine("----------------------");
+    };
+    HashTable.prototype.grow = function () {
+        var newSize = Hash.expandPrime(this.entries.length);
+        var oldEntries = this.entries;
+        var newEntries = ArrayUtilities.createArray(newSize);
+        this.entries = newEntries;
+        for(var i = 0; i < oldEntries.length; i++) {
+            var e = oldEntries[i];
+            while(e !== null) {
+                var newIndex = e.HashCode % newSize;
+                var tmp = e.Next;
+                e.Next = newEntries[newIndex];
+                newEntries[newIndex] = e;
+                e = tmp;
+            }
+        }
+    };
+    HashTable.textCharArrayEquals = function textCharArrayEquals(text, array, start, length) {
+        if(text.length !== length) {
+            return false;
+        }
+        var s = start;
+        for(var i = 0; i < text.length; i++) {
+            if(text.charCodeAt(i) !== array[s]) {
+                return false;
+            }
+            s++;
+        }
+        return true;
+    }
+    return HashTable;
+})();
 var IntegerUtilities = (function () {
     function IntegerUtilities() { }
     IntegerUtilities.integerDivide = function integerDivide(numerator, denominator) {
         return (numerator / denominator) >> 0;
+    }
+    IntegerUtilities.integerMultiplyLow32Bits = function integerMultiplyLow32Bits(n1, n2) {
+        var n1Low16 = n1 & 65535;
+        var n1High16 = n1 >>> 16;
+        var n2Low16 = n2 & 65535;
+        var n2High16 = n2 >>> 16;
+        var resultLow32 = (((n1 & 4294901760) * n2) >>> 0) + (((n1 & 65535) * n2) >>> 0) >>> 0;
+        return resultLow32;
+    }
+    IntegerUtilities.integerMultiplyHigh32Bits = function integerMultiplyHigh32Bits(n1, n2) {
+        var n1Low16 = n1 & 65535;
+        var n1High16 = n1 >>> 16;
+        var n2Low16 = n2 & 65535;
+        var n2High16 = n2 >>> 16;
+        var resultHigh32 = n1High16 * n2High16 + ((((n1Low16 * n2Low16) >>> 17) + n1Low16 * n2High16) >>> 15);
+        return resultHigh32;
     }
     return IntegerUtilities;
 })();
@@ -2949,17 +3062,16 @@ var Strings = (function () {
     return Strings;
 })();
 var StringTableEntry = (function () {
-    function StringTableEntry(text, hashCode, next) {
-        this.Text = text;
-        this.HashCode = hashCode;
-        this.Next = next;
+    function StringTableEntry(Text, HashCode, Next) {
+        this.Text = Text;
+        this.HashCode = HashCode;
+        this.Next = Next;
     }
     return StringTableEntry;
 })();
 var StringTable = (function () {
-    function StringTable(capacity, nested) {
+    function StringTable(capacity) {
         if (typeof capacity === "undefined") { capacity = 256; }
-        if (typeof nested === "undefined") { nested = null; }
         this.entries = [];
         this.count = 0;
         var size = Hash.getPrime(capacity);
@@ -45932,8 +46044,7 @@ var expectedTop1000Failures = {
     "JSFile800\\fedex_com\\InstantInvite3.js": true
 };
 var stringTable = new StringTable();
-var specificFile = "ArrowFunctionInExpressionStatement2";
-undefined;
+var specificFile = undefined;
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {

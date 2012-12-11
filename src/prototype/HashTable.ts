@@ -1,48 +1,61 @@
 ///<reference path='References.ts' />
 
-class StringTableEntry {
-    constructor(public Text: string,
+class HashTableEntry {
+    constructor(public Value: any,
                 public HashCode: number,
-                public Next: StringTableEntry) {
+                public Next: HashTableEntry) {
     }
 }
 
-class StringTable {
-    private entries: StringTableEntry[] = [];
+class HashTable {
+    private entries: HashTableEntry[] = [];
     private count: number = 0;
+    private hash: (v: any) => number;
+    private equals: (v1: any, v2: any) => bool;
 
-    constructor(capacity: number = 256) {
+    constructor(capacity: number = 256, hash: (v: any) => number = null, equals: (v1: any, v2: any) => bool = null) {
         var size = Hash.getPrime(capacity);
+        this.hash = hash;
+        this.equals = equals;
         this.entries = ArrayUtilities.createArray(size);
     }
 
-    public addCharArray(key: number[], start: number, len: number): string {
+    public addValue(value: any): string {
         // Compute the hash for this key.  Also ensure that it's non negative.
-        var hashCode = Hash.computeMurmur2CharArrayHashCode(key, start, len) % 0x7FFFFFFF;
+        var hashCode = this.hash === null
+            ? value.hashCode()
+            : this.hash(value);
 
-        var entry = this.findCharArrayEntry(key, start, len, hashCode);
+        hashCode = hashCode % 0x7FFFFFFF;
+
+        var entry = this.findEntry(value, hashCode);
         if (entry !== null) {
-            return entry.Text;
+            return entry.Value;
         }
 
-        var slice: number[] = key.slice(start, start + len);
-        return this.addEntry(StringUtilities.fromCharCodeArray(slice), hashCode);
+        return this.addEntry(value, hashCode);
     }
 
-    private findCharArrayEntry(key: number[], start: number, len: number, hashCode: number): StringTableEntry {
+    private findEntry(value: any, hashCode: number): HashTableEntry {
         for (var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
-            if (e.HashCode === hashCode && StringTable.textCharArrayEquals(e.Text, key, start, len)) {
-                return e;
+            if (e.HashCode === hashCode) {
+                var equals = this.equals === null
+                    ? value === e.Value
+                    : this.equals(value, e.Value);
+
+                if (equals) {
+                    return e;
+                }
             }
         }
 
         return null;
     }
 
-    private addEntry(text: string, hashCode: number): string {
+    private addEntry(value: any, hashCode: number): any {
         var index = hashCode %  this.entries.length;
 
-        var e = new StringTableEntry(text, hashCode, this.entries[index]);
+        var e = new HashTableEntry(value, hashCode, this.entries[index]);
 
         this.entries[index] = e;
         if (this.count === this.entries.length) {
@@ -50,14 +63,14 @@ class StringTable {
         }
 
         this.count++;
-        return e.Text;
+        return e.Value;
     }
 
     private dumpStats() {
         var standardOut = Environment.standardOut;
         
         standardOut.WriteLine("----------------------")
-        standardOut.WriteLine("String table stats");
+        standardOut.WriteLine("Hash table stats");
         standardOut.WriteLine("Count            : " + this.count);
         standardOut.WriteLine("Entries Length   : " + this.entries.length);
 
@@ -79,7 +92,7 @@ class StringTable {
         var newSize = Hash.expandPrime(this.entries.length);
 
         var oldEntries = this.entries;
-        var newEntries: StringTableEntry[] = ArrayUtilities.createArray(newSize);
+        var newEntries: HashTableEntry[] = ArrayUtilities.createArray(newSize);
 
         this.entries = newEntries;
 
