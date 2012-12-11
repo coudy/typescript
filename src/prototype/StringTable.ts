@@ -7,6 +7,20 @@ class StringTableEntry {
     }
 }
 
+// A table of interned strings.  Faster and better than an arbitrary hashtable for the needs of the
+// scanner. Specifically, the scanner operates over a sliding window of characters, with a start 
+// and end pointer for the current lexeme.  The scanner then wants to get the *interned* string
+// represented by that subsection.
+//
+// Importantly, if the string is already interned, then it wants ask "is the string represented by 
+// this section of a char array contained within the table" in a non-allocating fashion.  i.e. if 
+// you have "[' ', 'p', 'u', 'b', 'l', 'i', 'c', ' ']" and you ask to get the string represented by
+//  range [1, 7), then this table will return "public" without any allocations if that value was 
+// already in the table.
+//
+// Of course, if the value is not in the table then there will be an initial cost to allocate the 
+// string and the bucket for the table.  However, that is only incurred the first time each unique 
+// string is added.
 class StringTable {
     private entries: StringTableEntry[] = [];
     private count: number = 0;
@@ -17,14 +31,19 @@ class StringTable {
     }
 
     public addCharArray(key: number[], start: number, len: number): string {
-        // Compute the hash for this key.  Also ensure that it's non negative.
+        // Compute the hash for this key.  Also ensure that it fits within 31 bits  (so that it 
+        // stays a non-heap integer, and so we can index into the array safely).
         var hashCode = Hash.computeMurmur2CharArrayHashCode(key, start, len) % 0x7FFFFFFF;
 
+        // First see if we already have the string represented by "key[start, start + len)" already
+        // present in this table.  If we do, just return that string.  Do this without any 
+        // allocations
         var entry = this.findCharArrayEntry(key, start, len, hashCode);
         if (entry !== null) {
             return entry.Text;
         }
 
+        // We don't have an entry for that string in our table.  Convert that 
         var slice: number[] = key.slice(start, start + len);
         return this.addEntry(StringUtilities.fromCharCodeArray(slice), hashCode);
     }

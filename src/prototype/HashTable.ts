@@ -111,22 +111,4 @@ class HashTable {
 
         // this.dumpStats();
     }
-
-    private static textCharArrayEquals(text: string, array: number[], start: number, length: number): bool {
-        if (text.length !== length) {
-            return false;
-        }
-
-        // use array.Length to eliminate the rangecheck
-        var s = start;
-        for (var i = 0; i < text.length; i++) {
-            if (text.charCodeAt(i) !== array[s]) {
-                return false;
-            }
-
-            s++;
-        }
-
-        return true;
-    }
 }
