@@ -324,7 +324,7 @@ var ArrayUtilities = (function () {
     }
     return ArrayUtilities;
 })();
-var argumentChecks = true;
+var argumentChecks = false;
 var definitions = [
     {
         name: 'SourceUnitSyntax',

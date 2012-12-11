@@ -16,6 +16,18 @@ class Hash {
         return hashCode;
     }
 
+    public static computeSimple31BitCharArrayHashCode(key: number[], start: number, len: number): number {
+        var hash = 0;
+
+        for (var i = 0; i < len; i++) {
+            var ch = key[start + i];
+
+            hash = (((hash << 5) + hash) + ch) | 0;
+        }
+
+        return hash & 0x7FFFFFFF;
+    }
+
     public static computeMurmur2CharArrayHashCode(key: number[], start: number, len: number): number {
         // 'm' and 'r' are mixing constants generated offline.
         // They're not really 'magic', they just happen to work well.

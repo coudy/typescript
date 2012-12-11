@@ -33,7 +33,7 @@ class StringTable {
     public addCharArray(key: number[], start: number, len: number): string {
         // Compute the hash for this key.  Also ensure that it fits within 31 bits  (so that it 
         // stays a non-heap integer, and so we can index into the array safely).
-        var hashCode = Hash.computeMurmur2CharArrayHashCode(key, start, len) % 0x7FFFFFFF;
+        var hashCode = Hash.computeSimple31BitCharArrayHashCode(key, start, len) % 0x7FFFFFFF;
 
         // First see if we already have the string represented by "key[start, start + len)" already
         // present in this table.  If we do, just return that string.  Do this without any 
@@ -113,7 +113,7 @@ class StringTable {
             }
         }
 
-        // this.dumpStats();
+        this.dumpStats();
     }
 
     private static textCharArrayEquals(text: string, array: number[], start: number, length: number): bool {
