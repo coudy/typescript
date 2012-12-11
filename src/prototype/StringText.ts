@@ -67,8 +67,6 @@ class StringText extends TextBase {
     }
 
     public copyTo(sourceIndex: number, destination: number[], destinationIndex: number, count: number): void {
-        for (var i = 0; i < count; i++) {
-            destination[destinationIndex + i] = this.source.charCodeAt(sourceIndex + i);
-        }
+        return StringUtilities.copyTo(this.source, sourceIndex, destination, destinationIndex, count);
     }
 }

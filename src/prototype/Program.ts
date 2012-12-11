@@ -6,7 +6,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    "Module4.ts";
+    // "Module4.ts";
     undefined;
 
 class Program {

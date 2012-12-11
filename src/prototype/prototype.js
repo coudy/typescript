@@ -236,10 +236,10 @@ var CharacterCodes;
     CharacterCodes.maxAsciiCharacter = 127;
     CharacterCodes.lineFeed = 10;
     CharacterCodes.carriageReturn = 13;
-    CharacterCodes.nextLine = 133;
     CharacterCodes.lineSeparator = 8232;
     CharacterCodes.paragraphSeparator = 8233;
     CharacterCodes.space = 32;
+    CharacterCodes.nextLine = 133;
     CharacterCodes.nonBreakingSpace = 160;
     CharacterCodes._ = 95;
     CharacterCodes.$ = 36;
@@ -3073,9 +3073,7 @@ var StringText = (function (_super) {
         return this.source.substr(span.start(), span.length());
     };
     StringText.prototype.copyTo = function (sourceIndex, destination, destinationIndex, count) {
-        for(var i = 0; i < count; i++) {
-            destination[destinationIndex + i] = this.source.charCodeAt(sourceIndex + i);
-        }
+        return StringUtilities.copyTo(this.source, sourceIndex, destination, destinationIndex, count);
     };
     return StringText;
 })(TextBase);
@@ -3089,6 +3087,11 @@ var StringUtilities = (function () {
     }
     StringUtilities.startsWith = function startsWith(string, value) {
         return string.substr(0, value.length) === value;
+    }
+    StringUtilities.copyTo = function copyTo(source, sourceIndex, destination, destinationIndex, count) {
+        for(var i = 0; i < count; i++) {
+            destination[destinationIndex + i] = source.charCodeAt(sourceIndex + i);
+        }
     }
     return StringUtilities;
 })();
@@ -15589,12 +15592,57 @@ var SyntaxIndenter = (function (_super) {
         ];
         for(var i = 0, n = triviaList.count(); i < n; i++) {
             var trivia = triviaList.syntaxTriviaAt(i);
+            if(trivia.kind() === 6 /* MultiLineCommentTrivia */ ) {
+                result.push(this.adjustMultiLineCommentIndentation(trivia));
+                continue;
+            }
             result.push(trivia);
             if(trivia.kind() === 5 /* NewLineTrivia */ ) {
                 result.push(this.indentationTrivia);
             }
         }
         return SyntaxTriviaList.create(result);
+    };
+    SyntaxIndenter.prototype.adjustMultiLineCommentIndentation = function (trivia) {
+        var oldTriviaText = trivia.fullText();
+        var newTriviaText = null;
+        var indentationText = this.indentationTrivia.fullText();
+        for(var i = 0; i < oldTriviaText.length; i++) {
+            var ch = oldTriviaText.charCodeAt(i);
+            switch(ch) {
+                case 13 /* carriageReturn */ :
+                case 10 /* lineFeed */ :
+                case 8233 /* paragraphSeparator */ :
+                case 8232 /* lineSeparator */ : {
+                    if(newTriviaText === null) {
+                        newTriviaText = [];
+                        StringUtilities.copyTo(oldTriviaText, 0, newTriviaText, 0, i);
+                    }
+
+                }
+            }
+            if(newTriviaText !== null) {
+                newTriviaText.push(ch);
+            }
+            switch(ch) {
+                case 13 /* carriageReturn */ : {
+                    if(i < oldTriviaText.length - 1 && oldTriviaText.charCodeAt(i + 1) === 10 /* lineFeed */ ) {
+                        continue;
+                    }
+
+                }
+                case 10 /* lineFeed */ :
+                case 8233 /* paragraphSeparator */ :
+                case 8232 /* lineSeparator */ : {
+                    StringUtilities.copyTo(indentationText, 0, newTriviaText, newTriviaText.length, indentationText.length);
+
+                }
+            }
+        }
+        if(newTriviaText === null) {
+            return trivia;
+        }
+        return SyntaxTrivia.create(6 /* MultiLineCommentTrivia */ , StringUtilities.fromCharCodeArray(newTriviaText));
     };
     SyntaxIndenter.indentNode = function indentNode(node, indentFirstToken, indentTrivia) {
         var indenter = new SyntaxIndenter(indentFirstToken, indentTrivia);
@@ -45810,8 +45858,7 @@ var expectedTop1000Failures = {
     "JSFile800\\fedex_com\\InstantInvite3.js": true
 };
 var stringTable = new StringTable();
-var specificFile = "Module4.ts";
-undefined;
+var specificFile = undefined;
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {
