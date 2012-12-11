@@ -6134,9 +6134,9 @@ var ArrowFunctionExpressionSyntax = (function (_super) {
     }
     return ArrowFunctionExpressionSyntax;
 })(UnaryExpressionSyntax);
-var SimpleArrowFunctionExpression = (function (_super) {
-    __extends(SimpleArrowFunctionExpression, _super);
-    function SimpleArrowFunctionExpression(identifier, equalsGreaterThanToken, body) {
+var SimpleArrowFunctionExpressionSyntax = (function (_super) {
+    __extends(SimpleArrowFunctionExpressionSyntax, _super);
+    function SimpleArrowFunctionExpressionSyntax(identifier, equalsGreaterThanToken, body) {
         _super.call(this);
         if(body === null) {
             throw Errors.argumentNull('body');
@@ -6151,16 +6151,16 @@ var SimpleArrowFunctionExpression = (function (_super) {
         this._equalsGreaterThanToken = equalsGreaterThanToken;
         this._body = body;
     }
-    SimpleArrowFunctionExpression.prototype.accept = function (visitor) {
+    SimpleArrowFunctionExpressionSyntax.prototype.accept = function (visitor) {
         visitor.visitSimpleArrowFunctionExpression(this);
     };
-    SimpleArrowFunctionExpression.prototype.accept1 = function (visitor) {
+    SimpleArrowFunctionExpressionSyntax.prototype.accept1 = function (visitor) {
         return visitor.visitSimpleArrowFunctionExpression(this);
     };
-    SimpleArrowFunctionExpression.prototype.kind = function () {
+    SimpleArrowFunctionExpressionSyntax.prototype.kind = function () {
         return 217 /* SimpleArrowFunctionExpression */ ;
     };
-    SimpleArrowFunctionExpression.prototype.isMissing = function () {
+    SimpleArrowFunctionExpressionSyntax.prototype.isMissing = function () {
         if(!this._identifier.isMissing()) {
             return false;
         }
@@ -6172,7 +6172,7 @@ var SimpleArrowFunctionExpression = (function (_super) {
         }
         return true;
     };
-    SimpleArrowFunctionExpression.prototype.firstToken = function () {
+    SimpleArrowFunctionExpressionSyntax.prototype.firstToken = function () {
         var token = null;
         if(this._identifier.width() > 0) {
             return token;
@@ -6185,36 +6185,36 @@ var SimpleArrowFunctionExpression = (function (_super) {
         }
         return null;
     };
-    SimpleArrowFunctionExpression.prototype.identifier = function () {
+    SimpleArrowFunctionExpressionSyntax.prototype.identifier = function () {
         return this._identifier;
     };
-    SimpleArrowFunctionExpression.prototype.equalsGreaterThanToken = function () {
+    SimpleArrowFunctionExpressionSyntax.prototype.equalsGreaterThanToken = function () {
         return this._equalsGreaterThanToken;
     };
-    SimpleArrowFunctionExpression.prototype.body = function () {
+    SimpleArrowFunctionExpressionSyntax.prototype.body = function () {
         return this._body;
     };
-    SimpleArrowFunctionExpression.prototype.update = function (identifier, equalsGreaterThanToken, body) {
+    SimpleArrowFunctionExpressionSyntax.prototype.update = function (identifier, equalsGreaterThanToken, body) {
         if(this._identifier === identifier && this._equalsGreaterThanToken === equalsGreaterThanToken && this._body === body) {
             return this;
         }
-        return new SimpleArrowFunctionExpression(identifier, equalsGreaterThanToken, body);
+        return new SimpleArrowFunctionExpressionSyntax(identifier, equalsGreaterThanToken, body);
     };
-    SimpleArrowFunctionExpression.prototype.withIdentifier = function (identifier) {
+    SimpleArrowFunctionExpressionSyntax.prototype.withIdentifier = function (identifier) {
         return this.update(identifier, this._equalsGreaterThanToken, this._body);
     };
-    SimpleArrowFunctionExpression.prototype.withEqualsGreaterThanToken = function (equalsGreaterThanToken) {
+    SimpleArrowFunctionExpressionSyntax.prototype.withEqualsGreaterThanToken = function (equalsGreaterThanToken) {
         return this.update(this._identifier, equalsGreaterThanToken, this._body);
     };
-    SimpleArrowFunctionExpression.prototype.withBody = function (body) {
+    SimpleArrowFunctionExpressionSyntax.prototype.withBody = function (body) {
         return this.update(this._identifier, this._equalsGreaterThanToken, body);
     };
-    SimpleArrowFunctionExpression.prototype.collectTextElements = function (elements) {
+    SimpleArrowFunctionExpressionSyntax.prototype.collectTextElements = function (elements) {
         this._identifier.collectTextElements(elements);
         this._equalsGreaterThanToken.collectTextElements(elements);
         this._body.collectTextElements(elements);
     };
-    return SimpleArrowFunctionExpression;
+    return SimpleArrowFunctionExpressionSyntax;
 })(ArrowFunctionExpressionSyntax);
 var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
     __extends(ParenthesizedArrowFunctionExpressionSyntax, _super);
@@ -12614,10 +12614,14 @@ var Emitter = (function (_super) {
     function Emitter(syntaxOnly) {
         _super.call(this);
         this.syntaxOnly = syntaxOnly;
-        this.indentation = StringUtilities.repeat(" ", Emitter.defualtSpacesPerIndent);
-        this.indentationTrivia = SyntaxTrivia.create(4 /* WhitespaceTrivia */ , this.indentation);
+        this.indentationTrivia = Emitter.createIndentationTrivia(Emitter.defualtSpacesPerIndent);
+        this.indentation = this.indentationTrivia.fullText();
     }
     Emitter.defualtSpacesPerIndent = 4;
+    Emitter.createIndentationTrivia = function createIndentationTrivia(count) {
+        var indentation = StringUtilities.repeat(" ", count);
+        return SyntaxTrivia.create(4 /* WhitespaceTrivia */ , indentation);
+    }
     Emitter.prototype.emit = function (input) {
         var sourceUnit = input.accept1(this);
         return sourceUnit;
@@ -12750,6 +12754,58 @@ var Emitter = (function (_super) {
             variableStatement, 
             expressionStatement
         ];
+    };
+    Emitter.prototype.visitSimpleArrowFunctionExpression = function (node) {
+        var leadingWidth = node.identifier().leadingTriviaWidth();
+        var leadingSpaces = Emitter.createIndentationTrivia(leadingWidth);
+        var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var block = this.convertArrowFunctionBody(node.body(), leadingSpaces);
+        return FunctionExpressionSyntax.create(SyntaxToken.createElasticKeyword({
+            kind: 25 /* FunctionKeyword */ ,
+            leadingTrivia: node.identifier().leadingTrivia().toArray()
+        }), CallSignatureSyntax.create(new ParameterListSyntax(SyntaxToken.createElastic({
+            kind: 69 /* OpenParenToken */ 
+        }), SeparatedSyntaxList.create([
+            ParameterSyntax.create(identifier)
+        ]), SyntaxToken.createElastic({
+            kind: 70 /* CloseParenToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.space
+            ]
+        }))), block);
+    };
+    Emitter.prototype.convertArrowFunctionBody = function (node, leadingIndentation) {
+        var rewrittenNode = node.accept1(this);
+        if(rewrittenNode.kind() === 138 /* Block */ ) {
+            return rewrittenNode;
+        }
+        return new BlockSyntax(SyntaxToken.createElastic({
+            kind: 67 /* OpenBraceToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.carriageReturnLineFeed
+            ]
+        }), SyntaxList.create([
+            new ReturnStatementSyntax(SyntaxToken.createElasticKeyword({
+                leadingTrivia: [
+                    leadingIndentation, 
+                    this.indentationTrivia
+                ],
+                kind: 31 /* ReturnKeyword */ ,
+                trailingTrivia: [
+                    SyntaxTrivia.space
+                ]
+            }), rewrittenNode, SyntaxToken.createElastic({
+                kind: 75 /* SemicolonToken */ ,
+                trailingTrivia: [
+                    SyntaxTrivia.carriageReturnLineFeed
+                ]
+            }))
+        ]), SyntaxToken.createElastic({
+            leadingTrivia: [
+                leadingIndentation
+            ],
+            kind: 68 /* CloseBraceToken */ 
+        }));
     };
     return Emitter;
 })(SyntaxRewriter);
@@ -14657,7 +14713,7 @@ var Parser = (function (_super) {
         var identifier = this.eatIdentifierToken();
         var equalsGreaterThanToken = this.eatToken(82 /* EqualsGreaterThanToken */ );
         var body = this.parseArrowFunctionBody();
-        return new SimpleArrowFunctionExpression(identifier, equalsGreaterThanToken, body);
+        return new SimpleArrowFunctionExpressionSyntax(identifier, equalsGreaterThanToken, body);
     };
     Parser.prototype.isBlock = function () {
         return this.currentToken().tokenKind === 67 /* OpenBraceToken */ ;
@@ -17458,7 +17514,6 @@ var SyntaxTrivia;
     })();    
     function create(kind, text) {
         Debug.assert(kind === 6 /* MultiLineCommentTrivia */  || kind === 5 /* NewLineTrivia */  || kind === 7 /* SingleLineCommentTrivia */  || kind === 4 /* WhitespaceTrivia */  || kind === 8 /* SkippedTextTrivia */ );
-        Debug.assert(text.length > 0);
         return new SimpleSyntaxTrivia(kind, text);
     }
     SyntaxTrivia.create = create;

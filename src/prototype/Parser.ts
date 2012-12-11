@@ -2788,14 +2788,14 @@ class Parser extends SlidingWindow {
                this.peekTokenN(1).tokenKind === SyntaxKind.EqualsGreaterThanToken;
     }
 
-    private parseSimpleArrowFunctionExpression(): SimpleArrowFunctionExpression {
+    private parseSimpleArrowFunctionExpression(): SimpleArrowFunctionExpressionSyntax {
         Debug.assert(this.isSimpleArrowFunctionExpression());
 
         var identifier = this.eatIdentifierToken();
         var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
         var body = this.parseArrowFunctionBody();
 
-        return new SimpleArrowFunctionExpression(
+        return new SimpleArrowFunctionExpressionSyntax(
             identifier, equalsGreaterThanToken, body);
     }
 

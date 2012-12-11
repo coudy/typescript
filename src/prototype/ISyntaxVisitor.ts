@@ -21,7 +21,7 @@ interface ISyntaxVisitor {
     visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): void;
     visitOmittedExpression(node: OmittedExpressionSyntax): void;
     visitParenthesizedExpression(node: ParenthesizedExpressionSyntax): void;
-    visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpression): void;
+    visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): void;
     visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): void;
     visitIdentifierName(node: IdentifierNameSyntax): void;
     visitQualifiedName(node: QualifiedNameSyntax): void;
@@ -170,7 +170,7 @@ class DefaultSyntaxVisitor implements ISyntaxVisitor {
         this.defaultVisit(node);
     }
 
-    public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpression): void {
+    public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): void {
         this.defaultVisit(node);
     }
 
@@ -444,7 +444,7 @@ interface ISyntaxVisitor1 {
     visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): any;
     visitOmittedExpression(node: OmittedExpressionSyntax): any;
     visitParenthesizedExpression(node: ParenthesizedExpressionSyntax): any;
-    visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpression): any;
+    visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): any;
     visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): any;
     visitIdentifierName(node: IdentifierNameSyntax): any;
     visitQualifiedName(node: QualifiedNameSyntax): any;
@@ -594,7 +594,7 @@ class DefaultSyntaxVisitor1 implements ISyntaxVisitor1 {
         return this.defaultVisit(node);
     }
 
-    public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpression): any {
+    public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): any {
         return this.defaultVisit(node);
     }
 

@@ -1964,7 +1964,7 @@ class ArrowFunctionExpressionSyntax extends UnaryExpressionSyntax {
     }
 }
 
-class SimpleArrowFunctionExpression extends ArrowFunctionExpressionSyntax {
+class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax {
     private _identifier: ISyntaxToken;
     private _equalsGreaterThanToken: ISyntaxToken;
     private _body: SyntaxNode;
@@ -2029,18 +2029,18 @@ class SimpleArrowFunctionExpression extends ArrowFunctionExpressionSyntax {
             return this;
         }
 
-        return new SimpleArrowFunctionExpression(identifier, equalsGreaterThanToken, body);
+        return new SimpleArrowFunctionExpressionSyntax(identifier, equalsGreaterThanToken, body);
     }
 
-    public withIdentifier(identifier: ISyntaxToken): SimpleArrowFunctionExpression {
+    public withIdentifier(identifier: ISyntaxToken): SimpleArrowFunctionExpressionSyntax {
         return this.update(identifier, this._equalsGreaterThanToken, this._body);
     }
 
-    public withEqualsGreaterThanToken(equalsGreaterThanToken: ISyntaxToken): SimpleArrowFunctionExpression {
+    public withEqualsGreaterThanToken(equalsGreaterThanToken: ISyntaxToken): SimpleArrowFunctionExpressionSyntax {
         return this.update(this._identifier, equalsGreaterThanToken, this._body);
     }
 
-    public withBody(body: SyntaxNode): SimpleArrowFunctionExpression {
+    public withBody(body: SyntaxNode): SimpleArrowFunctionExpressionSyntax {
         return this.update(this._identifier, this._equalsGreaterThanToken, body);
     }
 

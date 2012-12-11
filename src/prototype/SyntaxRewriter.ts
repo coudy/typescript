@@ -202,7 +202,7 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
             this.visitToken(node.closeParenToken()));
     }
 
-    public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpression): any {
+    public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): any {
         return node.update(
             this.visitToken(node.identifier()),
             this.visitToken(node.equalsGreaterThanToken()),

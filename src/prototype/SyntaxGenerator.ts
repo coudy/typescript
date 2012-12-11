@@ -246,7 +246,7 @@ var definitions:ITypeDefinition[] = [
         children: []
     },
     <any>{
-        name: 'SimpleArrowFunctionExpression',
+        name: 'SimpleArrowFunctionExpressionSyntax',
         baseType: 'ArrowFunctionExpressionSyntax',
         children: [
             <any>{ name: 'identifier', isToken: true, tokenKinds: ["IdentifierNameToken"] },
@@ -1604,11 +1604,11 @@ function generateRewriter(): string {
 "        return token;\r\n" +
 "    }\r\n" +
 "\r\n" +
-"    private visitNode(node: SyntaxNode): SyntaxNode {\r\n" +
+"    public visitNode(node: SyntaxNode): SyntaxNode {\r\n" +
 "        return node === null ? null : node.accept1(this);\r\n" +
 "    }\r\n" +
 "\r\n" +
-"    private visitList(list: ISyntaxList): ISyntaxList {\r\n" +
+"    public visitList(list: ISyntaxList): ISyntaxList {\r\n" +
 "        var newItems: SyntaxNode[] = null;\r\n" +
 "\r\n" +
 "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" +
@@ -1631,7 +1631,7 @@ function generateRewriter(): string {
 "        return newItems === null ? list : SyntaxList.create(newItems);\r\n" +
 "    }\r\n" +
 "\r\n" +
-"    private visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n" +
+"    public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n" +
 "        var newItems: any[] = null;\r\n" +
 "\r\n" +
 "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" +

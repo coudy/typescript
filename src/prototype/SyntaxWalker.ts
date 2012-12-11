@@ -157,7 +157,7 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visit(node.closeParenToken());
     }
 
-    public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpression): void {
+    public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): void {
         this.visit(node.identifier());
         this.visit(node.equalsGreaterThanToken());
         this.visit(node.body());

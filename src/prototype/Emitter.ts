@@ -11,8 +11,13 @@ class Emitter extends SyntaxRewriter {
         super();
 
         this.syntaxOnly = syntaxOnly;
-        this.indentation = StringUtilities.repeat(" ", Emitter.defualtSpacesPerIndent);
-        this.indentationTrivia = SyntaxTrivia.create(SyntaxKind.WhitespaceTrivia, this.indentation);
+        this.indentationTrivia = Emitter.createIndentationTrivia(Emitter.defualtSpacesPerIndent);
+        this.indentation = this.indentationTrivia.fullText(); 
+    }
+
+    private static createIndentationTrivia(count: number): ISyntaxTrivia {
+        var indentation = StringUtilities.repeat(" ", count);
+        return SyntaxTrivia.create(SyntaxKind.WhitespaceTrivia, indentation);
     }
 
     public emit(input: SourceUnitSyntax): SourceUnitSyntax {
@@ -167,5 +172,40 @@ class Emitter extends SyntaxRewriter {
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
 
         return [variableStatement, expressionStatement];
+    }
+
+    private visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): FunctionExpressionSyntax {
+        var leadingWidth = node.identifier().leadingTriviaWidth();
+        var leadingSpaces = Emitter.createIndentationTrivia(leadingWidth);
+
+        var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+
+        var block = this.convertArrowFunctionBody(node.body(), leadingSpaces);
+        return FunctionExpressionSyntax.create(
+            SyntaxToken.createElasticKeyword({ kind: SyntaxKind.FunctionKeyword, leadingTrivia: node.identifier().leadingTrivia().toArray() }),
+            CallSignatureSyntax.create(
+                new ParameterListSyntax(
+                    SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+                    SeparatedSyntaxList.create([ParameterSyntax.create(identifier)]),
+                    SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken, trailingTrivia: [SyntaxTrivia.space] }))),
+            block);
+    }
+    
+    private convertArrowFunctionBody(node: SyntaxNode, leadingIndentation: ISyntaxTrivia): BlockSyntax {
+        var rewrittenNode = node.accept1(this);
+
+        if (rewrittenNode.kind() === SyntaxKind.Block) {
+            return <BlockSyntax>rewrittenNode;
+        }
+
+        return new BlockSyntax(
+            SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }),
+            SyntaxList.create([
+                new ReturnStatementSyntax(
+                    SyntaxToken.createElasticKeyword({ leadingTrivia: [leadingIndentation, this.indentationTrivia], kind: SyntaxKind.ReturnKeyword, trailingTrivia: [SyntaxTrivia.space] }),
+                    rewrittenNode,
+                    SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }))
+            ]),
+            SyntaxToken.createElastic({ leadingTrivia: [leadingIndentation], kind: SyntaxKind.CloseBraceToken }));
     }
 }
