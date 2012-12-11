@@ -62,6 +62,54 @@ class Hash {
         return h;
     }
 
+    public static computeMurmur2StringHashCode(key: string): number {
+        // 'm' and 'r' are mixing constants generated offline.
+        // They're not really 'magic', they just happen to work well.
+        var m = 0x5bd1e995;
+        var r = 24;
+
+        // Initialize the hash to a 'random' value
+        var start = 0;
+        var len = key.length;
+        var numberOfCharsLeft = len;
+        var h = (0 ^ numberOfCharsLeft);
+
+        // Mix 4 bytes at a time into the hash.  NOTE: 4 bytes is two chars, so we iterate
+        // through the string two chars at a time.
+        var index = start;
+        while (numberOfCharsLeft >= 2) {
+            var c1 = key.charCodeAt(index);
+            var c2 = key.charCodeAt(index + 1);
+
+            var k = c1 | (c2 << 16);
+
+            k *= m;
+            k ^= k >> r;
+            k *= m;
+
+            h *= m;
+            h ^= k;
+
+            index += 2;
+            numberOfCharsLeft -= 2;
+        }
+
+        // Handle the last char (or 2 bytes) if they exist.  This happens if the original string had
+        // odd length.
+        if (numberOfCharsLeft == 1) {
+            h ^= key.charCodeAt(index);
+            h *= m;
+        }
+
+        // Do a few final mixes of the hash to ensure the last few bytes are well-incorporated.
+
+        h ^= h >> 13;
+        h *= m;
+        h ^= h >> 15;
+
+        return h;
+    }
+
     private static primes =
         [ 3, 7, 11, 17, 23, 29, 37, 47, 59, 71, 89, 107, 131, 163, 197, 239, 293, 353, 431, 521,
           631, 761, 919, 1103, 1327, 1597, 1931, 2333, 2801, 3371, 4049, 4861, 5839, 7013, 8419,
