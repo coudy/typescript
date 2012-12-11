@@ -208,4 +208,28 @@ class Emitter extends SyntaxRewriter {
             ]),
             SyntaxToken.createElastic({ leadingTrivia: [leadingIndentation], kind: SyntaxKind.CloseBraceToken }));
     }
+
+    private visitExpressionStatement(node: ExpressionStatementSyntax): ExpressionStatementSyntax {
+        var rewritten = <ExpressionStatementSyntax>super.visitExpressionStatement(node);
+        
+        if (rewritten.expression().kind() !== SyntaxKind.FunctionExpression) {
+            return rewritten;
+        }
+
+        var functionExpression = <FunctionExpressionSyntax>rewritten.expression();
+        if (functionExpression.identifier() !== null) {
+            return rewritten;
+        }
+
+        var newFunctionExpression = functionExpression.withFunctionKeyword(
+            functionExpression.functionKeyword().withLeadingTrivia(SyntaxTriviaList.empty));
+
+        // Can't have an expression statement with an anonymous function expression in it.
+        var parenthesizedExpression = new ParenthesizedExpressionSyntax(
+            SyntaxToken.createElastic({ leadingTrivia: functionExpression.functionKeyword().leadingTrivia().toArray(), kind: SyntaxKind.OpenParenToken }),
+            newFunctionExpression,
+            SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }));
+
+        return rewritten.withExpression(parenthesizedExpression);
+    }
 }

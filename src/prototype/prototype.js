@@ -12807,6 +12807,24 @@ var Emitter = (function (_super) {
             kind: 68 /* CloseBraceToken */ 
         }));
     };
+    Emitter.prototype.visitExpressionStatement = function (node) {
+        var rewritten = _super.prototype.visitExpressionStatement.call(this, node);
+        if(rewritten.expression().kind() !== 220 /* FunctionExpression */ ) {
+            return rewritten;
+        }
+        var functionExpression = rewritten.expression();
+        if(functionExpression.identifier() !== null) {
+            return rewritten;
+        }
+        var newFunctionExpression = functionExpression.withFunctionKeyword(functionExpression.functionKeyword().withLeadingTrivia(SyntaxTriviaList.empty));
+        var parenthesizedExpression = new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
+            leadingTrivia: functionExpression.functionKeyword().leadingTrivia().toArray(),
+            kind: 69 /* OpenParenToken */ 
+        }), newFunctionExpression, SyntaxToken.createElastic({
+            kind: 70 /* CloseParenToken */ 
+        }));
+        return rewritten.withExpression(parenthesizedExpression);
+    };
     return Emitter;
 })(SyntaxRewriter);
 var ParserExpressionPrecedence;
