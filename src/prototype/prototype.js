@@ -3093,6 +3093,9 @@ var StringUtilities = (function () {
             destination[destinationIndex + i] = source.charCodeAt(sourceIndex + i);
         }
     }
+    StringUtilities.repeat = function repeat(value, count) {
+        return Array(count + 1).join(value);
+    }
     return StringUtilities;
 })();
 var SyntaxDiagnostic = (function (_super) {
@@ -12610,11 +12613,11 @@ var Emitter = (function (_super) {
     __extends(Emitter, _super);
     function Emitter(syntaxOnly) {
         _super.call(this);
-        this.inputNestingLevel = 0;
-        this.outputNestingLevel = 0;
         this.syntaxOnly = syntaxOnly;
+        this.indentation = StringUtilities.repeat(" ", Emitter.defualtSpacesPerIndent);
+        this.indentationTrivia = SyntaxTrivia.create(4 /* WhitespaceTrivia */ , this.indentation);
     }
-    Emitter.spacesPerNestingLevel = 4;
+    Emitter.defualtSpacesPerIndent = 4;
     Emitter.prototype.emit = function (input) {
         var sourceUnit = input.accept1(this);
         return sourceUnit;
@@ -12661,50 +12664,26 @@ var Emitter = (function (_super) {
         }
     }
     Emitter.prototype.adjustListIndentation = function (nodes) {
-        var nestingOffset = this.outputNestingLevel - this.inputNestingLevel;
-        if(nestingOffset <= 0) {
-            return nodes;
-        }
-        var indentation = this.createIndentationTrivia();
-        return SyntaxIndenter.indentNodes(nodes, true, indentation);
+        return SyntaxIndenter.indentNodes(nodes, true, this.indentationTrivia);
     };
     Emitter.prototype.visitModuleDeclaration = function (node) {
         var _this = this;
         var names = Emitter.splitModuleName(node.moduleName());
-        this.outputNestingLevel += names.length;
-        this.inputNestingLevel += 1;
         var moduleElements = node.moduleElements().toArray();
         moduleElements = ArrayUtilities.select(moduleElements, function (m) {
             return m.accept1(_this);
         });
-        moduleElements = this.adjustListIndentation(moduleElements);
         for(var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
             moduleElements = this.convertModuleDeclaration(names[nameIndex], moduleElements);
-            this.outputNestingLevel--;
+            if(nameIndex > 0) {
+                moduleElements = this.adjustListIndentation(moduleElements);
+            }
         }
-        this.inputNestingLevel -= 1;
         return moduleElements;
-    };
-    Emitter.prototype.createIndentationTrivia = function () {
-        var nestingOffset = this.outputNestingLevel - this.inputNestingLevel;
-        Debug.assert(nestingOffset > 0);
-        var spaces = Array(nestingOffset * Emitter.spacesPerNestingLevel).join(" ");
-        return SyntaxTrivia.create(4 /* WhitespaceTrivia */ , spaces);
-    };
-    Emitter.prototype.createIndentationTriviaList = function () {
-        var nestingOffset = this.outputNestingLevel - this.inputNestingLevel;
-        if(nestingOffset <= 0) {
-            return [];
-        }
-        return [
-            this.createIndentationTrivia()
-        ];
     };
     Emitter.prototype.convertModuleDeclaration = function (name, moduleElements) {
         name = name.withIdentifier(name.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty));
-        var indentationTrivia = this.createIndentationTriviaList();
         var variableStatement = VariableStatementSyntax.create(new VariableDeclarationSyntax(SyntaxToken.createElasticKeyword({
-            leadingTrivia: indentationTrivia,
             kind: 38 /* VarKeyword */ ,
             trailingTrivia: [
                 SyntaxTrivia.space
@@ -12734,11 +12713,9 @@ var Emitter = (function (_super) {
                 SyntaxTrivia.carriageReturnLineFeed
             ]
         }), SyntaxList.create(moduleElements), SyntaxToken.createElastic({
-            leadingTrivia: indentationTrivia,
             kind: 68 /* CloseBraceToken */ 
         })));
         var parenthesizedFunctionExpression = new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
-            leadingTrivia: indentationTrivia,
             kind: 69 /* OpenParenToken */ 
         }), functionExpression, SyntaxToken.createElastic({
             kind: 70 /* CloseParenToken */ 

@@ -1,22 +1,18 @@
 ///<reference path='References.ts' />
 
 class Emitter extends SyntaxRewriter {
-    private static spacesPerNestingLevel = 4;
+    private static defualtSpacesPerIndent = 4;
 
     private syntaxOnly: bool;
-
-    // The original nesting level we were at when processing our iput.
-    private inputNestingLevel: number = 0;
-
-    // The current nesting level we're out when generating the output.  If this differs from 
-    // inputNestingLevel, then we'll have to indent or dedent the output based on the difference
-    // between the two. 
-    private outputNestingLevel: number = 0;
+    private indentation: string;
+    private indentationTrivia: ISyntaxTrivia;
 
     constructor(syntaxOnly: bool) {
         super();
 
         this.syntaxOnly = syntaxOnly;
+        this.indentation = StringUtilities.repeat(" ", Emitter.defualtSpacesPerIndent);
+        this.indentationTrivia = SyntaxTrivia.create(SyntaxKind.WhitespaceTrivia, this.indentation);
     }
 
     public emit(input: SourceUnitSyntax): SourceUnitSyntax {
@@ -86,13 +82,7 @@ class Emitter extends SyntaxRewriter {
     //}
 
     private adjustListIndentation(nodes: SyntaxNode[]): SyntaxNode[] {
-        var nestingOffset = this.outputNestingLevel - this.inputNestingLevel;
-        if (nestingOffset <= 0) {
-            return nodes;
-        }
-
-        var indentation = this.createIndentationTrivia();
-        return SyntaxIndenter.indentNodes(nodes, /*indentFirstToken:*/ true, indentation);
+        return SyntaxIndenter.indentNodes(nodes, /*indentFirstToken:*/ true, this.indentationTrivia);
     }
 
     private visitModuleDeclaration(node: ModuleDeclarationSyntax): ModuleElementSyntax[] {
@@ -102,56 +92,30 @@ class Emitter extends SyntaxRewriter {
         // Start with the rightmost piece.  This will be hte one that actually containers the 
         // members declared in the module.
 
-        // Note: our output will be nested N deep based on the number of names in the module.
-        // However, from our input's perspective, we're only going one deeper.
-        this.outputNestingLevel += names.length;
-        this.inputNestingLevel += 1;
-
         var moduleElements: ModuleElementSyntax[] = <ModuleElementSyntax[]>node.moduleElements().toArray();
         moduleElements = ArrayUtilities.select(moduleElements, m => m.accept1(this));
 
-        // We recursed and processed our child elements.  Now we need to adjust them based on any
-        // indentation offset we've accumulated.
-        moduleElements = <ModuleElementSyntax[]>this.adjustListIndentation(moduleElements);
-
         // Then, for all the names left of that name, wrap what we've created in a larger module.
-        // Each time we do this, we'll pop the output nesting level one
         for (var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
             moduleElements = this.convertModuleDeclaration(names[nameIndex], moduleElements);
-            this.outputNestingLevel--;
-        }
 
-        // We're done with the children of this module.  Pop back out.
-        this.inputNestingLevel -= 1;
+            if (nameIndex > 0) {
+                // We're popping out and generate each outer module.  As we do so, we have to
+                // indent whatever we've created so far appropriately.
+                moduleElements = <ModuleElementSyntax[]>this.adjustListIndentation(moduleElements);
+            }
+        }
 
         return moduleElements;
     }
 
-    private createIndentationTrivia(): ISyntaxTrivia {
-        var nestingOffset = this.outputNestingLevel - this.inputNestingLevel;
-        Debug.assert(nestingOffset > 0);
-
-        var spaces = Array(nestingOffset * Emitter.spacesPerNestingLevel).join(" ");
-        return SyntaxTrivia.create(SyntaxKind.WhitespaceTrivia, spaces);
-    }
-
-    private createIndentationTriviaList(): ISyntaxTrivia[] {
-        var nestingOffset = this.outputNestingLevel - this.inputNestingLevel;
-        if (nestingOffset <= 0) {
-            return [];
-        }
-
-        return [this.createIndentationTrivia()];
-    }
-    
     private convertModuleDeclaration(name: IdentifierNameSyntax, moduleElements: ModuleElementSyntax[]): ModuleElementSyntax[] {
         name = name.withIdentifier(
             name.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty));
 
-        var indentationTrivia = this.createIndentationTriviaList();
         var variableStatement = VariableStatementSyntax.create(
             new VariableDeclarationSyntax(
-                SyntaxToken.createElasticKeyword({ leadingTrivia:indentationTrivia, kind: SyntaxKind.VarKeyword, trailingTrivia: [SyntaxTrivia.space] }),
+                SyntaxToken.createElasticKeyword({ kind: SyntaxKind.VarKeyword, trailingTrivia: [SyntaxTrivia.space] }),
                 SeparatedSyntaxList.create(
                     [VariableDeclaratorSyntax.create(name.identifier())])),
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
@@ -167,10 +131,10 @@ class Emitter extends SyntaxRewriter {
             new BlockSyntax(
                 SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed]  }),
                 SyntaxList.create(moduleElements),
-                SyntaxToken.createElastic({ leadingTrivia:indentationTrivia, kind: SyntaxKind.CloseBraceToken })));
+                SyntaxToken.createElastic({ kind: SyntaxKind.CloseBraceToken })));
 
         var parenthesizedFunctionExpression = new ParenthesizedExpressionSyntax(
-            SyntaxToken.createElastic({ leadingTrivia:indentationTrivia, kind: SyntaxKind.OpenParenToken }),
+            SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
             functionExpression,
             SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }));
         

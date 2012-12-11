@@ -18,4 +18,8 @@ class StringUtilities {
             destination[destinationIndex + i] = source.charCodeAt(sourceIndex + i);
         }
     }
+
+    public static repeat(value: string, count: number) {
+        return Array(count + 1).join(value);
+    }
 }
