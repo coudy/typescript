@@ -1324,12 +1324,12 @@ function generateFirstMethod(definition: ITypeDefinition): string {
 
             if (child.isToken) {
                 result += getPropertyAccess(child) + ".width() > 0";
+                result += ") { return " + getPropertyAccess(child) + "; }\r\n";
             }
             else {
                 result += "(token = " + getPropertyAccess(child) + ".firstToken()) !== null";
+                result += ") { return token; }\r\n";
             }
-
-            result += ") { return token; }\r\n";
         }
 
         if (definition.name === "SourceUnitSyntax") {

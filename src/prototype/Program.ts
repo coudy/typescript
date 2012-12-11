@@ -6,7 +6,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "Module4.ts";
+    "ArrowFunctionInExpressionStatement2";
     undefined;
 
 class Program {
