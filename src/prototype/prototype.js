@@ -653,8 +653,8 @@ var Environment = (function () {
 })();
 var Errors = (function () {
     function Errors() { }
-    Errors.argument = function argument(argument) {
-        return new Error("Invalid argument: " + argument + ".");
+    Errors.argument = function argument(argument, message) {
+        return new Error("Invalid argument: " + argument + "." + (message ? (" " + message) : ""));
     }
     Errors.argumentOutOfRange = function argumentOutOfRange(argument) {
         return new Error("Argument out of range: " + argument + ".");
@@ -724,6 +724,35 @@ var Hash = (function () {
         }
         if(numberOfCharsLeft == 1) {
             h ^= key[index];
+            h *= m;
+        }
+        h ^= h >> 13;
+        h *= m;
+        h ^= h >> 15;
+        return h;
+    }
+    Hash.computeMurmur2StringHashCode = function computeMurmur2StringHashCode(key) {
+        var m = 1540483477;
+        var r = 24;
+        var start = 0;
+        var len = key.length;
+        var numberOfCharsLeft = len;
+        var h = (0 ^ numberOfCharsLeft);
+        var index = start;
+        while(numberOfCharsLeft >= 2) {
+            var c1 = key.charCodeAt(index);
+            var c2 = key.charCodeAt(index + 1);
+            var k = c1 | (c2 << 16);
+            k *= m;
+            k ^= k >> r;
+            k *= m;
+            h *= m;
+            h ^= k;
+            index += 2;
+            numberOfCharsLeft -= 2;
+        }
+        if(numberOfCharsLeft == 1) {
+            h ^= key.charCodeAt(index);
             h *= m;
         }
         h ^= h >> 13;
@@ -821,10 +850,14 @@ var Hash = (function () {
         }
         return Hash.getPrime(num);
     }
+    Hash.combine = function combine(newKey, currentKey) {
+        return (currentKey * 2773833001) + newKey;
+    }
     return Hash;
 })();
 var HashTableEntry = (function () {
-    function HashTableEntry(Value, HashCode, Next) {
+    function HashTableEntry(Key, Value, HashCode, Next) {
+        this.Key = Key;
         this.Value = Value;
         this.HashCode = HashCode;
         this.Next = Next;
@@ -843,19 +876,31 @@ var HashTable = (function () {
         this.equals = equals;
         this.entries = ArrayUtilities.createArray(size);
     }
-    HashTable.prototype.addValue = function (value) {
-        var hashCode = this.hash === null ? value.hashCode() : this.hash(value);
-        hashCode = hashCode % 2147483647;
-        var entry = this.findEntry(value, hashCode);
-        if(entry !== null) {
-            return entry.Value;
-        }
-        return this.addEntry(value, hashCode);
+    HashTable.prototype.set = function (key, value) {
+        this.addOrSet(key, value, false);
     };
-    HashTable.prototype.findEntry = function (value, hashCode) {
+    HashTable.prototype.add = function (key, value) {
+        this.addOrSet(key, value, true);
+    };
+    HashTable.prototype.addOrSet = function (key, value, throwOnExistingEntry) {
+        var hashCode = this.hash === null ? key.hashCode() : this.hash(key);
+        hashCode = hashCode % 2147483647;
+        Debug.assert(hashCode > 0);
+        var entry = this.findEntry(key, hashCode);
+        if(entry !== null) {
+            if(throwOnExistingEntry) {
+                throw Errors.argument('key', 'Key was already in table.');
+            }
+            entry.Key = key;
+            entry.Value = value;
+            return;
+        }
+        return this.addEntry(key, value, hashCode);
+    };
+    HashTable.prototype.findEntry = function (key, hashCode) {
         for(var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
             if(e.HashCode === hashCode) {
-                var equals = this.equals === null ? value === e.Value : this.equals(value, e.Value);
+                var equals = this.equals === null ? key === e.Key : this.equals(key, e.Key);
                 if(equals) {
                     return e;
                 }
@@ -863,15 +908,15 @@ var HashTable = (function () {
         }
         return null;
     };
-    HashTable.prototype.addEntry = function (value, hashCode) {
+    HashTable.prototype.addEntry = function (key, value, hashCode) {
         var index = hashCode % this.entries.length;
-        var e = new HashTableEntry(value, hashCode, this.entries[index]);
+        var e = new HashTableEntry(key, value, hashCode, this.entries[index]);
         this.entries[index] = e;
         if(this.count === this.entries.length) {
             this.grow();
         }
         this.count++;
-        return e.Value;
+        return e.Key;
     };
     HashTable.prototype.dumpStats = function () {
         var standardOut = Environment.standardOut;
@@ -905,19 +950,6 @@ var HashTable = (function () {
             }
         }
     };
-    HashTable.textCharArrayEquals = function textCharArrayEquals(text, array, start, length) {
-        if(text.length !== length) {
-            return false;
-        }
-        var s = start;
-        for(var i = 0; i < text.length; i++) {
-            if(text.charCodeAt(i) !== array[s]) {
-                return false;
-            }
-            s++;
-        }
-        return true;
-    }
     return HashTable;
 })();
 var IntegerUtilities = (function () {
@@ -46135,13 +46167,13 @@ var Program = (function () {
         var parser = new Parser(text, languageVersion, stringTable);
         var tree = parser.parseSyntaxTree();
         var emitted = new Emitter(true).emit(tree.sourceUnit());
+        end = new Date().getTime();
+        totalTime += (end - start);
         var result = {
             fullText: emitted.fullText().split("\r\n"),
             sourceUnit: emitted
         };
         this.checkResult(filePath, result, verify, generateBaseline);
-        end = new Date().getTime();
-        totalTime += (end - start);
     };
     Program.prototype.runParser = function (environment, filePath, languageVersion, useTypeScript, verify, generateBaseline) {
         if (typeof generateBaseline === "undefined") { generateBaseline = false; }
@@ -46160,14 +46192,16 @@ var Program = (function () {
             var parser1 = new TypeScript.Parser();
             parser1.errorRecovery = true;
             var unit1 = parser1.parse(text1, filePath, 0);
+            end = new Date().getTime();
+            totalTime += (end - start);
         } else {
             var text = new StringText(contents);
             var parser = new Parser(text, languageVersion, stringTable);
             var unit = parser.parseSyntaxTree();
+            end = new Date().getTime();
+            totalTime += (end - start);
             this.checkResult(filePath, unit, verify, generateBaseline);
         }
-        end = new Date().getTime();
-        totalTime += (end - start);
     };
     Program.prototype.runTrivia = function (environment, filePath, languageVersion, verify, generateBaseline) {
         if (typeof generateBaseline === "undefined") { generateBaseline = false; }
@@ -46189,9 +46223,9 @@ var Program = (function () {
                 break;
             }
         }
-        this.checkResult(filePath, tokens, verify, generateBaseline);
         end = new Date().getTime();
         totalTime += (end - start);
+        this.checkResult(filePath, tokens, verify, generateBaseline);
     };
     Program.prototype.runScanner = function (environment, filePath, languageVersion, verify, generateBaseline) {
         if(!StringUtilities.endsWith(filePath, ".ts")) {
@@ -46200,36 +46234,33 @@ var Program = (function () {
         var contents = environment.readFile(filePath, true);
         var start, end;
         start = new Date().getTime();
-        try  {
-            var text = new StringText(contents);
-            var scanner = Scanner.create(text, languageVersion);
-            var tokens = [];
-            var textArray = [];
-            var diagnostics = [];
-            while(true) {
-                var token = scanner.scan(diagnostics, false);
-                tokens.push(token);
-                if(token.tokenKind === 118 /* EndOfFileToken */ ) {
-                    break;
-                }
+        var text = new StringText(contents);
+        var scanner = Scanner.create(text, languageVersion);
+        var tokens = [];
+        var textArray = [];
+        var diagnostics = [];
+        while(true) {
+            var token = scanner.scan(diagnostics, false);
+            tokens.push(token);
+            if(token.tokenKind === 118 /* EndOfFileToken */ ) {
+                break;
             }
-            if(verify) {
-                var tokenText = ArrayUtilities.select(tokens, function (t) {
-                    return t.fullText();
-                }).join("");
-                if(tokenText !== contents) {
-                    throw new Error("Token invariant broken!");
-                }
-            }
-            var result = diagnostics.length === 0 ? tokens : {
-                diagnostics: diagnostics,
-                tokens: tokens
-            };
-            this.checkResult(filePath, result, verify, generateBaseline);
-        }finally {
-            end = new Date().getTime();
-            totalTime += (end - start);
         }
+        end = new Date().getTime();
+        totalTime += (end - start);
+        if(verify) {
+            var tokenText = ArrayUtilities.select(tokens, function (t) {
+                return t.fullText();
+            }).join("");
+            if(tokenText !== contents) {
+                throw new Error("Token invariant broken!");
+            }
+        }
+        var result = diagnostics.length === 0 ? tokens : {
+            diagnostics: diagnostics,
+            tokens: tokens
+        };
+        this.checkResult(filePath, result, verify, generateBaseline);
     };
     Program.prototype.run = function (environment, useTypeScript) {
         environment.standardOut.WriteLine("Testing input files.");

@@ -21,23 +21,39 @@ class HashTable {
         this.entries = ArrayUtilities.createArray(size);
     }
 
+    // Maps 'key' to 'value' in this table.  Does not throw if 'key' is already in the table.
+    public set (key: any, value: any) {
+        this.addOrSet(key, value, /*throwOnExistingEntry:*/ false);
+    }
+    
+    // Maps 'key' to 'value' in this table.  Throws if 'key' is already in the table.
     public add(key: any, value: any) {
+        this.addOrSet(key, value, /*throwOnExistingEntry:*/ true);
+    }
+
+    public addOrSet(key: any, value: any, throwOnExistingEntry: bool) {
         // Compute the hash for this key.  Also ensure that it's non negative.
         var hashCode = this.hash === null
             ? key.hashCode()
             : this.hash(key);
 
         hashCode = hashCode % 0x7FFFFFFF;
+        Debug.assert(hashCode > 0);
 
         var entry = this.findEntry(key, hashCode);
         if (entry !== null) {
+            if (throwOnExistingEntry) {
+                throw Errors.argument('key', 'Key was already in table.');
+            }
+
+            entry.Key = key;
             entry.Value = value;
             return;
         }
 
         return this.addEntry(key, value, hashCode);
     }
-
+    
     private findEntry(key: any, hashCode: number): HashTableEntry {
         for (var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
             if (e.HashCode === hashCode) {
@@ -60,6 +76,11 @@ class HashTable {
         var e = new HashTableEntry(key, value, hashCode, this.entries[index]);
 
         this.entries[index] = e;
+
+        // Right now we grow when we get a load factor of 1.  We're basically guaranteed to have had
+        // a collision at that point.  Should we potentially change this to a lower load factor?  It
+        // will require more space, but provide us with faster lookup.  We could potentially make this
+        // configurable as well.
         if (this.count === this.entries.length) {
             this.grow();
         }
@@ -100,6 +121,7 @@ class HashTable {
 
         for (var i = 0; i < oldEntries.length; i++) {
             var e = oldEntries[i];
+
             while (e !== null) {
                 var newIndex = e.HashCode % newSize;
                 var tmp = e.Next;

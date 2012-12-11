@@ -122,12 +122,12 @@ class Program {
         var parser = new Parser(text, languageVersion, stringTable);
         var tree = parser.parseSyntaxTree();
         var emitted = new Emitter(true).emit(<SourceUnitSyntax>tree.sourceUnit());
-        
-        var result = { fullText: emitted.fullText().split("\r\n"), sourceUnit: emitted };
-        this.checkResult(filePath, result, verify, generateBaseline);
 
         end = new Date().getTime();
         totalTime += (end - start);
+        
+        var result = { fullText: emitted.fullText().split("\r\n"), sourceUnit: emitted };
+        this.checkResult(filePath, result, verify, generateBaseline);
     }
 
     runParser(environment: IEnvironment,
@@ -157,17 +157,20 @@ class Program {
             var parser1 = new TypeScript.Parser(); 
             parser1.errorRecovery = true;
             var unit1 = parser1.parse(text1, filePath, 0);
+
+            end = new Date().getTime();
+            totalTime += (end - start);
         }
         else {
             var text = new StringText(contents);
             var parser = new Parser(text, languageVersion, stringTable);
             var unit = parser.parseSyntaxTree();
 
+            end = new Date().getTime();
+            totalTime += (end - start);
+
             this.checkResult(filePath, unit, verify, generateBaseline);
         }
-
-        end = new Date().getTime();
-        totalTime += (end - start);
     }
 
     runTrivia(environment: IEnvironment, filePath: string,
@@ -197,14 +200,14 @@ class Program {
             }
         }
 
-        this.checkResult(filePath, tokens, verify, generateBaseline);
-
         end = new Date().getTime();
         totalTime += (end - start);
+
+        this.checkResult(filePath, tokens, verify, generateBaseline);
     }
 
     runScanner(environment: IEnvironment,
-              filePath: string, languageVersion: LanguageVersion, verify: bool, generateBaseline: bool): void {
+        filePath: string, languageVersion: LanguageVersion, verify: bool, generateBaseline: bool): void {
         if (!StringUtilities.endsWith(filePath, ".ts")) {
             return;
         }
@@ -213,38 +216,36 @@ class Program {
 
         var start: number, end: number;
         start = new Date().getTime();
-        try {
-            var text = new StringText(contents);
-            var scanner = Scanner.create(text, languageVersion);
 
-            var tokens: ISyntaxToken[] = [];
-            var textArray: string[] = [];
-            var diagnostics: SyntaxDiagnostic[] = [];
+        var text = new StringText(contents);
+        var scanner = Scanner.create(text, languageVersion);
 
-            while (true) {
-                var token = scanner.scan(diagnostics, /*allowRegularExpression:*/ false);
-                tokens.push(token);
+        var tokens: ISyntaxToken[] = [];
+        var textArray: string[] = [];
+        var diagnostics: SyntaxDiagnostic[] = [];
 
-                if (token.tokenKind === SyntaxKind.EndOfFileToken) {
-                    break;
-                }
+        while (true) {
+            var token = scanner.scan(diagnostics, /*allowRegularExpression:*/ false);
+            tokens.push(token);
+
+            if (token.tokenKind === SyntaxKind.EndOfFileToken) {
+                break;
             }
+        }
 
-            if (verify) {
-                var tokenText = ArrayUtilities.select(tokens, t => t.fullText()).join("");
+        end = new Date().getTime();
+        totalTime += (end - start);
 
-                if (tokenText !== contents) {
-                    throw new Error("Token invariant broken!");
-                }
+        if (verify) {
+            var tokenText = ArrayUtilities.select(tokens, t => t.fullText()).join("");
+
+            if (tokenText !== contents) {
+                throw new Error("Token invariant broken!");
             }
+        }
 
-            var result = diagnostics.length === 0 ? <any>tokens : { diagnostics: diagnostics, tokens: tokens };
-            this.checkResult(filePath, result, verify, generateBaseline);
-        }
-        finally {
-            end = new Date().getTime();
-            totalTime += (end - start);
-        }
+        var result = diagnostics.length === 0 ? <any>tokens : { diagnostics: diagnostics, tokens: tokens };
+        this.checkResult(filePath, result, verify, generateBaseline);
     }
 
     run(environment: IEnvironment, useTypeScript: bool): void {
