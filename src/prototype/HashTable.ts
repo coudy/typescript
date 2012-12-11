@@ -1,7 +1,8 @@
 ///<reference path='References.ts' />
 
 class HashTableEntry {
-    constructor(public Value: any,
+    constructor(public Key: any,
+                public Value: any,
                 public HashCode: number,
                 public Next: HashTableEntry) {
     }
@@ -10,38 +11,39 @@ class HashTableEntry {
 class HashTable {
     private entries: HashTableEntry[] = [];
     private count: number = 0;
-    private hash: (v: any) => number;
-    private equals: (v1: any, v2: any) => bool;
+    private hash: (k: any) => number;
+    private equals: (k1: any, k2: any) => bool;
 
-    constructor(capacity: number = 256, hash: (v: any) => number = null, equals: (v1: any, v2: any) => bool = null) {
+    constructor(capacity: number = 256, hash: (k: any) => number = null, equals: (k1: any, k2: any) => bool = null) {
         var size = Hash.getPrime(capacity);
         this.hash = hash;
         this.equals = equals;
         this.entries = ArrayUtilities.createArray(size);
     }
 
-    public addValue(value: any): string {
+    public add(key: any, value: any) {
         // Compute the hash for this key.  Also ensure that it's non negative.
         var hashCode = this.hash === null
-            ? value.hashCode()
-            : this.hash(value);
+            ? key.hashCode()
+            : this.hash(key);
 
         hashCode = hashCode % 0x7FFFFFFF;
 
-        var entry = this.findEntry(value, hashCode);
+        var entry = this.findEntry(key, hashCode);
         if (entry !== null) {
-            return entry.Value;
+            entry.Value = value;
+            return;
         }
 
-        return this.addEntry(value, hashCode);
+        return this.addEntry(key, value, hashCode);
     }
 
-    private findEntry(value: any, hashCode: number): HashTableEntry {
+    private findEntry(key: any, hashCode: number): HashTableEntry {
         for (var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
             if (e.HashCode === hashCode) {
                 var equals = this.equals === null
-                    ? value === e.Value
-                    : this.equals(value, e.Value);
+                    ? key === e.Key
+                    : this.equals(key, e.Key);
 
                 if (equals) {
                     return e;
@@ -52,10 +54,10 @@ class HashTable {
         return null;
     }
 
-    private addEntry(value: any, hashCode: number): any {
+    private addEntry(key: any, value: any, hashCode: number): any {
         var index = hashCode %  this.entries.length;
 
-        var e = new HashTableEntry(value, hashCode, this.entries[index]);
+        var e = new HashTableEntry(key, value, hashCode, this.entries[index]);
 
         this.entries[index] = e;
         if (this.count === this.entries.length) {
@@ -63,7 +65,7 @@ class HashTable {
         }
 
         this.count++;
-        return e.Value;
+        return e.Key;
     }
 
     private dumpStats() {
