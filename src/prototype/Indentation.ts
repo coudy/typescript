@@ -1,47 +1,75 @@
 ///<reference path='References.ts' />
 
-class Indentation {
-    // The raw character position of the indentation in the in the line. This will
-    // range between [0, line.Length).
-    private _linePosition: number;
+module Indentation {
+    export function columnForStartOfToken(
+            token: ISyntaxToken,
+            syntaxInformationMap: SyntaxInformationMap,
+            options: FormattingOptions): number {
+        // Walk backward from this token until we find the first token in the line.  For each token 
+        // we see (that is not the first toke in line), push the entirety of the text into the text 
+        // array.  Then, for the first token, add its text (without its leading trivia) to the text
+        // array.  i.e. if we have:
+        //
+        //      var foo = a => bar();
+        //
+        // And we want the column for the start of 'bar', then we'll add the underlinded portions to
+        // the text array:
+        //
+        //      var foo = a => bar();
+        //                  ___
+        //                __
+        //              __
+        //          ____
+        //      ___
+        var firstTokenInLine = syntaxInformationMap.firstTokenInLineContainingToken(token);
+        var leadingTextInReverse: string[] = [];
 
-    // The column position of the indentation in the line.  This will be equal to the
-    // linePosition if the indentation is all spaces, but it can greater if there are tabs in
-    // the indent that expand out to more than 1 space.
-    public _column: number;
+        var current = token;
+        while (current !== firstTokenInLine) {
+            current = syntaxInformationMap.previousToken(current);
 
-    constructor(linePosition: number, column: number) {
-        this._linePosition = linePosition;
-        this._column = column;
+            if (current === firstTokenInLine) {
+                // We're at the first token in teh line.
+                // We don't want the leading trivia for this token.  That will be taken care of in
+                // columnForFirstNonWhitespaceCharacterInLine.  So just push the trailing trivia
+                // and then the token text.
+                leadingTextInReverse.push(current.trailingTrivia().fullText());
+                leadingTextInReverse.push(current.text());
+            }
+            else {
+                // We're at an intermediate token on the line.  Just push all its text into the array.
+                leadingTextInReverse.push(current.fullText());
+            }
+        }
+
+        // Now, add all trivia to the start of the line on the first token in the list.
+        collectLeadingTriviaTextToStartOfLine(firstTokenInLine, leadingTextInReverse);
+
+        return columnForLeadingTextInReverse(leadingTextInReverse, options);
     }
 
-    public linePosition(): number {
-        return this._linePosition;
-    }
-
-    public column(): number {
-        return this._column;
-    }
-
-    public static columnForToken(token: ISyntaxToken, syntaxInformationMap: SyntaxInformationMap, spacesPerTab: number) {
-
-    }
-
-    private static indentationForLineContainingToken(token: ISyntaxToken, syntaxInformationMap: SyntaxInformationMap, spacesPerTab: number) {
+    export function columnForStartOfFirstTokenInLineContainingToken(
+            token: ISyntaxToken,
+            syntaxInformationMap: SyntaxInformationMap,
+            options: FormattingOptions): number {
         // Walk backward through the tokens until we find the first one on the line.
-        var firstToken = syntaxInformationMap.firstTokenOnLineContainingToken(token);
+        var firstTokenInLine = syntaxInformationMap.firstTokenInLineContainingToken(token);
+        var leadingTextInReverse: string[] = [];
 
-        return Indentation.indentationForFirstTokenOnLine(firstToken, spacesPerTab);
+        // Now, add all trivia to the start of the line on the first token in the list.
+        collectLeadingTriviaTextToStartOfLine(firstTokenInLine, leadingTextInReverse);
+
+        return columnForLeadingTextInReverse(leadingTextInReverse, options);
     }
 
-    // Returns the indentation for this token.  The presumption is that this token is the first one
-    // on the line.  If it isn't, then this will not return what you want.
-    private static indentationForFirstTokenOnLine(firstTokenOnLine: ISyntaxToken, spacesPerTab: number) {
-        var leadingTrivia = firstTokenOnLine.leadingTrivia();
+    // Collect all the trivia that precedes this token.  Stopping when we hit a newline trivia
+    // or a multiline comment that spans multiple lines.  This is meant to be called on the first
+    // token in a line.
+    function collectLeadingTriviaTextToStartOfLine(
+            firstTokenInLine: ISyntaxToken,
+            leadingTextInReverse: string[]) {
+        var leadingTrivia = firstTokenInLine.leadingTrivia();
 
-        // Collect all the trivia that precedes this token.  Stopping when we hit a newline trivia
-        // or a multiline comment that spans multiple lines.
-        var indentationTextInReverse: string[] = [];
         for (var i = leadingTrivia.count() - 1; i >= 0; i--) {
             var trivia = leadingTrivia.syntaxTriviaAt(i);
             if (trivia.kind() === SyntaxKind.NewLineTrivia) {
@@ -50,7 +78,7 @@ class Indentation {
 
             if (trivia.kind() === SyntaxKind.MultiLineCommentTrivia) {
                 var lineSegments = SyntaxTrivia.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
-                indentationTextInReverse.push(ArrayUtilities.last(lineSegments));
+                leadingTextInReverse.push(ArrayUtilities.last(lineSegments));
 
                 if (lineSegments.length > 0) {
                     // This multiline comment actually spanned multiple lines.  So we're done.
@@ -60,47 +88,62 @@ class Indentation {
                 // It was only on a single line, so keep on going.
             }
 
-            indentationTextInReverse.push(trivia.fullText());
+            leadingTextInReverse.push(trivia.fullText());
         }
+    }
 
-        var linePosition = 0;
+    function columnForLeadingTextInReverse(
+            leadingTextInReverse: string[],
+            options: FormattingOptions): number {
         var column = 0;
 
         // walk backwards.  This means we're actually walking forward from column 0 to the start of
         // the token.
-        for (var i = indentationTextInReverse.length - 1; i >= 0; i--) {
-            var indentationChunk = indentationTextInReverse[i];
+        for (var i = leadingTextInReverse.length - 1; i >= 0; i--) {
+            var text = leadingTextInReverse[i];
+            column = columnForPositionInStringWorker(text, text.length, column, options);
+       }
 
-            for (var j = 0; j < indentationChunk.length; j++) {
-                var ch = indentationChunk.charCodeAt(j);
+        return column;
+    }
 
-                linePosition++;
-                if (ch === CharacterCodes.tab) {
-                    column += spacesPerTab - column % spacesPerTab;
-                }
-                else {
-                    column++;
-                }
+    // Returns the column that this input string ends at (assuming it starts at column 0).
+    export function columnForPositionInString(input: string, position: number, options: FormattingOptions): number {
+        return columnForPositionInStringWorker(input, position, 0, options);
+    }
+    
+    function columnForPositionInStringWorker(input: string, position: number, startColumn: number, options: FormattingOptions): number {
+        var column = startColumn;
+        var spacesPerTab = options.spacesPerTab;
+
+        for (var j = 0; j < position; j++) {
+            var ch = input.charCodeAt(j);
+
+            if (ch === CharacterCodes.tab) {
+                column += spacesPerTab - column % spacesPerTab;
+            }
+            else {
+                column++;
             }
         }
 
-        return new Indentation(linePosition, column);
+        return column;
     }
 
-    public static indentationString(column: number, useTabs: bool, spacesPerTab: number): string {
+    export function indentationString(column: number, options: FormattingOptions): string {
         var numberOfTabs = 0;
         var numberOfSpaces = MathPrototype.max(0, column);
 
-        if (useTabs) {
-            numberOfTabs = column / spacesPerTab;
-            numberOfSpaces -= numberOfTabs * spacesPerTab;
+        if (options.useTabs) {
+            numberOfTabs = column / options.spacesPerTab;
+            numberOfSpaces -= numberOfTabs * options.spacesPerTab;
         }
 
         return StringUtilities.repeat('\t', numberOfTabs) +
                StringUtilities.repeat(' ', numberOfSpaces);
     }
 
-    public static indentationTrivia(column: number, useTabs: bool, spacesPerTab: number): ISyntaxTrivia {
-        return SyntaxTrivia.create(SyntaxKind.WhitespaceTrivia, this.indentationString(column, useTabs, spacesPerTab));
+    export function indentationTrivia(column: number, options: FormattingOptions): ISyntaxTrivia {
+        return SyntaxTrivia.create(SyntaxKind.WhitespaceTrivia, this.indentationString(column, options));
     }
 }

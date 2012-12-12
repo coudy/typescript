@@ -8,6 +8,7 @@
 ///<reference path='DiagnosticCode.ts' />
 ///<reference path='Environment.ts' />
 ///<reference path='Errors.ts' />
+///<reference path='FormattingOptions.ts' />
 ///<reference path='Contract.ts' />
 ///<reference path='Hash.ts' />
 ///<reference path='HashTable.ts' />

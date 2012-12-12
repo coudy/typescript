@@ -351,6 +351,32 @@ var CharacterInfo = (function () {
         Debug.assert(CharacterInfo.isHexDigit(c));
         return CharacterInfo.isDecimalDigit(c) ? (c - 48 /* _0 */ ) : (c >= 65 /* A */  && c <= 70 /* F */ ) ? c - 65 /* A */  + 10 : c - 97 /* a */  + 10;
     }
+    CharacterInfo.isWhitespace = function isWhitespace(ch) {
+        switch(ch) {
+            case 32 /* space */ :
+            case 9 /* tab */ :
+            case 11 /* verticalTab */ :
+            case 12 /* formFeed */ :
+            case 160 /* nonBreakingSpace */ :
+            case 65279 /* byteOrderMark */ : {
+                return true;
+
+            }
+        }
+        return false;
+    }
+    CharacterInfo.isLineTerminator = function isLineTerminator(ch) {
+        switch(ch) {
+            case 13 /* carriageReturn */ :
+            case 10 /* lineFeed */ :
+            case 8233 /* paragraphSeparator */ :
+            case 8232 /* lineSeparator */ : {
+                return true;
+
+            }
+        }
+        return false;
+    }
     return CharacterInfo;
 })();
 var Constants;
@@ -696,6 +722,15 @@ var Environment = (function () {
         }
     }
 })();
+var FormattingOptions = (function () {
+    function FormattingOptions(useTabs, spacesPerTab, indentSpaces) {
+        this.useTabs = useTabs;
+        this.spacesPerTab = spacesPerTab;
+        this.indentSpaces = indentSpaces;
+    }
+    FormattingOptions.defaultOptions = new FormattingOptions(false, 4, 4);
+    return FormattingOptions;
+})();
 var Contract = (function () {
     function Contract() { }
     Contract.requires = function requires(expression) {
@@ -1005,26 +1040,34 @@ var HashTable = (function () {
     };
     return HashTable;
 })();
-var Indentation = (function () {
-    function Indentation(linePosition, column) {
-        this._linePosition = linePosition;
-        this._column = column;
+var Indentation;
+(function (Indentation) {
+    function columnForStartOfToken(token, syntaxInformationMap, options) {
+        var firstTokenInLine = syntaxInformationMap.firstTokenInLineContainingToken(token);
+        var leadingTextInReverse = [];
+        var current = token;
+        while(current !== firstTokenInLine) {
+            current = syntaxInformationMap.previousToken(current);
+            if(current === firstTokenInLine) {
+                leadingTextInReverse.push(current.trailingTrivia().fullText());
+                leadingTextInReverse.push(current.text());
+            } else {
+                leadingTextInReverse.push(current.fullText());
+            }
+        }
+        collectLeadingTriviaTextToStartOfLine(firstTokenInLine, leadingTextInReverse);
+        return columnForLeadingTextInReverse(leadingTextInReverse, options);
     }
-    Indentation.prototype.linePosition = function () {
-        return this._linePosition;
-    };
-    Indentation.prototype.column = function () {
-        return this._column;
-    };
-    Indentation.columnForToken = function columnForToken(token, syntaxInformationMap, spacesPerTab) {
+    Indentation.columnForStartOfToken = columnForStartOfToken;
+    function columnForStartOfFirstTokenInLineContainingToken(token, syntaxInformationMap, options) {
+        var firstTokenInLine = syntaxInformationMap.firstTokenInLineContainingToken(token);
+        var leadingTextInReverse = [];
+        collectLeadingTriviaTextToStartOfLine(firstTokenInLine, leadingTextInReverse);
+        return columnForLeadingTextInReverse(leadingTextInReverse, options);
     }
-    Indentation.indentationForLineContainingToken = function indentationForLineContainingToken(token, syntaxInformationMap, spacesPerTab) {
-        var firstToken = syntaxInformationMap.firstTokenOnLineContainingToken(token);
-        return Indentation.indentationForFirstTokenOnLine(firstToken, spacesPerTab);
-    }
-    Indentation.indentationForFirstTokenOnLine = function indentationForFirstTokenOnLine(firstTokenOnLine, spacesPerTab) {
-        var leadingTrivia = firstTokenOnLine.leadingTrivia();
-        var indentationTextInReverse = [];
+    Indentation.columnForStartOfFirstTokenInLineContainingToken = columnForStartOfFirstTokenInLineContainingToken;
+    function collectLeadingTriviaTextToStartOfLine(firstTokenInLine, leadingTextInReverse) {
+        var leadingTrivia = firstTokenInLine.leadingTrivia();
         for(var i = leadingTrivia.count() - 1; i >= 0; i--) {
             var trivia = leadingTrivia.syntaxTriviaAt(i);
             if(trivia.kind() === 5 /* NewLineTrivia */ ) {
@@ -1032,43 +1075,54 @@ var Indentation = (function () {
             }
             if(trivia.kind() === 6 /* MultiLineCommentTrivia */ ) {
                 var lineSegments = SyntaxTrivia.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
-                indentationTextInReverse.push(ArrayUtilities.last(lineSegments));
+                leadingTextInReverse.push(ArrayUtilities.last(lineSegments));
                 if(lineSegments.length > 0) {
                     break;
                 }
             }
-            indentationTextInReverse.push(trivia.fullText());
+            leadingTextInReverse.push(trivia.fullText());
         }
-        var linePosition = 0;
+    }
+    function columnForLeadingTextInReverse(leadingTextInReverse, options) {
         var column = 0;
-        for(var i = indentationTextInReverse.length - 1; i >= 0; i--) {
-            var indentationChunk = indentationTextInReverse[i];
-            for(var j = 0; j < indentationChunk.length; j++) {
-                var ch = indentationChunk.charCodeAt(j);
-                linePosition++;
-                if(ch === 9 /* tab */ ) {
-                    column += spacesPerTab - column % spacesPerTab;
-                } else {
-                    column++;
-                }
+        for(var i = leadingTextInReverse.length - 1; i >= 0; i--) {
+            var text = leadingTextInReverse[i];
+            column = columnForPositionInStringWorker(text, text.length, column, options);
+        }
+        return column;
+    }
+    function columnForPositionInString(input, position, options) {
+        return columnForPositionInStringWorker(input, position, 0, options);
+    }
+    Indentation.columnForPositionInString = columnForPositionInString;
+    function columnForPositionInStringWorker(input, position, startColumn, options) {
+        var column = startColumn;
+        var spacesPerTab = options.spacesPerTab;
+        for(var j = 0; j < position; j++) {
+            var ch = input.charCodeAt(j);
+            if(ch === 9 /* tab */ ) {
+                column += spacesPerTab - column % spacesPerTab;
+            } else {
+                column++;
             }
         }
-        return new Indentation(linePosition, column);
+        return column;
     }
-    Indentation.indentationString = function indentationString(column, useTabs, spacesPerTab) {
+    function indentationString(column, options) {
         var numberOfTabs = 0;
         var numberOfSpaces = MathPrototype.max(0, column);
-        if(useTabs) {
-            numberOfTabs = column / spacesPerTab;
-            numberOfSpaces -= numberOfTabs * spacesPerTab;
+        if(options.useTabs) {
+            numberOfTabs = column / options.spacesPerTab;
+            numberOfSpaces -= numberOfTabs * options.spacesPerTab;
         }
         return StringUtilities.repeat('\t', numberOfTabs) + StringUtilities.repeat(' ', numberOfSpaces);
     }
-    Indentation.indentationTrivia = function indentationTrivia(column, useTabs, spacesPerTab) {
-        return SyntaxTrivia.create(4 /* WhitespaceTrivia */ , this.indentationString(column, useTabs, spacesPerTab));
+    Indentation.indentationString = indentationString;
+    function indentationTrivia(column, options) {
+        return SyntaxTrivia.create(4 /* WhitespaceTrivia */ , this.indentationString(column, options));
     }
-    return Indentation;
-})();
+    Indentation.indentationTrivia = indentationTrivia;
+})(Indentation || (Indentation = {}));
 var IntegerUtilities = (function () {
     function IntegerUtilities() { }
     IntegerUtilities.integerDivide = function integerDivide(numerator, denominator) {
@@ -11989,27 +12043,14 @@ var SyntaxNodeCloner = (function (_super) {
     };
     return SyntaxNodeCloner;
 })(SyntaxRewriter);
-var EmitterOptions = (function () {
-    function EmitterOptions(useTabs, spacesPerTab, indentSpaces) {
-        this.useTabs = useTabs;
-        this.spacesPerTab = spacesPerTab;
-        this.indentSpaces = indentSpaces;
-    }
-    EmitterOptions.defaultOptions = new EmitterOptions(false, 4, 4);
-    return EmitterOptions;
-})();
 var Emitter = (function (_super) {
     __extends(Emitter, _super);
     function Emitter(syntaxInformationMap, options) {
         _super.call(this);
         this.syntaxInformationMap = syntaxInformationMap;
-        this.options = options || EmitterOptions.defaultOptions;
-        this.indentationTrivia = Indentation.indentationTrivia(this.options.indentSpaces, this.options.useTabs, this.options.spacesPerTab);
+        this.options = options || FormattingOptions.defaultOptions;
+        this.indentationTrivia = Indentation.indentationTrivia(this.options.indentSpaces, this.options);
     }
-    Emitter.prototype.createColumnIndentTriviaForLineContainingToken = function (token) {
-        var indentation = Indentation.indentationForLineContainingToken(token, this.syntaxInformationMap, this.options.spacesPerTab);
-        return Indentation.indentationTrivia(indentation.column(), this.options.useTabs, this.options.spacesPerTab);
-    };
     Emitter.emit = function emit(input, options) {
         if (typeof options === "undefined") { options = null; }
         SyntaxNodeInvariantsChecker.checkInvariants(input);
@@ -12060,7 +12101,7 @@ var Emitter = (function (_super) {
         }
     }
     Emitter.prototype.adjustListIndentation = function (nodes) {
-        return SyntaxIndenter.indentNodes(nodes, true, this.indentationTrivia);
+        return SyntaxIndenter.indentNodes(nodes, true, this.options.indentSpaces, this.options);
     };
     Emitter.prototype.visitModuleDeclaration = function (node) {
         var _this = this;
@@ -12199,17 +12240,18 @@ var Emitter = (function (_super) {
             ]
         }));
         var firstExpressionToken = arrowFunction.body().firstToken();
-        var expressionPosition = this.syntaxInformationMap.start(firstExpressionToken);
-        var newExpressionPosition = returnStatement.returnKeyword().fullWidth();
-        var difference = newExpressionPosition - expressionPosition;
+        var firstExpressionTokenIsFirstOnLine = this.syntaxInformationMap.isFirstTokenInLine(firstExpressionToken);
+        var expressionColumn = Indentation.columnForStartOfToken(firstExpressionToken, this.syntaxInformationMap, this.options);
+        var newExpressionColumn = returnStatement.returnKeyword().fullWidth();
+        var difference = newExpressionColumn - expressionColumn;
         if(difference < 0) {
-            returnStatement = SyntaxDedenter.dedentNode(returnStatement, false, -difference, 4);
+            returnStatement = SyntaxDedenter.dedentNode(returnStatement, firstExpressionTokenIsFirstOnLine, -difference, this.options.indentSpaces);
         } else {
             if(difference > 0) {
-                returnStatement = SyntaxIndenter.indentNode(returnStatement, false, SyntaxTrivia.createSpaces(difference));
+                returnStatement = SyntaxIndenter.indentNode(returnStatement, firstExpressionTokenIsFirstOnLine, difference, this.options);
             }
         }
-        returnStatement = SyntaxIndenter.indentNode(returnStatement, true, this.indentationTrivia);
+        returnStatement = SyntaxIndenter.indentNode(returnStatement, true, this.options.indentSpaces, this.options);
         var block = new BlockSyntax(SyntaxToken.createElastic({
             kind: 67 /* OpenBraceToken */ ,
             trailingTrivia: [
@@ -12220,7 +12262,7 @@ var Emitter = (function (_super) {
         ]), SyntaxToken.createElastic({
             kind: 68 /* CloseBraceToken */ 
         }));
-        block = SyntaxIndenter.indentNode(block, false, this.createColumnIndentTriviaForLineContainingToken(arrowFunction.firstToken()));
+        block = SyntaxIndenter.indentNode(block, false, Indentation.columnForStartOfFirstTokenInLineContainingToken(arrowFunction.firstToken(), this.syntaxInformationMap, this.options), this.options);
         return block;
     };
     return Emitter;
@@ -15098,11 +15140,12 @@ var SyntaxDedenter = (function (_super) {
 })(SyntaxRewriter);
 var SyntaxIndenter = (function (_super) {
     __extends(SyntaxIndenter, _super);
-    function SyntaxIndenter(indentFirstToken, indentationTrivia) {
+    function SyntaxIndenter(indentFirstToken, indentationAmount, options) {
         _super.call(this);
+        this.indentationAmount = indentationAmount;
+        this.options = options;
         this.lastTriviaWasNewLine = true;
         this.lastTriviaWasNewLine = indentFirstToken;
-        this.indentationTrivia = indentationTrivia;
     }
     SyntaxIndenter.prototype.visitToken = function (token) {
         var result = token;
@@ -15114,37 +15157,96 @@ var SyntaxIndenter = (function (_super) {
         return result;
     };
     SyntaxIndenter.prototype.indentTriviaList = function (triviaList) {
-        var result = [
-            this.indentationTrivia
-        ];
+        var result = [];
+        var indentNextTrivia = true;
         for(var i = 0, n = triviaList.count(); i < n; i++) {
             var trivia = triviaList.syntaxTriviaAt(i);
-            if(trivia.kind() === 6 /* MultiLineCommentTrivia */ ) {
-                result.push(this.indentMultiLineComment(trivia));
-                continue;
+            var indentThisTrivia = indentNextTrivia;
+            indentNextTrivia = false;
+            switch(trivia.kind()) {
+                case 6 /* MultiLineCommentTrivia */ : {
+                    this.indentMultiLineComment(trivia, indentThisTrivia, result);
+                    continue;
+
+                }
+                case 7 /* SingleLineCommentTrivia */ :
+                case 8 /* SkippedTextTrivia */ : {
+                    this.indentSingleLineOrSkippedText(trivia, indentThisTrivia, result);
+                    continue;
+
+                }
+                case 4 /* WhitespaceTrivia */ : {
+                    this.indentWhitespace(trivia, indentThisTrivia, result);
+                    continue;
+
+                }
+                case 5 /* NewLineTrivia */ : {
+                    result.push(trivia);
+                    indentNextTrivia = true;
+                    continue;
+
+                }
+                default: {
+                    throw Errors.invalidOperation();
+
+                }
             }
-            result.push(trivia);
-            if(trivia.kind() === 5 /* NewLineTrivia */ ) {
-                result.push(this.indentationTrivia);
-            }
+        }
+        if(indentNextTrivia) {
+            result.push(Indentation.indentationTrivia(this.indentationAmount, this.options));
         }
         return SyntaxTriviaList.create(result);
     };
-    SyntaxIndenter.prototype.indentMultiLineComment = function (trivia) {
-        var lineSegments = SyntaxTrivia.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
-        if(lineSegments.length === 1) {
-            return trivia;
+    SyntaxIndenter.firstNonWhitespacePosition = function firstNonWhitespacePosition(value) {
+        for(var i = 0; i < value.length; i++) {
+            var ch = value.charCodeAt(i);
+            if(!CharacterInfo.isWhitespace(ch)) {
+                return i;
+            }
         }
-        var indentationText = this.indentationTrivia.fullText();
-        var newText = lineSegments.join(indentationText);
-        return SyntaxTrivia.create(6 /* MultiLineCommentTrivia */ , newText);
+        return value.length;
+    }
+    SyntaxIndenter.prototype.indentSegment = function (segment, allWhitespace) {
+        var firstNonWhitespacePosition = allWhitespace ? segment.length : SyntaxIndenter.firstNonWhitespacePosition(segment);
+        if(firstNonWhitespacePosition == 0 && segment.length > 0 && CharacterInfo.isLineTerminator(segment[0])) {
+            return segment;
+        }
+        var firstNonWhitespaceColumn = Indentation.columnForPositionInString(segment, firstNonWhitespacePosition, this.options);
+        var newFirstNonWhitespaceColumn = firstNonWhitespaceColumn + this.indentationAmount;
+        var indentationString = Indentation.indentationString(newFirstNonWhitespaceColumn, this.options);
+        return indentationString + segment.substring(firstNonWhitespacePosition);
     };
-    SyntaxIndenter.indentNode = function indentNode(node, indentFirstToken, indentTrivia) {
-        var indenter = new SyntaxIndenter(indentFirstToken, indentTrivia);
+    SyntaxIndenter.prototype.indentWhitespace = function (trivia, indentThisTrivia, result) {
+        if(!indentThisTrivia) {
+            result.push(trivia);
+            return;
+        }
+        var newIndentation = this.indentSegment(trivia.fullText(), true);
+        result.push(SyntaxTrivia.createWhitespace(newIndentation));
+    };
+    SyntaxIndenter.prototype.indentSingleLineOrSkippedText = function (trivia, indentThisTrivia, result) {
+        if(indentThisTrivia) {
+            result.push(Indentation.indentationTrivia(this.indentationAmount, this.options));
+        }
+        result.push(trivia);
+    };
+    SyntaxIndenter.prototype.indentMultiLineComment = function (trivia, indentThisTrivia, result) {
+        if(indentThisTrivia) {
+            result.push(Indentation.indentationTrivia(this.indentationAmount, this.options));
+        }
+        var segments = SyntaxTrivia.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
+        for(var i = 1; i < segments.length; i++) {
+            segments[i] = this.indentSegment(segments[i], false);
+        }
+        var newText = segments.join("");
+        result.push(SyntaxTrivia.createMultiLineComment(newText));
+    };
+    SyntaxIndenter.indentNode = function indentNode(node, indentFirstToken, indentAmount, options) {
+        var indenter = new SyntaxIndenter(indentFirstToken, indentAmount, options);
         return node.accept1(indenter);
     }
-    SyntaxIndenter.indentNodes = function indentNodes(nodes, indentFirstToken, indentTrivia) {
-        var indenter = new SyntaxIndenter(indentFirstToken, indentTrivia);
+    SyntaxIndenter.indentNodes = function indentNodes(nodes, indentFirstToken, indentAmount, options) {
+        var indenter = new SyntaxIndenter(indentFirstToken, indentAmount, options);
         var result = ArrayUtilities.select(nodes, function (n) {
             return n.accept1(indenter);
         });
@@ -17042,6 +17144,14 @@ var SyntaxTrivia;
         return create(4 /* WhitespaceTrivia */ , StringUtilities.repeat(" ", count));
     }
     SyntaxTrivia.createSpaces = createSpaces;
+    function createWhitespace(text) {
+        return create(4 /* WhitespaceTrivia */ , text);
+    }
+    SyntaxTrivia.createWhitespace = createWhitespace;
+    function createMultiLineComment(text) {
+        return create(6 /* MultiLineCommentTrivia */ , text);
+    }
+    SyntaxTrivia.createMultiLineComment = createMultiLineComment;
     SyntaxTrivia.space = createSpaces(1);
     SyntaxTrivia.lineFeed = create(5 /* NewLineTrivia */ , "\n");
     SyntaxTrivia.carriageReturn = create(5 /* NewLineTrivia */ , "\r");
@@ -17803,9 +17913,9 @@ var SyntaxInformationMap = (function (_super) {
         _super.apply(this, arguments);
 
         this.tokenToInformation = new HashTable(HashTable.DefaultCapacity, SyntaxToken.hashCode);
-        this.previousToken = null;
-        this.previousTokenInformation = null;
-        this.currentPosition = 0;
+        this._previousToken = null;
+        this._previousTokenInformation = null;
+        this._currentPosition = 0;
     }
     SyntaxInformationMap.create = function create(node) {
         var map = new SyntaxInformationMap();
@@ -17814,16 +17924,16 @@ var SyntaxInformationMap = (function (_super) {
     }
     SyntaxInformationMap.prototype.visitToken = function (token) {
         var tokenInformation = {
-            fullStart: this.currentPosition,
-            previousToken: this.previousToken,
+            fullStart: this._currentPosition,
+            previousToken: this._previousToken,
             nextToken: null
         };
-        if(this.previousTokenInformation !== null) {
-            this.previousTokenInformation.nextToken = token;
+        if(this._previousTokenInformation !== null) {
+            this._previousTokenInformation.nextToken = token;
         }
-        this.previousToken = token;
-        this.currentPosition += token.fullWidth();
-        this.previousTokenInformation = tokenInformation;
+        this._previousToken = token;
+        this._currentPosition += token.fullWidth();
+        this._previousTokenInformation = tokenInformation;
         this.tokenToInformation.add(token, tokenInformation);
     };
     SyntaxInformationMap.prototype.fullStart = function (token) {
@@ -17832,19 +17942,29 @@ var SyntaxInformationMap = (function (_super) {
     SyntaxInformationMap.prototype.start = function (token) {
         return this.fullStart(token) + token.leadingTriviaWidth();
     };
+    SyntaxInformationMap.prototype.previousToken = function (token) {
+        return this.tokenInformation(token).previousToken;
+    };
     SyntaxInformationMap.prototype.tokenInformation = function (token) {
         return this.tokenToInformation.get(token);
     };
-    SyntaxInformationMap.prototype.firstTokenOnLineContainingToken = function (token) {
+    SyntaxInformationMap.prototype.firstTokenInLineContainingToken = function (token) {
         var current = token;
         while(true) {
             var information = this.tokenInformation(current);
-            if(information.previousToken === null || information.previousToken.hasTrailingNewLineTrivia) {
+            if(this.isFirstTokenInLineWorker(information)) {
                 break;
             }
             current = information.previousToken;
         }
         return current;
+    };
+    SyntaxInformationMap.prototype.isFirstTokenInLine = function (token) {
+        var information = this.tokenInformation(token);
+        return this.isFirstTokenInLineWorker(information);
+    };
+    SyntaxInformationMap.prototype.isFirstTokenInLineWorker = function (information) {
+        return information.previousToken === null || information.previousToken.hasTrailingNewLineTrivia();
     };
     return SyntaxInformationMap;
 })(SyntaxWalker);
@@ -45512,8 +45632,7 @@ var expectedTop1000Failures = {
     "JSFile800\\fedex_com\\InstantInvite3.js": true
 };
 var stringTable = new StringTable();
-var specificFile = "ArrowFunctionInExpressionStatement2";
-undefined;
+var specificFile = undefined;
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {

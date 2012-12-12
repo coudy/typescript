@@ -1,36 +1,18 @@
 ///<reference path='References.ts' />
 
-class EmitterOptions {
-    constructor(public useTabs: bool,
-                public spacesPerTab: number,
-                public indentSpaces: number) {
-    }
-
-    public static defaultOptions = new EmitterOptions(/*useTabs:*/ false, /*spacesPerTab:*/ 4, /*indentSpaces:*/ 4);
-}
-
 class Emitter extends SyntaxRewriter {
     private syntaxInformationMap: SyntaxInformationMap;
-    private options: EmitterOptions;
-    private indentationTrivia: ISyntaxTrivia;
+    private options: FormattingOptions;
 
     constructor(syntaxInformationMap: SyntaxInformationMap,
-                options: EmitterOptions) {
+                options: FormattingOptions) {
         super();
 
         this.syntaxInformationMap = syntaxInformationMap;
-        this.options = options || EmitterOptions.defaultOptions;
-
-        this.indentationTrivia = Indentation.indentationTrivia(this.options.indentSpaces, this.options.useTabs, this.options.spacesPerTab);
-    }
-
-    private createColumnIndentTriviaForLineContainingToken(token: ISyntaxToken): ISyntaxTrivia {
-        // TODO: convert the preferred column to trivia using the right tab/spaces rules.
-        var indentation = Indentation.indentationForLineContainingToken(token, this.syntaxInformationMap, this.options.spacesPerTab);
-        return Indentation.indentationTrivia(indentation.column(), this.options.useTabs, this.options.spacesPerTab);
+        this.options = options || FormattingOptions.defaultOptions;
     }
     
-    public static emit(input: SourceUnitSyntax, options: EmitterOptions = null): SourceUnitSyntax {
+    public static emit(input: SourceUnitSyntax, options: FormattingOptions = null): SourceUnitSyntax {
         SyntaxNodeInvariantsChecker.checkInvariants(input);
         var emitter = new Emitter(SyntaxInformationMap.create(input), options);
 
@@ -89,7 +71,8 @@ class Emitter extends SyntaxRewriter {
     }
 
     private adjustListIndentation(nodes: SyntaxNode[]): SyntaxNode[] {
-        return SyntaxIndenter.indentNodes(nodes, /*indentFirstToken:*/ true, this.indentationTrivia);
+        // TODO: determine if we should actually indent the first token or not.
+        return SyntaxIndenter.indentNodes(nodes, /*indentFirstToken:*/ true, this.options.indentSpaces, this.options);
     }
 
     private visitModuleDeclaration(node: ModuleDeclarationSyntax): ModuleElementSyntax[] {
@@ -253,25 +236,33 @@ class Emitter extends SyntaxRewriter {
         // NOTE: this math is almost certainly wrong given tabs.  Fix that later on.  Also, we 
         // should not do this for expressions that are in a newline.
         var firstExpressionToken = arrowFunction.body().firstToken();
-        var expressionPosition = this.syntaxInformationMap.start(firstExpressionToken);
-        var newExpressionPosition = returnStatement.returnKeyword().fullWidth();
-        var difference = newExpressionPosition - expressionPosition;
+        var firstExpressionTokenIsFirstOnLine = this.syntaxInformationMap.isFirstTokenInLine(firstExpressionToken);
+        
+        var expressionColumn = Indentation.columnForStartOfToken(firstExpressionToken, this.syntaxInformationMap, this.options);
+        var newExpressionColumn = returnStatement.returnKeyword().fullWidth();
+        var difference = newExpressionColumn - expressionColumn;
 
         if (difference < 0) {
             // Dedent the expression.  But don't allow it go before column 4.
             returnStatement = <ReturnStatementSyntax>SyntaxDedenter.dedentNode(
-                returnStatement, /*dedentFirstToken:*/ false, -difference, /*minimumIndent:*/ 4);
+                returnStatement,
+                /*dedentFirstToken:*/ firstExpressionTokenIsFirstOnLine,
+                /*dedentAmount:*/-difference,
+                /*minimumColumn:*/ this.options.indentSpaces);
         }
         else if (difference > 0) {
             returnStatement = <ReturnStatementSyntax>SyntaxIndenter.indentNode(
-                returnStatement, /*indentFirstToken:*/ false, SyntaxTrivia.createSpaces(difference));
+                returnStatement,
+                /*indentFirstToken:*/ firstExpressionTokenIsFirstOnLine,
+                /*indentAmount:*/ difference,
+                this.options);
         }
 
         // Next, indent the return statement.  It's going in a block, so it needs to be properly
         // indented.  Note we do this *after* we've ensured the expression aligns properly.
 
         returnStatement = <ReturnStatementSyntax>SyntaxIndenter.indentNode(
-            returnStatement, /*indentFirstToken:*/ true, this.indentationTrivia);
+            returnStatement, /*indentFirstToken:*/ true, this.options.indentSpaces, this.options);
 
         // Now wrap the return statement in a block.
         var block = new BlockSyntax(
@@ -299,8 +290,9 @@ class Emitter extends SyntaxRewriter {
         // parent structure.  Note: we don't wan to adjust the leading brace as that's going to go
         // after the function sigature.
 
-        block = <BlockSyntax>SyntaxIndenter.indentNode(block, /*indentFirstToken:*/ false, 
-            this.createColumnIndentTriviaForLineContainingToken(arrowFunction.firstToken()));
+        block = <BlockSyntax>SyntaxIndenter.indentNode(block, /*indentFirstToken:*/ false,
+            Indentation.columnForStartOfFirstTokenInLineContainingToken(
+                arrowFunction.firstToken(), this.syntaxInformationMap, this.options), this.options);
         return block;
     }
 }

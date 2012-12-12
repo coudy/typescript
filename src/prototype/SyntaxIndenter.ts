@@ -2,12 +2,12 @@
 
 class SyntaxIndenter extends SyntaxRewriter {
     private lastTriviaWasNewLine = true;
-    private indentationTrivia: ISyntaxTrivia;
     
-    constructor(indentFirstToken: bool, indentationTrivia: ISyntaxTrivia) {
+    constructor(indentFirstToken: bool, 
+                private indentationAmount: number,
+                private options: FormattingOptions) {
         super();
         this.lastTriviaWasNewLine = indentFirstToken;
-        this.indentationTrivia = indentationTrivia;
     }
 
     private visitToken(token: ISyntaxToken): ISyntaxToken {
@@ -25,59 +25,146 @@ class SyntaxIndenter extends SyntaxRewriter {
     }
 
     private indentTriviaList(triviaList: ISyntaxTriviaList): ISyntaxTriviaList {
-        var result = [this.indentationTrivia];
+        var result = [];
 
+        // First, update any existing trivia with the indent amount.  For example, combine the
+        // indent with any whitespace trivia, or prepend any comments with the trivia.
+        var indentNextTrivia = true;
         for (var i = 0, n = triviaList.count(); i < n; i++) {
             var trivia = triviaList.syntaxTriviaAt(i);
 
-            if (trivia.kind() === SyntaxKind.MultiLineCommentTrivia) {
-                // This trivia may span multiple lines.  If it does, we need to indent each 
-                // successive line of it until it terminates.
-                result.push(this.indentMultiLineComment(trivia));
-                continue;
-            }
+            var indentThisTrivia = indentNextTrivia;
+            indentNextTrivia = false;
 
-            // All other trivia we just append to the list.
-            result.push(trivia);
-            if (trivia.kind() === SyntaxKind.NewLineTrivia) {
-                // We hit a newline processing the trivia.  We need to add the indentation to the 
-                // next line as well.
-                result.push(this.indentationTrivia);
+            switch (trivia.kind()) {
+                case SyntaxKind.MultiLineCommentTrivia:
+                    this.indentMultiLineComment(trivia, indentThisTrivia, result);
+                    continue;
+
+                case SyntaxKind.SingleLineCommentTrivia:
+                case SyntaxKind.SkippedTextTrivia:
+                    this.indentSingleLineOrSkippedText(trivia, indentThisTrivia, result);
+                    continue;
+
+                case SyntaxKind.WhitespaceTrivia:
+                    this.indentWhitespace(trivia, indentThisTrivia, result);
+                    continue;
+
+                case SyntaxKind.NewLineTrivia:
+                    // We hit a newline processing the trivia.  We need to add the indentation to the 
+                    // next line as well.  Note: don't bother indenting the newline itself.  This will 
+                    // just insert ugly whitespace that most users probably will not want.
+                    result.push(trivia);
+                    indentNextTrivia = true;
+                    continue;
+
+                default:
+                    throw Errors.invalidOperation();
             }
+        }
+
+        // Then, if the last trivia was a newline (or there was no trivia at all), then just add the
+        // indentation in right before the token.
+        if(indentNextTrivia) {
+            result.push(Indentation.indentationTrivia(this.indentationAmount, this.options));
         }
 
         return SyntaxTriviaList.create(result);
     }
 
-    private indentMultiLineComment(trivia: ISyntaxTrivia): ISyntaxTrivia {
-        var lineSegments = SyntaxTrivia.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
-        if (lineSegments.length === 1) {
-            return trivia;
+    private static firstNonWhitespacePosition(value: string): number {
+        for (var i = 0; i < value.length; i++) {
+            var ch = value.charCodeAt(i);
+            if (!CharacterInfo.isWhitespace(ch)) {
+                return i;
+            }
         }
-        
-        var indentationText = this.indentationTrivia.fullText();
 
-        // Join works perfectly for our needs.  We want the indentation added between every line.
-        // This is because each line goes up through the newline character.  So the indent is 
-        // added after newline and before the next line.
-        var newText = lineSegments.join(indentationText);
-
-        // Create a new trivia token out of the indented lines.
-        return SyntaxTrivia.create(SyntaxKind.MultiLineCommentTrivia, newText);
+        return value.length;
     }
 
-    public static indentNode(node: SyntaxNode, indentFirstToken: bool, indentTrivia: ISyntaxTrivia): SyntaxNode {
-        var indenter = new SyntaxIndenter(indentFirstToken, indentTrivia);
+    private indentSegment(segment: string, allWhitespace: bool): string {
+        // Find the position of the first non whitespace character in the segment.
+        var firstNonWhitespacePosition = allWhitespace
+            ? segment.length
+            : SyntaxIndenter.firstNonWhitespacePosition(segment);
+
+        if (firstNonWhitespacePosition == 0 && segment.length > 0 &&
+            CharacterInfo.isLineTerminator(segment[0])) {
+
+            // If this segment was just a newline, then don't bother indenting it.  That will just
+            // leave the user with an ugly indent in their output that they probably do not want.
+            return segment;
+        }
+
+        // Convert that position to a column.  
+        var firstNonWhitespaceColumn = Indentation.columnForPositionInString(segment, firstNonWhitespacePosition, this.options);
+
+        // Find the new column we want the nonwhitespace text to start at.
+        var newFirstNonWhitespaceColumn = firstNonWhitespaceColumn + this.indentationAmount;
+
+        // Compute an indentation string for that.
+        var indentationString = Indentation.indentationString(newFirstNonWhitespaceColumn, this.options);
+
+        // Join the new indentation and the original string without its indentation.
+        return indentationString + segment.substring(firstNonWhitespacePosition);
+    }
+
+    private indentWhitespace(trivia: ISyntaxTrivia, indentThisTrivia: bool, result: ISyntaxTrivia[]): void {
+        if (!indentThisTrivia) {
+            // Line didn't start with this trivia.  So no need to touch it.  Just add to the result
+            // and continue on.
+            result.push(trivia);
+            return;
+        }
+
+        // Line started with this trivia.  We want to figure out what the final column this 
+        // whitespace goes to will be.  To do that we add the column it is at now to the column we
+        // want to indent to.  We then compute the final tabs+whitespace string for that.
+        var newIndentation = this.indentSegment(trivia.fullText(), /*isAllWhitespace:*/ true);
+        result.push(SyntaxTrivia.createWhitespace(newIndentation));
+    }
+
+    private indentSingleLineOrSkippedText(trivia: ISyntaxTrivia, indentThisTrivia: bool, result: ISyntaxTrivia[]): void {
+        if (indentThisTrivia) {
+            // The line started with a comment or skipped text.  Add an indentation based 
+            // on the desired settings, and then add the trivia itself.
+            result.push(Indentation.indentationTrivia(this.indentationAmount, this.options));
+        }
+
+        result.push(trivia);
+    }
+
+    private indentMultiLineComment(trivia: ISyntaxTrivia, indentThisTrivia: bool, result: ISyntaxTrivia[]): void {
+        if (indentThisTrivia) {
+            // The line started with a multiline comment.  Add an indentation based 
+            // on the desired settings, and then add the trivia itself.
+            result.push(Indentation.indentationTrivia(this.indentationAmount, this.options));
+        }
+
+        // If the multiline comment spans multiple lines, we need to add the right indent amount to
+        // each successive line segment as well.
+        var segments = SyntaxTrivia.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
+
+        for (var i = 1; i < segments.length; i++) {
+            segments[i] = this.indentSegment(segments[i], /*isAllWhitespace:*/ false);
+        }
+
+        var newText = segments.join("");
+        result.push(SyntaxTrivia.createMultiLineComment(newText));
+    }
+
+    public static indentNode(node: SyntaxNode, indentFirstToken: bool, indentAmount: number, options: FormattingOptions): SyntaxNode {
+        var indenter = new SyntaxIndenter(indentFirstToken, indentAmount, options);
         return node.accept1(indenter);
     }
 
-    public static indentNodes(nodes: SyntaxNode[], indentFirstToken: bool, indentTrivia: ISyntaxTrivia): SyntaxNode[] {
+    public static indentNodes(nodes: SyntaxNode[], indentFirstToken: bool, indentAmount: number, options: FormattingOptions): SyntaxNode[] {
         // Note: it is necessary for correctness that we reuse the same SyntaxIndenter here.  
         // That's because when working on nodes 1-N, we need to know if the previous node ended
         // with a newline.  The indenter will track that for us.
         
-        var indenter = new SyntaxIndenter(indentFirstToken, indentTrivia);
-        
+        var indenter = new SyntaxIndenter(indentFirstToken, indentAmount, options);
         var result = ArrayUtilities.select(nodes, n => n.accept1(indenter));
 
         return result;

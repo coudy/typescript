@@ -56,6 +56,14 @@ module SyntaxTrivia {
         return create(SyntaxKind.WhitespaceTrivia, StringUtilities.repeat(" ", count));
     }
 
+    export function createWhitespace(text: string): ISyntaxTrivia {
+        return create(SyntaxKind.WhitespaceTrivia, text);
+    }
+
+    export function createMultiLineComment(text: string): ISyntaxTrivia {
+        return create(SyntaxKind.MultiLineCommentTrivia, text);
+    }
+
     export var space: ISyntaxTrivia = createSpaces(1);
     export var lineFeed: ISyntaxTrivia = create(SyntaxKind.NewLineTrivia, "\n");
     export var carriageReturn: ISyntaxTrivia = create(SyntaxKind.NewLineTrivia, "\r");

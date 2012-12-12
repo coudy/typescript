@@ -19,4 +19,30 @@ class CharacterInfo {
                 ? c - CharacterCodes.A + 10
                 : c - CharacterCodes.a + 10;
     }
+
+    public static isWhitespace(ch: number): bool {
+        switch (ch) {
+            case CharacterCodes.space:
+            case CharacterCodes.tab:
+            case CharacterCodes.verticalTab:
+            case CharacterCodes.formFeed:
+            case CharacterCodes.nonBreakingSpace:
+            case CharacterCodes.byteOrderMark:
+                return true;
+        }
+
+        return false;
+    }
+
+    public static isLineTerminator(ch: number): bool {
+        switch (ch) {
+            case CharacterCodes.carriageReturn:
+            case CharacterCodes.lineFeed:
+            case CharacterCodes.paragraphSeparator:
+            case CharacterCodes.lineSeparator:
+                return true;
+        }
+
+        return false;
+    }
 }

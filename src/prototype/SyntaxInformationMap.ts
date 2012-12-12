@@ -10,9 +10,9 @@ class SyntaxInformationMap extends SyntaxWalker {
     // TODO: in the future we could also track the position of syntax nodes.
     private tokenToInformation = new HashTable(HashTable.DefaultCapacity, SyntaxToken.hashCode);
 
-    private previousToken = null;
-    private previousTokenInformation: ITokenInformation = null;
-    private currentPosition = 0;
+    private _previousToken = null;
+    private _previousTokenInformation: ITokenInformation = null;
+    private _currentPosition = 0;
 
     public static create(node: SyntaxNode): SyntaxInformationMap {
         var map = new SyntaxInformationMap();
@@ -22,18 +22,18 @@ class SyntaxInformationMap extends SyntaxWalker {
 
     private visitToken(token: ISyntaxToken): void {
         var tokenInformation: ITokenInformation = {
-            fullStart: this.currentPosition,
-            previousToken: this.previousToken,
+            fullStart: this._currentPosition,
+            previousToken: this._previousToken,
             nextToken: null
         };
 
-        if (this.previousTokenInformation !== null) {
-            this.previousTokenInformation.nextToken = token;
+        if (this._previousTokenInformation !== null) {
+            this._previousTokenInformation.nextToken = token;
         }
 
-        this.previousToken = token;
-        this.currentPosition += token.fullWidth();
-        this.previousTokenInformation = tokenInformation;
+        this._previousToken = token;
+        this._currentPosition += token.fullWidth();
+        this._previousTokenInformation = tokenInformation;
 
         this.tokenToInformation.add(token, tokenInformation);
     }
@@ -46,15 +46,19 @@ class SyntaxInformationMap extends SyntaxWalker {
         return this.fullStart(token) + token.leadingTriviaWidth();
     }
 
+    public previousToken(token: ISyntaxToken): ISyntaxToken {
+        return this.tokenInformation(token).previousToken;
+    }
+
     public tokenInformation(token: ISyntaxToken): ITokenInformation {
         return this.tokenToInformation.get(token);
     }
 
-    public firstTokenOnLineContainingToken(token: ISyntaxToken): ISyntaxToken {
+    public firstTokenInLineContainingToken(token: ISyntaxToken): ISyntaxToken {
         var current = token;
         while (true) {
             var information = this.tokenInformation(current);
-            if (information.previousToken === null || information.previousToken.hasTrailingNewLineTrivia) {
+            if (this.isFirstTokenInLineWorker(information)) {
                 break;
             }
 
@@ -62,5 +66,14 @@ class SyntaxInformationMap extends SyntaxWalker {
         }
 
         return current;
+    }
+
+    public isFirstTokenInLine(token: ISyntaxToken): bool {
+        var information = this.tokenInformation(token);
+        return this.isFirstTokenInLineWorker(information);
+    }
+
+    private isFirstTokenInLineWorker(information: ITokenInformation): bool {
+        return information.previousToken === null || information.previousToken.hasTrailingNewLineTrivia();
     }
 }
