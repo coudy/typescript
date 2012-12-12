@@ -16,6 +16,15 @@ module SyntaxToken {
             this._value = value;
         }
 
+        public clone(): ISyntaxToken {
+            return new VariableWidthTokenWithNoTrivia(
+                this._sourceText,
+                this.tokenKind,
+                this._fullStart,
+                this._text,
+                this._value);
+        }
+
         public isToken(): bool { return true; }
         public isNode(): bool { return false; }
         public isList(): bool { return false; }
@@ -80,6 +89,16 @@ module SyntaxToken {
             this._value = value;
         }
 
+        public clone(): ISyntaxToken {
+            return new VariableWidthTokenWithLeadingTrivia(
+                this._sourceText,
+                this.tokenKind,
+                this._fullStart,
+                this._leadingTriviaInfo,
+                this._text,
+                this._value);
+        }
+
         public isToken(): bool { return true; }
         public isNode(): bool { return false; }
         public isList(): bool { return false; }
@@ -142,6 +161,16 @@ module SyntaxToken {
             this._text = text;
             this._value = value;
             this._trailingTriviaInfo = trailingTriviaInfo;
+        }
+
+        public clone(): ISyntaxToken {
+            return new VariableWidthTokenWithTrailingTrivia(
+                this._sourceText,
+                this.tokenKind,
+                this._fullStart,
+                this._text,
+                this._value,
+                this._trailingTriviaInfo);
         }
 
         public isToken(): bool { return true; }
@@ -210,6 +239,17 @@ module SyntaxToken {
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
 
+        public clone(): ISyntaxToken {
+            return new VariableWidthTokenWithLeadingAndTrailingTrivia(
+                this._sourceText,
+                this.tokenKind,
+                this._fullStart,
+                this._leadingTriviaInfo,
+                this._text,
+                this._value,
+                this._trailingTriviaInfo);
+        }
+
         public isToken(): bool { return true; }
         public isNode(): bool { return false; }
         public isList(): bool { return false; }
@@ -266,6 +306,13 @@ module SyntaxToken {
             this._sourceText = sourceText;
             this.tokenKind = kind;
             this._fullStart = fullStart;
+        }
+
+        public clone(): ISyntaxToken {
+            return new FixedWidthTokenWithNoTrivia(
+                this._sourceText,
+                this.tokenKind,
+                this._fullStart);
         }
 
         public isToken(): bool { return true; }
@@ -328,6 +375,14 @@ module SyntaxToken {
             this._leadingTriviaInfo = leadingTriviaInfo;
         }
 
+        public clone(): ISyntaxToken {
+            return new FixedWidthTokenWithLeadingTrivia(
+                this._sourceText,
+                this.tokenKind,
+                this._fullStart,
+                this._leadingTriviaInfo);
+        }
+
         public isToken(): bool { return true; }
         public isNode(): bool { return false; }
         public isList(): bool { return false; }
@@ -386,6 +441,14 @@ module SyntaxToken {
             this.tokenKind = kind;
             this._fullStart = fullStart;
             this._trailingTriviaInfo = trailingTriviaInfo;
+        }
+
+        public clone(): ISyntaxToken {
+            return new FixedWidthTokenWithTrailingTrivia(
+                this._sourceText,
+                this.tokenKind,
+                this._fullStart,
+                this._trailingTriviaInfo);
         }
 
         public isToken(): bool { return true; }
@@ -450,6 +513,15 @@ module SyntaxToken {
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
 
+        public clone(): ISyntaxToken {
+            return new FixedWidthTokenWithLeadingAndTrailingTrivia(
+                this._sourceText,
+                this.tokenKind,
+                this._fullStart,
+                this._leadingTriviaInfo,
+                this._trailingTriviaInfo);
+        }
+
         public isToken(): bool { return true; }
         public isNode(): bool { return false; }
         public isList(): bool { return false; }
@@ -508,6 +580,13 @@ module SyntaxToken {
             this.tokenKind = SyntaxKind.IdentifierNameToken;
             this._keywordKind = keywordKind;
             this._fullStart = fullStart;
+        }
+
+        public clone(): ISyntaxToken {
+            return new KeywordWithNoTrivia(
+                this._sourceText,
+                this._keywordKind,
+                this._fullStart);
         }
 
         public isToken(): bool { return true; }
@@ -572,6 +651,14 @@ module SyntaxToken {
             this._leadingTriviaInfo = leadingTriviaInfo;
         }
 
+        public clone(): ISyntaxToken {
+            return new KeywordWithLeadingTrivia(
+                this._sourceText,
+                this._keywordKind,
+                this._fullStart,
+                this._leadingTriviaInfo);
+        }
+
         public isToken(): bool { return true; }
         public isNode(): bool { return false; }
         public isList(): bool { return false; }
@@ -632,6 +719,14 @@ module SyntaxToken {
             this._keywordKind = keywordKind;
             this._fullStart = fullStart;
             this._trailingTriviaInfo = trailingTriviaInfo;
+        }
+
+        public clone(): ISyntaxToken {
+            return new KeywordWithTrailingTrivia(
+                this._sourceText,
+                this._keywordKind,
+                this._fullStart,
+                this._trailingTriviaInfo);
         }
 
         public isToken(): bool { return true; }
@@ -696,6 +791,15 @@ module SyntaxToken {
             this._fullStart = fullStart;
             this._leadingTriviaInfo = leadingTriviaInfo;
             this._trailingTriviaInfo = trailingTriviaInfo;
+        }
+
+        public clone(): ISyntaxToken {
+            return new KeywordWithLeadingAndTrailingTrivia(
+                this._sourceText,
+                this._keywordKind,
+                this._fullStart,
+                this._leadingTriviaInfo,
+                this._trailingTriviaInfo);
         }
 
         public isToken(): bool { return true; }

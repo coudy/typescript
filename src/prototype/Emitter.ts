@@ -201,7 +201,7 @@ class Emitter extends SyntaxRewriter {
             new VariableDeclarationSyntax(
                 SyntaxToken.createElasticKeyword({ kind: SyntaxKind.VarKeyword, trailingTrivia: [SyntaxTrivia.space] }),
                 SeparatedSyntaxList.create(
-                    [VariableDeclaratorSyntax.create(name.identifier())])),
+                    [VariableDeclaratorSyntax.create(name.identifier().clone())])),
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
 
         var functionExpression = FunctionExpressionSyntax.create(
@@ -210,7 +210,7 @@ class Emitter extends SyntaxRewriter {
                 new ParameterListSyntax(
                     SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
                     SeparatedSyntaxList.create([
-                        ParameterSyntax.create(name.identifier())]),
+                        ParameterSyntax.create(name.identifier().clone())]),
                     SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken, trailingTrivia: [SyntaxTrivia.space]  }))),
             new BlockSyntax(
                 SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed]  }),
@@ -224,13 +224,13 @@ class Emitter extends SyntaxRewriter {
         
         var logicalOrExpression = new BinaryExpressionSyntax(
             SyntaxKind.LogicalOrExpression,
-            name,
+            <IdentifierNameSyntax>name.clone(),
             SyntaxToken.createElastic({ kind: SyntaxKind.BarBarToken }),
             new ParenthesizedExpressionSyntax(
                 SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
                 new BinaryExpressionSyntax(
                     SyntaxKind.AssignmentExpression,
-                    name,
+                    <IdentifierNameSyntax>name.clone(),
                     SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken }),
                     new ObjectLiteralExpressionSyntax(
                         SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken }),

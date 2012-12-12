@@ -55,4 +55,8 @@ class SyntaxNode implements ISyntaxElement {
         this.collectTextElements(elements);
         return elements.join("");
     }
+
+    public clone(): SyntaxNode {
+        return this.accept1(new SyntaxNodeCloner());
+    }
 }

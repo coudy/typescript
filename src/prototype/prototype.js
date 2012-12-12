@@ -4242,6 +4242,9 @@ var SyntaxNode = (function () {
         this.collectTextElements(elements);
         return elements.join("");
     };
+    SyntaxNode.prototype.clone = function () {
+        return this.accept1(new SyntaxNodeCloner());
+    };
     return SyntaxNode;
 })();
 var SyntaxList;
@@ -11804,6 +11807,17 @@ var SyntaxRewriter = (function () {
     };
     return SyntaxRewriter;
 })();
+var SyntaxNodeCloner = (function (_super) {
+    __extends(SyntaxNodeCloner, _super);
+    function SyntaxNodeCloner() {
+        _super.apply(this, arguments);
+
+    }
+    SyntaxNodeCloner.prototype.visitToken = function (token) {
+        return token.clone();
+    };
+    return SyntaxNodeCloner;
+})(SyntaxRewriter);
 var Emitter = (function (_super) {
     __extends(Emitter, _super);
     function Emitter(syntaxOnly) {
@@ -11920,7 +11934,7 @@ var Emitter = (function (_super) {
                 SyntaxTrivia.space
             ]
         }), SeparatedSyntaxList.create([
-            VariableDeclaratorSyntax.create(name.identifier())
+            VariableDeclaratorSyntax.create(name.identifier().clone())
         ])), SyntaxToken.createElastic({
             kind: 75 /* SemicolonToken */ ,
             trailingTrivia: [
@@ -11932,7 +11946,7 @@ var Emitter = (function (_super) {
         }), CallSignatureSyntax.create(new ParameterListSyntax(SyntaxToken.createElastic({
             kind: 69 /* OpenParenToken */ 
         }), SeparatedSyntaxList.create([
-            ParameterSyntax.create(name.identifier())
+            ParameterSyntax.create(name.identifier().clone())
         ]), SyntaxToken.createElastic({
             kind: 70 /* CloseParenToken */ ,
             trailingTrivia: [
@@ -11951,11 +11965,11 @@ var Emitter = (function (_super) {
         }), functionExpression, SyntaxToken.createElastic({
             kind: 70 /* CloseParenToken */ 
         }));
-        var logicalOrExpression = new BinaryExpressionSyntax(184 /* LogicalOrExpression */ , name, SyntaxToken.createElastic({
+        var logicalOrExpression = new BinaryExpressionSyntax(184 /* LogicalOrExpression */ , name.clone(), SyntaxToken.createElastic({
             kind: 101 /* BarBarToken */ 
         }), new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
             kind: 69 /* OpenParenToken */ 
-        }), new BinaryExpressionSyntax(171 /* AssignmentExpression */ , name, SyntaxToken.createElastic({
+        }), new BinaryExpressionSyntax(171 /* AssignmentExpression */ , name.clone(), SyntaxToken.createElastic({
             kind: 104 /* EqualsToken */ 
         }), new ObjectLiteralExpressionSyntax(SyntaxToken.createElastic({
             kind: 67 /* OpenBraceToken */ 
@@ -15033,6 +15047,9 @@ var SyntaxToken;
             this.tokenKind = kind;
             this._keywordKind = keywordKind;
         }
+        EmptyToken.prototype.clone = function () {
+            return new EmptyToken(this.tokenKind, this._keywordKind);
+        };
         EmptyToken.prototype.isToken = function () {
             return true;
         };
@@ -15137,6 +15154,9 @@ var SyntaxToken;
             this._text = text;
             this._trailingTrivia = trailingTrivia;
         }
+        ElasticToken.prototype.clone = function () {
+            return new ElasticToken(this.tokenKind, this._keywordKind, this._leadingTrivia, this._text, this._trailingTrivia);
+        };
         ElasticToken.prototype.isToken = function () {
             return true;
         };
@@ -15252,6 +15272,9 @@ var SyntaxToken;
             this._trailingTrivia = trailingTrivia;
             this._isMissing = isMissing;
         }
+        RealizedToken.prototype.clone = function () {
+            return new RealizedToken(this.tokenKind, this._keywordKind, this._leadingTrivia, this._text, this._value, this._valueText, this._trailingTrivia, this._isMissing);
+        };
         RealizedToken.prototype.kind = function () {
             return this.tokenKind;
         };
@@ -15366,6 +15389,9 @@ var SyntaxToken;
             this._text = text;
             this._value = value;
         }
+        VariableWidthTokenWithNoTrivia.prototype.clone = function () {
+            return new VariableWidthTokenWithNoTrivia(this._sourceText, this.tokenKind, this._fullStart, this._text, this._value);
+        };
         VariableWidthTokenWithNoTrivia.prototype.isToken = function () {
             return true;
         };
@@ -15473,6 +15499,9 @@ var SyntaxToken;
             this._text = text;
             this._value = value;
         }
+        VariableWidthTokenWithLeadingTrivia.prototype.clone = function () {
+            return new VariableWidthTokenWithLeadingTrivia(this._sourceText, this.tokenKind, this._fullStart, this._leadingTriviaInfo, this._text, this._value);
+        };
         VariableWidthTokenWithLeadingTrivia.prototype.isToken = function () {
             return true;
         };
@@ -15580,6 +15609,9 @@ var SyntaxToken;
             this._value = value;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
+        VariableWidthTokenWithTrailingTrivia.prototype.clone = function () {
+            return new VariableWidthTokenWithTrailingTrivia(this._sourceText, this.tokenKind, this._fullStart, this._text, this._value, this._trailingTriviaInfo);
+        };
         VariableWidthTokenWithTrailingTrivia.prototype.isToken = function () {
             return true;
         };
@@ -15688,6 +15720,9 @@ var SyntaxToken;
             this._value = value;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.clone = function () {
+            return new VariableWidthTokenWithLeadingAndTrailingTrivia(this._sourceText, this.tokenKind, this._fullStart, this._leadingTriviaInfo, this._text, this._value, this._trailingTriviaInfo);
+        };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isToken = function () {
             return true;
         };
@@ -15792,6 +15827,9 @@ var SyntaxToken;
             this.tokenKind = kind;
             this._fullStart = fullStart;
         }
+        FixedWidthTokenWithNoTrivia.prototype.clone = function () {
+            return new FixedWidthTokenWithNoTrivia(this._sourceText, this.tokenKind, this._fullStart);
+        };
         FixedWidthTokenWithNoTrivia.prototype.isToken = function () {
             return true;
         };
@@ -15897,6 +15935,9 @@ var SyntaxToken;
             this._fullStart = fullStart;
             this._leadingTriviaInfo = leadingTriviaInfo;
         }
+        FixedWidthTokenWithLeadingTrivia.prototype.clone = function () {
+            return new FixedWidthTokenWithLeadingTrivia(this._sourceText, this.tokenKind, this._fullStart, this._leadingTriviaInfo);
+        };
         FixedWidthTokenWithLeadingTrivia.prototype.isToken = function () {
             return true;
         };
@@ -16002,6 +16043,9 @@ var SyntaxToken;
             this._fullStart = fullStart;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
+        FixedWidthTokenWithTrailingTrivia.prototype.clone = function () {
+            return new FixedWidthTokenWithTrailingTrivia(this._sourceText, this.tokenKind, this._fullStart, this._trailingTriviaInfo);
+        };
         FixedWidthTokenWithTrailingTrivia.prototype.isToken = function () {
             return true;
         };
@@ -16108,6 +16152,9 @@ var SyntaxToken;
             this._leadingTriviaInfo = leadingTriviaInfo;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.clone = function () {
+            return new FixedWidthTokenWithLeadingAndTrailingTrivia(this._sourceText, this.tokenKind, this._fullStart, this._leadingTriviaInfo, this._trailingTriviaInfo);
+        };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isToken = function () {
             return true;
         };
@@ -16213,6 +16260,9 @@ var SyntaxToken;
             this._keywordKind = keywordKind;
             this._fullStart = fullStart;
         }
+        KeywordWithNoTrivia.prototype.clone = function () {
+            return new KeywordWithNoTrivia(this._sourceText, this._keywordKind, this._fullStart);
+        };
         KeywordWithNoTrivia.prototype.isToken = function () {
             return true;
         };
@@ -16319,6 +16369,9 @@ var SyntaxToken;
             this._fullStart = fullStart;
             this._leadingTriviaInfo = leadingTriviaInfo;
         }
+        KeywordWithLeadingTrivia.prototype.clone = function () {
+            return new KeywordWithLeadingTrivia(this._sourceText, this._keywordKind, this._fullStart, this._leadingTriviaInfo);
+        };
         KeywordWithLeadingTrivia.prototype.isToken = function () {
             return true;
         };
@@ -16425,6 +16478,9 @@ var SyntaxToken;
             this._fullStart = fullStart;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
+        KeywordWithTrailingTrivia.prototype.clone = function () {
+            return new KeywordWithTrailingTrivia(this._sourceText, this._keywordKind, this._fullStart, this._trailingTriviaInfo);
+        };
         KeywordWithTrailingTrivia.prototype.isToken = function () {
             return true;
         };
@@ -16532,6 +16588,9 @@ var SyntaxToken;
             this._leadingTriviaInfo = leadingTriviaInfo;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
+        KeywordWithLeadingAndTrailingTrivia.prototype.clone = function () {
+            return new KeywordWithLeadingAndTrailingTrivia(this._sourceText, this._keywordKind, this._fullStart, this._leadingTriviaInfo, this._trailingTriviaInfo);
+        };
         KeywordWithLeadingAndTrailingTrivia.prototype.isToken = function () {
             return true;
         };

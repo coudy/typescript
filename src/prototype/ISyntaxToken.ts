@@ -31,6 +31,8 @@ interface ISyntaxToken extends ISyntaxElement {
 
     withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken;
     withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken;
+
+    clone(): ISyntaxToken;
 }
 
 interface IElasticToken {

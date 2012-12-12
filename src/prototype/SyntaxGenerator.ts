@@ -1716,12 +1716,13 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
 
     var result = "    class ";
 
-    result += isKeyword ? "Keyword" :
+    var className = isKeyword ? "Keyword" :
          isPunctuation ? "FixedWidthToken" : "VariableWidthToken";
-
-    result += leading && trailing ? "WithLeadingAndTrailingTrivia" :
+    className += leading && trailing ? "WithLeadingAndTrailingTrivia" :
              leading && !trailing ? "WithLeadingTrivia" :
              !leading && trailing ? "WithTrailingTrivia" : "WithNoTrivia";
+
+    result += className;
 
     result += " implements ISyntaxToken {\r\n";
     result += "        private _sourceText: IText;\r\n";
@@ -1748,8 +1749,6 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
 
     result += "\r\n";
     result += "        constructor(sourceText: IText";
-
-
 
     if (isKeyword) {
         result += ", keywordKind: SyntaxKind";
@@ -1796,6 +1795,34 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "            this._trailingTriviaInfo = trailingTriviaInfo;\r\n";
     }
 
+    result += "        }\r\n\r\n";
+
+    result += "        public clone(): ISyntaxToken {\r\n";
+    result += "            return new " + className + "(\r\n";
+    result += "                this._sourceText,\r\n";
+
+    if (isKeyword) {
+        result += "                this._keywordKind,\r\n";
+    }
+    else {
+        result += "                this.tokenKind,\r\n";
+    }
+
+    result += "                this._fullStart";
+    if (leading) {
+        result += ",\r\n                this._leadingTriviaInfo";
+    }
+
+    if (!isFixedWidth) {
+        result += ",\r\n                this._text";
+        result += ",\r\n                this._value";
+    }
+
+    if (trailing) {
+        result += ",\r\n                this._trailingTriviaInfo";
+    }
+
+    result += ");\r\n";
     result += "        }\r\n\r\n";
 
     result +=

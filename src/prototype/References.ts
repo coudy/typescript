@@ -52,16 +52,19 @@
 ///<reference path='SyntaxNodes.ts' />
 ///<reference path='SyntaxRewriter.ts' />
 
-// Emitter depends on SyntaxRewriter
+// Emitter depends on SyntaxNodeCloner.
+///<reference path='SyntaxNodeCloner.ts' />
+
+// Emitter depends on SyntaxRewriter.
 ///<reference path='Emitter.ts' />
 
 // Parser depends on SlidingWindow and SyntaxRewriter.
 ///<reference path='Parser.ts' />
 
-// SyntaxRealizer depends on SyntaxRewriter
+// SyntaxRealizer depends on SyntaxRewriter.
 ///<reference path='SyntaxIndenter.ts' />
 
-// SyntaxRealizer depends on SyntaxRewriter
+// SyntaxRealizer depends on SyntaxRewriter.
 ///<reference path='SyntaxRealizer.ts' />
 
 ///<reference path='SyntaxToken.ts' />
@@ -71,7 +74,7 @@
 ///<reference path='SyntaxTriviaList.ts' />
 ///<reference path='SyntaxWalker.ts' />
 
-// SyntaxNodeInvariantsChecker depends on SyntaxWalker
+// SyntaxNodeInvariantsChecker depends on SyntaxWalker.
 ///<reference path='SyntaxNodeInvariantsChecker.ts' />
 
 ///<reference path='TextChangeRange.ts' />

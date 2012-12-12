@@ -123,6 +123,10 @@ module SyntaxToken {
             this._keywordKind = keywordKind;
         }
 
+        public clone(): ISyntaxToken {
+            return new EmptyToken(this.tokenKind, this._keywordKind);
+        }
+
         public isToken(): bool { return true; }
         public isNode(): bool { return false; }
         public isList(): bool { return false; }
@@ -182,6 +186,10 @@ module SyntaxToken {
             this._leadingTrivia = leadingTrivia;
             this._text = text;
             this._trailingTrivia = trailingTrivia;
+        }
+
+        public clone(): ISyntaxToken {
+            return new ElasticToken(this.tokenKind, this._keywordKind, this._leadingTrivia, this._text, this._trailingTrivia);
         }
 
         public isToken(): bool { return true; }
@@ -302,6 +310,11 @@ module SyntaxToken {
             this._valueText = valueText;
             this._trailingTrivia = trailingTrivia;
             this._isMissing = isMissing;
+        }
+
+        public clone(): ISyntaxToken {
+            return new RealizedToken(this.tokenKind, this._keywordKind, this._leadingTrivia,
+                this._text, this._value, this._valueText, this._trailingTrivia, this._isMissing);
         }
 
         public kind(): SyntaxKind { return this.tokenKind; }
