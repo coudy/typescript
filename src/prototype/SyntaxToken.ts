@@ -1,6 +1,24 @@
 ///<reference path='References.ts' />
 
 module SyntaxToken {
+    export function hashCode(token: ISyntaxToken): number {
+        var hash = 0;
+
+        hash = Hash.combine(token.leadingTriviaWidth(), hash);
+        hash = Hash.combine(token.hasLeadingCommentTrivia ? 1 : 0, hash);
+        hash = Hash.combine(token.hasLeadingNewLineTrivia ? 1 : 0, hash);
+
+        hash = Hash.combine(token.kind(), hash);
+        hash = Hash.combine(token.keywordKind(), hash);
+        hash = Hash.combine(Hash.computeSimple31BitStringHashCode(token.text()), hash);
+
+        hash = Hash.combine(token.trailingTriviaWidth(), hash);
+        hash = Hash.combine(token.hasTrailingCommentTrivia ? 1 : 0, hash);
+        hash = Hash.combine(token.hasTrailingNewLineTrivia ? 1 : 0, hash);
+
+        return hash;
+    }
+
     export function realize(token: ISyntaxToken): ISyntaxToken {
         return new RealizedToken(token.tokenKind, token.keywordKind(),
             token.leadingTrivia(), token.text(), token.value(), token.valueText(), token.trailingTrivia(),

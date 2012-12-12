@@ -34,6 +34,27 @@ class Hash {
         return hash & 0x7FFFFFFF;
     }
 
+    public static computeSimple31BitStringHashCode(key: string): number {
+        // Start with an int.
+        var hash = 0;
+
+        var start = 0;
+        var len = key.length;
+
+        for (var i = 0; i < len; i++) {
+            var ch = key.charCodeAt(start + i);
+
+            // Left shift keeps things as a 32bit int.  And we're only doing two adds.  Chakra and
+            // V8 recognize this as not needing to go past the 53 bits needed for the float 
+            // mantissa.  Or'ing with 0 keeps this 32 bits.
+            hash = (((hash << 5) + hash) + ch) | 0;
+        }
+
+        // Ensure we fit in 31 bits.  That way if/when this gets stored, it won't require any heap
+        // allocation.
+        return hash & 0x7FFFFFFF;
+    }
+
     public static computeMurmur2CharArrayHashCode(key: number[], start: number, len: number): number {
         // 'm' and 'r' are mixing constants generated offline.
         // They're not really 'magic', they just happen to work well.
@@ -151,12 +172,14 @@ class Hash {
     public static expandPrime(oldSize: number): number {
         var num = oldSize << 1;
         if (num > 2146435069 && 2146435069 > oldSize) {
+            // NOTE: 2146435069 fits in 31 bits.
             return 2146435069;
         }
         return getPrime(num);
     }
 
-    public static combine(newKey: number, currentKey: number): number {
-        return (currentKey * 0xA5555529) + newKey;
+    public static combine(value: number, currentHash: number): number {
+        // Ensure we stay within 31 bits.
+        return (((currentHash << 5) + currentHash) + value) & 0x7FFFFFFF;
     }
 }

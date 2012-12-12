@@ -9,12 +9,14 @@ class HashTableEntry {
 }
 
 class HashTable {
+    public static DefaultCapacity = 256;
+
     private entries: HashTableEntry[] = [];
     private count: number = 0;
-    private hash: (k: any) => number;
-    private equals: (k1: any, k2: any) => bool;
 
-    constructor(capacity: number = 256, hash: (k: any) => number = null, equals: (k1: any, k2: any) => bool = null) {
+    constructor(capacity: number = HashTable.DefaultCapacity,
+                private hash: (k: any) => number = null,
+                private equals: (k1: any, k2: any) => bool = null) {
         var size = Hash.getPrime(capacity);
         this.hash = hash;
         this.equals = equals;
@@ -31,13 +33,13 @@ class HashTable {
         this.addOrSet(key, value, /*throwOnExistingEntry:*/ true);
     }
 
-    public addOrSet(key: any, value: any, throwOnExistingEntry: bool) {
+    private addOrSet(key: any, value: any, throwOnExistingEntry: bool) {
         // Compute the hash for this key.  Also ensure that it's non negative.
         var hashCode = this.hash === null
             ? key.hashCode()
             : this.hash(key);
 
-        hashCode = hashCode % 0x7FFFFFFF;
+        hashCode = hashCode & 0x7FFFFFFF;
         Debug.assert(hashCode > 0);
 
         var entry = this.findEntry(key, hashCode);

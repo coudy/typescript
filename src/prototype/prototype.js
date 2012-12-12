@@ -712,6 +712,16 @@ var Hash = (function () {
         }
         return hash & 2147483647;
     }
+    Hash.computeSimple31BitStringHashCode = function computeSimple31BitStringHashCode(key) {
+        var hash = 0;
+        var start = 0;
+        var len = key.length;
+        for(var i = 0; i < len; i++) {
+            var ch = key.charCodeAt(start + i);
+            hash = (((hash << 5) + hash) + ch) | 0;
+        }
+        return hash & 2147483647;
+    }
     Hash.computeMurmur2CharArrayHashCode = function computeMurmur2CharArrayHashCode(key, start, len) {
         var m = 1540483477;
         var r = 24;
@@ -858,8 +868,8 @@ var Hash = (function () {
         }
         return Hash.getPrime(num);
     }
-    Hash.combine = function combine(newKey, currentKey) {
-        return (currentKey * 2773833001) + newKey;
+    Hash.combine = function combine(value, currentHash) {
+        return (((currentHash << 5) + currentHash) + value) & 2147483647;
     }
     return Hash;
 })();
@@ -874,9 +884,11 @@ var HashTableEntry = (function () {
 })();
 var HashTable = (function () {
     function HashTable(capacity, hash, equals) {
-        if (typeof capacity === "undefined") { capacity = 256; }
+        if (typeof capacity === "undefined") { capacity = HashTable.DefaultCapacity; }
         if (typeof hash === "undefined") { hash = null; }
         if (typeof equals === "undefined") { equals = null; }
+        this.hash = hash;
+        this.equals = equals;
         this.entries = [];
         this.count = 0;
         var size = Hash.getPrime(capacity);
@@ -884,6 +896,7 @@ var HashTable = (function () {
         this.equals = equals;
         this.entries = ArrayUtilities.createArray(size);
     }
+    HashTable.DefaultCapacity = 256;
     HashTable.prototype.set = function (key, value) {
         this.addOrSet(key, value, false);
     };
@@ -892,7 +905,7 @@ var HashTable = (function () {
     };
     HashTable.prototype.addOrSet = function (key, value, throwOnExistingEntry) {
         var hashCode = this.hash === null ? key.hashCode() : this.hash(key);
-        hashCode = hashCode % 2147483647;
+        hashCode = hashCode & 2147483647;
         Debug.assert(hashCode > 0);
         var entry = this.findEntry(key, hashCode);
         if(entry !== null) {
@@ -3118,7 +3131,8 @@ var StringTable = (function () {
         this.entries = ArrayUtilities.createArray(size);
     }
     StringTable.prototype.addCharArray = function (key, start, len) {
-        var hashCode = Hash.computeSimple31BitCharArrayHashCode(key, start, len) % 2147483647;
+        var hashCode = Hash.computeSimple31BitCharArrayHashCode(key, start, len) & 2147483647;
+        Debug.assert(hashCode > 0);
         var entry = this.findCharArrayEntry(key, start, len, hashCode);
         if(entry !== null) {
             return entry.Text;
@@ -14931,6 +14945,20 @@ var SyntaxRealizer = (function (_super) {
 })(SyntaxRewriter);
 var SyntaxToken;
 (function (SyntaxToken) {
+    function hashCode(token) {
+        var hash = 0;
+        hash = Hash.combine(token.leadingTriviaWidth(), hash);
+        hash = Hash.combine(token.hasLeadingCommentTrivia ? 1 : 0, hash);
+        hash = Hash.combine(token.hasLeadingNewLineTrivia ? 1 : 0, hash);
+        hash = Hash.combine(token.kind(), hash);
+        hash = Hash.combine(token.keywordKind(), hash);
+        hash = Hash.combine(Hash.computeSimple31BitStringHashCode(token.text()), hash);
+        hash = Hash.combine(token.trailingTriviaWidth(), hash);
+        hash = Hash.combine(token.hasTrailingCommentTrivia ? 1 : 0, hash);
+        hash = Hash.combine(token.hasTrailingNewLineTrivia ? 1 : 0, hash);
+        return hash;
+    }
+    SyntaxToken.hashCode = hashCode;
     function realize(token) {
         return new RealizedToken(token.tokenKind, token.keywordKind(), token.leadingTrivia(), token.text(), token.value(), token.valueText(), token.trailingTrivia(), token.isMissing());
     }
@@ -17474,10 +17502,14 @@ var SyntaxNodeInvariantsChecker = (function (_super) {
     function SyntaxNodeInvariantsChecker() {
         _super.apply(this, arguments);
 
+        this.tokenTable = new HashTable(HashTable.DefaultCapacity, SyntaxToken.hashCode);
     }
     SyntaxNodeInvariantsChecker.checkInvariants = function checkInvariants(node) {
         node.accept(new SyntaxNodeInvariantsChecker());
     }
+    SyntaxNodeInvariantsChecker.prototype.visitToken = function (token) {
+        this.tokenTable.add(token, token);
+    };
     return SyntaxNodeInvariantsChecker;
 })(SyntaxWalker);
 var TextChangeRange = (function () {
