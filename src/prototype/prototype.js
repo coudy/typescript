@@ -3150,13 +3150,22 @@ var StringTable = (function () {
         standardOut.WriteLine("String table stats");
         standardOut.WriteLine("Count            : " + this.count);
         standardOut.WriteLine("Entries Length   : " + this.entries.length);
+        var longestSlot = 0;
         var occupiedSlots = 0;
         for(var i = 0; i < this.entries.length; i++) {
             if(this.entries[i] !== null) {
                 occupiedSlots++;
+                var current = this.entries[i];
+                var slotCount = 0;
+                while(current !== null) {
+                    slotCount++;
+                    current = current.Next;
+                }
+                longestSlot = MathPrototype.max(longestSlot, slotCount);
             }
         }
         standardOut.WriteLine("Occupied slots   : " + occupiedSlots);
+        standardOut.WriteLine("Longest  slot    : " + longestSlot);
         standardOut.WriteLine("Avg Length/Slot  : " + (this.count / occupiedSlots));
         standardOut.WriteLine("----------------------");
     };
@@ -3175,7 +3184,6 @@ var StringTable = (function () {
                 e = tmp;
             }
         }
-        this.dumpStats();
     };
     StringTable.textCharArrayEquals = function textCharArrayEquals(text, array, start, length) {
         if(text.length !== length) {

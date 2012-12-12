@@ -64,6 +64,11 @@ class StringTable {
         var e = new StringTableEntry(text, hashCode, this.entries[index]);
 
         this.entries[index] = e;
+
+        // We grow when our load factor equals 1.  I tried different load factors (like .75 and 
+        // .5), however they seemed to have no effect on running time.  With a load factor of 1
+        // we seem to get about 80% slot fill rate with an average of around 1.25 table entries 
+        // per slot.
         if (this.count === this.entries.length) {
             this.grow();
         }
@@ -80,14 +85,25 @@ class StringTable {
         standardOut.WriteLine("Count            : " + this.count);
         standardOut.WriteLine("Entries Length   : " + this.entries.length);
 
+        var longestSlot = 0;
         var occupiedSlots = 0;
         for (var i = 0; i < this.entries.length; i++) {
             if (this.entries[i] !== null) {
                 occupiedSlots++;
+
+                var current = this.entries[i];
+                var slotCount = 0;
+                while (current !== null) {
+                    slotCount++;
+                    current = current.Next;
+                }
+
+                longestSlot = MathPrototype.max(longestSlot, slotCount);
             }
         }
         
         standardOut.WriteLine("Occupied slots   : " + occupiedSlots);
+        standardOut.WriteLine("Longest  slot    : " + longestSlot);
         standardOut.WriteLine("Avg Length/Slot  : " + (this.count / occupiedSlots));
         standardOut.WriteLine("----------------------");
     }
@@ -113,7 +129,7 @@ class StringTable {
             }
         }
 
-        this.dumpStats();
+        // this.dumpStats();
     }
 
     private static textCharArrayEquals(text: string, array: number[], start: number, length: number): bool {
