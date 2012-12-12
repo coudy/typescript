@@ -11834,7 +11834,10 @@ var Emitter = (function (_super) {
         }
     };
     Emitter.prototype.emit = function (input) {
-        return this.visitNode(input);
+        SyntaxNodeInvariantsChecker.checkInvariants(input);
+        var output = this.visitNode(input);
+        SyntaxNodeInvariantsChecker.checkInvariants(output);
+        return output;
     };
     Emitter.prototype.visitSourceUnit = function (node) {
         var moduleElements = [];
@@ -12029,6 +12032,9 @@ var Emitter = (function (_super) {
         }));
         block = SyntaxIndenter.indentNode(block, false, this.createColumnIndentTrivia());
         return block;
+    };
+    Emitter.prototype.ensureInvariants = function (node) {
+        var hashTable = new HashTable();
     };
     return Emitter;
 })(SyntaxRewriter);
@@ -16972,498 +16978,508 @@ var SyntaxWalker = (function () {
     function SyntaxWalker() { }
     SyntaxWalker.prototype.visitToken = function (token) {
     };
-    SyntaxWalker.prototype.visit = function (element) {
-        if(element === null) {
+    SyntaxWalker.prototype.visitOptionalToken = function (token) {
+        if(token === null) {
             return;
         }
-        if(element.isToken()) {
-            this.visitToken(element);
-        } else {
-            if(element.isNode()) {
-                (element).accept(this);
+        this.visitToken(token);
+    };
+    SyntaxWalker.prototype.visitOptionalNode = function (node) {
+        if(node === null) {
+            return;
+        }
+        node.accept1(this);
+    };
+    SyntaxWalker.prototype.visitList = function (list) {
+        for(var i = 0, n = list.count(); i < n; i++) {
+            list.syntaxNodeAt(i).accept(this);
+        }
+    };
+    SyntaxWalker.prototype.visitSeparatedList = function (list) {
+        for(var i = 0, n = list.count(); i < n; i++) {
+            var item = list.itemAt(i);
+            if(item.isToken()) {
+                this.visitToken(item);
             } else {
-                if(element.isList()) {
-                    var list = element;
-                    for(var i = 0, n = list.count(); i < n; i++) {
-                        this.visit(list.syntaxNodeAt(i));
-                    }
-                } else {
-                    if(element.isSeparatedList()) {
-                        var separatedList = element;
-                        for(var i = 0, n = separatedList.count(); i < n; i++) {
-                            this.visit(separatedList.itemAt(i));
-                        }
-                    } else {
-                        throw Errors.invalidOperation();
-                    }
-                }
+                (item).accept(this);
             }
         }
     };
     SyntaxWalker.prototype.visitSourceUnit = function (node) {
-        this.visit(node.moduleElements());
-        this.visit(node.endOfFileToken());
+        this.visitList(node.moduleElements());
+        this.visitToken(node.endOfFileToken());
     };
     SyntaxWalker.prototype.visitExternalModuleReference = function (node) {
-        this.visit(node.moduleKeyword());
-        this.visit(node.openParenToken());
-        this.visit(node.stringLiteral());
-        this.visit(node.closeParenToken());
+        this.visitToken(node.moduleKeyword());
+        this.visitToken(node.openParenToken());
+        this.visitToken(node.stringLiteral());
+        this.visitToken(node.closeParenToken());
     };
     SyntaxWalker.prototype.visitModuleNameModuleReference = function (node) {
-        this.visit(node.moduleName());
+        node.moduleName().accept(this);
     };
     SyntaxWalker.prototype.visitImportDeclaration = function (node) {
-        this.visit(node.importKeyword());
-        this.visit(node.identifier());
-        this.visit(node.equalsToken());
-        this.visit(node.moduleReference());
-        this.visit(node.semicolonToken());
+        this.visitToken(node.importKeyword());
+        this.visitToken(node.identifier());
+        this.visitToken(node.equalsToken());
+        node.moduleReference().accept(this);
+        this.visitToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitClassDeclaration = function (node) {
-        this.visit(node.exportKeyword());
-        this.visit(node.declareKeyword());
-        this.visit(node.classKeyword());
-        this.visit(node.identifier());
-        this.visit(node.extendsClause());
-        this.visit(node.implementsClause());
-        this.visit(node.openBraceToken());
-        this.visit(node.classElements());
-        this.visit(node.closeBraceToken());
+        this.visitOptionalToken(node.exportKeyword());
+        this.visitOptionalToken(node.declareKeyword());
+        this.visitToken(node.classKeyword());
+        this.visitToken(node.identifier());
+        this.visitOptionalNode(node.extendsClause());
+        this.visitOptionalNode(node.implementsClause());
+        this.visitToken(node.openBraceToken());
+        this.visitList(node.classElements());
+        this.visitToken(node.closeBraceToken());
     };
     SyntaxWalker.prototype.visitInterfaceDeclaration = function (node) {
-        this.visit(node.exportKeyword());
-        this.visit(node.interfaceKeyword());
-        this.visit(node.identifier());
-        this.visit(node.extendsClause());
-        this.visit(node.body());
+        this.visitOptionalToken(node.exportKeyword());
+        this.visitToken(node.interfaceKeyword());
+        this.visitToken(node.identifier());
+        this.visitOptionalNode(node.extendsClause());
+        node.body().accept(this);
     };
     SyntaxWalker.prototype.visitExtendsClause = function (node) {
-        this.visit(node.extendsKeyword());
-        this.visit(node.typeNames());
+        this.visitToken(node.extendsKeyword());
+        this.visitSeparatedList(node.typeNames());
     };
     SyntaxWalker.prototype.visitImplementsClause = function (node) {
-        this.visit(node.implementsKeyword());
-        this.visit(node.typeNames());
+        this.visitToken(node.implementsKeyword());
+        this.visitSeparatedList(node.typeNames());
     };
     SyntaxWalker.prototype.visitModuleDeclaration = function (node) {
-        this.visit(node.exportKeyword());
-        this.visit(node.declareKeyword());
-        this.visit(node.moduleKeyword());
-        this.visit(node.moduleName());
-        this.visit(node.stringLiteral());
-        this.visit(node.openBraceToken());
-        this.visit(node.moduleElements());
-        this.visit(node.closeBraceToken());
+        this.visitOptionalToken(node.exportKeyword());
+        this.visitOptionalToken(node.declareKeyword());
+        this.visitToken(node.moduleKeyword());
+        this.visitOptionalNode(node.moduleName());
+        this.visitOptionalToken(node.stringLiteral());
+        this.visitToken(node.openBraceToken());
+        this.visitList(node.moduleElements());
+        this.visitToken(node.closeBraceToken());
     };
     SyntaxWalker.prototype.visitFunctionDeclaration = function (node) {
-        this.visit(node.exportKeyword());
-        this.visit(node.declareKeyword());
-        this.visit(node.functionKeyword());
-        this.visit(node.functionSignature());
-        this.visit(node.block());
-        this.visit(node.semicolonToken());
+        this.visitOptionalToken(node.exportKeyword());
+        this.visitOptionalToken(node.declareKeyword());
+        this.visitToken(node.functionKeyword());
+        node.functionSignature().accept(this);
+        this.visitOptionalNode(node.block());
+        this.visitOptionalToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitVariableStatement = function (node) {
-        this.visit(node.exportKeyword());
-        this.visit(node.declareKeyword());
-        this.visit(node.variableDeclaration());
-        this.visit(node.semicolonToken());
+        this.visitOptionalToken(node.exportKeyword());
+        this.visitOptionalToken(node.declareKeyword());
+        node.variableDeclaration().accept(this);
+        this.visitToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitVariableDeclaration = function (node) {
-        this.visit(node.varKeyword());
-        this.visit(node.variableDeclarators());
+        this.visitToken(node.varKeyword());
+        this.visitSeparatedList(node.variableDeclarators());
     };
     SyntaxWalker.prototype.visitVariableDeclarator = function (node) {
-        this.visit(node.identifier());
-        this.visit(node.typeAnnotation());
-        this.visit(node.equalsValueClause());
+        this.visitToken(node.identifier());
+        this.visitOptionalNode(node.typeAnnotation());
+        this.visitOptionalNode(node.equalsValueClause());
     };
     SyntaxWalker.prototype.visitEqualsValueClause = function (node) {
-        this.visit(node.equalsToken());
-        this.visit(node.value());
+        this.visitToken(node.equalsToken());
+        node.value().accept(this);
     };
     SyntaxWalker.prototype.visitPrefixUnaryExpression = function (node) {
-        this.visit(node.operatorToken());
-        this.visit(node.operand());
+        this.visitToken(node.operatorToken());
+        node.operand().accept(this);
     };
     SyntaxWalker.prototype.visitThisExpression = function (node) {
-        this.visit(node.thisKeyword());
+        this.visitToken(node.thisKeyword());
     };
     SyntaxWalker.prototype.visitLiteralExpression = function (node) {
-        this.visit(node.literalToken());
+        this.visitToken(node.literalToken());
     };
     SyntaxWalker.prototype.visitArrayLiteralExpression = function (node) {
-        this.visit(node.openBracketToken());
-        this.visit(node.expressions());
-        this.visit(node.closeBracketToken());
+        this.visitToken(node.openBracketToken());
+        this.visitSeparatedList(node.expressions());
+        this.visitToken(node.closeBracketToken());
     };
     SyntaxWalker.prototype.visitOmittedExpression = function (node) {
     };
     SyntaxWalker.prototype.visitParenthesizedExpression = function (node) {
-        this.visit(node.openParenToken());
-        this.visit(node.expression());
-        this.visit(node.closeParenToken());
+        this.visitToken(node.openParenToken());
+        node.expression().accept(this);
+        this.visitToken(node.closeParenToken());
     };
     SyntaxWalker.prototype.visitSimpleArrowFunctionExpression = function (node) {
-        this.visit(node.identifier());
-        this.visit(node.equalsGreaterThanToken());
-        this.visit(node.body());
+        this.visitToken(node.identifier());
+        this.visitToken(node.equalsGreaterThanToken());
+        node.body().accept(this);
     };
     SyntaxWalker.prototype.visitParenthesizedArrowFunctionExpression = function (node) {
-        this.visit(node.callSignature());
-        this.visit(node.equalsGreaterThanToken());
-        this.visit(node.body());
+        node.callSignature().accept(this);
+        this.visitToken(node.equalsGreaterThanToken());
+        node.body().accept(this);
     };
     SyntaxWalker.prototype.visitIdentifierName = function (node) {
-        this.visit(node.identifier());
+        this.visitToken(node.identifier());
     };
     SyntaxWalker.prototype.visitQualifiedName = function (node) {
-        this.visit(node.left());
-        this.visit(node.dotToken());
-        this.visit(node.right());
+        node.left().accept(this);
+        this.visitToken(node.dotToken());
+        node.right().accept(this);
     };
     SyntaxWalker.prototype.visitConstructorType = function (node) {
-        this.visit(node.newKeyword());
-        this.visit(node.parameterList());
-        this.visit(node.equalsGreaterThanToken());
-        this.visit(node.type());
+        this.visitToken(node.newKeyword());
+        node.parameterList().accept(this);
+        this.visitToken(node.equalsGreaterThanToken());
+        node.type().accept(this);
     };
     SyntaxWalker.prototype.visitFunctionType = function (node) {
-        this.visit(node.parameterList());
-        this.visit(node.equalsGreaterThanToken());
-        this.visit(node.type());
+        node.parameterList().accept(this);
+        this.visitToken(node.equalsGreaterThanToken());
+        node.type().accept(this);
     };
     SyntaxWalker.prototype.visitObjectType = function (node) {
-        this.visit(node.openBraceToken());
-        this.visit(node.typeMembers());
-        this.visit(node.closeBraceToken());
+        this.visitToken(node.openBraceToken());
+        this.visitSeparatedList(node.typeMembers());
+        this.visitToken(node.closeBraceToken());
     };
     SyntaxWalker.prototype.visitArrayType = function (node) {
-        this.visit(node.type());
-        this.visit(node.openBracketToken());
-        this.visit(node.closeBracketToken());
+        node.type().accept(this);
+        this.visitToken(node.openBracketToken());
+        this.visitToken(node.closeBracketToken());
     };
     SyntaxWalker.prototype.visitPredefinedType = function (node) {
-        this.visit(node.keyword());
+        this.visitToken(node.keyword());
     };
     SyntaxWalker.prototype.visitTypeAnnotation = function (node) {
-        this.visit(node.colonToken());
-        this.visit(node.type());
+        this.visitToken(node.colonToken());
+        node.type().accept(this);
     };
     SyntaxWalker.prototype.visitBlock = function (node) {
-        this.visit(node.openBraceToken());
-        this.visit(node.statements());
-        this.visit(node.closeBraceToken());
+        this.visitToken(node.openBraceToken());
+        this.visitList(node.statements());
+        this.visitToken(node.closeBraceToken());
     };
     SyntaxWalker.prototype.visitParameter = function (node) {
-        this.visit(node.dotDotDotToken());
-        this.visit(node.publicOrPrivateKeyword());
-        this.visit(node.identifier());
-        this.visit(node.questionToken());
-        this.visit(node.typeAnnotation());
-        this.visit(node.equalsValueClause());
+        this.visitOptionalToken(node.dotDotDotToken());
+        this.visitOptionalToken(node.publicOrPrivateKeyword());
+        this.visitToken(node.identifier());
+        this.visitOptionalToken(node.questionToken());
+        this.visitOptionalNode(node.typeAnnotation());
+        this.visitOptionalNode(node.equalsValueClause());
     };
     SyntaxWalker.prototype.visitMemberAccessExpression = function (node) {
-        this.visit(node.expression());
-        this.visit(node.dotToken());
-        this.visit(node.identifierName());
+        node.expression().accept(this);
+        this.visitToken(node.dotToken());
+        node.identifierName().accept(this);
     };
     SyntaxWalker.prototype.visitPostfixUnaryExpression = function (node) {
-        this.visit(node.operand());
-        this.visit(node.operatorToken());
+        node.operand().accept(this);
+        this.visitToken(node.operatorToken());
     };
     SyntaxWalker.prototype.visitElementAccessExpression = function (node) {
-        this.visit(node.expression());
-        this.visit(node.openBracketToken());
-        this.visit(node.argumentExpression());
-        this.visit(node.closeBracketToken());
+        node.expression().accept(this);
+        this.visitToken(node.openBracketToken());
+        node.argumentExpression().accept(this);
+        this.visitToken(node.closeBracketToken());
     };
     SyntaxWalker.prototype.visitInvocationExpression = function (node) {
-        this.visit(node.expression());
-        this.visit(node.argumentList());
+        node.expression().accept(this);
+        node.argumentList().accept(this);
     };
     SyntaxWalker.prototype.visitArgumentList = function (node) {
-        this.visit(node.openParenToken());
-        this.visit(node.arguments());
-        this.visit(node.closeParenToken());
+        this.visitToken(node.openParenToken());
+        this.visitSeparatedList(node.arguments());
+        this.visitToken(node.closeParenToken());
     };
     SyntaxWalker.prototype.visitBinaryExpression = function (node) {
-        this.visit(node.left());
-        this.visit(node.operatorToken());
-        this.visit(node.right());
+        node.left().accept(this);
+        this.visitToken(node.operatorToken());
+        node.right().accept(this);
     };
     SyntaxWalker.prototype.visitConditionalExpression = function (node) {
-        this.visit(node.condition());
-        this.visit(node.questionToken());
-        this.visit(node.whenTrue());
-        this.visit(node.colonToken());
-        this.visit(node.whenFalse());
+        node.condition().accept(this);
+        this.visitToken(node.questionToken());
+        node.whenTrue().accept(this);
+        this.visitToken(node.colonToken());
+        node.whenFalse().accept(this);
     };
     SyntaxWalker.prototype.visitConstructSignature = function (node) {
-        this.visit(node.newKeyword());
-        this.visit(node.parameterList());
-        this.visit(node.typeAnnotation());
+        this.visitToken(node.newKeyword());
+        node.parameterList().accept(this);
+        this.visitOptionalNode(node.typeAnnotation());
     };
     SyntaxWalker.prototype.visitFunctionSignature = function (node) {
-        this.visit(node.identifier());
-        this.visit(node.questionToken());
-        this.visit(node.parameterList());
-        this.visit(node.typeAnnotation());
+        this.visitToken(node.identifier());
+        this.visitOptionalToken(node.questionToken());
+        node.parameterList().accept(this);
+        this.visitOptionalNode(node.typeAnnotation());
     };
     SyntaxWalker.prototype.visitIndexSignature = function (node) {
-        this.visit(node.openBracketToken());
-        this.visit(node.parameter());
-        this.visit(node.closeBracketToken());
-        this.visit(node.typeAnnotation());
+        this.visitToken(node.openBracketToken());
+        node.parameter().accept(this);
+        this.visitToken(node.closeBracketToken());
+        this.visitOptionalNode(node.typeAnnotation());
     };
     SyntaxWalker.prototype.visitPropertySignature = function (node) {
-        this.visit(node.identifier());
-        this.visit(node.questionToken());
-        this.visit(node.typeAnnotation());
+        this.visitToken(node.identifier());
+        this.visitOptionalToken(node.questionToken());
+        this.visitOptionalNode(node.typeAnnotation());
     };
     SyntaxWalker.prototype.visitParameterList = function (node) {
-        this.visit(node.openParenToken());
-        this.visit(node.parameters());
-        this.visit(node.closeParenToken());
+        this.visitToken(node.openParenToken());
+        this.visitSeparatedList(node.parameters());
+        this.visitToken(node.closeParenToken());
     };
     SyntaxWalker.prototype.visitCallSignature = function (node) {
-        this.visit(node.parameterList());
-        this.visit(node.typeAnnotation());
+        node.parameterList().accept(this);
+        this.visitOptionalNode(node.typeAnnotation());
     };
     SyntaxWalker.prototype.visitElseClause = function (node) {
-        this.visit(node.elseKeyword());
-        this.visit(node.statement());
+        this.visitToken(node.elseKeyword());
+        node.statement().accept(this);
     };
     SyntaxWalker.prototype.visitIfStatement = function (node) {
-        this.visit(node.ifKeyword());
-        this.visit(node.openParenToken());
-        this.visit(node.condition());
-        this.visit(node.closeParenToken());
-        this.visit(node.statement());
-        this.visit(node.elseClause());
+        this.visitToken(node.ifKeyword());
+        this.visitToken(node.openParenToken());
+        node.condition().accept(this);
+        this.visitToken(node.closeParenToken());
+        node.statement().accept(this);
+        this.visitOptionalNode(node.elseClause());
     };
     SyntaxWalker.prototype.visitExpressionStatement = function (node) {
-        this.visit(node.expression());
-        this.visit(node.semicolonToken());
+        node.expression().accept(this);
+        this.visitToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitConstructorDeclaration = function (node) {
-        this.visit(node.constructorKeyword());
-        this.visit(node.parameterList());
-        this.visit(node.block());
-        this.visit(node.semicolonToken());
+        this.visitToken(node.constructorKeyword());
+        node.parameterList().accept(this);
+        this.visitOptionalNode(node.block());
+        this.visitOptionalToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitMemberFunctionDeclaration = function (node) {
-        this.visit(node.publicOrPrivateKeyword());
-        this.visit(node.staticKeyword());
-        this.visit(node.functionSignature());
-        this.visit(node.block());
-        this.visit(node.semicolonToken());
+        this.visitOptionalToken(node.publicOrPrivateKeyword());
+        this.visitOptionalToken(node.staticKeyword());
+        node.functionSignature().accept(this);
+        this.visitOptionalNode(node.block());
+        this.visitOptionalToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitGetMemberAccessorDeclaration = function (node) {
-        this.visit(node.publicOrPrivateKeyword());
-        this.visit(node.staticKeyword());
-        this.visit(node.getKeyword());
-        this.visit(node.identifier());
-        this.visit(node.parameterList());
-        this.visit(node.typeAnnotation());
-        this.visit(node.block());
+        this.visitOptionalToken(node.publicOrPrivateKeyword());
+        this.visitOptionalToken(node.staticKeyword());
+        this.visitToken(node.getKeyword());
+        this.visitToken(node.identifier());
+        node.parameterList().accept(this);
+        this.visitOptionalNode(node.typeAnnotation());
+        node.block().accept(this);
     };
     SyntaxWalker.prototype.visitSetMemberAccessorDeclaration = function (node) {
-        this.visit(node.publicOrPrivateKeyword());
-        this.visit(node.staticKeyword());
-        this.visit(node.setKeyword());
-        this.visit(node.identifier());
-        this.visit(node.parameterList());
-        this.visit(node.block());
+        this.visitOptionalToken(node.publicOrPrivateKeyword());
+        this.visitOptionalToken(node.staticKeyword());
+        this.visitToken(node.setKeyword());
+        this.visitToken(node.identifier());
+        node.parameterList().accept(this);
+        node.block().accept(this);
     };
     SyntaxWalker.prototype.visitMemberVariableDeclaration = function (node) {
-        this.visit(node.publicOrPrivateKeyword());
-        this.visit(node.staticKeyword());
-        this.visit(node.variableDeclarator());
-        this.visit(node.semicolonToken());
+        this.visitOptionalToken(node.publicOrPrivateKeyword());
+        this.visitOptionalToken(node.staticKeyword());
+        node.variableDeclarator().accept(this);
+        this.visitToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitThrowStatement = function (node) {
-        this.visit(node.throwKeyword());
-        this.visit(node.expression());
-        this.visit(node.semicolonToken());
+        this.visitToken(node.throwKeyword());
+        node.expression().accept(this);
+        this.visitToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitReturnStatement = function (node) {
-        this.visit(node.returnKeyword());
-        this.visit(node.expression());
-        this.visit(node.semicolonToken());
+        this.visitToken(node.returnKeyword());
+        this.visitOptionalNode(node.expression());
+        this.visitToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitObjectCreationExpression = function (node) {
-        this.visit(node.newKeyword());
-        this.visit(node.expression());
-        this.visit(node.argumentList());
+        this.visitToken(node.newKeyword());
+        node.expression().accept(this);
+        this.visitOptionalNode(node.argumentList());
     };
     SyntaxWalker.prototype.visitSwitchStatement = function (node) {
-        this.visit(node.switchKeyword());
-        this.visit(node.openParenToken());
-        this.visit(node.expression());
-        this.visit(node.closeParenToken());
-        this.visit(node.openBraceToken());
-        this.visit(node.caseClauses());
-        this.visit(node.closeBraceToken());
+        this.visitToken(node.switchKeyword());
+        this.visitToken(node.openParenToken());
+        node.expression().accept(this);
+        this.visitToken(node.closeParenToken());
+        this.visitToken(node.openBraceToken());
+        this.visitList(node.caseClauses());
+        this.visitToken(node.closeBraceToken());
     };
     SyntaxWalker.prototype.visitCaseSwitchClause = function (node) {
-        this.visit(node.caseKeyword());
-        this.visit(node.expression());
-        this.visit(node.colonToken());
-        this.visit(node.statements());
+        this.visitToken(node.caseKeyword());
+        node.expression().accept(this);
+        this.visitToken(node.colonToken());
+        this.visitList(node.statements());
     };
     SyntaxWalker.prototype.visitDefaultSwitchClause = function (node) {
-        this.visit(node.defaultKeyword());
-        this.visit(node.colonToken());
-        this.visit(node.statements());
+        this.visitToken(node.defaultKeyword());
+        this.visitToken(node.colonToken());
+        this.visitList(node.statements());
     };
     SyntaxWalker.prototype.visitBreakStatement = function (node) {
-        this.visit(node.breakKeyword());
-        this.visit(node.identifier());
-        this.visit(node.semicolonToken());
+        this.visitToken(node.breakKeyword());
+        this.visitOptionalToken(node.identifier());
+        this.visitToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitContinueStatement = function (node) {
-        this.visit(node.continueKeyword());
-        this.visit(node.identifier());
-        this.visit(node.semicolonToken());
+        this.visitToken(node.continueKeyword());
+        this.visitOptionalToken(node.identifier());
+        this.visitToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitForStatement = function (node) {
-        this.visit(node.forKeyword());
-        this.visit(node.openParenToken());
-        this.visit(node.variableDeclaration());
-        this.visit(node.initializer());
-        this.visit(node.firstSemicolonToken());
-        this.visit(node.condition());
-        this.visit(node.secondSemicolonToken());
-        this.visit(node.incrementor());
-        this.visit(node.closeParenToken());
-        this.visit(node.statement());
+        this.visitToken(node.forKeyword());
+        this.visitToken(node.openParenToken());
+        this.visitOptionalNode(node.variableDeclaration());
+        this.visitOptionalNode(node.initializer());
+        this.visitToken(node.firstSemicolonToken());
+        this.visitOptionalNode(node.condition());
+        this.visitToken(node.secondSemicolonToken());
+        this.visitOptionalNode(node.incrementor());
+        this.visitToken(node.closeParenToken());
+        node.statement().accept(this);
     };
     SyntaxWalker.prototype.visitForInStatement = function (node) {
-        this.visit(node.forKeyword());
-        this.visit(node.openParenToken());
-        this.visit(node.variableDeclaration());
-        this.visit(node.left());
-        this.visit(node.inKeyword());
-        this.visit(node.expression());
-        this.visit(node.closeParenToken());
-        this.visit(node.statement());
+        this.visitToken(node.forKeyword());
+        this.visitToken(node.openParenToken());
+        this.visitOptionalNode(node.variableDeclaration());
+        this.visitOptionalNode(node.left());
+        this.visitToken(node.inKeyword());
+        node.expression().accept(this);
+        this.visitToken(node.closeParenToken());
+        node.statement().accept(this);
     };
     SyntaxWalker.prototype.visitWhileStatement = function (node) {
-        this.visit(node.whileKeyword());
-        this.visit(node.openParenToken());
-        this.visit(node.condition());
-        this.visit(node.closeParenToken());
-        this.visit(node.statement());
+        this.visitToken(node.whileKeyword());
+        this.visitToken(node.openParenToken());
+        node.condition().accept(this);
+        this.visitToken(node.closeParenToken());
+        node.statement().accept(this);
     };
     SyntaxWalker.prototype.visitWithStatement = function (node) {
-        this.visit(node.withKeyword());
-        this.visit(node.openParenToken());
-        this.visit(node.condition());
-        this.visit(node.closeParenToken());
-        this.visit(node.statement());
+        this.visitToken(node.withKeyword());
+        this.visitToken(node.openParenToken());
+        node.condition().accept(this);
+        this.visitToken(node.closeParenToken());
+        node.statement().accept(this);
     };
     SyntaxWalker.prototype.visitEnumDeclaration = function (node) {
-        this.visit(node.exportKeyword());
-        this.visit(node.enumKeyword());
-        this.visit(node.identifier());
-        this.visit(node.openBraceToken());
-        this.visit(node.variableDeclarators());
-        this.visit(node.closeBraceToken());
+        this.visitOptionalToken(node.exportKeyword());
+        this.visitToken(node.enumKeyword());
+        this.visitToken(node.identifier());
+        this.visitToken(node.openBraceToken());
+        this.visitSeparatedList(node.variableDeclarators());
+        this.visitToken(node.closeBraceToken());
     };
     SyntaxWalker.prototype.visitCastExpression = function (node) {
-        this.visit(node.lessThanToken());
-        this.visit(node.type());
-        this.visit(node.greaterThanToken());
-        this.visit(node.expression());
+        this.visitToken(node.lessThanToken());
+        node.type().accept(this);
+        this.visitToken(node.greaterThanToken());
+        node.expression().accept(this);
     };
     SyntaxWalker.prototype.visitObjectLiteralExpression = function (node) {
-        this.visit(node.openBraceToken());
-        this.visit(node.propertyAssignments());
-        this.visit(node.closeBraceToken());
+        this.visitToken(node.openBraceToken());
+        this.visitSeparatedList(node.propertyAssignments());
+        this.visitToken(node.closeBraceToken());
     };
     SyntaxWalker.prototype.visitSimplePropertyAssignment = function (node) {
-        this.visit(node.propertyName());
-        this.visit(node.colonToken());
-        this.visit(node.expression());
+        this.visitToken(node.propertyName());
+        this.visitToken(node.colonToken());
+        node.expression().accept(this);
     };
     SyntaxWalker.prototype.visitGetAccessorPropertyAssignment = function (node) {
-        this.visit(node.getKeyword());
-        this.visit(node.propertyName());
-        this.visit(node.openParenToken());
-        this.visit(node.closeParenToken());
-        this.visit(node.block());
+        this.visitToken(node.getKeyword());
+        this.visitToken(node.propertyName());
+        this.visitToken(node.openParenToken());
+        this.visitToken(node.closeParenToken());
+        node.block().accept(this);
     };
     SyntaxWalker.prototype.visitSetAccessorPropertyAssignment = function (node) {
-        this.visit(node.setKeyword());
-        this.visit(node.propertyName());
-        this.visit(node.openParenToken());
-        this.visit(node.parameterName());
-        this.visit(node.closeParenToken());
-        this.visit(node.block());
+        this.visitToken(node.setKeyword());
+        this.visitToken(node.propertyName());
+        this.visitToken(node.openParenToken());
+        this.visitToken(node.parameterName());
+        this.visitToken(node.closeParenToken());
+        node.block().accept(this);
     };
     SyntaxWalker.prototype.visitFunctionExpression = function (node) {
-        this.visit(node.functionKeyword());
-        this.visit(node.identifier());
-        this.visit(node.callSignature());
-        this.visit(node.block());
+        this.visitToken(node.functionKeyword());
+        this.visitOptionalToken(node.identifier());
+        node.callSignature().accept(this);
+        node.block().accept(this);
     };
     SyntaxWalker.prototype.visitEmptyStatement = function (node) {
-        this.visit(node.semicolonToken());
+        this.visitToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitSuperExpression = function (node) {
-        this.visit(node.superKeyword());
+        this.visitToken(node.superKeyword());
     };
     SyntaxWalker.prototype.visitTryStatement = function (node) {
-        this.visit(node.tryKeyword());
-        this.visit(node.block());
-        this.visit(node.catchClause());
-        this.visit(node.finallyClause());
+        this.visitToken(node.tryKeyword());
+        node.block().accept(this);
+        this.visitOptionalNode(node.catchClause());
+        this.visitOptionalNode(node.finallyClause());
     };
     SyntaxWalker.prototype.visitCatchClause = function (node) {
-        this.visit(node.catchKeyword());
-        this.visit(node.openParenToken());
-        this.visit(node.identifier());
-        this.visit(node.closeParenToken());
-        this.visit(node.block());
+        this.visitToken(node.catchKeyword());
+        this.visitToken(node.openParenToken());
+        this.visitToken(node.identifier());
+        this.visitToken(node.closeParenToken());
+        node.block().accept(this);
     };
     SyntaxWalker.prototype.visitFinallyClause = function (node) {
-        this.visit(node.finallyKeyword());
-        this.visit(node.block());
+        this.visitToken(node.finallyKeyword());
+        node.block().accept(this);
     };
     SyntaxWalker.prototype.visitLabeledStatement = function (node) {
-        this.visit(node.identifier());
-        this.visit(node.colonToken());
-        this.visit(node.statement());
+        this.visitToken(node.identifier());
+        this.visitToken(node.colonToken());
+        node.statement().accept(this);
     };
     SyntaxWalker.prototype.visitDoStatement = function (node) {
-        this.visit(node.doKeyword());
-        this.visit(node.statement());
-        this.visit(node.whileKeyword());
-        this.visit(node.openParenToken());
-        this.visit(node.condition());
-        this.visit(node.closeParenToken());
-        this.visit(node.semicolonToken());
+        this.visitToken(node.doKeyword());
+        node.statement().accept(this);
+        this.visitToken(node.whileKeyword());
+        this.visitToken(node.openParenToken());
+        node.condition().accept(this);
+        this.visitToken(node.closeParenToken());
+        this.visitToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitTypeOfExpression = function (node) {
-        this.visit(node.typeOfKeyword());
-        this.visit(node.expression());
+        this.visitToken(node.typeOfKeyword());
+        node.expression().accept(this);
     };
     SyntaxWalker.prototype.visitDeleteExpression = function (node) {
-        this.visit(node.deleteKeyword());
-        this.visit(node.expression());
+        this.visitToken(node.deleteKeyword());
+        node.expression().accept(this);
     };
     SyntaxWalker.prototype.visitVoidExpression = function (node) {
-        this.visit(node.voidKeyword());
-        this.visit(node.expression());
+        this.visitToken(node.voidKeyword());
+        node.expression().accept(this);
     };
     SyntaxWalker.prototype.visitDebuggerStatement = function (node) {
-        this.visit(node.debuggerKeyword());
-        this.visit(node.semicolonToken());
+        this.visitToken(node.debuggerKeyword());
+        this.visitToken(node.semicolonToken());
     };
     return SyntaxWalker;
 })();
+var SyntaxNodeInvariantsChecker = (function (_super) {
+    __extends(SyntaxNodeInvariantsChecker, _super);
+    function SyntaxNodeInvariantsChecker() {
+        _super.apply(this, arguments);
+
+    }
+    SyntaxNodeInvariantsChecker.checkInvariants = function checkInvariants(node) {
+        node.accept(new SyntaxNodeInvariantsChecker());
+    }
+    return SyntaxNodeInvariantsChecker;
+})(SyntaxWalker);
 var TextChangeRange = (function () {
     function TextChangeRange(span, newLength) {
         this._span = null;

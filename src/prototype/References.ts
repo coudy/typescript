@@ -70,6 +70,10 @@
 ///<reference path='SyntaxTrivia.ts' />
 ///<reference path='SyntaxTriviaList.ts' />
 ///<reference path='SyntaxWalker.ts' />
+
+// SyntaxNodeInvariantsChecker depends on SyntaxWalker
+///<reference path='SyntaxNodeInvariantsChecker.ts' />
+
 ///<reference path='TextChangeRange.ts' />
 ///<reference path='TextLine.ts' />
 ///<reference path='TextSpan.ts' />

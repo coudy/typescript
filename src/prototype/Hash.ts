@@ -17,14 +17,20 @@ class Hash {
     }
 
     public static computeSimple31BitCharArrayHashCode(key: number[], start: number, len: number): number {
+        // Start with an int.
         var hash = 0;
 
         for (var i = 0; i < len; i++) {
             var ch = key[start + i];
 
+            // Left shift keeps things as a 32bit int.  And we're only doing two adds.  Chakra and
+            // V8 recognize this as not needing to go past the 53 bits needed for the float 
+            // mantissa.  Or'ing with 0 keeps this 32 bits.
             hash = (((hash << 5) + hash) + ch) | 0;
         }
 
+        // Ensure we fit in 31 bits.  That way if/when this gets stored, it won't require any heap
+        // allocation.
         return hash & 0x7FFFFFFF;
     }
 

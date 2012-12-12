@@ -109,7 +109,11 @@ class Emitter extends SyntaxRewriter {
     }
     
     public emit(input: SourceUnitSyntax): SourceUnitSyntax {
-        return <SourceUnitSyntax>this.visitNode(input);
+        SyntaxNodeInvariantsChecker.checkInvariants(input);
+        var output = <SourceUnitSyntax>this.visitNode(input);
+        SyntaxNodeInvariantsChecker.checkInvariants(output);
+
+        return output;
     }
 
     private visitSourceUnit(node: SourceUnitSyntax): SourceUnitSyntax {
@@ -356,5 +360,11 @@ class Emitter extends SyntaxRewriter {
 
         block = <BlockSyntax>SyntaxIndenter.indentNode(block, /*indentFirstToken:*/ false, this.createColumnIndentTrivia());
         return block;
+    }
+
+    private ensureInvariants(node: SyntaxNode): void {
+        // 
+
+        var hashTable = new HashTable();
     }
 }

@@ -1,579 +1,585 @@
-///<reference path='References.ts' />
+﻿///<reference path='References.ts' />
 
 class SyntaxWalker implements ISyntaxVisitor {
     public visitToken(token: ISyntaxToken): void {
     }
 
-    private visit(element: ISyntaxElement): void {
-        if (element === null) {
+    private visitOptionalToken(token: ISyntaxToken): void {
+        if (token === null) {
             return;
         }
 
-        if (element.isToken()) {
-            this.visitToken(<ISyntaxToken>element);
+        this.visitToken(token);
+    }
+
+    public visitOptionalNode(node: SyntaxNode): void {
+        if (node === null) {
+            return;
         }
-        else if (element.isNode()) {
-            (<SyntaxNode>element).accept(this);
+
+        node.accept1(this);
+    }
+
+    public visitList(list: ISyntaxList): void {
+        for (var i = 0, n = list.count(); i < n; i++) {
+           list.syntaxNodeAt(i).accept(this);
         }
-        else if (element.isList()) {
-            var list = <ISyntaxList>element;
-            for (var i = 0, n = list.count(); i < n; i++) {
-                this.visit(list.syntaxNodeAt(i));
+    }
+
+    public visitSeparatedList(list: ISeparatedSyntaxList): void {
+        for (var i = 0, n = list.count(); i < n; i++) {
+            var item = list.itemAt(i);
+            if (item.isToken()) {
+                this.visitToken(<ISyntaxToken>item);
             }
-        }
-        else if (element.isSeparatedList()) {
-            var separatedList = <ISeparatedSyntaxList>element;
-            for (var i = 0, n = separatedList.count(); i < n; i++) {
-                this.visit(separatedList.itemAt(i));
+            else {
+                (<SyntaxNode>item).accept(this);
             }
-        }
-        else {
-            throw Errors.invalidOperation();
         }
     }
 
     public visitSourceUnit(node: SourceUnitSyntax): void {
-        this.visit(node.moduleElements());
-        this.visit(node.endOfFileToken());
+        this.visitList(node.moduleElements());
+        this.visitToken(node.endOfFileToken());
     }
-    
+
     public visitExternalModuleReference(node: ExternalModuleReferenceSyntax): void {
-        this.visit(node.moduleKeyword());
-        this.visit(node.openParenToken());
-        this.visit(node.stringLiteral());
-        this.visit(node.closeParenToken());
+        this.visitToken(node.moduleKeyword());
+        this.visitToken(node.openParenToken());
+        this.visitToken(node.stringLiteral());
+        this.visitToken(node.closeParenToken());
     }
 
     public visitModuleNameModuleReference(node: ModuleNameModuleReferenceSyntax): void {
-        this.visit(node.moduleName());
+        node.moduleName().accept(this);
     }
 
     public visitImportDeclaration(node: ImportDeclarationSyntax): void {
-        this.visit(node.importKeyword());
-        this.visit(node.identifier());
-        this.visit(node.equalsToken());
-        this.visit(node.moduleReference());
-        this.visit(node.semicolonToken());
+        this.visitToken(node.importKeyword());
+        this.visitToken(node.identifier());
+        this.visitToken(node.equalsToken());
+        node.moduleReference().accept(this);
+        this.visitToken(node.semicolonToken());
     }
 
     public visitClassDeclaration(node: ClassDeclarationSyntax): void {
-        this.visit(node.exportKeyword());
-        this.visit(node.declareKeyword());
-        this.visit(node.classKeyword());
-        this.visit(node.identifier());
-        this.visit(node.extendsClause());
-        this.visit(node.implementsClause());
-        this.visit(node.openBraceToken());
-        this.visit(node.classElements());
-        this.visit(node.closeBraceToken());
+        this.visitOptionalToken(node.exportKeyword());
+        this.visitOptionalToken(node.declareKeyword());
+        this.visitToken(node.classKeyword());
+        this.visitToken(node.identifier());
+        this.visitOptionalNode(node.extendsClause());
+        this.visitOptionalNode(node.implementsClause());
+        this.visitToken(node.openBraceToken());
+        this.visitList(node.classElements());
+        this.visitToken(node.closeBraceToken());
     }
 
     public visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): void {
-        this.visit(node.exportKeyword());
-        this.visit(node.interfaceKeyword());
-        this.visit(node.identifier());
-        this.visit(node.extendsClause());
-        this.visit(node.body());
+        this.visitOptionalToken(node.exportKeyword());
+        this.visitToken(node.interfaceKeyword());
+        this.visitToken(node.identifier());
+        this.visitOptionalNode(node.extendsClause());
+        node.body().accept(this);
     }
 
     public visitExtendsClause(node: ExtendsClauseSyntax): void {
-        this.visit(node.extendsKeyword());
-        this.visit(node.typeNames());
+        this.visitToken(node.extendsKeyword());
+        this.visitSeparatedList(node.typeNames());
     }
 
     public visitImplementsClause(node: ImplementsClauseSyntax): void {
-        this.visit(node.implementsKeyword());
-        this.visit(node.typeNames());
+        this.visitToken(node.implementsKeyword());
+        this.visitSeparatedList(node.typeNames());
     }
 
     public visitModuleDeclaration(node: ModuleDeclarationSyntax): void {
-        this.visit(node.exportKeyword());
-        this.visit(node.declareKeyword());
-        this.visit(node.moduleKeyword());
-        this.visit(node.moduleName());
-        this.visit(node.stringLiteral());
-        this.visit(node.openBraceToken());
-        this.visit(node.moduleElements());
-        this.visit(node.closeBraceToken());
+        this.visitOptionalToken(node.exportKeyword());
+        this.visitOptionalToken(node.declareKeyword());
+        this.visitToken(node.moduleKeyword());
+        this.visitOptionalNode(node.moduleName());
+        this.visitOptionalToken(node.stringLiteral());
+        this.visitToken(node.openBraceToken());
+        this.visitList(node.moduleElements());
+        this.visitToken(node.closeBraceToken());
     }
 
     public visitFunctionDeclaration(node: FunctionDeclarationSyntax): void {
-        this.visit(node.exportKeyword());
-        this.visit(node.declareKeyword());
-        this.visit(node.functionKeyword());
-        this.visit(node.functionSignature());
-        this.visit(node.block());
-        this.visit(node.semicolonToken());
+        this.visitOptionalToken(node.exportKeyword());
+        this.visitOptionalToken(node.declareKeyword());
+        this.visitToken(node.functionKeyword());
+        node.functionSignature().accept(this);
+        this.visitOptionalNode(node.block());
+        this.visitOptionalToken(node.semicolonToken());
     }
 
     public visitVariableStatement(node: VariableStatementSyntax): void {
-        this.visit(node.exportKeyword());
-        this.visit(node.declareKeyword());
-        this.visit(node.variableDeclaration());
-        this.visit(node.semicolonToken());
+        this.visitOptionalToken(node.exportKeyword());
+        this.visitOptionalToken(node.declareKeyword());
+        node.variableDeclaration().accept(this);
+        this.visitToken(node.semicolonToken());
     }
 
     public visitVariableDeclaration(node: VariableDeclarationSyntax): void {
-        this.visit(node.varKeyword());
-        this.visit(node.variableDeclarators());
+        this.visitToken(node.varKeyword());
+        this.visitSeparatedList(node.variableDeclarators());
     }
 
     public visitVariableDeclarator(node: VariableDeclaratorSyntax): void {
-        this.visit(node.identifier());
-        this.visit(node.typeAnnotation());
-        this.visit(node.equalsValueClause());
+        this.visitToken(node.identifier());
+        this.visitOptionalNode(node.typeAnnotation());
+        this.visitOptionalNode(node.equalsValueClause());
     }
 
     public visitEqualsValueClause(node: EqualsValueClauseSyntax): void {
-        this.visit(node.equalsToken());
-        this.visit(node.value());
+        this.visitToken(node.equalsToken());
+        node.value().accept(this);
     }
 
     public visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): void {
-        this.visit(node.operatorToken());
-        this.visit(node.operand());
+        this.visitToken(node.operatorToken());
+        node.operand().accept(this);
     }
 
     public visitThisExpression(node: ThisExpressionSyntax): void {
-        this.visit(node.thisKeyword());
+        this.visitToken(node.thisKeyword());
     }
 
     public visitLiteralExpression(node: LiteralExpressionSyntax): void {
-        this.visit(node.literalToken());
+        this.visitToken(node.literalToken());
     }
 
     public visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): void {
-        this.visit(node.openBracketToken());
-        this.visit(node.expressions());
-        this.visit(node.closeBracketToken());
+        this.visitToken(node.openBracketToken());
+        this.visitSeparatedList(node.expressions());
+        this.visitToken(node.closeBracketToken());
     }
 
     public visitOmittedExpression(node: OmittedExpressionSyntax): void {
     }
 
     public visitParenthesizedExpression(node: ParenthesizedExpressionSyntax): void {
-        this.visit(node.openParenToken());
-        this.visit(node.expression());
-        this.visit(node.closeParenToken());
+        this.visitToken(node.openParenToken());
+        node.expression().accept(this);
+        this.visitToken(node.closeParenToken());
     }
 
     public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): void {
-        this.visit(node.identifier());
-        this.visit(node.equalsGreaterThanToken());
-        this.visit(node.body());
+        this.visitToken(node.identifier());
+        this.visitToken(node.equalsGreaterThanToken());
+        node.body().accept(this);
     }
 
     public visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): void {
-        this.visit(node.callSignature());
-        this.visit(node.equalsGreaterThanToken());
-        this.visit(node.body());
+        node.callSignature().accept(this);
+        this.visitToken(node.equalsGreaterThanToken());
+        node.body().accept(this);
     }
 
     public visitIdentifierName(node: IdentifierNameSyntax): void {
-        this.visit(node.identifier());
+        this.visitToken(node.identifier());
     }
 
     public visitQualifiedName(node: QualifiedNameSyntax): void {
-        this.visit(node.left());
-        this.visit(node.dotToken());
-        this.visit(node.right());
+        node.left().accept(this);
+        this.visitToken(node.dotToken());
+        node.right().accept(this);
     }
 
     public visitConstructorType(node: ConstructorTypeSyntax): void {
-        this.visit(node.newKeyword());
-        this.visit(node.parameterList());
-        this.visit(node.equalsGreaterThanToken());
-        this.visit(node.type());
+        this.visitToken(node.newKeyword());
+        node.parameterList().accept(this);
+        this.visitToken(node.equalsGreaterThanToken());
+        node.type().accept(this);
     }
 
     public visitFunctionType(node: FunctionTypeSyntax): void {
-        this.visit(node.parameterList());
-        this.visit(node.equalsGreaterThanToken());
-        this.visit(node.type());
+        node.parameterList().accept(this);
+        this.visitToken(node.equalsGreaterThanToken());
+        node.type().accept(this);
     }
 
     public visitObjectType(node: ObjectTypeSyntax): void {
-        this.visit(node.openBraceToken());
-        this.visit(node.typeMembers());
-        this.visit(node.closeBraceToken());
+        this.visitToken(node.openBraceToken());
+        this.visitSeparatedList(node.typeMembers());
+        this.visitToken(node.closeBraceToken());
     }
 
     public visitArrayType(node: ArrayTypeSyntax): void {
-        this.visit(node.type());
-        this.visit(node.openBracketToken());
-        this.visit(node.closeBracketToken());
+        node.type().accept(this);
+        this.visitToken(node.openBracketToken());
+        this.visitToken(node.closeBracketToken());
     }
 
     public visitPredefinedType(node: PredefinedTypeSyntax): void {
-        this.visit(node.keyword());
+        this.visitToken(node.keyword());
     }
 
     public visitTypeAnnotation(node: TypeAnnotationSyntax): void {
-        this.visit(node.colonToken());
-        this.visit(node.type());
+        this.visitToken(node.colonToken());
+        node.type().accept(this);
     }
 
     public visitBlock(node: BlockSyntax): void {
-        this.visit(node.openBraceToken()); 
-        this.visit(node.statements());
-        this.visit(node.closeBraceToken());
+        this.visitToken(node.openBraceToken());
+        this.visitList(node.statements());
+        this.visitToken(node.closeBraceToken());
     }
 
     public visitParameter(node: ParameterSyntax): void {
-        this.visit(node.dotDotDotToken());
-        this.visit(node.publicOrPrivateKeyword());
-        this.visit(node.identifier());
-        this.visit(node.questionToken());
-        this.visit(node.typeAnnotation());
-        this.visit(node.equalsValueClause());
+        this.visitOptionalToken(node.dotDotDotToken());
+        this.visitOptionalToken(node.publicOrPrivateKeyword());
+        this.visitToken(node.identifier());
+        this.visitOptionalToken(node.questionToken());
+        this.visitOptionalNode(node.typeAnnotation());
+        this.visitOptionalNode(node.equalsValueClause());
     }
 
     public visitMemberAccessExpression(node: MemberAccessExpressionSyntax): void {
-        this.visit(node.expression());
-        this.visit(node.dotToken());
-        this.visit(node.identifierName());
+        node.expression().accept(this);
+        this.visitToken(node.dotToken());
+        node.identifierName().accept(this);
     }
 
     public visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): void {
-        this.visit(node.operand());
-        this.visit(node.operatorToken());
+        node.operand().accept(this);
+        this.visitToken(node.operatorToken());
     }
 
     public visitElementAccessExpression(node: ElementAccessExpressionSyntax): void {
-        this.visit(node.expression());
-        this.visit(node.openBracketToken());
-        this.visit(node.argumentExpression());
-        this.visit(node.closeBracketToken());
+        node.expression().accept(this);
+        this.visitToken(node.openBracketToken());
+        node.argumentExpression().accept(this);
+        this.visitToken(node.closeBracketToken());
     }
 
     public visitInvocationExpression(node: InvocationExpressionSyntax): void {
-        this.visit(node.expression());
-        this.visit(node.argumentList());
+        node.expression().accept(this);
+        node.argumentList().accept(this);
     }
 
     public visitArgumentList(node: ArgumentListSyntax): void {
-        this.visit(node.openParenToken()); 
-        this.visit(node.arguments());
-        this.visit(node.closeParenToken());
+        this.visitToken(node.openParenToken());
+        this.visitSeparatedList(node.arguments());
+        this.visitToken(node.closeParenToken());
     }
 
     public visitBinaryExpression(node: BinaryExpressionSyntax): void {
-        this.visit(node.left());
-        this.visit(node.operatorToken());
-        this.visit(node.right());
+        node.left().accept(this);
+        this.visitToken(node.operatorToken());
+        node.right().accept(this);
     }
 
     public visitConditionalExpression(node: ConditionalExpressionSyntax): void {
-        this.visit(node.condition());
-        this.visit(node.questionToken());
-        this.visit(node.whenTrue());
-        this.visit(node.colonToken());
-        this.visit(node.whenFalse());
+        node.condition().accept(this);
+        this.visitToken(node.questionToken());
+        node.whenTrue().accept(this);
+        this.visitToken(node.colonToken());
+        node.whenFalse().accept(this);
     }
 
     public visitConstructSignature(node: ConstructSignatureSyntax): void {
-        this.visit(node.newKeyword());
-        this.visit(node.parameterList());
-        this.visit(node.typeAnnotation());
+        this.visitToken(node.newKeyword());
+        node.parameterList().accept(this);
+        this.visitOptionalNode(node.typeAnnotation());
     }
 
     public visitFunctionSignature(node: FunctionSignatureSyntax): void {
-        this.visit(node.identifier());
-        this.visit(node.questionToken());
-        this.visit(node.parameterList());
-        this.visit(node.typeAnnotation());
+        this.visitToken(node.identifier());
+        this.visitOptionalToken(node.questionToken());
+        node.parameterList().accept(this);
+        this.visitOptionalNode(node.typeAnnotation());
     }
 
     public visitIndexSignature(node: IndexSignatureSyntax): void {
-        this.visit(node.openBracketToken());
-        this.visit(node.parameter());
-        this.visit(node.closeBracketToken());
-        this.visit(node.typeAnnotation());
+        this.visitToken(node.openBracketToken());
+        node.parameter().accept(this);
+        this.visitToken(node.closeBracketToken());
+        this.visitOptionalNode(node.typeAnnotation());
     }
 
     public visitPropertySignature(node: PropertySignatureSyntax): void {
-        this.visit(node.identifier());
-        this.visit(node.questionToken());
-        this.visit(node.typeAnnotation());
+        this.visitToken(node.identifier());
+        this.visitOptionalToken(node.questionToken());
+        this.visitOptionalNode(node.typeAnnotation());
     }
 
     public visitParameterList(node: ParameterListSyntax): void {
-        this.visit(node.openParenToken());
-        this.visit(node.parameters());
-        this.visit(node.closeParenToken());
+        this.visitToken(node.openParenToken());
+        this.visitSeparatedList(node.parameters());
+        this.visitToken(node.closeParenToken());
     }
 
     public visitCallSignature(node: CallSignatureSyntax): void {
-        this.visit(node.parameterList());
-        this.visit(node.typeAnnotation());
+        node.parameterList().accept(this);
+        this.visitOptionalNode(node.typeAnnotation());
     }
 
     public visitElseClause(node: ElseClauseSyntax): void {
-        this.visit(node.elseKeyword());
-        this.visit(node.statement());
+        this.visitToken(node.elseKeyword());
+        node.statement().accept(this);
     }
 
     public visitIfStatement(node: IfStatementSyntax): void {
-        this.visit(node.ifKeyword());
-        this.visit(node.openParenToken());
-        this.visit(node.condition());
-        this.visit(node.closeParenToken());
-        this.visit(node.statement());
-        this.visit(node.elseClause());
+        this.visitToken(node.ifKeyword());
+        this.visitToken(node.openParenToken());
+        node.condition().accept(this);
+        this.visitToken(node.closeParenToken());
+        node.statement().accept(this);
+        this.visitOptionalNode(node.elseClause());
     }
 
     public visitExpressionStatement(node: ExpressionStatementSyntax): void {
-        this.visit(node.expression());
-        this.visit(node.semicolonToken());
+        node.expression().accept(this);
+        this.visitToken(node.semicolonToken());
     }
 
     public visitConstructorDeclaration(node: ConstructorDeclarationSyntax): void {
-        this.visit(node.constructorKeyword());
-        this.visit(node.parameterList());
-        this.visit(node.block());
-        this.visit(node.semicolonToken());
+        this.visitToken(node.constructorKeyword());
+        node.parameterList().accept(this);
+        this.visitOptionalNode(node.block());
+        this.visitOptionalToken(node.semicolonToken());
     }
 
     public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): void {
-        this.visit(node.publicOrPrivateKeyword());
-        this.visit(node.staticKeyword());
-        this.visit(node.functionSignature());
-        this.visit(node.block());
-        this.visit(node.semicolonToken());
+        this.visitOptionalToken(node.publicOrPrivateKeyword());
+        this.visitOptionalToken(node.staticKeyword());
+        node.functionSignature().accept(this);
+        this.visitOptionalNode(node.block());
+        this.visitOptionalToken(node.semicolonToken());
     }
 
     public visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): void {
-        this.visit(node.publicOrPrivateKeyword());
-        this.visit(node.staticKeyword());
-        this.visit(node.getKeyword());
-        this.visit(node.identifier());
-        this.visit(node.parameterList());
-        this.visit(node.typeAnnotation());
-        this.visit(node.block());
+        this.visitOptionalToken(node.publicOrPrivateKeyword());
+        this.visitOptionalToken(node.staticKeyword());
+        this.visitToken(node.getKeyword());
+        this.visitToken(node.identifier());
+        node.parameterList().accept(this);
+        this.visitOptionalNode(node.typeAnnotation());
+        node.block().accept(this);
     }
 
     public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): void {
-        this.visit(node.publicOrPrivateKeyword());
-        this.visit(node.staticKeyword());
-        this.visit(node.setKeyword());
-        this.visit(node.identifier());
-        this.visit(node.parameterList());
-        this.visit(node.block());
+        this.visitOptionalToken(node.publicOrPrivateKeyword());
+        this.visitOptionalToken(node.staticKeyword());
+        this.visitToken(node.setKeyword());
+        this.visitToken(node.identifier());
+        node.parameterList().accept(this);
+        node.block().accept(this);
     }
 
     public visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): void {
-        this.visit(node.publicOrPrivateKeyword());
-        this.visit(node.staticKeyword());
-        this.visit(node.variableDeclarator());
-        this.visit(node.semicolonToken());
+        this.visitOptionalToken(node.publicOrPrivateKeyword());
+        this.visitOptionalToken(node.staticKeyword());
+        node.variableDeclarator().accept(this);
+        this.visitToken(node.semicolonToken());
     }
-    
+
     public visitThrowStatement(node: ThrowStatementSyntax): void {
-        this.visit(node.throwKeyword());
-        this.visit(node.expression());
-        this.visit(node.semicolonToken());
+        this.visitToken(node.throwKeyword());
+        node.expression().accept(this);
+        this.visitToken(node.semicolonToken());
     }
 
     public visitReturnStatement(node: ReturnStatementSyntax): void {
-        this.visit(node.returnKeyword());
-        this.visit(node.expression());
-        this.visit(node.semicolonToken());
+        this.visitToken(node.returnKeyword());
+        this.visitOptionalNode(node.expression());
+        this.visitToken(node.semicolonToken());
     }
 
     public visitObjectCreationExpression(node: ObjectCreationExpressionSyntax): void {
-        this.visit(node.newKeyword());
-        this.visit(node.expression());
-        this.visit(node.argumentList());
+        this.visitToken(node.newKeyword());
+        node.expression().accept(this);
+        this.visitOptionalNode(node.argumentList());
     }
 
     public visitSwitchStatement(node: SwitchStatementSyntax): void {
-        this.visit(node.switchKeyword());
-        this.visit(node.openParenToken());
-        this.visit(node.expression());
-        this.visit(node.closeParenToken());
-        this.visit(node.openBraceToken());
-        this.visit(node.caseClauses());
-        this.visit(node.closeBraceToken());
+        this.visitToken(node.switchKeyword());
+        this.visitToken(node.openParenToken());
+        node.expression().accept(this);
+        this.visitToken(node.closeParenToken());
+        this.visitToken(node.openBraceToken());
+        this.visitList(node.caseClauses());
+        this.visitToken(node.closeBraceToken());
     }
 
     public visitCaseSwitchClause(node: CaseSwitchClauseSyntax): void {
-        this.visit(node.caseKeyword());
-        this.visit(node.expression());
-        this.visit(node.colonToken());
-        this.visit(node.statements());
+        this.visitToken(node.caseKeyword());
+        node.expression().accept(this);
+        this.visitToken(node.colonToken());
+        this.visitList(node.statements());
     }
 
     public visitDefaultSwitchClause(node: DefaultSwitchClauseSyntax): void {
-        this.visit(node.defaultKeyword());
-        this.visit(node.colonToken());
-        this.visit(node.statements());
+        this.visitToken(node.defaultKeyword());
+        this.visitToken(node.colonToken());
+        this.visitList(node.statements());
     }
 
     public visitBreakStatement(node: BreakStatementSyntax): void {
-        this.visit(node.breakKeyword());
-        this.visit(node.identifier());
-        this.visit(node.semicolonToken());
+        this.visitToken(node.breakKeyword());
+        this.visitOptionalToken(node.identifier());
+        this.visitToken(node.semicolonToken());
     }
 
     public visitContinueStatement(node: ContinueStatementSyntax): void {
-        this.visit(node.continueKeyword());
-        this.visit(node.identifier());
-        this.visit(node.semicolonToken());
+        this.visitToken(node.continueKeyword());
+        this.visitOptionalToken(node.identifier());
+        this.visitToken(node.semicolonToken());
     }
 
     public visitForStatement(node: ForStatementSyntax): void {
-        this.visit(node.forKeyword());
-        this.visit(node.openParenToken());
-        this.visit(node.variableDeclaration());
-        this.visit(node.initializer());
-        this.visit(node.firstSemicolonToken());
-        this.visit(node.condition());
-        this.visit(node.secondSemicolonToken());
-        this.visit(node.incrementor());
-        this.visit(node.closeParenToken());
-        this.visit(node.statement());
+        this.visitToken(node.forKeyword());
+        this.visitToken(node.openParenToken());
+        this.visitOptionalNode(node.variableDeclaration());
+        this.visitOptionalNode(node.initializer());
+        this.visitToken(node.firstSemicolonToken());
+        this.visitOptionalNode(node.condition());
+        this.visitToken(node.secondSemicolonToken());
+        this.visitOptionalNode(node.incrementor());
+        this.visitToken(node.closeParenToken());
+        node.statement().accept(this);
     }
 
     public visitForInStatement(node: ForInStatementSyntax): void {
-        this.visit(node.forKeyword());
-        this.visit(node.openParenToken());
-        this.visit(node.variableDeclaration());
-        this.visit(node.left());
-        this.visit(node.inKeyword());
-        this.visit(node.expression());
-        this.visit(node.closeParenToken());
-        this.visit(node.statement());
+        this.visitToken(node.forKeyword());
+        this.visitToken(node.openParenToken());
+        this.visitOptionalNode(node.variableDeclaration());
+        this.visitOptionalNode(node.left());
+        this.visitToken(node.inKeyword());
+        node.expression().accept(this);
+        this.visitToken(node.closeParenToken());
+        node.statement().accept(this);
     }
 
     public visitWhileStatement(node: WhileStatementSyntax): void {
-        this.visit(node.whileKeyword());
-        this.visit(node.openParenToken());
-        this.visit(node.condition());
-        this.visit(node.closeParenToken());
-        this.visit(node.statement());
+        this.visitToken(node.whileKeyword());
+        this.visitToken(node.openParenToken());
+        node.condition().accept(this);
+        this.visitToken(node.closeParenToken());
+        node.statement().accept(this);
     }
 
     public visitWithStatement(node: WithStatementSyntax): void {
-        this.visit(node.withKeyword());
-        this.visit(node.openParenToken());
-        this.visit(node.condition());
-        this.visit(node.closeParenToken());
-        this.visit(node.statement());
+        this.visitToken(node.withKeyword());
+        this.visitToken(node.openParenToken());
+        node.condition().accept(this);
+        this.visitToken(node.closeParenToken());
+        node.statement().accept(this);
     }
 
     public visitEnumDeclaration(node: EnumDeclarationSyntax): void {
-        this.visit(node.exportKeyword());
-        this.visit(node.enumKeyword());
-        this.visit(node.identifier());
-        this.visit(node.openBraceToken());
-        this.visit(node.variableDeclarators());
-        this.visit(node.closeBraceToken());
+        this.visitOptionalToken(node.exportKeyword());
+        this.visitToken(node.enumKeyword());
+        this.visitToken(node.identifier());
+        this.visitToken(node.openBraceToken());
+        this.visitSeparatedList(node.variableDeclarators());
+        this.visitToken(node.closeBraceToken());
     }
 
     public visitCastExpression(node: CastExpressionSyntax): void {
-        this.visit(node.lessThanToken());
-        this.visit(node.type());
-        this.visit(node.greaterThanToken());
-        this.visit(node.expression());
+        this.visitToken(node.lessThanToken());
+        node.type().accept(this);
+        this.visitToken(node.greaterThanToken());
+        node.expression().accept(this);
     }
 
     public visitObjectLiteralExpression(node: ObjectLiteralExpressionSyntax): void {
-        this.visit(node.openBraceToken());
-        this.visit(node.propertyAssignments());
-        this.visit(node.closeBraceToken());
+        this.visitToken(node.openBraceToken());
+        this.visitSeparatedList(node.propertyAssignments());
+        this.visitToken(node.closeBraceToken());
     }
 
     public visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): void {
-        this.visit(node.propertyName());
-        this.visit(node.colonToken());
-        this.visit(node.expression());
+        this.visitToken(node.propertyName());
+        this.visitToken(node.colonToken());
+        node.expression().accept(this);
     }
 
     public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): void {
-        this.visit(node.getKeyword());
-        this.visit(node.propertyName());
-        this.visit(node.openParenToken());
-        this.visit(node.closeParenToken());
-        this.visit(node.block());
+        this.visitToken(node.getKeyword());
+        this.visitToken(node.propertyName());
+        this.visitToken(node.openParenToken());
+        this.visitToken(node.closeParenToken());
+        node.block().accept(this);
     }
 
     public visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): void {
-        this.visit(node.setKeyword());
-        this.visit(node.propertyName());
-        this.visit(node.openParenToken());
-        this.visit(node.parameterName());
-        this.visit(node.closeParenToken());
-        this.visit(node.block());
+        this.visitToken(node.setKeyword());
+        this.visitToken(node.propertyName());
+        this.visitToken(node.openParenToken());
+        this.visitToken(node.parameterName());
+        this.visitToken(node.closeParenToken());
+        node.block().accept(this);
     }
 
     public visitFunctionExpression(node: FunctionExpressionSyntax): void {
-        this.visit(node.functionKeyword());
-        this.visit(node.identifier());
-        this.visit(node.callSignature());
-        this.visit(node.block());
+        this.visitToken(node.functionKeyword());
+        this.visitOptionalToken(node.identifier());
+        node.callSignature().accept(this);
+        node.block().accept(this);
     }
 
     public visitEmptyStatement(node: EmptyStatementSyntax): void {
-        this.visit(node.semicolonToken());
+        this.visitToken(node.semicolonToken());
     }
 
     public visitSuperExpression(node: SuperExpressionSyntax): void {
-        this.visit(node.superKeyword());
+        this.visitToken(node.superKeyword());
     }
 
     public visitTryStatement(node: TryStatementSyntax): void {
-        this.visit(node.tryKeyword());
-        this.visit(node.block());
-        this.visit(node.catchClause());
-        this.visit(node.finallyClause());
+        this.visitToken(node.tryKeyword());
+        node.block().accept(this);
+        this.visitOptionalNode(node.catchClause());
+        this.visitOptionalNode(node.finallyClause());
     }
 
     public visitCatchClause(node: CatchClauseSyntax): void {
-        this.visit(node.catchKeyword());
-        this.visit(node.openParenToken());
-        this.visit(node.identifier());
-        this.visit(node.closeParenToken());
-        this.visit(node.block());
+        this.visitToken(node.catchKeyword());
+        this.visitToken(node.openParenToken());
+        this.visitToken(node.identifier());
+        this.visitToken(node.closeParenToken());
+        node.block().accept(this);
     }
 
     public visitFinallyClause(node: FinallyClauseSyntax): void {
-        this.visit(node.finallyKeyword());
-        this.visit(node.block());
+        this.visitToken(node.finallyKeyword());
+        node.block().accept(this);
     }
 
     public visitLabeledStatement(node: LabeledStatement): void {
-        this.visit(node.identifier());
-        this.visit(node.colonToken());
-        this.visit(node.statement());
+        this.visitToken(node.identifier());
+        this.visitToken(node.colonToken());
+        node.statement().accept(this);
     }
 
     public visitDoStatement(node: DoStatementSyntax): void {
-        this.visit(node.doKeyword());
-        this.visit(node.statement());
-        this.visit(node.whileKeyword());
-        this.visit(node.openParenToken());
-        this.visit(node.condition());
-        this.visit(node.closeParenToken());
-        this.visit(node.semicolonToken());
+        this.visitToken(node.doKeyword());
+        node.statement().accept(this);
+        this.visitToken(node.whileKeyword());
+        this.visitToken(node.openParenToken());
+        node.condition().accept(this);
+        this.visitToken(node.closeParenToken());
+        this.visitToken(node.semicolonToken());
     }
 
     public visitTypeOfExpression(node: TypeOfExpressionSyntax): void {
-        this.visit(node.typeOfKeyword());
-        this.visit(node.expression());
+        this.visitToken(node.typeOfKeyword());
+        node.expression().accept(this);
     }
 
     public visitDeleteExpression(node: DeleteExpressionSyntax): void {
-        this.visit(node.deleteKeyword());
-        this.visit(node.expression());
+        this.visitToken(node.deleteKeyword());
+        node.expression().accept(this);
     }
 
     public visitVoidExpression(node: VoidExpressionSyntax): void {
-        this.visit(node.voidKeyword());
-        this.visit(node.expression());
+        this.visitToken(node.voidKeyword());
+        node.expression().accept(this);
     }
 
     public visitDebuggerStatement(node: DebuggerStatementSyntax): void {
-        this.visit(node.debuggerKeyword());
-        this.visit(node.semicolonToken());
+        this.visitToken(node.debuggerKeyword());
+        this.visitToken(node.semicolonToken());
     }
 }

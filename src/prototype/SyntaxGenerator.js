@@ -2993,9 +2993,52 @@ function generateTokens() {
     result += "}";
     return result;
 }
+function generateWalker() {
+    var result = "";
+    result += "///<reference path='References.ts' />\r\n" + "\r\n" + "class SyntaxWalker implements ISyntaxVisitor {\r\n" + "    public visitToken(token: ISyntaxToken): void {\r\n" + "    }\r\n" + "\r\n" + "    private visitOptionalToken(token: ISyntaxToken): void {\r\n" + "        if (token === null) {\r\n" + "            return;\r\n" + "        }\r\n" + "\r\n" + "        this.visitToken(token);\r\n" + "    }\r\n" + "\r\n" + "    public visitOptionalNode(node: SyntaxNode): void {\r\n" + "        if (node === null) {\r\n" + "            return;\r\n" + "        }\r\n" + "\r\n" + "        node.accept1(this);\r\n" + "    }\r\n" + "\r\n" + "    public visitList(list: ISyntaxList): void {\r\n" + "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" + "           list.syntaxNodeAt(i).accept(this);\r\n" + "        }\r\n" + "    }\r\n" + "\r\n" + "    public visitSeparatedList(list: ISeparatedSyntaxList): void {\r\n" + "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" + "            var item = list.itemAt(i);\r\n" + "            if (item.isToken()) {\r\n" + "                this.visitToken(<ISyntaxToken>item);\r\n" + "            }\r\n" + "            else {\r\n" + "                (<SyntaxNode>item).accept(this);\r\n" + "            }\r\n" + "        }\r\n" + "    }\r\n";
+    for(var i = 0; i < definitions.length; i++) {
+        var definition = definitions[i];
+        if(definition.isAbstract) {
+            continue;
+        }
+        result += "\r\n";
+        result += "    public visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): void {\r\n";
+        for(var j = 0; j < definition.children.length; j++) {
+            var child = definition.children[j];
+            if(child.isToken) {
+                if(child.isOptional) {
+                    result += "        this.visitOptionalToken(node." + child.name + "());\r\n";
+                } else {
+                    result += "        this.visitToken(node." + child.name + "());\r\n";
+                }
+            } else {
+                if(child.isList) {
+                    result += "        this.visitList(node." + child.name + "());\r\n";
+                } else {
+                    if(child.isSeparatedList) {
+                        result += "        this.visitSeparatedList(node." + child.name + "());\r\n";
+                    } else {
+                        if(child.type !== "SyntaxKind") {
+                            if(child.isOptional) {
+                                result += "        this.visitOptionalNode(node." + child.name + "());\r\n";
+                            } else {
+                                result += "        node." + child.name + "().accept(this);\r\n";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        result += "    }\r\n";
+    }
+    result += "}";
+    return result;
+}
 var syntaxNodes = generateNodes();
 var rewriter = generateRewriter();
 var tokens = generateTokens();
+var walker = generateWalker();
 Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxNodes.ts", syntaxNodes, true);
 Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxRewriter.ts", rewriter, true);
 Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxToken.generated.ts", tokens, true);
+Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxWalker.ts", walker, true);
