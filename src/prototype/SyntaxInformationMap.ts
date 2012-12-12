@@ -38,6 +38,14 @@ class SyntaxInformationMap extends SyntaxWalker {
         this.tokenToInformation.add(token, tokenInformation);
     }
 
+    public fullStart(token: ISyntaxToken): number {
+        return this.tokenInformation(token).fullStart;
+    }
+
+    public start(token: ISyntaxToken): number {
+        return this.fullStart(token) + token.leadingTriviaWidth();
+    }
+
     public tokenInformation(token: ISyntaxToken): ITokenInformation {
         return this.tokenToInformation.get(token);
     }

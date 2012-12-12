@@ -61,7 +61,10 @@
 // Parser depends on SlidingWindow and SyntaxRewriter.
 ///<reference path='Parser.ts' />
 
-// SyntaxRealizer depends on SyntaxRewriter.
+// SyntaxDedenter depends on SyntaxRewriter.
+///<reference path='SyntaxDedenter.ts' />
+
+// SyntaxIndenter depends on SyntaxRewriter.
 ///<reference path='SyntaxIndenter.ts' />
 
 // SyntaxRealizer depends on SyntaxRewriter.

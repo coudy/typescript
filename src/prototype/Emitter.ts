@@ -10,32 +10,6 @@ class EmitterOptions {
 }
 
 class Emitter extends SyntaxRewriter {
-    // as we walk down the tree, keep track of what our current indentation is based on this 
-    // node.
-    // i.e. if we have:
-    //
-    // class C {
-    //     private x = 
-    //           foo + bar...
-    // }
-    //
-    // Then when we recurse into the property, we will mark that we're now at an indentation
-    // of 4.  When we recurse into "foo + bar" we'll then be at an indentation of 10. 
-    // 
-    // indentation is used to compute where to put new items.  For example, if we have:
-    //
-    //          var v = a => 1;     // <-- current indentation 8.
-    //
-    // Then when we generate new code we'll generate it as:
-    //
-    //          var v = function(a) {
-    //              return 1;
-    //          };
-    //
-    // For fully synthesized nodes (like the return statement above), we will use that same
-    // indentation level that we're currently at, along with whatever indentation setting the 
-    // emitter was created with.
-
     private syntaxInformationMap: SyntaxInformationMap;
     private options: EmitterOptions;
     private indentationTrivia: ISyntaxTrivia;
@@ -261,7 +235,7 @@ class Emitter extends SyntaxRewriter {
             <ExpressionSyntax>rewrittenBody,
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
 
-        // UNDONE: We want to adjust the indentation of the expression so that is aligns as it 
+        // We want to adjust the indentation of the expression so that is aligns as it 
         // did before.  For example, if we started with:
         //
         //          a => foo().bar()
@@ -276,8 +250,25 @@ class Emitter extends SyntaxRewriter {
         // column, and the column we're inserting into.  Whatever delta that is (in the above case 
         // it is '2') is what we need to apply to the subexpression (not including the first token).
 
+        // NOTE: this math is almost certainly wrong given tabs.  Fix that later on.  Also, we 
+        // should not do this for expressions that are in a newline.
+        var firstExpressionToken = arrowFunction.body().firstToken();
+        var expressionPosition = this.syntaxInformationMap.start(firstExpressionToken);
+        var newExpressionPosition = returnStatement.returnKeyword().fullWidth();
+        var difference = newExpressionPosition - expressionPosition;
+
+        if (difference < 0) {
+            // Dedent the expression.  But don't allow it go before column 4.
+            returnStatement = <ReturnStatementSyntax>SyntaxDedenter.dedentNode(
+                returnStatement, /*dedentFirstToken:*/ false, -difference, /*minimumIndent:*/ 4);
+        }
+        else if (difference > 0) {
+            returnStatement = <ReturnStatementSyntax>SyntaxIndenter.indentNode(
+                returnStatement, /*indentFirstToken:*/ false, SyntaxTrivia.createSpaces(difference));
+        }
+
         // Next, indent the return statement.  It's going in a block, so it needs to be properly
-        // indented.
+        // indented.  Note we do this *after* we've ensured the expression aligns properly.
 
         returnStatement = <ReturnStatementSyntax>SyntaxIndenter.indentNode(
             returnStatement, /*indentFirstToken:*/ true, this.indentationTrivia);
@@ -311,11 +302,5 @@ class Emitter extends SyntaxRewriter {
         block = <BlockSyntax>SyntaxIndenter.indentNode(block, /*indentFirstToken:*/ false, 
             this.createColumnIndentTriviaForLineContainingToken(arrowFunction.firstToken()));
         return block;
-    }
-
-    private ensureInvariants(node: SyntaxNode): void {
-        // 
-
-        var hashTable = new HashTable();
     }
 }

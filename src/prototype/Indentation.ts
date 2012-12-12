@@ -23,7 +23,11 @@ class Indentation {
         return this._column;
     }
 
-    public static indentationForLineContainingToken(token: ISyntaxToken, syntaxInformationMap: SyntaxInformationMap, spacesPerTab: number) {
+    public static columnForToken(token: ISyntaxToken, syntaxInformationMap: SyntaxInformationMap, spacesPerTab: number) {
+
+    }
+
+    private static indentationForLineContainingToken(token: ISyntaxToken, syntaxInformationMap: SyntaxInformationMap, spacesPerTab: number) {
         // Walk backward through the tokens until we find the first one on the line.
         var firstToken = syntaxInformationMap.firstTokenOnLineContainingToken(token);
 
@@ -45,7 +49,7 @@ class Indentation {
             }
 
             if (trivia.kind() === SyntaxKind.MultiLineCommentTrivia) {
-                var lineSegments = Indentation.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
+                var lineSegments = SyntaxTrivia.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
                 indentationTextInReverse.push(ArrayUtilities.last(lineSegments));
 
                 if (lineSegments.length > 0) {
@@ -81,47 +85,6 @@ class Indentation {
         }
 
         return new Indentation(linePosition, column);
-    }
-
-    private static splitMultiLineCommentTriviaIntoMultipleLines(trivia: ISyntaxTrivia): string[] {
-        Debug.assert(trivia.kind() === SyntaxKind.MultiLineCommentTrivia);
-        var result: string[] = [];
-
-        var triviaText = trivia.fullText();
-        var currentIndex = 0;
-
-        for (var i = 0; i < triviaText.length; i++) {
-            var ch = triviaText.charCodeAt(i);
-
-            // When we run into a newline for the first time, create the string builder and copy
-            // all the values up to this newline into it.
-            var isCarriageReturnLineFeed = false;
-            switch (ch) {
-                case CharacterCodes.carriageReturn:
-                    if (i < triviaText.length - 1 && triviaText.charCodeAt(i + 1) === CharacterCodes.lineFeed) {
-                        isCarriageReturnLineFeed = true;
-                    }
-
-                // Fall through.
-
-                case CharacterCodes.lineFeed:
-                case CharacterCodes.paragraphSeparator:
-                case CharacterCodes.lineSeparator:
-                    result.push(triviaText.substring(currentIndex, i));
-
-                    // Move an extra space forward if this is a crlf.
-                    if (isCarriageReturnLineFeed) {
-                        i++;
-                    }
-
-                    // Set the current index to *after* the newline.
-                    currentIndex = i + 1;
-                    continue;
-            }
-        }
-
-        result.push(triviaText.substring(currentIndex));
-        return result;
     }
 
     public static indentationString(column: number, useTabs: bool, spacesPerTab: number): string {

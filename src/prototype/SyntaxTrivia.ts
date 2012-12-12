@@ -52,8 +52,54 @@ module SyntaxTrivia {
         return new SimpleSyntaxTrivia(kind, text);
     }
 
-    export var space: ISyntaxTrivia = create(SyntaxKind.WhitespaceTrivia, " ");
+    export function createSpaces(count: number): ISyntaxTrivia {
+        return create(SyntaxKind.WhitespaceTrivia, StringUtilities.repeat(" ", count));
+    }
+
+    export var space: ISyntaxTrivia = createSpaces(1);
     export var lineFeed: ISyntaxTrivia = create(SyntaxKind.NewLineTrivia, "\n");
     export var carriageReturn: ISyntaxTrivia = create(SyntaxKind.NewLineTrivia, "\r");
     export var carriageReturnLineFeed: ISyntaxTrivia = create(SyntaxKind.NewLineTrivia, "\r\n");
+
+    export function splitMultiLineCommentTriviaIntoMultipleLines(trivia: ISyntaxTrivia): string[] {
+        Debug.assert(trivia.kind() === SyntaxKind.MultiLineCommentTrivia);
+        var result: string[] = [];
+
+        var triviaText = trivia.fullText();
+        var currentIndex = 0;
+
+        for (var i = 0; i < triviaText.length; i++) {
+            var ch = triviaText.charCodeAt(i);
+
+            // When we run into a newline for the first time, create the string builder and copy
+            // all the values up to this newline into it.
+            var isCarriageReturnLineFeed = false;
+            switch (ch) {
+                case CharacterCodes.carriageReturn:
+                    if (i < triviaText.length - 1 && triviaText.charCodeAt(i + 1) === CharacterCodes.lineFeed) {
+                        isCarriageReturnLineFeed = true;
+                    }
+
+                // Fall through.
+
+                case CharacterCodes.lineFeed:
+                case CharacterCodes.paragraphSeparator:
+                case CharacterCodes.lineSeparator:
+                    // Move an extra space forward if this is a crlf.
+                    if (isCarriageReturnLineFeed) {
+                        // Consume the \r
+                        i++;
+                    }
+
+                    result.push(triviaText.substring(currentIndex, i + 1));
+
+                    // Set the current index to *after* the newline.
+                    currentIndex = i + 1;
+                    continue;
+            }
+        }
+
+        result.push(triviaText.substring(currentIndex));
+        return result;
+    }
 }

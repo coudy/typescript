@@ -14,7 +14,7 @@ class SyntaxIndenter extends SyntaxRewriter {
         var result = token;
         if (this.lastTriviaWasNewLine) {
             // have to add our indentation to every line that this token hits.
-            result = token.withLeadingTrivia(this.adjustIndentation(token.leadingTrivia()));
+            result = token.withLeadingTrivia(this.indentTriviaList(token.leadingTrivia()));
         }
 
         var trailingTrivia = token.trailingTrivia();
@@ -24,7 +24,7 @@ class SyntaxIndenter extends SyntaxRewriter {
         return result;
     }
 
-    private adjustIndentation(triviaList: ISyntaxTriviaList): ISyntaxTriviaList {
+    private indentTriviaList(triviaList: ISyntaxTriviaList): ISyntaxTriviaList {
         var result = [this.indentationTrivia];
 
         for (var i = 0, n = triviaList.count(); i < n; i++) {
@@ -33,7 +33,7 @@ class SyntaxIndenter extends SyntaxRewriter {
             if (trivia.kind() === SyntaxKind.MultiLineCommentTrivia) {
                 // This trivia may span multiple lines.  If it does, we need to indent each 
                 // successive line of it until it terminates.
-                result.push(this.adjustMultiLineCommentIndentation(trivia));
+                result.push(this.indentMultiLineComment(trivia));
                 continue;
             }
 
@@ -49,61 +49,21 @@ class SyntaxIndenter extends SyntaxRewriter {
         return SyntaxTriviaList.create(result);
     }
 
-    private adjustMultiLineCommentIndentation(trivia: ISyntaxTrivia): ISyntaxTrivia {
-        var oldTriviaText = trivia.fullText();
-        var newTriviaText: number[] = null;
-        var indentationText = this.indentationTrivia.fullText();
-        
-        for (var i = 0; i < oldTriviaText.length; i++) {
-            var ch = oldTriviaText.charCodeAt(i);
-
-            // When we run into a newline for the first time, create the string builder and copy
-            // all the values up to this newline into it.
-            switch (ch) {
-                case CharacterCodes.carriageReturn:
-                case CharacterCodes.lineFeed:
-                case CharacterCodes.paragraphSeparator:
-                case CharacterCodes.lineSeparator:
-                    if (newTriviaText === null) {
-                        newTriviaText = [];
-                        StringUtilities.copyTo(oldTriviaText, 0, newTriviaText, 0, i);
-                    }
-            }
-
-            // Add the character to the string builder if we have one.
-            if (newTriviaText !== null) {
-                newTriviaText.push(ch);
-            }
-
-            // Now, if the character was a newline, then add an indent after that so that all 
-            // subsequent characters will be offset properly.
-            switch (ch) {
-                case CharacterCodes.carriageReturn:
-                    // \r\n  case.
-                    // If the next character is a linefeed, then don't add the indent yet.  We want
-                    // to add it once we process that character instead.
-                    if (i < oldTriviaText.length - 1 && oldTriviaText.charCodeAt(i + 1) === CharacterCodes.lineFeed) {
-                        continue;
-                    }
-
-                    // Otherwise, fall through.
-
-                case CharacterCodes.lineFeed:
-                case CharacterCodes.paragraphSeparator:
-                case CharacterCodes.lineSeparator:
-                    // Now add the indent as well.
-                    StringUtilities.copyTo(
-                        indentationText, 0, newTriviaText, newTriviaText.length, indentationText.length);
-            }
-        }
-
-        // if there were no newlines, we can return it as is.
-        if (newTriviaText === null) {
+    private indentMultiLineComment(trivia: ISyntaxTrivia): ISyntaxTrivia {
+        var lineSegments = SyntaxTrivia.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
+        if (lineSegments.length === 1) {
             return trivia;
         }
+        
+        var indentationText = this.indentationTrivia.fullText();
+
+        // Join works perfectly for our needs.  We want the indentation added between every line.
+        // This is because each line goes up through the newline character.  So the indent is 
+        // added after newline and before the next line.
+        var newText = lineSegments.join(indentationText);
 
         // Create a new trivia token out of the indented lines.
-        return SyntaxTrivia.create(SyntaxKind.MultiLineCommentTrivia, StringUtilities.fromCharCodeArray(newTriviaText));
+        return SyntaxTrivia.create(SyntaxKind.MultiLineCommentTrivia, newText);
     }
 
     public static indentNode(node: SyntaxNode, indentFirstToken: bool, indentTrivia: ISyntaxTrivia): SyntaxNode {

@@ -2,13 +2,13 @@
     "fullText": [
         "(function(a) {",
         "    return foo().bar()",
-        "              .baz();",
+        "                .baz();",
         "});",
         "var M;",
         "(function(M) {",
         "    (function(a) {",
         "        return foo().bar()",
-        "                      .baz();",
+        "            .baz();",
         "    });",
         "})(M||(M={}));",
         ""
@@ -188,7 +188,7 @@
                                             "_dotToken": {
                                                 "kind": "DotToken",
                                                 "width": 1,
-                                                "fullWidth": 15,
+                                                "fullWidth": 17,
                                                 "text": ".",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -199,6 +199,10 @@
                                                     {
                                                         "kind": "WhitespaceTrivia",
                                                         "text": "    "
+                                                    },
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": "  "
                                                     },
                                                     {
                                                         "kind": "WhitespaceTrivia",
@@ -578,7 +582,7 @@
                                                                     "_dotToken": {
                                                                         "kind": "DotToken",
                                                                         "width": 1,
-                                                                        "fullWidth": 23,
+                                                                        "fullWidth": 13,
                                                                         "text": ".",
                                                                         "hasLeadingTrivia": true,
                                                                         "leadingTrivia": [
@@ -592,7 +596,7 @@
                                                                             },
                                                                             {
                                                                                 "kind": "WhitespaceTrivia",
-                                                                                "text": "              "
+                                                                                "text": "    "
                                                                             }
                                                                         ]
                                                                     },
