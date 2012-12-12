@@ -1345,16 +1345,63 @@ function generateFirstMethod(definition: ITypeDefinition): string {
     return result;
 }
 
+function baseType(definition: ITypeDefinition) {
+    return ArrayUtilities.firstOrDefault(definitions, d => d.name === definition.baseType);
+}
+
+function derivesFrom(def1: ITypeDefinition, def2: ITypeDefinition): bool {
+    var current = def1;
+    while (current !== null) {
+        var base = baseType(current);
+        if (base === def2) {
+            return true;
+        }
+
+        current = base;
+    }
+
+    return false;
+}
+
+function contains(definition: ITypeDefinition, child: IMemberDefinition) {
+    return ArrayUtilities.any(definition.children,
+        c => c.name === child.name &&
+             c.isList === child.isList &&
+             c.isSeparatedList === child.isSeparatedList &&
+             c.isToken === child.isToken &&
+             c.type === child.type);
+}
+
 function generateAccessors(definition: ITypeDefinition): string {
     var result = "";
 
     for (var i = 0; i < definition.children.length; i++) {
-        var child: IMemberDefinition = definition.children[i];
+        var child = definition.children[i];
         
         result += "\r\n";
         result += "    public " + child.name + "(): " + getType(child) + " {\r\n";
         result += "        return " + getPropertyAccess(child) + ";\r\n";
         result += "    }\r\n";
+    }
+
+    if (definition.isAbstract) {
+        // Generate accessors for all properties that all subclasses share.
+        var subclasses = ArrayUtilities.where(definitions, d => !d.isAbstract && derivesFrom(d, definition));
+
+        if (subclasses.length > 0) {
+            var firstSubclass = subclasses[0];
+
+            for (var i = 0; i < firstSubclass.children.length; i++) {
+                var child = firstSubclass.children[i];
+
+                if (ArrayUtilities.all(subclasses, s => contains(s, child))) {
+                    result += "\r\n";
+                    result += "    public " + child.name + "(): " + getType(child) + " {\r\n";
+                    result += "        throw Errors.abstract();\r\n";
+                    result += "    }\r\n";
+                }
+            }
+        }
     }
 
     return result;

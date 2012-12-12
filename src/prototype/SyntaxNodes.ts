@@ -1834,6 +1834,14 @@ class ArrowFunctionExpressionSyntax extends UnaryExpressionSyntax {
     constructor() {
         super();
     }
+
+    public equalsGreaterThanToken(): ISyntaxToken {
+        throw Errors.abstract();
+    }
+
+    public body(): SyntaxNode {
+        throw Errors.abstract();
+    }
 }
 
 class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax {
@@ -3464,6 +3472,10 @@ class TypeMemberSyntax extends SyntaxNode {
     constructor() {
         super();
     }
+
+    public typeAnnotation(): TypeAnnotationSyntax {
+        throw Errors.abstract();
+    }
 }
 
 class ConstructSignatureSyntax extends TypeMemberSyntax {
@@ -4393,6 +4405,14 @@ class MemberDeclarationSyntax extends ClassElementSyntax {
     constructor() {
         super();
     }
+
+    public publicOrPrivateKeyword(): ISyntaxToken {
+        throw Errors.abstract();
+    }
+
+    public staticKeyword(): ISyntaxToken {
+        throw Errors.abstract();
+    }
 }
 
 class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
@@ -4515,6 +4535,26 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
 class MemberAccessorDeclarationSyntax extends MemberDeclarationSyntax {
     constructor() {
         super();
+    }
+
+    public publicOrPrivateKeyword(): ISyntaxToken {
+        throw Errors.abstract();
+    }
+
+    public staticKeyword(): ISyntaxToken {
+        throw Errors.abstract();
+    }
+
+    public identifier(): ISyntaxToken {
+        throw Errors.abstract();
+    }
+
+    public parameterList(): ParameterListSyntax {
+        throw Errors.abstract();
+    }
+
+    public block(): BlockSyntax {
+        throw Errors.abstract();
     }
 }
 
@@ -5321,6 +5361,14 @@ class SwitchClauseSyntax extends SyntaxNode {
     constructor() {
         super();
     }
+
+    public colonToken(): ISyntaxToken {
+        throw Errors.abstract();
+    }
+
+    public statements(): ISyntaxList {
+        throw Errors.abstract();
+    }
 }
 
 class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
@@ -5695,11 +5743,43 @@ class IterationStatementSyntax extends StatementSyntax {
     constructor() {
         super();
     }
+
+    public openParenToken(): ISyntaxToken {
+        throw Errors.abstract();
+    }
+
+    public closeParenToken(): ISyntaxToken {
+        throw Errors.abstract();
+    }
+
+    public statement(): StatementSyntax {
+        throw Errors.abstract();
+    }
 }
 
 class BaseForStatementSyntax extends IterationStatementSyntax {
     constructor() {
         super();
+    }
+
+    public forKeyword(): ISyntaxToken {
+        throw Errors.abstract();
+    }
+
+    public openParenToken(): ISyntaxToken {
+        throw Errors.abstract();
+    }
+
+    public variableDeclaration(): VariableDeclarationSyntax {
+        throw Errors.abstract();
+    }
+
+    public closeParenToken(): ISyntaxToken {
+        throw Errors.abstract();
+    }
+
+    public statement(): StatementSyntax {
+        throw Errors.abstract();
     }
 }
 
@@ -6618,6 +6698,10 @@ class PropertyAssignmentSyntax extends SyntaxNode {
     constructor() {
         super();
     }
+
+    public propertyName(): ISyntaxToken {
+        throw Errors.abstract();
+    }
 }
 
 class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
@@ -6706,6 +6790,22 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
 class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
     constructor() {
         super();
+    }
+
+    public propertyName(): ISyntaxToken {
+        throw Errors.abstract();
+    }
+
+    public openParenToken(): ISyntaxToken {
+        throw Errors.abstract();
+    }
+
+    public closeParenToken(): ISyntaxToken {
+        throw Errors.abstract();
+    }
+
+    public block(): BlockSyntax {
+        throw Errors.abstract();
     }
 }
 

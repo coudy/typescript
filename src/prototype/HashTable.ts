@@ -33,14 +33,27 @@ class HashTable {
         this.addOrSet(key, value, /*throwOnExistingEntry:*/ true);
     }
 
-    private addOrSet(key: any, value: any, throwOnExistingEntry: bool) {
-        // Compute the hash for this key.  Also ensure that it's non negative.
+    public get (key: any): any {
+        var hashCode = this.computeHashCode(key);
+        var entry = this.findEntry(key, hashCode);
+
+        return entry === null ? null : entry.Value;
+    }
+
+    private computeHashCode(key: any): number {
         var hashCode = this.hash === null
             ? key.hashCode()
             : this.hash(key);
 
         hashCode = hashCode & 0x7FFFFFFF;
         Debug.assert(hashCode > 0);
+
+        return hashCode;
+    }
+
+    private addOrSet(key: any, value: any, throwOnExistingEntry: bool) {
+        // Compute the hash for this key.  Also ensure that it's non negative.
+        var hashCode = this.computeHashCode(key);
 
         var entry = this.findEntry(key, hashCode);
         if (entry !== null) {

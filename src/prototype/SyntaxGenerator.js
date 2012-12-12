@@ -249,10 +249,47 @@ var Environment = (function () {
         }
     }
 })();
+var Errors = (function () {
+    function Errors() { }
+    Errors.argument = function argument(argument, message) {
+        return new Error("Invalid argument: " + argument + "." + (message ? (" " + message) : ""));
+    }
+    Errors.argumentOutOfRange = function argumentOutOfRange(argument) {
+        return new Error("Argument out of range: " + argument + ".");
+    }
+    Errors.argumentNull = function argumentNull(argument) {
+        return new Error("Argument null: " + argument + ".");
+    }
+    Errors.abstract = function abstract() {
+        return new Error("Operation not implemented properly by subclass.");
+    }
+    Errors.notYetImplemented = function notYetImplemented() {
+        return new Error("Not yet implemented.");
+    }
+    Errors.invalidOperation = function invalidOperation(message) {
+        return new Error(message ? ("Invalid operation: " + message) : "Invalid operation.");
+    }
+    return Errors;
+})();
 var ArrayUtilities = (function () {
     function ArrayUtilities() { }
     ArrayUtilities.isArray = function isArray(value) {
         return Object.prototype.toString.apply(value, []) === '[object Array]';
+    }
+    ArrayUtilities.last = function last(array) {
+        if(array.length === 0) {
+            throw Errors.argumentOutOfRange('array');
+        }
+        return array[array.length - 1];
+    }
+    ArrayUtilities.firstOrDefault = function firstOrDefault(array, func) {
+        for(var i = 0, n = array.length; i < n; i++) {
+            var value = array[i];
+            if(func(value)) {
+                return value;
+            }
+        }
+        return null;
     }
     ArrayUtilities.sum = function sum(array, func) {
         var result = 0;
@@ -284,6 +321,14 @@ var ArrayUtilities = (function () {
             }
         }
         return false;
+    }
+    ArrayUtilities.all = function all(array, func) {
+        for(var i = 0, n = array.length; i < n; i++) {
+            if(!func(array[i])) {
+                return false;
+            }
+        }
+        return true;
     }
     ArrayUtilities.binarySearch = function binarySearch(array, value) {
         var low = 0;
@@ -2659,6 +2704,27 @@ function generateFirstMethod(definition) {
     }
     return result;
 }
+function baseType(definition) {
+    return ArrayUtilities.firstOrDefault(definitions, function (d) {
+        return d.name === definition.baseType;
+    });
+}
+function derivesFrom(def1, def2) {
+    var current = def1;
+    while(current !== null) {
+        var base = baseType(current);
+        if(base === def2) {
+            return true;
+        }
+        current = base;
+    }
+    return false;
+}
+function contains(definition, child) {
+    return ArrayUtilities.any(definition.children, function (c) {
+        return c.name === child.name && c.isList === child.isList && c.isSeparatedList === child.isSeparatedList && c.isToken === child.isToken && c.type === child.type;
+    });
+}
 function generateAccessors(definition) {
     var result = "";
     for(var i = 0; i < definition.children.length; i++) {
@@ -2667,6 +2733,25 @@ function generateAccessors(definition) {
         result += "    public " + child.name + "(): " + getType(child) + " {\r\n";
         result += "        return " + getPropertyAccess(child) + ";\r\n";
         result += "    }\r\n";
+    }
+    if(definition.isAbstract) {
+        var subclasses = ArrayUtilities.where(definitions, function (d) {
+            return !d.isAbstract && derivesFrom(d, definition);
+        });
+        if(subclasses.length > 0) {
+            var firstSubclass = subclasses[0];
+            for(var i = 0; i < firstSubclass.children.length; i++) {
+                var child = firstSubclass.children[i];
+                if(ArrayUtilities.all(subclasses, function (s) {
+                    return contains(s, child);
+                })) {
+                    result += "\r\n";
+                    result += "    public " + child.name + "(): " + getType(child) + " {\r\n";
+                    result += "        throw Errors.abstract();\r\n";
+                    result += "    }\r\n";
+                }
+            }
+        }
     }
     return result;
 }

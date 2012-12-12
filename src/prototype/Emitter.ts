@@ -1,13 +1,15 @@
 ///<reference path='References.ts' />
 
+class EmitterOptions {
+    constructor(public useTabs: bool,
+                public spacesPerTab: number,
+                public indentSpaces: number) {
+    }
+
+    public static defaultOptions = new EmitterOptions(/*useTabs:*/ false, /*spacesPerTab:*/ 4, /*indentSpaces:*/ 4);
+}
+
 class Emitter extends SyntaxRewriter {
-    private static defualtSpacesPerIndent = 4;
-
-    private syntaxOnly: bool;
-
-    // private indentation: string;
-    private indentationTrivia: ISyntaxTrivia;
-
     // as we walk down the tree, keep track of what our current indentation is based on this 
     // node.
     // i.e. if we have:
@@ -34,83 +36,31 @@ class Emitter extends SyntaxRewriter {
     // indentation level that we're currently at, along with whatever indentation setting the 
     // emitter was created with.
 
-    // TODO: properly handle tab/space conversions here.
-    private currentIndentationColumn = 0;
+    private syntaxInformationMap: SyntaxInformationMap;
+    private options: EmitterOptions;
+    private indentationTrivia: ISyntaxTrivia;
 
-    constructor(syntaxOnly: bool) {
+    constructor(syntaxInformationMap: SyntaxInformationMap,
+                options: EmitterOptions) {
         super();
 
-        this.syntaxOnly = syntaxOnly;
-        this.indentationTrivia = Emitter.createIndentationTrivia(Emitter.defualtSpacesPerIndent);
-        //this.indentation = this.indentationTrivia.fullText(); 
+        this.syntaxInformationMap = syntaxInformationMap;
+        this.options = options || EmitterOptions.defaultOptions;
+
+        this.indentationTrivia = Indentation.indentationTrivia(this.options.indentSpaces, this.options.useTabs, this.options.spacesPerTab);
     }
 
-    private static createIndentationTrivia(count: number): ISyntaxTrivia {
-        var indentation = StringUtilities.repeat(" ", count);
-        return SyntaxTrivia.create(SyntaxKind.WhitespaceTrivia, indentation);
-    }
-
-    private createColumnIndentTrivia(): ISyntaxTrivia {
+    private createColumnIndentTriviaForLineContainingToken(token: ISyntaxToken): ISyntaxTrivia {
         // TODO: convert the preferred column to trivia using the right tab/spaces rules.
-        return Emitter.createIndentationTrivia(this.currentIndentationColumn);
-    }
-
-    private visitNode(node: SyntaxNode) {
-        if (node === null) {
-            return null;
-        }
-
-        // Note: this could be very expensive.  We're continually calling 'firstToken' on each
-        // node we hit.  'firstToken' is usually log(n) on well formed trees, so that means
-        // we're doing n log(n) operations.
-        //
-        // Preserve what our current indentation is so that when we're done with this sub node
-        // we return to it.
-        var savedIndentationColumn = this.currentIndentationColumn;
-        this.tryUpdateCurrentColumn(node);
-        
-        var result = super.visitNode(node);
-
-        this.currentIndentationColumn = savedIndentationColumn;
-
-        return result;
-    }
-
-    private tryUpdateCurrentColumn(node: SyntaxNode): void {
-        // Determine the indentation by finding the first token in this node and seeing what it's 
-        // indentation is.
-        var firstToken = node.firstToken();
-        if (firstToken !== null) {
-
-            // We want to do this if the node has a leading newline.  Alternatively, if this is
-            // a SourceUnit, then do it anyways, just to figure out what the initial indent is
-            // (since the first token may be indented, but may not have leading newlines).
-            if (node.kind() === SyntaxKind.SourceUnit ||
-                firstToken.hasLeadingNewLineTrivia()) {
-
-                var leadingTrivia = firstToken.leadingTrivia();
-
-                // we want all the leading trivia up to the first newline.
-                var leadingWidth = 0;
-                for (var i = leadingTrivia.count() - 1; i >= 0; i--) {
-                    var trivia = leadingTrivia.syntaxTriviaAt(i);
-                    if (trivia.kind() === SyntaxKind.NewLineTrivia) {
-                        break;
-                    }
-
-                    leadingWidth += trivia.fullWidth();
-                }
-
-                // TODO: handle proper tab/space conversion here.  We want to keep track of what the
-                // indentation *column* is
-                this.currentIndentationColumn = leadingWidth;
-            }
-        }
+        var indentation = Indentation.indentationForLineContainingToken(token, this.syntaxInformationMap, this.options.spacesPerTab);
+        return Indentation.indentationTrivia(indentation.column(), this.options.useTabs, this.options.spacesPerTab);
     }
     
-    public emit(input: SourceUnitSyntax): SourceUnitSyntax {
+    public static emit(input: SourceUnitSyntax, options: EmitterOptions = null): SourceUnitSyntax {
         SyntaxNodeInvariantsChecker.checkInvariants(input);
-        var output = <SourceUnitSyntax>this.visitNode(input);
+        var emitter = new Emitter(SyntaxInformationMap.create(input), options);
+
+        var output = <SourceUnitSyntax>input.accept1(emitter);
         SyntaxNodeInvariantsChecker.checkInvariants(output);
 
         return output;
@@ -286,7 +236,7 @@ class Emitter extends SyntaxRewriter {
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
                                           .withTrailingTrivia(SyntaxTriviaList.empty);
 
-        var block = this.convertArrowFunctionBody(node.body());
+        var block = this.convertArrowFunctionBody(node);
 
         return FunctionExpressionSyntax.create(
             SyntaxToken.createElasticKeyword({ leadingTrivia: node.identifier().leadingTrivia().toArray(), kind: SyntaxKind.FunctionKeyword}),
@@ -298,8 +248,8 @@ class Emitter extends SyntaxRewriter {
             block);
     }
 
-    private convertArrowFunctionBody(body: SyntaxNode): BlockSyntax {
-        var rewrittenBody = this.visitNode(body);
+    private convertArrowFunctionBody(arrowFunction: ArrowFunctionExpressionSyntax): BlockSyntax {
+        var rewrittenBody = this.visitNode(arrowFunction.body());
 
         if (rewrittenBody.kind() === SyntaxKind.Block) {
             return <BlockSyntax>rewrittenBody;
@@ -358,7 +308,8 @@ class Emitter extends SyntaxRewriter {
         // parent structure.  Note: we don't wan to adjust the leading brace as that's going to go
         // after the function sigature.
 
-        block = <BlockSyntax>SyntaxIndenter.indentNode(block, /*indentFirstToken:*/ false, this.createColumnIndentTrivia());
+        block = <BlockSyntax>SyntaxIndenter.indentNode(block, /*indentFirstToken:*/ false, 
+            this.createColumnIndentTriviaForLineContainingToken(arrowFunction.firstToken()));
         return block;
     }
 

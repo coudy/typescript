@@ -121,7 +121,7 @@ class Program {
 
         var parser = new Parser(text, languageVersion, stringTable);
         var tree = parser.parseSyntaxTree();
-        var emitted = new Emitter(true).emit(<SourceUnitSyntax>tree.sourceUnit());
+        var emitted = Emitter.emit(<SourceUnitSyntax>tree.sourceUnit());
 
         end = new Date().getTime();
         totalTime += (end - start);

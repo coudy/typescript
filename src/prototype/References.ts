@@ -11,6 +11,7 @@
 ///<reference path='Contract.ts' />
 ///<reference path='Hash.ts' />
 ///<reference path='HashTable.ts' />
+///<reference path='Indentation.ts' />
 ///<reference path='IntegerUtilities.ts' />
 ///<reference path='IEnvironment.ts' />
 ///<reference path='ISeparatedSyntaxList.ts' />
@@ -41,7 +42,6 @@
 ///<reference path='StringText.ts' />
 ///<reference path='StringUtilities.ts' />
 ///<reference path='SyntaxDiagnostic.ts' />
-
 ///<reference path='SyntaxKind.ts' />
 
 // SyntaxFacts depends on SyntaxKind.
@@ -73,6 +73,9 @@
 ///<reference path='SyntaxTrivia.ts' />
 ///<reference path='SyntaxTriviaList.ts' />
 ///<reference path='SyntaxWalker.ts' />
+
+// SyntaxInformationMap depends on SyntaxWalker.
+///<reference path='SyntaxInformationMap.ts' />
 
 // SyntaxNodeInvariantsChecker depends on SyntaxWalker.
 ///<reference path='SyntaxNodeInvariantsChecker.ts' />

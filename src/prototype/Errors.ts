@@ -1,5 +1,3 @@
-///<reference path='References.ts' />
-
 class Errors {
     public static argument(argument: string, message?: string): Error {
         return new Error("Invalid argument: " + argument + "."  + (message ? (" " + message) : ""));

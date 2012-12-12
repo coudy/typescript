@@ -154,10 +154,47 @@ var JSON2 = {
         };
     }
 })());
+var Errors = (function () {
+    function Errors() { }
+    Errors.argument = function argument(argument, message) {
+        return new Error("Invalid argument: " + argument + "." + (message ? (" " + message) : ""));
+    }
+    Errors.argumentOutOfRange = function argumentOutOfRange(argument) {
+        return new Error("Argument out of range: " + argument + ".");
+    }
+    Errors.argumentNull = function argumentNull(argument) {
+        return new Error("Argument null: " + argument + ".");
+    }
+    Errors.abstract = function abstract() {
+        return new Error("Operation not implemented properly by subclass.");
+    }
+    Errors.notYetImplemented = function notYetImplemented() {
+        return new Error("Not yet implemented.");
+    }
+    Errors.invalidOperation = function invalidOperation(message) {
+        return new Error(message ? ("Invalid operation: " + message) : "Invalid operation.");
+    }
+    return Errors;
+})();
 var ArrayUtilities = (function () {
     function ArrayUtilities() { }
     ArrayUtilities.isArray = function isArray(value) {
         return Object.prototype.toString.apply(value, []) === '[object Array]';
+    }
+    ArrayUtilities.last = function last(array) {
+        if(array.length === 0) {
+            throw Errors.argumentOutOfRange('array');
+        }
+        return array[array.length - 1];
+    }
+    ArrayUtilities.firstOrDefault = function firstOrDefault(array, func) {
+        for(var i = 0, n = array.length; i < n; i++) {
+            var value = array[i];
+            if(func(value)) {
+                return value;
+            }
+        }
+        return null;
     }
     ArrayUtilities.sum = function sum(array, func) {
         var result = 0;
@@ -189,6 +226,14 @@ var ArrayUtilities = (function () {
             }
         }
         return false;
+    }
+    ArrayUtilities.all = function all(array, func) {
+        for(var i = 0, n = array.length; i < n; i++) {
+            if(!func(array[i])) {
+                return false;
+            }
+        }
+        return true;
     }
     ArrayUtilities.binarySearch = function binarySearch(array, value) {
         var low = 0;
@@ -651,28 +696,6 @@ var Environment = (function () {
         }
     }
 })();
-var Errors = (function () {
-    function Errors() { }
-    Errors.argument = function argument(argument, message) {
-        return new Error("Invalid argument: " + argument + "." + (message ? (" " + message) : ""));
-    }
-    Errors.argumentOutOfRange = function argumentOutOfRange(argument) {
-        return new Error("Argument out of range: " + argument + ".");
-    }
-    Errors.argumentNull = function argumentNull(argument) {
-        return new Error("Argument null: " + argument + ".");
-    }
-    Errors.abstract = function abstract() {
-        return new Error("Operation not implemented properly by subclass.");
-    }
-    Errors.notYetImplemented = function notYetImplemented() {
-        return new Error("Not yet implemented.");
-    }
-    Errors.invalidOperation = function invalidOperation(message) {
-        return new Error(message ? ("Invalid operation: " + message) : "Invalid operation.");
-    }
-    return Errors;
-})();
 var Contract = (function () {
     function Contract() { }
     Contract.requires = function requires(expression) {
@@ -903,10 +926,19 @@ var HashTable = (function () {
     HashTable.prototype.add = function (key, value) {
         this.addOrSet(key, value, true);
     };
-    HashTable.prototype.addOrSet = function (key, value, throwOnExistingEntry) {
+    HashTable.prototype.get = function (key) {
+        var hashCode = this.computeHashCode(key);
+        var entry = this.findEntry(key, hashCode);
+        return entry === null ? null : entry.Value;
+    };
+    HashTable.prototype.computeHashCode = function (key) {
         var hashCode = this.hash === null ? key.hashCode() : this.hash(key);
         hashCode = hashCode & 2147483647;
         Debug.assert(hashCode > 0);
+        return hashCode;
+    };
+    HashTable.prototype.addOrSet = function (key, value, throwOnExistingEntry) {
+        var hashCode = this.computeHashCode(key);
         var entry = this.findEntry(key, hashCode);
         if(entry !== null) {
             if(throwOnExistingEntry) {
@@ -972,6 +1004,99 @@ var HashTable = (function () {
         }
     };
     return HashTable;
+})();
+var Indentation = (function () {
+    function Indentation(linePosition, column) {
+        this._linePosition = linePosition;
+        this._column = column;
+    }
+    Indentation.prototype.linePosition = function () {
+        return this._linePosition;
+    };
+    Indentation.prototype.column = function () {
+        return this._column;
+    };
+    Indentation.indentationForLineContainingToken = function indentationForLineContainingToken(token, syntaxInformationMap, spacesPerTab) {
+        var firstToken = syntaxInformationMap.firstTokenOnLineContainingToken(token);
+        return Indentation.indentationForFirstTokenOnLine(firstToken, spacesPerTab);
+    }
+    Indentation.indentationForFirstTokenOnLine = function indentationForFirstTokenOnLine(firstTokenOnLine, spacesPerTab) {
+        var leadingTrivia = firstTokenOnLine.leadingTrivia();
+        var indentationTextInReverse = [];
+        for(var i = leadingTrivia.count() - 1; i >= 0; i--) {
+            var trivia = leadingTrivia.syntaxTriviaAt(i);
+            if(trivia.kind() === 5 /* NewLineTrivia */ ) {
+                break;
+            }
+            if(trivia.kind() === 6 /* MultiLineCommentTrivia */ ) {
+                var lineSegments = Indentation.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
+                indentationTextInReverse.push(ArrayUtilities.last(lineSegments));
+                if(lineSegments.length > 0) {
+                    break;
+                }
+            }
+            indentationTextInReverse.push(trivia.fullText());
+        }
+        var linePosition = 0;
+        var column = 0;
+        for(var i = indentationTextInReverse.length - 1; i >= 0; i--) {
+            var indentationChunk = indentationTextInReverse[i];
+            for(var j = 0; j < indentationChunk.length; j++) {
+                var ch = indentationChunk.charCodeAt(j);
+                linePosition++;
+                if(ch === 9 /* tab */ ) {
+                    column += spacesPerTab - column % spacesPerTab;
+                } else {
+                    column++;
+                }
+            }
+        }
+        return new Indentation(linePosition, column);
+    }
+    Indentation.splitMultiLineCommentTriviaIntoMultipleLines = function splitMultiLineCommentTriviaIntoMultipleLines(trivia) {
+        Debug.assert(trivia.kind() === 6 /* MultiLineCommentTrivia */ );
+        var result = [];
+        var triviaText = trivia.fullText();
+        var currentIndex = 0;
+        for(var i = 0; i < triviaText.length; i++) {
+            var ch = triviaText.charCodeAt(i);
+            var isCarriageReturnLineFeed = false;
+            switch(ch) {
+                case 13 /* carriageReturn */ : {
+                    if(i < triviaText.length - 1 && triviaText.charCodeAt(i + 1) === 10 /* lineFeed */ ) {
+                        isCarriageReturnLineFeed = true;
+                    }
+
+                }
+                case 10 /* lineFeed */ :
+                case 8233 /* paragraphSeparator */ :
+                case 8232 /* lineSeparator */ : {
+                    result.push(triviaText.substring(currentIndex, i));
+                    if(isCarriageReturnLineFeed) {
+                        i++;
+                    }
+                    currentIndex = i + 1;
+                    continue;
+
+                }
+            }
+        }
+        result.push(triviaText.substring(currentIndex));
+        return result;
+    }
+    Indentation.indentationString = function indentationString(column, useTabs, spacesPerTab) {
+        var numberOfTabs = 0;
+        var numberOfSpaces = MathPrototype.max(0, column);
+        if(useTabs) {
+            numberOfTabs = column / spacesPerTab;
+            numberOfSpaces -= numberOfTabs * spacesPerTab;
+        }
+        return StringUtilities.repeat('\t', numberOfTabs) + StringUtilities.repeat(' ', numberOfSpaces);
+    }
+    Indentation.indentationTrivia = function indentationTrivia(column, useTabs, spacesPerTab) {
+        return SyntaxTrivia.create(4 /* WhitespaceTrivia */ , this.indentationString(column, useTabs, spacesPerTab));
+    }
+    return Indentation;
 })();
 var IntegerUtilities = (function () {
     function IntegerUtilities() { }
@@ -6071,6 +6196,12 @@ var ArrowFunctionExpressionSyntax = (function (_super) {
     function ArrowFunctionExpressionSyntax() {
         _super.call(this);
     }
+    ArrowFunctionExpressionSyntax.prototype.equalsGreaterThanToken = function () {
+        throw Errors.abstract();
+    };
+    ArrowFunctionExpressionSyntax.prototype.body = function () {
+        throw Errors.abstract();
+    };
     return ArrowFunctionExpressionSyntax;
 })(UnaryExpressionSyntax);
 var SimpleArrowFunctionExpressionSyntax = (function (_super) {
@@ -7509,6 +7640,9 @@ var TypeMemberSyntax = (function (_super) {
     function TypeMemberSyntax() {
         _super.call(this);
     }
+    TypeMemberSyntax.prototype.typeAnnotation = function () {
+        throw Errors.abstract();
+    };
     return TypeMemberSyntax;
 })(SyntaxNode);
 var ConstructSignatureSyntax = (function (_super) {
@@ -8339,6 +8473,12 @@ var MemberDeclarationSyntax = (function (_super) {
     function MemberDeclarationSyntax() {
         _super.call(this);
     }
+    MemberDeclarationSyntax.prototype.publicOrPrivateKeyword = function () {
+        throw Errors.abstract();
+    };
+    MemberDeclarationSyntax.prototype.staticKeyword = function () {
+        throw Errors.abstract();
+    };
     return MemberDeclarationSyntax;
 })(ClassElementSyntax);
 var MemberFunctionDeclarationSyntax = (function (_super) {
@@ -8458,6 +8598,21 @@ var MemberAccessorDeclarationSyntax = (function (_super) {
     function MemberAccessorDeclarationSyntax() {
         _super.call(this);
     }
+    MemberAccessorDeclarationSyntax.prototype.publicOrPrivateKeyword = function () {
+        throw Errors.abstract();
+    };
+    MemberAccessorDeclarationSyntax.prototype.staticKeyword = function () {
+        throw Errors.abstract();
+    };
+    MemberAccessorDeclarationSyntax.prototype.identifier = function () {
+        throw Errors.abstract();
+    };
+    MemberAccessorDeclarationSyntax.prototype.parameterList = function () {
+        throw Errors.abstract();
+    };
+    MemberAccessorDeclarationSyntax.prototype.block = function () {
+        throw Errors.abstract();
+    };
     return MemberAccessorDeclarationSyntax;
 })(MemberDeclarationSyntax);
 var GetMemberAccessorDeclarationSyntax = (function (_super) {
@@ -9180,6 +9335,12 @@ var SwitchClauseSyntax = (function (_super) {
     function SwitchClauseSyntax() {
         _super.call(this);
     }
+    SwitchClauseSyntax.prototype.colonToken = function () {
+        throw Errors.abstract();
+    };
+    SwitchClauseSyntax.prototype.statements = function () {
+        throw Errors.abstract();
+    };
     return SwitchClauseSyntax;
 })(SyntaxNode);
 var CaseSwitchClauseSyntax = (function (_super) {
@@ -9509,6 +9670,15 @@ var IterationStatementSyntax = (function (_super) {
     function IterationStatementSyntax() {
         _super.call(this);
     }
+    IterationStatementSyntax.prototype.openParenToken = function () {
+        throw Errors.abstract();
+    };
+    IterationStatementSyntax.prototype.closeParenToken = function () {
+        throw Errors.abstract();
+    };
+    IterationStatementSyntax.prototype.statement = function () {
+        throw Errors.abstract();
+    };
     return IterationStatementSyntax;
 })(StatementSyntax);
 var BaseForStatementSyntax = (function (_super) {
@@ -9516,6 +9686,21 @@ var BaseForStatementSyntax = (function (_super) {
     function BaseForStatementSyntax() {
         _super.call(this);
     }
+    BaseForStatementSyntax.prototype.forKeyword = function () {
+        throw Errors.abstract();
+    };
+    BaseForStatementSyntax.prototype.openParenToken = function () {
+        throw Errors.abstract();
+    };
+    BaseForStatementSyntax.prototype.variableDeclaration = function () {
+        throw Errors.abstract();
+    };
+    BaseForStatementSyntax.prototype.closeParenToken = function () {
+        throw Errors.abstract();
+    };
+    BaseForStatementSyntax.prototype.statement = function () {
+        throw Errors.abstract();
+    };
     return BaseForStatementSyntax;
 })(IterationStatementSyntax);
 var ForStatementSyntax = (function (_super) {
@@ -10340,6 +10525,9 @@ var PropertyAssignmentSyntax = (function (_super) {
     function PropertyAssignmentSyntax() {
         _super.call(this);
     }
+    PropertyAssignmentSyntax.prototype.propertyName = function () {
+        throw Errors.abstract();
+    };
     return PropertyAssignmentSyntax;
 })(SyntaxNode);
 var SimplePropertyAssignmentSyntax = (function (_super) {
@@ -10420,6 +10608,18 @@ var AccessorPropertyAssignmentSyntax = (function (_super) {
     function AccessorPropertyAssignmentSyntax() {
         _super.call(this);
     }
+    AccessorPropertyAssignmentSyntax.prototype.propertyName = function () {
+        throw Errors.abstract();
+    };
+    AccessorPropertyAssignmentSyntax.prototype.openParenToken = function () {
+        throw Errors.abstract();
+    };
+    AccessorPropertyAssignmentSyntax.prototype.closeParenToken = function () {
+        throw Errors.abstract();
+    };
+    AccessorPropertyAssignmentSyntax.prototype.block = function () {
+        throw Errors.abstract();
+    };
     return AccessorPropertyAssignmentSyntax;
 })(PropertyAssignmentSyntax);
 var GetAccessorPropertyAssignmentSyntax = (function (_super) {
@@ -11818,55 +12018,35 @@ var SyntaxNodeCloner = (function (_super) {
     };
     return SyntaxNodeCloner;
 })(SyntaxRewriter);
+var EmitterOptions = (function () {
+    function EmitterOptions(useTabs, spacesPerTab, indentSpaces) {
+        this.useTabs = useTabs;
+        this.spacesPerTab = spacesPerTab;
+        this.indentSpaces = indentSpaces;
+    }
+    EmitterOptions.defaultOptions = new EmitterOptions(false, 4, 4);
+    return EmitterOptions;
+})();
 var Emitter = (function (_super) {
     __extends(Emitter, _super);
-    function Emitter(syntaxOnly) {
+    function Emitter(syntaxInformationMap, options) {
         _super.call(this);
-        this.currentIndentationColumn = 0;
-        this.syntaxOnly = syntaxOnly;
-        this.indentationTrivia = Emitter.createIndentationTrivia(Emitter.defualtSpacesPerIndent);
+        this.syntaxInformationMap = syntaxInformationMap;
+        this.options = options || EmitterOptions.defaultOptions;
+        this.indentationTrivia = Indentation.indentationTrivia(this.options.indentSpaces, this.options.useTabs, this.options.spacesPerTab);
     }
-    Emitter.defualtSpacesPerIndent = 4;
-    Emitter.createIndentationTrivia = function createIndentationTrivia(count) {
-        var indentation = StringUtilities.repeat(" ", count);
-        return SyntaxTrivia.create(4 /* WhitespaceTrivia */ , indentation);
-    }
-    Emitter.prototype.createColumnIndentTrivia = function () {
-        return Emitter.createIndentationTrivia(this.currentIndentationColumn);
+    Emitter.prototype.createColumnIndentTriviaForLineContainingToken = function (token) {
+        var indentation = Indentation.indentationForLineContainingToken(token, this.syntaxInformationMap, this.options.spacesPerTab);
+        return Indentation.indentationTrivia(indentation.column(), this.options.useTabs, this.options.spacesPerTab);
     };
-    Emitter.prototype.visitNode = function (node) {
-        if(node === null) {
-            return null;
-        }
-        var savedIndentationColumn = this.currentIndentationColumn;
-        this.tryUpdateCurrentColumn(node);
-        var result = _super.prototype.visitNode.call(this, node);
-        this.currentIndentationColumn = savedIndentationColumn;
-        return result;
-    };
-    Emitter.prototype.tryUpdateCurrentColumn = function (node) {
-        var firstToken = node.firstToken();
-        if(firstToken !== null) {
-            if(node.kind() === 119 /* SourceUnit */  || firstToken.hasLeadingNewLineTrivia()) {
-                var leadingTrivia = firstToken.leadingTrivia();
-                var leadingWidth = 0;
-                for(var i = leadingTrivia.count() - 1; i >= 0; i--) {
-                    var trivia = leadingTrivia.syntaxTriviaAt(i);
-                    if(trivia.kind() === 5 /* NewLineTrivia */ ) {
-                        break;
-                    }
-                    leadingWidth += trivia.fullWidth();
-                }
-                this.currentIndentationColumn = leadingWidth;
-            }
-        }
-    };
-    Emitter.prototype.emit = function (input) {
+    Emitter.emit = function emit(input, options) {
+        if (typeof options === "undefined") { options = null; }
         SyntaxNodeInvariantsChecker.checkInvariants(input);
-        var output = this.visitNode(input);
+        var emitter = new Emitter(SyntaxInformationMap.create(input), options);
+        var output = input.accept1(emitter);
         SyntaxNodeInvariantsChecker.checkInvariants(output);
         return output;
-    };
+    }
     Emitter.prototype.visitSourceUnit = function (node) {
         var moduleElements = [];
         for(var i = 0, n = node.moduleElements().count(); i < n; i++) {
@@ -12016,7 +12196,7 @@ var Emitter = (function (_super) {
     };
     Emitter.prototype.visitSimpleArrowFunctionExpression = function (node) {
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
-        var block = this.convertArrowFunctionBody(node.body());
+        var block = this.convertArrowFunctionBody(node);
         return FunctionExpressionSyntax.create(SyntaxToken.createElasticKeyword({
             leadingTrivia: node.identifier().leadingTrivia().toArray(),
             kind: 25 /* FunctionKeyword */ 
@@ -12031,8 +12211,8 @@ var Emitter = (function (_super) {
             ]
         }))), block);
     };
-    Emitter.prototype.convertArrowFunctionBody = function (body) {
-        var rewrittenBody = this.visitNode(body);
+    Emitter.prototype.convertArrowFunctionBody = function (arrowFunction) {
+        var rewrittenBody = this.visitNode(arrowFunction.body());
         if(rewrittenBody.kind() === 138 /* Block */ ) {
             return rewrittenBody;
         }
@@ -12058,7 +12238,7 @@ var Emitter = (function (_super) {
         ]), SyntaxToken.createElastic({
             kind: 68 /* CloseBraceToken */ 
         }));
-        block = SyntaxIndenter.indentNode(block, false, this.createColumnIndentTrivia());
+        block = SyntaxIndenter.indentNode(block, false, this.createColumnIndentTriviaForLineContainingToken(arrowFunction.firstToken()));
         return block;
     };
     Emitter.prototype.ensureInvariants = function (node) {
@@ -17556,6 +17736,51 @@ var SyntaxWalker = (function () {
     };
     return SyntaxWalker;
 })();
+var SyntaxInformationMap = (function (_super) {
+    __extends(SyntaxInformationMap, _super);
+    function SyntaxInformationMap() {
+        _super.apply(this, arguments);
+
+        this.tokenToInformation = new HashTable(HashTable.DefaultCapacity, SyntaxToken.hashCode);
+        this.previousToken = null;
+        this.previousTokenInformation = null;
+        this.currentPosition = 0;
+    }
+    SyntaxInformationMap.create = function create(node) {
+        var map = new SyntaxInformationMap();
+        node.accept(map);
+        return map;
+    }
+    SyntaxInformationMap.prototype.visitToken = function (token) {
+        var tokenInformation = {
+            fullStart: this.currentPosition,
+            previousToken: this.previousToken,
+            nextToken: null
+        };
+        if(this.previousTokenInformation !== null) {
+            this.previousTokenInformation.nextToken = token;
+        }
+        this.previousToken = token;
+        this.currentPosition += token.fullWidth();
+        this.previousTokenInformation = tokenInformation;
+        this.tokenToInformation.add(token, tokenInformation);
+    };
+    SyntaxInformationMap.prototype.tokenInformation = function (token) {
+        return this.tokenToInformation.get(token);
+    };
+    SyntaxInformationMap.prototype.firstTokenOnLineContainingToken = function (token) {
+        var current = token;
+        while(true) {
+            var information = this.tokenInformation(current);
+            if(information.previousToken === null || information.previousToken.hasTrailingNewLineTrivia) {
+                break;
+            }
+            current = information.previousToken;
+        }
+        return current;
+    };
+    return SyntaxInformationMap;
+})(SyntaxWalker);
 var SyntaxNodeInvariantsChecker = (function (_super) {
     __extends(SyntaxNodeInvariantsChecker, _super);
     function SyntaxNodeInvariantsChecker() {
@@ -45310,7 +45535,7 @@ var Program = (function () {
         var text = new StringText(contents);
         var parser = new Parser(text, languageVersion, stringTable);
         var tree = parser.parseSyntaxTree();
-        var emitted = new Emitter(true).emit(tree.sourceUnit());
+        var emitted = Emitter.emit(tree.sourceUnit());
         end = new Date().getTime();
         totalTime += (end - start);
         var result = {
