@@ -6,7 +6,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "ArrowFunctionInExpressionStatement5";
+    // "ArrowFunctionInExpressionStatement11";
     undefined;
 
 class Program {
@@ -83,7 +83,13 @@ class Program {
             var expectedFile = filePath + ".expected";
             var actualFile = filePath + ".actual";
 
-            var expectedResult = Environment.readFile(expectedFile, /*useUTF8:*/ true);
+            var expectedResult = null;
+            if (!Environment.fileExists(expectedFile)) {
+                Environment.writeFile(expectedFile, "", false);
+            }
+            else {
+                expectedResult = Environment.readFile(expectedFile, /*useUTF8:*/ true);
+            }
 
             if (expectedResult !== actualResult) {
                 Environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
@@ -91,7 +97,7 @@ class Program {
             }
         }
     }
-
+    
     runEmitter(environment: IEnvironment,
                filePath: string,
                languageVersion: LanguageVersion,

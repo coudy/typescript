@@ -113,7 +113,7 @@ class SyntaxDedenter extends SyntaxRewriter {
                 return "";
             }
         }
-        else if (CharacterInfo.isLineTerminator(segment[firstNonWhitespacePosition])) {
+        else if (CharacterInfo.isLineTerminator(segment.charCodeAt(firstNonWhitespacePosition))) {
             // It was entirely whitespace, with a newline after it.  Just trim this down to 
             // the newline
             return segment.substring(firstNonWhitespacePosition);
@@ -184,16 +184,4 @@ class SyntaxDedenter extends SyntaxRewriter {
 
         return result;
     }
-
-    //public static indentNodes(nodes: SyntaxNode[], indentFirstToken: bool, indentTrivia: ISyntaxTrivia): SyntaxNode[] {
-    //    // Note: it is necessary for correctness that we reuse the same SyntaxIndenter here.  
-    //    // That's because when working on nodes 1-N, we need to know if the previous node ended
-    //    // with a newline.  The indenter will track that for us.
-        
-    //    var indenter = new SyntaxIndenter(indentFirstToken, indentTrivia);
-        
-    //    var result = ArrayUtilities.select(nodes, n => n.accept1(indenter));
-
-    //    return result;
-    //}
 }

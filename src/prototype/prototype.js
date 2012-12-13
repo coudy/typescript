@@ -15146,7 +15146,7 @@ var SyntaxDedenter = (function (_super) {
                 return "";
             }
         } else {
-            if(CharacterInfo.isLineTerminator(segment[firstNonWhitespacePosition])) {
+            if(CharacterInfo.isLineTerminator(segment.charCodeAt(firstNonWhitespacePosition))) {
                 return segment.substring(firstNonWhitespacePosition);
             }
         }
@@ -15246,7 +15246,7 @@ var SyntaxIndenter = (function (_super) {
     };
     SyntaxIndenter.prototype.indentSegment = function (segment) {
         var firstNonWhitespacePosition = Indentation.firstNonWhitespacePosition(segment);
-        if(firstNonWhitespacePosition === 0 && segment.length > 0 && CharacterInfo.isLineTerminator(segment[0])) {
+        if(firstNonWhitespacePosition < segment.length && CharacterInfo.isLineTerminator(segment.charCodeAt(firstNonWhitespacePosition))) {
             return segment;
         }
         var firstNonWhitespaceColumn = Indentation.columnForPositionInString(segment, firstNonWhitespacePosition, this.options);
@@ -45732,7 +45732,12 @@ var Program = (function () {
                 var actualResult = JSON2.stringify(result, null, 4);
                 var expectedFile = filePath + ".expected";
                 var actualFile = filePath + ".actual";
-                var expectedResult = Environment.readFile(expectedFile, true);
+                var expectedResult = null;
+                if(!Environment.fileExists(expectedFile)) {
+                    Environment.writeFile(expectedFile, "", false);
+                } else {
+                    expectedResult = Environment.readFile(expectedFile, true);
+                }
                 if(expectedResult !== actualResult) {
                     Environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
                     Environment.writeFile(actualFile, actualResult, true);

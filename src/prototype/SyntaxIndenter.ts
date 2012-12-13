@@ -73,8 +73,8 @@ class SyntaxIndenter extends SyntaxRewriter {
         // Find the position of the first non whitespace character in the segment.
         var firstNonWhitespacePosition = Indentation.firstNonWhitespacePosition(segment);
 
-        if (firstNonWhitespacePosition === 0 && segment.length > 0 &&
-            CharacterInfo.isLineTerminator(segment[0])) {
+        if (firstNonWhitespacePosition < segment.length &&
+            CharacterInfo.isLineTerminator(segment.charCodeAt(firstNonWhitespacePosition))) {
 
             // If this segment was just a newline, then don't bother indenting it.  That will just
             // leave the user with an ugly indent in their output that they probably do not want.
