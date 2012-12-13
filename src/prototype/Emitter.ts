@@ -331,4 +331,95 @@ class Emitter extends SyntaxRewriter {
                 arrowFunction.firstToken(), this.syntaxInformationMap, this.options), this.options);
         return block;
     }
+
+    private static functionSignatureDefaultParameters(signature: FunctionSignatureSyntax): ParameterSyntax[] {
+        return Emitter.parameterListDefaultParameters(signature.parameterList());
+    }
+
+    private static parameterListDefaultParameters(parameterList: ParameterListSyntax): ParameterSyntax[] {
+        return Emitter.parametersDefaultParameters(parameterList.parameters());
+    }
+
+    private static parametersDefaultParameters(list: ISeparatedSyntaxList): ParameterSyntax[] {
+        var result: ParameterSyntax[] = [];
+        for (var i = 0, n = list.syntaxNodeCount(); i < n; i++) {
+            var parameter = <ParameterSyntax>list.syntaxNodeAt(i);
+
+            if (parameter.equalsValueClause() !== null) {
+                result.push(parameter);
+            }
+        }
+
+        return result;
+    }
+
+    private generateDefaultValueAssignmentStatement(parameter: ParameterSyntax): IfStatementSyntax {
+        var space = SyntaxTriviaList.create([SyntaxTrivia.space]);
+        var name = parameter.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
+                                         .withTrailingTrivia(space);
+        var identifierName = new IdentifierNameSyntax(name);
+
+        var condition = new BinaryExpressionSyntax(
+                SyntaxKind.EqualsExpression,
+                new TypeOfExpressionSyntax(
+                    SyntaxToken.createElastic({ kind: SyntaxKind.TypeOfKeyword, trailingTrivia: [SyntaxTrivia.space] }),
+                    <IdentifierNameSyntax>identifierName.clone()),
+                SyntaxToken.createElastic({ kind: SyntaxKind.EqualsEqualsEqualsToken, trailingTrivia: [SyntaxTrivia.space] }),
+                new LiteralExpressionSyntax(
+                    SyntaxKind.StringLiteralExpression,
+                    SyntaxToken.createElastic({ kind: SyntaxKind.StringLiteral, text: '"undefined"' })));
+
+        var assignment = new BinaryExpressionSyntax(
+            SyntaxKind.AssignmentExpression,
+            <IdentifierNameSyntax>identifierName.clone(),
+            SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: [SyntaxTrivia.space] }),
+            <ExpressionSyntax>parameter.equalsValueClause().value().clone());
+        
+        var assignmentStatement = new ExpressionStatementSyntax(
+            assignment,
+            SyntaxToken.createElasticKeyword({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.space] }));
+
+        var block = new BlockSyntax(
+            SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: [SyntaxTrivia.space] }),
+            SyntaxList.create([assignmentStatement]),
+            SyntaxToken.createElastic({ kind: SyntaxKind.CloseBraceToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
+
+        return new IfStatementSyntax(
+            SyntaxToken.createElasticKeyword({ kind: SyntaxKind.IfKeyword, trailingTrivia: [SyntaxTrivia.space] }),
+            SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+            condition,
+            SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken, trailingTrivia: [SyntaxTrivia.space] }),
+            block, null);
+    }
+
+    private visitFunctionDeclaration(node: FunctionDeclarationSyntax): FunctionDeclarationSyntax {
+        if (node.block() === null) {
+            // Function overloads aren't emitted.
+            return null;
+        }
+
+        var rewritten = super.visitFunctionDeclaration(node);
+        var parametersWithDefaults = Emitter.functionSignatureDefaultParameters(node.functionSignature());
+
+        if (parametersWithDefaults.length === 0) {
+            return rewritten;
+        }
+
+        var defaultValueAssignmentStatements = ArrayUtilities.select(
+            parametersWithDefaults, p => this.generateDefaultValueAssignmentStatement(p));
+
+        var functionDeclarationStartColumn = Indentation.columnForStartOfToken(
+            node.firstToken(), this.syntaxInformationMap, this.options);
+        var desiredColumn = functionDeclarationStartColumn + this.options.indentSpaces;
+
+        defaultValueAssignmentStatements = ArrayUtilities.select(defaultValueAssignmentStatements,
+            s => SyntaxIndenter.indentNode(s, /*indentFirstToken:*/ true, this.options.indentSpaces, this.options));
+
+        var statements: StatementSyntax[] = [];
+        statements.push.apply(statements, defaultValueAssignmentStatements);
+        statements.push.apply(statements, rewritten.block().statements());
+
+        // TODO: remove export/declare keywords.
+        return rewritten.withBlock(rewritten.block().withStatements(statements));
+    }
 }

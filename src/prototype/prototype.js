@@ -12326,6 +12326,104 @@ var Emitter = (function (_super) {
         block = SyntaxIndenter.indentNode(block, false, Indentation.columnForStartOfFirstTokenInLineContainingToken(arrowFunction.firstToken(), this.syntaxInformationMap, this.options), this.options);
         return block;
     };
+    Emitter.functionSignatureDefaultParameters = function functionSignatureDefaultParameters(signature) {
+        return Emitter.parameterListDefaultParameters(signature.parameterList());
+    }
+    Emitter.parameterListDefaultParameters = function parameterListDefaultParameters(parameterList) {
+        return Emitter.parametersDefaultParameters(parameterList.parameters());
+    }
+    Emitter.parametersDefaultParameters = function parametersDefaultParameters(list) {
+        var result = [];
+        for(var i = 0, n = list.syntaxNodeCount(); i < n; i++) {
+            var parameter = list.syntaxNodeAt(i);
+            if(parameter.equalsValueClause() !== null) {
+                result.push(parameter);
+            }
+        }
+        return result;
+    }
+    Emitter.prototype.generateDefaultValueAssignmentStatement = function (parameter) {
+        var space = SyntaxTriviaList.create([
+            SyntaxTrivia.space
+        ]);
+        var name = parameter.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(space);
+        var identifierName = new IdentifierNameSyntax(name);
+        var condition = new BinaryExpressionSyntax(191 /* EqualsExpression */ , new TypeOfExpressionSyntax(SyntaxToken.createElastic({
+            kind: 37 /* TypeOfKeyword */ ,
+            trailingTrivia: [
+                SyntaxTrivia.space
+            ]
+        }), identifierName.clone()), SyntaxToken.createElastic({
+            kind: 84 /* EqualsEqualsEqualsToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.space
+            ]
+        }), new LiteralExpressionSyntax(169 /* StringLiteralExpression */ , SyntaxToken.createElastic({
+            kind: 12 /* StringLiteral */ ,
+            text: '"undefined"'
+        })));
+        var assignment = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , identifierName.clone(), SyntaxToken.createElastic({
+            kind: 104 /* EqualsToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.space
+            ]
+        }), parameter.equalsValueClause().value().clone());
+        var assignmentStatement = new ExpressionStatementSyntax(assignment, SyntaxToken.createElasticKeyword({
+            kind: 75 /* SemicolonToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.space
+            ]
+        }));
+        var block = new BlockSyntax(SyntaxToken.createElastic({
+            kind: 67 /* OpenBraceToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.space
+            ]
+        }), SyntaxList.create([
+            assignmentStatement
+        ]), SyntaxToken.createElastic({
+            kind: 68 /* CloseBraceToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.carriageReturnLineFeed
+            ]
+        }));
+        return new IfStatementSyntax(SyntaxToken.createElasticKeyword({
+            kind: 26 /* IfKeyword */ ,
+            trailingTrivia: [
+                SyntaxTrivia.space
+            ]
+        }), SyntaxToken.createElastic({
+            kind: 69 /* OpenParenToken */ 
+        }), condition, SyntaxToken.createElastic({
+            kind: 70 /* CloseParenToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.space
+            ]
+        }), block, null);
+    };
+    Emitter.prototype.visitFunctionDeclaration = function (node) {
+        var _this = this;
+        if(node.block() === null) {
+            return null;
+        }
+        var rewritten = _super.prototype.visitFunctionDeclaration.call(this, node);
+        var parametersWithDefaults = Emitter.functionSignatureDefaultParameters(node.functionSignature());
+        if(parametersWithDefaults.length === 0) {
+            return rewritten;
+        }
+        var defaultValueAssignmentStatements = ArrayUtilities.select(parametersWithDefaults, function (p) {
+            return _this.generateDefaultValueAssignmentStatement(p);
+        });
+        var functionDeclarationStartColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+        var desiredColumn = functionDeclarationStartColumn + this.options.indentSpaces;
+        defaultValueAssignmentStatements = ArrayUtilities.select(defaultValueAssignmentStatements, function (s) {
+            return SyntaxIndenter.indentNode(s, true, _this.options.indentSpaces, _this.options);
+        });
+        var statements = [];
+        statements.push.apply(statements, defaultValueAssignmentStatements);
+        statements.push.apply(statements, rewritten.block().statements());
+        return rewritten.withBlock(rewritten.block().withStatements(statements));
+    };
     return Emitter;
 })(SyntaxRewriter);
 var ParserExpressionPrecedence;
@@ -45712,7 +45810,8 @@ var expectedTop1000Failures = {
     "JSFile800\\fedex_com\\InstantInvite3.js": true
 };
 var stringTable = new StringTable();
-var specificFile = undefined;
+var specificFile = "FunctionDeclaration1";
+undefined;
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {
