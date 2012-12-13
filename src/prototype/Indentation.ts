@@ -1,6 +1,13 @@
 ///<reference path='References.ts' />
 
 module Indentation {
+    export function columnForEndOfToken(
+            token: ISyntaxToken,
+            syntaxInformationMap: SyntaxInformationMap,
+            options: FormattingOptions): number {
+        return columnForStartOfToken(token, syntaxInformationMap, options) + token.width();
+    }
+
     export function columnForStartOfToken(
             token: ISyntaxToken,
             syntaxInformationMap: SyntaxInformationMap,
@@ -145,5 +152,16 @@ module Indentation {
 
     export function indentationTrivia(column: number, options: FormattingOptions): ISyntaxTrivia {
         return SyntaxTrivia.create(SyntaxKind.WhitespaceTrivia, this.indentationString(column, options));
+    }
+
+    export function firstNonWhitespacePosition(value: string): number {
+        for (var i = 0; i < value.length; i++) {
+            var ch = value.charCodeAt(i);
+            if (!CharacterInfo.isWhitespace(ch)) {
+                return i;
+            }
+        }
+
+        return value.length;
     }
 }

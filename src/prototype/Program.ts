@@ -6,7 +6,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "ArrowFunctionInExpressionStatement2";
+    // "ArrowFunctionInExpressionStatement5";
     undefined;
 
 class Program {

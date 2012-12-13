@@ -1,7 +1,7 @@
 ///<reference path='References.ts' />
 
 class SyntaxIndenter extends SyntaxRewriter {
-    private lastTriviaWasNewLine = true;
+    private lastTriviaWasNewLine: bool;
     
     constructor(indentFirstToken: bool, 
                 private indentationAmount: number,
@@ -17,10 +17,7 @@ class SyntaxIndenter extends SyntaxRewriter {
             result = token.withLeadingTrivia(this.indentTriviaList(token.leadingTrivia()));
         }
 
-        var trailingTrivia = token.trailingTrivia();
-        this.lastTriviaWasNewLine = 
-            trailingTrivia.count() > 0 && trailingTrivia.last().kind() === SyntaxKind.NewLineTrivia;
-
+        this.lastTriviaWasNewLine = token.hasTrailingNewLineTrivia();
         return result;
     }
 
@@ -72,24 +69,11 @@ class SyntaxIndenter extends SyntaxRewriter {
         return SyntaxTriviaList.create(result);
     }
 
-    private static firstNonWhitespacePosition(value: string): number {
-        for (var i = 0; i < value.length; i++) {
-            var ch = value.charCodeAt(i);
-            if (!CharacterInfo.isWhitespace(ch)) {
-                return i;
-            }
-        }
-
-        return value.length;
-    }
-
-    private indentSegment(segment: string, allWhitespace: bool): string {
+    private indentSegment(segment: string): string {
         // Find the position of the first non whitespace character in the segment.
-        var firstNonWhitespacePosition = allWhitespace
-            ? segment.length
-            : SyntaxIndenter.firstNonWhitespacePosition(segment);
+        var firstNonWhitespacePosition = Indentation.firstNonWhitespacePosition(segment);
 
-        if (firstNonWhitespacePosition == 0 && segment.length > 0 &&
+        if (firstNonWhitespacePosition === 0 && segment.length > 0 &&
             CharacterInfo.isLineTerminator(segment[0])) {
 
             // If this segment was just a newline, then don't bother indenting it.  That will just
@@ -121,7 +105,7 @@ class SyntaxIndenter extends SyntaxRewriter {
         // Line started with this trivia.  We want to figure out what the final column this 
         // whitespace goes to will be.  To do that we add the column it is at now to the column we
         // want to indent to.  We then compute the final tabs+whitespace string for that.
-        var newIndentation = this.indentSegment(trivia.fullText(), /*isAllWhitespace:*/ true);
+        var newIndentation = this.indentSegment(trivia.fullText());
         result.push(SyntaxTrivia.createWhitespace(newIndentation));
     }
 
@@ -147,7 +131,7 @@ class SyntaxIndenter extends SyntaxRewriter {
         var segments = SyntaxTrivia.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
 
         for (var i = 1; i < segments.length; i++) {
-            segments[i] = this.indentSegment(segments[i], /*isAllWhitespace:*/ false);
+            segments[i] = this.indentSegment(segments[i]);
         }
 
         var newText = segments.join("");

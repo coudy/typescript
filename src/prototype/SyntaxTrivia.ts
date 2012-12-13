@@ -69,6 +69,10 @@ module SyntaxTrivia {
     export var carriageReturn: ISyntaxTrivia = create(SyntaxKind.NewLineTrivia, "\r");
     export var carriageReturnLineFeed: ISyntaxTrivia = create(SyntaxKind.NewLineTrivia, "\r\n");
 
+    // Breaks a multiline trivia up into individual line components.  If the trivia doesn't span
+    // any lines, then the result will be a single string with the entire text of the trivia. 
+    // Otherwise, there will be one entry in the array for each line spanned by the trivia.  Each
+    // entry will contain the line separator at the end of the string.
     export function splitMultiLineCommentTriviaIntoMultipleLines(trivia: ISyntaxTrivia): string[] {
         Debug.assert(trivia.kind() === SyntaxKind.MultiLineCommentTrivia);
         var result: string[] = [];
@@ -85,7 +89,8 @@ module SyntaxTrivia {
             switch (ch) {
                 case CharacterCodes.carriageReturn:
                     if (i < triviaText.length - 1 && triviaText.charCodeAt(i + 1) === CharacterCodes.lineFeed) {
-                        isCarriageReturnLineFeed = true;
+                        // Consume the \r
+                        i++;
                     }
 
                 // Fall through.
@@ -93,12 +98,7 @@ module SyntaxTrivia {
                 case CharacterCodes.lineFeed:
                 case CharacterCodes.paragraphSeparator:
                 case CharacterCodes.lineSeparator:
-                    // Move an extra space forward if this is a crlf.
-                    if (isCarriageReturnLineFeed) {
-                        // Consume the \r
-                        i++;
-                    }
-
+                    // Eat from the last stating position through to the end of the newline.
                     result.push(triviaText.substring(currentIndex, i + 1));
 
                     // Set the current index to *after* the newline.

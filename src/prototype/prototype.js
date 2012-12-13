@@ -1042,6 +1042,10 @@ var HashTable = (function () {
 })();
 var Indentation;
 (function (Indentation) {
+    function columnForEndOfToken(token, syntaxInformationMap, options) {
+        return columnForStartOfToken(token, syntaxInformationMap, options) + token.width();
+    }
+    Indentation.columnForEndOfToken = columnForEndOfToken;
     function columnForStartOfToken(token, syntaxInformationMap, options) {
         var firstTokenInLine = syntaxInformationMap.firstTokenInLineContainingToken(token);
         var leadingTextInReverse = [];
@@ -1122,6 +1126,16 @@ var Indentation;
         return SyntaxTrivia.create(4 /* WhitespaceTrivia */ , this.indentationString(column, options));
     }
     Indentation.indentationTrivia = indentationTrivia;
+    function firstNonWhitespacePosition(value) {
+        for(var i = 0; i < value.length; i++) {
+            var ch = value.charCodeAt(i);
+            if(!CharacterInfo.isWhitespace(ch)) {
+                return i;
+            }
+        }
+        return value.length;
+    }
+    Indentation.firstNonWhitespacePosition = firstNonWhitespacePosition;
 })(Indentation || (Indentation = {}));
 var IntegerUtilities = (function () {
     function IntegerUtilities() { }
@@ -12049,7 +12063,6 @@ var Emitter = (function (_super) {
         _super.call(this);
         this.syntaxInformationMap = syntaxInformationMap;
         this.options = options || FormattingOptions.defaultOptions;
-        this.indentationTrivia = Indentation.indentationTrivia(this.options.indentSpaces, this.options);
     }
     Emitter.emit = function emit(input, options) {
         if (typeof options === "undefined") { options = null; }
@@ -12223,34 +12236,37 @@ var Emitter = (function (_super) {
             ]
         }))), block);
     };
+    Emitter.prototype.changeIndentation = function (node, changeFirstToken, indentAmount) {
+        if(indentAmount === 0) {
+            return node;
+        } else {
+            if(indentAmount > 0) {
+                return SyntaxIndenter.indentNode(node, changeFirstToken, indentAmount, this.options);
+            } else {
+                return SyntaxDedenter.dedentNode(node, changeFirstToken, -indentAmount, this.options.indentSpaces, this.options);
+            }
+        }
+    };
     Emitter.prototype.convertArrowFunctionBody = function (arrowFunction) {
         var rewrittenBody = this.visitNode(arrowFunction.body());
         if(rewrittenBody.kind() === 138 /* Block */ ) {
             return rewrittenBody;
         }
+        var arrowToken = arrowFunction.equalsGreaterThanToken();
+        var arrowTrailingTrivia = arrowToken.trailingTrivia();
         var returnStatement = new ReturnStatementSyntax(SyntaxToken.createElasticKeyword({
             kind: 31 /* ReturnKeyword */ ,
-            trailingTrivia: [
-                SyntaxTrivia.space
-            ]
+            trailingTrivia: arrowTrailingTrivia.toArray()
         }), rewrittenBody, SyntaxToken.createElastic({
             kind: 75 /* SemicolonToken */ ,
             trailingTrivia: [
                 SyntaxTrivia.carriageReturnLineFeed
             ]
         }));
-        var firstExpressionToken = arrowFunction.body().firstToken();
-        var firstExpressionTokenIsFirstOnLine = this.syntaxInformationMap.isFirstTokenInLine(firstExpressionToken);
-        var expressionColumn = Indentation.columnForStartOfToken(firstExpressionToken, this.syntaxInformationMap, this.options);
-        var newExpressionColumn = returnStatement.returnKeyword().fullWidth();
-        var difference = newExpressionColumn - expressionColumn;
-        if(difference < 0) {
-            returnStatement = SyntaxDedenter.dedentNode(returnStatement, firstExpressionTokenIsFirstOnLine, -difference, this.options.indentSpaces);
-        } else {
-            if(difference > 0) {
-                returnStatement = SyntaxIndenter.indentNode(returnStatement, firstExpressionTokenIsFirstOnLine, difference, this.options);
-            }
-        }
+        var arrowEndColumn = Indentation.columnForEndOfToken(arrowToken, this.syntaxInformationMap, this.options);
+        var returnKeywordEndColumn = returnStatement.returnKeyword().width();
+        var difference = returnKeywordEndColumn - arrowEndColumn;
+        returnStatement = this.changeIndentation(returnStatement, false, difference);
         returnStatement = SyntaxIndenter.indentNode(returnStatement, true, this.options.indentSpaces, this.options);
         var block = new BlockSyntax(SyntaxToken.createElastic({
             kind: 67 /* OpenBraceToken */ ,
@@ -15062,33 +15078,50 @@ var Parser = (function (_super) {
 })(SlidingWindow);
 var SyntaxDedenter = (function (_super) {
     __extends(SyntaxDedenter, _super);
-    function SyntaxDedenter(dedentFirstToken, dedentAmount, minimumIndent) {
+    function SyntaxDedenter(dedentFirstToken, dedentationAmount, minimumIndent, options) {
         _super.call(this);
-        this.lastTriviaWasNewLine = true;
-        this.lastTriviaWasNewLine = dedentFirstToken;
-        this.dedentAmount = dedentAmount;
+        this.dedentationAmount = dedentationAmount;
         this.minimumIndent = minimumIndent;
+        this.options = options;
+        this.lastTriviaWasNewLine = dedentFirstToken;
     }
+    SyntaxDedenter.prototype.abort = function () {
+        this.lastTriviaWasNewLine = false;
+        this.dedentationAmount = 0;
+    };
+    SyntaxDedenter.prototype.isAborted = function () {
+        return this.dedentationAmount === 0;
+    };
     SyntaxDedenter.prototype.visitToken = function (token) {
         var result = token;
         if(this.lastTriviaWasNewLine) {
             result = token.withLeadingTrivia(this.dedentTriviaList(token.leadingTrivia()));
         }
-        var trailingTrivia = token.trailingTrivia();
-        this.lastTriviaWasNewLine = trailingTrivia.count() > 0 && trailingTrivia.last().kind() === 5 /* NewLineTrivia */ ;
+        if(this.isAborted()) {
+            return token;
+        }
+        this.lastTriviaWasNewLine = token.hasTrailingNewLineTrivia();
         return result;
     };
     SyntaxDedenter.prototype.dedentTriviaList = function (triviaList) {
         var result = [];
         var dedentNextWhitespace = true;
-        for(var i = 0, n = triviaList.count(); i < n; i++) {
+        for(var i = 0, n = triviaList.count(); i < n && !this.isAborted(); i++) {
             var trivia = triviaList.syntaxTriviaAt(i);
-            if(dedentNextWhitespace && trivia.kind() === 4 /* WhitespaceTrivia */ ) {
-                result.push(this.dedentWhitespace(trivia));
-                dedentNextWhitespace = false;
-                continue;
-            }
+            var dedentThisTrivia = dedentNextWhitespace;
             dedentNextWhitespace = false;
+            if(dedentThisTrivia) {
+                if(trivia.kind() === 4 /* WhitespaceTrivia */ ) {
+                    var hasFollowingNewLine = (i < triviaList.count() - 1) && triviaList.syntaxTriviaAt(i + 1).kind() === 5 /* NewLineTrivia */ ;
+                    result.push(this.dedentWhitespace(trivia, hasFollowingNewLine));
+                    continue;
+                } else {
+                    if(trivia.kind() !== 5 /* NewLineTrivia */ ) {
+                        this.abort();
+                        break;
+                    }
+                }
+            }
             if(trivia.kind() === 6 /* MultiLineCommentTrivia */ ) {
                 result.push(this.dedentMultiLineComment(trivia));
                 continue;
@@ -15098,43 +15131,59 @@ var SyntaxDedenter = (function (_super) {
                 dedentNextWhitespace = true;
             }
         }
+        if(dedentNextWhitespace) {
+            this.abort();
+        }
+        if(this.isAborted()) {
+            return triviaList;
+        }
         return SyntaxTriviaList.create(result);
     };
-    SyntaxDedenter.prototype.dedentWhitespace = function (trivia) {
-        var newLength = MathPrototype.max(trivia.fullWidth() - this.dedentAmount, this.minimumIndent);
-        if(newLength === trivia.fullWidth()) {
-            return trivia;
+    SyntaxDedenter.prototype.dedentSegment = function (segment, hasFollowingNewLineTrivia) {
+        var firstNonWhitespacePosition = Indentation.firstNonWhitespacePosition(segment);
+        if(firstNonWhitespacePosition === segment.length) {
+            if(hasFollowingNewLineTrivia) {
+                return "";
+            }
+        } else {
+            if(CharacterInfo.isLineTerminator(segment[firstNonWhitespacePosition])) {
+                return segment.substring(firstNonWhitespacePosition);
+            }
         }
-        return SyntaxTrivia.createSpaces(newLength);
+        var firstNonWhitespaceColumn = Indentation.columnForPositionInString(segment, firstNonWhitespacePosition, this.options);
+        var newFirstNonWhitespaceColumn = MathPrototype.min(firstNonWhitespaceColumn, MathPrototype.max(firstNonWhitespaceColumn - this.dedentationAmount, this.minimumIndent));
+        if(newFirstNonWhitespaceColumn === firstNonWhitespaceColumn) {
+            this.abort();
+            return segment;
+        }
+        this.dedentationAmount = firstNonWhitespaceColumn - newFirstNonWhitespaceColumn;
+        Debug.assert(this.dedentationAmount >= 0);
+        var indentationString = Indentation.indentationString(newFirstNonWhitespaceColumn, this.options);
+        return indentationString + segment.substring(firstNonWhitespacePosition);
+    };
+    SyntaxDedenter.prototype.dedentWhitespace = function (trivia, hasFollowingNewLineTrivia) {
+        var newIndentation = this.dedentSegment(trivia.fullText(), hasFollowingNewLineTrivia);
+        return SyntaxTrivia.createWhitespace(newIndentation);
     };
     SyntaxDedenter.prototype.dedentMultiLineComment = function (trivia) {
         var segments = SyntaxTrivia.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
-        if(segments.length === 0) {
+        if(segments.length === 1) {
             return trivia;
         }
         for(var i = 1; i < segments.length; i++) {
             var segment = segments[i];
-            segments[i] = this.dedentLineSegment(segment);
+            segments[i] = this.dedentSegment(segment, false);
         }
         var result = segments.join("");
         return SyntaxTrivia.create(6 /* MultiLineCommentTrivia */ , result);
     };
-    SyntaxDedenter.prototype.dedentLineSegment = function (segment) {
-        var segmentWithoutIndentation = this.removeIndentation(segment);
-        var originalIndentation = segment.length - segmentWithoutIndentation.length;
-        var desiredIndentation = MathPrototype.max(originalIndentation - this.dedentAmount, this.minimumIndent);
-        return StringUtilities.repeat(" ", desiredIndentation) + segmentWithoutIndentation;
-    };
-    SyntaxDedenter.prototype.removeIndentation = function (segment) {
-        var start = 0;
-        while(start < segment.length && segment.charCodeAt(start) === 32 /* space */ ) {
-            start++;
+    SyntaxDedenter.dedentNode = function dedentNode(node, dedentFirstToken, dedentAmount, minimumIndent, options) {
+        var dedenter = new SyntaxDedenter(dedentFirstToken, dedentAmount, minimumIndent, options);
+        var result = node.accept1(dedenter);
+        if(dedenter.isAborted()) {
+            return node;
         }
-        return segment.substring(start);
-    };
-    SyntaxDedenter.dedentNode = function dedentNode(node, dedentFirstToken, dedentAmount, minimumIndent) {
-        var dedenter = new SyntaxDedenter(dedentFirstToken, dedentAmount, minimumIndent);
-        return node.accept1(dedenter);
+        return result;
     }
     return SyntaxDedenter;
 })(SyntaxRewriter);
@@ -15144,7 +15193,6 @@ var SyntaxIndenter = (function (_super) {
         _super.call(this);
         this.indentationAmount = indentationAmount;
         this.options = options;
-        this.lastTriviaWasNewLine = true;
         this.lastTriviaWasNewLine = indentFirstToken;
     }
     SyntaxIndenter.prototype.visitToken = function (token) {
@@ -15152,8 +15200,7 @@ var SyntaxIndenter = (function (_super) {
         if(this.lastTriviaWasNewLine) {
             result = token.withLeadingTrivia(this.indentTriviaList(token.leadingTrivia()));
         }
-        var trailingTrivia = token.trailingTrivia();
-        this.lastTriviaWasNewLine = trailingTrivia.count() > 0 && trailingTrivia.last().kind() === 5 /* NewLineTrivia */ ;
+        this.lastTriviaWasNewLine = token.hasTrailingNewLineTrivia();
         return result;
     };
     SyntaxIndenter.prototype.indentTriviaList = function (triviaList) {
@@ -15197,18 +15244,9 @@ var SyntaxIndenter = (function (_super) {
         }
         return SyntaxTriviaList.create(result);
     };
-    SyntaxIndenter.firstNonWhitespacePosition = function firstNonWhitespacePosition(value) {
-        for(var i = 0; i < value.length; i++) {
-            var ch = value.charCodeAt(i);
-            if(!CharacterInfo.isWhitespace(ch)) {
-                return i;
-            }
-        }
-        return value.length;
-    }
-    SyntaxIndenter.prototype.indentSegment = function (segment, allWhitespace) {
-        var firstNonWhitespacePosition = allWhitespace ? segment.length : SyntaxIndenter.firstNonWhitespacePosition(segment);
-        if(firstNonWhitespacePosition == 0 && segment.length > 0 && CharacterInfo.isLineTerminator(segment[0])) {
+    SyntaxIndenter.prototype.indentSegment = function (segment) {
+        var firstNonWhitespacePosition = Indentation.firstNonWhitespacePosition(segment);
+        if(firstNonWhitespacePosition === 0 && segment.length > 0 && CharacterInfo.isLineTerminator(segment[0])) {
             return segment;
         }
         var firstNonWhitespaceColumn = Indentation.columnForPositionInString(segment, firstNonWhitespacePosition, this.options);
@@ -15221,7 +15259,7 @@ var SyntaxIndenter = (function (_super) {
             result.push(trivia);
             return;
         }
-        var newIndentation = this.indentSegment(trivia.fullText(), true);
+        var newIndentation = this.indentSegment(trivia.fullText());
         result.push(SyntaxTrivia.createWhitespace(newIndentation));
     };
     SyntaxIndenter.prototype.indentSingleLineOrSkippedText = function (trivia, indentThisTrivia, result) {
@@ -15236,7 +15274,7 @@ var SyntaxIndenter = (function (_super) {
         }
         var segments = SyntaxTrivia.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
         for(var i = 1; i < segments.length; i++) {
-            segments[i] = this.indentSegment(segments[i], false);
+            segments[i] = this.indentSegment(segments[i]);
         }
         var newText = segments.join("");
         result.push(SyntaxTrivia.createMultiLineComment(newText));
@@ -17167,16 +17205,13 @@ var SyntaxTrivia;
             switch(ch) {
                 case 13 /* carriageReturn */ : {
                     if(i < triviaText.length - 1 && triviaText.charCodeAt(i + 1) === 10 /* lineFeed */ ) {
-                        isCarriageReturnLineFeed = true;
+                        i++;
                     }
 
                 }
                 case 10 /* lineFeed */ :
                 case 8233 /* paragraphSeparator */ :
                 case 8232 /* lineSeparator */ : {
-                    if(isCarriageReturnLineFeed) {
-                        i++;
-                    }
                     result.push(triviaText.substring(currentIndex, i + 1));
                     currentIndex = i + 1;
                     continue;

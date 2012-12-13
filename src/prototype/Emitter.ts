@@ -205,6 +205,28 @@ class Emitter extends SyntaxRewriter {
             block);
     }
 
+    private changeIndentation(node: SyntaxNode, changeFirstToken: bool, indentAmount: number): SyntaxNode {
+        if (indentAmount === 0) {
+            return node;
+        }
+        else if (indentAmount > 0) {
+            return SyntaxIndenter.indentNode(
+                node,
+                /*indentFirstToken:*/ changeFirstToken,
+                /*indentAmount:*/ indentAmount,
+                this.options);
+        }
+        else {
+            // Dedent the node.  But don't allow it go before the minimum indent amount.
+            return SyntaxDedenter.dedentNode(
+                node,
+                /*dedentFirstToken:*/ changeFirstToken,
+                /*dedentAmount:*/-indentAmount,
+                /*minimumColumn:*/ this.options.indentSpaces,
+                this.options);
+        }
+    }
+
     private convertArrowFunctionBody(arrowFunction: ArrowFunctionExpressionSyntax): BlockSyntax {
         var rewrittenBody = this.visitNode(arrowFunction.body());
 
@@ -212,9 +234,12 @@ class Emitter extends SyntaxRewriter {
             return <BlockSyntax>rewrittenBody;
         }
 
+        var arrowToken = arrowFunction.equalsGreaterThanToken();
+        var arrowTrailingTrivia = arrowToken.trailingTrivia();
+
         // first, attach the expression to the return statement
         var returnStatement = new ReturnStatementSyntax(
-            SyntaxToken.createElasticKeyword({ kind: SyntaxKind.ReturnKeyword, trailingTrivia: [SyntaxTrivia.space] }),
+            SyntaxToken.createElasticKeyword({ kind: SyntaxKind.ReturnKeyword, trailingTrivia: arrowTrailingTrivia.toArray() }),
             <ExpressionSyntax>rewrittenBody,
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
 
@@ -229,34 +254,15 @@ class Emitter extends SyntaxRewriter {
         //          return foo().bar()
         //                      .baz()
         //
-        // Right now this is tricky to do because we need to figure to figure out "foo"s original 
-        // column, and the column we're inserting into.  Whatever delta that is (in the above case 
-        // it is '2') is what we need to apply to the subexpression (not including the first token).
+        // To do this we look at where the previous token (=>) used to end and where the new pevious
+        // token (return) ends.  The difference (in this case '2') is our offset.
 
-        // NOTE: this math is almost certainly wrong given tabs.  Fix that later on.  Also, we 
-        // should not do this for expressions that are in a newline.
-        var firstExpressionToken = arrowFunction.body().firstToken();
-        var firstExpressionTokenIsFirstOnLine = this.syntaxInformationMap.isFirstTokenInLine(firstExpressionToken);
-        
-        var expressionColumn = Indentation.columnForStartOfToken(firstExpressionToken, this.syntaxInformationMap, this.options);
-        var newExpressionColumn = returnStatement.returnKeyword().fullWidth();
-        var difference = newExpressionColumn - expressionColumn;
+        var arrowEndColumn = Indentation.columnForEndOfToken(arrowToken, this.syntaxInformationMap, this.options);
+        var returnKeywordEndColumn = returnStatement.returnKeyword().width();
+        var difference = returnKeywordEndColumn - arrowEndColumn;
 
-        if (difference < 0) {
-            // Dedent the expression.  But don't allow it go before column 4.
-            returnStatement = <ReturnStatementSyntax>SyntaxDedenter.dedentNode(
-                returnStatement,
-                /*dedentFirstToken:*/ firstExpressionTokenIsFirstOnLine,
-                /*dedentAmount:*/-difference,
-                /*minimumColumn:*/ this.options.indentSpaces);
-        }
-        else if (difference > 0) {
-            returnStatement = <ReturnStatementSyntax>SyntaxIndenter.indentNode(
-                returnStatement,
-                /*indentFirstToken:*/ firstExpressionTokenIsFirstOnLine,
-                /*indentAmount:*/ difference,
-                this.options);
-        }
+        returnStatement = <ReturnStatementSyntax>this.changeIndentation(
+            returnStatement, /*changeFirstToken:*/ false, difference);
 
         // Next, indent the return statement.  It's going in a block, so it needs to be properly
         // indented.  Note we do this *after* we've ensured the expression aligns properly.
