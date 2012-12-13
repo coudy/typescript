@@ -11791,6 +11791,13 @@ var SyntaxRewriter = (function () {
         Debug.assert(newItems === null || newItems.length === list.count());
         return newItems === null ? list : SyntaxList.create(newItems);
     };
+    SyntaxRewriter.subSeparatedList = function subSeparatedList(list, length) {
+        var newItems = [];
+        for(var j = 0; j < length; j++) {
+            newItems.push(list.itemAt(j));
+        }
+        return newItems;
+    }
     SyntaxRewriter.prototype.visitSeparatedList = function (list) {
         var newItems = null;
         var removeNextSeparator = false;
@@ -11809,10 +11816,7 @@ var SyntaxRewriter = (function () {
                 if(newItem === null) {
                     validateInvariants = true;
                     if(newItems === null) {
-                        newItems = [];
-                        for(var j = 0; j < i; j++) {
-                            newItems.push(list.itemAt(j));
-                        }
+                        newItems = SyntaxRewriter.subSeparatedList(list, i);
                     }
                     if(newItems.length > 0 && newItems[newItems.length - 1].isToken()) {
                         newItems.pop();
@@ -11822,10 +11826,7 @@ var SyntaxRewriter = (function () {
                 }
             }
             if(item !== newItem && newItems === null) {
-                newItems = [];
-                for(var j = 0; j < i; j++) {
-                    newItems.push(list.itemAt(j));
-                }
+                newItems = SyntaxRewriter.subSeparatedList(list, i);
             }
             if(newItems && newItem !== null) {
                 newItems.push(newItem);

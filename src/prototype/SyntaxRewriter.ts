@@ -23,6 +23,7 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
                 }
             }
 
+            // TODO: if we're removing the node, figure out what we can do with the trivia on it.
             if (newItems && newItem !== null) {
                 newItems.push(newItem);
             }
@@ -30,6 +31,15 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
 
         Debug.assert(newItems === null || newItems.length === list.count());
         return newItems === null ? list : SyntaxList.create(newItems);
+    }
+
+    private static subSeparatedList(list: ISeparatedSyntaxList, length: number): ISyntaxElement[] {
+        var newItems: ISyntaxElement[] = [];
+        for (var j = 0; j < length; j++) {
+            newItems.push(list.itemAt(j));
+        }
+
+        return newItems;
     }
 
     public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {
@@ -56,10 +66,7 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
                     validateInvariants = true;
 
                     if (newItems === null) {
-                        newItems = [];
-                        for (var j = 0; j < i; j++) {
-                            newItems.push(list.itemAt(j));
-                        }
+                        newItems = SyntaxRewriter.subSeparatedList(list, i);
                     }
                     
                     // try to remove preceding separator if any
@@ -77,10 +84,7 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
             }
 
             if (item !== newItem && newItems === null) {
-                newItems = [];
-                for (var j = 0; j < i; j++) {
-                    newItems.push(list.itemAt(j));
-                }
+                newItems = SyntaxRewriter.subSeparatedList(list, i);
             }
 
             if (newItems && newItem !== null) {
