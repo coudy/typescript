@@ -23,7 +23,7 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
                 }
             }
 
-            if (newItems) {
+            if (newItems && newItem !== null) {
                 newItems.push(newItem);
             }
         }
@@ -33,11 +33,48 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
     }
 
     public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {
-        var newItems: any[] = null;
+        var newItems: ISyntaxElement[] = null;
+        var removeNextSeparator = false;
+        var validateInvariants = false;
 
         for (var i = 0, n = list.count(); i < n; i++) {
             var item = list.itemAt(i);
-            var newItem = item.isToken() ? <ISyntaxElement>this.visitToken(<ISyntaxToken>item) : this.visitNode(<SyntaxNode>item);
+            var newItem: ISyntaxElement = null;
+
+            if (item.isToken()) {
+                if (removeNextSeparator) {
+                    removeNextSeparator = false;
+                    // TODO: deal with the trivia on this token in the future.
+                }
+                else {
+                    newItem = this.visitToken(<ISyntaxToken>item);
+                }
+            }
+            else {
+                newItem = this.visitNode(<SyntaxNode>item);
+                if (newItem === null) {
+                    validateInvariants = true;
+
+                    if (newItems === null) {
+                        newItems = [];
+                        for (var j = 0; j < i; j++) {
+                            newItems.push(list.itemAt(j));
+                        }
+                    }
+                    
+                    // try to remove preceding separator if any
+                    if (newItems.length > 0 && newItems[newItems.length - 1].isToken()) {
+                        newItems.pop();
+                        // TODO: deal with the trivia on this token we're removing.
+                    }
+                    else {
+                        // otherwise remove the next separator
+                        removeNextSeparator = true;
+                    }
+
+                    // Deal with the trivia on the node we removed.
+                }
+            }
 
             if (item !== newItem && newItems === null) {
                 newItems = [];
@@ -46,13 +83,13 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
                 }
             }
 
-            if (newItems) {
+            if (newItems && newItem !== null) {
                 newItems.push(newItem);
             }
         }
 
         Debug.assert(newItems === null || newItems.length === list.count());
-        return newItems === null ? list : SeparatedSyntaxList.create(newItems);
+        return newItems === null ? list : SeparatedSyntaxList.createAndValidate(newItems, validateInvariants);
     }
 
     public visitSourceUnit(node: SourceUnitSyntax): any {

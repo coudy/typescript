@@ -1937,8 +1937,22 @@ var SeparatedSyntaxList;
     })();    
     SeparatedSyntaxList.empty = new EmptySeparatedSyntaxList();
     function create(nodes) {
+        return createAndValidate(nodes, false);
+    }
+    SeparatedSyntaxList.create = create;
+    function createAndValidate(nodes, validate) {
         if(nodes === undefined || nodes === null || nodes.length === 0) {
             return SeparatedSyntaxList.empty;
+        }
+        if(validate) {
+            for(var i = 0; i < nodes.length; i++) {
+                var item = nodes[i];
+                if(i % 2 === 0) {
+                    Debug.assert(!SyntaxFacts.isTokenKind(item.kind()));
+                } else {
+                    Debug.assert(SyntaxFacts.isTokenKind(item.kind()));
+                }
+            }
         }
         if(nodes.length === 1) {
             Debug.assert(nodes[0].isNode());
@@ -1946,7 +1960,7 @@ var SeparatedSyntaxList;
         }
         return new NormalSeparatedSyntaxList(nodes);
     }
-    SeparatedSyntaxList.create = create;
+    SeparatedSyntaxList.createAndValidate = createAndValidate;
 })(SeparatedSyntaxList || (SeparatedSyntaxList = {}));
 var SlidingWindow = (function () {
     function SlidingWindow(defaultWindowSize, defaultValue, sourceLength) {
@@ -11770,7 +11784,7 @@ var SyntaxRewriter = (function () {
                     newItems.push(list.syntaxNodeAt(j));
                 }
             }
-            if(newItems) {
+            if(newItems && newItem !== null) {
                 newItems.push(newItem);
             }
         }
@@ -11779,21 +11793,46 @@ var SyntaxRewriter = (function () {
     };
     SyntaxRewriter.prototype.visitSeparatedList = function (list) {
         var newItems = null;
+        var removeNextSeparator = false;
+        var validateInvariants = false;
         for(var i = 0, n = list.count(); i < n; i++) {
             var item = list.itemAt(i);
-            var newItem = item.isToken() ? this.visitToken(item) : this.visitNode(item);
+            var newItem = null;
+            if(item.isToken()) {
+                if(removeNextSeparator) {
+                    removeNextSeparator = false;
+                } else {
+                    newItem = this.visitToken(item);
+                }
+            } else {
+                newItem = this.visitNode(item);
+                if(newItem === null) {
+                    validateInvariants = true;
+                    if(newItems === null) {
+                        newItems = [];
+                        for(var j = 0; j < i; j++) {
+                            newItems.push(list.itemAt(j));
+                        }
+                    }
+                    if(newItems.length > 0 && newItems[newItems.length - 1].isToken()) {
+                        newItems.pop();
+                    } else {
+                        removeNextSeparator = true;
+                    }
+                }
+            }
             if(item !== newItem && newItems === null) {
                 newItems = [];
                 for(var j = 0; j < i; j++) {
                     newItems.push(list.itemAt(j));
                 }
             }
-            if(newItems) {
+            if(newItems && newItem !== null) {
                 newItems.push(newItem);
             }
         }
         Debug.assert(newItems === null || newItems.length === list.count());
-        return newItems === null ? list : SeparatedSyntaxList.create(newItems);
+        return newItems === null ? list : SeparatedSyntaxList.createAndValidate(newItems, validateInvariants);
     };
     SyntaxRewriter.prototype.visitSourceUnit = function (node) {
         return node.update(this.visitList(node.moduleElements()), this.visitToken(node.endOfFileToken()));

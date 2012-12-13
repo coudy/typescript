@@ -182,20 +182,26 @@ module SeparatedSyntaxList {
     export var empty: ISeparatedSyntaxList = new EmptySeparatedSyntaxList();
 
     export function create(nodes: ISyntaxElement[]): ISeparatedSyntaxList {
+        return createAndValidate(nodes, false);
+    }
+
+    export function createAndValidate(nodes: ISyntaxElement[], validate: bool): ISeparatedSyntaxList {
         if (nodes === undefined || nodes === null || nodes.length === 0) {
             return empty;
         }
 
-        //for (var i = 0; i < nodes.length; i++) {
-        //    var item = nodes[i];
+        if (validate) {
+            for (var i = 0; i < nodes.length; i++) {
+                var item = nodes[i];
 
-        //    if (i % 2 === 0) {
-        //        Debug.assert(!SyntaxFacts.isTokenKind(item.kind()));
-        //    }
-        //    else {
-        //        Debug.assert(SyntaxFacts.isTokenKind(item.kind));
-        //    }
-        //}
+                if (i % 2 === 0) {
+                    Debug.assert(!SyntaxFacts.isTokenKind(item.kind()));
+                }
+                else {
+                    Debug.assert(SyntaxFacts.isTokenKind(item.kind()));
+                }
+            }
+        }
 
         if (nodes.length === 1) {
             Debug.assert(nodes[0].isNode());
