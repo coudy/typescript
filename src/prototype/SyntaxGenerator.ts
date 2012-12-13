@@ -1763,6 +1763,8 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
 
     var result = "    class ";
 
+    var needsSourcetext = leading || trailing;
+
     var className = isKeyword ? "Keyword" :
          isPunctuation ? "FixedWidthToken" : "VariableWidthToken";
     className += leading && trailing ? "WithLeadingAndTrailingTrivia" :
@@ -1772,7 +1774,11 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
     result += className;
 
     result += " implements ISyntaxToken {\r\n";
-    result += "        private _sourceText: IText;\r\n";
+
+    if (needsSourcetext) {
+        result += "        private _sourceText: IText;\r\n";
+    }
+
     result += "        public tokenKind: SyntaxKind;\r\n";
 
     if (isKeyword) {
@@ -1795,13 +1801,19 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
     }
 
     result += "\r\n";
-    result += "        constructor(sourceText: IText";
 
-    if (isKeyword) {
-        result += ", keywordKind: SyntaxKind";
+    if (needsSourcetext) {
+        result += "        constructor(sourceText: IText, ";
     }
     else {
-        result += ", kind: SyntaxKind";
+        result += "        constructor(";
+    }
+
+    if (isKeyword) {
+        result += "keywordKind: SyntaxKind";
+    }
+    else {
+        result += "kind: SyntaxKind";
     }
 
     result += ", fullStart: number";
@@ -1818,7 +1830,10 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
     }
 
     result += ") {\r\n";
-    result += "            this._sourceText = sourceText;\r\n";
+
+    if (needsSourcetext) {
+        result += "            this._sourceText = sourceText;\r\n";
+    }
 
     if (isKeyword) {
         result += "            this.tokenKind = SyntaxKind.IdentifierNameToken;\r\n";
@@ -1846,7 +1861,10 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
 
     result += "        public clone(): ISyntaxToken {\r\n";
     result += "            return new " + className + "(\r\n";
-    result += "                this._sourceText,\r\n";
+
+    if (needsSourcetext) {
+        result += "                this._sourceText,\r\n";
+    }
 
     if (isKeyword) {
         result += "                this._keywordKind,\r\n";
@@ -1923,7 +1941,13 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
     else {
         result += "        public text(): string { return this._text; }\r\n";
     }
-    result += "        public fullText(): string { return this._sourceText.substr(this._fullStart, this.fullWidth()); }\r\n\r\n";
+
+    if (needsSourcetext) {
+        result += "        public fullText(): string { return this._sourceText.substr(this._fullStart, this.fullWidth()); }\r\n\r\n";
+    }
+    else {
+        result += "        public fullText(): string { return this.text(); }\r\n\r\n";
+    }
 
     if (isFixedWidth) {
         result += "        public value(): any { return null; }\r\n";
@@ -2010,7 +2034,7 @@ function generateTokens(): string {
 "\r\n" +
 "        if (leadingTriviaInfo === 0) {\r\n" +
 "            if (trailingTriviaInfo === 0) {\r\n" +
-"                return new FixedWidthTokenWithNoTrivia(sourceText, kind, fullStart);\r\n" +
+"                return new FixedWidthTokenWithNoTrivia(kind, fullStart);\r\n" +
 "            }\r\n" +
 "            else {\r\n" +
 "                return new FixedWidthTokenWithTrailingTrivia(sourceText, kind, fullStart, trailingTriviaInfo);\r\n" +
@@ -2033,7 +2057,7 @@ function generateTokens(): string {
 "        // var text = tokenInfo.Text === null ? SyntaxFacts.getText(kind) : tokenInfo.Text;\r\n" +
 "        if (leadingTriviaInfo === 0) {\r\n" +
 "            if (trailingTriviaInfo === 0) {\r\n" +
-"                return new VariableWidthTokenWithNoTrivia(sourceText, kind, fullStart, tokenInfo.Text, tokenInfo.Value);\r\n" +
+"                return new VariableWidthTokenWithNoTrivia(kind, fullStart, tokenInfo.Text, tokenInfo.Value);\r\n" +
 "            }\r\n" +
 "            else {\r\n" +
 "                return new VariableWidthTokenWithTrailingTrivia(sourceText, kind, fullStart, tokenInfo.Text, tokenInfo.Value, trailingTriviaInfo);\r\n" +
@@ -2054,7 +2078,7 @@ function generateTokens(): string {
 "\r\n" +
 "        if (leadingTriviaInfo === 0) {\r\n" +
 "            if (trailingTriviaInfo === 0) {\r\n" +
-"                return new KeywordWithNoTrivia(sourceText, keywordKind, fullStart);\r\n" +
+"                return new KeywordWithNoTrivia(keywordKind, fullStart);\r\n" +
 "            }\r\n" +
 "            else {\r\n" +
 "                return new KeywordWithTrailingTrivia(sourceText, keywordKind, fullStart, trailingTriviaInfo);\r\n" +

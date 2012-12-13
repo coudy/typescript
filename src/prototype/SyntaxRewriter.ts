@@ -23,8 +23,7 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
                 }
             }
 
-            // TODO: if we're removing the node, figure out what we can do with the trivia on it.
-            if (newItems && newItem !== null) {
+            if (newItems) {
                 newItems.push(newItem);
             }
         }
@@ -33,67 +32,27 @@ class SyntaxRewriter implements ISyntaxVisitor1 {
         return newItems === null ? list : SyntaxList.create(newItems);
     }
 
-    private static subSeparatedList(list: ISeparatedSyntaxList, length: number): ISyntaxElement[] {
-        var newItems: ISyntaxElement[] = [];
-        for (var j = 0; j < length; j++) {
-            newItems.push(list.itemAt(j));
-        }
-
-        return newItems;
-    }
-
     public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {
-        var newItems: ISyntaxElement[] = null;
-        var removeNextSeparator = false;
-        var validateInvariants = false;
+        var newItems: any[] = null;
 
         for (var i = 0, n = list.count(); i < n; i++) {
             var item = list.itemAt(i);
-            var newItem: ISyntaxElement = null;
-
-            if (item.isToken()) {
-                if (removeNextSeparator) {
-                    removeNextSeparator = false;
-                    // TODO: deal with the trivia on this token in the future.
-                }
-                else {
-                    newItem = this.visitToken(<ISyntaxToken>item);
-                }
-            }
-            else {
-                newItem = this.visitNode(<SyntaxNode>item);
-                if (newItem === null) {
-                    validateInvariants = true;
-
-                    if (newItems === null) {
-                        newItems = SyntaxRewriter.subSeparatedList(list, i);
-                    }
-                    
-                    // try to remove preceding separator if any
-                    if (newItems.length > 0 && newItems[newItems.length - 1].isToken()) {
-                        newItems.pop();
-                        // TODO: deal with the trivia on this token we're removing.
-                    }
-                    else {
-                        // otherwise remove the next separator
-                        removeNextSeparator = true;
-                    }
-
-                    // Deal with the trivia on the node we removed.
-                }
-            }
+            var newItem = item.isToken() ? <ISyntaxElement>this.visitToken(<ISyntaxToken>item) : this.visitNode(<SyntaxNode>item);
 
             if (item !== newItem && newItems === null) {
-                newItems = SyntaxRewriter.subSeparatedList(list, i);
+                newItems = [];
+                for (var j = 0; j < i; j++) {
+                    newItems.push(list.itemAt(j));
+                }
             }
 
-            if (newItems && newItem !== null) {
+            if (newItems) {
                 newItems.push(newItem);
             }
         }
 
         Debug.assert(newItems === null || newItems.length === list.count());
-        return newItems === null ? list : SeparatedSyntaxList.createAndValidate(newItems, validateInvariants);
+        return newItems === null ? list : SeparatedSyntaxList.create(newItems);
     }
 
     public visitSourceUnit(node: SourceUnitSyntax): any {

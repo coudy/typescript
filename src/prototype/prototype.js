@@ -11784,56 +11784,30 @@ var SyntaxRewriter = (function () {
                     newItems.push(list.syntaxNodeAt(j));
                 }
             }
-            if(newItems && newItem !== null) {
+            if(newItems) {
                 newItems.push(newItem);
             }
         }
         Debug.assert(newItems === null || newItems.length === list.count());
         return newItems === null ? list : SyntaxList.create(newItems);
     };
-    SyntaxRewriter.subSeparatedList = function subSeparatedList(list, length) {
-        var newItems = [];
-        for(var j = 0; j < length; j++) {
-            newItems.push(list.itemAt(j));
-        }
-        return newItems;
-    }
     SyntaxRewriter.prototype.visitSeparatedList = function (list) {
         var newItems = null;
-        var removeNextSeparator = false;
-        var validateInvariants = false;
         for(var i = 0, n = list.count(); i < n; i++) {
             var item = list.itemAt(i);
-            var newItem = null;
-            if(item.isToken()) {
-                if(removeNextSeparator) {
-                    removeNextSeparator = false;
-                } else {
-                    newItem = this.visitToken(item);
-                }
-            } else {
-                newItem = this.visitNode(item);
-                if(newItem === null) {
-                    validateInvariants = true;
-                    if(newItems === null) {
-                        newItems = SyntaxRewriter.subSeparatedList(list, i);
-                    }
-                    if(newItems.length > 0 && newItems[newItems.length - 1].isToken()) {
-                        newItems.pop();
-                    } else {
-                        removeNextSeparator = true;
-                    }
-                }
-            }
+            var newItem = item.isToken() ? this.visitToken(item) : this.visitNode(item);
             if(item !== newItem && newItems === null) {
-                newItems = SyntaxRewriter.subSeparatedList(list, i);
+                newItems = [];
+                for(var j = 0; j < i; j++) {
+                    newItems.push(list.itemAt(j));
+                }
             }
-            if(newItems && newItem !== null) {
+            if(newItems) {
                 newItems.push(newItem);
             }
         }
         Debug.assert(newItems === null || newItems.length === list.count());
-        return newItems === null ? list : SeparatedSyntaxList.createAndValidate(newItems, validateInvariants);
+        return newItems === null ? list : SeparatedSyntaxList.create(newItems);
     };
     SyntaxRewriter.prototype.visitSourceUnit = function (node) {
         return node.update(this.visitList(node.moduleElements()), this.visitToken(node.endOfFileToken()));
@@ -15870,15 +15844,14 @@ var SyntaxToken;
 var SyntaxToken;
 (function (SyntaxToken) {
     var VariableWidthTokenWithNoTrivia = (function () {
-        function VariableWidthTokenWithNoTrivia(sourceText, kind, fullStart, text, value) {
-            this._sourceText = sourceText;
+        function VariableWidthTokenWithNoTrivia(kind, fullStart, text, value) {
             this.tokenKind = kind;
             this._fullStart = fullStart;
             this._text = text;
             this._value = value;
         }
         VariableWidthTokenWithNoTrivia.prototype.clone = function () {
-            return new VariableWidthTokenWithNoTrivia(this._sourceText, this.tokenKind, this._fullStart, this._text, this._value);
+            return new VariableWidthTokenWithNoTrivia(this.tokenKind, this._fullStart, this._text, this._value);
         };
         VariableWidthTokenWithNoTrivia.prototype.isToken = function () {
             return true;
@@ -15923,7 +15896,7 @@ var SyntaxToken;
             return this._text;
         };
         VariableWidthTokenWithNoTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth());
+            return this.text();
         };
         VariableWidthTokenWithNoTrivia.prototype.value = function () {
             return SyntaxToken.value(this, this._value);
@@ -16310,13 +16283,12 @@ var SyntaxToken;
         return VariableWidthTokenWithLeadingAndTrailingTrivia;
     })();    
     var FixedWidthTokenWithNoTrivia = (function () {
-        function FixedWidthTokenWithNoTrivia(sourceText, kind, fullStart) {
-            this._sourceText = sourceText;
+        function FixedWidthTokenWithNoTrivia(kind, fullStart) {
             this.tokenKind = kind;
             this._fullStart = fullStart;
         }
         FixedWidthTokenWithNoTrivia.prototype.clone = function () {
-            return new FixedWidthTokenWithNoTrivia(this._sourceText, this.tokenKind, this._fullStart);
+            return new FixedWidthTokenWithNoTrivia(this.tokenKind, this._fullStart);
         };
         FixedWidthTokenWithNoTrivia.prototype.isToken = function () {
             return true;
@@ -16361,7 +16333,7 @@ var SyntaxToken;
             return SyntaxFacts.getText(this.tokenKind);
         };
         FixedWidthTokenWithNoTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth());
+            return this.text();
         };
         FixedWidthTokenWithNoTrivia.prototype.value = function () {
             return null;
@@ -16742,14 +16714,13 @@ var SyntaxToken;
         return FixedWidthTokenWithLeadingAndTrailingTrivia;
     })();    
     var KeywordWithNoTrivia = (function () {
-        function KeywordWithNoTrivia(sourceText, keywordKind, fullStart) {
-            this._sourceText = sourceText;
+        function KeywordWithNoTrivia(keywordKind, fullStart) {
             this.tokenKind = 9 /* IdentifierNameToken */ ;
             this._keywordKind = keywordKind;
             this._fullStart = fullStart;
         }
         KeywordWithNoTrivia.prototype.clone = function () {
-            return new KeywordWithNoTrivia(this._sourceText, this._keywordKind, this._fullStart);
+            return new KeywordWithNoTrivia(this._keywordKind, this._fullStart);
         };
         KeywordWithNoTrivia.prototype.isToken = function () {
             return true;
@@ -16794,7 +16765,7 @@ var SyntaxToken;
             return SyntaxFacts.getText(this._keywordKind);
         };
         KeywordWithNoTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth());
+            return this.text();
         };
         KeywordWithNoTrivia.prototype.value = function () {
             return null;
@@ -17180,7 +17151,7 @@ var SyntaxToken;
     function createFixedWidthToken(sourceText, fullStart, leadingTriviaInfo, kind, trailingTriviaInfo) {
         if(leadingTriviaInfo === 0) {
             if(trailingTriviaInfo === 0) {
-                return new FixedWidthTokenWithNoTrivia(sourceText, kind, fullStart);
+                return new FixedWidthTokenWithNoTrivia(kind, fullStart);
             } else {
                 return new FixedWidthTokenWithTrailingTrivia(sourceText, kind, fullStart, trailingTriviaInfo);
             }
@@ -17196,7 +17167,7 @@ var SyntaxToken;
         var kind = tokenInfo.Kind;
         if(leadingTriviaInfo === 0) {
             if(trailingTriviaInfo === 0) {
-                return new VariableWidthTokenWithNoTrivia(sourceText, kind, fullStart, tokenInfo.Text, tokenInfo.Value);
+                return new VariableWidthTokenWithNoTrivia(kind, fullStart, tokenInfo.Text, tokenInfo.Value);
             } else {
                 return new VariableWidthTokenWithTrailingTrivia(sourceText, kind, fullStart, tokenInfo.Text, tokenInfo.Value, trailingTriviaInfo);
             }
@@ -17211,7 +17182,7 @@ var SyntaxToken;
     function createKeyword(sourceText, fullStart, leadingTriviaInfo, keywordKind, trailingTriviaInfo) {
         if(leadingTriviaInfo === 0) {
             if(trailingTriviaInfo === 0) {
-                return new KeywordWithNoTrivia(sourceText, keywordKind, fullStart);
+                return new KeywordWithNoTrivia(keywordKind, fullStart);
             } else {
                 return new KeywordWithTrailingTrivia(sourceText, keywordKind, fullStart, trailingTriviaInfo);
             }
