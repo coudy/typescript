@@ -398,7 +398,7 @@ class Emitter extends SyntaxRewriter {
             return null;
         }
 
-        var rewritten = super.visitFunctionDeclaration(node);
+        var rewritten = <FunctionDeclarationSyntax>super.visitFunctionDeclaration(node);
         var parametersWithDefaults = Emitter.functionSignatureDefaultParameters(node.functionSignature());
 
         if (parametersWithDefaults.length === 0) {
@@ -413,13 +413,14 @@ class Emitter extends SyntaxRewriter {
         var desiredColumn = functionDeclarationStartColumn + this.options.indentSpaces;
 
         defaultValueAssignmentStatements = ArrayUtilities.select(defaultValueAssignmentStatements,
-            s => SyntaxIndenter.indentNode(s, /*indentFirstToken:*/ true, this.options.indentSpaces, this.options));
+            s => SyntaxIndenter.indentNode(s, /*indentFirstToken:*/ true, desiredColumn, this.options));
 
         var statements: StatementSyntax[] = [];
         statements.push.apply(statements, defaultValueAssignmentStatements);
-        statements.push.apply(statements, rewritten.block().statements());
+        statements.push.apply(statements, rewritten.block().statements().toArray());
 
         // TODO: remove export/declare keywords.
-        return rewritten.withBlock(rewritten.block().withStatements(statements));
+        return rewritten.withBlock(rewritten.block().withStatements(
+            SyntaxList.create(statements)));
     }
 }

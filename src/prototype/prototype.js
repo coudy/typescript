@@ -12417,12 +12417,12 @@ var Emitter = (function (_super) {
         var functionDeclarationStartColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
         var desiredColumn = functionDeclarationStartColumn + this.options.indentSpaces;
         defaultValueAssignmentStatements = ArrayUtilities.select(defaultValueAssignmentStatements, function (s) {
-            return SyntaxIndenter.indentNode(s, true, _this.options.indentSpaces, _this.options);
+            return SyntaxIndenter.indentNode(s, true, desiredColumn, _this.options);
         });
         var statements = [];
         statements.push.apply(statements, defaultValueAssignmentStatements);
-        statements.push.apply(statements, rewritten.block().statements());
-        return rewritten.withBlock(rewritten.block().withStatements(statements));
+        statements.push.apply(statements, rewritten.block().statements().toArray());
+        return rewritten.withBlock(rewritten.block().withStatements(SyntaxList.create(statements)));
     };
     return Emitter;
 })(SyntaxRewriter);
@@ -45810,8 +45810,7 @@ var expectedTop1000Failures = {
     "JSFile800\\fedex_com\\InstantInvite3.js": true
 };
 var stringTable = new StringTable();
-var specificFile = "FunctionDeclaration1";
-undefined;
+var specificFile = undefined;
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {

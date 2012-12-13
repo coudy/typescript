@@ -6,7 +6,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    "FunctionDeclaration1";
+    // "FunctionDeclaration6";
     undefined;
 
 class Program {
