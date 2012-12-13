@@ -235,11 +235,10 @@ class Emitter extends SyntaxRewriter {
         }
 
         var arrowToken = arrowFunction.equalsGreaterThanToken();
-        var arrowTrailingTrivia = arrowToken.trailingTrivia();
 
         // first, attach the expression to the return statement
         var returnStatement = new ReturnStatementSyntax(
-            SyntaxToken.createElasticKeyword({ kind: SyntaxKind.ReturnKeyword, trailingTrivia: arrowTrailingTrivia.toArray() }),
+            SyntaxToken.createElasticKeyword({ kind: SyntaxKind.ReturnKeyword, trailingTrivia: arrowToken.trailingTrivia().toArray() }),
             <ExpressionSyntax>rewrittenBody,
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
 
@@ -257,9 +256,40 @@ class Emitter extends SyntaxRewriter {
         // To do this we look at where the previous token (=>) used to end and where the new pevious
         // token (return) ends.  The difference (in this case '2') is our offset.
 
-        var arrowEndColumn = Indentation.columnForEndOfToken(arrowToken, this.syntaxInformationMap, this.options);
-        var returnKeywordEndColumn = returnStatement.returnKeyword().width();
-        var difference = returnKeywordEndColumn - arrowEndColumn;
+        var difference = 0;
+        if (arrowToken.hasTrailingNewLineTrivia()) {
+            // The expression is on the next line.  i.e. 
+            //
+            //      foo =>
+            //          expr
+            //
+            // So we want it to immediately follow the return statement. i.e.:
+            //
+            //      return
+            //          expr;
+            //
+            // and we adjust based on the column difference between the start of the arrow function
+            // and the start of the expr.
+            var arrowFunctionStart = Indentation.columnForStartOfToken(arrowFunction.firstToken(), this.syntaxInformationMap, this.options);
+            // var expressionStart = Indentation.columnForStartOfToken(arrowFunction.body().firstToken(), this.syntaxInformationMap, this.options);
+            // var originalOffset = expressionStart - arrowFunctionStart;
+            difference = -arrowFunctionStart;
+        }
+        else {
+            // the expression immediately follows the arrow. i.e.:
+            //
+            //      foo => expr
+            //
+            // So we want it to immediately follow the return statement. i.e.:
+            //
+            //      return expr;
+            //
+            // and we adjust based on the column difference between the end of the arrow token and 
+            // the end of the return statement.
+            var arrowEndColumn = Indentation.columnForEndOfToken(arrowToken, this.syntaxInformationMap, this.options);
+            var returnKeywordEndColumn = returnStatement.returnKeyword().width();
+            difference = returnKeywordEndColumn - arrowEndColumn;
+        }
 
         returnStatement = <ReturnStatementSyntax>this.changeIndentation(
             returnStatement, /*changeFirstToken:*/ false, difference);

@@ -1,22 +1,16 @@
 {
     "fullText": [
-        "(function(a) {",
+        "(function(longname) {",
         "    return",
-        "        /* Comment1",
-        "         * Comment2.  Next line is empty",
-        "",
-        "         */ ",
-        "        foo().bar().baz();",
+        "        foo().bar()",
+        "             .baz();",
         "});",
         "var M;",
         "(function(M) {",
-        "    (function(a) {",
+        "    (function(longname) {",
         "        return",
-        "            /* Comment1",
-        "             * Comment2.  Next line is empty.",
-        "",
-        "             */ ",
-        "            foo().bar().baz();",
+        "                    foo().bar()",
+        "                         .baz();",
         "    });",
         "})(M||(M={}));",
         ""
@@ -55,9 +49,9 @@
                                         "kind": "Parameter",
                                         "_identifier": {
                                             "kind": "IdentifierNameToken",
-                                            "width": 1,
-                                            "text": "a",
-                                            "valueText": "a"
+                                            "width": 8,
+                                            "text": "longname",
+                                            "valueText": "longname"
                                         }
                                     }
                                 ],
@@ -132,29 +126,11 @@
                                                             "_identifier": {
                                                                 "kind": "IdentifierNameToken",
                                                                 "width": 3,
-                                                                "fullWidth": 90,
+                                                                "fullWidth": 11,
                                                                 "text": "foo",
                                                                 "valueText": "foo",
                                                                 "hasLeadingTrivia": true,
-                                                                "hasLeadingCommentTrivia": true,
-                                                                "hasLeadingNewLineTrivia": true,
                                                                 "leadingTrivia": [
-                                                                    {
-                                                                        "kind": "WhitespaceTrivia",
-                                                                        "text": "        "
-                                                                    },
-                                                                    {
-                                                                        "kind": "MultiLineCommentTrivia",
-                                                                        "text": "/* Comment1\r\n         * Comment2.  Next line is empty\r\n\r\n         */"
-                                                                    },
-                                                                    {
-                                                                        "kind": "WhitespaceTrivia",
-                                                                        "text": " "
-                                                                    },
-                                                                    {
-                                                                        "kind": "NewLineTrivia",
-                                                                        "text": "\r\n"
-                                                                    },
                                                                     {
                                                                         "kind": "WhitespaceTrivia",
                                                                         "text": "        "
@@ -203,14 +179,31 @@
                                                     "_closeParenToken": {
                                                         "kind": "CloseParenToken",
                                                         "width": 1,
-                                                        "text": ")"
+                                                        "fullWidth": 3,
+                                                        "text": ")",
+                                                        "hasTrailingTrivia": true,
+                                                        "hasTrailingNewLineTrivia": true,
+                                                        "trailingTrivia": [
+                                                            {
+                                                                "kind": "NewLineTrivia",
+                                                                "text": "\r\n"
+                                                            }
+                                                        ]
                                                     }
                                                 }
                                             },
                                             "_dotToken": {
                                                 "kind": "DotToken",
                                                 "width": 1,
-                                                "text": "."
+                                                "fullWidth": 14,
+                                                "text": ".",
+                                                "hasLeadingTrivia": true,
+                                                "leadingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": "             "
+                                                    }
+                                                ]
                                             },
                                             "_identifierName": {
                                                 "kind": "IdentifierName",
@@ -443,9 +436,9 @@
                                                                 "kind": "Parameter",
                                                                 "_identifier": {
                                                                     "kind": "IdentifierNameToken",
-                                                                    "width": 1,
-                                                                    "text": "a",
-                                                                    "valueText": "a"
+                                                                    "width": 8,
+                                                                    "text": "longname",
+                                                                    "valueText": "longname"
                                                                 }
                                                             }
                                                         ],
@@ -520,32 +513,14 @@
                                                                                     "_identifier": {
                                                                                         "kind": "IdentifierNameToken",
                                                                                         "width": 3,
-                                                                                        "fullWidth": 107,
+                                                                                        "fullWidth": 23,
                                                                                         "text": "foo",
                                                                                         "valueText": "foo",
                                                                                         "hasLeadingTrivia": true,
-                                                                                        "hasLeadingCommentTrivia": true,
-                                                                                        "hasLeadingNewLineTrivia": true,
                                                                                         "leadingTrivia": [
                                                                                             {
                                                                                                 "kind": "WhitespaceTrivia",
-                                                                                                "text": "            "
-                                                                                            },
-                                                                                            {
-                                                                                                "kind": "MultiLineCommentTrivia",
-                                                                                                "text": "/* Comment1\r\n             * Comment2.  Next line is empty.\r\n\r\n             */"
-                                                                                            },
-                                                                                            {
-                                                                                                "kind": "WhitespaceTrivia",
-                                                                                                "text": " "
-                                                                                            },
-                                                                                            {
-                                                                                                "kind": "NewLineTrivia",
-                                                                                                "text": "\r\n"
-                                                                                            },
-                                                                                            {
-                                                                                                "kind": "WhitespaceTrivia",
-                                                                                                "text": "            "
+                                                                                                "text": "                    "
                                                                                             }
                                                                                         ]
                                                                                     }
@@ -591,14 +566,31 @@
                                                                             "_closeParenToken": {
                                                                                 "kind": "CloseParenToken",
                                                                                 "width": 1,
-                                                                                "text": ")"
+                                                                                "fullWidth": 3,
+                                                                                "text": ")",
+                                                                                "hasTrailingTrivia": true,
+                                                                                "hasTrailingNewLineTrivia": true,
+                                                                                "trailingTrivia": [
+                                                                                    {
+                                                                                        "kind": "NewLineTrivia",
+                                                                                        "text": "\r\n"
+                                                                                    }
+                                                                                ]
                                                                             }
                                                                         }
                                                                     },
                                                                     "_dotToken": {
                                                                         "kind": "DotToken",
                                                                         "width": 1,
-                                                                        "text": "."
+                                                                        "fullWidth": 26,
+                                                                        "text": ".",
+                                                                        "hasLeadingTrivia": true,
+                                                                        "leadingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": "                         "
+                                                                            }
+                                                                        ]
                                                                     },
                                                                     "_identifierName": {
                                                                         "kind": "IdentifierName",

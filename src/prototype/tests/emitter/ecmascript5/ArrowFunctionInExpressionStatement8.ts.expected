@@ -2,17 +2,17 @@
     "fullText": [
         "(function(a) {",
         "    return",
-        "          // Comment1",
-        "          // Comment2",
-        "          foo().bar().baz();",
+        "        // Comment1",
+        "        // Comment2",
+        "        foo().bar().baz();",
         "});",
         "var M;",
         "(function(M) {",
         "    (function(a) {",
         "        return",
-        "              // Comment1",
-        "              // Comment2",
-        "              foo().bar().baz();",
+        "            // Comment1",
+        "            // Comment2",
+        "            foo().bar().baz();",
         "    });",
         "})(M||(M={}));",
         ""
@@ -128,7 +128,7 @@
                                                             "_identifier": {
                                                                 "kind": "IdentifierNameToken",
                                                                 "width": 3,
-                                                                "fullWidth": 59,
+                                                                "fullWidth": 53,
                                                                 "text": "foo",
                                                                 "valueText": "foo",
                                                                 "hasLeadingTrivia": true,
@@ -137,7 +137,7 @@
                                                                 "leadingTrivia": [
                                                                     {
                                                                         "kind": "WhitespaceTrivia",
-                                                                        "text": "          "
+                                                                        "text": "        "
                                                                     },
                                                                     {
                                                                         "kind": "SingleLineCommentTrivia",
@@ -149,7 +149,7 @@
                                                                     },
                                                                     {
                                                                         "kind": "WhitespaceTrivia",
-                                                                        "text": "          "
+                                                                        "text": "        "
                                                                     },
                                                                     {
                                                                         "kind": "SingleLineCommentTrivia",
@@ -161,7 +161,7 @@
                                                                     },
                                                                     {
                                                                         "kind": "WhitespaceTrivia",
-                                                                        "text": "          "
+                                                                        "text": "        "
                                                                     }
                                                                 ]
                                                             }
@@ -524,7 +524,7 @@
                                                                                     "_identifier": {
                                                                                         "kind": "IdentifierNameToken",
                                                                                         "width": 3,
-                                                                                        "fullWidth": 71,
+                                                                                        "fullWidth": 65,
                                                                                         "text": "foo",
                                                                                         "valueText": "foo",
                                                                                         "hasLeadingTrivia": true,
@@ -533,7 +533,7 @@
                                                                                         "leadingTrivia": [
                                                                                             {
                                                                                                 "kind": "WhitespaceTrivia",
-                                                                                                "text": "              "
+                                                                                                "text": "            "
                                                                                             },
                                                                                             {
                                                                                                 "kind": "SingleLineCommentTrivia",
@@ -545,7 +545,7 @@
                                                                                             },
                                                                                             {
                                                                                                 "kind": "WhitespaceTrivia",
-                                                                                                "text": "              "
+                                                                                                "text": "            "
                                                                                             },
                                                                                             {
                                                                                                 "kind": "SingleLineCommentTrivia",
@@ -557,7 +557,7 @@
                                                                                             },
                                                                                             {
                                                                                                 "kind": "WhitespaceTrivia",
-                                                                                                "text": "              "
+                                                                                                "text": "            "
                                                                                             }
                                                                                         ]
                                                                                     }

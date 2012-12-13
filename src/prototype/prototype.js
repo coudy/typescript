@@ -12253,19 +12253,24 @@ var Emitter = (function (_super) {
             return rewrittenBody;
         }
         var arrowToken = arrowFunction.equalsGreaterThanToken();
-        var arrowTrailingTrivia = arrowToken.trailingTrivia();
         var returnStatement = new ReturnStatementSyntax(SyntaxToken.createElasticKeyword({
             kind: 31 /* ReturnKeyword */ ,
-            trailingTrivia: arrowTrailingTrivia.toArray()
+            trailingTrivia: arrowToken.trailingTrivia().toArray()
         }), rewrittenBody, SyntaxToken.createElastic({
             kind: 75 /* SemicolonToken */ ,
             trailingTrivia: [
                 SyntaxTrivia.carriageReturnLineFeed
             ]
         }));
-        var arrowEndColumn = Indentation.columnForEndOfToken(arrowToken, this.syntaxInformationMap, this.options);
-        var returnKeywordEndColumn = returnStatement.returnKeyword().width();
-        var difference = returnKeywordEndColumn - arrowEndColumn;
+        var difference = 0;
+        if(arrowToken.hasTrailingNewLineTrivia()) {
+            var arrowFunctionStart = Indentation.columnForStartOfToken(arrowFunction.firstToken(), this.syntaxInformationMap, this.options);
+            difference = -arrowFunctionStart;
+        } else {
+            var arrowEndColumn = Indentation.columnForEndOfToken(arrowToken, this.syntaxInformationMap, this.options);
+            var returnKeywordEndColumn = returnStatement.returnKeyword().width();
+            difference = returnKeywordEndColumn - arrowEndColumn;
+        }
         returnStatement = this.changeIndentation(returnStatement, false, difference);
         returnStatement = SyntaxIndenter.indentNode(returnStatement, true, this.options.indentSpaces, this.options);
         var block = new BlockSyntax(SyntaxToken.createElastic({
