@@ -56,8 +56,6 @@ module SyntaxTriviaList {
         }
     }
 
-    export var empty: ISyntaxTriviaList = new EmptySyntaxTriviaList();
-
     function isComment(trivia: ISyntaxTrivia): bool {
         return trivia.kind() === SyntaxKind.MultiLineCommentTrivia || trivia.kind() === SyntaxKind.SingleLineCommentTrivia;
     }
@@ -206,4 +204,7 @@ module SyntaxTriviaList {
 
         return new NormalSyntaxTriviaList(trivia);
     }
+
+    export var empty: ISyntaxTriviaList = new EmptySyntaxTriviaList();
+    export var space: ISyntaxTriviaList = create([SyntaxTrivia.space]);
 }

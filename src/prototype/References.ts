@@ -76,7 +76,10 @@
 ///<reference path='SyntaxToken.generated.ts' />
 ///<reference path='SyntaxTree.ts' />
 ///<reference path='SyntaxTrivia.ts' />
+
+// SyntaxTriviaList depends on SyntaxTrivia.
 ///<reference path='SyntaxTriviaList.ts' />
+
 ///<reference path='SyntaxWalker.generated.ts' />
 
 // SyntaxInformationMap depends on SyntaxWalker.

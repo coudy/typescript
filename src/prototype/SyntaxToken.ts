@@ -388,20 +388,29 @@ module SyntaxToken {
         }
     }
 
-    export function createElasticKeyword(token: IElasticToken): ISyntaxToken {
-        token.keywordKind = token.kind;
-        token.kind = SyntaxKind.IdentifierNameToken;
+    //export function createElastic(token: IElasticToken): ISyntaxToken {
+    //    token.keywordKind = token.kind;
+    //    token.kind = SyntaxKind.IdentifierNameToken;
 
-        return createElastic(token);
-    }
+    //    return createElastic(token);
+    //}
 
     export function createElastic(token: IElasticToken): ISyntaxToken {
-        var text = token.text ? token.text :
-            token.keywordKind ? SyntaxFacts.getText(token.keywordKind) : SyntaxFacts.getText(token.kind);
+        var text = token.text ? token.text : SyntaxFacts.getText(token.kind);
+
+        var kind: SyntaxKind, keywordKind: SyntaxKind;
+        if (SyntaxFacts.isAnyKeyword(token.kind)) {
+            kind = SyntaxKind.IdentifierNameToken;
+            keywordKind = token.kind;
+        }
+        else {
+            kind = token.kind;
+            keywordKind = SyntaxKind.None;
+        }
 
         return new ElasticToken(
-            token.kind,
-            token.keywordKind ? token.keywordKind : SyntaxKind.None,
+            kind,
+            keywordKind,
             SyntaxTriviaList.create(token.leadingTrivia),
             text,
             SyntaxTriviaList.create(token.trailingTrivia));

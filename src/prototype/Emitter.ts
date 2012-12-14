@@ -106,13 +106,13 @@ class Emitter extends SyntaxRewriter {
 
         var variableStatement = VariableStatementSyntax.create(
             new VariableDeclarationSyntax(
-                SyntaxToken.createElasticKeyword({ kind: SyntaxKind.VarKeyword, trailingTrivia: [SyntaxTrivia.space] }),
+                SyntaxToken.createElastic({ kind: SyntaxKind.VarKeyword, trailingTrivia: [SyntaxTrivia.space] }),
                 SeparatedSyntaxList.create(
                     [VariableDeclaratorSyntax.create(name.identifier().clone())])),
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
 
         var functionExpression = FunctionExpressionSyntax.create(
-            SyntaxToken.createElasticKeyword({ kind: SyntaxKind.FunctionKeyword }),
+            SyntaxToken.createElastic({ kind: SyntaxKind.FunctionKeyword }),
             CallSignatureSyntax.create(
                 new ParameterListSyntax(
                     SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
@@ -196,7 +196,7 @@ class Emitter extends SyntaxRewriter {
         var block = this.convertArrowFunctionBody(node);
 
         return FunctionExpressionSyntax.create(
-            SyntaxToken.createElasticKeyword({ leadingTrivia: node.identifier().leadingTrivia().toArray(), kind: SyntaxKind.FunctionKeyword}),
+            SyntaxToken.createElastic({ leadingTrivia: node.identifier().leadingTrivia().toArray(), kind: SyntaxKind.FunctionKeyword}),
             CallSignatureSyntax.create(
                 new ParameterListSyntax(
                     SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
@@ -238,7 +238,7 @@ class Emitter extends SyntaxRewriter {
 
         // first, attach the expression to the return statement
         var returnStatement = new ReturnStatementSyntax(
-            SyntaxToken.createElasticKeyword({ kind: SyntaxKind.ReturnKeyword, trailingTrivia: arrowToken.trailingTrivia().toArray() }),
+            SyntaxToken.createElastic({ kind: SyntaxKind.ReturnKeyword, trailingTrivia: arrowToken.trailingTrivia().toArray() }),
             <ExpressionSyntax>rewrittenBody,
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
 
@@ -377,7 +377,7 @@ class Emitter extends SyntaxRewriter {
         
         var assignmentStatement = new ExpressionStatementSyntax(
             assignment,
-            SyntaxToken.createElasticKeyword({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.space] }));
+            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.space] }));
 
         var block = new BlockSyntax(
             SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: [SyntaxTrivia.space] }),
@@ -385,7 +385,7 @@ class Emitter extends SyntaxRewriter {
             SyntaxToken.createElastic({ kind: SyntaxKind.CloseBraceToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
 
         return new IfStatementSyntax(
-            SyntaxToken.createElasticKeyword({ kind: SyntaxKind.IfKeyword, trailingTrivia: [SyntaxTrivia.space] }),
+            SyntaxToken.createElastic({ kind: SyntaxKind.IfKeyword, trailingTrivia: [SyntaxTrivia.space] }),
             SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
             condition,
             SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken, trailingTrivia: [SyntaxTrivia.space] }),
@@ -431,5 +431,68 @@ class Emitter extends SyntaxRewriter {
                                .withTrailingTrivia(node.lastToken().trailingTrivia());
 
         return ParameterSyntax.create(identifier);
+    }
+
+    public visitClassDeclaration(node: ClassDeclarationSyntax): VariableStatementSyntax {
+        var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
+                                          .withTrailingTrivia(SyntaxTriviaList.empty);
+        
+        var statements: StatementSyntax[] = [];
+
+        var returnStatement = new ReturnStatementSyntax(
+            SyntaxToken.createElastic({ kind: SyntaxKind.ReturnKeyword, trailingTrivia: [SyntaxTrivia.space] }),
+            new IdentifierNameSyntax(identifier.clone()),
+            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
+        returnStatement = <ReturnStatementSyntax>this.changeIndentation(
+            returnStatement, /*changeFirstToken:*/ true, this.options.indentSpaces);
+
+        statements.push(returnStatement);
+
+        var block = new BlockSyntax(
+            SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }),
+            SyntaxList.create(statements),
+            SyntaxToken.createElastic({ kind: SyntaxKind.CloseBraceToken }));
+
+        var callSignature = CallSignatureSyntax.create(
+            ParameterListSyntax.create(
+                SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+                SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken, trailingTrivia: [SyntaxTrivia.space] })));
+
+        var functionExpression = FunctionExpressionSyntax.create(
+            SyntaxToken.createElastic({ kind: SyntaxKind.FunctionKeyword }),
+            callSignature,
+            block);
+
+        var parenthesizedExpression = new ParenthesizedExpressionSyntax(
+            SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+            functionExpression,
+            SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }));
+
+        var invocationExpression = new InvocationExpressionSyntax(
+            parenthesizedExpression,
+            ArgumentListSyntax.create(
+                SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+                SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken })));
+
+        var variableDeclarator = new VariableDeclaratorSyntax(
+            identifier.withTrailingTrivia(SyntaxTriviaList.space),
+            null,
+            new EqualsValueClauseSyntax(
+                SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: [SyntaxTrivia.space] }),
+                invocationExpression));
+
+        var variableDeclaration = new VariableDeclarationSyntax(
+            SyntaxToken.createElastic({ kind: SyntaxKind.VarKeyword, trailingTrivia: [SyntaxTrivia.space] }),
+            SeparatedSyntaxList.create([ variableDeclarator ]));
+
+        var variableStatement = VariableStatementSyntax.create(
+            variableDeclaration,
+            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
+
+        var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+        variableStatement = <VariableStatementSyntax>this.changeIndentation(
+            variableStatement, /*changeFirstToken:*/ true, indentationColumn);
+
+        return variableStatement;
     }
 }

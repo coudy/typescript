@@ -34,7 +34,6 @@ interface ISyntaxToken extends ISyntaxElement {
 
 interface IElasticToken {
     kind: SyntaxKind;
-    keywordKind?: SyntaxKind;
     leadingTrivia?: ISyntaxTrivia[];
     text?: string;
     trailingTrivia?: ISyntaxTrivia[];
