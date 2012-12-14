@@ -1,11 +1,5 @@
 ﻿///<reference path='References.ts' />
 
-//class ScannerTokenInfo {
-//    public Kind: SyntaxKind;
-//    public KeywordKind: SyntaxKind;
-//    public Width: number;
-//}
-
 class Scanner extends SlidingWindow {
     private text: IText = null;
     private stringTable: StringTable;
@@ -73,7 +67,6 @@ class Scanner extends SlidingWindow {
         return this.currentItem(null);
     }
 
-    // private tokenInfo: ScannerTokenInfo = new ScannerTokenInfo();
     private kind: SyntaxKind = SyntaxKind.None;
     private width: number = 0;
 
@@ -95,7 +88,6 @@ class Scanner extends SlidingWindow {
     
     private scanTrivia(isTrailing: bool): ISyntaxTriviaList {
         // Keep this exactly in sync with scanTriviaInfo
-
         var trivia: ISyntaxTrivia[] = [];
 
         while (true) {
@@ -156,7 +148,6 @@ class Scanner extends SlidingWindow {
 
     private scanTriviaInfo(diagnostics: SyntaxDiagnostic[], isTrailing: bool): number {
         // Keep this exactly in sync with scanTrivia
-
         var width = 0;
         var hasComment = false;
         var hasNewLine = false;
@@ -508,13 +499,6 @@ class Scanner extends SlidingWindow {
                     this.kind = ScannerUtilities.identifierKind(this.window, offset, endIndex - startIndex); // SyntaxFacts.getTokenKind(this.tokenInfo.Text);
                 }
 
-                //if (this.keywordKind === SyntaxKind.None) {
-                //    // Because this was all simple ascii characters with no escapes in it, we can set
-                //    // the value for this token right now.  Otherwise, we will defer computing the 
-                //    // value till later.
-                //    this.tokenInfo.Value = this.tokenInfo.Text;
-                //}
-
                 this.releaseAndUnpinAbsoluteIndex(startIndex);
                 return true;
             }
@@ -551,14 +535,6 @@ class Scanner extends SlidingWindow {
         }
 
         this.releaseAndUnpinAbsoluteIndex(startIndex);
-
-        //// From the spec:
-        //// The source character immediately following a NumericLiteral must not be an 
-        //// IdentifierStart or DecimalDigit.
-        //if (this.isIdentifierStart(this.peekCharOrUnicodeEscape())) {
-        //    diagnostics.add(new SyntaxDiagnostic(
-        //        this.absoluteIndex(), 1, DiagnosticCode.Numeric_literal_can_not_be_followed_directly
-        //}
     }
 
     private scanDecimalNumericLiteral(startIndex: number): void {
@@ -606,7 +582,6 @@ class Scanner extends SlidingWindow {
         }
 
         var endIndex = this.absoluteIndex();
-        // this.tokenInfo.Text = this.substring(start, end, /*intern:*/ false);
         this.width = endIndex - startIndex;
         this.kind = SyntaxKind.NumericLiteral;
     }
@@ -963,7 +938,7 @@ class Scanner extends SlidingWindow {
     private scanDefaultCharacter(character: number, diagnostics: SyntaxDiagnostic[]): void {
         var position = this.absoluteIndex();
         this.moveToNextItem();
-        this.width = 1; // = String.fromCharCode(character);
+        this.width = 1;
         this.kind = SyntaxKind.ErrorToken;
 
         var text = String.fromCharCode(character);
@@ -1143,7 +1118,6 @@ class Scanner extends SlidingWindow {
         }
 
         var endIndex = this.absoluteIndex();
-        // this.tokenInfo.Text = this.substring(startIndex, endIndex, true);
         this.width = endIndex - startIndex;
         this.kind = SyntaxKind.StringLiteral;
     }
