@@ -205,7 +205,10 @@ class Emitter extends SyntaxRewriter {
             block);
     }
 
-    private changeIndentation(node: SyntaxNode, changeFirstToken: bool, indentAmount: number): SyntaxNode {
+    private changeIndentation(node: SyntaxNode,
+                              changeFirstToken: bool,
+                              indentAmount: number,
+                              minimumColumn = this.options.indentSpaces): SyntaxNode {
         if (indentAmount === 0) {
             return node;
         }
@@ -222,7 +225,7 @@ class Emitter extends SyntaxRewriter {
                 node,
                 /*dedentFirstToken:*/ changeFirstToken,
                 /*dedentAmount:*/-indentAmount,
-                /*minimumColumn:*/ this.options.indentSpaces,
+                /*minimumColumn:*/minimumColumn,
                 this.options);
         }
     }
@@ -433,11 +436,51 @@ class Emitter extends SyntaxRewriter {
         return ParameterSyntax.create(identifier);
     }
 
-    public visitClassDeclaration(node: ClassDeclarationSyntax): VariableStatementSyntax {
+    private convertConstructorDeclaration(classDeclaration: ClassDeclarationSyntax,
+                                          constructorDeclaration: ConstructorDeclarationSyntax): FunctionDeclarationSyntax {
+        if (constructorDeclaration === null ||
+            constructorDeclaration.block() === null) {
+            return null;
+        }
+
+        var identifier = classDeclaration.identifier()
+                                         .withLeadingTrivia(SyntaxTriviaList.empty)
+                                         .withTrailingTrivia(SyntaxTriviaList.empty);
+
+        var functionSignature = FunctionSignatureSyntax.create(
+            identifier.clone(),
+            constructorDeclaration.parameterList().accept1(this));
+
+        // We're generating FunctionDeclaration at column 0.  So we need to offset the block 
+        // backward to be at that column as well.
+        var block = <BlockSyntax>this.changeIndentation(
+            constructorDeclaration.block().accept1(this),
+            this.syntaxInformationMap.isFirstTokenInLine(constructorDeclaration.block().firstToken()),
+            -Indentation.columnForStartOfToken(constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options),
+            /*minimumColumn:*/ 0);
+
+        var functionDeclaration = new FunctionDeclarationSyntax(null, null,
+            SyntaxToken.createElastic({ kind: SyntaxKind.FunctionKeyword, trailingTrivia: [SyntaxTrivia.space] }),
+            functionSignature,
+            block, null);
+
+        return functionDeclaration;
+    }
+
+    private visitClassDeclaration(node: ClassDeclarationSyntax): VariableStatementSyntax {
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
                                           .withTrailingTrivia(SyntaxTriviaList.empty);
         
         var statements: StatementSyntax[] = [];
+
+        var constructorFunctionDeclaration = this.convertConstructorDeclaration(node,
+            ArrayUtilities.firstOrDefault(node.classElements().toArray(), c => c.kind() === SyntaxKind.ConstructorDeclaration));
+
+        if (constructorFunctionDeclaration !== null) {
+            constructorFunctionDeclaration = <FunctionDeclarationSyntax>this.changeIndentation(
+                constructorFunctionDeclaration, /*changeFirstToken:*/ true, this.options.indentSpaces);
+            statements.push(constructorFunctionDeclaration)
+        }
 
         var returnStatement = new ReturnStatementSyntax(
             SyntaxToken.createElastic({ kind: SyntaxKind.ReturnKeyword, trailingTrivia: [SyntaxTrivia.space] }),

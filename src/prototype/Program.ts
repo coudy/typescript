@@ -6,7 +6,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "AdditiveExpression1.ts";
+    // "ClassDeclaration2";
     undefined;
 
 class Program {

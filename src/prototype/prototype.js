@@ -13955,14 +13955,15 @@ var Emitter = (function (_super) {
             ]
         }))), block);
     };
-    Emitter.prototype.changeIndentation = function (node, changeFirstToken, indentAmount) {
+    Emitter.prototype.changeIndentation = function (node, changeFirstToken, indentAmount, minimumColumn) {
+        if (typeof minimumColumn === "undefined") { minimumColumn = this.options.indentSpaces; }
         if(indentAmount === 0) {
             return node;
         } else {
             if(indentAmount > 0) {
                 return SyntaxIndenter.indentNode(node, changeFirstToken, indentAmount, this.options);
             } else {
-                return SyntaxDedenter.dedentNode(node, changeFirstToken, -indentAmount, this.options.indentSpaces, this.options);
+                return SyntaxDedenter.dedentNode(node, changeFirstToken, -indentAmount, minimumColumn, this.options);
             }
         }
     };
@@ -14108,9 +14109,31 @@ var Emitter = (function (_super) {
         identifier = identifier.withLeadingTrivia(node.firstToken().leadingTrivia()).withTrailingTrivia(node.lastToken().trailingTrivia());
         return ParameterSyntax.create(identifier);
     };
+    Emitter.prototype.convertConstructorDeclaration = function (classDeclaration, constructorDeclaration) {
+        if(constructorDeclaration === null || constructorDeclaration.block() === null) {
+            return null;
+        }
+        var identifier = classDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var functionSignature = FunctionSignatureSyntax.create(identifier.clone(), constructorDeclaration.parameterList().accept1(this));
+        var block = this.changeIndentation(constructorDeclaration.block().accept1(this), this.syntaxInformationMap.isFirstTokenInLine(constructorDeclaration.block().firstToken()), -Indentation.columnForStartOfToken(constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options), 0);
+        var functionDeclaration = new FunctionDeclarationSyntax(null, null, SyntaxToken.createElastic({
+            kind: 25 /* FunctionKeyword */ ,
+            trailingTrivia: [
+                SyntaxTrivia.space
+            ]
+        }), functionSignature, block, null);
+        return functionDeclaration;
+    };
     Emitter.prototype.visitClassDeclaration = function (node) {
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
         var statements = [];
+        var constructorFunctionDeclaration = this.convertConstructorDeclaration(node, ArrayUtilities.firstOrDefault(node.classElements().toArray(), function (c) {
+            return c.kind() === 135 /* ConstructorDeclaration */ ;
+        }));
+        if(constructorFunctionDeclaration !== null) {
+            constructorFunctionDeclaration = this.changeIndentation(constructorFunctionDeclaration, true, this.options.indentSpaces);
+            statements.push(constructorFunctionDeclaration);
+        }
         var returnStatement = new ReturnStatementSyntax(SyntaxToken.createElastic({
             kind: 31 /* ReturnKeyword */ ,
             trailingTrivia: [
