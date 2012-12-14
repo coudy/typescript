@@ -1,6 +1,6 @@
 {
     "fullText": [
-        "    function f(a = 1, b, c = 2) {",
+        "    function f(a, b, c) {",
         "        if (typeof a === \"undefined\") { a = 1; }",
         "        if (typeof c === \"undefined\") { c = 2; }",
         "        return;",
@@ -53,40 +53,8 @@
                                 "_identifier": {
                                     "kind": "IdentifierNameToken",
                                     "width": 1,
-                                    "fullWidth": 2,
                                     "text": "a",
-                                    "valueText": "a",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                },
-                                "_equalsValueClause": {
-                                    "kind": "EqualsValueClause",
-                                    "_equalsToken": {
-                                        "kind": "EqualsToken",
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": "=",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
-                                    },
-                                    "_value": {
-                                        "kind": "NumericLiteralExpression",
-                                        "_literalToken": {
-                                            "kind": "NumericLiteral",
-                                            "width": 1,
-                                            "text": "1"
-                                        }
-                                    }
+                                    "valueText": "a"
                                 }
                             },
                             {
@@ -129,40 +97,8 @@
                                 "_identifier": {
                                     "kind": "IdentifierNameToken",
                                     "width": 1,
-                                    "fullWidth": 2,
                                     "text": "c",
-                                    "valueText": "c",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                },
-                                "_equalsValueClause": {
-                                    "kind": "EqualsValueClause",
-                                    "_equalsToken": {
-                                        "kind": "EqualsToken",
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": "=",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
-                                    },
-                                    "_value": {
-                                        "kind": "NumericLiteralExpression",
-                                        "_literalToken": {
-                                            "kind": "NumericLiteral",
-                                            "width": 1,
-                                            "text": "2"
-                                        }
-                                    }
+                                    "valueText": "c"
                                 }
                             }
                         ],

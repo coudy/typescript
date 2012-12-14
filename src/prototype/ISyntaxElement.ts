@@ -11,5 +11,8 @@ interface ISyntaxElement {
     isTrivia(): bool;
     isMissing(): bool;
 
+    fullWidth(): number;
+    fullText(): string;
+
     collectTextElements(elements: string[]): void;
 }

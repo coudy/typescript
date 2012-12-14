@@ -40,6 +40,10 @@ class SourceUnitSyntax extends SyntaxNode {
         return this._endOfFileToken;
     }
 
+    public lastToken(): ISyntaxToken {
+        return this._endOfFileToken;
+    }
+
     public moduleElements(): ISyntaxList {
         return this._moduleElements;
     }
@@ -130,6 +134,15 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
+        if (this._stringLiteral.width() > 0) { return this._stringLiteral; }
+        if (this._openParenToken.width() > 0) { return this._openParenToken; }
+        if (this._moduleKeyword.width() > 0) { return this._moduleKeyword; }
+        return null;
+    }
+
     public moduleKeyword(): ISyntaxToken {
         return this._moduleKeyword;
     }
@@ -213,6 +226,12 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._moduleName.lastToken()) !== null) { return token; }
+        return null;
+    }
+
     public moduleName(): NameSyntax {
         return this._moduleName;
     }
@@ -283,6 +302,16 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
         if (this._equalsToken.width() > 0) { return this._equalsToken; }
         if ((token = this._moduleReference.firstToken()) !== null) { return token; }
         if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        if ((token = this._moduleReference.lastToken()) !== null) { return token; }
+        if (this._equalsToken.width() > 0) { return this._equalsToken; }
+        if (this._identifier.width() > 0) { return this._identifier; }
+        if (this._importKeyword.width() > 0) { return this._importKeyword; }
         return null;
     }
 
@@ -423,6 +452,20 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
         if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
         if ((token = this._classElements.firstToken()) !== null) { return token; }
         if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
+        if ((token = this._classElements.lastToken()) !== null) { return token; }
+        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
+        if (this._implementsClause !== null && (token = this._implementsClause.lastToken()) !== null) { return token; }
+        if (this._extendsClause !== null && (token = this._extendsClause.lastToken()) !== null) { return token; }
+        if (this._identifier.width() > 0) { return this._identifier; }
+        if (this._classKeyword.width() > 0) { return this._classKeyword; }
+        if (this._declareKeyword !== null && this._declareKeyword.width() > 0) { return this._declareKeyword; }
+        if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
         return null;
     }
 
@@ -585,6 +628,16 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._body.lastToken()) !== null) { return token; }
+        if (this._extendsClause !== null && (token = this._extendsClause.lastToken()) !== null) { return token; }
+        if (this._identifier.width() > 0) { return this._identifier; }
+        if (this._interfaceKeyword.width() > 0) { return this._interfaceKeyword; }
+        if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
+        return null;
+    }
+
     public exportKeyword(): ISyntaxToken {
         return this._exportKeyword;
     }
@@ -687,6 +740,13 @@ class ExtendsClauseSyntax extends SyntaxNode {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._typeNames.lastToken()) !== null) { return token; }
+        if (this._extendsKeyword.width() > 0) { return this._extendsKeyword; }
+        return null;
+    }
+
     public extendsKeyword(): ISyntaxToken {
         return this._extendsKeyword;
     }
@@ -756,6 +816,13 @@ class ImplementsClauseSyntax extends SyntaxNode {
         var token = null;
         if (this._implementsKeyword.width() > 0) { return this._implementsKeyword; }
         if ((token = this._typeNames.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._typeNames.lastToken()) !== null) { return token; }
+        if (this._implementsKeyword.width() > 0) { return this._implementsKeyword; }
         return null;
     }
 
@@ -860,6 +927,19 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
         if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
         if ((token = this._moduleElements.firstToken()) !== null) { return token; }
         if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
+        if ((token = this._moduleElements.lastToken()) !== null) { return token; }
+        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
+        if (this._stringLiteral !== null && this._stringLiteral.width() > 0) { return this._stringLiteral; }
+        if (this._moduleName !== null && (token = this._moduleName.lastToken()) !== null) { return token; }
+        if (this._moduleKeyword.width() > 0) { return this._moduleKeyword; }
+        if (this._declareKeyword !== null && this._declareKeyword.width() > 0) { return this._declareKeyword; }
+        if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
         return null;
     }
 
@@ -1022,6 +1102,17 @@ class FunctionDeclarationSyntax extends StatementSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._semicolonToken !== null && this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        if (this._block !== null && (token = this._block.lastToken()) !== null) { return token; }
+        if ((token = this._functionSignature.lastToken()) !== null) { return token; }
+        if (this._functionKeyword.width() > 0) { return this._functionKeyword; }
+        if (this._declareKeyword !== null && this._declareKeyword.width() > 0) { return this._declareKeyword; }
+        if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
+        return null;
+    }
+
     public exportKeyword(): ISyntaxToken {
         return this._exportKeyword;
     }
@@ -1145,6 +1236,15 @@ class VariableStatementSyntax extends StatementSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        if ((token = this._variableDeclaration.lastToken()) !== null) { return token; }
+        if (this._declareKeyword !== null && this._declareKeyword.width() > 0) { return this._declareKeyword; }
+        if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
+        return null;
+    }
+
     public exportKeyword(): ISyntaxToken {
         return this._exportKeyword;
     }
@@ -1249,6 +1349,13 @@ class VariableDeclarationSyntax extends SyntaxNode {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._variableDeclarators.lastToken()) !== null) { return token; }
+        if (this._varKeyword.width() > 0) { return this._varKeyword; }
+        return null;
+    }
+
     public varKeyword(): ISyntaxToken {
         return this._varKeyword;
     }
@@ -1323,6 +1430,14 @@ class VariableDeclaratorSyntax extends SyntaxNode {
         if (this._identifier.width() > 0) { return this._identifier; }
         if (this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) { return token; }
         if (this._equalsValueClause !== null && (token = this._equalsValueClause.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._equalsValueClause !== null && (token = this._equalsValueClause.lastToken()) !== null) { return token; }
+        if (this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) { return token; }
+        if (this._identifier.width() > 0) { return this._identifier; }
         return null;
     }
 
@@ -1404,6 +1519,13 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._value.lastToken()) !== null) { return token; }
+        if (this._equalsToken.width() > 0) { return this._equalsToken; }
+        return null;
+    }
+
     public equalsToken(): ISyntaxToken {
         return this._equalsToken;
     }
@@ -1468,6 +1590,13 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
         var token = null;
         if (this._operatorToken.width() > 0) { return this._operatorToken; }
         if ((token = this._operand.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._operand.lastToken()) !== null) { return token; }
+        if (this._operatorToken.width() > 0) { return this._operatorToken; }
         return null;
     }
 
@@ -1543,6 +1672,12 @@ class ThisExpressionSyntax extends UnaryExpressionSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._thisKeyword.width() > 0) { return this._thisKeyword; }
+        return null;
+    }
+
     public thisKeyword(): ISyntaxToken {
         return this._thisKeyword;
     }
@@ -1590,6 +1725,12 @@ class LiteralExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     public firstToken(): ISyntaxToken {
+        var token = null;
+        if (this._literalToken.width() > 0) { return this._literalToken; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
         var token = null;
         if (this._literalToken.width() > 0) { return this._literalToken; }
         return null;
@@ -1672,6 +1813,14 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._closeBracketToken.width() > 0) { return this._closeBracketToken; }
+        if ((token = this._expressions.lastToken()) !== null) { return token; }
+        if (this._openBracketToken.width() > 0) { return this._openBracketToken; }
+        return null;
+    }
+
     public openBracketToken(): ISyntaxToken {
         return this._openBracketToken;
     }
@@ -1739,6 +1888,11 @@ class OmittedExpressionSyntax extends ExpressionSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        return null;
+    }
+
     private update() {
         return this;
     }
@@ -1786,6 +1940,14 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
         if (this._openParenToken.width() > 0) { return this._openParenToken; }
         if ((token = this._expression.firstToken()) !== null) { return token; }
         if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
+        if ((token = this._expression.lastToken()) !== null) { return token; }
+        if (this._openParenToken.width() > 0) { return this._openParenToken; }
         return null;
     }
 
@@ -1886,6 +2048,14 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._body.lastToken()) !== null) { return token; }
+        if (this._equalsGreaterThanToken.width() > 0) { return this._equalsGreaterThanToken; }
+        if (this._identifier.width() > 0) { return this._identifier; }
+        return null;
+    }
+
     public identifier(): ISyntaxToken {
         return this._identifier;
     }
@@ -1966,6 +2136,14 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
         if ((token = this._callSignature.firstToken()) !== null) { return token; }
         if (this._equalsGreaterThanToken.width() > 0) { return this._equalsGreaterThanToken; }
         if ((token = this._body.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._body.lastToken()) !== null) { return token; }
+        if (this._equalsGreaterThanToken.width() > 0) { return this._equalsGreaterThanToken; }
+        if ((token = this._callSignature.lastToken()) !== null) { return token; }
         return null;
     }
 
@@ -2054,6 +2232,12 @@ class IdentifierNameSyntax extends NameSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._identifier.width() > 0) { return this._identifier; }
+        return null;
+    }
+
     public identifier(): ISyntaxToken {
         return this._identifier;
     }
@@ -2114,6 +2298,14 @@ class QualifiedNameSyntax extends NameSyntax {
         if ((token = this._left.firstToken()) !== null) { return token; }
         if (this._dotToken.width() > 0) { return this._dotToken; }
         if ((token = this._right.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._right.lastToken()) !== null) { return token; }
+        if (this._dotToken.width() > 0) { return this._dotToken; }
+        if ((token = this._left.lastToken()) !== null) { return token; }
         return null;
     }
 
@@ -2202,6 +2394,15 @@ class ConstructorTypeSyntax extends TypeSyntax {
         if ((token = this._parameterList.firstToken()) !== null) { return token; }
         if (this._equalsGreaterThanToken.width() > 0) { return this._equalsGreaterThanToken; }
         if ((token = this._type.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._type.lastToken()) !== null) { return token; }
+        if (this._equalsGreaterThanToken.width() > 0) { return this._equalsGreaterThanToken; }
+        if ((token = this._parameterList.lastToken()) !== null) { return token; }
+        if (this._newKeyword.width() > 0) { return this._newKeyword; }
         return null;
     }
 
@@ -2298,6 +2499,14 @@ class FunctionTypeSyntax extends TypeSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._type.lastToken()) !== null) { return token; }
+        if (this._equalsGreaterThanToken.width() > 0) { return this._equalsGreaterThanToken; }
+        if ((token = this._parameterList.lastToken()) !== null) { return token; }
+        return null;
+    }
+
     public parameterList(): ParameterListSyntax {
         return this._parameterList;
     }
@@ -2386,6 +2595,14 @@ class ObjectTypeSyntax extends TypeSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
+        if ((token = this._typeMembers.lastToken()) !== null) { return token; }
+        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
+        return null;
+    }
+
     public openBraceToken(): ISyntaxToken {
         return this._openBraceToken;
     }
@@ -2469,6 +2686,14 @@ class ArrayTypeSyntax extends TypeSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._closeBracketToken.width() > 0) { return this._closeBracketToken; }
+        if (this._openBracketToken.width() > 0) { return this._openBracketToken; }
+        if ((token = this._type.lastToken()) !== null) { return token; }
+        return null;
+    }
+
     public type(): TypeSyntax {
         return this._type;
     }
@@ -2542,6 +2767,12 @@ class PredefinedTypeSyntax extends TypeSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._keyword.width() > 0) { return this._keyword; }
+        return null;
+    }
+
     public keyword(): ISyntaxToken {
         return this._keyword;
     }
@@ -2597,6 +2828,13 @@ class TypeAnnotationSyntax extends SyntaxNode {
         var token = null;
         if (this._colonToken.width() > 0) { return this._colonToken; }
         if ((token = this._type.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._type.lastToken()) !== null) { return token; }
+        if (this._colonToken.width() > 0) { return this._colonToken; }
         return null;
     }
 
@@ -2675,6 +2913,14 @@ class BlockSyntax extends StatementSyntax {
         if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
         if ((token = this._statements.firstToken()) !== null) { return token; }
         if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
+        if ((token = this._statements.lastToken()) !== null) { return token; }
+        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
         return null;
     }
 
@@ -2777,6 +3023,17 @@ class ParameterSyntax extends SyntaxNode {
         if (this._questionToken !== null && this._questionToken.width() > 0) { return this._questionToken; }
         if (this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) { return token; }
         if (this._equalsValueClause !== null && (token = this._equalsValueClause.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._equalsValueClause !== null && (token = this._equalsValueClause.lastToken()) !== null) { return token; }
+        if (this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) { return token; }
+        if (this._questionToken !== null && this._questionToken.width() > 0) { return this._questionToken; }
+        if (this._identifier.width() > 0) { return this._identifier; }
+        if (this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) { return this._publicOrPrivateKeyword; }
+        if (this._dotDotDotToken !== null && this._dotDotDotToken.width() > 0) { return this._dotDotDotToken; }
         return null;
     }
 
@@ -2893,6 +3150,14 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._identifierName.lastToken()) !== null) { return token; }
+        if (this._dotToken.width() > 0) { return this._dotToken; }
+        if ((token = this._expression.lastToken()) !== null) { return token; }
+        return null;
+    }
+
     public expression(): ExpressionSyntax {
         return this._expression;
     }
@@ -2967,6 +3232,13 @@ class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
         var token = null;
         if ((token = this._operand.firstToken()) !== null) { return token; }
         if (this._operatorToken.width() > 0) { return this._operatorToken; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._operatorToken.width() > 0) { return this._operatorToken; }
+        if ((token = this._operand.lastToken()) !== null) { return token; }
         return null;
     }
 
@@ -3054,6 +3326,15 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
         if (this._openBracketToken.width() > 0) { return this._openBracketToken; }
         if ((token = this._argumentExpression.firstToken()) !== null) { return token; }
         if (this._closeBracketToken.width() > 0) { return this._closeBracketToken; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._closeBracketToken.width() > 0) { return this._closeBracketToken; }
+        if ((token = this._argumentExpression.lastToken()) !== null) { return token; }
+        if (this._openBracketToken.width() > 0) { return this._openBracketToken; }
+        if ((token = this._expression.lastToken()) !== null) { return token; }
         return null;
     }
 
@@ -3145,6 +3426,13 @@ class InvocationExpressionSyntax extends UnaryExpressionSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._argumentList.lastToken()) !== null) { return token; }
+        if ((token = this._expression.lastToken()) !== null) { return token; }
+        return null;
+    }
+
     public expression(): ExpressionSyntax {
         return this._expression;
     }
@@ -3220,6 +3508,14 @@ class ArgumentListSyntax extends SyntaxNode {
         if (this._openParenToken.width() > 0) { return this._openParenToken; }
         if ((token = this._arguments.firstToken()) !== null) { return token; }
         if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
+        if ((token = this._arguments.lastToken()) !== null) { return token; }
+        if (this._openParenToken.width() > 0) { return this._openParenToken; }
         return null;
     }
 
@@ -3302,6 +3598,14 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
         if ((token = this._left.firstToken()) !== null) { return token; }
         if (this._operatorToken.width() > 0) { return this._operatorToken; }
         if ((token = this._right.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._right.lastToken()) !== null) { return token; }
+        if (this._operatorToken.width() > 0) { return this._operatorToken; }
+        if ((token = this._left.lastToken()) !== null) { return token; }
         return null;
     }
 
@@ -3404,6 +3708,16 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
         if ((token = this._whenTrue.firstToken()) !== null) { return token; }
         if (this._colonToken.width() > 0) { return this._colonToken; }
         if ((token = this._whenFalse.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._whenFalse.lastToken()) !== null) { return token; }
+        if (this._colonToken.width() > 0) { return this._colonToken; }
+        if ((token = this._whenTrue.lastToken()) !== null) { return token; }
+        if (this._questionToken.width() > 0) { return this._questionToken; }
+        if ((token = this._condition.lastToken()) !== null) { return token; }
         return null;
     }
 
@@ -3525,6 +3839,14 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) { return token; }
+        if ((token = this._parameterList.lastToken()) !== null) { return token; }
+        if (this._newKeyword.width() > 0) { return this._newKeyword; }
+        return null;
+    }
+
     public newKeyword(): ISyntaxToken {
         return this._newKeyword;
     }
@@ -3615,6 +3937,15 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         if (this._questionToken !== null && this._questionToken.width() > 0) { return this._questionToken; }
         if ((token = this._parameterList.firstToken()) !== null) { return token; }
         if (this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) { return token; }
+        if ((token = this._parameterList.lastToken()) !== null) { return token; }
+        if (this._questionToken !== null && this._questionToken.width() > 0) { return this._questionToken; }
+        if (this._identifier.width() > 0) { return this._identifier; }
         return null;
     }
 
@@ -3722,6 +4053,15 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) { return token; }
+        if (this._closeBracketToken.width() > 0) { return this._closeBracketToken; }
+        if ((token = this._parameter.lastToken()) !== null) { return token; }
+        if (this._openBracketToken.width() > 0) { return this._openBracketToken; }
+        return null;
+    }
+
     public openBracketToken(): ISyntaxToken {
         return this._openBracketToken;
     }
@@ -3819,6 +4159,14 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) { return token; }
+        if (this._questionToken !== null && this._questionToken.width() > 0) { return this._questionToken; }
+        if (this._identifier.width() > 0) { return this._identifier; }
+        return null;
+    }
+
     public identifier(): ISyntaxToken {
         return this._identifier;
     }
@@ -3907,6 +4255,14 @@ class ParameterListSyntax extends SyntaxNode {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
+        if ((token = this._parameters.lastToken()) !== null) { return token; }
+        if (this._openParenToken.width() > 0) { return this._openParenToken; }
+        return null;
+    }
+
     public openParenToken(): ISyntaxToken {
         return this._openParenToken;
     }
@@ -3989,6 +4345,13 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) { return token; }
+        if ((token = this._parameterList.lastToken()) !== null) { return token; }
+        return null;
+    }
+
     public parameterList(): ParameterListSyntax {
         return this._parameterList;
     }
@@ -4054,6 +4417,13 @@ class ElseClauseSyntax extends SyntaxNode {
         var token = null;
         if (this._elseKeyword.width() > 0) { return this._elseKeyword; }
         if ((token = this._statement.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._statement.lastToken()) !== null) { return token; }
+        if (this._elseKeyword.width() > 0) { return this._elseKeyword; }
         return null;
     }
 
@@ -4150,6 +4520,17 @@ class IfStatementSyntax extends StatementSyntax {
         if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
         if ((token = this._statement.firstToken()) !== null) { return token; }
         if (this._elseClause !== null && (token = this._elseClause.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._elseClause !== null && (token = this._elseClause.lastToken()) !== null) { return token; }
+        if ((token = this._statement.lastToken()) !== null) { return token; }
+        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
+        if ((token = this._condition.lastToken()) !== null) { return token; }
+        if (this._openParenToken.width() > 0) { return this._openParenToken; }
+        if (this._ifKeyword.width() > 0) { return this._ifKeyword; }
         return null;
     }
 
@@ -4261,6 +4642,13 @@ class ExpressionStatementSyntax extends StatementSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        if ((token = this._expression.lastToken()) !== null) { return token; }
+        return null;
+    }
+
     public expression(): ExpressionSyntax {
         return this._expression;
     }
@@ -4347,6 +4735,15 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
         if ((token = this._parameterList.firstToken()) !== null) { return token; }
         if (this._block !== null && (token = this._block.firstToken()) !== null) { return token; }
         if (this._semicolonToken !== null && this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._semicolonToken !== null && this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        if (this._block !== null && (token = this._block.lastToken()) !== null) { return token; }
+        if ((token = this._parameterList.lastToken()) !== null) { return token; }
+        if (this._constructorKeyword.width() > 0) { return this._constructorKeyword; }
         return null;
     }
 
@@ -4468,6 +4865,16 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
         if ((token = this._functionSignature.firstToken()) !== null) { return token; }
         if (this._block !== null && (token = this._block.firstToken()) !== null) { return token; }
         if (this._semicolonToken !== null && this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._semicolonToken !== null && this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        if (this._block !== null && (token = this._block.lastToken()) !== null) { return token; }
+        if ((token = this._functionSignature.lastToken()) !== null) { return token; }
+        if (this._staticKeyword !== null && this._staticKeyword.width() > 0) { return this._staticKeyword; }
+        if (this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) { return this._publicOrPrivateKeyword; }
         return null;
     }
 
@@ -4627,6 +5034,18 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._block.lastToken()) !== null) { return token; }
+        if (this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) { return token; }
+        if ((token = this._parameterList.lastToken()) !== null) { return token; }
+        if (this._identifier.width() > 0) { return this._identifier; }
+        if (this._getKeyword.width() > 0) { return this._getKeyword; }
+        if (this._staticKeyword !== null && this._staticKeyword.width() > 0) { return this._staticKeyword; }
+        if (this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) { return this._publicOrPrivateKeyword; }
+        return null;
+    }
+
     public publicOrPrivateKeyword(): ISyntaxToken {
         return this._publicOrPrivateKeyword;
     }
@@ -4772,6 +5191,17 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._block.lastToken()) !== null) { return token; }
+        if ((token = this._parameterList.lastToken()) !== null) { return token; }
+        if (this._identifier.width() > 0) { return this._identifier; }
+        if (this._setKeyword.width() > 0) { return this._setKeyword; }
+        if (this._staticKeyword !== null && this._staticKeyword.width() > 0) { return this._staticKeyword; }
+        if (this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) { return this._publicOrPrivateKeyword; }
+        return null;
+    }
+
     public publicOrPrivateKeyword(): ISyntaxToken {
         return this._publicOrPrivateKeyword;
     }
@@ -4895,6 +5325,15 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        if ((token = this._variableDeclarator.lastToken()) !== null) { return token; }
+        if (this._staticKeyword !== null && this._staticKeyword.width() > 0) { return this._staticKeyword; }
+        if (this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) { return this._publicOrPrivateKeyword; }
+        return null;
+    }
+
     public publicOrPrivateKeyword(): ISyntaxToken {
         return this._publicOrPrivateKeyword;
     }
@@ -4988,6 +5427,14 @@ class ThrowStatementSyntax extends StatementSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        if ((token = this._expression.lastToken()) !== null) { return token; }
+        if (this._throwKeyword.width() > 0) { return this._throwKeyword; }
+        return null;
+    }
+
     public throwKeyword(): ISyntaxToken {
         return this._throwKeyword;
     }
@@ -5076,6 +5523,14 @@ class ReturnStatementSyntax extends StatementSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        if (this._expression !== null && (token = this._expression.lastToken()) !== null) { return token; }
+        if (this._returnKeyword.width() > 0) { return this._returnKeyword; }
+        return null;
+    }
+
     public returnKeyword(): ISyntaxToken {
         return this._returnKeyword;
     }
@@ -5161,6 +5616,14 @@ class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
         if (this._newKeyword.width() > 0) { return this._newKeyword; }
         if ((token = this._expression.firstToken()) !== null) { return token; }
         if (this._argumentList !== null && (token = this._argumentList.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._argumentList !== null && (token = this._argumentList.lastToken()) !== null) { return token; }
+        if ((token = this._expression.lastToken()) !== null) { return token; }
+        if (this._newKeyword.width() > 0) { return this._newKeyword; }
         return null;
     }
 
@@ -5273,6 +5736,18 @@ class SwitchStatementSyntax extends StatementSyntax {
         if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
         if ((token = this._caseClauses.firstToken()) !== null) { return token; }
         if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
+        if ((token = this._caseClauses.lastToken()) !== null) { return token; }
+        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
+        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
+        if ((token = this._expression.lastToken()) !== null) { return token; }
+        if (this._openParenToken.width() > 0) { return this._openParenToken; }
+        if (this._switchKeyword.width() > 0) { return this._switchKeyword; }
         return null;
     }
 
@@ -5424,6 +5899,15 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._statements.lastToken()) !== null) { return token; }
+        if (this._colonToken.width() > 0) { return this._colonToken; }
+        if ((token = this._expression.lastToken()) !== null) { return token; }
+        if (this._caseKeyword.width() > 0) { return this._caseKeyword; }
+        return null;
+    }
+
     public caseKeyword(): ISyntaxToken {
         return this._caseKeyword;
     }
@@ -5522,6 +6006,14 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._statements.lastToken()) !== null) { return token; }
+        if (this._colonToken.width() > 0) { return this._colonToken; }
+        if (this._defaultKeyword.width() > 0) { return this._defaultKeyword; }
+        return null;
+    }
+
     public defaultKeyword(): ISyntaxToken {
         return this._defaultKeyword;
     }
@@ -5610,6 +6102,14 @@ class BreakStatementSyntax extends StatementSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        if (this._identifier !== null && this._identifier.width() > 0) { return this._identifier; }
+        if (this._breakKeyword.width() > 0) { return this._breakKeyword; }
+        return null;
+    }
+
     public breakKeyword(): ISyntaxToken {
         return this._breakKeyword;
     }
@@ -5695,6 +6195,14 @@ class ContinueStatementSyntax extends StatementSyntax {
         if (this._continueKeyword.width() > 0) { return this._continueKeyword; }
         if (this._identifier !== null && this._identifier.width() > 0) { return this._identifier; }
         if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        if (this._identifier !== null && this._identifier.width() > 0) { return this._identifier; }
+        if (this._continueKeyword.width() > 0) { return this._continueKeyword; }
         return null;
     }
 
@@ -5866,6 +6374,21 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         if (this._incrementor !== null && (token = this._incrementor.firstToken()) !== null) { return token; }
         if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
         if ((token = this._statement.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._statement.lastToken()) !== null) { return token; }
+        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
+        if (this._incrementor !== null && (token = this._incrementor.lastToken()) !== null) { return token; }
+        if (this._secondSemicolonToken.width() > 0) { return this._secondSemicolonToken; }
+        if (this._condition !== null && (token = this._condition.lastToken()) !== null) { return token; }
+        if (this._firstSemicolonToken.width() > 0) { return this._firstSemicolonToken; }
+        if (this._initializer !== null && (token = this._initializer.lastToken()) !== null) { return token; }
+        if (this._variableDeclaration !== null && (token = this._variableDeclaration.lastToken()) !== null) { return token; }
+        if (this._openParenToken.width() > 0) { return this._openParenToken; }
+        if (this._forKeyword.width() > 0) { return this._forKeyword; }
         return null;
     }
 
@@ -6056,6 +6579,19 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._statement.lastToken()) !== null) { return token; }
+        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
+        if ((token = this._expression.lastToken()) !== null) { return token; }
+        if (this._inKeyword.width() > 0) { return this._inKeyword; }
+        if (this._left !== null && (token = this._left.lastToken()) !== null) { return token; }
+        if (this._variableDeclaration !== null && (token = this._variableDeclaration.lastToken()) !== null) { return token; }
+        if (this._openParenToken.width() > 0) { return this._openParenToken; }
+        if (this._forKeyword.width() > 0) { return this._forKeyword; }
+        return null;
+    }
+
     public forKeyword(): ISyntaxToken {
         return this._forKeyword;
     }
@@ -6199,6 +6735,16 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._statement.lastToken()) !== null) { return token; }
+        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
+        if ((token = this._condition.lastToken()) !== null) { return token; }
+        if (this._openParenToken.width() > 0) { return this._openParenToken; }
+        if (this._whileKeyword.width() > 0) { return this._whileKeyword; }
+        return null;
+    }
+
     public whileKeyword(): ISyntaxToken {
         return this._whileKeyword;
     }
@@ -6309,6 +6855,16 @@ class WithStatementSyntax extends StatementSyntax {
         if ((token = this._condition.firstToken()) !== null) { return token; }
         if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
         if ((token = this._statement.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._statement.lastToken()) !== null) { return token; }
+        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
+        if ((token = this._condition.lastToken()) !== null) { return token; }
+        if (this._openParenToken.width() > 0) { return this._openParenToken; }
+        if (this._withKeyword.width() > 0) { return this._withKeyword; }
         return null;
     }
 
@@ -6437,6 +6993,17 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
+        if ((token = this._variableDeclarators.lastToken()) !== null) { return token; }
+        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
+        if (this._identifier.width() > 0) { return this._identifier; }
+        if (this._enumKeyword.width() > 0) { return this._enumKeyword; }
+        if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
+        return null;
+    }
+
     public exportKeyword(): ISyntaxToken {
         return this._exportKeyword;
     }
@@ -6555,6 +7122,15 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._expression.lastToken()) !== null) { return token; }
+        if (this._greaterThanToken.width() > 0) { return this._greaterThanToken; }
+        if ((token = this._type.lastToken()) !== null) { return token; }
+        if (this._lessThanToken.width() > 0) { return this._lessThanToken; }
+        return null;
+    }
+
     public lessThanToken(): ISyntaxToken {
         return this._lessThanToken;
     }
@@ -6653,6 +7229,14 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
+        if ((token = this._propertyAssignments.lastToken()) !== null) { return token; }
+        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
+        return null;
+    }
+
     public openBraceToken(): ISyntaxToken {
         return this._openBraceToken;
     }
@@ -6743,6 +7327,14 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         if (this._propertyName.width() > 0) { return this._propertyName; }
         if (this._colonToken.width() > 0) { return this._colonToken; }
         if ((token = this._expression.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._expression.lastToken()) !== null) { return token; }
+        if (this._colonToken.width() > 0) { return this._colonToken; }
+        if (this._propertyName.width() > 0) { return this._propertyName; }
         return null;
     }
 
@@ -6861,6 +7453,16 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._block.lastToken()) !== null) { return token; }
+        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
+        if (this._openParenToken.width() > 0) { return this._openParenToken; }
+        if (this._propertyName.width() > 0) { return this._propertyName; }
+        if (this._getKeyword.width() > 0) { return this._getKeyword; }
+        return null;
+    }
+
     public getKeyword(): ISyntaxToken {
         return this._getKeyword;
     }
@@ -6976,6 +7578,17 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         if (this._parameterName.width() > 0) { return this._parameterName; }
         if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
         if ((token = this._block.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._block.lastToken()) !== null) { return token; }
+        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
+        if (this._parameterName.width() > 0) { return this._parameterName; }
+        if (this._openParenToken.width() > 0) { return this._openParenToken; }
+        if (this._propertyName.width() > 0) { return this._propertyName; }
+        if (this._setKeyword.width() > 0) { return this._setKeyword; }
         return null;
     }
 
@@ -7103,6 +7716,15 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._block.lastToken()) !== null) { return token; }
+        if ((token = this._callSignature.lastToken()) !== null) { return token; }
+        if (this._identifier !== null && this._identifier.width() > 0) { return this._identifier; }
+        if (this._functionKeyword.width() > 0) { return this._functionKeyword; }
+        return null;
+    }
+
     public functionKeyword(): ISyntaxToken {
         return this._functionKeyword;
     }
@@ -7186,6 +7808,12 @@ class EmptyStatementSyntax extends StatementSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        return null;
+    }
+
     public semicolonToken(): ISyntaxToken {
         return this._semicolonToken;
     }
@@ -7234,6 +7862,12 @@ class SuperExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     public firstToken(): ISyntaxToken {
+        var token = null;
+        if (this._superKeyword.width() > 0) { return this._superKeyword; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
         var token = null;
         if (this._superKeyword.width() > 0) { return this._superKeyword; }
         return null;
@@ -7309,6 +7943,15 @@ class TryStatementSyntax extends StatementSyntax {
         if ((token = this._block.firstToken()) !== null) { return token; }
         if (this._catchClause !== null && (token = this._catchClause.firstToken()) !== null) { return token; }
         if (this._finallyClause !== null && (token = this._finallyClause.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._finallyClause !== null && (token = this._finallyClause.lastToken()) !== null) { return token; }
+        if (this._catchClause !== null && (token = this._catchClause.lastToken()) !== null) { return token; }
+        if ((token = this._block.lastToken()) !== null) { return token; }
+        if (this._tryKeyword.width() > 0) { return this._tryKeyword; }
         return null;
     }
 
@@ -7415,6 +8058,16 @@ class CatchClauseSyntax extends SyntaxNode {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._block.lastToken()) !== null) { return token; }
+        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
+        if (this._identifier.width() > 0) { return this._identifier; }
+        if (this._openParenToken.width() > 0) { return this._openParenToken; }
+        if (this._catchKeyword.width() > 0) { return this._catchKeyword; }
+        return null;
+    }
+
     public catchKeyword(): ISyntaxToken {
         return this._catchKeyword;
     }
@@ -7513,6 +8166,13 @@ class FinallyClauseSyntax extends SyntaxNode {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._block.lastToken()) !== null) { return token; }
+        if (this._finallyKeyword.width() > 0) { return this._finallyKeyword; }
+        return null;
+    }
+
     public finallyKeyword(): ISyntaxToken {
         return this._finallyKeyword;
     }
@@ -7583,6 +8243,14 @@ class LabeledStatement extends StatementSyntax {
         if (this._identifier.width() > 0) { return this._identifier; }
         if (this._colonToken.width() > 0) { return this._colonToken; }
         if ((token = this._statement.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._statement.lastToken()) !== null) { return token; }
+        if (this._colonToken.width() > 0) { return this._colonToken; }
+        if (this._identifier.width() > 0) { return this._identifier; }
         return null;
     }
 
@@ -7686,6 +8354,18 @@ class DoStatementSyntax extends IterationStatementSyntax {
         if ((token = this._condition.firstToken()) !== null) { return token; }
         if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
         if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
+        if ((token = this._condition.lastToken()) !== null) { return token; }
+        if (this._openParenToken.width() > 0) { return this._openParenToken; }
+        if (this._whileKeyword.width() > 0) { return this._whileKeyword; }
+        if ((token = this._statement.lastToken()) !== null) { return token; }
+        if (this._doKeyword.width() > 0) { return this._doKeyword; }
         return null;
     }
 
@@ -7807,6 +8487,13 @@ class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._expression.lastToken()) !== null) { return token; }
+        if (this._typeOfKeyword.width() > 0) { return this._typeOfKeyword; }
+        return null;
+    }
+
     public typeOfKeyword(): ISyntaxToken {
         return this._typeOfKeyword;
     }
@@ -7872,6 +8559,13 @@ class DeleteExpressionSyntax extends UnaryExpressionSyntax {
         var token = null;
         if (this._deleteKeyword.width() > 0) { return this._deleteKeyword; }
         if ((token = this._expression.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._expression.lastToken()) !== null) { return token; }
+        if (this._deleteKeyword.width() > 0) { return this._deleteKeyword; }
         return null;
     }
 
@@ -7943,6 +8637,13 @@ class VoidExpressionSyntax extends UnaryExpressionSyntax {
         return null;
     }
 
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._expression.lastToken()) !== null) { return token; }
+        if (this._voidKeyword.width() > 0) { return this._voidKeyword; }
+        return null;
+    }
+
     public voidKeyword(): ISyntaxToken {
         return this._voidKeyword;
     }
@@ -8008,6 +8709,13 @@ class DebuggerStatementSyntax extends StatementSyntax {
         var token = null;
         if (this._debuggerKeyword.width() > 0) { return this._debuggerKeyword; }
         if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
+        if (this._debuggerKeyword.width() > 0) { return this._debuggerKeyword; }
         return null;
     }
 

@@ -6,4 +6,5 @@ interface ISyntaxList extends ISyntaxElement {
     toArray(): SyntaxNode[];
 
     firstToken(): ISyntaxToken;
+    lastToken(): ISyntaxToken;
 }

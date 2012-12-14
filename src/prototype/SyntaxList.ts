@@ -43,6 +43,18 @@ module SyntaxList {
         public firstToken(): ISyntaxToken {
             return null;
         }
+
+        public lastToken(): ISyntaxToken {
+            return null;
+        }
+
+        public fullWidth(): number {
+            return 0;
+        }
+
+        public fullText(): string {
+            return "";
+        }
     }
 
     export var empty: ISyntaxList = new EmptySyntaxList();
@@ -89,6 +101,18 @@ module SyntaxList {
 
         public firstToken(): ISyntaxToken {
             return this._item.firstToken();
+        }
+
+        public lastToken(): ISyntaxToken {
+            return this._item.lastToken();
+        }
+
+        public fullWidth(): number {
+            return this._item.fullWidth();
+        }
+
+        public fullText(): string {
+            return this._item.fullText();
         }
     }
 
@@ -150,6 +174,32 @@ module SyntaxList {
             }
 
             return null;
+        }
+
+        public lastToken(): ISyntaxToken {
+            for (var i = this.nodes.length - 1; i >= 0; i--) {
+                var token = this.nodes[i].lastToken();
+                if (token !== null) {
+                    return token;
+                }
+            }
+
+            return null;
+        }
+
+        public fullText(): string {
+            var elements: string[] = [];
+            this.collectTextElements(elements);
+            return elements.join("");
+        }
+
+        public fullWidth(): number {
+            var width = 0
+            for (var i = 0, n = this.nodes.length; i < n; i++) {
+                width += this.nodes[i].fullWidth();
+            }
+
+            return width;
         }
     }
 

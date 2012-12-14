@@ -1,6 +1,6 @@
 {
     "fullText": [
-        "    function f(a = 1) {",
+        "    function f(a) {",
         "        if (typeof a === \"undefined\") { a = 1; }",
         "        (function(b) {",
         "            return c;",
@@ -54,40 +54,8 @@
                                 "_identifier": {
                                     "kind": "IdentifierNameToken",
                                     "width": 1,
-                                    "fullWidth": 2,
                                     "text": "a",
-                                    "valueText": "a",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                },
-                                "_equalsValueClause": {
-                                    "kind": "EqualsValueClause",
-                                    "_equalsToken": {
-                                        "kind": "EqualsToken",
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": "=",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
-                                    },
-                                    "_value": {
-                                        "kind": "NumericLiteralExpression",
-                                        "_literalToken": {
-                                            "kind": "NumericLiteral",
-                                            "width": 1,
-                                            "text": "1"
-                                        }
-                                    }
+                                    "valueText": "a"
                                 }
                             }
                         ],

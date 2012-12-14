@@ -16,8 +16,13 @@ class SyntaxNode implements ISyntaxElement {
         throw Errors.abstract();
     }
 
-    // Returns the first non-missing token inside this node (or null if there are no such tokens).
+    // Returns the first non-missing token inside this node (or null if there are no such token).
     public firstToken(): ISyntaxToken {
+        throw Errors.abstract();
+    }
+
+    // Returns the last non-missing token inside this node (or null if there are no such token).
+    public lastToken(): ISyntaxToken {
         throw Errors.abstract();
     }
 
@@ -54,6 +59,10 @@ class SyntaxNode implements ISyntaxElement {
         var elements: string[] = [];
         this.collectTextElements(elements);
         return elements.join("");
+    }
+
+    public fullWidth(): number {
+        throw Errors.abstract();
     }
 
     public clone(): SyntaxNode {

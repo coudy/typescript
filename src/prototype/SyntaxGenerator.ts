@@ -1299,7 +1299,7 @@ function generateIsMissingMethod(definition: ITypeDefinition): string {
     return result;
 }
 
-function generateFirstMethod(definition: ITypeDefinition): string {
+function generateFirstTokenMethod(definition: ITypeDefinition): string {
     var result = "";
 
     if (!definition.isAbstract) {
@@ -1339,6 +1339,56 @@ function generateFirstMethod(definition: ITypeDefinition): string {
             result += "        return this._endOfFileToken;\r\n";
         }
         else {
+            result += "        return null;\r\n";
+        }
+
+        result += "    }\r\n";
+    }
+
+    return result;
+}
+
+function generateLastTokenMethod(definition: ITypeDefinition): string {
+    var result = "";
+
+    if (!definition.isAbstract) {
+
+        result += "\r\n";
+        result += "    public lastToken(): ISyntaxToken {\r\n";
+        
+        if (definition.name === "SourceUnitSyntax") {
+            result += "        return this._endOfFileToken;\r\n";
+        }
+        else {
+            result += "        var token = null;\r\n";
+
+            for (var i = definition.children.length - 1; i >= 0; i--) {
+                var child: IMemberDefinition = definition.children[i];
+
+                if (getType(child) === "SyntaxKind") {
+                    continue;
+                }
+
+                if (child.name === "endOfFileToken") {
+                    continue;
+                }
+
+                result += "        if (";
+
+                if (child.isOptional) {
+                    result += getPropertyAccess(child) + " !== null && ";
+                }
+
+                if (child.isToken) {
+                    result += getPropertyAccess(child) + ".width() > 0";
+                    result += ") { return " + getPropertyAccess(child) + "; }\r\n";
+                }
+                else {
+                    result += "(token = " + getPropertyAccess(child) + ".lastToken()) !== null";
+                    result += ") { return token; }\r\n";
+                }
+            }
+
             result += "        return null;\r\n";
         }
 
@@ -1618,7 +1668,8 @@ function generateNode(definition: ITypeDefinition): string {
     result += generateAcceptMethods(definition);
     result += generateKindMethod(definition);
     result += generateIsMissingMethod(definition);
-    result += generateFirstMethod(definition);
+    result += generateFirstTokenMethod(definition);
+    result += generateLastTokenMethod(definition);
     result += generateAccessors(definition);
     result += generateUpdateMethod(definition);
     result += generateWithMethods(definition);

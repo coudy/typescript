@@ -11,4 +11,5 @@ interface ISeparatedSyntaxList extends ISyntaxElement {
     separatorAt(index: number): ISyntaxToken;
 
     firstToken(): ISyntaxToken;
+    lastToken(): ISyntaxToken;
 }

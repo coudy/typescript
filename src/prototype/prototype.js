@@ -1828,6 +1828,15 @@ var SeparatedSyntaxList;
         EmptySeparatedSyntaxList.prototype.firstToken = function () {
             return null;
         };
+        EmptySeparatedSyntaxList.prototype.lastToken = function () {
+            return null;
+        };
+        EmptySeparatedSyntaxList.prototype.fullWidth = function () {
+            return 0;
+        };
+        EmptySeparatedSyntaxList.prototype.fullText = function () {
+            return "";
+        };
         return EmptySeparatedSyntaxList;
     })();    
     var SingletonSeparatedSyntaxList = (function () {
@@ -1892,6 +1901,15 @@ var SeparatedSyntaxList;
         };
         SingletonSeparatedSyntaxList.prototype.firstToken = function () {
             return this.item.firstToken();
+        };
+        SingletonSeparatedSyntaxList.prototype.lastToken = function () {
+            return this.item.lastToken();
+        };
+        SingletonSeparatedSyntaxList.prototype.fullWidth = function () {
+            return this.item.fullWidth();
+        };
+        SingletonSeparatedSyntaxList.prototype.fullText = function () {
+            return this.item.fullText();
         };
         return SingletonSeparatedSyntaxList;
     })();    
@@ -1980,6 +1998,36 @@ var SeparatedSyntaxList;
                 }
             }
             return null;
+        };
+        NormalSeparatedSyntaxList.prototype.lastToken = function () {
+            var token;
+            for(var i = this.elements.length - 1; i >= 0; i--) {
+                if(i % 2 === 0) {
+                    var node = this.elements[i];
+                    token = node.lastToken();
+                    if(token !== null) {
+                        return token;
+                    }
+                } else {
+                    token = this.elements[i];
+                    if(token.width() > 0) {
+                        return token;
+                    }
+                }
+            }
+            return null;
+        };
+        NormalSeparatedSyntaxList.prototype.fullWidth = function () {
+            var width = 0;
+            for(var i = 0, n = this.elements.length; i < n; i++) {
+                width += this.elements[i].fullWidth();
+            }
+            return width;
+        };
+        NormalSeparatedSyntaxList.prototype.fullText = function () {
+            var elements = [];
+            this.collectTextElements(elements);
+            return elements.join("");
         };
         return NormalSeparatedSyntaxList;
     })();    
@@ -4790,6 +4838,9 @@ var SyntaxNode = (function () {
     SyntaxNode.prototype.firstToken = function () {
         throw Errors.abstract();
     };
+    SyntaxNode.prototype.lastToken = function () {
+        throw Errors.abstract();
+    };
     SyntaxNode.prototype.toJSON = function (key) {
         var result = {
             kind: (SyntaxKind)._map[this.kind()]
@@ -4818,6 +4869,9 @@ var SyntaxNode = (function () {
         var elements = [];
         this.collectTextElements(elements);
         return elements.join("");
+    };
+    SyntaxNode.prototype.fullWidth = function () {
+        throw Errors.abstract();
     };
     SyntaxNode.prototype.clone = function () {
         return this.accept1(new SyntaxNodeCloner());
@@ -4875,6 +4929,15 @@ var SyntaxList;
         EmptySyntaxList.prototype.firstToken = function () {
             return null;
         };
+        EmptySyntaxList.prototype.lastToken = function () {
+            return null;
+        };
+        EmptySyntaxList.prototype.fullWidth = function () {
+            return 0;
+        };
+        EmptySyntaxList.prototype.fullText = function () {
+            return "";
+        };
         return EmptySyntaxList;
     })();    
     SyntaxList.empty = new EmptySyntaxList();
@@ -4930,6 +4993,15 @@ var SyntaxList;
         };
         SingletonSyntaxList.prototype.firstToken = function () {
             return this._item.firstToken();
+        };
+        SingletonSyntaxList.prototype.lastToken = function () {
+            return this._item.lastToken();
+        };
+        SingletonSyntaxList.prototype.fullWidth = function () {
+            return this._item.fullWidth();
+        };
+        SingletonSyntaxList.prototype.fullText = function () {
+            return this._item.fullText();
         };
         return SingletonSyntaxList;
     })();    
@@ -4993,6 +5065,27 @@ var SyntaxList;
             }
             return null;
         };
+        NormalSyntaxList.prototype.lastToken = function () {
+            for(var i = this.nodes.length - 1; i >= 0; i--) {
+                var token = this.nodes[i].lastToken();
+                if(token !== null) {
+                    return token;
+                }
+            }
+            return null;
+        };
+        NormalSyntaxList.prototype.fullText = function () {
+            var elements = [];
+            this.collectTextElements(elements);
+            return elements.join("");
+        };
+        NormalSyntaxList.prototype.fullWidth = function () {
+            var width = 0;
+            for(var i = 0, n = this.nodes.length; i < n; i++) {
+                width += this.nodes[i].fullWidth();
+            }
+            return width;
+        };
         return NormalSyntaxList;
     })();    
     function create(nodes) {
@@ -5040,6 +5133,9 @@ var SourceUnitSyntax = (function (_super) {
         if((token = this._moduleElements.firstToken()) !== null) {
             return token;
         }
+        return this._endOfFileToken;
+    };
+    SourceUnitSyntax.prototype.lastToken = function () {
         return this._endOfFileToken;
     };
     SourceUnitSyntax.prototype.moduleElements = function () {
@@ -5129,6 +5225,22 @@ var ExternalModuleReferenceSyntax = (function (_super) {
         }
         return null;
     };
+    ExternalModuleReferenceSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._closeParenToken.width() > 0) {
+            return this._closeParenToken;
+        }
+        if(this._stringLiteral.width() > 0) {
+            return this._stringLiteral;
+        }
+        if(this._openParenToken.width() > 0) {
+            return this._openParenToken;
+        }
+        if(this._moduleKeyword.width() > 0) {
+            return this._moduleKeyword;
+        }
+        return null;
+    };
     ExternalModuleReferenceSyntax.prototype.moduleKeyword = function () {
         return this._moduleKeyword;
     };
@@ -5191,6 +5303,13 @@ var ModuleNameModuleReferenceSyntax = (function (_super) {
     ModuleNameModuleReferenceSyntax.prototype.firstToken = function () {
         var token = null;
         if((token = this._moduleName.firstToken()) !== null) {
+            return token;
+        }
+        return null;
+    };
+    ModuleNameModuleReferenceSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._moduleName.lastToken()) !== null) {
             return token;
         }
         return null;
@@ -5265,6 +5384,25 @@ var ImportDeclarationSyntax = (function (_super) {
         }
         if(this._semicolonToken.width() > 0) {
             return this._semicolonToken;
+        }
+        return null;
+    };
+    ImportDeclarationSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._semicolonToken.width() > 0) {
+            return this._semicolonToken;
+        }
+        if((token = this._moduleReference.lastToken()) !== null) {
+            return token;
+        }
+        if(this._equalsToken.width() > 0) {
+            return this._equalsToken;
+        }
+        if(this._identifier.width() > 0) {
+            return this._identifier;
+        }
+        if(this._importKeyword.width() > 0) {
+            return this._importKeyword;
         }
         return null;
     };
@@ -5397,6 +5535,37 @@ var ClassDeclarationSyntax = (function (_super) {
         }
         if(this._closeBraceToken.width() > 0) {
             return this._closeBraceToken;
+        }
+        return null;
+    };
+    ClassDeclarationSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._closeBraceToken.width() > 0) {
+            return this._closeBraceToken;
+        }
+        if((token = this._classElements.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openBraceToken.width() > 0) {
+            return this._openBraceToken;
+        }
+        if(this._implementsClause !== null && (token = this._implementsClause.lastToken()) !== null) {
+            return token;
+        }
+        if(this._extendsClause !== null && (token = this._extendsClause.lastToken()) !== null) {
+            return token;
+        }
+        if(this._identifier.width() > 0) {
+            return this._identifier;
+        }
+        if(this._classKeyword.width() > 0) {
+            return this._classKeyword;
+        }
+        if(this._declareKeyword !== null && this._declareKeyword.width() > 0) {
+            return this._declareKeyword;
+        }
+        if(this._exportKeyword !== null && this._exportKeyword.width() > 0) {
+            return this._exportKeyword;
         }
         return null;
     };
@@ -5540,6 +5709,25 @@ var InterfaceDeclarationSyntax = (function (_super) {
         }
         return null;
     };
+    InterfaceDeclarationSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._body.lastToken()) !== null) {
+            return token;
+        }
+        if(this._extendsClause !== null && (token = this._extendsClause.lastToken()) !== null) {
+            return token;
+        }
+        if(this._identifier.width() > 0) {
+            return this._identifier;
+        }
+        if(this._interfaceKeyword.width() > 0) {
+            return this._interfaceKeyword;
+        }
+        if(this._exportKeyword !== null && this._exportKeyword.width() > 0) {
+            return this._exportKeyword;
+        }
+        return null;
+    };
     InterfaceDeclarationSyntax.prototype.exportKeyword = function () {
         return this._exportKeyword;
     };
@@ -5627,6 +5815,16 @@ var ExtendsClauseSyntax = (function (_super) {
         }
         return null;
     };
+    ExtendsClauseSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._typeNames.lastToken()) !== null) {
+            return token;
+        }
+        if(this._extendsKeyword.width() > 0) {
+            return this._extendsKeyword;
+        }
+        return null;
+    };
     ExtendsClauseSyntax.prototype.extendsKeyword = function () {
         return this._extendsKeyword;
     };
@@ -5686,6 +5884,16 @@ var ImplementsClauseSyntax = (function (_super) {
         }
         if((token = this._typeNames.firstToken()) !== null) {
             return token;
+        }
+        return null;
+    };
+    ImplementsClauseSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._typeNames.lastToken()) !== null) {
+            return token;
+        }
+        if(this._implementsKeyword.width() > 0) {
+            return this._implementsKeyword;
         }
         return null;
     };
@@ -5790,6 +5998,34 @@ var ModuleDeclarationSyntax = (function (_super) {
         }
         if(this._closeBraceToken.width() > 0) {
             return this._closeBraceToken;
+        }
+        return null;
+    };
+    ModuleDeclarationSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._closeBraceToken.width() > 0) {
+            return this._closeBraceToken;
+        }
+        if((token = this._moduleElements.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openBraceToken.width() > 0) {
+            return this._openBraceToken;
+        }
+        if(this._stringLiteral !== null && this._stringLiteral.width() > 0) {
+            return this._stringLiteral;
+        }
+        if(this._moduleName !== null && (token = this._moduleName.lastToken()) !== null) {
+            return token;
+        }
+        if(this._moduleKeyword.width() > 0) {
+            return this._moduleKeyword;
+        }
+        if(this._declareKeyword !== null && this._declareKeyword.width() > 0) {
+            return this._declareKeyword;
+        }
+        if(this._exportKeyword !== null && this._exportKeyword.width() > 0) {
+            return this._exportKeyword;
         }
         return null;
     };
@@ -5940,6 +6176,28 @@ var FunctionDeclarationSyntax = (function (_super) {
         }
         return null;
     };
+    FunctionDeclarationSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._semicolonToken !== null && this._semicolonToken.width() > 0) {
+            return this._semicolonToken;
+        }
+        if(this._block !== null && (token = this._block.lastToken()) !== null) {
+            return token;
+        }
+        if((token = this._functionSignature.lastToken()) !== null) {
+            return token;
+        }
+        if(this._functionKeyword.width() > 0) {
+            return this._functionKeyword;
+        }
+        if(this._declareKeyword !== null && this._declareKeyword.width() > 0) {
+            return this._declareKeyword;
+        }
+        if(this._exportKeyword !== null && this._exportKeyword.width() > 0) {
+            return this._exportKeyword;
+        }
+        return null;
+    };
     FunctionDeclarationSyntax.prototype.exportKeyword = function () {
         return this._exportKeyword;
     };
@@ -6052,6 +6310,22 @@ var VariableStatementSyntax = (function (_super) {
         }
         return null;
     };
+    VariableStatementSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._semicolonToken.width() > 0) {
+            return this._semicolonToken;
+        }
+        if((token = this._variableDeclaration.lastToken()) !== null) {
+            return token;
+        }
+        if(this._declareKeyword !== null && this._declareKeyword.width() > 0) {
+            return this._declareKeyword;
+        }
+        if(this._exportKeyword !== null && this._exportKeyword.width() > 0) {
+            return this._exportKeyword;
+        }
+        return null;
+    };
     VariableStatementSyntax.prototype.exportKeyword = function () {
         return this._exportKeyword;
     };
@@ -6146,6 +6420,16 @@ var VariableDeclarationSyntax = (function (_super) {
         }
         return null;
     };
+    VariableDeclarationSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._variableDeclarators.lastToken()) !== null) {
+            return token;
+        }
+        if(this._varKeyword.width() > 0) {
+            return this._varKeyword;
+        }
+        return null;
+    };
     VariableDeclarationSyntax.prototype.varKeyword = function () {
         return this._varKeyword;
     };
@@ -6212,6 +6496,19 @@ var VariableDeclaratorSyntax = (function (_super) {
         }
         if(this._equalsValueClause !== null && (token = this._equalsValueClause.firstToken()) !== null) {
             return token;
+        }
+        return null;
+    };
+    VariableDeclaratorSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._equalsValueClause !== null && (token = this._equalsValueClause.lastToken()) !== null) {
+            return token;
+        }
+        if(this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) {
+            return token;
+        }
+        if(this._identifier.width() > 0) {
+            return this._identifier;
         }
         return null;
     };
@@ -6285,6 +6582,16 @@ var EqualsValueClauseSyntax = (function (_super) {
         }
         return null;
     };
+    EqualsValueClauseSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._value.lastToken()) !== null) {
+            return token;
+        }
+        if(this._equalsToken.width() > 0) {
+            return this._equalsToken;
+        }
+        return null;
+    };
     EqualsValueClauseSyntax.prototype.equalsToken = function () {
         return this._equalsToken;
     };
@@ -6339,6 +6646,16 @@ var PrefixUnaryExpressionSyntax = (function (_super) {
         }
         if((token = this._operand.firstToken()) !== null) {
             return token;
+        }
+        return null;
+    };
+    PrefixUnaryExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._operand.lastToken()) !== null) {
+            return token;
+        }
+        if(this._operatorToken.width() > 0) {
+            return this._operatorToken;
         }
         return null;
     };
@@ -6400,6 +6717,13 @@ var ThisExpressionSyntax = (function (_super) {
         }
         return null;
     };
+    ThisExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._thisKeyword.width() > 0) {
+            return this._thisKeyword;
+        }
+        return null;
+    };
     ThisExpressionSyntax.prototype.thisKeyword = function () {
         return this._thisKeyword;
     };
@@ -6437,6 +6761,13 @@ var LiteralExpressionSyntax = (function (_super) {
         return true;
     };
     LiteralExpressionSyntax.prototype.firstToken = function () {
+        var token = null;
+        if(this._literalToken.width() > 0) {
+            return this._literalToken;
+        }
+        return null;
+    };
+    LiteralExpressionSyntax.prototype.lastToken = function () {
         var token = null;
         if(this._literalToken.width() > 0) {
             return this._literalToken;
@@ -6511,6 +6842,19 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
         }
         return null;
     };
+    ArrayLiteralExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._closeBracketToken.width() > 0) {
+            return this._closeBracketToken;
+        }
+        if((token = this._expressions.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openBracketToken.width() > 0) {
+            return this._openBracketToken;
+        }
+        return null;
+    };
     ArrayLiteralExpressionSyntax.prototype.openBracketToken = function () {
         return this._openBracketToken;
     };
@@ -6563,6 +6907,10 @@ var OmittedExpressionSyntax = (function (_super) {
         var token = null;
         return null;
     };
+    OmittedExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        return null;
+    };
     OmittedExpressionSyntax.prototype.update = function () {
         return this;
     };
@@ -6609,6 +6957,19 @@ var ParenthesizedExpressionSyntax = (function (_super) {
         }
         if(this._closeParenToken.width() > 0) {
             return this._closeParenToken;
+        }
+        return null;
+    };
+    ParenthesizedExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._closeParenToken.width() > 0) {
+            return this._closeParenToken;
+        }
+        if((token = this._expression.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openParenToken.width() > 0) {
+            return this._openParenToken;
         }
         return null;
     };
@@ -6698,6 +7059,19 @@ var SimpleArrowFunctionExpressionSyntax = (function (_super) {
         }
         return null;
     };
+    SimpleArrowFunctionExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._body.lastToken()) !== null) {
+            return token;
+        }
+        if(this._equalsGreaterThanToken.width() > 0) {
+            return this._equalsGreaterThanToken;
+        }
+        if(this._identifier.width() > 0) {
+            return this._identifier;
+        }
+        return null;
+    };
     SimpleArrowFunctionExpressionSyntax.prototype.identifier = function () {
         return this._identifier;
     };
@@ -6767,6 +7141,19 @@ var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
             return this._equalsGreaterThanToken;
         }
         if((token = this._body.firstToken()) !== null) {
+            return token;
+        }
+        return null;
+    };
+    ParenthesizedArrowFunctionExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._body.lastToken()) !== null) {
+            return token;
+        }
+        if(this._equalsGreaterThanToken.width() > 0) {
+            return this._equalsGreaterThanToken;
+        }
+        if((token = this._callSignature.lastToken()) !== null) {
             return token;
         }
         return null;
@@ -6844,6 +7231,13 @@ var IdentifierNameSyntax = (function (_super) {
         }
         return null;
     };
+    IdentifierNameSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._identifier.width() > 0) {
+            return this._identifier;
+        }
+        return null;
+    };
     IdentifierNameSyntax.prototype.identifier = function () {
         return this._identifier;
     };
@@ -6899,6 +7293,19 @@ var QualifiedNameSyntax = (function (_super) {
             return this._dotToken;
         }
         if((token = this._right.firstToken()) !== null) {
+            return token;
+        }
+        return null;
+    };
+    QualifiedNameSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._right.lastToken()) !== null) {
+            return token;
+        }
+        if(this._dotToken.width() > 0) {
+            return this._dotToken;
+        }
+        if((token = this._left.lastToken()) !== null) {
             return token;
         }
         return null;
@@ -6983,6 +7390,22 @@ var ConstructorTypeSyntax = (function (_super) {
         }
         return null;
     };
+    ConstructorTypeSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._type.lastToken()) !== null) {
+            return token;
+        }
+        if(this._equalsGreaterThanToken.width() > 0) {
+            return this._equalsGreaterThanToken;
+        }
+        if((token = this._parameterList.lastToken()) !== null) {
+            return token;
+        }
+        if(this._newKeyword.width() > 0) {
+            return this._newKeyword;
+        }
+        return null;
+    };
     ConstructorTypeSyntax.prototype.newKeyword = function () {
         return this._newKeyword;
     };
@@ -7063,6 +7486,19 @@ var FunctionTypeSyntax = (function (_super) {
         }
         return null;
     };
+    FunctionTypeSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._type.lastToken()) !== null) {
+            return token;
+        }
+        if(this._equalsGreaterThanToken.width() > 0) {
+            return this._equalsGreaterThanToken;
+        }
+        if((token = this._parameterList.lastToken()) !== null) {
+            return token;
+        }
+        return null;
+    };
     FunctionTypeSyntax.prototype.parameterList = function () {
         return this._parameterList;
     };
@@ -7139,6 +7575,19 @@ var ObjectTypeSyntax = (function (_super) {
         }
         return null;
     };
+    ObjectTypeSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._closeBraceToken.width() > 0) {
+            return this._closeBraceToken;
+        }
+        if((token = this._typeMembers.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openBraceToken.width() > 0) {
+            return this._openBraceToken;
+        }
+        return null;
+    };
     ObjectTypeSyntax.prototype.openBraceToken = function () {
         return this._openBraceToken;
     };
@@ -7212,6 +7661,19 @@ var ArrayTypeSyntax = (function (_super) {
         }
         return null;
     };
+    ArrayTypeSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._closeBracketToken.width() > 0) {
+            return this._closeBracketToken;
+        }
+        if(this._openBracketToken.width() > 0) {
+            return this._openBracketToken;
+        }
+        if((token = this._type.lastToken()) !== null) {
+            return token;
+        }
+        return null;
+    };
     ArrayTypeSyntax.prototype.type = function () {
         return this._type;
     };
@@ -7271,6 +7733,13 @@ var PredefinedTypeSyntax = (function (_super) {
         }
         return null;
     };
+    PredefinedTypeSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._keyword.width() > 0) {
+            return this._keyword;
+        }
+        return null;
+    };
     PredefinedTypeSyntax.prototype.keyword = function () {
         return this._keyword;
     };
@@ -7320,6 +7789,16 @@ var TypeAnnotationSyntax = (function (_super) {
         }
         if((token = this._type.firstToken()) !== null) {
             return token;
+        }
+        return null;
+    };
+    TypeAnnotationSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._type.lastToken()) !== null) {
+            return token;
+        }
+        if(this._colonToken.width() > 0) {
+            return this._colonToken;
         }
         return null;
     };
@@ -7389,6 +7868,19 @@ var BlockSyntax = (function (_super) {
         }
         if(this._closeBraceToken.width() > 0) {
             return this._closeBraceToken;
+        }
+        return null;
+    };
+    BlockSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._closeBraceToken.width() > 0) {
+            return this._closeBraceToken;
+        }
+        if((token = this._statements.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openBraceToken.width() > 0) {
+            return this._openBraceToken;
         }
         return null;
     };
@@ -7486,6 +7978,28 @@ var ParameterSyntax = (function (_super) {
         }
         if(this._equalsValueClause !== null && (token = this._equalsValueClause.firstToken()) !== null) {
             return token;
+        }
+        return null;
+    };
+    ParameterSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._equalsValueClause !== null && (token = this._equalsValueClause.lastToken()) !== null) {
+            return token;
+        }
+        if(this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) {
+            return token;
+        }
+        if(this._questionToken !== null && this._questionToken.width() > 0) {
+            return this._questionToken;
+        }
+        if(this._identifier.width() > 0) {
+            return this._identifier;
+        }
+        if(this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) {
+            return this._publicOrPrivateKeyword;
+        }
+        if(this._dotDotDotToken !== null && this._dotDotDotToken.width() > 0) {
+            return this._dotDotDotToken;
         }
         return null;
     };
@@ -7593,6 +8107,19 @@ var MemberAccessExpressionSyntax = (function (_super) {
         }
         return null;
     };
+    MemberAccessExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._identifierName.lastToken()) !== null) {
+            return token;
+        }
+        if(this._dotToken.width() > 0) {
+            return this._dotToken;
+        }
+        if((token = this._expression.lastToken()) !== null) {
+            return token;
+        }
+        return null;
+    };
     MemberAccessExpressionSyntax.prototype.expression = function () {
         return this._expression;
     };
@@ -7654,6 +8181,16 @@ var PostfixUnaryExpressionSyntax = (function (_super) {
         }
         if(this._operatorToken.width() > 0) {
             return this._operatorToken;
+        }
+        return null;
+    };
+    PostfixUnaryExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._operatorToken.width() > 0) {
+            return this._operatorToken;
+        }
+        if((token = this._operand.lastToken()) !== null) {
+            return token;
         }
         return null;
     };
@@ -7736,6 +8273,22 @@ var ElementAccessExpressionSyntax = (function (_super) {
         }
         return null;
     };
+    ElementAccessExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._closeBracketToken.width() > 0) {
+            return this._closeBracketToken;
+        }
+        if((token = this._argumentExpression.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openBracketToken.width() > 0) {
+            return this._openBracketToken;
+        }
+        if((token = this._expression.lastToken()) !== null) {
+            return token;
+        }
+        return null;
+    };
     ElementAccessExpressionSyntax.prototype.expression = function () {
         return this._expression;
     };
@@ -7809,6 +8362,16 @@ var InvocationExpressionSyntax = (function (_super) {
         }
         return null;
     };
+    InvocationExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._argumentList.lastToken()) !== null) {
+            return token;
+        }
+        if((token = this._expression.lastToken()) !== null) {
+            return token;
+        }
+        return null;
+    };
     InvocationExpressionSyntax.prototype.expression = function () {
         return this._expression;
     };
@@ -7875,6 +8438,19 @@ var ArgumentListSyntax = (function (_super) {
         }
         if(this._closeParenToken.width() > 0) {
             return this._closeParenToken;
+        }
+        return null;
+    };
+    ArgumentListSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._closeParenToken.width() > 0) {
+            return this._closeParenToken;
+        }
+        if((token = this._arguments.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openParenToken.width() > 0) {
+            return this._openParenToken;
         }
         return null;
     };
@@ -7945,6 +8521,19 @@ var BinaryExpressionSyntax = (function (_super) {
             return this._operatorToken;
         }
         if((token = this._right.firstToken()) !== null) {
+            return token;
+        }
+        return null;
+    };
+    BinaryExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._right.lastToken()) !== null) {
+            return token;
+        }
+        if(this._operatorToken.width() > 0) {
+            return this._operatorToken;
+        }
+        if((token = this._left.lastToken()) !== null) {
             return token;
         }
         return null;
@@ -8038,6 +8627,25 @@ var ConditionalExpressionSyntax = (function (_super) {
             return this._colonToken;
         }
         if((token = this._whenFalse.firstToken()) !== null) {
+            return token;
+        }
+        return null;
+    };
+    ConditionalExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._whenFalse.lastToken()) !== null) {
+            return token;
+        }
+        if(this._colonToken.width() > 0) {
+            return this._colonToken;
+        }
+        if((token = this._whenTrue.lastToken()) !== null) {
+            return token;
+        }
+        if(this._questionToken.width() > 0) {
+            return this._questionToken;
+        }
+        if((token = this._condition.lastToken()) !== null) {
             return token;
         }
         return null;
@@ -8142,6 +8750,19 @@ var ConstructSignatureSyntax = (function (_super) {
         }
         return null;
     };
+    ConstructSignatureSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) {
+            return token;
+        }
+        if((token = this._parameterList.lastToken()) !== null) {
+            return token;
+        }
+        if(this._newKeyword.width() > 0) {
+            return this._newKeyword;
+        }
+        return null;
+    };
     ConstructSignatureSyntax.prototype.newKeyword = function () {
         return this._newKeyword;
     };
@@ -8224,6 +8845,22 @@ var FunctionSignatureSyntax = (function (_super) {
         }
         if(this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) {
             return token;
+        }
+        return null;
+    };
+    FunctionSignatureSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) {
+            return token;
+        }
+        if((token = this._parameterList.lastToken()) !== null) {
+            return token;
+        }
+        if(this._questionToken !== null && this._questionToken.width() > 0) {
+            return this._questionToken;
+        }
+        if(this._identifier.width() > 0) {
+            return this._identifier;
         }
         return null;
     };
@@ -8321,6 +8958,22 @@ var IndexSignatureSyntax = (function (_super) {
         }
         return null;
     };
+    IndexSignatureSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) {
+            return token;
+        }
+        if(this._closeBracketToken.width() > 0) {
+            return this._closeBracketToken;
+        }
+        if((token = this._parameter.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openBracketToken.width() > 0) {
+            return this._openBracketToken;
+        }
+        return null;
+    };
     IndexSignatureSyntax.prototype.openBracketToken = function () {
         return this._openBracketToken;
     };
@@ -8406,6 +9059,19 @@ var PropertySignatureSyntax = (function (_super) {
         }
         return null;
     };
+    PropertySignatureSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) {
+            return token;
+        }
+        if(this._questionToken !== null && this._questionToken.width() > 0) {
+            return this._questionToken;
+        }
+        if(this._identifier.width() > 0) {
+            return this._identifier;
+        }
+        return null;
+    };
     PropertySignatureSyntax.prototype.identifier = function () {
         return this._identifier;
     };
@@ -8486,6 +9152,19 @@ var ParameterListSyntax = (function (_super) {
         }
         return null;
     };
+    ParameterListSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._closeParenToken.width() > 0) {
+            return this._closeParenToken;
+        }
+        if((token = this._parameters.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openParenToken.width() > 0) {
+            return this._openParenToken;
+        }
+        return null;
+    };
     ParameterListSyntax.prototype.openParenToken = function () {
         return this._openParenToken;
     };
@@ -8555,6 +9234,16 @@ var CallSignatureSyntax = (function (_super) {
         }
         return null;
     };
+    CallSignatureSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) {
+            return token;
+        }
+        if((token = this._parameterList.lastToken()) !== null) {
+            return token;
+        }
+        return null;
+    };
     CallSignatureSyntax.prototype.parameterList = function () {
         return this._parameterList;
     };
@@ -8613,6 +9302,16 @@ var ElseClauseSyntax = (function (_super) {
         }
         if((token = this._statement.firstToken()) !== null) {
             return token;
+        }
+        return null;
+    };
+    ElseClauseSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._statement.lastToken()) !== null) {
+            return token;
+        }
+        if(this._elseKeyword.width() > 0) {
+            return this._elseKeyword;
         }
         return null;
     };
@@ -8706,6 +9405,28 @@ var IfStatementSyntax = (function (_super) {
         }
         return null;
     };
+    IfStatementSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._elseClause !== null && (token = this._elseClause.lastToken()) !== null) {
+            return token;
+        }
+        if((token = this._statement.lastToken()) !== null) {
+            return token;
+        }
+        if(this._closeParenToken.width() > 0) {
+            return this._closeParenToken;
+        }
+        if((token = this._condition.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openParenToken.width() > 0) {
+            return this._openParenToken;
+        }
+        if(this._ifKeyword.width() > 0) {
+            return this._ifKeyword;
+        }
+        return null;
+    };
     IfStatementSyntax.prototype.ifKeyword = function () {
         return this._ifKeyword;
     };
@@ -8795,6 +9516,16 @@ var ExpressionStatementSyntax = (function (_super) {
         }
         return null;
     };
+    ExpressionStatementSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._semicolonToken.width() > 0) {
+            return this._semicolonToken;
+        }
+        if((token = this._expression.lastToken()) !== null) {
+            return token;
+        }
+        return null;
+    };
     ExpressionStatementSyntax.prototype.expression = function () {
         return this._expression;
     };
@@ -8875,6 +9606,22 @@ var ConstructorDeclarationSyntax = (function (_super) {
         }
         if(this._semicolonToken !== null && this._semicolonToken.width() > 0) {
             return this._semicolonToken;
+        }
+        return null;
+    };
+    ConstructorDeclarationSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._semicolonToken !== null && this._semicolonToken.width() > 0) {
+            return this._semicolonToken;
+        }
+        if(this._block !== null && (token = this._block.lastToken()) !== null) {
+            return token;
+        }
+        if((token = this._parameterList.lastToken()) !== null) {
+            return token;
+        }
+        if(this._constructorKeyword.width() > 0) {
+            return this._constructorKeyword;
         }
         return null;
     };
@@ -8989,6 +9736,25 @@ var MemberFunctionDeclarationSyntax = (function (_super) {
         }
         if(this._semicolonToken !== null && this._semicolonToken.width() > 0) {
             return this._semicolonToken;
+        }
+        return null;
+    };
+    MemberFunctionDeclarationSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._semicolonToken !== null && this._semicolonToken.width() > 0) {
+            return this._semicolonToken;
+        }
+        if(this._block !== null && (token = this._block.lastToken()) !== null) {
+            return token;
+        }
+        if((token = this._functionSignature.lastToken()) !== null) {
+            return token;
+        }
+        if(this._staticKeyword !== null && this._staticKeyword.width() > 0) {
+            return this._staticKeyword;
+        }
+        if(this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) {
+            return this._publicOrPrivateKeyword;
         }
         return null;
     };
@@ -9140,6 +9906,31 @@ var GetMemberAccessorDeclarationSyntax = (function (_super) {
         }
         return null;
     };
+    GetMemberAccessorDeclarationSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._block.lastToken()) !== null) {
+            return token;
+        }
+        if(this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) {
+            return token;
+        }
+        if((token = this._parameterList.lastToken()) !== null) {
+            return token;
+        }
+        if(this._identifier.width() > 0) {
+            return this._identifier;
+        }
+        if(this._getKeyword.width() > 0) {
+            return this._getKeyword;
+        }
+        if(this._staticKeyword !== null && this._staticKeyword.width() > 0) {
+            return this._staticKeyword;
+        }
+        if(this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) {
+            return this._publicOrPrivateKeyword;
+        }
+        return null;
+    };
     GetMemberAccessorDeclarationSyntax.prototype.publicOrPrivateKeyword = function () {
         return this._publicOrPrivateKeyword;
     };
@@ -9271,6 +10062,28 @@ var SetMemberAccessorDeclarationSyntax = (function (_super) {
         }
         return null;
     };
+    SetMemberAccessorDeclarationSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._block.lastToken()) !== null) {
+            return token;
+        }
+        if((token = this._parameterList.lastToken()) !== null) {
+            return token;
+        }
+        if(this._identifier.width() > 0) {
+            return this._identifier;
+        }
+        if(this._setKeyword.width() > 0) {
+            return this._setKeyword;
+        }
+        if(this._staticKeyword !== null && this._staticKeyword.width() > 0) {
+            return this._staticKeyword;
+        }
+        if(this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) {
+            return this._publicOrPrivateKeyword;
+        }
+        return null;
+    };
     SetMemberAccessorDeclarationSyntax.prototype.publicOrPrivateKeyword = function () {
         return this._publicOrPrivateKeyword;
     };
@@ -9379,6 +10192,22 @@ var MemberVariableDeclarationSyntax = (function (_super) {
         }
         return null;
     };
+    MemberVariableDeclarationSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._semicolonToken.width() > 0) {
+            return this._semicolonToken;
+        }
+        if((token = this._variableDeclarator.lastToken()) !== null) {
+            return token;
+        }
+        if(this._staticKeyword !== null && this._staticKeyword.width() > 0) {
+            return this._staticKeyword;
+        }
+        if(this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) {
+            return this._publicOrPrivateKeyword;
+        }
+        return null;
+    };
     MemberVariableDeclarationSyntax.prototype.publicOrPrivateKeyword = function () {
         return this._publicOrPrivateKeyword;
     };
@@ -9463,6 +10292,19 @@ var ThrowStatementSyntax = (function (_super) {
         }
         return null;
     };
+    ThrowStatementSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._semicolonToken.width() > 0) {
+            return this._semicolonToken;
+        }
+        if((token = this._expression.lastToken()) !== null) {
+            return token;
+        }
+        if(this._throwKeyword.width() > 0) {
+            return this._throwKeyword;
+        }
+        return null;
+    };
     ThrowStatementSyntax.prototype.throwKeyword = function () {
         return this._throwKeyword;
     };
@@ -9536,6 +10378,19 @@ var ReturnStatementSyntax = (function (_super) {
         }
         if(this._semicolonToken.width() > 0) {
             return this._semicolonToken;
+        }
+        return null;
+    };
+    ReturnStatementSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._semicolonToken.width() > 0) {
+            return this._semicolonToken;
+        }
+        if(this._expression !== null && (token = this._expression.lastToken()) !== null) {
+            return token;
+        }
+        if(this._returnKeyword.width() > 0) {
+            return this._returnKeyword;
         }
         return null;
     };
@@ -9614,6 +10469,19 @@ var ObjectCreationExpressionSyntax = (function (_super) {
         }
         if(this._argumentList !== null && (token = this._argumentList.firstToken()) !== null) {
             return token;
+        }
+        return null;
+    };
+    ObjectCreationExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._argumentList !== null && (token = this._argumentList.lastToken()) !== null) {
+            return token;
+        }
+        if((token = this._expression.lastToken()) !== null) {
+            return token;
+        }
+        if(this._newKeyword.width() > 0) {
+            return this._newKeyword;
         }
         return null;
     };
@@ -9720,6 +10588,31 @@ var SwitchStatementSyntax = (function (_super) {
         }
         if(this._closeBraceToken.width() > 0) {
             return this._closeBraceToken;
+        }
+        return null;
+    };
+    SwitchStatementSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._closeBraceToken.width() > 0) {
+            return this._closeBraceToken;
+        }
+        if((token = this._caseClauses.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openBraceToken.width() > 0) {
+            return this._openBraceToken;
+        }
+        if(this._closeParenToken.width() > 0) {
+            return this._closeParenToken;
+        }
+        if((token = this._expression.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openParenToken.width() > 0) {
+            return this._openParenToken;
+        }
+        if(this._switchKeyword.width() > 0) {
+            return this._switchKeyword;
         }
         return null;
     };
@@ -9847,6 +10740,22 @@ var CaseSwitchClauseSyntax = (function (_super) {
         }
         return null;
     };
+    CaseSwitchClauseSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._statements.lastToken()) !== null) {
+            return token;
+        }
+        if(this._colonToken.width() > 0) {
+            return this._colonToken;
+        }
+        if((token = this._expression.lastToken()) !== null) {
+            return token;
+        }
+        if(this._caseKeyword.width() > 0) {
+            return this._caseKeyword;
+        }
+        return null;
+    };
     CaseSwitchClauseSyntax.prototype.caseKeyword = function () {
         return this._caseKeyword;
     };
@@ -9930,6 +10839,19 @@ var DefaultSwitchClauseSyntax = (function (_super) {
         }
         return null;
     };
+    DefaultSwitchClauseSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._statements.lastToken()) !== null) {
+            return token;
+        }
+        if(this._colonToken.width() > 0) {
+            return this._colonToken;
+        }
+        if(this._defaultKeyword.width() > 0) {
+            return this._defaultKeyword;
+        }
+        return null;
+    };
     DefaultSwitchClauseSyntax.prototype.defaultKeyword = function () {
         return this._defaultKeyword;
     };
@@ -10003,6 +10925,19 @@ var BreakStatementSyntax = (function (_super) {
         }
         if(this._semicolonToken.width() > 0) {
             return this._semicolonToken;
+        }
+        return null;
+    };
+    BreakStatementSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._semicolonToken.width() > 0) {
+            return this._semicolonToken;
+        }
+        if(this._identifier !== null && this._identifier.width() > 0) {
+            return this._identifier;
+        }
+        if(this._breakKeyword.width() > 0) {
+            return this._breakKeyword;
         }
         return null;
     };
@@ -10081,6 +11016,19 @@ var ContinueStatementSyntax = (function (_super) {
         }
         if(this._semicolonToken.width() > 0) {
             return this._semicolonToken;
+        }
+        return null;
+    };
+    ContinueStatementSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._semicolonToken.width() > 0) {
+            return this._semicolonToken;
+        }
+        if(this._identifier !== null && this._identifier.width() > 0) {
+            return this._identifier;
+        }
+        if(this._continueKeyword.width() > 0) {
+            return this._continueKeyword;
         }
         return null;
     };
@@ -10246,6 +11194,40 @@ var ForStatementSyntax = (function (_super) {
         }
         if((token = this._statement.firstToken()) !== null) {
             return token;
+        }
+        return null;
+    };
+    ForStatementSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._statement.lastToken()) !== null) {
+            return token;
+        }
+        if(this._closeParenToken.width() > 0) {
+            return this._closeParenToken;
+        }
+        if(this._incrementor !== null && (token = this._incrementor.lastToken()) !== null) {
+            return token;
+        }
+        if(this._secondSemicolonToken.width() > 0) {
+            return this._secondSemicolonToken;
+        }
+        if(this._condition !== null && (token = this._condition.lastToken()) !== null) {
+            return token;
+        }
+        if(this._firstSemicolonToken.width() > 0) {
+            return this._firstSemicolonToken;
+        }
+        if(this._initializer !== null && (token = this._initializer.lastToken()) !== null) {
+            return token;
+        }
+        if(this._variableDeclaration !== null && (token = this._variableDeclaration.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openParenToken.width() > 0) {
+            return this._openParenToken;
+        }
+        if(this._forKeyword.width() > 0) {
+            return this._forKeyword;
         }
         return null;
     };
@@ -10417,6 +11399,34 @@ var ForInStatementSyntax = (function (_super) {
         }
         return null;
     };
+    ForInStatementSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._statement.lastToken()) !== null) {
+            return token;
+        }
+        if(this._closeParenToken.width() > 0) {
+            return this._closeParenToken;
+        }
+        if((token = this._expression.lastToken()) !== null) {
+            return token;
+        }
+        if(this._inKeyword.width() > 0) {
+            return this._inKeyword;
+        }
+        if(this._left !== null && (token = this._left.lastToken()) !== null) {
+            return token;
+        }
+        if(this._variableDeclaration !== null && (token = this._variableDeclaration.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openParenToken.width() > 0) {
+            return this._openParenToken;
+        }
+        if(this._forKeyword.width() > 0) {
+            return this._forKeyword;
+        }
+        return null;
+    };
     ForInStatementSyntax.prototype.forKeyword = function () {
         return this._forKeyword;
     };
@@ -10543,6 +11553,25 @@ var WhileStatementSyntax = (function (_super) {
         }
         return null;
     };
+    WhileStatementSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._statement.lastToken()) !== null) {
+            return token;
+        }
+        if(this._closeParenToken.width() > 0) {
+            return this._closeParenToken;
+        }
+        if((token = this._condition.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openParenToken.width() > 0) {
+            return this._openParenToken;
+        }
+        if(this._whileKeyword.width() > 0) {
+            return this._whileKeyword;
+        }
+        return null;
+    };
     WhileStatementSyntax.prototype.whileKeyword = function () {
         return this._whileKeyword;
     };
@@ -10641,6 +11670,25 @@ var WithStatementSyntax = (function (_super) {
         }
         if((token = this._statement.firstToken()) !== null) {
             return token;
+        }
+        return null;
+    };
+    WithStatementSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._statement.lastToken()) !== null) {
+            return token;
+        }
+        if(this._closeParenToken.width() > 0) {
+            return this._closeParenToken;
+        }
+        if((token = this._condition.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openParenToken.width() > 0) {
+            return this._openParenToken;
+        }
+        if(this._withKeyword.width() > 0) {
+            return this._withKeyword;
         }
         return null;
     };
@@ -10755,6 +11803,28 @@ var EnumDeclarationSyntax = (function (_super) {
         }
         return null;
     };
+    EnumDeclarationSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._closeBraceToken.width() > 0) {
+            return this._closeBraceToken;
+        }
+        if((token = this._variableDeclarators.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openBraceToken.width() > 0) {
+            return this._openBraceToken;
+        }
+        if(this._identifier.width() > 0) {
+            return this._identifier;
+        }
+        if(this._enumKeyword.width() > 0) {
+            return this._enumKeyword;
+        }
+        if(this._exportKeyword !== null && this._exportKeyword.width() > 0) {
+            return this._exportKeyword;
+        }
+        return null;
+    };
     EnumDeclarationSyntax.prototype.exportKeyword = function () {
         return this._exportKeyword;
     };
@@ -10858,6 +11928,22 @@ var CastExpressionSyntax = (function (_super) {
         }
         return null;
     };
+    CastExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._expression.lastToken()) !== null) {
+            return token;
+        }
+        if(this._greaterThanToken.width() > 0) {
+            return this._greaterThanToken;
+        }
+        if((token = this._type.lastToken()) !== null) {
+            return token;
+        }
+        if(this._lessThanToken.width() > 0) {
+            return this._lessThanToken;
+        }
+        return null;
+    };
     CastExpressionSyntax.prototype.lessThanToken = function () {
         return this._lessThanToken;
     };
@@ -10941,6 +12027,19 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
         }
         return null;
     };
+    ObjectLiteralExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._closeBraceToken.width() > 0) {
+            return this._closeBraceToken;
+        }
+        if((token = this._propertyAssignments.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openBraceToken.width() > 0) {
+            return this._openBraceToken;
+        }
+        return null;
+    };
     ObjectLiteralExpressionSyntax.prototype.openBraceToken = function () {
         return this._openBraceToken;
     };
@@ -11021,6 +12120,19 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
         }
         if((token = this._expression.firstToken()) !== null) {
             return token;
+        }
+        return null;
+    };
+    SimplePropertyAssignmentSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._expression.lastToken()) !== null) {
+            return token;
+        }
+        if(this._colonToken.width() > 0) {
+            return this._colonToken;
+        }
+        if(this._propertyName.width() > 0) {
+            return this._propertyName;
         }
         return null;
     };
@@ -11127,6 +12239,25 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
         }
         if((token = this._block.firstToken()) !== null) {
             return token;
+        }
+        return null;
+    };
+    GetAccessorPropertyAssignmentSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._block.lastToken()) !== null) {
+            return token;
+        }
+        if(this._closeParenToken.width() > 0) {
+            return this._closeParenToken;
+        }
+        if(this._openParenToken.width() > 0) {
+            return this._openParenToken;
+        }
+        if(this._propertyName.width() > 0) {
+            return this._propertyName;
+        }
+        if(this._getKeyword.width() > 0) {
+            return this._getKeyword;
         }
         return null;
     };
@@ -11238,6 +12369,28 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
         }
         return null;
     };
+    SetAccessorPropertyAssignmentSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._block.lastToken()) !== null) {
+            return token;
+        }
+        if(this._closeParenToken.width() > 0) {
+            return this._closeParenToken;
+        }
+        if(this._parameterName.width() > 0) {
+            return this._parameterName;
+        }
+        if(this._openParenToken.width() > 0) {
+            return this._openParenToken;
+        }
+        if(this._propertyName.width() > 0) {
+            return this._propertyName;
+        }
+        if(this._setKeyword.width() > 0) {
+            return this._setKeyword;
+        }
+        return null;
+    };
     SetAccessorPropertyAssignmentSyntax.prototype.setKeyword = function () {
         return this._setKeyword;
     };
@@ -11342,6 +12495,22 @@ var FunctionExpressionSyntax = (function (_super) {
         }
         return null;
     };
+    FunctionExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._block.lastToken()) !== null) {
+            return token;
+        }
+        if((token = this._callSignature.lastToken()) !== null) {
+            return token;
+        }
+        if(this._identifier !== null && this._identifier.width() > 0) {
+            return this._identifier;
+        }
+        if(this._functionKeyword.width() > 0) {
+            return this._functionKeyword;
+        }
+        return null;
+    };
     FunctionExpressionSyntax.prototype.functionKeyword = function () {
         return this._functionKeyword;
     };
@@ -11410,6 +12579,13 @@ var EmptyStatementSyntax = (function (_super) {
         }
         return null;
     };
+    EmptyStatementSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._semicolonToken.width() > 0) {
+            return this._semicolonToken;
+        }
+        return null;
+    };
     EmptyStatementSyntax.prototype.semicolonToken = function () {
         return this._semicolonToken;
     };
@@ -11449,6 +12625,13 @@ var SuperExpressionSyntax = (function (_super) {
         return true;
     };
     SuperExpressionSyntax.prototype.firstToken = function () {
+        var token = null;
+        if(this._superKeyword.width() > 0) {
+            return this._superKeyword;
+        }
+        return null;
+    };
+    SuperExpressionSyntax.prototype.lastToken = function () {
         var token = null;
         if(this._superKeyword.width() > 0) {
             return this._superKeyword;
@@ -11521,6 +12704,22 @@ var TryStatementSyntax = (function (_super) {
         }
         if(this._finallyClause !== null && (token = this._finallyClause.firstToken()) !== null) {
             return token;
+        }
+        return null;
+    };
+    TryStatementSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._finallyClause !== null && (token = this._finallyClause.lastToken()) !== null) {
+            return token;
+        }
+        if(this._catchClause !== null && (token = this._catchClause.lastToken()) !== null) {
+            return token;
+        }
+        if((token = this._block.lastToken()) !== null) {
+            return token;
+        }
+        if(this._tryKeyword.width() > 0) {
+            return this._tryKeyword;
         }
         return null;
     };
@@ -11622,6 +12821,25 @@ var CatchClauseSyntax = (function (_super) {
         }
         return null;
     };
+    CatchClauseSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._block.lastToken()) !== null) {
+            return token;
+        }
+        if(this._closeParenToken.width() > 0) {
+            return this._closeParenToken;
+        }
+        if(this._identifier.width() > 0) {
+            return this._identifier;
+        }
+        if(this._openParenToken.width() > 0) {
+            return this._openParenToken;
+        }
+        if(this._catchKeyword.width() > 0) {
+            return this._catchKeyword;
+        }
+        return null;
+    };
     CatchClauseSyntax.prototype.catchKeyword = function () {
         return this._catchKeyword;
     };
@@ -11702,6 +12920,16 @@ var FinallyClauseSyntax = (function (_super) {
         }
         return null;
     };
+    FinallyClauseSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._block.lastToken()) !== null) {
+            return token;
+        }
+        if(this._finallyKeyword.width() > 0) {
+            return this._finallyKeyword;
+        }
+        return null;
+    };
     FinallyClauseSyntax.prototype.finallyKeyword = function () {
         return this._finallyKeyword;
     };
@@ -11765,6 +12993,19 @@ var LabeledStatement = (function (_super) {
         }
         if((token = this._statement.firstToken()) !== null) {
             return token;
+        }
+        return null;
+    };
+    LabeledStatement.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._statement.lastToken()) !== null) {
+            return token;
+        }
+        if(this._colonToken.width() > 0) {
+            return this._colonToken;
+        }
+        if(this._identifier.width() > 0) {
+            return this._identifier;
         }
         return null;
     };
@@ -11869,6 +13110,31 @@ var DoStatementSyntax = (function (_super) {
         }
         return null;
     };
+    DoStatementSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._semicolonToken.width() > 0) {
+            return this._semicolonToken;
+        }
+        if(this._closeParenToken.width() > 0) {
+            return this._closeParenToken;
+        }
+        if((token = this._condition.lastToken()) !== null) {
+            return token;
+        }
+        if(this._openParenToken.width() > 0) {
+            return this._openParenToken;
+        }
+        if(this._whileKeyword.width() > 0) {
+            return this._whileKeyword;
+        }
+        if((token = this._statement.lastToken()) !== null) {
+            return token;
+        }
+        if(this._doKeyword.width() > 0) {
+            return this._doKeyword;
+        }
+        return null;
+    };
     DoStatementSyntax.prototype.doKeyword = function () {
         return this._doKeyword;
     };
@@ -11963,6 +13229,16 @@ var TypeOfExpressionSyntax = (function (_super) {
         }
         return null;
     };
+    TypeOfExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._expression.lastToken()) !== null) {
+            return token;
+        }
+        if(this._typeOfKeyword.width() > 0) {
+            return this._typeOfKeyword;
+        }
+        return null;
+    };
     TypeOfExpressionSyntax.prototype.typeOfKeyword = function () {
         return this._typeOfKeyword;
     };
@@ -12019,6 +13295,16 @@ var DeleteExpressionSyntax = (function (_super) {
         }
         if((token = this._expression.firstToken()) !== null) {
             return token;
+        }
+        return null;
+    };
+    DeleteExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._expression.lastToken()) !== null) {
+            return token;
+        }
+        if(this._deleteKeyword.width() > 0) {
+            return this._deleteKeyword;
         }
         return null;
     };
@@ -12081,6 +13367,16 @@ var VoidExpressionSyntax = (function (_super) {
         }
         return null;
     };
+    VoidExpressionSyntax.prototype.lastToken = function () {
+        var token = null;
+        if((token = this._expression.lastToken()) !== null) {
+            return token;
+        }
+        if(this._voidKeyword.width() > 0) {
+            return this._voidKeyword;
+        }
+        return null;
+    };
     VoidExpressionSyntax.prototype.voidKeyword = function () {
         return this._voidKeyword;
     };
@@ -12137,6 +13433,16 @@ var DebuggerStatementSyntax = (function (_super) {
         }
         if(this._semicolonToken.width() > 0) {
             return this._semicolonToken;
+        }
+        return null;
+    };
+    DebuggerStatementSyntax.prototype.lastToken = function () {
+        var token = null;
+        if(this._semicolonToken.width() > 0) {
+            return this._semicolonToken;
+        }
+        if(this._debuggerKeyword.width() > 0) {
+            return this._debuggerKeyword;
         }
         return null;
     };
@@ -12796,6 +14102,11 @@ var Emitter = (function (_super) {
         statements.push.apply(statements, defaultValueAssignmentStatements);
         statements.push.apply(statements, rewritten.block().statements().toArray());
         return rewritten.withBlock(rewritten.block().withStatements(SyntaxList.create(statements)));
+    };
+    Emitter.prototype.visitParameter = function (node) {
+        var identifier = node.identifier();
+        identifier = identifier.withLeadingTrivia(node.firstToken().leadingTrivia()).withTrailingTrivia(node.lastToken().trailingTrivia());
+        return ParameterSyntax.create(identifier);
     };
     return Emitter;
 })(SyntaxRewriter);

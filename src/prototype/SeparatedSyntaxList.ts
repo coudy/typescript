@@ -42,6 +42,18 @@ module SeparatedSyntaxList {
         public firstToken(): ISyntaxToken {
             return null;
         }
+
+        public lastToken(): ISyntaxToken {
+            return null;
+        }
+
+        public fullWidth(): number {
+            return 0;
+        }
+
+        public fullText(): string {
+            return "";
+        }
     }
 
     class SingletonSeparatedSyntaxList implements ISeparatedSyntaxList {
@@ -94,6 +106,18 @@ module SeparatedSyntaxList {
 
         public firstToken(): ISyntaxToken {
             return this.item.firstToken();
+        }
+
+        public lastToken(): ISyntaxToken {
+            return this.item.lastToken();
+        }
+
+        public fullWidth(): number {
+            return this.item.fullWidth();
+        }
+
+        public fullText(): string {
+            return this.item.fullText();
         }
     }
 
@@ -177,8 +201,44 @@ module SeparatedSyntaxList {
 
             return null;
         }
-    }
 
+        public lastToken(): ISyntaxToken {
+            var token;
+            for (var i = this.elements.length - 1; i >= 0; i--) {
+                if (i % 2 === 0) {
+                    var node = <SyntaxNode>this.elements[i];
+                    token = node.lastToken();
+                    if (token !== null) {
+                        return token;
+                    }
+                }
+                else {
+                    token = <ISyntaxToken>this.elements[i];
+                    if (token.width() > 0) {
+                        return token;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public fullWidth(): number {
+            var width = 0
+            for (var i = 0, n = this.elements.length; i < n; i++) {
+                width += this.elements[i].fullWidth();
+            }
+
+            return width;
+        }
+
+        public fullText(): string {
+            var elements: string[] = [];
+            this.collectTextElements(elements);
+            return elements.join("");
+        }
+    }
+    
     export var empty: ISeparatedSyntaxList = new EmptySeparatedSyntaxList();
 
     export function create(nodes: ISyntaxElement[]): ISeparatedSyntaxList {

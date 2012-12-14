@@ -423,4 +423,13 @@ class Emitter extends SyntaxRewriter {
         return rewritten.withBlock(rewritten.block().withStatements(
             SyntaxList.create(statements)));
     }
+
+    public visitParameter(node: ParameterSyntax): ParameterSyntax {
+        // transfer the trivia from the first token to the the identifier.
+        var identifier = node.identifier();
+        identifier = identifier.withLeadingTrivia(node.firstToken().leadingTrivia())
+                               .withTrailingTrivia(node.lastToken().trailingTrivia());
+
+        return ParameterSyntax.create(identifier);
+    }
 }

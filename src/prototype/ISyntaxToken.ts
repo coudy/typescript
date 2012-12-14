@@ -5,11 +5,8 @@ interface ISyntaxToken extends ISyntaxElement {
     tokenKind: SyntaxKind;
     keywordKind(): SyntaxKind;
 
-    fullWidth(): number;
     width(): number;
-
     text(): string;
-    fullText(): string;
 
     value(): any;
     // valueText(): string;
