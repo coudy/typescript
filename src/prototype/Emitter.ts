@@ -453,11 +453,27 @@ class Emitter extends SyntaxRewriter {
 
         // We're generating FunctionDeclaration at column 0.  So we need to offset the block 
         // backward to be at that column as well.
-        var block = <BlockSyntax>this.changeIndentation(
-            constructorDeclaration.block().accept1(this),
+        var block = constructorDeclaration.block().accept1(this);
+
+        block = <BlockSyntax>this.changeIndentation(
+            block,
             this.syntaxInformationMap.isFirstTokenInLine(constructorDeclaration.block().firstToken()),
             -Indentation.columnForStartOfToken(constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options),
             /*minimumColumn:*/ 0);
+
+        var defaultValueAssignments = <StatementSyntax[]>ArrayUtilities.select(
+            Emitter.parameterListDefaultParameters(constructorDeclaration.parameterList()),
+            p => this.generateDefaultValueAssignmentStatement(p));
+
+        var statements:StatementSyntax[] = block.statements().toArray();
+
+        for (var i = defaultValueAssignments.length - 1; i >= 0; i--) {
+            var assignment = <StatementSyntax>this.changeIndentation(
+                defaultValueAssignments[i], /*changeFirstToken:*/ true, this.options.indentSpaces);
+            statements.unshift(assignment);
+        }
+
+        block = block.withStatements(SyntaxList.create(statements));
 
         var functionDeclaration = new FunctionDeclarationSyntax(null, null,
             SyntaxToken.createElastic({ kind: SyntaxKind.FunctionKeyword, trailingTrivia: [SyntaxTrivia.space] }),
@@ -538,4 +554,10 @@ class Emitter extends SyntaxRewriter {
 
         return variableStatement;
     }
+
+    //private visitTypeAnnotation(node: TypeAnnotationSyntax): TypeAnnotationSyntax {
+    //    // TODO: it's unlikely that a type annotation would have comments on them.  But if it does,
+    //    // transfer it to the surrounding construct.
+    //    return null;
+    //}
 }

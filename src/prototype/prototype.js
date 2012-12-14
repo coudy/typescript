@@ -14110,12 +14110,23 @@ var Emitter = (function (_super) {
         return ParameterSyntax.create(identifier);
     };
     Emitter.prototype.convertConstructorDeclaration = function (classDeclaration, constructorDeclaration) {
+        var _this = this;
         if(constructorDeclaration === null || constructorDeclaration.block() === null) {
             return null;
         }
         var identifier = classDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
         var functionSignature = FunctionSignatureSyntax.create(identifier.clone(), constructorDeclaration.parameterList().accept1(this));
-        var block = this.changeIndentation(constructorDeclaration.block().accept1(this), this.syntaxInformationMap.isFirstTokenInLine(constructorDeclaration.block().firstToken()), -Indentation.columnForStartOfToken(constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options), 0);
+        var block = constructorDeclaration.block().accept1(this);
+        block = this.changeIndentation(block, this.syntaxInformationMap.isFirstTokenInLine(constructorDeclaration.block().firstToken()), -Indentation.columnForStartOfToken(constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options), 0);
+        var defaultValueAssignments = ArrayUtilities.select(Emitter.parameterListDefaultParameters(constructorDeclaration.parameterList()), function (p) {
+            return _this.generateDefaultValueAssignmentStatement(p);
+        });
+        var statements = block.statements().toArray();
+        for(var i = defaultValueAssignments.length - 1; i >= 0; i--) {
+            var assignment = this.changeIndentation(defaultValueAssignments[i], true, this.options.indentSpaces);
+            statements.unshift(assignment);
+        }
+        block = block.withStatements(SyntaxList.create(statements));
         var functionDeclaration = new FunctionDeclarationSyntax(null, null, SyntaxToken.createElastic({
             kind: 25 /* FunctionKeyword */ ,
             trailingTrivia: [
