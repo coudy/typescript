@@ -3347,49 +3347,15 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.skipEscapeSequence = function (diagnostics) {
         Debug.assert(this.currentCharCode() === 92 /* backslash */ );
-        var rewindPoint = this.getRewindPoint();
+        var rewindPoint = this.getAndPinAbsoluteIndex();
         try  {
             this.moveToNextItem();
             var ch = this.currentCharCode();
             this.moveToNextItem();
             switch(ch) {
-                case 39 /* singleQuote */ :
-                case 34 /* doubleQuote */ :
-                case 92 /* backslash */ : {
-                    return;
-
-                }
-                case 48 /* _0 */ : {
-                    return;
-
-                }
-                case 98 /* b */ : {
-                    return;
-
-                }
-                case 102 /* f */ : {
-                    return;
-
-                }
-                case 110 /* n */ : {
-                    return;
-
-                }
-                case 114 /* r */ : {
-                    return;
-
-                }
-                case 116 /* t */ : {
-                    return;
-
-                }
-                case 118 /* v */ : {
-                    return;
-
-                }
                 case 120 /* x */ :
                 case 117 /* u */ : {
-                    this.rewind(rewindPoint);
+                    this.rewindToPinnedIndex(rewindPoint);
                     var value = this.scanUnicodeOrHexEscape(diagnostics);
                     return;
 
@@ -3401,25 +3367,19 @@ var Scanner = (function (_super) {
                     return;
 
                 }
-                case 10 /* lineFeed */ :
-                case 8233 /* paragraphSeparator */ :
-                case 8232 /* lineSeparator */ : {
-                    return;
-
-                }
                 default: {
                     return;
 
                 }
             }
         }finally {
-            this.releaseRewindPoint(rewindPoint);
+            this.releaseAndUnpinAbsoluteIndex(rewindPoint);
         }
     };
     Scanner.prototype.scanStringLiteral = function (diagnostics) {
         var quoteCharacter = this.currentCharCode();
         Debug.assert(quoteCharacter === 39 /* singleQuote */  || quoteCharacter === 34 /* doubleQuote */ );
-        var startIndex = this.getAndPinAbsoluteIndex();
+        var startIndex = this.absoluteIndex();
         this.moveToNextItem();
         while(true) {
             var ch = this.currentCharCode();
@@ -3442,7 +3402,6 @@ var Scanner = (function (_super) {
         var endIndex = this.absoluteIndex();
         this.tokenInfo.Width = endIndex - startIndex;
         this.tokenInfo.Kind = 12 /* StringLiteral */ ;
-        this.releaseAndUnpinAbsoluteIndex(startIndex);
     };
     Scanner.prototype.isUnicodeOrHexEscape = function (character) {
         return this.isUnicodeEscape(character) || this.isHexEscape(character);

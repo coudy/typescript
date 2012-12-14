@@ -981,56 +981,99 @@ class Scanner extends SlidingWindow {
         return JSON2.stringify(text);
     }
 
+    // Code for if we ever want the value of a string literal:
+    //    private skipEscapeSequence(diagnostics: SyntaxDiagnostic[]): void {
+    //    Debug.assert(this.currentCharCode() === CharacterCodes.backslash);
+
+    //    var rewindPoint = this.getAndPinAbsoluteIndex();
+    //    try {
+    //    // Consume the backslash.
+    //        this.moveToNextItem();
+
+    //    // Get the char after the backslash
+    //        var ch = this.currentCharCode();
+    //        this.moveToNextItem();
+    //        switch (ch) {
+    //            case CharacterCodes.singleQuote:
+    //            case CharacterCodes.doubleQuote:
+    //            case CharacterCodes.backslash:
+    //                // value is ch itself;
+    //                return;
+
+    //            case CharacterCodes._0:
+    //                // TODO: Deal with this part of the spec rule: 0 [lookahead ∉DecimalDigit]
+    //                // value is CharacterCodes.nullCharacter;
+    //                return;
+
+    //            case CharacterCodes.b:
+    //                // value is CharacterCodes.backspace;
+    //                return;
+
+    //            case CharacterCodes.f:
+    //                // value is CharacterCodes.formFeed;
+    //                return;
+
+    //            case CharacterCodes.n:
+    //                // value is CharacterCodes.newLine;
+    //                return;
+
+    //            case CharacterCodes.r:
+    //                // value is CharacterCodes.carriageReturn;
+    //                return;
+
+    //            case CharacterCodes.t:
+    //                // value is CharacterCodes.tab;
+    //                return;
+
+    //            case CharacterCodes.v:
+    //                // value is CharacterCodes.verticalTab;
+    //                return;
+
+    //            case CharacterCodes.x:
+    //            case CharacterCodes.u:
+    //                this.rewind(rewindPoint);
+    //                var value = this.scanUnicodeOrHexEscape(diagnostics);
+    //                return;
+
+    //            case CharacterCodes.carriageReturn:
+    //                // If it's \r\n then consume both characters.
+    //                if (this.currentCharCode() === CharacterCodes.lineFeed) {
+    //                    this.moveToNextItem();
+    //                }
+    //                return;
+    //            case CharacterCodes.lineFeed:
+    //            case CharacterCodes.paragraphSeparator:
+    //            case CharacterCodes.lineSeparator:
+    //                return;
+
+    //            default:
+    //                // Any other character is ok as well.  As per rule:
+    //                // EscapeSequence :: CharacterEscapeSequence
+    //                // CharacterEscapeSequence :: NonEscapeCharacter
+    //                // NonEscapeCharacter :: SourceCharacter but notEscapeCharacter or LineTerminator
+    //                return;
+    //        }
+    //    }
+    //    finally {
+    //        this.releaseAndUnpinAbsoluteIndex(rewindPoint);
+    //    }
+    //}
+
     private skipEscapeSequence(diagnostics: SyntaxDiagnostic[]): void {
         Debug.assert(this.currentCharCode() === CharacterCodes.backslash);
 
-        var rewindPoint = this.getRewindPoint();
+        var rewindPoint = this.getAndPinAbsoluteIndex();
         try {
-        // Consume the backslash.
+            // Consume the backslash.
             this.moveToNextItem();
 
-        // Get the char after the backslash
+            // Get the char after the backslash
             var ch = this.currentCharCode();
             this.moveToNextItem();
             switch (ch) {
-                case CharacterCodes.singleQuote:
-                case CharacterCodes.doubleQuote:
-                case CharacterCodes.backslash:
-                    // value is ch itself;
-                    return;
-
-                case CharacterCodes._0:
-                    // TODO: Deal with this part of the spec rule: 0 [lookahead ∉DecimalDigit]
-                    // value is CharacterCodes.nullCharacter;
-                    return;
-
-                case CharacterCodes.b:
-                    // value is CharacterCodes.backspace;
-                    return;
-
-                case CharacterCodes.f:
-                    // value is CharacterCodes.formFeed;
-                    return;
-
-                case CharacterCodes.n:
-                    // value is CharacterCodes.newLine;
-                    return;
-
-                case CharacterCodes.r:
-                    // value is CharacterCodes.carriageReturn;
-                    return;
-
-                case CharacterCodes.t:
-                    // value is CharacterCodes.tab;
-                    return;
-
-                case CharacterCodes.v:
-                    // value is CharacterCodes.verticalTab;
-                    return;
-
                 case CharacterCodes.x:
                 case CharacterCodes.u:
-                    this.rewind(rewindPoint);
+                    this.rewindToPinnedIndex(rewindPoint);
                     var value = this.scanUnicodeOrHexEscape(diagnostics);
                     return;
 
@@ -1040,11 +1083,22 @@ class Scanner extends SlidingWindow {
                         this.moveToNextItem();
                     }
                     return;
-                case CharacterCodes.lineFeed:
-                case CharacterCodes.paragraphSeparator:
-                case CharacterCodes.lineSeparator:
-                    return;
 
+                // We don't have to do anything special about these characters.  I'm including them
+                // Just so it's clear that we intentially process them in the exact same way:
+                //case CharacterCodes.singleQuote:
+                //case CharacterCodes.doubleQuote:
+                //case CharacterCodes.backslash:
+                //case CharacterCodes._0:
+                //case CharacterCodes.b:
+                //case CharacterCodes.f:
+                //case CharacterCodes.n:
+                //case CharacterCodes.r:
+                //case CharacterCodes.t:
+                //case CharacterCodes.v:
+                //case CharacterCodes.lineFeed:
+                //case CharacterCodes.paragraphSeparator:
+                //case CharacterCodes.lineSeparator:
                 default:
                     // Any other character is ok as well.  As per rule:
                     // EscapeSequence :: CharacterEscapeSequence
@@ -1054,7 +1108,7 @@ class Scanner extends SlidingWindow {
             }
         }
         finally {
-            this.releaseRewindPoint(rewindPoint);
+            this.releaseAndUnpinAbsoluteIndex(rewindPoint);
         }
     }
 
@@ -1063,7 +1117,7 @@ class Scanner extends SlidingWindow {
 
         Debug.assert(quoteCharacter === CharacterCodes.singleQuote || quoteCharacter === CharacterCodes.doubleQuote);
 
-        var startIndex = this.getAndPinAbsoluteIndex();
+        var startIndex = this.absoluteIndex();
         this.moveToNextItem();
 
         while (true) {
@@ -1089,8 +1143,6 @@ class Scanner extends SlidingWindow {
         // this.tokenInfo.Text = this.substring(startIndex, endIndex, true);
         this.tokenInfo.Width = endIndex - startIndex;
         this.tokenInfo.Kind = SyntaxKind.StringLiteral;
-
-        this.releaseAndUnpinAbsoluteIndex(startIndex);
     }
 
     private isUnicodeOrHexEscape(character: number): bool {
