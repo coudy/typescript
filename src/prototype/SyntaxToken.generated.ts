@@ -849,8 +849,8 @@ module SyntaxToken {
 
 
     function createFixedWidthToken(sourceText: IText, fullStart: number,
-        leadingTriviaInfo: number,
         kind: SyntaxKind,
+        leadingTriviaInfo: number,
         trailingTriviaInfo: number): ISyntaxToken {
 
         if (leadingTriviaInfo === 0) {
@@ -870,30 +870,30 @@ module SyntaxToken {
     }
 
     function createVariableWidthToken(sourceText: IText, fullStart: number,
+        kind: SyntaxKind,
         leadingTriviaInfo: number,
-        tokenInfo: ScannerTokenInfo,
+        width: number,
         trailingTriviaInfo: number): ISyntaxToken {
 
-        var kind = tokenInfo.Kind;
         if (leadingTriviaInfo === 0) {
             if (trailingTriviaInfo === 0) {
-                return new VariableWidthTokenWithNoTrivia(sourceText, kind, fullStart, tokenInfo.Width);
+                return new VariableWidthTokenWithNoTrivia(sourceText, kind, fullStart, width);
             }
             else {
-                return new VariableWidthTokenWithTrailingTrivia(sourceText, kind, fullStart, tokenInfo.Width, trailingTriviaInfo);
+                return new VariableWidthTokenWithTrailingTrivia(sourceText, kind, fullStart, width, trailingTriviaInfo);
             }
         }
         else if (trailingTriviaInfo === 0) {
-            return new VariableWidthTokenWithLeadingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, tokenInfo.Width);
+            return new VariableWidthTokenWithLeadingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, width);
         }
         else {
-            return new VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, tokenInfo.Width, trailingTriviaInfo);
+            return new VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, width, trailingTriviaInfo);
         }
     }
 
     function createKeyword(sourceText: IText, fullStart: number,
-        leadingTriviaInfo: number,
         keywordKind: SyntaxKind,
+        leadingTriviaInfo: number,
         trailingTriviaInfo: number): ISyntaxToken {
 
         if (leadingTriviaInfo === 0) {
@@ -913,17 +913,18 @@ module SyntaxToken {
     }
 
     export function create(text: IText, fullStart: number,
+        kind: SyntaxKind,
         leadingTriviaInfo: number,
-        tokenInfo: ScannerTokenInfo,
+        width: number,
         trailingTriviaInfo: number): ISyntaxToken {
-        if (SyntaxFacts.isAnyPunctuation(tokenInfo.Kind)) {
-            return createFixedWidthToken(text, fullStart, leadingTriviaInfo, tokenInfo.Kind, trailingTriviaInfo);
+        if (SyntaxFacts.isAnyPunctuation(kind)) {
+            return createFixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
         }
-        else if (SyntaxFacts.isAnyKeyword(tokenInfo.KeywordKind)) {
-            return createKeyword(text, fullStart, leadingTriviaInfo, tokenInfo.KeywordKind, trailingTriviaInfo);
+        else if (SyntaxFacts.isAnyKeyword(kind)) {
+            return createKeyword(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
         }
         else {
-            return createVariableWidthToken(text, fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo);
+            return createVariableWidthToken(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);
         }
     }
 

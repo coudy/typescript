@@ -1,10 +1,10 @@
 ﻿///<reference path='References.ts' />
 
-class ScannerTokenInfo {
-    public Kind: SyntaxKind;
-    public KeywordKind: SyntaxKind;
-    public Width: number;
-}
+//class ScannerTokenInfo {
+//    public Kind: SyntaxKind;
+//    public KeywordKind: SyntaxKind;
+//    public Width: number;
+//}
 
 class Scanner extends SlidingWindow {
     private text: IText = null;
@@ -73,14 +73,18 @@ class Scanner extends SlidingWindow {
         return this.currentItem(null);
     }
 
-    private tokenInfo: ScannerTokenInfo = new ScannerTokenInfo();
+    // private tokenInfo: ScannerTokenInfo = new ScannerTokenInfo();
+    private kind: SyntaxKind = SyntaxKind.None;
+    private width: number = 0;
 
     public scan(diagnostics: SyntaxDiagnostic[], allowRegularExpression: bool): ISyntaxToken {
         var fullStart = this.absoluteIndex();
         var leadingTriviaInfo = this.scanTriviaInfo(diagnostics, /*isTrailing: */ false);
         this.scanSyntaxToken(diagnostics, allowRegularExpression);
         var trailingTriviaInfo = this.scanTriviaInfo(diagnostics,/*isTrailing: */true);
-        return SyntaxToken.create(this.text, fullStart, leadingTriviaInfo, this.tokenInfo, trailingTriviaInfo);
+        return SyntaxToken.create(
+            this.text, fullStart, this.kind, leadingTriviaInfo, 
+            this.width, trailingTriviaInfo);
     }
 
     public static scanTrivia(text: IText, start: number, length: number, isTrailing: bool): ISyntaxTriviaList {
@@ -345,12 +349,11 @@ class Scanner extends SlidingWindow {
     }
 
     private scanSyntaxToken(diagnostics: SyntaxDiagnostic[], allowRegularExpression: bool): void {
-        this.tokenInfo.Kind = SyntaxKind.None;
-        this.tokenInfo.KeywordKind = SyntaxKind.None;
-        this.tokenInfo.Width = 0;
+        this.kind = SyntaxKind.None;
+        this.width = 0;
 
         if (this.isAtEndOfSource()) {
-            this.tokenInfo.Kind = SyntaxKind.EndOfFileToken;
+            this.kind = SyntaxKind.EndOfFileToken;
             return;
         }
 
@@ -496,16 +499,16 @@ class Scanner extends SlidingWindow {
                 // Saw an ascii character that wasn't a backslash and wasn't an identifier 
                 // character.  This identifier is done.
                 var endIndex = this.absoluteIndex();
-                this.tokenInfo.Width = endIndex - startIndex; // = this.substring(startIndex, endIndex, /*intern:*/ true);
-                this.tokenInfo.Kind = SyntaxKind.IdentifierNameToken;
+                this.width = endIndex - startIndex; // = this.substring(startIndex, endIndex, /*intern:*/ true);
+                this.kind = SyntaxKind.IdentifierNameToken;
 
                 // Also check if it a keyword if it started with a lowercase letter.
                 if (Scanner.isKeywordStartCharacter[firstCharacter]) {
                     var offset = startIndex - this.windowAbsoluteStartIndex;
-                    this.tokenInfo.KeywordKind = ScannerUtilities.keywordKind(this.window, offset, endIndex - startIndex); // SyntaxFacts.getTokenKind(this.tokenInfo.Text);
+                    this.kind = ScannerUtilities.identifierKind(this.window, offset, endIndex - startIndex); // SyntaxFacts.getTokenKind(this.tokenInfo.Text);
                 }
 
-                //if (this.tokenInfo.KeywordKind === SyntaxKind.None) {
+                //if (this.keywordKind === SyntaxKind.None) {
                 //    // Because this was all simple ascii characters with no escapes in it, we can set
                 //    // the value for this token right now.  Otherwise, we will defer computing the 
                 //    // value till later.
@@ -529,8 +532,8 @@ class Scanner extends SlidingWindow {
         while (this.isIdentifierPart(this.peekCharOrUnicodeEscape()));
 
         var endIndex = this.absoluteIndex();
-        this.tokenInfo.Width = endIndex - startIndex;
-        this.tokenInfo.Kind = SyntaxKind.IdentifierNameToken;
+        this.width = endIndex - startIndex;
+        this.kind = SyntaxKind.IdentifierNameToken;
 
         this.releaseAndUnpinAbsoluteIndex(startIndex);
     }
@@ -589,8 +592,8 @@ class Scanner extends SlidingWindow {
 
         var endIndex = this.absoluteIndex();
 
-        this.tokenInfo.Width = endIndex - startIndex;
-        this.tokenInfo.Kind = SyntaxKind.NumericLiteral;
+        this.width = endIndex - startIndex;
+        this.kind = SyntaxKind.NumericLiteral;
     }
 
     private scanHexNumericLiteral(startIndex: number): void {
@@ -604,8 +607,8 @@ class Scanner extends SlidingWindow {
 
         var endIndex = this.absoluteIndex();
         // this.tokenInfo.Text = this.substring(start, end, /*intern:*/ false);
-        this.tokenInfo.Width = endIndex - startIndex;
-        this.tokenInfo.Kind = SyntaxKind.NumericLiteral;
+        this.width = endIndex - startIndex;
+        this.kind = SyntaxKind.NumericLiteral;
     }
 
     private isHexNumericLiteral(): bool {
@@ -624,7 +627,7 @@ class Scanner extends SlidingWindow {
 
     private advanceAndSetTokenKind(kind: SyntaxKind): void {
         this.moveToNextItem();
-        this.tokenInfo.Kind = kind;
+        this.kind = kind;
     }
 
     private scanGreaterThanToken(): void {
@@ -634,12 +637,12 @@ class Scanner extends SlidingWindow {
         var character = this.currentCharCode();
         if (character === CharacterCodes.equals) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = SyntaxKind.GreaterThanEqualsToken;
+            this.kind = SyntaxKind.GreaterThanEqualsToken;
         }
         else if (character === CharacterCodes.greaterThan) {
             this.scanGreaterThanGreaterThanToken();
         } else {
-            this.tokenInfo.Kind = SyntaxKind.GreaterThanToken;
+            this.kind = SyntaxKind.GreaterThanToken;
         }
     }
 
@@ -649,13 +652,13 @@ class Scanner extends SlidingWindow {
 
         if (character === CharacterCodes.equals) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = SyntaxKind.GreaterThanGreaterThanEqualsToken;
+            this.kind = SyntaxKind.GreaterThanGreaterThanEqualsToken;
         }
         else if (character === CharacterCodes.greaterThan) {
             this.scanGreaterThanGreaterThanGreaterThanToken();
         }
         else {
-            this.tokenInfo.Kind = SyntaxKind.GreaterThanGreaterThanToken;
+            this.kind = SyntaxKind.GreaterThanGreaterThanToken;
         }
     }
 
@@ -665,10 +668,10 @@ class Scanner extends SlidingWindow {
 
         if (character === CharacterCodes.equals) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken;
+            this.kind = SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken;
         }
         else {
-            this.tokenInfo.Kind = SyntaxKind.GreaterThanGreaterThanGreaterThanToken;
+            this.kind = SyntaxKind.GreaterThanGreaterThanGreaterThanToken;
         }
     }
 
@@ -676,20 +679,20 @@ class Scanner extends SlidingWindow {
         this.moveToNextItem();
         if (this.currentCharCode() === CharacterCodes.equals) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = SyntaxKind.LessThanEqualsToken;
+            this.kind = SyntaxKind.LessThanEqualsToken;
         }
         else if (this.currentCharCode() === CharacterCodes.lessThan) {
             this.moveToNextItem();
             if (this.currentCharCode() === CharacterCodes.equals) {
                 this.moveToNextItem();
-                this.tokenInfo.Kind = SyntaxKind.LessThanLessThanEqualsToken;
+                this.kind = SyntaxKind.LessThanLessThanEqualsToken;
             }
             else {
-                this.tokenInfo.Kind = SyntaxKind.LessThanLessThanToken;
+                this.kind = SyntaxKind.LessThanLessThanToken;
             }
         }
         else {
-            this.tokenInfo.Kind = SyntaxKind.LessThanToken;
+            this.kind = SyntaxKind.LessThanToken;
         }
     }
 
@@ -697,14 +700,14 @@ class Scanner extends SlidingWindow {
         this.moveToNextItem();
         if (this.currentCharCode() === CharacterCodes.equals) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = SyntaxKind.BarEqualsToken;
+            this.kind = SyntaxKind.BarEqualsToken;
         }
         else if (this.currentCharCode() === CharacterCodes.bar) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = SyntaxKind.BarBarToken;
+            this.kind = SyntaxKind.BarBarToken;
         }
         else {
-            this.tokenInfo.Kind = SyntaxKind.BarToken;
+            this.kind = SyntaxKind.BarToken;
         }
     }
 
@@ -712,10 +715,10 @@ class Scanner extends SlidingWindow {
         this.moveToNextItem();
         if (this.currentCharCode() === CharacterCodes.equals) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = SyntaxKind.CaretEqualsToken;
+            this.kind = SyntaxKind.CaretEqualsToken;
         }
         else {
-            this.tokenInfo.Kind = SyntaxKind.CaretToken;
+            this.kind = SyntaxKind.CaretToken;
         }
     }
 
@@ -724,14 +727,14 @@ class Scanner extends SlidingWindow {
         var character = this.currentCharCode();
         if (character === CharacterCodes.equals) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = SyntaxKind.AmpersandEqualsToken;
+            this.kind = SyntaxKind.AmpersandEqualsToken;
         }
         else if (this.currentCharCode() === CharacterCodes.ampersand) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = SyntaxKind.AmpersandAmpersandToken;
+            this.kind = SyntaxKind.AmpersandAmpersandToken;
         }
         else {
-            this.tokenInfo.Kind = SyntaxKind.AmpersandToken;
+            this.kind = SyntaxKind.AmpersandToken;
         }
     }
 
@@ -739,10 +742,10 @@ class Scanner extends SlidingWindow {
         this.moveToNextItem();
         if (this.currentCharCode() === CharacterCodes.equals) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = SyntaxKind.PercentEqualsToken;
+            this.kind = SyntaxKind.PercentEqualsToken;
         }
         else {
-            this.tokenInfo.Kind = SyntaxKind.PercentToken;
+            this.kind = SyntaxKind.PercentToken;
         }
     }
 
@@ -752,14 +755,14 @@ class Scanner extends SlidingWindow {
 
         if (character === CharacterCodes.equals) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = SyntaxKind.MinusEqualsToken;
+            this.kind = SyntaxKind.MinusEqualsToken;
         }
         else if (character === CharacterCodes.minus) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = SyntaxKind.MinusMinusToken;
+            this.kind = SyntaxKind.MinusMinusToken;
         }
         else {
-            this.tokenInfo.Kind = SyntaxKind.MinusToken;
+            this.kind = SyntaxKind.MinusToken;
         }
     }
 
@@ -768,14 +771,14 @@ class Scanner extends SlidingWindow {
         var character = this.currentCharCode();
         if (character === CharacterCodes.equals) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = SyntaxKind.PlusEqualsToken;
+            this.kind = SyntaxKind.PlusEqualsToken;
         }
         else if (character === CharacterCodes.plus) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = SyntaxKind.PlusPlusToken;
+            this.kind = SyntaxKind.PlusPlusToken;
         }
         else {
-            this.tokenInfo.Kind = SyntaxKind.PlusToken;
+            this.kind = SyntaxKind.PlusToken;
         }
     }
 
@@ -783,10 +786,10 @@ class Scanner extends SlidingWindow {
         this.moveToNextItem();
         if (this.currentCharCode() === CharacterCodes.equals) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = SyntaxKind.AsteriskEqualsToken;
+            this.kind = SyntaxKind.AsteriskEqualsToken;
         }
         else {
-            this.tokenInfo.Kind = SyntaxKind.AsteriskToken;
+            this.kind = SyntaxKind.AsteriskToken;
         }
     }
 
@@ -799,18 +802,18 @@ class Scanner extends SlidingWindow {
             if (this.currentCharCode() === CharacterCodes.equals) {
                 this.moveToNextItem();
 
-                this.tokenInfo.Kind = SyntaxKind.EqualsEqualsEqualsToken;
+                this.kind = SyntaxKind.EqualsEqualsEqualsToken;
             }
             else {
-                this.tokenInfo.Kind = SyntaxKind.EqualsEqualsToken;
+                this.kind = SyntaxKind.EqualsEqualsToken;
             }
         }
         else if (character === CharacterCodes.greaterThan) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = SyntaxKind.EqualsGreaterThanToken;
+            this.kind = SyntaxKind.EqualsGreaterThanToken;
         }
         else {
-            this.tokenInfo.Kind = SyntaxKind.EqualsToken;
+            this.kind = SyntaxKind.EqualsToken;
         }
     }
 
@@ -835,10 +838,10 @@ class Scanner extends SlidingWindow {
 
             this.moveToNextItem();
             this.moveToNextItem();
-            this.tokenInfo.Kind = SyntaxKind.DotDotDotToken;
+            this.kind = SyntaxKind.DotDotDotToken;
         }
         else {
-            this.tokenInfo.Kind = SyntaxKind.DotToken;
+            this.kind = SyntaxKind.DotToken;
         }
     }
 
@@ -854,10 +857,10 @@ class Scanner extends SlidingWindow {
         this.moveToNextItem();
         if (this.currentCharCode() === CharacterCodes.equals) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = SyntaxKind.SlashEqualsToken;
+            this.kind = SyntaxKind.SlashEqualsToken;
         }
         else {
-            this.tokenInfo.Kind = SyntaxKind.SlashToken;
+            this.kind = SyntaxKind.SlashToken;
         }
     }
 
@@ -929,8 +932,8 @@ class Scanner extends SlidingWindow {
             }
 
             var endIndex = this.absoluteIndex();
-            this.tokenInfo.Kind = SyntaxKind.RegularExpressionLiteral;
-            this.tokenInfo.Width = endIndex - startIndex;
+            this.kind = SyntaxKind.RegularExpressionLiteral;
+            this.width = endIndex - startIndex;
             return true;
         }
         finally {
@@ -946,22 +949,22 @@ class Scanner extends SlidingWindow {
             if (this.currentCharCode() === CharacterCodes.equals) {
                 this.moveToNextItem();
 
-                this.tokenInfo.Kind = SyntaxKind.ExclamationEqualsEqualsToken;
+                this.kind = SyntaxKind.ExclamationEqualsEqualsToken;
             }
             else {
-                this.tokenInfo.Kind = SyntaxKind.ExclamationEqualsToken;
+                this.kind = SyntaxKind.ExclamationEqualsToken;
             }
         }
         else {
-            this.tokenInfo.Kind = SyntaxKind.ExclamationToken;
+            this.kind = SyntaxKind.ExclamationToken;
         }
     }
 
     private scanDefaultCharacter(character: number, diagnostics: SyntaxDiagnostic[]): void {
         var position = this.absoluteIndex();
         this.moveToNextItem();
-        this.tokenInfo.Width = 1; // = String.fromCharCode(character);
-        this.tokenInfo.Kind = SyntaxKind.ErrorToken;
+        this.width = 1; // = String.fromCharCode(character);
+        this.kind = SyntaxKind.ErrorToken;
 
         var text = String.fromCharCode(character);
         var messageText = this.getErrorMessageText(text);
@@ -1141,8 +1144,8 @@ class Scanner extends SlidingWindow {
 
         var endIndex = this.absoluteIndex();
         // this.tokenInfo.Text = this.substring(startIndex, endIndex, true);
-        this.tokenInfo.Width = endIndex - startIndex;
-        this.tokenInfo.Kind = SyntaxKind.StringLiteral;
+        this.width = endIndex - startIndex;
+        this.kind = SyntaxKind.StringLiteral;
     }
 
     private isUnicodeOrHexEscape(character: number): bool {

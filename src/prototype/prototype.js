@@ -2012,12 +2012,12 @@ var SeparatedSyntaxList;
 })(SeparatedSyntaxList || (SeparatedSyntaxList = {}));
 var ScannerUtilities = (function () {
     function ScannerUtilities() { }
-    ScannerUtilities.keywordKind = function keywordKind(array, startIndex, length) {
+    ScannerUtilities.identifierKind = function identifierKind(array, startIndex, length) {
         switch(length) {
             case 2: {
                 switch(array[startIndex]) {
                     case 100 /* d */ : {
-                        return (array[startIndex + 1] === 111 /* o */ ) ? 20 /* DoKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 111 /* o */ ) ? 20 /* DoKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 105 /* i */ : {
@@ -2031,14 +2031,14 @@ var ScannerUtilities = (function () {
 
                             }
                             default: {
-                                return 0 /* None */ ;
+                                return 9 /* IdentifierNameToken */ ;
 
                             }
                         }
 
                     }
                     default: {
-                        return 0 /* None */ ;
+                        return 9 /* IdentifierNameToken */ ;
 
                     }
                 }
@@ -2047,39 +2047,39 @@ var ScannerUtilities = (function () {
             case 3: {
                 switch(array[startIndex]) {
                     case 102 /* f */ : {
-                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 114 /* r */ ) ? 24 /* ForKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 114 /* r */ ) ? 24 /* ForKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 110 /* n */ : {
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 119 /* w */ ) ? 29 /* NewKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 119 /* w */ ) ? 29 /* NewKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 116 /* t */ : {
-                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 121 /* y */ ) ? 36 /* TryKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 121 /* y */ ) ? 36 /* TryKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 118 /* v */ : {
-                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 114 /* r */ ) ? 38 /* VarKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 114 /* r */ ) ? 38 /* VarKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 108 /* l */ : {
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 51 /* LetKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 51 /* LetKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 97 /* a */ : {
-                        return (array[startIndex + 1] === 110 /* n */  && array[startIndex + 2] === 121 /* y */ ) ? 58 /* AnyKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 110 /* n */  && array[startIndex + 2] === 121 /* y */ ) ? 58 /* AnyKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 103 /* g */ : {
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 62 /* GetKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 62 /* GetKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 115 /* s */ : {
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 65 /* SetKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 65 /* SetKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     default: {
-                        return 0 /* None */ ;
+                        return 9 /* IdentifierNameToken */ ;
 
                     }
                 }
@@ -2088,61 +2088,61 @@ var ScannerUtilities = (function () {
             case 4: {
                 switch(array[startIndex]) {
                     case 99 /* c */ : {
-                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 101 /* e */ ) ? 14 /* CaseKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 101 /* e */ ) ? 14 /* CaseKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 101 /* e */ : {
                         switch(array[startIndex + 1]) {
                             case 108 /* l */ : {
-                                return (array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 101 /* e */ ) ? 21 /* ElseKeyword */  : 0 /* None */ ;
+                                return (array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 101 /* e */ ) ? 21 /* ElseKeyword */  : 9 /* IdentifierNameToken */ ;
 
                             }
                             case 110 /* n */ : {
-                                return (array[startIndex + 2] === 117 /* u */  && array[startIndex + 3] === 109 /* m */ ) ? 44 /* EnumKeyword */  : 0 /* None */ ;
+                                return (array[startIndex + 2] === 117 /* u */  && array[startIndex + 3] === 109 /* m */ ) ? 44 /* EnumKeyword */  : 9 /* IdentifierNameToken */ ;
 
                             }
                             default: {
-                                return 0 /* None */ ;
+                                return 9 /* IdentifierNameToken */ ;
 
                             }
                         }
 
                     }
                     case 110 /* n */ : {
-                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 108 /* l */ ) ? 30 /* NullKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 108 /* l */ ) ? 30 /* NullKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 116 /* t */ : {
                         switch(array[startIndex + 1]) {
                             case 104 /* h */ : {
-                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 115 /* s */ ) ? 33 /* ThisKeyword */  : 0 /* None */ ;
+                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 115 /* s */ ) ? 33 /* ThisKeyword */  : 9 /* IdentifierNameToken */ ;
 
                             }
                             case 114 /* r */ : {
-                                return (array[startIndex + 2] === 117 /* u */  && array[startIndex + 3] === 101 /* e */ ) ? 35 /* TrueKeyword */  : 0 /* None */ ;
+                                return (array[startIndex + 2] === 117 /* u */  && array[startIndex + 3] === 101 /* e */ ) ? 35 /* TrueKeyword */  : 9 /* IdentifierNameToken */ ;
 
                             }
                             default: {
-                                return 0 /* None */ ;
+                                return 9 /* IdentifierNameToken */ ;
 
                             }
                         }
 
                     }
                     case 118 /* v */ : {
-                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 100 /* d */ ) ? 39 /* VoidKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 100 /* d */ ) ? 39 /* VoidKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 119 /* w */ : {
-                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 104 /* h */ ) ? 41 /* WithKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 104 /* h */ ) ? 41 /* WithKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 98 /* b */ : {
-                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 111 /* o */  && array[startIndex + 3] === 108 /* l */ ) ? 59 /* BoolKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 111 /* o */  && array[startIndex + 3] === 108 /* l */ ) ? 59 /* BoolKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     default: {
-                        return 0 /* None */ ;
+                        return 9 /* IdentifierNameToken */ ;
 
                     }
                 }
@@ -2151,52 +2151,52 @@ var ScannerUtilities = (function () {
             case 5: {
                 switch(array[startIndex]) {
                     case 98 /* b */ : {
-                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 101 /* e */  && array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 107 /* k */ ) ? 13 /* BreakKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 101 /* e */  && array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 107 /* k */ ) ? 13 /* BreakKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 99 /* c */ : {
                         switch(array[startIndex + 1]) {
                             case 97 /* a */ : {
-                                return (array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 99 /* c */  && array[startIndex + 4] === 104 /* h */ ) ? 15 /* CatchKeyword */  : 0 /* None */ ;
+                                return (array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 99 /* c */  && array[startIndex + 4] === 104 /* h */ ) ? 15 /* CatchKeyword */  : 9 /* IdentifierNameToken */ ;
 
                             }
                             case 108 /* l */ : {
-                                return (array[startIndex + 2] === 97 /* a */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 115 /* s */ ) ? 42 /* ClassKeyword */  : 0 /* None */ ;
+                                return (array[startIndex + 2] === 97 /* a */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 115 /* s */ ) ? 42 /* ClassKeyword */  : 9 /* IdentifierNameToken */ ;
 
                             }
                             case 111 /* o */ : {
-                                return (array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 116 /* t */ ) ? 43 /* ConstKeyword */  : 0 /* None */ ;
+                                return (array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 116 /* t */ ) ? 43 /* ConstKeyword */  : 9 /* IdentifierNameToken */ ;
 
                             }
                             default: {
-                                return 0 /* None */ ;
+                                return 9 /* IdentifierNameToken */ ;
 
                             }
                         }
 
                     }
                     case 102 /* f */ : {
-                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 101 /* e */ ) ? 22 /* FalseKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 101 /* e */ ) ? 22 /* FalseKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 116 /* t */ : {
-                        return (array[startIndex + 1] === 104 /* h */  && array[startIndex + 2] === 114 /* r */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 119 /* w */ ) ? 34 /* ThrowKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 104 /* h */  && array[startIndex + 2] === 114 /* r */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 119 /* w */ ) ? 34 /* ThrowKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 119 /* w */ : {
-                        return (array[startIndex + 1] === 104 /* h */  && array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 101 /* e */ ) ? 40 /* WhileKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 104 /* h */  && array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 101 /* e */ ) ? 40 /* WhileKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 115 /* s */ : {
-                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 114 /* r */ ) ? 48 /* SuperKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 114 /* r */ ) ? 48 /* SuperKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 121 /* y */ : {
-                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 101 /* e */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 100 /* d */ ) ? 57 /* YieldKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 101 /* e */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 100 /* d */ ) ? 57 /* YieldKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     default: {
-                        return 0 /* None */ ;
+                        return 9 /* IdentifierNameToken */ ;
 
                     }
                 }
@@ -2205,69 +2205,69 @@ var ScannerUtilities = (function () {
             case 6: {
                 switch(array[startIndex]) {
                     case 100 /* d */ : {
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 101 /* e */ ) ? 19 /* DeleteKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 101 /* e */ ) ? 19 /* DeleteKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 114 /* r */ : {
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 110 /* n */ ) ? 31 /* ReturnKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 110 /* n */ ) ? 31 /* ReturnKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 115 /* s */ : {
                         switch(array[startIndex + 1]) {
                             case 119 /* w */ : {
-                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 99 /* c */  && array[startIndex + 5] === 104 /* h */ ) ? 32 /* SwitchKeyword */  : 0 /* None */ ;
+                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 99 /* c */  && array[startIndex + 5] === 104 /* h */ ) ? 32 /* SwitchKeyword */  : 9 /* IdentifierNameToken */ ;
 
                             }
                             case 116 /* t */ : {
                                 switch(array[startIndex + 2]) {
                                     case 97 /* a */ : {
-                                        return (array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 99 /* c */ ) ? 56 /* StaticKeyword */  : 0 /* None */ ;
+                                        return (array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 99 /* c */ ) ? 56 /* StaticKeyword */  : 9 /* IdentifierNameToken */ ;
 
                                     }
                                     case 114 /* r */ : {
-                                        return (array[startIndex + 3] === 105 /* i */  && array[startIndex + 4] === 110 /* n */  && array[startIndex + 5] === 103 /* g */ ) ? 66 /* StringKeyword */  : 0 /* None */ ;
+                                        return (array[startIndex + 3] === 105 /* i */  && array[startIndex + 4] === 110 /* n */  && array[startIndex + 5] === 103 /* g */ ) ? 66 /* StringKeyword */  : 9 /* IdentifierNameToken */ ;
 
                                     }
                                     default: {
-                                        return 0 /* None */ ;
+                                        return 9 /* IdentifierNameToken */ ;
 
                                     }
                                 }
 
                             }
                             default: {
-                                return 0 /* None */ ;
+                                return 9 /* IdentifierNameToken */ ;
 
                             }
                         }
 
                     }
                     case 116 /* t */ : {
-                        return (array[startIndex + 1] === 121 /* y */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 111 /* o */  && array[startIndex + 5] === 102 /* f */ ) ? 37 /* TypeOfKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 121 /* y */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 111 /* o */  && array[startIndex + 5] === 102 /* f */ ) ? 37 /* TypeOfKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 101 /* e */ : {
-                        return (array[startIndex + 1] === 120 /* x */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 116 /* t */ ) ? 45 /* ExportKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 120 /* x */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 116 /* t */ ) ? 45 /* ExportKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 105 /* i */ : {
-                        return (array[startIndex + 1] === 109 /* m */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 116 /* t */ ) ? 47 /* ImportKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 109 /* m */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 116 /* t */ ) ? 47 /* ImportKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 112 /* p */ : {
-                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 98 /* b */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 99 /* c */ ) ? 55 /* PublicKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 98 /* b */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 99 /* c */ ) ? 55 /* PublicKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 109 /* m */ : {
-                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 100 /* d */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 108 /* l */  && array[startIndex + 5] === 101 /* e */ ) ? 63 /* ModuleKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 100 /* d */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 108 /* l */  && array[startIndex + 5] === 101 /* e */ ) ? 63 /* ModuleKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 110 /* n */ : {
-                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 109 /* m */  && array[startIndex + 3] === 98 /* b */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 114 /* r */ ) ? 64 /* NumberKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 109 /* m */  && array[startIndex + 3] === 98 /* b */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 114 /* r */ ) ? 64 /* NumberKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     default: {
-                        return 0 /* None */ ;
+                        return 9 /* IdentifierNameToken */ ;
 
                     }
                 }
@@ -2280,54 +2280,54 @@ var ScannerUtilities = (function () {
                             case 101 /* e */ : {
                                 switch(array[startIndex + 2]) {
                                     case 102 /* f */ : {
-                                        return (array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 117 /* u */  && array[startIndex + 5] === 108 /* l */  && array[startIndex + 6] === 116 /* t */ ) ? 18 /* DefaultKeyword */  : 0 /* None */ ;
+                                        return (array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 117 /* u */  && array[startIndex + 5] === 108 /* l */  && array[startIndex + 6] === 116 /* t */ ) ? 18 /* DefaultKeyword */  : 9 /* IdentifierNameToken */ ;
 
                                     }
                                     case 99 /* c */ : {
-                                        return (array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 114 /* r */  && array[startIndex + 6] === 101 /* e */ ) ? 61 /* DeclareKeyword */  : 0 /* None */ ;
+                                        return (array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 114 /* r */  && array[startIndex + 6] === 101 /* e */ ) ? 61 /* DeclareKeyword */  : 9 /* IdentifierNameToken */ ;
 
                                     }
                                     default: {
-                                        return 0 /* None */ ;
+                                        return 9 /* IdentifierNameToken */ ;
 
                                     }
                                 }
 
                             }
                             default: {
-                                return 0 /* None */ ;
+                                return 9 /* IdentifierNameToken */ ;
 
                             }
                         }
 
                     }
                     case 102 /* f */ : {
-                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 108 /* l */  && array[startIndex + 5] === 108 /* l */  && array[startIndex + 6] === 121 /* y */ ) ? 23 /* FinallyKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 108 /* l */  && array[startIndex + 5] === 108 /* l */  && array[startIndex + 6] === 121 /* y */ ) ? 23 /* FinallyKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 101 /* e */ : {
-                        return (array[startIndex + 1] === 120 /* x */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 110 /* n */  && array[startIndex + 5] === 100 /* d */  && array[startIndex + 6] === 115 /* s */ ) ? 46 /* ExtendsKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 120 /* x */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 110 /* n */  && array[startIndex + 5] === 100 /* d */  && array[startIndex + 6] === 115 /* s */ ) ? 46 /* ExtendsKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 112 /* p */ : {
                         switch(array[startIndex + 1]) {
                             case 97 /* a */ : {
-                                return (array[startIndex + 2] === 99 /* c */  && array[startIndex + 3] === 107 /* k */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 103 /* g */  && array[startIndex + 6] === 101 /* e */ ) ? 52 /* PackageKeyword */  : 0 /* None */ ;
+                                return (array[startIndex + 2] === 99 /* c */  && array[startIndex + 3] === 107 /* k */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 103 /* g */  && array[startIndex + 6] === 101 /* e */ ) ? 52 /* PackageKeyword */  : 9 /* IdentifierNameToken */ ;
 
                             }
                             case 114 /* r */ : {
-                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 118 /* v */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 116 /* t */  && array[startIndex + 6] === 101 /* e */ ) ? 53 /* PrivateKeyword */  : 0 /* None */ ;
+                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 118 /* v */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 116 /* t */  && array[startIndex + 6] === 101 /* e */ ) ? 53 /* PrivateKeyword */  : 9 /* IdentifierNameToken */ ;
 
                             }
                             default: {
-                                return 0 /* None */ ;
+                                return 9 /* IdentifierNameToken */ ;
 
                             }
                         }
 
                     }
                     default: {
-                        return 0 /* None */ ;
+                        return 9 /* IdentifierNameToken */ ;
 
                     }
                 }
@@ -2336,19 +2336,19 @@ var ScannerUtilities = (function () {
             case 8: {
                 switch(array[startIndex]) {
                     case 99 /* c */ : {
-                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 110 /* n */  && array[startIndex + 6] === 117 /* u */  && array[startIndex + 7] === 101 /* e */ ) ? 16 /* ContinueKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 110 /* n */  && array[startIndex + 6] === 117 /* u */  && array[startIndex + 7] === 101 /* e */ ) ? 16 /* ContinueKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 100 /* d */ : {
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 98 /* b */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 103 /* g */  && array[startIndex + 5] === 103 /* g */  && array[startIndex + 6] === 101 /* e */  && array[startIndex + 7] === 114 /* r */ ) ? 17 /* DebuggerKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 98 /* b */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 103 /* g */  && array[startIndex + 5] === 103 /* g */  && array[startIndex + 6] === 101 /* e */  && array[startIndex + 7] === 114 /* r */ ) ? 17 /* DebuggerKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 102 /* f */ : {
-                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 99 /* c */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 105 /* i */  && array[startIndex + 6] === 111 /* o */  && array[startIndex + 7] === 110 /* n */ ) ? 25 /* FunctionKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 99 /* c */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 105 /* i */  && array[startIndex + 6] === 111 /* o */  && array[startIndex + 7] === 110 /* n */ ) ? 25 /* FunctionKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     default: {
-                        return 0 /* None */ ;
+                        return 9 /* IdentifierNameToken */ ;
 
                     }
                 }
@@ -2357,15 +2357,15 @@ var ScannerUtilities = (function () {
             case 9: {
                 switch(array[startIndex]) {
                     case 105 /* i */ : {
-                        return (array[startIndex + 1] === 110 /* n */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 102 /* f */  && array[startIndex + 6] === 97 /* a */  && array[startIndex + 7] === 99 /* c */  && array[startIndex + 8] === 101 /* e */ ) ? 50 /* InterfaceKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 110 /* n */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 102 /* f */  && array[startIndex + 6] === 97 /* a */  && array[startIndex + 7] === 99 /* c */  && array[startIndex + 8] === 101 /* e */ ) ? 50 /* InterfaceKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     case 112 /* p */ : {
-                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 111 /* o */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 99 /* c */  && array[startIndex + 6] === 116 /* t */  && array[startIndex + 7] === 101 /* e */  && array[startIndex + 8] === 100 /* d */ ) ? 54 /* ProtectedKeyword */  : 0 /* None */ ;
+                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 111 /* o */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 99 /* c */  && array[startIndex + 6] === 116 /* t */  && array[startIndex + 7] === 101 /* e */  && array[startIndex + 8] === 100 /* d */ ) ? 54 /* ProtectedKeyword */  : 9 /* IdentifierNameToken */ ;
 
                     }
                     default: {
-                        return 0 /* None */ ;
+                        return 9 /* IdentifierNameToken */ ;
 
                     }
                 }
@@ -2376,33 +2376,33 @@ var ScannerUtilities = (function () {
                     case 105 /* i */ : {
                         switch(array[startIndex + 1]) {
                             case 110 /* n */ : {
-                                return (array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 110 /* n */  && array[startIndex + 6] === 99 /* c */  && array[startIndex + 7] === 101 /* e */  && array[startIndex + 8] === 111 /* o */  && array[startIndex + 9] === 102 /* f */ ) ? 28 /* InstanceOfKeyword */  : 0 /* None */ ;
+                                return (array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 110 /* n */  && array[startIndex + 6] === 99 /* c */  && array[startIndex + 7] === 101 /* e */  && array[startIndex + 8] === 111 /* o */  && array[startIndex + 9] === 102 /* f */ ) ? 28 /* InstanceOfKeyword */  : 9 /* IdentifierNameToken */ ;
 
                             }
                             case 109 /* m */ : {
-                                return (array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 109 /* m */  && array[startIndex + 6] === 101 /* e */  && array[startIndex + 7] === 110 /* n */  && array[startIndex + 8] === 116 /* t */  && array[startIndex + 9] === 115 /* s */ ) ? 49 /* ImplementsKeyword */  : 0 /* None */ ;
+                                return (array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 109 /* m */  && array[startIndex + 6] === 101 /* e */  && array[startIndex + 7] === 110 /* n */  && array[startIndex + 8] === 116 /* t */  && array[startIndex + 9] === 115 /* s */ ) ? 49 /* ImplementsKeyword */  : 9 /* IdentifierNameToken */ ;
 
                             }
                             default: {
-                                return 0 /* None */ ;
+                                return 9 /* IdentifierNameToken */ ;
 
                             }
                         }
 
                     }
                     default: {
-                        return 0 /* None */ ;
+                        return 9 /* IdentifierNameToken */ ;
 
                     }
                 }
 
             }
             case 11: {
-                return (array[startIndex] === 99 /* c */  && array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 114 /* r */  && array[startIndex + 6] === 117 /* u */  && array[startIndex + 7] === 99 /* c */  && array[startIndex + 8] === 116 /* t */  && array[startIndex + 9] === 111 /* o */  && array[startIndex + 10] === 114 /* r */ ) ? 60 /* ConstructorKeyword */  : 0 /* None */ ;
+                return (array[startIndex] === 99 /* c */  && array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 114 /* r */  && array[startIndex + 6] === 117 /* u */  && array[startIndex + 7] === 99 /* c */  && array[startIndex + 8] === 116 /* t */  && array[startIndex + 9] === 111 /* o */  && array[startIndex + 10] === 114 /* r */ ) ? 60 /* ConstructorKeyword */  : 9 /* IdentifierNameToken */ ;
 
             }
             default: {
-                return 0 /* None */ ;
+                return 9 /* IdentifierNameToken */ ;
 
             }
         }
@@ -2550,16 +2550,13 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var ScannerTokenInfo = (function () {
-    function ScannerTokenInfo() { }
-    return ScannerTokenInfo;
-})();
 var Scanner = (function (_super) {
     __extends(Scanner, _super);
     function Scanner(text, languageVersion, stringTable) {
         _super.call(this, 2048, 0, text.length());
         this.text = null;
-        this.tokenInfo = new ScannerTokenInfo();
+        this.kind = 0 /* None */ ;
+        this.width = 0;
         Scanner.initializeStaticData();
         this.text = text;
         this.stringTable = stringTable;
@@ -2615,7 +2612,7 @@ var Scanner = (function (_super) {
         var leadingTriviaInfo = this.scanTriviaInfo(diagnostics, false);
         this.scanSyntaxToken(diagnostics, allowRegularExpression);
         var trailingTriviaInfo = this.scanTriviaInfo(diagnostics, true);
-        return SyntaxToken.create(this.text, fullStart, leadingTriviaInfo, this.tokenInfo, trailingTriviaInfo);
+        return SyntaxToken.create(this.text, fullStart, this.kind, leadingTriviaInfo, this.width, trailingTriviaInfo);
     };
     Scanner.scanTrivia = function scanTrivia(text, start, length, isTrailing) {
         Debug.assert(length > 0);
@@ -2825,11 +2822,10 @@ var Scanner = (function (_super) {
         }
     };
     Scanner.prototype.scanSyntaxToken = function (diagnostics, allowRegularExpression) {
-        this.tokenInfo.Kind = 0 /* None */ ;
-        this.tokenInfo.KeywordKind = 0 /* None */ ;
-        this.tokenInfo.Width = 0;
+        this.kind = 0 /* None */ ;
+        this.width = 0;
         if(this.isAtEndOfSource()) {
-            this.tokenInfo.Kind = 118 /* EndOfFileToken */ ;
+            this.kind = 118 /* EndOfFileToken */ ;
             return;
         }
         var character = this.currentCharCode();
@@ -2976,11 +2972,11 @@ var Scanner = (function (_super) {
                     return false;
                 } else {
                     var endIndex = this.absoluteIndex();
-                    this.tokenInfo.Width = endIndex - startIndex;
-                    this.tokenInfo.Kind = 9 /* IdentifierNameToken */ ;
+                    this.width = endIndex - startIndex;
+                    this.kind = 9 /* IdentifierNameToken */ ;
                     if(Scanner.isKeywordStartCharacter[firstCharacter]) {
                         var offset = startIndex - this.windowAbsoluteStartIndex;
-                        this.tokenInfo.KeywordKind = ScannerUtilities.keywordKind(this.window, offset, endIndex - startIndex);
+                        this.kind = ScannerUtilities.identifierKind(this.window, offset, endIndex - startIndex);
                     }
                     this.releaseAndUnpinAbsoluteIndex(startIndex);
                     return true;
@@ -2994,8 +2990,8 @@ var Scanner = (function (_super) {
             this.scanCharOrUnicodeEscape(diagnostics);
         }while(this.isIdentifierPart(this.peekCharOrUnicodeEscape()))
         var endIndex = this.absoluteIndex();
-        this.tokenInfo.Width = endIndex - startIndex;
-        this.tokenInfo.Kind = 9 /* IdentifierNameToken */ ;
+        this.width = endIndex - startIndex;
+        this.kind = 9 /* IdentifierNameToken */ ;
         this.releaseAndUnpinAbsoluteIndex(startIndex);
     };
     Scanner.prototype.scanNumericLiteral = function () {
@@ -3031,8 +3027,8 @@ var Scanner = (function (_super) {
             this.moveToNextItem();
         }
         var endIndex = this.absoluteIndex();
-        this.tokenInfo.Width = endIndex - startIndex;
-        this.tokenInfo.Kind = 11 /* NumericLiteral */ ;
+        this.width = endIndex - startIndex;
+        this.kind = 11 /* NumericLiteral */ ;
     };
     Scanner.prototype.scanHexNumericLiteral = function (startIndex) {
         Debug.assert(this.isHexNumericLiteral());
@@ -3042,8 +3038,8 @@ var Scanner = (function (_super) {
             this.moveToNextItem();
         }
         var endIndex = this.absoluteIndex();
-        this.tokenInfo.Width = endIndex - startIndex;
-        this.tokenInfo.Kind = 11 /* NumericLiteral */ ;
+        this.width = endIndex - startIndex;
+        this.kind = 11 /* NumericLiteral */ ;
     };
     Scanner.prototype.isHexNumericLiteral = function () {
         if(this.currentCharCode() === 48 /* _0 */ ) {
@@ -3057,19 +3053,19 @@ var Scanner = (function (_super) {
     };
     Scanner.prototype.advanceAndSetTokenKind = function (kind) {
         this.moveToNextItem();
-        this.tokenInfo.Kind = kind;
+        this.kind = kind;
     };
     Scanner.prototype.scanGreaterThanToken = function () {
         this.moveToNextItem();
         var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 80 /* GreaterThanEqualsToken */ ;
+            this.kind = 80 /* GreaterThanEqualsToken */ ;
         } else {
             if(character === 62 /* greaterThan */ ) {
                 this.scanGreaterThanGreaterThanToken();
             } else {
-                this.tokenInfo.Kind = 78 /* GreaterThanToken */ ;
+                this.kind = 78 /* GreaterThanToken */ ;
             }
         }
     };
@@ -3078,12 +3074,12 @@ var Scanner = (function (_super) {
         var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 110 /* GreaterThanGreaterThanEqualsToken */ ;
+            this.kind = 110 /* GreaterThanGreaterThanEqualsToken */ ;
         } else {
             if(character === 62 /* greaterThan */ ) {
                 this.scanGreaterThanGreaterThanGreaterThanToken();
             } else {
-                this.tokenInfo.Kind = 93 /* GreaterThanGreaterThanToken */ ;
+                this.kind = 93 /* GreaterThanGreaterThanToken */ ;
             }
         }
     };
@@ -3092,27 +3088,27 @@ var Scanner = (function (_super) {
         var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 111 /* GreaterThanGreaterThanGreaterThanEqualsToken */ ;
+            this.kind = 111 /* GreaterThanGreaterThanGreaterThanEqualsToken */ ;
         } else {
-            this.tokenInfo.Kind = 94 /* GreaterThanGreaterThanGreaterThanToken */ ;
+            this.kind = 94 /* GreaterThanGreaterThanGreaterThanToken */ ;
         }
     };
     Scanner.prototype.scanLessThanToken = function () {
         this.moveToNextItem();
         if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 79 /* LessThanEqualsToken */ ;
+            this.kind = 79 /* LessThanEqualsToken */ ;
         } else {
             if(this.currentCharCode() === 60 /* lessThan */ ) {
                 this.moveToNextItem();
                 if(this.currentCharCode() === 61 /* equals */ ) {
                     this.moveToNextItem();
-                    this.tokenInfo.Kind = 109 /* LessThanLessThanEqualsToken */ ;
+                    this.kind = 109 /* LessThanLessThanEqualsToken */ ;
                 } else {
-                    this.tokenInfo.Kind = 92 /* LessThanLessThanToken */ ;
+                    this.kind = 92 /* LessThanLessThanToken */ ;
                 }
             } else {
-                this.tokenInfo.Kind = 77 /* LessThanToken */ ;
+                this.kind = 77 /* LessThanToken */ ;
             }
         }
     };
@@ -3120,13 +3116,13 @@ var Scanner = (function (_super) {
         this.moveToNextItem();
         if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 113 /* BarEqualsToken */ ;
+            this.kind = 113 /* BarEqualsToken */ ;
         } else {
             if(this.currentCharCode() === 124 /* bar */ ) {
                 this.moveToNextItem();
-                this.tokenInfo.Kind = 101 /* BarBarToken */ ;
+                this.kind = 101 /* BarBarToken */ ;
             } else {
-                this.tokenInfo.Kind = 96 /* BarToken */ ;
+                this.kind = 96 /* BarToken */ ;
             }
         }
     };
@@ -3134,9 +3130,9 @@ var Scanner = (function (_super) {
         this.moveToNextItem();
         if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 114 /* CaretEqualsToken */ ;
+            this.kind = 114 /* CaretEqualsToken */ ;
         } else {
-            this.tokenInfo.Kind = 97 /* CaretToken */ ;
+            this.kind = 97 /* CaretToken */ ;
         }
     };
     Scanner.prototype.scanAmpersandToken = function () {
@@ -3144,13 +3140,13 @@ var Scanner = (function (_super) {
         var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 112 /* AmpersandEqualsToken */ ;
+            this.kind = 112 /* AmpersandEqualsToken */ ;
         } else {
             if(this.currentCharCode() === 38 /* ampersand */ ) {
                 this.moveToNextItem();
-                this.tokenInfo.Kind = 100 /* AmpersandAmpersandToken */ ;
+                this.kind = 100 /* AmpersandAmpersandToken */ ;
             } else {
-                this.tokenInfo.Kind = 95 /* AmpersandToken */ ;
+                this.kind = 95 /* AmpersandToken */ ;
             }
         }
     };
@@ -3158,9 +3154,9 @@ var Scanner = (function (_super) {
         this.moveToNextItem();
         if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 108 /* PercentEqualsToken */ ;
+            this.kind = 108 /* PercentEqualsToken */ ;
         } else {
-            this.tokenInfo.Kind = 89 /* PercentToken */ ;
+            this.kind = 89 /* PercentToken */ ;
         }
     };
     Scanner.prototype.scanMinusToken = function () {
@@ -3168,13 +3164,13 @@ var Scanner = (function (_super) {
         var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 106 /* MinusEqualsToken */ ;
+            this.kind = 106 /* MinusEqualsToken */ ;
         } else {
             if(character === 45 /* minus */ ) {
                 this.moveToNextItem();
-                this.tokenInfo.Kind = 91 /* MinusMinusToken */ ;
+                this.kind = 91 /* MinusMinusToken */ ;
             } else {
-                this.tokenInfo.Kind = 87 /* MinusToken */ ;
+                this.kind = 87 /* MinusToken */ ;
             }
         }
     };
@@ -3183,13 +3179,13 @@ var Scanner = (function (_super) {
         var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 105 /* PlusEqualsToken */ ;
+            this.kind = 105 /* PlusEqualsToken */ ;
         } else {
             if(character === 43 /* plus */ ) {
                 this.moveToNextItem();
-                this.tokenInfo.Kind = 90 /* PlusPlusToken */ ;
+                this.kind = 90 /* PlusPlusToken */ ;
             } else {
-                this.tokenInfo.Kind = 86 /* PlusToken */ ;
+                this.kind = 86 /* PlusToken */ ;
             }
         }
     };
@@ -3197,9 +3193,9 @@ var Scanner = (function (_super) {
         this.moveToNextItem();
         if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 107 /* AsteriskEqualsToken */ ;
+            this.kind = 107 /* AsteriskEqualsToken */ ;
         } else {
-            this.tokenInfo.Kind = 88 /* AsteriskToken */ ;
+            this.kind = 88 /* AsteriskToken */ ;
         }
     };
     Scanner.prototype.scanEqualsToken = function () {
@@ -3209,16 +3205,16 @@ var Scanner = (function (_super) {
             this.moveToNextItem();
             if(this.currentCharCode() === 61 /* equals */ ) {
                 this.moveToNextItem();
-                this.tokenInfo.Kind = 84 /* EqualsEqualsEqualsToken */ ;
+                this.kind = 84 /* EqualsEqualsEqualsToken */ ;
             } else {
-                this.tokenInfo.Kind = 81 /* EqualsEqualsToken */ ;
+                this.kind = 81 /* EqualsEqualsToken */ ;
             }
         } else {
             if(character === 62 /* greaterThan */ ) {
                 this.moveToNextItem();
-                this.tokenInfo.Kind = 82 /* EqualsGreaterThanToken */ ;
+                this.kind = 82 /* EqualsGreaterThanToken */ ;
             } else {
-                this.tokenInfo.Kind = 104 /* EqualsToken */ ;
+                this.kind = 104 /* EqualsToken */ ;
             }
         }
     };
@@ -3238,9 +3234,9 @@ var Scanner = (function (_super) {
         if(this.currentCharCode() === 46 /* dot */  && this.peekItemN(1) === 46 /* dot */ ) {
             this.moveToNextItem();
             this.moveToNextItem();
-            this.tokenInfo.Kind = 74 /* DotDotDotToken */ ;
+            this.kind = 74 /* DotDotDotToken */ ;
         } else {
-            this.tokenInfo.Kind = 73 /* DotToken */ ;
+            this.kind = 73 /* DotToken */ ;
         }
     };
     Scanner.prototype.scanSlashToken = function (allowRegularExpression) {
@@ -3250,9 +3246,9 @@ var Scanner = (function (_super) {
         this.moveToNextItem();
         if(this.currentCharCode() === 61 /* equals */ ) {
             this.moveToNextItem();
-            this.tokenInfo.Kind = 116 /* SlashEqualsToken */ ;
+            this.kind = 116 /* SlashEqualsToken */ ;
         } else {
-            this.tokenInfo.Kind = 115 /* SlashToken */ ;
+            this.kind = 115 /* SlashToken */ ;
         }
     };
     Scanner.prototype.tryScanRegularExpressionToken = function () {
@@ -3307,8 +3303,8 @@ var Scanner = (function (_super) {
                 this.moveToNextItem();
             }
             var endIndex = this.absoluteIndex();
-            this.tokenInfo.Kind = 10 /* RegularExpressionLiteral */ ;
-            this.tokenInfo.Width = endIndex - startIndex;
+            this.kind = 10 /* RegularExpressionLiteral */ ;
+            this.width = endIndex - startIndex;
             return true;
         }finally {
             this.releaseAndUnpinAbsoluteIndex(startIndex);
@@ -3320,19 +3316,19 @@ var Scanner = (function (_super) {
             this.moveToNextItem();
             if(this.currentCharCode() === 61 /* equals */ ) {
                 this.moveToNextItem();
-                this.tokenInfo.Kind = 85 /* ExclamationEqualsEqualsToken */ ;
+                this.kind = 85 /* ExclamationEqualsEqualsToken */ ;
             } else {
-                this.tokenInfo.Kind = 83 /* ExclamationEqualsToken */ ;
+                this.kind = 83 /* ExclamationEqualsToken */ ;
             }
         } else {
-            this.tokenInfo.Kind = 98 /* ExclamationToken */ ;
+            this.kind = 98 /* ExclamationToken */ ;
         }
     };
     Scanner.prototype.scanDefaultCharacter = function (character, diagnostics) {
         var position = this.absoluteIndex();
         this.moveToNextItem();
-        this.tokenInfo.Width = 1;
-        this.tokenInfo.Kind = 117 /* ErrorToken */ ;
+        this.width = 1;
+        this.kind = 117 /* ErrorToken */ ;
         var text = String.fromCharCode(character);
         var messageText = this.getErrorMessageText(text);
         diagnostics.push(new SyntaxDiagnostic(position, 1, 1 /* Unexpected_character_0 */ , [
@@ -3400,8 +3396,8 @@ var Scanner = (function (_super) {
             }
         }
         var endIndex = this.absoluteIndex();
-        this.tokenInfo.Width = endIndex - startIndex;
-        this.tokenInfo.Kind = 12 /* StringLiteral */ ;
+        this.width = endIndex - startIndex;
+        this.kind = 12 /* StringLiteral */ ;
     };
     Scanner.prototype.isUnicodeOrHexEscape = function (character) {
         return this.isUnicodeEscape(character) || this.isHexEscape(character);
@@ -17539,7 +17535,7 @@ var SyntaxToken;
         };
         return KeywordWithLeadingAndTrailingTrivia;
     })();    
-    function createFixedWidthToken(sourceText, fullStart, leadingTriviaInfo, kind, trailingTriviaInfo) {
+    function createFixedWidthToken(sourceText, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo) {
         if(leadingTriviaInfo === 0) {
             if(trailingTriviaInfo === 0) {
                 return new FixedWidthTokenWithNoTrivia(kind, fullStart);
@@ -17554,23 +17550,22 @@ var SyntaxToken;
             }
         }
     }
-    function createVariableWidthToken(sourceText, fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo) {
-        var kind = tokenInfo.Kind;
+    function createVariableWidthToken(sourceText, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo) {
         if(leadingTriviaInfo === 0) {
             if(trailingTriviaInfo === 0) {
-                return new VariableWidthTokenWithNoTrivia(sourceText, kind, fullStart, tokenInfo.Width);
+                return new VariableWidthTokenWithNoTrivia(sourceText, kind, fullStart, width);
             } else {
-                return new VariableWidthTokenWithTrailingTrivia(sourceText, kind, fullStart, tokenInfo.Width, trailingTriviaInfo);
+                return new VariableWidthTokenWithTrailingTrivia(sourceText, kind, fullStart, width, trailingTriviaInfo);
             }
         } else {
             if(trailingTriviaInfo === 0) {
-                return new VariableWidthTokenWithLeadingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, tokenInfo.Width);
+                return new VariableWidthTokenWithLeadingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, width);
             } else {
-                return new VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, tokenInfo.Width, trailingTriviaInfo);
+                return new VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, width, trailingTriviaInfo);
             }
         }
     }
-    function createKeyword(sourceText, fullStart, leadingTriviaInfo, keywordKind, trailingTriviaInfo) {
+    function createKeyword(sourceText, fullStart, keywordKind, leadingTriviaInfo, trailingTriviaInfo) {
         if(leadingTriviaInfo === 0) {
             if(trailingTriviaInfo === 0) {
                 return new KeywordWithNoTrivia(keywordKind, fullStart);
@@ -17585,14 +17580,14 @@ var SyntaxToken;
             }
         }
     }
-    function create(text, fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo) {
-        if(SyntaxFacts.isAnyPunctuation(tokenInfo.Kind)) {
-            return createFixedWidthToken(text, fullStart, leadingTriviaInfo, tokenInfo.Kind, trailingTriviaInfo);
+    function create(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo) {
+        if(SyntaxFacts.isAnyPunctuation(kind)) {
+            return createFixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
         } else {
-            if(SyntaxFacts.isAnyKeyword(tokenInfo.KeywordKind)) {
-                return createKeyword(text, fullStart, leadingTriviaInfo, tokenInfo.KeywordKind, trailingTriviaInfo);
+            if(SyntaxFacts.isAnyKeyword(kind)) {
+                return createKeyword(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
             } else {
-                return createVariableWidthToken(text, fullStart, leadingTriviaInfo, tokenInfo, trailingTriviaInfo);
+                return createVariableWidthToken(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);
             }
         }
     }
