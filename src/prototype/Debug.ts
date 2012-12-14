@@ -1,5 +1,3 @@
-///<reference path='References.ts' />
-
 class Debug {
     public static assert(expression: bool): void {
         if (!expression) {

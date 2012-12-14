@@ -138,9 +138,8 @@ class StringTable {
             return false;
         }
 
-        // use array.Length to eliminate the rangecheck
         var s = start;
-        for (var i = 0; i < text.length; i++) {
+        for (var i = 0; i < length; i++) {
             if (text.charCodeAt(i) !== array[s]) {
                 return false;
             }

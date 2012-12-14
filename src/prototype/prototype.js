@@ -181,6 +181,40 @@ var ArrayUtilities = (function () {
     ArrayUtilities.isArray = function isArray(value) {
         return Object.prototype.toString.apply(value, []) === '[object Array]';
     }
+    ArrayUtilities.groupBy = function groupBy(array, func) {
+        var result = {
+        };
+        for(var i = 0, n = array.length; i < n; i++) {
+            var v = array[i];
+            var k = func(v);
+            var list = result[k] || [];
+            list.push(v);
+            result[k] = list;
+        }
+        return result;
+    }
+    ArrayUtilities.min = function min(array, func) {
+        Debug.assert(array.length > 0);
+        var min = func(array[0]);
+        for(var i = 1; i < array.length; i++) {
+            var next = func(array[i]);
+            if(next < min) {
+                min = next;
+            }
+        }
+        return min;
+    }
+    ArrayUtilities.max = function max(array, func) {
+        Debug.assert(array.length > 0);
+        var max = func(array[0]);
+        for(var i = 1; i < array.length; i++) {
+            var next = func(array[i]);
+            if(next > max) {
+                max = next;
+            }
+        }
+        return max;
+    }
     ArrayUtilities.last = function last(array) {
         if(array.length === 0) {
             throw Errors.argumentOutOfRange('array');
@@ -292,14 +326,27 @@ var CharacterCodes;
     CharacterCodes._9 = 57;
     CharacterCodes.a = 97;
     CharacterCodes.b = 98;
+    CharacterCodes.c = 99;
+    CharacterCodes.d = 100;
     CharacterCodes.e = 101;
     CharacterCodes.f = 102;
+    CharacterCodes.g = 103;
+    CharacterCodes.h = 104;
+    CharacterCodes.i = 105;
+    CharacterCodes.k = 107;
+    CharacterCodes.l = 108;
+    CharacterCodes.m = 109;
     CharacterCodes.n = 110;
+    CharacterCodes.o = 111;
+    CharacterCodes.p = 112;
     CharacterCodes.r = 114;
+    CharacterCodes.s = 115;
     CharacterCodes.t = 116;
     CharacterCodes.u = 117;
     CharacterCodes.v = 118;
+    CharacterCodes.w = 119;
     CharacterCodes.x = 120;
+    CharacterCodes.y = 121;
     CharacterCodes.z = 122;
     CharacterCodes.A = 65;
     CharacterCodes.E = 69;
@@ -382,7 +429,8 @@ var CharacterInfo = (function () {
 var Constants;
 (function (Constants) {
     Constants._map = [];
-    Constants.MaxInteger = 4294967295;
+    Constants.Max31BitInteger = 1073741823;
+    Constants.Min31BitInteger = -1073741824;
     Constants.TriviaNewLineMask = 134217728;
     Constants.TriviaCommentMask = 67108864;
     Constants.TriviaLengthMask = 67108863;
@@ -1962,6 +2010,405 @@ var SeparatedSyntaxList;
     }
     SeparatedSyntaxList.createAndValidate = createAndValidate;
 })(SeparatedSyntaxList || (SeparatedSyntaxList = {}));
+var ScannerUtilities = (function () {
+    function ScannerUtilities() { }
+    ScannerUtilities.keywordKind = function keywordKind(array, startIndex, length) {
+        switch(length) {
+            case 2: {
+                switch(array[startIndex]) {
+                    case 100 /* d */ : {
+                        return (array[startIndex + 1] === 111 /* o */ ) ? 20 /* DoKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 105 /* i */ : {
+                        switch(array[startIndex + 1]) {
+                            case 102 /* f */ : {
+                                return 26 /* IfKeyword */ ;
+
+                            }
+                            case 110 /* n */ : {
+                                return 27 /* InKeyword */ ;
+
+                            }
+                            default: {
+                                return 0 /* None */ ;
+
+                            }
+                        }
+
+                    }
+                    default: {
+                        return 0 /* None */ ;
+
+                    }
+                }
+
+            }
+            case 3: {
+                switch(array[startIndex]) {
+                    case 102 /* f */ : {
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 114 /* r */ ) ? 24 /* ForKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 110 /* n */ : {
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 119 /* w */ ) ? 29 /* NewKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 116 /* t */ : {
+                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 121 /* y */ ) ? 36 /* TryKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 118 /* v */ : {
+                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 114 /* r */ ) ? 38 /* VarKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 108 /* l */ : {
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 51 /* LetKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 97 /* a */ : {
+                        return (array[startIndex + 1] === 110 /* n */  && array[startIndex + 2] === 121 /* y */ ) ? 58 /* AnyKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 103 /* g */ : {
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 62 /* GetKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 115 /* s */ : {
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 65 /* SetKeyword */  : 0 /* None */ ;
+
+                    }
+                    default: {
+                        return 0 /* None */ ;
+
+                    }
+                }
+
+            }
+            case 4: {
+                switch(array[startIndex]) {
+                    case 99 /* c */ : {
+                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 101 /* e */ ) ? 14 /* CaseKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 101 /* e */ : {
+                        switch(array[startIndex + 1]) {
+                            case 108 /* l */ : {
+                                return (array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 101 /* e */ ) ? 21 /* ElseKeyword */  : 0 /* None */ ;
+
+                            }
+                            case 110 /* n */ : {
+                                return (array[startIndex + 2] === 117 /* u */  && array[startIndex + 3] === 109 /* m */ ) ? 44 /* EnumKeyword */  : 0 /* None */ ;
+
+                            }
+                            default: {
+                                return 0 /* None */ ;
+
+                            }
+                        }
+
+                    }
+                    case 110 /* n */ : {
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 108 /* l */ ) ? 30 /* NullKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 116 /* t */ : {
+                        switch(array[startIndex + 1]) {
+                            case 104 /* h */ : {
+                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 115 /* s */ ) ? 33 /* ThisKeyword */  : 0 /* None */ ;
+
+                            }
+                            case 114 /* r */ : {
+                                return (array[startIndex + 2] === 117 /* u */  && array[startIndex + 3] === 101 /* e */ ) ? 35 /* TrueKeyword */  : 0 /* None */ ;
+
+                            }
+                            default: {
+                                return 0 /* None */ ;
+
+                            }
+                        }
+
+                    }
+                    case 118 /* v */ : {
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 100 /* d */ ) ? 39 /* VoidKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 119 /* w */ : {
+                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 104 /* h */ ) ? 41 /* WithKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 98 /* b */ : {
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 111 /* o */  && array[startIndex + 3] === 108 /* l */ ) ? 59 /* BoolKeyword */  : 0 /* None */ ;
+
+                    }
+                    default: {
+                        return 0 /* None */ ;
+
+                    }
+                }
+
+            }
+            case 5: {
+                switch(array[startIndex]) {
+                    case 98 /* b */ : {
+                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 101 /* e */  && array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 107 /* k */ ) ? 13 /* BreakKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 99 /* c */ : {
+                        switch(array[startIndex + 1]) {
+                            case 97 /* a */ : {
+                                return (array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 99 /* c */  && array[startIndex + 4] === 104 /* h */ ) ? 15 /* CatchKeyword */  : 0 /* None */ ;
+
+                            }
+                            case 108 /* l */ : {
+                                return (array[startIndex + 2] === 97 /* a */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 115 /* s */ ) ? 42 /* ClassKeyword */  : 0 /* None */ ;
+
+                            }
+                            case 111 /* o */ : {
+                                return (array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 116 /* t */ ) ? 43 /* ConstKeyword */  : 0 /* None */ ;
+
+                            }
+                            default: {
+                                return 0 /* None */ ;
+
+                            }
+                        }
+
+                    }
+                    case 102 /* f */ : {
+                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 101 /* e */ ) ? 22 /* FalseKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 116 /* t */ : {
+                        return (array[startIndex + 1] === 104 /* h */  && array[startIndex + 2] === 114 /* r */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 119 /* w */ ) ? 34 /* ThrowKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 119 /* w */ : {
+                        return (array[startIndex + 1] === 104 /* h */  && array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 101 /* e */ ) ? 40 /* WhileKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 115 /* s */ : {
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 114 /* r */ ) ? 48 /* SuperKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 121 /* y */ : {
+                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 101 /* e */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 100 /* d */ ) ? 57 /* YieldKeyword */  : 0 /* None */ ;
+
+                    }
+                    default: {
+                        return 0 /* None */ ;
+
+                    }
+                }
+
+            }
+            case 6: {
+                switch(array[startIndex]) {
+                    case 100 /* d */ : {
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 101 /* e */ ) ? 19 /* DeleteKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 114 /* r */ : {
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 110 /* n */ ) ? 31 /* ReturnKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 115 /* s */ : {
+                        switch(array[startIndex + 1]) {
+                            case 119 /* w */ : {
+                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 99 /* c */  && array[startIndex + 5] === 104 /* h */ ) ? 32 /* SwitchKeyword */  : 0 /* None */ ;
+
+                            }
+                            case 116 /* t */ : {
+                                switch(array[startIndex + 2]) {
+                                    case 97 /* a */ : {
+                                        return (array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 99 /* c */ ) ? 56 /* StaticKeyword */  : 0 /* None */ ;
+
+                                    }
+                                    case 114 /* r */ : {
+                                        return (array[startIndex + 3] === 105 /* i */  && array[startIndex + 4] === 110 /* n */  && array[startIndex + 5] === 103 /* g */ ) ? 66 /* StringKeyword */  : 0 /* None */ ;
+
+                                    }
+                                    default: {
+                                        return 0 /* None */ ;
+
+                                    }
+                                }
+
+                            }
+                            default: {
+                                return 0 /* None */ ;
+
+                            }
+                        }
+
+                    }
+                    case 116 /* t */ : {
+                        return (array[startIndex + 1] === 121 /* y */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 111 /* o */  && array[startIndex + 5] === 102 /* f */ ) ? 37 /* TypeOfKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 101 /* e */ : {
+                        return (array[startIndex + 1] === 120 /* x */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 116 /* t */ ) ? 45 /* ExportKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 105 /* i */ : {
+                        return (array[startIndex + 1] === 109 /* m */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 116 /* t */ ) ? 47 /* ImportKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 112 /* p */ : {
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 98 /* b */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 99 /* c */ ) ? 55 /* PublicKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 109 /* m */ : {
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 100 /* d */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 108 /* l */  && array[startIndex + 5] === 101 /* e */ ) ? 63 /* ModuleKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 110 /* n */ : {
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 109 /* m */  && array[startIndex + 3] === 98 /* b */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 114 /* r */ ) ? 64 /* NumberKeyword */  : 0 /* None */ ;
+
+                    }
+                    default: {
+                        return 0 /* None */ ;
+
+                    }
+                }
+
+            }
+            case 7: {
+                switch(array[startIndex]) {
+                    case 100 /* d */ : {
+                        switch(array[startIndex + 1]) {
+                            case 101 /* e */ : {
+                                switch(array[startIndex + 2]) {
+                                    case 102 /* f */ : {
+                                        return (array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 117 /* u */  && array[startIndex + 5] === 108 /* l */  && array[startIndex + 6] === 116 /* t */ ) ? 18 /* DefaultKeyword */  : 0 /* None */ ;
+
+                                    }
+                                    case 99 /* c */ : {
+                                        return (array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 114 /* r */  && array[startIndex + 6] === 101 /* e */ ) ? 61 /* DeclareKeyword */  : 0 /* None */ ;
+
+                                    }
+                                    default: {
+                                        return 0 /* None */ ;
+
+                                    }
+                                }
+
+                            }
+                            default: {
+                                return 0 /* None */ ;
+
+                            }
+                        }
+
+                    }
+                    case 102 /* f */ : {
+                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 108 /* l */  && array[startIndex + 5] === 108 /* l */  && array[startIndex + 6] === 121 /* y */ ) ? 23 /* FinallyKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 101 /* e */ : {
+                        return (array[startIndex + 1] === 120 /* x */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 110 /* n */  && array[startIndex + 5] === 100 /* d */  && array[startIndex + 6] === 115 /* s */ ) ? 46 /* ExtendsKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 112 /* p */ : {
+                        switch(array[startIndex + 1]) {
+                            case 97 /* a */ : {
+                                return (array[startIndex + 2] === 99 /* c */  && array[startIndex + 3] === 107 /* k */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 103 /* g */  && array[startIndex + 6] === 101 /* e */ ) ? 52 /* PackageKeyword */  : 0 /* None */ ;
+
+                            }
+                            case 114 /* r */ : {
+                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 118 /* v */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 116 /* t */  && array[startIndex + 6] === 101 /* e */ ) ? 53 /* PrivateKeyword */  : 0 /* None */ ;
+
+                            }
+                            default: {
+                                return 0 /* None */ ;
+
+                            }
+                        }
+
+                    }
+                    default: {
+                        return 0 /* None */ ;
+
+                    }
+                }
+
+            }
+            case 8: {
+                switch(array[startIndex]) {
+                    case 99 /* c */ : {
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 110 /* n */  && array[startIndex + 6] === 117 /* u */  && array[startIndex + 7] === 101 /* e */ ) ? 16 /* ContinueKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 100 /* d */ : {
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 98 /* b */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 103 /* g */  && array[startIndex + 5] === 103 /* g */  && array[startIndex + 6] === 101 /* e */  && array[startIndex + 7] === 114 /* r */ ) ? 17 /* DebuggerKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 102 /* f */ : {
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 99 /* c */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 105 /* i */  && array[startIndex + 6] === 111 /* o */  && array[startIndex + 7] === 110 /* n */ ) ? 25 /* FunctionKeyword */  : 0 /* None */ ;
+
+                    }
+                    default: {
+                        return 0 /* None */ ;
+
+                    }
+                }
+
+            }
+            case 9: {
+                switch(array[startIndex]) {
+                    case 105 /* i */ : {
+                        return (array[startIndex + 1] === 110 /* n */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 102 /* f */  && array[startIndex + 6] === 97 /* a */  && array[startIndex + 7] === 99 /* c */  && array[startIndex + 8] === 101 /* e */ ) ? 50 /* InterfaceKeyword */  : 0 /* None */ ;
+
+                    }
+                    case 112 /* p */ : {
+                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 111 /* o */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 99 /* c */  && array[startIndex + 6] === 116 /* t */  && array[startIndex + 7] === 101 /* e */  && array[startIndex + 8] === 100 /* d */ ) ? 54 /* ProtectedKeyword */  : 0 /* None */ ;
+
+                    }
+                    default: {
+                        return 0 /* None */ ;
+
+                    }
+                }
+
+            }
+            case 10: {
+                switch(array[startIndex]) {
+                    case 105 /* i */ : {
+                        switch(array[startIndex + 1]) {
+                            case 110 /* n */ : {
+                                return (array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 110 /* n */  && array[startIndex + 6] === 99 /* c */  && array[startIndex + 7] === 101 /* e */  && array[startIndex + 8] === 111 /* o */  && array[startIndex + 9] === 102 /* f */ ) ? 28 /* InstanceOfKeyword */  : 0 /* None */ ;
+
+                            }
+                            case 109 /* m */ : {
+                                return (array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 109 /* m */  && array[startIndex + 6] === 101 /* e */  && array[startIndex + 7] === 110 /* n */  && array[startIndex + 8] === 116 /* t */  && array[startIndex + 9] === 115 /* s */ ) ? 49 /* ImplementsKeyword */  : 0 /* None */ ;
+
+                            }
+                            default: {
+                                return 0 /* None */ ;
+
+                            }
+                        }
+
+                    }
+                    default: {
+                        return 0 /* None */ ;
+
+                    }
+                }
+
+            }
+            case 11: {
+                return (array[startIndex] === 99 /* c */  && array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 114 /* r */  && array[startIndex + 6] === 117 /* u */  && array[startIndex + 7] === 99 /* c */  && array[startIndex + 8] === 116 /* t */  && array[startIndex + 9] === 111 /* o */  && array[startIndex + 10] === 114 /* r */ ) ? 60 /* ConstructorKeyword */  : 0 /* None */ ;
+
+            }
+            default: {
+                return 0 /* None */ ;
+
+            }
+        }
+    }
+    return ScannerUtilities;
+})();
 var SlidingWindow = (function () {
     function SlidingWindow(defaultWindowSize, defaultValue, sourceLength) {
         if (typeof sourceLength === "undefined") { sourceLength = -1; }
@@ -2380,11 +2827,9 @@ var Scanner = (function (_super) {
     Scanner.prototype.scanSyntaxToken = function (diagnostics, allowRegularExpression) {
         this.tokenInfo.Kind = 0 /* None */ ;
         this.tokenInfo.KeywordKind = 0 /* None */ ;
-        this.tokenInfo.Text = null;
-        this.tokenInfo.Value = null;
+        this.tokenInfo.Width = 0;
         if(this.isAtEndOfSource()) {
             this.tokenInfo.Kind = 118 /* EndOfFileToken */ ;
-            this.tokenInfo.Text = "";
             return;
         }
         var character = this.currentCharCode();
@@ -2531,13 +2976,11 @@ var Scanner = (function (_super) {
                     return false;
                 } else {
                     var endIndex = this.absoluteIndex();
-                    this.tokenInfo.Text = this.substring(startIndex, endIndex, true);
+                    this.tokenInfo.Width = endIndex - startIndex;
                     this.tokenInfo.Kind = 9 /* IdentifierNameToken */ ;
                     if(Scanner.isKeywordStartCharacter[firstCharacter]) {
-                        this.tokenInfo.KeywordKind = SyntaxFacts.getTokenKind(this.tokenInfo.Text);
-                    }
-                    if(this.tokenInfo.KeywordKind === 0 /* None */ ) {
-                        this.tokenInfo.Value = this.tokenInfo.Text;
+                        var offset = startIndex - this.windowAbsoluteStartIndex;
+                        this.tokenInfo.KeywordKind = ScannerUtilities.keywordKind(this.window, offset, endIndex - startIndex);
                     }
                     this.releaseAndUnpinAbsoluteIndex(startIndex);
                     return true;
@@ -2551,7 +2994,7 @@ var Scanner = (function (_super) {
             this.scanCharOrUnicodeEscape(diagnostics);
         }while(this.isIdentifierPart(this.peekCharOrUnicodeEscape()))
         var endIndex = this.absoluteIndex();
-        this.tokenInfo.Text = this.substring(startIndex, endIndex, true);
+        this.tokenInfo.Width = endIndex - startIndex;
         this.tokenInfo.Kind = 9 /* IdentifierNameToken */ ;
         this.releaseAndUnpinAbsoluteIndex(startIndex);
     };
@@ -2588,18 +3031,18 @@ var Scanner = (function (_super) {
             this.moveToNextItem();
         }
         var endIndex = this.absoluteIndex();
-        this.tokenInfo.Text = this.substring(startIndex, endIndex, false);
+        this.tokenInfo.Width = endIndex - startIndex;
         this.tokenInfo.Kind = 11 /* NumericLiteral */ ;
     };
-    Scanner.prototype.scanHexNumericLiteral = function (start) {
+    Scanner.prototype.scanHexNumericLiteral = function (startIndex) {
         Debug.assert(this.isHexNumericLiteral());
         this.moveToNextItem();
         this.moveToNextItem();
         while(CharacterInfo.isHexDigit(this.currentCharCode())) {
             this.moveToNextItem();
         }
-        var end = this.absoluteIndex();
-        this.tokenInfo.Text = this.substring(start, end, false);
+        var endIndex = this.absoluteIndex();
+        this.tokenInfo.Width = endIndex - startIndex;
         this.tokenInfo.Kind = 11 /* NumericLiteral */ ;
     };
     Scanner.prototype.isHexNumericLiteral = function () {
@@ -2865,7 +3308,7 @@ var Scanner = (function (_super) {
             }
             var endIndex = this.absoluteIndex();
             this.tokenInfo.Kind = 10 /* RegularExpressionLiteral */ ;
-            this.tokenInfo.Text = this.substring(startIndex, endIndex, false);
+            this.tokenInfo.Width = endIndex - startIndex;
             return true;
         }finally {
             this.releaseAndUnpinAbsoluteIndex(startIndex);
@@ -2888,9 +3331,10 @@ var Scanner = (function (_super) {
     Scanner.prototype.scanDefaultCharacter = function (character, diagnostics) {
         var position = this.absoluteIndex();
         this.moveToNextItem();
-        this.tokenInfo.Text = String.fromCharCode(character);
+        this.tokenInfo.Width = 1;
         this.tokenInfo.Kind = 117 /* ErrorToken */ ;
-        var messageText = this.getErrorMessageText(this.tokenInfo.Text);
+        var text = String.fromCharCode(character);
+        var messageText = this.getErrorMessageText(text);
         diagnostics.push(new SyntaxDiagnostic(position, 1, 1 /* Unexpected_character_0 */ , [
             messageText
         ]));
@@ -2996,7 +3440,7 @@ var Scanner = (function (_super) {
             }
         }
         var endIndex = this.absoluteIndex();
-        this.tokenInfo.Text = this.substring(startIndex, endIndex, true);
+        this.tokenInfo.Width = endIndex - startIndex;
         this.tokenInfo.Kind = 12 /* StringLiteral */ ;
         this.releaseAndUnpinAbsoluteIndex(startIndex);
     };
@@ -3131,7 +3575,7 @@ var TextBase = (function () {
         this.checkSubSpan(span);
         return new SubText(this, span);
     };
-    TextBase.prototype.substr = function (start, length) {
+    TextBase.prototype.substr = function (start, length, intern) {
         throw Errors.abstract();
     };
     TextBase.prototype.copyTo = function (sourceIndex, destination, destinationIndex, count) {
@@ -3382,7 +3826,7 @@ var StringTable = (function () {
             return false;
         }
         var s = start;
-        for(var i = 0; i < text.length; i++) {
+        for(var i = 0; i < length; i++) {
             if(text.charCodeAt(i) !== array[s]) {
                 return false;
             }
@@ -3411,7 +3855,7 @@ var StringText = (function (_super) {
         }
         return this.source.charCodeAt(position);
     };
-    StringText.prototype.substr = function (start, length) {
+    StringText.prototype.substr = function (start, length, intern) {
         return this.source.substr(start, length);
     };
     StringText.prototype.toString = function (span) {
@@ -12911,7 +13355,7 @@ var Parser = (function (_super) {
         if(this.isExternalModuleReference()) {
             return this.parseExternalModuleReference();
         } else {
-            this.parseModuleNameModuleReference();
+            return this.parseModuleNameModuleReference();
         }
     };
     Parser.prototype.isExternalModuleReference = function () {
@@ -15436,7 +15880,7 @@ var SyntaxToken;
     }
     SyntaxToken.hashCode = hashCode;
     function realize(token) {
-        return new RealizedToken(token.tokenKind, token.keywordKind(), token.leadingTrivia(), token.text(), token.value(), token.valueText(), token.trailingTrivia(), token.isMissing());
+        return new RealizedToken(token.tokenKind, token.keywordKind(), token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia(), token.isMissing());
     }
     SyntaxToken.realize = realize;
     function collectTextElements(token, elements) {
@@ -15461,10 +15905,7 @@ var SyntaxToken;
         }
         result.text = token.text();
         if(token.value() !== null) {
-            result.value = token.value;
-        }
-        if(token.valueText() !== null) {
-            result.valueText = token.valueText();
+            result.valueText = token.value();
         }
         if(token.hasLeadingTrivia()) {
             result.hasLeadingTrivia = true;
@@ -15495,15 +15936,36 @@ var SyntaxToken;
         return result;
     }
     SyntaxToken.toJSON = toJSON;
-    function value(token, value) {
-        return value;
+    function value(token) {
+        if(token.tokenKind === 9 /* IdentifierNameToken */ ) {
+            var text = token.text();
+            for(var i = 0; i < text.length; i++) {
+                if(!Scanner.isIdentifierPartCharacter[text.charCodeAt(i)]) {
+                    return null;
+                }
+            }
+            return text;
+        } else {
+            if(token.tokenKind === 11 /* NumericLiteral */ ) {
+                return null;
+            } else {
+                if(token.tokenKind === 12 /* StringLiteral */ ) {
+                    return null;
+                } else {
+                    if(token.tokenKind === 10 /* RegularExpressionLiteral */ ) {
+                        return null;
+                    } else {
+                        if(token.tokenKind === 118 /* EndOfFileToken */  || token.tokenKind === 117 /* ErrorToken */ ) {
+                            return null;
+                        } else {
+                            throw Errors.invalidOperation();
+                        }
+                    }
+                }
+            }
+        }
     }
     SyntaxToken.value = value;
-    function valueText(token) {
-        var value = token.value();
-        return value === null ? null : typeof value === 'string' ? value : value.toString();
-    }
-    SyntaxToken.valueText = valueText;
     var EmptyToken = (function () {
         function EmptyToken(kind, keywordKind) {
             this.tokenKind = kind;
@@ -15556,9 +16018,6 @@ var SyntaxToken;
         };
         EmptyToken.prototype.value = function () {
             return null;
-        };
-        EmptyToken.prototype.valueText = function () {
-            return valueText(this);
         };
         EmptyToken.prototype.hasLeadingTrivia = function () {
             return false;
@@ -15724,18 +16183,17 @@ var SyntaxToken;
         return ElasticToken;
     })();    
     var RealizedToken = (function () {
-        function RealizedToken(tokenKind, keywordKind, leadingTrivia, text, value, valueText, trailingTrivia, isMissing) {
+        function RealizedToken(tokenKind, keywordKind, leadingTrivia, text, value, trailingTrivia, isMissing) {
             this.tokenKind = tokenKind;
             this._keywordKind = keywordKind;
             this._leadingTrivia = leadingTrivia;
             this._text = text;
             this._value = value;
-            this._valueText = valueText;
             this._trailingTrivia = trailingTrivia;
             this._isMissing = isMissing;
         }
         RealizedToken.prototype.clone = function () {
-            return new RealizedToken(this.tokenKind, this._keywordKind, this._leadingTrivia, this._text, this._value, this._valueText, this._trailingTrivia, this._isMissing);
+            return new RealizedToken(this.tokenKind, this._keywordKind, this._leadingTrivia, this._text, this._value, this._trailingTrivia, this._isMissing);
         };
         RealizedToken.prototype.kind = function () {
             return this.tokenKind;
@@ -15782,9 +16240,6 @@ var SyntaxToken;
         RealizedToken.prototype.value = function () {
             return this._value;
         };
-        RealizedToken.prototype.valueText = function () {
-            return this._valueText;
-        };
         RealizedToken.prototype.hasLeadingTrivia = function () {
             return this._leadingTrivia.count() > 0;
         };
@@ -15822,10 +16277,10 @@ var SyntaxToken;
             collectTextElements(this, elements);
         };
         RealizedToken.prototype.withLeadingTrivia = function (leadingTrivia) {
-            return new RealizedToken(this.tokenKind, this._keywordKind, leadingTrivia, this._text, this._value, this._valueText, this._trailingTrivia, this._isMissing);
+            return new RealizedToken(this.tokenKind, this._keywordKind, leadingTrivia, this._text, this._value, this._trailingTrivia, this._isMissing);
         };
         RealizedToken.prototype.withTrailingTrivia = function (trailingTrivia) {
-            return new RealizedToken(this.tokenKind, this._keywordKind, this._leadingTrivia, this._text, this._value, this._valueText, trailingTrivia, this._isMissing);
+            return new RealizedToken(this.tokenKind, this._keywordKind, this._leadingTrivia, this._text, this._value, trailingTrivia, this._isMissing);
         };
         return RealizedToken;
     })();    
@@ -15844,14 +16299,15 @@ var SyntaxToken;
 var SyntaxToken;
 (function (SyntaxToken) {
     var VariableWidthTokenWithNoTrivia = (function () {
-        function VariableWidthTokenWithNoTrivia(kind, fullStart, text, value) {
+        function VariableWidthTokenWithNoTrivia(sourceText, kind, fullStart, textOrWidth) {
+            this._value = null;
+            this._sourceText = sourceText;
             this.tokenKind = kind;
             this._fullStart = fullStart;
-            this._text = text;
-            this._value = value;
+            this._textOrWidth = textOrWidth;
         }
         VariableWidthTokenWithNoTrivia.prototype.clone = function () {
-            return new VariableWidthTokenWithNoTrivia(this.tokenKind, this._fullStart, this._text, this._value);
+            return new VariableWidthTokenWithNoTrivia(this._sourceText, this.tokenKind, this._fullStart, this._textOrWidth);
         };
         VariableWidthTokenWithNoTrivia.prototype.isToken = function () {
             return true;
@@ -15887,22 +16343,22 @@ var SyntaxToken;
             return this._fullStart;
         };
         VariableWidthTokenWithNoTrivia.prototype.width = function () {
-            return this.text().length;
+            return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length;
         };
         VariableWidthTokenWithNoTrivia.prototype.end = function () {
             return this.start() + this.width();
         };
         VariableWidthTokenWithNoTrivia.prototype.text = function () {
-            return this._text;
+            if(typeof this._textOrWidth === 'number') {
+                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 9 /* IdentifierNameToken */ );
+            }
+            return this._textOrWidth;
         };
         VariableWidthTokenWithNoTrivia.prototype.fullText = function () {
-            return this.text();
+            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
         };
         VariableWidthTokenWithNoTrivia.prototype.value = function () {
-            return SyntaxToken.value(this, this._value);
-        };
-        VariableWidthTokenWithNoTrivia.prototype.valueText = function () {
-            return SyntaxToken.valueText(this);
+            return this._value || (this._value = SyntaxToken.value(this));
         };
         VariableWidthTokenWithNoTrivia.prototype.hasLeadingTrivia = function () {
             return false;
@@ -15952,16 +16408,16 @@ var SyntaxToken;
         return VariableWidthTokenWithNoTrivia;
     })();    
     var VariableWidthTokenWithLeadingTrivia = (function () {
-        function VariableWidthTokenWithLeadingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, text, value) {
+        function VariableWidthTokenWithLeadingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, textOrWidth) {
+            this._value = null;
             this._sourceText = sourceText;
             this.tokenKind = kind;
             this._fullStart = fullStart;
             this._leadingTriviaInfo = leadingTriviaInfo;
-            this._text = text;
-            this._value = value;
+            this._textOrWidth = textOrWidth;
         }
         VariableWidthTokenWithLeadingTrivia.prototype.clone = function () {
-            return new VariableWidthTokenWithLeadingTrivia(this._sourceText, this.tokenKind, this._fullStart, this._leadingTriviaInfo, this._text, this._value);
+            return new VariableWidthTokenWithLeadingTrivia(this._sourceText, this.tokenKind, this._fullStart, this._leadingTriviaInfo, this._textOrWidth);
         };
         VariableWidthTokenWithLeadingTrivia.prototype.isToken = function () {
             return true;
@@ -15997,22 +16453,22 @@ var SyntaxToken;
             return this._fullStart + getTriviaLength(this._leadingTriviaInfo);
         };
         VariableWidthTokenWithLeadingTrivia.prototype.width = function () {
-            return this.text().length;
+            return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length;
         };
         VariableWidthTokenWithLeadingTrivia.prototype.end = function () {
             return this.start() + this.width();
         };
         VariableWidthTokenWithLeadingTrivia.prototype.text = function () {
-            return this._text;
+            if(typeof this._textOrWidth === 'number') {
+                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 9 /* IdentifierNameToken */ );
+            }
+            return this._textOrWidth;
         };
         VariableWidthTokenWithLeadingTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth());
+            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
         };
         VariableWidthTokenWithLeadingTrivia.prototype.value = function () {
-            return SyntaxToken.value(this, this._value);
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.valueText = function () {
-            return SyntaxToken.valueText(this);
+            return this._value || (this._value = SyntaxToken.value(this));
         };
         VariableWidthTokenWithLeadingTrivia.prototype.hasLeadingTrivia = function () {
             return true;
@@ -16062,16 +16518,16 @@ var SyntaxToken;
         return VariableWidthTokenWithLeadingTrivia;
     })();    
     var VariableWidthTokenWithTrailingTrivia = (function () {
-        function VariableWidthTokenWithTrailingTrivia(sourceText, kind, fullStart, text, value, trailingTriviaInfo) {
+        function VariableWidthTokenWithTrailingTrivia(sourceText, kind, fullStart, textOrWidth, trailingTriviaInfo) {
+            this._value = null;
             this._sourceText = sourceText;
             this.tokenKind = kind;
             this._fullStart = fullStart;
-            this._text = text;
-            this._value = value;
+            this._textOrWidth = textOrWidth;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
         VariableWidthTokenWithTrailingTrivia.prototype.clone = function () {
-            return new VariableWidthTokenWithTrailingTrivia(this._sourceText, this.tokenKind, this._fullStart, this._text, this._value, this._trailingTriviaInfo);
+            return new VariableWidthTokenWithTrailingTrivia(this._sourceText, this.tokenKind, this._fullStart, this._textOrWidth, this._trailingTriviaInfo);
         };
         VariableWidthTokenWithTrailingTrivia.prototype.isToken = function () {
             return true;
@@ -16107,22 +16563,22 @@ var SyntaxToken;
             return this._fullStart;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.width = function () {
-            return this.text().length;
+            return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.end = function () {
             return this.start() + this.width();
         };
         VariableWidthTokenWithTrailingTrivia.prototype.text = function () {
-            return this._text;
+            if(typeof this._textOrWidth === 'number') {
+                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 9 /* IdentifierNameToken */ );
+            }
+            return this._textOrWidth;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth());
+            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
         };
         VariableWidthTokenWithTrailingTrivia.prototype.value = function () {
-            return SyntaxToken.value(this, this._value);
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.valueText = function () {
-            return SyntaxToken.valueText(this);
+            return this._value || (this._value = SyntaxToken.value(this));
         };
         VariableWidthTokenWithTrailingTrivia.prototype.hasLeadingTrivia = function () {
             return false;
@@ -16172,17 +16628,17 @@ var SyntaxToken;
         return VariableWidthTokenWithTrailingTrivia;
     })();    
     var VariableWidthTokenWithLeadingAndTrailingTrivia = (function () {
-        function VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, text, value, trailingTriviaInfo) {
+        function VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, textOrWidth, trailingTriviaInfo) {
+            this._value = null;
             this._sourceText = sourceText;
             this.tokenKind = kind;
             this._fullStart = fullStart;
             this._leadingTriviaInfo = leadingTriviaInfo;
-            this._text = text;
-            this._value = value;
+            this._textOrWidth = textOrWidth;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.clone = function () {
-            return new VariableWidthTokenWithLeadingAndTrailingTrivia(this._sourceText, this.tokenKind, this._fullStart, this._leadingTriviaInfo, this._text, this._value, this._trailingTriviaInfo);
+            return new VariableWidthTokenWithLeadingAndTrailingTrivia(this._sourceText, this.tokenKind, this._fullStart, this._leadingTriviaInfo, this._textOrWidth, this._trailingTriviaInfo);
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isToken = function () {
             return true;
@@ -16218,22 +16674,22 @@ var SyntaxToken;
             return this._fullStart + getTriviaLength(this._leadingTriviaInfo);
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.width = function () {
-            return this.text().length;
+            return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length;
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.end = function () {
             return this.start() + this.width();
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.text = function () {
-            return this._text;
+            if(typeof this._textOrWidth === 'number') {
+                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 9 /* IdentifierNameToken */ );
+            }
+            return this._textOrWidth;
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth());
+            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.value = function () {
-            return SyntaxToken.value(this, this._value);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.valueText = function () {
-            return SyntaxToken.valueText(this);
+            return this._value || (this._value = SyntaxToken.value(this));
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingTrivia = function () {
             return true;
@@ -16338,9 +16794,6 @@ var SyntaxToken;
         FixedWidthTokenWithNoTrivia.prototype.value = function () {
             return null;
         };
-        FixedWidthTokenWithNoTrivia.prototype.valueText = function () {
-            return null;
-        };
         FixedWidthTokenWithNoTrivia.prototype.hasLeadingTrivia = function () {
             return false;
         };
@@ -16441,12 +16894,9 @@ var SyntaxToken;
             return SyntaxFacts.getText(this.tokenKind);
         };
         FixedWidthTokenWithLeadingTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth());
+            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
         };
         FixedWidthTokenWithLeadingTrivia.prototype.value = function () {
-            return null;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.valueText = function () {
             return null;
         };
         FixedWidthTokenWithLeadingTrivia.prototype.hasLeadingTrivia = function () {
@@ -16549,12 +16999,9 @@ var SyntaxToken;
             return SyntaxFacts.getText(this.tokenKind);
         };
         FixedWidthTokenWithTrailingTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth());
+            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
         };
         FixedWidthTokenWithTrailingTrivia.prototype.value = function () {
-            return null;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.valueText = function () {
             return null;
         };
         FixedWidthTokenWithTrailingTrivia.prototype.hasLeadingTrivia = function () {
@@ -16658,12 +17105,9 @@ var SyntaxToken;
             return SyntaxFacts.getText(this.tokenKind);
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth());
+            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.value = function () {
-            return null;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.valueText = function () {
             return null;
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingTrivia = function () {
@@ -16770,9 +17214,6 @@ var SyntaxToken;
         KeywordWithNoTrivia.prototype.value = function () {
             return null;
         };
-        KeywordWithNoTrivia.prototype.valueText = function () {
-            return null;
-        };
         KeywordWithNoTrivia.prototype.hasLeadingTrivia = function () {
             return false;
         };
@@ -16874,12 +17315,9 @@ var SyntaxToken;
             return SyntaxFacts.getText(this._keywordKind);
         };
         KeywordWithLeadingTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth());
+            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
         };
         KeywordWithLeadingTrivia.prototype.value = function () {
-            return null;
-        };
-        KeywordWithLeadingTrivia.prototype.valueText = function () {
             return null;
         };
         KeywordWithLeadingTrivia.prototype.hasLeadingTrivia = function () {
@@ -16983,12 +17421,9 @@ var SyntaxToken;
             return SyntaxFacts.getText(this._keywordKind);
         };
         KeywordWithTrailingTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth());
+            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
         };
         KeywordWithTrailingTrivia.prototype.value = function () {
-            return null;
-        };
-        KeywordWithTrailingTrivia.prototype.valueText = function () {
             return null;
         };
         KeywordWithTrailingTrivia.prototype.hasLeadingTrivia = function () {
@@ -17093,12 +17528,9 @@ var SyntaxToken;
             return SyntaxFacts.getText(this._keywordKind);
         };
         KeywordWithLeadingAndTrailingTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth());
+            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
         };
         KeywordWithLeadingAndTrailingTrivia.prototype.value = function () {
-            return null;
-        };
-        KeywordWithLeadingAndTrailingTrivia.prototype.valueText = function () {
             return null;
         };
         KeywordWithLeadingAndTrailingTrivia.prototype.hasLeadingTrivia = function () {
@@ -17167,15 +17599,15 @@ var SyntaxToken;
         var kind = tokenInfo.Kind;
         if(leadingTriviaInfo === 0) {
             if(trailingTriviaInfo === 0) {
-                return new VariableWidthTokenWithNoTrivia(kind, fullStart, tokenInfo.Text, tokenInfo.Value);
+                return new VariableWidthTokenWithNoTrivia(sourceText, kind, fullStart, tokenInfo.Width);
             } else {
-                return new VariableWidthTokenWithTrailingTrivia(sourceText, kind, fullStart, tokenInfo.Text, tokenInfo.Value, trailingTriviaInfo);
+                return new VariableWidthTokenWithTrailingTrivia(sourceText, kind, fullStart, tokenInfo.Width, trailingTriviaInfo);
             }
         } else {
             if(trailingTriviaInfo === 0) {
-                return new VariableWidthTokenWithLeadingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, tokenInfo.Text, tokenInfo.Value);
+                return new VariableWidthTokenWithLeadingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, tokenInfo.Width);
             } else {
-                return new VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, tokenInfo.Text, tokenInfo.Value, trailingTriviaInfo);
+                return new VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, tokenInfo.Width, trailingTriviaInfo);
             }
         }
     }
@@ -18150,7 +18582,7 @@ var TextChangeRange = (function () {
     };
     TextChangeRange.collapse = function collapse(changes) {
         var diff = 0;
-        var start = 4294967295 /* MaxInteger */ ;
+        var start = 1073741823 /* Max31BitInteger */ ;
         var end = 0;
         for(var i = 0; i < changes.length; i++) {
             var change = changes[i];

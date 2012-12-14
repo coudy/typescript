@@ -44,7 +44,7 @@ class StringText extends TextBase {
         return this.source.charCodeAt(position);
     }
 
-    public substr(start: number, length: number) {
+    public substr(start: number, length: number, intern: bool) {
         return this.source.substr(start, length);
     }
 

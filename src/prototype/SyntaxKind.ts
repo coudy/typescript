@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+// If you change anything in this enum, make sure you run SyntaxGenerator again!
 
 enum SyntaxKind {
     None,

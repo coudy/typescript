@@ -29,6 +29,7 @@
 ///<reference path='MathPrototype.ts' />
 ///<reference path='ParseOptions.ts' />
 ///<reference path='SeparatedSyntaxList.ts' />
+///<reference path='ScannerUtilities.generated.ts' />
 ///<reference path='SlidingWindow.ts' />
 
 // Scanner depends on SlidingWindow.
@@ -50,8 +51,8 @@
 
 ///<reference path='SyntaxNode.ts' />
 ///<reference path='SyntaxList.ts' />
-///<reference path='SyntaxNodes.ts' />
-///<reference path='SyntaxRewriter.ts' />
+///<reference path='SyntaxNodes.generated.ts' />
+///<reference path='SyntaxRewriter.generated.ts' />
 
 // Emitter depends on SyntaxNodeCloner.
 ///<reference path='SyntaxNodeCloner.ts' />
@@ -76,7 +77,7 @@
 ///<reference path='SyntaxTree.ts' />
 ///<reference path='SyntaxTrivia.ts' />
 ///<reference path='SyntaxTriviaList.ts' />
-///<reference path='SyntaxWalker.ts' />
+///<reference path='SyntaxWalker.generated.ts' />
 
 // SyntaxInformationMap depends on SyntaxWalker.
 ///<reference path='SyntaxInformationMap.ts' />

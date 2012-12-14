@@ -800,7 +800,7 @@ class Parser extends SlidingWindow {
             return this.parseExternalModuleReference();
         }
         else {
-            this.parseModuleNameModuleReference();
+            return this.parseModuleNameModuleReference();
         }
     }
 

@@ -1,7 +1,9 @@
 ///<reference path='References.ts' />
 
 enum Constants {
-    MaxInteger = 4294967295,
+    // 2^30-1
+    Max31BitInteger = 1073741823,
+    Min31BitInteger = -1073741824,
 
     // Masks that we use place information about trivia into a single int.
     // The first two flags mark bools that tell us if the trivia contains a comment or a newline.

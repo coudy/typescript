@@ -44,7 +44,7 @@ class TextBase implements IText {
         return new SubText(this, span);
     }
 
-    public substr(start: number, length: number) {
+    public substr(start: number, length: number, intern: bool) {
         throw Errors.abstract();
     }
 

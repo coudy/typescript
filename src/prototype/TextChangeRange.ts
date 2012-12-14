@@ -34,7 +34,7 @@ class TextChangeRange {
 
     public static collapse(changes: TextChangeRange[]): TextChangeRange {
         var diff = 0;
-        var start = Constants.MaxInteger;
+        var start = Constants.Max31BitInteger;
         var end = 0;
 
         // TODO: we are assuming that changes are normalized. That is currently not guaranteed,

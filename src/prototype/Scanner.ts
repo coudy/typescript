@@ -3,8 +3,7 @@
 class ScannerTokenInfo {
     public Kind: SyntaxKind;
     public KeywordKind: SyntaxKind;
-    public Text: string;
-    public Value: any;
+    public Width: number;
 }
 
 class Scanner extends SlidingWindow {
@@ -14,7 +13,7 @@ class Scanner extends SlidingWindow {
 
     private static isKeywordStartCharacter: bool[] = [];
     private static isIdentifierStartCharacter: bool[] = [];
-    private static isIdentifierPartCharacter: bool[] = [];
+    public static isIdentifierPartCharacter: bool[] = [];
     private static isNumericLiteralStart: bool[] = [];
 
     private static initializeStaticData() {
@@ -348,12 +347,10 @@ class Scanner extends SlidingWindow {
     private scanSyntaxToken(diagnostics: SyntaxDiagnostic[], allowRegularExpression: bool): void {
         this.tokenInfo.Kind = SyntaxKind.None;
         this.tokenInfo.KeywordKind = SyntaxKind.None;
-        this.tokenInfo.Text = null;
-        this.tokenInfo.Value = null;
+        this.tokenInfo.Width = 0;
 
         if (this.isAtEndOfSource()) {
             this.tokenInfo.Kind = SyntaxKind.EndOfFileToken;
-            this.tokenInfo.Text = "";
             return;
         }
 
@@ -499,20 +496,21 @@ class Scanner extends SlidingWindow {
                 // Saw an ascii character that wasn't a backslash and wasn't an identifier 
                 // character.  This identifier is done.
                 var endIndex = this.absoluteIndex();
-                this.tokenInfo.Text = this.substring(startIndex, endIndex, /*intern:*/ true);
+                this.tokenInfo.Width = endIndex - startIndex; // = this.substring(startIndex, endIndex, /*intern:*/ true);
                 this.tokenInfo.Kind = SyntaxKind.IdentifierNameToken;
 
                 // Also check if it a keyword if it started with a lowercase letter.
                 if (Scanner.isKeywordStartCharacter[firstCharacter]) {
-                    this.tokenInfo.KeywordKind = SyntaxFacts.getTokenKind(this.tokenInfo.Text);
+                    var offset = startIndex - this.windowAbsoluteStartIndex;
+                    this.tokenInfo.KeywordKind = ScannerUtilities.keywordKind(this.window, offset, endIndex - startIndex); // SyntaxFacts.getTokenKind(this.tokenInfo.Text);
                 }
 
-                if (this.tokenInfo.KeywordKind === SyntaxKind.None) {
-                    // Because this was all simple ascii characters with no escapes in it, we can set
-                    // the value for this token right now.  Otherwise, we will defer computing the 
-                    // value till later.
-                    this.tokenInfo.Value = this.tokenInfo.Text;
-                }
+                //if (this.tokenInfo.KeywordKind === SyntaxKind.None) {
+                //    // Because this was all simple ascii characters with no escapes in it, we can set
+                //    // the value for this token right now.  Otherwise, we will defer computing the 
+                //    // value till later.
+                //    this.tokenInfo.Value = this.tokenInfo.Text;
+                //}
 
                 this.releaseAndUnpinAbsoluteIndex(startIndex);
                 return true;
@@ -531,7 +529,7 @@ class Scanner extends SlidingWindow {
         while (this.isIdentifierPart(this.peekCharOrUnicodeEscape()));
 
         var endIndex = this.absoluteIndex();
-        this.tokenInfo.Text = this.substring(startIndex, endIndex, /*intern:*/ true);
+        this.tokenInfo.Width = endIndex - startIndex;
         this.tokenInfo.Kind = SyntaxKind.IdentifierNameToken;
 
         this.releaseAndUnpinAbsoluteIndex(startIndex);
@@ -591,11 +589,11 @@ class Scanner extends SlidingWindow {
 
         var endIndex = this.absoluteIndex();
 
-        this.tokenInfo.Text = this.substring(startIndex, endIndex, /*intern:*/ false);
+        this.tokenInfo.Width = endIndex - startIndex;
         this.tokenInfo.Kind = SyntaxKind.NumericLiteral;
     }
 
-    private scanHexNumericLiteral(start: number): void {
+    private scanHexNumericLiteral(startIndex: number): void {
         Debug.assert(this.isHexNumericLiteral());
         this.moveToNextItem();
         this.moveToNextItem();
@@ -604,8 +602,9 @@ class Scanner extends SlidingWindow {
             this.moveToNextItem();
         }
 
-        var end = this.absoluteIndex();
-        this.tokenInfo.Text = this.substring(start, end, /*intern:*/ false);
+        var endIndex = this.absoluteIndex();
+        // this.tokenInfo.Text = this.substring(start, end, /*intern:*/ false);
+        this.tokenInfo.Width = endIndex - startIndex;
         this.tokenInfo.Kind = SyntaxKind.NumericLiteral;
     }
 
@@ -931,7 +930,7 @@ class Scanner extends SlidingWindow {
 
             var endIndex = this.absoluteIndex();
             this.tokenInfo.Kind = SyntaxKind.RegularExpressionLiteral;
-            this.tokenInfo.Text = this.substring(startIndex, endIndex, /*intern:*/ false);
+            this.tokenInfo.Width = endIndex - startIndex;
             return true;
         }
         finally {
@@ -961,10 +960,11 @@ class Scanner extends SlidingWindow {
     private scanDefaultCharacter(character: number, diagnostics: SyntaxDiagnostic[]): void {
         var position = this.absoluteIndex();
         this.moveToNextItem();
-        this.tokenInfo.Text = String.fromCharCode(character);
+        this.tokenInfo.Width = 1; // = String.fromCharCode(character);
         this.tokenInfo.Kind = SyntaxKind.ErrorToken;
 
-        var messageText = this.getErrorMessageText(this.tokenInfo.Text);
+        var text = String.fromCharCode(character);
+        var messageText = this.getErrorMessageText(text);
         diagnostics.push(new SyntaxDiagnostic(
             position, 1, DiagnosticCode.Unexpected_character_0, [messageText]));
     }
@@ -1086,7 +1086,8 @@ class Scanner extends SlidingWindow {
         }
 
         var endIndex = this.absoluteIndex();
-        this.tokenInfo.Text = this.substring(startIndex, endIndex, true);
+        // this.tokenInfo.Text = this.substring(startIndex, endIndex, true);
+        this.tokenInfo.Width = endIndex - startIndex;
         this.tokenInfo.Kind = SyntaxKind.StringLiteral;
 
         this.releaseAndUnpinAbsoluteIndex(startIndex);

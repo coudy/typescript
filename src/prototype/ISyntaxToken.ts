@@ -12,7 +12,7 @@ interface ISyntaxToken extends ISyntaxElement {
     fullText(): string;
 
     value(): any;
-    valueText(): string;
+    // valueText(): string;
 
     hasLeadingTrivia(): bool;
     hasLeadingCommentTrivia(): bool;

@@ -1,5 +1,3 @@
-///<reference path='References.ts' />
-
 class StringUtilities {
     public static fromCharCodeArray(array: number[]): string {
         return String.fromCharCode.apply(null, array);

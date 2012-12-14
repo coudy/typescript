@@ -21,7 +21,7 @@ module SyntaxToken {
 
     export function realize(token: ISyntaxToken): ISyntaxToken {
         return new RealizedToken(token.tokenKind, token.keywordKind(),
-            token.leadingTrivia(), token.text(), token.value(), token.valueText(), token.trailingTrivia(),
+            token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia(),
             token.isMissing());
     }
 
@@ -52,11 +52,7 @@ module SyntaxToken {
         result.text = token.text();
 
         if (token.value() !== null) {
-            result.value = token.value;
-        }
-
-        if (token.valueText() !== null) {
-            result.valueText = token.valueText();
+            result.valueText = token.value();
         }
 
         if (token.hasLeadingTrivia()) {
@@ -96,23 +92,50 @@ module SyntaxToken {
         return result;
     }
 
-    export function value(token: ISyntaxToken, value: any): string {
-        // TODO: compute values for things like numeric or string literals.
-        return value;
+    export function value(token: ISyntaxToken): any {
+        if (token.tokenKind === SyntaxKind.IdentifierNameToken) {
+            var text = token.text();
+            for (var i = 0; i < text.length; i++) {
+                // TODO: handle unicode and escapes.
+                if (!Scanner.isIdentifierPartCharacter[text.charCodeAt(i)]) {
+                    return null;
+                }
+            }
+
+            return text;
+        }
+        else if (token.tokenKind === SyntaxKind.NumericLiteral) {
+            // TODO: implement this.
+            return null;
+        }
+        else if (token.tokenKind === SyntaxKind.StringLiteral) {
+            // TODO: implement this.
+            return null;
+        }
+        else if (token.tokenKind === SyntaxKind.RegularExpressionLiteral) {
+            // TODO: implement this.
+            return null;
+        }
+        else if (token.tokenKind === SyntaxKind.EndOfFileToken || token.tokenKind === SyntaxKind.ErrorToken) {
+            return null;
+        }
+        else {
+            throw Errors.invalidOperation();
+        }
     }
 
-    export function valueText(token: ISyntaxToken): string {
-        // TODO: specialize on IdentifierName token with null value.  In that case we need to 
-        // process the escape codes and make a real value for this token.  Remember, don't do
-        // this for keywords.
+    //export function valueText(token: ISyntaxToken): string {
+    //    // TODO: specialize on IdentifierName token with null value.  In that case we need to 
+    //    // process the escape codes and make a real value for this token.  Remember, don't do
+    //    // this for keywords.
 
-        var value = token.value();
-        return value === null
-            ? null
-            : typeof value === 'string'
-                ? value
-                : value.toString();
-    }
+    //    var value = token.value();
+    //    return value === null
+    //        ? null
+    //        : typeof value === 'string'
+    //            ? value
+    //            : value.toString();
+    //}
 
     class EmptyToken implements ISyntaxToken {
         public tokenKind: SyntaxKind;
@@ -143,7 +166,6 @@ module SyntaxToken {
         public text() { return ""; }
         public fullText(): string { return ""; }
         public value() { return null; }
-        public valueText(): string { return valueText(this); }
         public hasLeadingTrivia() { return false; }
         public hasLeadingCommentTrivia() { return false; }
         public hasLeadingNewLineTrivia() { return false; }
@@ -290,7 +312,6 @@ module SyntaxToken {
         private _leadingTrivia: ISyntaxTriviaList;
         private _text: string;
         private _value: any;
-        private _valueText: string;
         private _trailingTrivia: ISyntaxTriviaList;
         private _isMissing: bool;
 
@@ -299,7 +320,6 @@ module SyntaxToken {
                     leadingTrivia: ISyntaxTriviaList,
                     text: string,
                     value: any,
-                    valueText: string,
                     trailingTrivia: ISyntaxTriviaList,
                     isMissing: bool) {
             this.tokenKind = tokenKind;
@@ -307,14 +327,13 @@ module SyntaxToken {
             this._leadingTrivia = leadingTrivia;
             this._text = text;
             this._value = value;
-            this._valueText = valueText;
             this._trailingTrivia = trailingTrivia;
             this._isMissing = isMissing;
         }
 
         public clone(): ISyntaxToken {
             return new RealizedToken(this.tokenKind, this._keywordKind, this._leadingTrivia,
-                this._text, this._value, this._valueText, this._trailingTrivia, this._isMissing);
+                this._text, this._value, this._trailingTrivia, this._isMissing);
         }
 
         public kind(): SyntaxKind { return this.tokenKind; }
@@ -337,7 +356,6 @@ module SyntaxToken {
         public fullText(): string { return this._leadingTrivia.fullText() + this.text() + this._trailingTrivia.fullText(); }
 
         public value(): any { return this._value; }
-        public valueText(): string { return this._valueText; }
 
         public hasLeadingTrivia(): bool { return this._leadingTrivia.count() > 0; }
         public hasLeadingCommentTrivia(): bool { return this._leadingTrivia.hasComment(); }
@@ -359,14 +377,14 @@ module SyntaxToken {
             return new RealizedToken(
                 this.tokenKind, this._keywordKind,
                 leadingTrivia, this._text, this._value,
-                this._valueText, this._trailingTrivia, this._isMissing);
+                this._trailingTrivia, this._isMissing);
         }
 
         public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return new RealizedToken(
                 this.tokenKind, this._keywordKind,
                 this._leadingTrivia, this._text, this._value,
-                this._valueText, trailingTrivia, this._isMissing);
+                trailingTrivia, this._isMissing);
         }
     }
 

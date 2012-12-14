@@ -5,6 +5,49 @@ class ArrayUtilities {
         return Object.prototype.toString.apply(value, []) === '[object Array]';
     }
 
+    public static groupBy(array: any[], func:(v: any) => string): any {
+        var result = {};
+
+        for (var i = 0, n = array.length; i < n; i++) {
+            var v = array[i];
+            var k = func(v);
+
+            var list = result[k] || [];
+            list.push(v);
+            result[k] = list;
+        }
+
+        return result;
+    }
+
+    public static min(array: any[], func: (v: any) => number): number {
+        Debug.assert(array.length > 0);
+        var min = func(array[0]);
+
+        for (var i = 1; i < array.length; i++) {
+            var next = func(array[i]);
+            if (next < min) {
+                min = next;
+            }
+        }
+
+        return min;
+    }
+
+    public static max(array: any[], func: (v: any) => number): number {
+        Debug.assert(array.length > 0);
+        var max = func(array[0]);
+
+        for (var i = 1; i < array.length; i++) {
+            var next = func(array[i]);
+            if (next > max) {
+                max = next;
+            }
+        }
+
+        return max;
+    }
+
     public static last(array: any[]) {
         if (array.length === 0) {
             throw Errors.argumentOutOfRange('array');

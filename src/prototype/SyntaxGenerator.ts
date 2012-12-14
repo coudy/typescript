@@ -1,5 +1,8 @@
-///<reference path='Environment.ts' />
 ///<reference path='ArrayUtilities.ts' />
+///<reference path='Environment.ts' />
+///<reference path='StringUtilities.ts' />
+///<reference path='SyntaxFacts.ts' />
+///<reference path='SyntaxKind.ts' />
 
 // Adds argument checking to the generated nodes.  Argument checking appears to slow things down
 // parsing about 7%.  If we want to get that perf back, we can always remove this.
@@ -1760,10 +1763,12 @@ function generateRewriter(): string {
 
 function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trailing: bool): string {
     var isFixedWidth = isPunctuation || isKeyword;
+    var isVariableWidth = !isFixedWidth;
+    var hasAnyTrivia = leading || trailing;
 
     var result = "    class ";
 
-    var needsSourcetext = leading || trailing;
+    var needsSourcetext = hasAnyTrivia || isVariableWidth;
 
     var className = isKeyword ? "Keyword" :
          isPunctuation ? "FixedWidthToken" : "VariableWidthToken";
@@ -1791,9 +1796,9 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "        private _leadingTriviaInfo: number;\r\n";
     }
 
-    if (!isFixedWidth) {
-        result += "        private _text: string;\r\n";
-        result += "        private _value: any;\r\n";
+    if (isVariableWidth) {
+        result += "        private _textOrWidth: any;\r\n";
+        result += "        private _value: any = null;\r\n";
     }
 
     if (trailing) {
@@ -1821,8 +1826,8 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += ", leadingTriviaInfo: number";
     }
 
-    if (!isFixedWidth) {
-        result += ", text: string, value: any";
+    if (isVariableWidth) {
+        result += ", textOrWidth: any";
     }
 
     if (trailing) {
@@ -1848,9 +1853,8 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "            this._leadingTriviaInfo = leadingTriviaInfo;\r\n";
     }
 
-    if (!isFixedWidth) {
-        result += "            this._text = text;\r\n";
-        result += "            this._value = value;\r\n";
+    if (isVariableWidth) {
+        result += "            this._textOrWidth = textOrWidth;\r\n";
     }
 
     if (trailing) {
@@ -1878,9 +1882,8 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += ",\r\n                this._leadingTriviaInfo";
     }
 
-    if (!isFixedWidth) {
-        result += ",\r\n                this._text";
-        result += ",\r\n                this._value";
+    if (isVariableWidth) {
+        result += ",\r\n                this._textOrWidth";
     }
 
     if (trailing) {
@@ -1928,8 +1931,13 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "        private start(): number { return this._fullStart; }\r\n";
     }
 
-    result += "        public width(): number { return this.text().length; }\r\n";
-    // result += "        public fullEnd(): number { return this._fullStart + this.fullWidth(); }\r\n";
+    if (isPunctuation || isKeyword) {
+        result += "        public width(): number { return this.text().length; }\r\n";
+    }
+    else {
+        result += "        public width(): number { return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length; }\r\n";
+    }
+
     result += "        private end(): number { return this.start() + this.width(); }\r\n\r\n";
 
     if (isPunctuation) {
@@ -1939,23 +1947,34 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "        public text(): string { return SyntaxFacts.getText(this._keywordKind); }\r\n";
     }
     else {
-        result += "        public text(): string { return this._text; }\r\n";
+        result += "\r\n";
+        result += "        public text(): string {\r\n";
+        result += "            if (typeof this._textOrWidth === 'number') {\r\n";
+        result += "                this._textOrWidth = this._sourceText.substr(\r\n"; 
+        result += "                    this.start(), this._textOrWidth, /*intern:*/ this.tokenKind === SyntaxKind.IdentifierNameToken);\r\n";
+        result += "            }\r\n";
+        result += "\r\n";
+        result += "            return this._textOrWidth;\r\n";
+        result += "        }\r\n\r\n";
     }
 
     if (needsSourcetext) {
-        result += "        public fullText(): string { return this._sourceText.substr(this._fullStart, this.fullWidth()); }\r\n\r\n";
+        result += "        public fullText(): string { return this._sourceText.substr(this._fullStart, this.fullWidth(), /*intern:*/ false); }\r\n\r\n";
     }
     else {
         result += "        public fullText(): string { return this.text(); }\r\n\r\n";
     }
 
-    if (isFixedWidth) {
+    if (isPunctuation) {
         result += "        public value(): any { return null; }\r\n";
-        result += "        public valueText(): string { return null; }\r\n\r\n";
+    }
+    else if (isKeyword) {
+        result += "        public value(): any { return null; }\r\n";
+        //result += "        public value(): any { return this._keywordKind === SyntaxKind.TrueKeyword  ? true  :\r\n";
+        //result += "                                     this._keywordKind === SyntaxKind.FalseKeyword ? false : null; }\r\n";
     }
     else {
-        result += "        public value(): any { return value(this, this._value); }\r\n";
-        result += "        public valueText(): string { return valueText(this); }\r\n\r\n";
+        result += "        public value(): any { return this._value || (this._value = value(this)); }\r\n";
     }
 
     result += "        public hasLeadingTrivia(): bool { return " + (leading ? "true" : "false") + "; }\r\n";
@@ -2054,20 +2073,19 @@ function generateTokens(): string {
 "        trailingTriviaInfo: number): ISyntaxToken {\r\n" +
 "\r\n" +
 "        var kind = tokenInfo.Kind;\r\n" +
-"        // var text = tokenInfo.Text === null ? SyntaxFacts.getText(kind) : tokenInfo.Text;\r\n" +
 "        if (leadingTriviaInfo === 0) {\r\n" +
 "            if (trailingTriviaInfo === 0) {\r\n" +
-"                return new VariableWidthTokenWithNoTrivia(kind, fullStart, tokenInfo.Text, tokenInfo.Value);\r\n" +
+"                return new VariableWidthTokenWithNoTrivia(sourceText, kind, fullStart, tokenInfo.Width);\r\n" +
 "            }\r\n" +
 "            else {\r\n" +
-"                return new VariableWidthTokenWithTrailingTrivia(sourceText, kind, fullStart, tokenInfo.Text, tokenInfo.Value, trailingTriviaInfo);\r\n" +
+"                return new VariableWidthTokenWithTrailingTrivia(sourceText, kind, fullStart, tokenInfo.Width, trailingTriviaInfo);\r\n" +
 "            }\r\n" +
 "        }\r\n" +
 "        else if (trailingTriviaInfo === 0) {\r\n" +
-"            return new VariableWidthTokenWithLeadingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, tokenInfo.Text, tokenInfo.Value);\r\n" +
+"            return new VariableWidthTokenWithLeadingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, tokenInfo.Width);\r\n" +
 "        }\r\n" +
 "        else {\r\n" +
-"            return new VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, tokenInfo.Text, tokenInfo.Value, trailingTriviaInfo);\r\n" +
+"            return new VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, kind, fullStart, leadingTriviaInfo, tokenInfo.Width, trailingTriviaInfo);\r\n" +
 "        }\r\n" +
 "    }\r\n" +
 "\r\n" +
@@ -2210,12 +2228,101 @@ function generateWalker(): string {
     return result;
 }
 
+function generateKeywordCondition(keywords: { text: string; kind: SyntaxKind; }[], currentCharacter: number, indent: string): string {
+    var length = keywords[0].text.length;
+
+    var result = "";
+
+    if (keywords.length === 1) {
+        var keyword = keywords[0];
+        
+        if (currentCharacter === length) {
+            return indent + "return SyntaxKind." + (<any>SyntaxKind)._map[keyword.kind] + ";\r\n";
+        }
+
+        var keywordText = keywords[0].text;
+        var result = indent + "return ("
+
+        for (var i = currentCharacter; i < length; i++) {
+            if (i > currentCharacter) {
+                result += " && ";
+            }
+
+            var index = i === 0 ? "startIndex" : ("startIndex + " + i);
+            result += "array[" + index + "] === CharacterCodes." + keywordText.substr(i, 1);
+        }
+
+        result += ") ? SyntaxKind." + (<any>SyntaxKind)._map[keyword.kind] + " : SyntaxKind.None;\r\n";
+    }
+    else {
+        var index = currentCharacter === 0 ? "startIndex" : ("startIndex + " + currentCharacter);
+        result += indent + "switch(array[" + index + "]) {\r\n"
+
+        var groupedKeywords = ArrayUtilities.groupBy(keywords, k => k.text.substr(currentCharacter, 1));
+
+        for (var c in groupedKeywords) {
+            if (groupedKeywords.hasOwnProperty(c)) {
+                result += indent + "case CharacterCodes." + c + ":\r\n";
+                result += indent + "    // " + ArrayUtilities.select(groupedKeywords[c], k => k.text).join(", ") + "\r\n";
+                result += generateKeywordCondition(groupedKeywords[c], currentCharacter + 1, indent + "    ");
+            }
+        }
+
+        result += indent + "default:\r\n";
+        result += indent + "    return SyntaxKind.None;\r\n";
+        result += indent + "}\r\n\r\n";
+    }
+
+    return result;
+}
+
+function generateScannerUtilities(): string {
+    var result = "///<reference path='References.ts' />\r\n" +
+        "\r\n" +
+        "class ScannerUtilities {\r\n";
+
+    var keywords: { text: string; kind: SyntaxKind; }[] = [];
+    for (var i = SyntaxKind.FirstKeyword; i <= SyntaxKind.LastKeyword; i++) {
+        keywords.push({ kind: i, text: SyntaxFacts.getText(i) });
+    }
+
+    result += "    public static keywordKind(array: number[], startIndex: number, length: number): SyntaxKind {\r\n";
+
+    var minTokenLength = ArrayUtilities.min(keywords, k => k.text.length);
+    var maxTokenLength = ArrayUtilities.max(keywords, k => k.text.length);
+    result += "        switch (length) {\r\n";
+
+
+    for (var i = minTokenLength; i <= maxTokenLength; i++) {
+        var keywordsOfLengthI = ArrayUtilities.where(keywords, k => k.text.length === i);
+        if (keywordsOfLengthI.length > 0) {
+            result += "        case " + i + ":\r\n";
+            result += "            // " + ArrayUtilities.select(keywordsOfLengthI, k => k.text).join(", ") + "\r\n";
+
+            result += generateKeywordCondition(keywordsOfLengthI, 0, "            ");
+
+            // result += "            return SyntaxKind.None;\r\n\r\n";
+        }
+    }
+
+    result += "        default:\r\n";
+    result += "            return SyntaxKind.None;\r\n";
+    result += "        }\r\n";
+    result += "    }\r\n";
+
+    result += "}";
+
+    return result;
+}
+
 var syntaxNodes = generateNodes();
 var rewriter = generateRewriter();
 var tokens = generateTokens();
 var walker = generateWalker();
+var scannerUtilities = generateScannerUtilities();
 
-Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxNodes.ts", syntaxNodes, true);
-Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxRewriter.ts", rewriter, true);
+Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts", syntaxNodes, true);
+Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxRewriter.generated.ts", rewriter, true);
 Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxToken.generated.ts", tokens, true);
-Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxWalker.ts", walker, true);
+Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxWalker.generated.ts", walker, true);
+Environment.writeFile("C:\\fidelity\\src\\prototype\\ScannerUtilities.generated.ts", scannerUtilities, true);

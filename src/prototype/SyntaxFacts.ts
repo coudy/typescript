@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='Debug.ts' />
 
 class SyntaxFacts {
     private static textToKeywordKind: any = {
