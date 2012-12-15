@@ -14546,6 +14546,35 @@ var Emitter = (function (_super) {
     Emitter.prototype.visitInterfaceDeclaration = function (node) {
         return null;
     };
+    Emitter.prototype.generateEnumFunctionExpression = function (node) {
+        var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+        var indentationTrivia = Indentation.indentationTrivia(indentationColumn, this.options);
+        var block = new BlockSyntax(SyntaxToken.createElastic({
+            kind: 67 /* OpenBraceToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.carriageReturnLineFeed
+            ]
+        }), SyntaxList.create([]), SyntaxToken.createElastic({
+            leadingTrivia: [
+                indentationTrivia
+            ],
+            kind: 68 /* CloseBraceToken */ 
+        }));
+        var functionExpression = FunctionExpressionSyntax.create(SyntaxToken.createElastic({
+            kind: 25 /* FunctionKeyword */ 
+        }), CallSignatureSyntax.create(new ParameterListSyntax(SyntaxToken.createElastic({
+            kind: 69 /* OpenParenToken */ 
+        }), SeparatedSyntaxList.create([
+            new IdentifierNameSyntax(identifier.clone())
+        ]), SyntaxToken.createElastic({
+            kind: 70 /* CloseParenToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.space
+            ]
+        }))), block);
+        return functionExpression;
+    };
     Emitter.prototype.visitEnumDeclaration = function (node) {
         var result = [];
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
@@ -14564,6 +14593,45 @@ var Emitter = (function (_super) {
             ]
         }));
         result.push(variableStatement);
+        var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+        var indentationTrivia = Indentation.indentationTrivia(indentationColumn, this.options);
+        var functionExpression = this.generateEnumFunctionExpression(node);
+        var parenthesizedExpression = new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
+            leadingTrivia: [
+                indentationTrivia
+            ],
+            kind: 69 /* OpenParenToken */ 
+        }), functionExpression, SyntaxToken.createElastic({
+            kind: 70 /* CloseParenToken */ 
+        }));
+        var logicalOrExpression = new BinaryExpressionSyntax(184 /* LogicalOrExpression */ , new IdentifierNameSyntax(identifier.clone()), SyntaxToken.createElastic({
+            kind: 101 /* BarBarToken */ 
+        }), new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
+            kind: 69 /* OpenParenToken */ 
+        }), new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new IdentifierNameSyntax(identifier.clone()), SyntaxToken.createElastic({
+            kind: 104 /* EqualsToken */ 
+        }), new ObjectLiteralExpressionSyntax(SyntaxToken.createElastic({
+            kind: 67 /* OpenBraceToken */ 
+        }), SeparatedSyntaxList.empty, SyntaxToken.createElastic({
+            kind: 68 /* CloseBraceToken */ 
+        }))), SyntaxToken.createElastic({
+            kind: 70 /* CloseParenToken */ 
+        })));
+        var argumentList = new ArgumentListSyntax(SyntaxToken.createElastic({
+            kind: 69 /* OpenParenToken */ 
+        }), SeparatedSyntaxList.create([
+            logicalOrExpression
+        ]), SyntaxToken.createElastic({
+            kind: 70 /* CloseParenToken */ 
+        }));
+        var invocationExpression = new InvocationExpressionSyntax(parenthesizedExpression, argumentList);
+        var expressionStatement = new ExpressionStatementSyntax(invocationExpression, SyntaxToken.createElastic({
+            kind: 75 /* SemicolonToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.carriageReturnLineFeed
+            ]
+        }));
+        result.push(expressionStatement);
         return result;
     };
     return Emitter;

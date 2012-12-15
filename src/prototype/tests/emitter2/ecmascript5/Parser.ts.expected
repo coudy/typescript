@@ -30,6 +30,8 @@
 //    a   b
 
 var ParserExpressionPrecedence;
+(function(ParserExpressionPrecedence) {
+})(ParserExpressionPrecedence||(ParserExpressionPrecedence={}));
 
 // The current state of the parser wrt to list parsing.  The way to read these is as:
 // CurrentProduction_SubList.  i.e. "Block_Statements" means "we're parsing a Block, and we're 
@@ -60,6 +62,8 @@ var ParserExpressionPrecedence;
 // the token and add it to our list of 'skipped tokens'.  We will then repeat the above algorithm
 // until we resynchronize at some point.
 var ParserListParsingState;
+(function(ParserListParsingState) {
+})(ParserListParsingState||(ParserListParsingState={}));
 
 var ParserSkippedTokensAdder = (function(_super) {
     __extends(ParserSkippedTokensAdder, _super);

@@ -905,6 +905,30 @@ class Emitter extends SyntaxRewriter {
         return null;
     }
 
+    private generateEnumFunctionExpression(node: EnumDeclarationSyntax): FunctionExpressionSyntax {
+        var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
+                                          .withTrailingTrivia(SyntaxTriviaList.empty);
+        
+        var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+        var indentationTrivia = Indentation.indentationTrivia(indentationColumn, this.options);
+
+        var block = new BlockSyntax(
+            SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }),
+            SyntaxList.create([]),
+            SyntaxToken.createElastic({ leadingTrivia: [indentationTrivia], kind: SyntaxKind.CloseBraceToken }));
+
+        var functionExpression = FunctionExpressionSyntax.create(
+            SyntaxToken.createElastic({ kind: SyntaxKind.FunctionKeyword }),
+            CallSignatureSyntax.create(
+                new ParameterListSyntax(
+                    SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+                    SeparatedSyntaxList.create([new IdentifierNameSyntax(identifier.clone())]),
+                    SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken, trailingTrivia: [SyntaxTrivia.space] }))),
+            block);
+
+        return functionExpression;
+    }
+
     private visitEnumDeclaration(node: EnumDeclarationSyntax): StatementSyntax[] {
         var result: StatementSyntax[] = [];
 
@@ -920,8 +944,50 @@ class Emitter extends SyntaxRewriter {
                 }),
                 SeparatedSyntaxList.create([VariableDeclaratorSyntax.create(identifier.clone())])),
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
-    
         result.push(variableStatement);
+
+        var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+        var indentationTrivia = Indentation.indentationTrivia(indentationColumn, this.options);
+
+        var functionExpression = this.generateEnumFunctionExpression(node);
+
+        var parenthesizedExpression = new ParenthesizedExpressionSyntax(
+            SyntaxToken.createElastic({ leadingTrivia: [indentationTrivia], kind: SyntaxKind.OpenParenToken }),
+            functionExpression,
+            SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }));
+
+        var logicalOrExpression = new BinaryExpressionSyntax(
+            SyntaxKind.LogicalOrExpression,
+            new IdentifierNameSyntax(identifier.clone()),
+            SyntaxToken.createElastic({ kind: SyntaxKind.BarBarToken }),
+            new ParenthesizedExpressionSyntax(
+                SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+                new BinaryExpressionSyntax(
+                    SyntaxKind.AssignmentExpression,
+                    new IdentifierNameSyntax(identifier.clone()),
+                    SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken }),
+                    new ObjectLiteralExpressionSyntax(
+                        SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken }),
+                        SeparatedSyntaxList.empty,
+                        SyntaxToken.createElastic({ kind: SyntaxKind.CloseBraceToken })
+                    )),
+                SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken })));
+
+        var argumentList = new ArgumentListSyntax(
+            SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+            SeparatedSyntaxList.create([logicalOrExpression]),
+            SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }))
+
+        var invocationExpression = new InvocationExpressionSyntax(
+            parenthesizedExpression,
+            argumentList);
+
+        var expressionStatement = new ExpressionStatementSyntax(
+            invocationExpression,
+            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
+
+        result.push(expressionStatement);
+
         return result;
     }
 }
