@@ -790,9 +790,16 @@ class Emitter extends SyntaxRewriter {
             SyntaxList.create(statements),
             SyntaxToken.createElastic({ leadingTrivia: closeCurlyIndentation, kind: SyntaxKind.CloseBraceToken }));
 
+        var callParameters = [];
+        if (node.extendsClause() !== null) {
+            callParameters.push(ParameterSyntax.create(
+                SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "_super" })));
+        }
+
         var callSignature = CallSignatureSyntax.create(
-            ParameterListSyntax.create(
+            new ParameterListSyntax(
                 SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+                SeparatedSyntaxList.create(callParameters),
                 SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken, trailingTrivia: [SyntaxTrivia.space] })));
 
         var functionExpression = FunctionExpressionSyntax.create(

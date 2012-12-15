@@ -14423,9 +14423,16 @@ var Emitter = (function (_super) {
             leadingTrivia: closeCurlyIndentation,
             kind: 68 /* CloseBraceToken */ 
         }));
-        var callSignature = CallSignatureSyntax.create(ParameterListSyntax.create(SyntaxToken.createElastic({
+        var callParameters = [];
+        if(node.extendsClause() !== null) {
+            callParameters.push(ParameterSyntax.create(SyntaxToken.createElastic({
+                kind: 9 /* IdentifierNameToken */ ,
+                text: "_super"
+            })));
+        }
+        var callSignature = CallSignatureSyntax.create(new ParameterListSyntax(SyntaxToken.createElastic({
             kind: 69 /* OpenParenToken */ 
-        }), SyntaxToken.createElastic({
+        }), SeparatedSyntaxList.create(callParameters), SyntaxToken.createElastic({
             kind: 70 /* CloseParenToken */ ,
             trailingTrivia: [
                 SyntaxTrivia.space
