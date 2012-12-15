@@ -26,6 +26,14 @@ class SyntaxNode implements ISyntaxElement {
         throw Errors.abstract();
     }
 
+    public leadingTrivia(): ISyntaxTriviaList {
+        return this.firstToken().leadingTrivia();
+    }
+
+    public trailingTrivia(): ISyntaxTriviaList {
+        return this.lastToken().trailingTrivia();
+    }
+
     public toJSON(key) {
         var result: any = { kind: (<any>SyntaxKind)._map[this.kind()] };
 
