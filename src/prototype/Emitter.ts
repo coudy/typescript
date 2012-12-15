@@ -630,6 +630,23 @@ class Emitter extends SyntaxRewriter {
 
         block = block.withCloseBraceToken(
             block.closeBraceToken().withTrailingTrivia(SyntaxTriviaList.empty));
+        
+        var defaultParameters = Emitter.functionSignatureDefaultParameters(functionDeclaration.functionSignature());
+        var defaultValueAssignments = <StatementSyntax[]>ArrayUtilities.select(defaultParameters,
+            p => this.generateDefaultValueAssignmentStatement(p));
+
+        var functionColumn = Indentation.columnForStartOfToken(
+            functionDeclaration.firstToken(), this.syntaxInformationMap, this.options);
+
+        var blockStatements = block.statements().toArray();
+        for (var i = defaultValueAssignments.length - 1; i >= 0; i--) {
+            var assignment = <StatementSyntax>this.changeIndentation(
+                defaultValueAssignments[i], /*changeFirstToken:*/ true, functionColumn + this.options.indentSpaces, 0);
+
+            blockStatements.unshift(assignment);
+        }
+
+        block = block.withStatements(SyntaxList.create(blockStatements));
 
         var callSignature = CallSignatureSyntax.create(
             <ParameterListSyntax>functionDeclaration.functionSignature().parameterList().accept1(this));

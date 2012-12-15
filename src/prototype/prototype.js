@@ -14234,6 +14234,7 @@ var Emitter = (function (_super) {
         return functionDeclaration;
     };
     Emitter.prototype.convertMemberFunctionDeclaration = function (classDeclaration, functionDeclaration) {
+        var _this = this;
         if(functionDeclaration.block() === null) {
             return null;
         }
@@ -14252,6 +14253,17 @@ var Emitter = (function (_super) {
         var block = functionDeclaration.block().accept1(this);
         var blockTrailingTrivia = block.trailingTrivia();
         block = block.withCloseBraceToken(block.closeBraceToken().withTrailingTrivia(SyntaxTriviaList.empty));
+        var defaultParameters = Emitter.functionSignatureDefaultParameters(functionDeclaration.functionSignature());
+        var defaultValueAssignments = ArrayUtilities.select(defaultParameters, function (p) {
+            return _this.generateDefaultValueAssignmentStatement(p);
+        });
+        var functionColumn = Indentation.columnForStartOfToken(functionDeclaration.firstToken(), this.syntaxInformationMap, this.options);
+        var blockStatements = block.statements().toArray();
+        for(var i = defaultValueAssignments.length - 1; i >= 0; i--) {
+            var assignment = this.changeIndentation(defaultValueAssignments[i], true, functionColumn + this.options.indentSpaces, 0);
+            blockStatements.unshift(assignment);
+        }
+        block = block.withStatements(SyntaxList.create(blockStatements));
         var callSignature = CallSignatureSyntax.create(functionDeclaration.functionSignature().parameterList().accept1(this));
         var functionExpression = FunctionExpressionSyntax.create(SyntaxToken.createElastic({
             kind: 25 /* FunctionKeyword */ 
