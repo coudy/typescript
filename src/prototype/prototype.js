@@ -5174,7 +5174,8 @@ var SourceUnitSyntax = (function (_super) {
 var ModuleElementSyntax = (function (_super) {
     __extends(ModuleElementSyntax, _super);
     function ModuleElementSyntax() {
-        _super.call(this);
+        _super.apply(this, arguments);
+
     }
     return ModuleElementSyntax;
 })(SyntaxNode);
@@ -13479,6 +13480,10 @@ var DebuggerStatementSyntax = (function (_super) {
     };
     return DebuggerStatementSyntax;
 })(StatementSyntax);
+var X = (function () {
+    function X() { }
+    return X;
+})();
 var SyntaxRewriter = (function () {
     function SyntaxRewriter() { }
     SyntaxRewriter.prototype.visitToken = function (token) {
@@ -14194,6 +14199,73 @@ var Emitter = (function (_super) {
         }
         return result;
     };
+    Emitter.prototype.createDefaultConstructorDeclaration = function (classDeclaration) {
+        var identifier = classDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var functionSignature = FunctionSignatureSyntax.create(identifier.clone(), ParameterListSyntax.create(SyntaxToken.createElastic({
+            kind: 69 /* OpenParenToken */ 
+        }), SyntaxToken.createElastic({
+            kind: 70 /* CloseParenToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.space
+            ]
+        })));
+        var statements = [];
+        if(classDeclaration.extendsClause() !== null) {
+            var superStatement = new ExpressionStatementSyntax(new InvocationExpressionSyntax(new MemberAccessExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.createElastic({
+                kind: 9 /* IdentifierNameToken */ ,
+                text: "_super"
+            })), SyntaxToken.createElastic({
+                kind: 73 /* DotToken */ 
+            }), new IdentifierNameSyntax(SyntaxToken.createElastic({
+                kind: 9 /* IdentifierNameToken */ ,
+                text: "apply"
+            }))), new ArgumentListSyntax(SyntaxToken.createElastic({
+                kind: 69 /* OpenParenToken */ 
+            }), SeparatedSyntaxList.create([
+                new ThisExpressionSyntax(SyntaxToken.createElastic({
+                    kind: 33 /* ThisKeyword */ 
+                })), 
+                SyntaxToken.createElastic({
+                    kind: 76 /* CommaToken */ ,
+                    trailingTrivia: [
+                        SyntaxTrivia.space
+                    ]
+                }), 
+                new IdentifierNameSyntax(SyntaxToken.createElastic({
+                    kind: 9 /* IdentifierNameToken */ ,
+                    text: "arguments"
+                }))
+            ]), SyntaxToken.createElastic({
+                kind: 70 /* CloseParenToken */ 
+            }))), SyntaxToken.createElastic({
+                kind: 75 /* SemicolonToken */ ,
+                trailingTrivia: [
+                    SyntaxTrivia.carriageReturnLineFeed
+                ]
+            }));
+            superStatement = SyntaxIndenter.indentNode(superStatement, true, this.options.indentSpaces, this.options);
+            statements.push(superStatement);
+        }
+        var block = new BlockSyntax(SyntaxToken.createElastic({
+            kind: 67 /* OpenBraceToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.carriageReturnLineFeed
+            ]
+        }), SyntaxList.create(statements), SyntaxToken.createElastic({
+            kind: 68 /* CloseBraceToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.carriageReturnLineFeed
+            ]
+        }));
+        var functionDeclaration = new FunctionDeclarationSyntax(null, null, SyntaxToken.createElastic({
+            kind: 25 /* FunctionKeyword */ ,
+            trailingTrivia: [
+                SyntaxTriviaList.space
+            ]
+        }), functionSignature, block, null);
+        var classIndentation = Indentation.columnForStartOfToken(classDeclaration.firstToken(), this.syntaxInformationMap, this.options);
+        return SyntaxIndenter.indentNode(functionDeclaration, true, this.options.indentSpaces + classIndentation, this.options);
+    };
     Emitter.prototype.convertConstructorDeclaration = function (classDeclaration, constructorDeclaration) {
         var _this = this;
         if(constructorDeclaration === null || constructorDeclaration.block() === null) {
@@ -14312,9 +14384,10 @@ var Emitter = (function (_super) {
     Emitter.prototype.visitClassDeclaration = function (node) {
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
         var statements = [];
-        var constructorFunctionDeclaration = this.convertConstructorDeclaration(node, ArrayUtilities.firstOrDefault(node.classElements().toArray(), function (c) {
+        var constructorDeclaration = ArrayUtilities.firstOrDefault(node.classElements().toArray(), function (c) {
             return c.kind() === 135 /* ConstructorDeclaration */ ;
-        }));
+        });
+        var constructorFunctionDeclaration = constructorDeclaration === null ? this.createDefaultConstructorDeclaration(node) : this.convertConstructorDeclaration(node, constructorDeclaration);
         if(constructorFunctionDeclaration !== null) {
             statements.push(constructorFunctionDeclaration);
         }

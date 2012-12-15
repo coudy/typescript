@@ -76,9 +76,6 @@ class SourceUnitSyntax extends SyntaxNode {
 }
 
 class ModuleElementSyntax extends SyntaxNode {
-    constructor() {
-        super();
-    }
 }
 
 class ModuleReferenceSyntax extends SyntaxNode {
@@ -8748,4 +8745,7 @@ class DebuggerStatementSyntax extends StatementSyntax {
         this._debuggerKeyword.collectTextElements(elements);
         this._semicolonToken.collectTextElements(elements);
     }
+}
+
+class X {
 }

@@ -530,6 +530,56 @@ class Emitter extends SyntaxRewriter {
         return result;
     }
 
+    private createDefaultConstructorDeclaration(classDeclaration: ClassDeclarationSyntax): FunctionDeclarationSyntax {
+        var identifier = classDeclaration.identifier()
+                                         .withLeadingTrivia(SyntaxTriviaList.empty)
+                                         .withTrailingTrivia(SyntaxTriviaList.empty);
+
+        var functionSignature = FunctionSignatureSyntax.create(
+            identifier.clone(),
+            ParameterListSyntax.create(
+                SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+                SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken, trailingTrivia: [SyntaxTrivia.space] })));
+
+        var statements: StatementSyntax[] = [];
+        if (classDeclaration.extendsClause() !== null) {
+            var superStatement = new ExpressionStatementSyntax(
+                new InvocationExpressionSyntax(
+                    new MemberAccessExpressionSyntax(
+                        new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "_super" })),
+                        SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
+                        new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "apply" }))),
+                    new ArgumentListSyntax(
+                        SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+                        SeparatedSyntaxList.create([
+                            new ThisExpressionSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.ThisKeyword })),
+                            SyntaxToken.createElastic({ kind: SyntaxKind.CommaToken, trailingTrivia: [SyntaxTrivia.space] }),
+                            new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "arguments" }))]),
+                        SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }))),
+                SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
+
+            superStatement = <ExpressionStatementSyntax>SyntaxIndenter.indentNode(
+                superStatement, /*indentFirstToken:*/ true, this.options.indentSpaces, this.options);
+            statements.push(superStatement);
+        }
+
+        var block = new BlockSyntax(
+            SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }),
+            SyntaxList.create(statements),
+            SyntaxToken.createElastic({ kind: SyntaxKind.CloseBraceToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
+
+        var functionDeclaration = new FunctionDeclarationSyntax(null, null,
+            SyntaxToken.createElastic({ kind: SyntaxKind.FunctionKeyword, trailingTrivia: [SyntaxTriviaList.space] }),
+            functionSignature,
+            block, null);
+
+        var classIndentation = Indentation.columnForStartOfToken(
+            classDeclaration.firstToken(), this.syntaxInformationMap, this.options);
+
+        return <FunctionDeclarationSyntax>SyntaxIndenter.indentNode(
+            functionDeclaration, /*indentFirstToken:*/ true, this.options.indentSpaces + classIndentation, this.options);
+    }
+
     private convertConstructorDeclaration(classDeclaration: ClassDeclarationSyntax,
                                           constructorDeclaration: ConstructorDeclarationSyntax): FunctionDeclarationSyntax {
         if (constructorDeclaration === null ||
@@ -704,8 +754,12 @@ class Emitter extends SyntaxRewriter {
         
         var statements: StatementSyntax[] = [];
 
-        var constructorFunctionDeclaration = this.convertConstructorDeclaration(node,
-            ArrayUtilities.firstOrDefault(node.classElements().toArray(), c => c.kind() === SyntaxKind.ConstructorDeclaration));
+        var constructorDeclaration: ConstructorDeclarationSyntax =
+            ArrayUtilities.firstOrDefault(node.classElements().toArray(), c => c.kind() === SyntaxKind.ConstructorDeclaration);
+
+        var constructorFunctionDeclaration = constructorDeclaration === null
+            ? this.createDefaultConstructorDeclaration(node)
+            : this.convertConstructorDeclaration(node, constructorDeclaration);
 
         if (constructorFunctionDeclaration !== null) {
             statements.push(constructorFunctionDeclaration)
