@@ -5174,8 +5174,7 @@ var SourceUnitSyntax = (function (_super) {
 var ModuleElementSyntax = (function (_super) {
     __extends(ModuleElementSyntax, _super);
     function ModuleElementSyntax() {
-        _super.apply(this, arguments);
-
+        _super.call(this);
     }
     return ModuleElementSyntax;
 })(SyntaxNode);
@@ -13480,10 +13479,6 @@ var DebuggerStatementSyntax = (function (_super) {
     };
     return DebuggerStatementSyntax;
 })(StatementSyntax);
-var X = (function () {
-    function X() { }
-    return X;
-})();
 var SyntaxRewriter = (function () {
     function SyntaxRewriter() { }
     SyntaxRewriter.prototype.visitToken = function (token) {
@@ -14384,6 +14379,34 @@ var Emitter = (function (_super) {
     Emitter.prototype.visitClassDeclaration = function (node) {
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
         var statements = [];
+        if(node.extendsClause() !== null) {
+            var extendsParameters = [];
+            extendsParameters.push(new IdentifierNameSyntax(identifier.clone()));
+            extendsParameters.push(SyntaxToken.createElastic({
+                kind: 76 /* CommaToken */ ,
+                trailingTrivia: [
+                    SyntaxTrivia.space
+                ]
+            }));
+            extendsParameters.push(new IdentifierNameSyntax(SyntaxToken.createElastic({
+                kind: 9 /* IdentifierNameToken */ ,
+                text: "_super"
+            })));
+            var extendsStatement = new ExpressionStatementSyntax(new InvocationExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.createElastic({
+                kind: 9 /* IdentifierNameToken */ ,
+                text: "__extends"
+            })), new ArgumentListSyntax(SyntaxToken.createElastic({
+                kind: 69 /* OpenParenToken */ 
+            }), SeparatedSyntaxList.create(extendsParameters), SyntaxToken.createElastic({
+                kind: 70 /* CloseParenToken */ 
+            }))), SyntaxToken.createElastic({
+                kind: 75 /* SemicolonToken */ ,
+                trailingTrivia: [
+                    SyntaxTrivia.carriageReturnLineFeed
+                ]
+            }));
+            statements.push(SyntaxIndenter.indentNode(extendsStatement, true, this.options.indentSpaces, this.options));
+        }
         var constructorDeclaration = ArrayUtilities.firstOrDefault(node.classElements().toArray(), function (c) {
             return c.kind() === 135 /* ConstructorDeclaration */ ;
         });

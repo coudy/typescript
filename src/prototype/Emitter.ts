@@ -754,6 +754,26 @@ class Emitter extends SyntaxRewriter {
         
         var statements: StatementSyntax[] = [];
 
+        if (node.extendsClause() !== null) {
+            var extendsParameters = [];
+            extendsParameters.push(new IdentifierNameSyntax(identifier.clone()));
+            extendsParameters.push(SyntaxToken.createElastic({ kind: SyntaxKind.CommaToken, trailingTrivia: [SyntaxTrivia.space] }));
+            extendsParameters.push(new IdentifierNameSyntax(
+                SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "_super" })));
+
+            var extendsStatement = new ExpressionStatementSyntax(
+                new InvocationExpressionSyntax(
+                    new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "__extends" })),
+                    new ArgumentListSyntax(
+                        SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+                        SeparatedSyntaxList.create(extendsParameters),
+                        SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }))),
+                SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
+
+            statements.push(<StatementSyntax>SyntaxIndenter.indentNode(
+                extendsStatement, /*indentFirstToken:*/ true, this.options.indentSpaces, this.options));
+        }
+
         var constructorDeclaration: ConstructorDeclarationSyntax =
             ArrayUtilities.firstOrDefault(node.classElements().toArray(), c => c.kind() === SyntaxKind.ConstructorDeclaration);
 
