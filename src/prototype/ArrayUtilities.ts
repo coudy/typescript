@@ -77,6 +77,18 @@ class ArrayUtilities {
         return result;
     }
 
+    public static whereNotNull(array: any[]): any[] {
+        var result = [];
+        for (var i = 0; i < array.length; i++) {
+            var value = array[i];
+            if (value !== null) {
+                result.push(value);
+            }
+        }
+
+        return result;
+    }
+
     public static select(values: any[], func: (v: any) => any): any[] {
         var result = [];
 

@@ -29,11 +29,13 @@ class Emitter extends SyntaxRewriter {
             var moduleElement = node.moduleElements().syntaxNodeAt(i);
 
             var converted = this.visitNode(moduleElement);
-            if (ArrayUtilities.isArray(converted)) {
-                moduleElements.push.apply(moduleElements, converted);
-            }
-            else {
-                moduleElements.push(<ModuleElementSyntax>converted);
+            if (converted !== null) {
+                if (ArrayUtilities.isArray(converted)) {
+                    moduleElements.push.apply(moduleElements, converted);
+                }
+                else {
+                    moduleElements.push(<ModuleElementSyntax>converted);
+                }
             }
         }
 
@@ -85,6 +87,7 @@ class Emitter extends SyntaxRewriter {
         // Recurse downwards and get the rewritten children.
         var moduleElements: ModuleElementSyntax[] = <ModuleElementSyntax[]>node.moduleElements().toArray();
         moduleElements = ArrayUtilities.select(moduleElements, m => this.visitNode(m));
+        moduleElements = ArrayUtilities.whereNotNull(moduleElements);
 
         // Then, for all the names left of that name, wrap what we've created in a larger module.
         for (var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
@@ -895,5 +898,10 @@ class Emitter extends SyntaxRewriter {
             subExpression.firstToken(), subExpression.firstToken().withLeadingTrivia(totalTrivia));
 
         return subExpression;
+    }
+
+    private visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): InterfaceDeclarationSyntax {
+        // TODO: transfer trivia if important.
+        return null;
     }
 }

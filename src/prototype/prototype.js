@@ -237,6 +237,16 @@ var ArrayUtilities = (function () {
         }
         return result;
     }
+    ArrayUtilities.whereNotNull = function whereNotNull(array) {
+        var result = [];
+        for(var i = 0; i < array.length; i++) {
+            var value = array[i];
+            if(value !== null) {
+                result.push(value);
+            }
+        }
+        return result;
+    }
     ArrayUtilities.select = function select(values, func) {
         var result = [];
         for(var i = 0; i < values.length; i++) {
@@ -13814,10 +13824,12 @@ var Emitter = (function (_super) {
         for(var i = 0, n = node.moduleElements().count(); i < n; i++) {
             var moduleElement = node.moduleElements().syntaxNodeAt(i);
             var converted = this.visitNode(moduleElement);
-            if(ArrayUtilities.isArray(converted)) {
-                moduleElements.push.apply(moduleElements, converted);
-            } else {
-                moduleElements.push(converted);
+            if(converted !== null) {
+                if(ArrayUtilities.isArray(converted)) {
+                    moduleElements.push.apply(moduleElements, converted);
+                } else {
+                    moduleElements.push(converted);
+                }
             }
         }
         return new SourceUnitSyntax(SyntaxList.create(moduleElements), node.endOfFileToken());
@@ -13860,6 +13872,7 @@ var Emitter = (function (_super) {
         moduleElements = ArrayUtilities.select(moduleElements, function (m) {
             return _this.visitNode(m);
         });
+        moduleElements = ArrayUtilities.whereNotNull(moduleElements);
         for(var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
             moduleElements = this.convertModuleDeclaration(names[nameIndex], moduleElements);
             if(nameIndex > 0) {
@@ -14529,6 +14542,9 @@ var Emitter = (function (_super) {
         var totalTrivia = result.leadingTrivia().concat(subExpression.leadingTrivia());
         subExpression = subExpression.replaceToken(subExpression.firstToken(), subExpression.firstToken().withLeadingTrivia(totalTrivia));
         return subExpression;
+    };
+    Emitter.prototype.visitInterfaceDeclaration = function (node) {
+        return null;
     };
     return Emitter;
 })(SyntaxRewriter);
