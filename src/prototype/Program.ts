@@ -6,7 +6,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "ClassDeclaration6";
+    // "EnumDeclaration1";
     undefined;
 
 class Program {

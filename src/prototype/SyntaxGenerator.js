@@ -81,6 +81,16 @@ var ArrayUtilities = (function () {
         }
         return result;
     }
+    ArrayUtilities.whereNotNull = function whereNotNull(array) {
+        var result = [];
+        for(var i = 0; i < array.length; i++) {
+            var value = array[i];
+            if(value !== null) {
+                result.push(value);
+            }
+        }
+        return result;
+    }
     ArrayUtilities.select = function select(values, func) {
         var result = [];
         for(var i = 0; i < values.length; i++) {
@@ -1314,7 +1324,7 @@ var SyntaxKind;
     SyntaxKind.FirstPunctuation = SyntaxKind.OpenBraceToken;
     SyntaxKind.LastPunctuation = SyntaxKind.SlashEqualsToken;
 })(SyntaxKind || (SyntaxKind = {}));
-var argumentChecks = false;
+var argumentChecks = true;
 var definitions = [
     {
         name: 'SourceUnitSyntax',

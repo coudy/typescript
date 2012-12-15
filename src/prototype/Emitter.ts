@@ -85,9 +85,20 @@ class Emitter extends SyntaxRewriter {
         // members declared in the module.
 
         // Recurse downwards and get the rewritten children.
-        var moduleElements: ModuleElementSyntax[] = <ModuleElementSyntax[]>node.moduleElements().toArray();
-        moduleElements = ArrayUtilities.select(moduleElements, m => this.visitNode(m));
-        moduleElements = ArrayUtilities.whereNotNull(moduleElements);
+        var moduleElements: ModuleElementSyntax[] = [];
+        for (var i = 0, n = node.moduleElements().count(); i < n; i++) {
+            var element = node.moduleElements().syntaxNodeAt(i);
+            var converted = this.visitNode(element);
+
+            if (converted !== null) {
+                if (ArrayUtilities.isArray(converted)) {
+                    moduleElements.push.apply(moduleElements, converted);
+                }
+                else {
+                    moduleElements.push(<ModuleElementSyntax>converted);
+                }
+            }
+        }
 
         // Then, for all the names left of that name, wrap what we've created in a larger module.
         for (var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
