@@ -916,6 +916,44 @@ class Emitter extends SyntaxRewriter {
         return null;
     }
 
+    private generateEnumValueExpression(enumDeclaration: EnumDeclarationSyntax,
+                                        variableDeclarator: VariableDeclaratorSyntax,
+                                        assignDefaultValues: bool,
+                                        index: number): ExpressionSyntax {
+        if (variableDeclarator.equalsValueClause() !== null) {
+            // Use the value if one is provided.
+            return variableDeclarator.equalsValueClause().value();
+        }
+
+        // Didn't have a value.  Synthesize one if we're doing that, or use the previous item's value
+        // (plus one).
+        if (assignDefaultValues) {
+            return new LiteralExpressionSyntax(
+                SyntaxKind.NumericLiteralExpression,
+                SyntaxToken.createElastic({ kind: SyntaxKind.NumericLiteral, text: index.toString() }));
+        }
+
+        // Add one to the previous value.
+        var enumIdentifier = enumDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
+                                                     .withTrailingTrivia(SyntaxTriviaList.empty);
+        var previousVariable = <VariableDeclaratorSyntax>enumDeclaration.variableDeclarators().syntaxNodeAt(index - 1);
+        var variableIdentifier = previousVariable.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
+                                                     .withTrailingTrivia(SyntaxTriviaList.empty);
+
+        var receiver = new MemberAccessExpressionSyntax(
+            new IdentifierNameSyntax(enumIdentifier.clone()),
+            SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
+            new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
+
+        return new BinaryExpressionSyntax(
+            SyntaxKind.PlusExpression,
+            receiver,
+            SyntaxToken.createElastic({ kind: SyntaxKind.PlusToken, trailingTrivia: [SyntaxTrivia.space] }),
+            new LiteralExpressionSyntax(
+                SyntaxKind.NumericLiteralExpression,
+                SyntaxToken.createElastic({ kind: SyntaxKind.NumericLiteral, text: "1" })));
+    }
+
     private generateEnumFunctionExpression(node: EnumDeclarationSyntax): FunctionExpressionSyntax {
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
                                           .withTrailingTrivia(SyntaxTriviaList.empty);
@@ -923,9 +961,36 @@ class Emitter extends SyntaxRewriter {
         var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
         var indentationTrivia = Indentation.indentationTrivia(indentationColumn, this.options);
 
+        var statements: StatementSyntax[] = [];
+
+        var assignDefaultValues = true;
+        for (var i = 0, n = node.variableDeclarators().syntaxNodeCount(); i < n; i++) {
+            var variableDeclarator = <VariableDeclaratorSyntax>node.variableDeclarators().syntaxNodeAt(i);
+            var variableIdentifier = variableDeclarator.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
+                                                                    .withTrailingTrivia(SyntaxTriviaList.empty);
+            assignDefaultValues = assignDefaultValues && variableDeclarator.equalsValueClause() === null;
+
+            var receiver = new MemberAccessExpressionSyntax(
+                new IdentifierNameSyntax(identifier.withLeadingTrivia(variableDeclarator.leadingTrivia()).clone()),
+                SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
+                new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
+
+            var assignExpression = new BinaryExpressionSyntax(
+                SyntaxKind.AssignmentExpression,
+                receiver,
+                SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: [SyntaxTrivia.space] }),
+                this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues, i));
+
+            var expressionStatement = new ExpressionStatementSyntax(
+                assignExpression,
+                SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
+
+            statements.push(expressionStatement);
+        }
+
         var block = new BlockSyntax(
             SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }),
-            SyntaxList.create([]),
+            SyntaxList.create(statements),
             SyntaxToken.createElastic({ leadingTrivia: [indentationTrivia], kind: SyntaxKind.CloseBraceToken }));
 
         var functionExpression = FunctionExpressionSyntax.create(

@@ -15532,16 +15532,65 @@ var Emitter = (function (_super) {
     Emitter.prototype.visitInterfaceDeclaration = function (node) {
         return null;
     };
+    Emitter.prototype.generateEnumValueExpression = function (enumDeclaration, variableDeclarator, assignDefaultValues, index) {
+        if(variableDeclarator.equalsValueClause() !== null) {
+            return variableDeclarator.equalsValueClause().value();
+        }
+        if(assignDefaultValues) {
+            return new LiteralExpressionSyntax(167 /* NumericLiteralExpression */ , SyntaxToken.createElastic({
+                kind: 11 /* NumericLiteral */ ,
+                text: index.toString()
+            }));
+        }
+        var enumIdentifier = enumDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var previousVariable = enumDeclaration.variableDeclarators().syntaxNodeAt(index - 1);
+        var variableIdentifier = previousVariable.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var receiver = new MemberAccessExpressionSyntax(new IdentifierNameSyntax(enumIdentifier.clone()), SyntaxToken.createElastic({
+            kind: 73 /* DotToken */ 
+        }), new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
+        return new BinaryExpressionSyntax(156 /* PlusExpression */ , receiver, SyntaxToken.createElastic({
+            kind: 86 /* PlusToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.space
+            ]
+        }), new LiteralExpressionSyntax(167 /* NumericLiteralExpression */ , SyntaxToken.createElastic({
+            kind: 11 /* NumericLiteral */ ,
+            text: "1"
+        })));
+    };
     Emitter.prototype.generateEnumFunctionExpression = function (node) {
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
         var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
         var indentationTrivia = Indentation.indentationTrivia(indentationColumn, this.options);
+        var statements = [];
+        var assignDefaultValues = true;
+        for(var i = 0, n = node.variableDeclarators().syntaxNodeCount(); i < n; i++) {
+            var variableDeclarator = node.variableDeclarators().syntaxNodeAt(i);
+            var variableIdentifier = variableDeclarator.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+            assignDefaultValues = assignDefaultValues && variableDeclarator.equalsValueClause() === null;
+            var receiver = new MemberAccessExpressionSyntax(new IdentifierNameSyntax(identifier.withLeadingTrivia(variableDeclarator.leadingTrivia()).clone()), SyntaxToken.createElastic({
+                kind: 73 /* DotToken */ 
+            }), new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
+            var assignExpression = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , receiver, SyntaxToken.createElastic({
+                kind: 104 /* EqualsToken */ ,
+                trailingTrivia: [
+                    SyntaxTrivia.space
+                ]
+            }), this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues, i));
+            var expressionStatement = new ExpressionStatementSyntax(assignExpression, SyntaxToken.createElastic({
+                kind: 75 /* SemicolonToken */ ,
+                trailingTrivia: [
+                    SyntaxTrivia.carriageReturnLineFeed
+                ]
+            }));
+            statements.push(expressionStatement);
+        }
         var block = new BlockSyntax(SyntaxToken.createElastic({
             kind: 67 /* OpenBraceToken */ ,
             trailingTrivia: [
                 SyntaxTrivia.carriageReturnLineFeed
             ]
-        }), SyntaxList.create([]), SyntaxToken.createElastic({
+        }), SyntaxList.create(statements), SyntaxToken.createElastic({
             leadingTrivia: [
                 indentationTrivia
             ],
