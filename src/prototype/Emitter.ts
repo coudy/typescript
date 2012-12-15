@@ -455,28 +455,35 @@ class Emitter extends SyntaxRewriter {
         // backward to be at that column as well.
         var block = constructorDeclaration.block().accept1(this);
 
-        block = <BlockSyntax>this.changeIndentation(
-            block,
-            this.syntaxInformationMap.isFirstTokenInLine(constructorDeclaration.block().firstToken()),
-            -Indentation.columnForStartOfToken(constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options),
-            /*minimumColumn:*/ 0);
+        //block = <BlockSyntax>this.changeIndentation(
+        //    block,
+        //    this.syntaxInformationMap.isFirstTokenInLine(constructorDeclaration.block().firstToken()),
+        //    -Indentation.columnForStartOfToken(constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options),
+        //    /*minimumColumn:*/ 0);
 
         var defaultValueAssignments = <StatementSyntax[]>ArrayUtilities.select(
             Emitter.parameterListDefaultParameters(constructorDeclaration.parameterList()),
             p => this.generateDefaultValueAssignmentStatement(p));
 
         var statements:StatementSyntax[] = block.statements().toArray();
+        var constructorIndentationColumn = Indentation.columnForStartOfToken(
+            constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options);
 
         for (var i = defaultValueAssignments.length - 1; i >= 0; i--) {
-            var assignment = <StatementSyntax>this.changeIndentation(
-                defaultValueAssignments[i], /*changeFirstToken:*/ true, this.options.indentSpaces);
+            //var assignment = <StatementSyntax>this.changeIndentation(
+            //    defaultValueAssignments[i], /*changeFirstToken:*/ true, this.options.indentSpaces);
+            var assignment = defaultValueAssignments[i];
+            assignment = <StatementSyntax>this.changeIndentation(
+                assignment, /*changeFirstToken:*/ true, this.options.indentSpaces + constructorIndentationColumn);
             statements.unshift(assignment);
         }
 
         block = block.withStatements(SyntaxList.create(statements));
 
         var functionDeclaration = new FunctionDeclarationSyntax(null, null,
-            SyntaxToken.createElastic({ kind: SyntaxKind.FunctionKeyword, trailingTrivia: [SyntaxTrivia.space] }),
+            SyntaxToken.createElastic({ leadingTrivia: constructorDeclaration.firstToken().leadingTrivia().toArray(),
+                                        kind: SyntaxKind.FunctionKeyword,
+                                        trailingTrivia: [SyntaxTrivia.space] }),
             functionSignature,
             block, null);
 
@@ -493,24 +500,31 @@ class Emitter extends SyntaxRewriter {
             ArrayUtilities.firstOrDefault(node.classElements().toArray(), c => c.kind() === SyntaxKind.ConstructorDeclaration));
 
         if (constructorFunctionDeclaration !== null) {
-            constructorFunctionDeclaration = <FunctionDeclarationSyntax>this.changeIndentation(
-                constructorFunctionDeclaration, /*changeFirstToken:*/ true, this.options.indentSpaces);
+            //constructorFunctionDeclaration = <FunctionDeclarationSyntax>this.changeIndentation(
+            //    constructorFunctionDeclaration, /*changeFirstToken:*/ true, this.options.indentSpaces);
             statements.push(constructorFunctionDeclaration)
         }
 
+        var returnIndentation = Indentation.indentationTrivia(
+            this.options.indentSpaces + Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options),
+            this.options);
+        
         var returnStatement = new ReturnStatementSyntax(
-            SyntaxToken.createElastic({ kind: SyntaxKind.ReturnKeyword, trailingTrivia: [SyntaxTrivia.space] }),
+            SyntaxToken.createElastic({ leadingTrivia: [returnIndentation], kind: SyntaxKind.ReturnKeyword, trailingTrivia: [SyntaxTrivia.space] }),
             new IdentifierNameSyntax(identifier.clone()),
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
-        returnStatement = <ReturnStatementSyntax>this.changeIndentation(
-            returnStatement, /*changeFirstToken:*/ true, this.options.indentSpaces);
 
         statements.push(returnStatement);
+
+        var classIndentation = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+        var closeCurlyIndentation = classIndentation > 0
+            ? [Indentation.indentationTrivia(classIndentation, this.options)]
+            : null;
 
         var block = new BlockSyntax(
             SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }),
             SyntaxList.create(statements),
-            SyntaxToken.createElastic({ kind: SyntaxKind.CloseBraceToken }));
+            SyntaxToken.createElastic({ leadingTrivia: closeCurlyIndentation, kind: SyntaxKind.CloseBraceToken }));
 
         var callSignature = CallSignatureSyntax.create(
             ParameterListSyntax.create(
@@ -541,7 +555,9 @@ class Emitter extends SyntaxRewriter {
                 invocationExpression));
 
         var variableDeclaration = new VariableDeclarationSyntax(
-            SyntaxToken.createElastic({ kind: SyntaxKind.VarKeyword, trailingTrivia: [SyntaxTrivia.space] }),
+            SyntaxToken.createElastic({ leadingTrivia: node.firstToken().leadingTrivia().toArray(),
+                                        kind: SyntaxKind.VarKeyword,
+                                        trailingTrivia: [SyntaxTrivia.space] }),
             SeparatedSyntaxList.create([ variableDeclarator ]));
 
         var variableStatement = VariableStatementSyntax.create(
@@ -549,12 +565,12 @@ class Emitter extends SyntaxRewriter {
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
 
         var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
-        variableStatement = <VariableStatementSyntax>this.changeIndentation(
-            variableStatement, /*changeFirstToken:*/ true, indentationColumn);
+        //variableStatement = <VariableStatementSyntax>this.changeIndentation(
+        //    variableStatement, /*changeFirstToken:*/ false, indentationColumn);
 
         return variableStatement;
     }
-
+    
     //private visitTypeAnnotation(node: TypeAnnotationSyntax): TypeAnnotationSyntax {
     //    // TODO: it's unlikely that a type annotation would have comments on them.  But if it does,
     //    // transfer it to the surrounding construct.
