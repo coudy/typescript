@@ -5,7 +5,7 @@ interface ISeparatedSyntaxList extends ISyntaxElement {
     itemAt(index: number): ISyntaxElement;
 
     syntaxNodeCount();
-    syntaxNodeAt(index: number): any;
+    syntaxNodeAt(index: number): SyntaxNode;
 
     separatorCount();
     separatorAt(index: number): ISyntaxToken;

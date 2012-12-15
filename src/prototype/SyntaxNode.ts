@@ -80,4 +80,12 @@ class SyntaxNode implements ISyntaxElement {
     public replaceToken(token1: ISyntaxToken, token2: ISyntaxToken): SyntaxNode {
         return this.accept1(new SyntaxTokenReplacer(token1, token2));
     }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): SyntaxNode {
+        return this.replaceToken(this.firstToken(), this.firstToken().withLeadingTrivia(trivia));
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): SyntaxNode {
+        return this.replaceToken(this.lastToken(), this.lastToken().withTrailingTrivia(trivia));
+    }
 }

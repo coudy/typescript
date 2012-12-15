@@ -4885,6 +4885,12 @@ var SyntaxNode = (function () {
     SyntaxNode.prototype.replaceToken = function (token1, token2) {
         return this.accept1(new SyntaxTokenReplacer(token1, token2));
     };
+    SyntaxNode.prototype.withLeadingTrivia = function (trivia) {
+        return this.replaceToken(this.firstToken(), this.firstToken().withLeadingTrivia(trivia));
+    };
+    SyntaxNode.prototype.withTrailingTrivia = function (trivia) {
+        return this.replaceToken(this.lastToken(), this.lastToken().withTrailingTrivia(trivia));
+    };
     return SyntaxNode;
 })();
 var SyntaxList;
@@ -14469,9 +14475,13 @@ var Emitter = (function (_super) {
         }), functionExpression, SyntaxToken.createElastic({
             kind: 70 /* CloseParenToken */ 
         }));
-        var invocationExpression = new InvocationExpressionSyntax(parenthesizedExpression, ArgumentListSyntax.create(SyntaxToken.createElastic({
+        var invocationParameters = [];
+        if(node.extendsClause() !== null && node.extendsClause().typeNames().count() > 0) {
+            invocationParameters.push(node.extendsClause().typeNames().syntaxNodeAt(0).withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty));
+        }
+        var invocationExpression = new InvocationExpressionSyntax(parenthesizedExpression, new ArgumentListSyntax(SyntaxToken.createElastic({
             kind: 69 /* OpenParenToken */ 
-        }), SyntaxToken.createElastic({
+        }), SeparatedSyntaxList.create(invocationParameters), SyntaxToken.createElastic({
             kind: 70 /* CloseParenToken */ 
         })));
         var variableDeclarator = new VariableDeclaratorSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space), null, new EqualsValueClauseSyntax(SyntaxToken.createElastic({

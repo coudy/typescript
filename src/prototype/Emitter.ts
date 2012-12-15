@@ -832,10 +832,18 @@ class Emitter extends SyntaxRewriter {
             functionExpression,
             SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }));
 
+        var invocationParameters = [];
+        if (node.extendsClause() !== null && node.extendsClause().typeNames().count() > 0) {
+            invocationParameters.push(node.extendsClause().typeNames().syntaxNodeAt(0)
+                .withLeadingTrivia(SyntaxTriviaList.empty)
+                .withTrailingTrivia(SyntaxTriviaList.empty));
+        }
+
         var invocationExpression = new InvocationExpressionSyntax(
             parenthesizedExpression,
-            ArgumentListSyntax.create(
+            new ArgumentListSyntax(
                 SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+                SeparatedSyntaxList.create(invocationParameters),
                 SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken })));
 
         var variableDeclarator = new VariableDeclaratorSyntax(
