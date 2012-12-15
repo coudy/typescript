@@ -14012,6 +14012,9 @@ var Emitter = (function (_super) {
     Emitter.parameterListDefaultParameters = function parameterListDefaultParameters(parameterList) {
         return Emitter.parametersDefaultParameters(parameterList.parameters());
     }
+    Emitter.parameterListPropertyParameters = function parameterListPropertyParameters(parameterList) {
+        return Emitter.parametersPropertyParameters(parameterList.parameters());
+    }
     Emitter.parametersDefaultParameters = function parametersDefaultParameters(list) {
         var result = [];
         for(var i = 0, n = list.syntaxNodeCount(); i < n; i++) {
@@ -14022,6 +14025,34 @@ var Emitter = (function (_super) {
         }
         return result;
     }
+    Emitter.parametersPropertyParameters = function parametersPropertyParameters(list) {
+        var result = [];
+        for(var i = 0, n = list.syntaxNodeCount(); i < n; i++) {
+            var parameter = list.syntaxNodeAt(i);
+            if(parameter.publicOrPrivateKeyword() !== null) {
+                result.push(parameter);
+            }
+        }
+        return result;
+    }
+    Emitter.prototype.generatePropertyAssignmentStatement = function (parameter) {
+        var identifier = parameter.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        return new ExpressionStatementSyntax(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new MemberAccessExpressionSyntax(new ThisExpressionSyntax(SyntaxToken.createElastic({
+            kind: 33 /* ThisKeyword */ 
+        })), SyntaxToken.createElastic({
+            kind: 73 /* DotToken */ 
+        }), new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))), SyntaxToken.createElastic({
+            kind: 104 /* EqualsToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.space
+            ]
+        }), new IdentifierNameSyntax(identifier.clone())), SyntaxToken.createElastic({
+            kind: 75 /* SemicolonToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.carriageReturnLineFeed
+            ]
+        }));
+    };
     Emitter.prototype.generateDefaultValueAssignmentStatement = function (parameter) {
         var space = SyntaxTriviaList.create([
             SyntaxTrivia.space
@@ -14117,11 +14148,19 @@ var Emitter = (function (_super) {
         var identifier = classDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
         var functionSignature = FunctionSignatureSyntax.create(identifier.clone(), constructorDeclaration.parameterList().accept1(this));
         var block = constructorDeclaration.block().accept1(this);
+        var statements = block.statements().toArray();
+        var constructorIndentationColumn = Indentation.columnForStartOfToken(constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options);
+        var parameterPropertyAssignments = ArrayUtilities.select(Emitter.parameterListPropertyParameters(constructorDeclaration.parameterList()), function (p) {
+            return _this.generatePropertyAssignmentStatement(p);
+        });
+        for(var i = parameterPropertyAssignments.length - 1; i >= 0; i--) {
+            var assignment = parameterPropertyAssignments[i];
+            assignment = this.changeIndentation(assignment, true, this.options.indentSpaces + constructorIndentationColumn);
+            statements.unshift(assignment);
+        }
         var defaultValueAssignments = ArrayUtilities.select(Emitter.parameterListDefaultParameters(constructorDeclaration.parameterList()), function (p) {
             return _this.generateDefaultValueAssignmentStatement(p);
         });
-        var statements = block.statements().toArray();
-        var constructorIndentationColumn = Indentation.columnForStartOfToken(constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options);
         for(var i = defaultValueAssignments.length - 1; i >= 0; i--) {
             var assignment = defaultValueAssignments[i];
             assignment = this.changeIndentation(assignment, true, this.options.indentSpaces + constructorIndentationColumn);
