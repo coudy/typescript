@@ -469,6 +469,56 @@ class Emitter extends SyntaxRewriter {
         return ParameterSyntax.create(identifier);
     }
 
+    private generatePropertyAssignments(classDeclaration: ClassDeclarationSyntax,
+                                        static: bool): ExpressionStatementSyntax[] {
+        var result: ExpressionStatementSyntax[] = [];
+        var identifier = classDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
+                                                      .withTrailingTrivia(SyntaxTriviaList.empty);
+        
+        // TODO: handle alignment here.
+        for (var i = classDeclaration.classElements().count() - 1; i >= 0; i--) {
+            var classElement = classDeclaration.classElements().syntaxNodeAt(i);
+
+            if (classElement.kind() !== SyntaxKind.MemberVariableDeclaration) {
+                continue;
+            }
+
+            var memberDeclaration = <MemberVariableDeclarationSyntax>classElement;
+            if (memberDeclaration.staticKeyword() !== null) {
+                continue;
+            }
+            
+            var declarator = memberDeclaration.variableDeclarator();
+            if (declarator.equalsValueClause() === null) {
+                continue;
+            }
+
+            var identifier = declarator.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
+                                                    .withTrailingTrivia(SyntaxTriviaList.empty);
+            
+            var receiver = static
+                ? <ExpressionSyntax>new IdentifierNameSyntax(identifier).clone()
+                : new ThisExpressionSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.ThisKeyword }));
+
+            receiver = new MemberAccessExpressionSyntax(
+                receiver,
+                SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
+                new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space)));
+
+            var statement = new ExpressionStatementSyntax(
+                new BinaryExpressionSyntax(
+                    SyntaxKind.AssignmentExpression,
+                    receiver,
+                    SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: [SyntaxTrivia.space] }),
+                    declarator.equalsValueClause().value()),
+                SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
+
+            result.push(statement);
+        }
+        
+        return result;
+    }
+
     private convertConstructorDeclaration(classDeclaration: ClassDeclarationSyntax,
                                           constructorDeclaration: ConstructorDeclarationSyntax): FunctionDeclarationSyntax {
         if (constructorDeclaration === null ||
@@ -491,26 +541,37 @@ class Emitter extends SyntaxRewriter {
         var constructorIndentationColumn = Indentation.columnForStartOfToken(
             constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options);
 
-        var parameterPropertyAssignments = <StatementSyntax[]>ArrayUtilities.select(
+        // TODO: handle alignment here.
+        var instanceAssignments = this.generatePropertyAssignments(
+            classDeclaration, /*static:*/ false);
+
+        for (var i = instanceAssignments.length - 1; i >= 0; i--) {
+            var expressionStatement = instanceAssignments[i];
+            expressionStatement = <ExpressionStatementSyntax>this.changeIndentation(
+                expressionStatement, /*changeFirstToken:*/ true, this.options.indentSpaces + constructorIndentationColumn);
+            statements.unshift(expressionStatement);
+        }
+
+        var parameterPropertyAssignments = <ExpressionStatementSyntax[]>ArrayUtilities.select(
             Emitter.parameterListPropertyParameters(constructorDeclaration.parameterList()),
             p => this.generatePropertyAssignmentStatement(p));
 
         for (var i = parameterPropertyAssignments.length - 1; i >= 0; i--) {
-            var assignment = parameterPropertyAssignments[i];
-            assignment = <StatementSyntax>this.changeIndentation(
-                assignment, /*changeFirstToken:*/ true, this.options.indentSpaces + constructorIndentationColumn);
-            statements.unshift(assignment);
+            var expressionStatement = parameterPropertyAssignments[i];
+            expressionStatement = <ExpressionStatementSyntax>this.changeIndentation(
+                expressionStatement, /*changeFirstToken:*/ true, this.options.indentSpaces + constructorIndentationColumn);
+            statements.unshift(expressionStatement);
         }
 
-        var defaultValueAssignments = <StatementSyntax[]>ArrayUtilities.select(
+        var defaultValueAssignments = <ExpressionStatementSyntax[]>ArrayUtilities.select(
             Emitter.parameterListDefaultParameters(constructorDeclaration.parameterList()),
             p => this.generateDefaultValueAssignmentStatement(p));
 
         for (var i = defaultValueAssignments.length - 1; i >= 0; i--) {
-            var assignment = defaultValueAssignments[i];
-            assignment = <StatementSyntax>this.changeIndentation(
-                assignment, /*changeFirstToken:*/ true, this.options.indentSpaces + constructorIndentationColumn);
-            statements.unshift(assignment);
+            var expressionStatement = defaultValueAssignments[i];
+            expressionStatement = <ExpressionStatementSyntax>this.changeIndentation(
+                expressionStatement, /*changeFirstToken:*/ true, this.options.indentSpaces + constructorIndentationColumn);
+            statements.unshift(expressionStatement);
         }
 
         block = block.withStatements(SyntaxList.create(statements));

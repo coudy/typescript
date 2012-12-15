@@ -14140,6 +14140,44 @@ var Emitter = (function (_super) {
         identifier = identifier.withLeadingTrivia(node.firstToken().leadingTrivia()).withTrailingTrivia(node.lastToken().trailingTrivia());
         return ParameterSyntax.create(identifier);
     };
+    Emitter.prototype.generatePropertyAssignments = function (classDeclaration, static) {
+        var result = [];
+        var identifier = classDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        for(var i = classDeclaration.classElements().count() - 1; i >= 0; i--) {
+            var classElement = classDeclaration.classElements().syntaxNodeAt(i);
+            if(classElement.kind() !== 134 /* MemberVariableDeclaration */ ) {
+                continue;
+            }
+            var memberDeclaration = classElement;
+            if(memberDeclaration.staticKeyword() !== null) {
+                continue;
+            }
+            var declarator = memberDeclaration.variableDeclarator();
+            if(declarator.equalsValueClause() === null) {
+                continue;
+            }
+            var identifier = declarator.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+            var receiver = static ? new IdentifierNameSyntax(identifier).clone() : new ThisExpressionSyntax(SyntaxToken.createElastic({
+                kind: 33 /* ThisKeyword */ 
+            }));
+            receiver = new MemberAccessExpressionSyntax(receiver, SyntaxToken.createElastic({
+                kind: 73 /* DotToken */ 
+            }), new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space)));
+            var statement = new ExpressionStatementSyntax(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , receiver, SyntaxToken.createElastic({
+                kind: 104 /* EqualsToken */ ,
+                trailingTrivia: [
+                    SyntaxTrivia.space
+                ]
+            }), declarator.equalsValueClause().value()), SyntaxToken.createElastic({
+                kind: 75 /* SemicolonToken */ ,
+                trailingTrivia: [
+                    SyntaxTrivia.carriageReturnLineFeed
+                ]
+            }));
+            result.push(statement);
+        }
+        return result;
+    };
     Emitter.prototype.convertConstructorDeclaration = function (classDeclaration, constructorDeclaration) {
         var _this = this;
         if(constructorDeclaration === null || constructorDeclaration.block() === null) {
@@ -14150,21 +14188,27 @@ var Emitter = (function (_super) {
         var block = constructorDeclaration.block().accept1(this);
         var statements = block.statements().toArray();
         var constructorIndentationColumn = Indentation.columnForStartOfToken(constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options);
+        var instanceAssignments = this.generatePropertyAssignments(classDeclaration, false);
+        for(var i = instanceAssignments.length - 1; i >= 0; i--) {
+            var expressionStatement = instanceAssignments[i];
+            expressionStatement = this.changeIndentation(expressionStatement, true, this.options.indentSpaces + constructorIndentationColumn);
+            statements.unshift(expressionStatement);
+        }
         var parameterPropertyAssignments = ArrayUtilities.select(Emitter.parameterListPropertyParameters(constructorDeclaration.parameterList()), function (p) {
             return _this.generatePropertyAssignmentStatement(p);
         });
         for(var i = parameterPropertyAssignments.length - 1; i >= 0; i--) {
-            var assignment = parameterPropertyAssignments[i];
-            assignment = this.changeIndentation(assignment, true, this.options.indentSpaces + constructorIndentationColumn);
-            statements.unshift(assignment);
+            var expressionStatement = parameterPropertyAssignments[i];
+            expressionStatement = this.changeIndentation(expressionStatement, true, this.options.indentSpaces + constructorIndentationColumn);
+            statements.unshift(expressionStatement);
         }
         var defaultValueAssignments = ArrayUtilities.select(Emitter.parameterListDefaultParameters(constructorDeclaration.parameterList()), function (p) {
             return _this.generateDefaultValueAssignmentStatement(p);
         });
         for(var i = defaultValueAssignments.length - 1; i >= 0; i--) {
-            var assignment = defaultValueAssignments[i];
-            assignment = this.changeIndentation(assignment, true, this.options.indentSpaces + constructorIndentationColumn);
-            statements.unshift(assignment);
+            var expressionStatement = defaultValueAssignments[i];
+            expressionStatement = this.changeIndentation(expressionStatement, true, this.options.indentSpaces + constructorIndentationColumn);
+            statements.unshift(expressionStatement);
         }
         block = block.withStatements(SyntaxList.create(statements));
         var functionDeclaration = new FunctionDeclarationSyntax(null, null, SyntaxToken.createElastic({
@@ -47634,7 +47678,8 @@ var expectedTop1000Failures = {
     "JSFile800\\fedex_com\\InstantInvite3.js": true
 };
 var stringTable = new StringTable();
-var specificFile = undefined;
+var specificFile = "ClassDeclaration6";
+undefined;
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {
