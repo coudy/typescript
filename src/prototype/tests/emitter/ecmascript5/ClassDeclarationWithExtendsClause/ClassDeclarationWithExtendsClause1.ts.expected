@@ -6,7 +6,7 @@
         "        _super.apply(this, arguments);",
         "    }",
         "    return C;",
-        "})();",
+        "})(D);",
         ""
     ],
     "sourceUnit": {
@@ -473,7 +473,17 @@
                                             "width": 1,
                                             "text": "("
                                         },
-                                        "_arguments": [],
+                                        "_arguments": [
+                                            {
+                                                "kind": "IdentifierName",
+                                                "_identifier": {
+                                                    "kind": "IdentifierNameToken",
+                                                    "width": 1,
+                                                    "text": "D",
+                                                    "valueText": "D"
+                                                }
+                                            }
+                                        ],
                                         "_closeParenToken": {
                                             "kind": "CloseParenToken",
                                             "width": 1,

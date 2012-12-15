@@ -19,7 +19,11 @@ class Program {
             
         environment.standardOut.WriteLine("Testing emitter.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5",
-            filePath => this.runEmitter(environment, filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false));
+            filePath => this.runEmitter(environment, filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false, null));
+            
+        environment.standardOut.WriteLine("Testing emitter.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter2\\ecmascript5",
+            filePath => this.runEmitter(environment, filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false, /*justText:*/ true));
 
         environment.standardOut.WriteLine("Testing scanner.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
@@ -70,16 +74,16 @@ class Program {
         }
     }
 
-    private checkResult(filePath: string, result: any, verify: bool, generateBaseline: bool): void {
+    private checkResult(filePath: string, result: any, verify: bool, generateBaseline: bool, justText: bool): void {
         if (generateBaseline) {
-            var actualResult = JSON2.stringify(result, null, 4);
+            var actualResult = justText ? result : JSON2.stringify(result, null, 4);
             var expectedFile = filePath + ".expected";
 
             // environment.standardOut.WriteLine("Generating baseline for: " + filePath);
             Environment.writeFile(expectedFile, actualResult, /*useUTF8:*/ true);
         }
         else if (verify) {
-            var actualResult = JSON2.stringify(result, null, 4);
+            var actualResult = justText ? result : JSON2.stringify(result, null, 4);
             var expectedFile = filePath + ".expected";
             var actualFile = filePath + ".actual";
 
@@ -102,7 +106,8 @@ class Program {
                filePath: string,
                languageVersion: LanguageVersion,
                verify: bool,
-               generateBaseline?: bool = false): void {
+               generateBaseline: bool,
+               justText: bool): void {
         if (true) {
             // return;
         }
@@ -132,8 +137,10 @@ class Program {
         end = new Date().getTime();
         totalTime += (end - start);
         
-        var result = { fullText: emitted.fullText().split("\r\n"), sourceUnit: emitted };
-        this.checkResult(filePath, result, verify, generateBaseline);
+        var result = justText
+            ? <any>emitted.fullText()
+            : { fullText: emitted.fullText().split("\r\n"), sourceUnit: emitted };
+        this.checkResult(filePath, result, verify, generateBaseline, justText);
     }
 
     runParser(environment: IEnvironment,
@@ -175,7 +182,7 @@ class Program {
             end = new Date().getTime();
             totalTime += (end - start);
 
-            this.checkResult(filePath, unit, verify, generateBaseline);
+            this.checkResult(filePath, unit, verify, generateBaseline, false);
         }
     }
 
@@ -209,7 +216,7 @@ class Program {
         end = new Date().getTime();
         totalTime += (end - start);
 
-        this.checkResult(filePath, tokens, verify, generateBaseline);
+        this.checkResult(filePath, tokens, verify, generateBaseline, false);
     }
 
     runScanner(environment: IEnvironment,
@@ -251,7 +258,7 @@ class Program {
         }
 
         var result = diagnostics.length === 0 ? <any>tokens : { diagnostics: diagnostics, tokens: tokens };
-        this.checkResult(filePath, result, verify, generateBaseline);
+        this.checkResult(filePath, result, verify, generateBaseline, false);
     }
 
     run(environment: IEnvironment, useTypeScript: bool): void {

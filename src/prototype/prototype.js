@@ -47942,7 +47942,11 @@ var Program = (function () {
         });
         environment.standardOut.WriteLine("Testing emitter.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5", function (filePath) {
-            return _this.runEmitter(environment, filePath, 1 /* EcmaScript5 */ , verify, false);
+            return _this.runEmitter(environment, filePath, 1 /* EcmaScript5 */ , verify, false, null);
+        });
+        environment.standardOut.WriteLine("Testing emitter.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter2\\ecmascript5", function (filePath) {
+            return _this.runEmitter(environment, filePath, 1 /* EcmaScript5 */ , verify, false, true);
         });
         environment.standardOut.WriteLine("Testing scanner.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
@@ -47985,14 +47989,14 @@ var Program = (function () {
             }
         }
     };
-    Program.prototype.checkResult = function (filePath, result, verify, generateBaseline) {
+    Program.prototype.checkResult = function (filePath, result, verify, generateBaseline, justText) {
         if(generateBaseline) {
-            var actualResult = JSON2.stringify(result, null, 4);
+            var actualResult = justText ? result : JSON2.stringify(result, null, 4);
             var expectedFile = filePath + ".expected";
             Environment.writeFile(expectedFile, actualResult, true);
         } else {
             if(verify) {
-                var actualResult = JSON2.stringify(result, null, 4);
+                var actualResult = justText ? result : JSON2.stringify(result, null, 4);
                 var expectedFile = filePath + ".expected";
                 var actualFile = filePath + ".actual";
                 var expectedResult = null;
@@ -48008,8 +48012,7 @@ var Program = (function () {
             }
         }
     };
-    Program.prototype.runEmitter = function (environment, filePath, languageVersion, verify, generateBaseline) {
-        if (typeof generateBaseline === "undefined") { generateBaseline = false; }
+    Program.prototype.runEmitter = function (environment, filePath, languageVersion, verify, generateBaseline, justText) {
         if(true) {
         }
         if(!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
@@ -48028,11 +48031,11 @@ var Program = (function () {
         var emitted = Emitter.emit(tree.sourceUnit());
         end = new Date().getTime();
         totalTime += (end - start);
-        var result = {
+        var result = justText ? emitted.fullText() : {
             fullText: emitted.fullText().split("\r\n"),
             sourceUnit: emitted
         };
-        this.checkResult(filePath, result, verify, generateBaseline);
+        this.checkResult(filePath, result, verify, generateBaseline, justText);
     };
     Program.prototype.runParser = function (environment, filePath, languageVersion, useTypeScript, verify, generateBaseline) {
         if (typeof generateBaseline === "undefined") { generateBaseline = false; }
@@ -48059,7 +48062,7 @@ var Program = (function () {
             var unit = parser.parseSyntaxTree();
             end = new Date().getTime();
             totalTime += (end - start);
-            this.checkResult(filePath, unit, verify, generateBaseline);
+            this.checkResult(filePath, unit, verify, generateBaseline, false);
         }
     };
     Program.prototype.runTrivia = function (environment, filePath, languageVersion, verify, generateBaseline) {
@@ -48084,7 +48087,7 @@ var Program = (function () {
         }
         end = new Date().getTime();
         totalTime += (end - start);
-        this.checkResult(filePath, tokens, verify, generateBaseline);
+        this.checkResult(filePath, tokens, verify, generateBaseline, false);
     };
     Program.prototype.runScanner = function (environment, filePath, languageVersion, verify, generateBaseline) {
         if(!StringUtilities.endsWith(filePath, ".ts")) {
@@ -48119,7 +48122,7 @@ var Program = (function () {
             diagnostics: diagnostics,
             tokens: tokens
         };
-        this.checkResult(filePath, result, verify, generateBaseline);
+        this.checkResult(filePath, result, verify, generateBaseline, false);
     };
     Program.prototype.run = function (environment, useTypeScript) {
         environment.standardOut.WriteLine("Testing input files.");
