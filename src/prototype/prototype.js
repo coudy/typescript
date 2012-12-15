@@ -14078,7 +14078,7 @@ var Emitter = (function (_super) {
             trailingTrivia: [
                 SyntaxTrivia.space
             ]
-        }), parameter.equalsValueClause().value().clone());
+        }), parameter.equalsValueClause().value().accept1(this).clone());
         var assignmentStatement = new ExpressionStatementSyntax(assignment, SyntaxToken.createElastic({
             kind: 75 /* SemicolonToken */ ,
             trailingTrivia: [
@@ -14140,6 +14140,36 @@ var Emitter = (function (_super) {
         identifier = identifier.withLeadingTrivia(node.firstToken().leadingTrivia()).withTrailingTrivia(node.lastToken().trailingTrivia());
         return ParameterSyntax.create(identifier);
     };
+    Emitter.prototype.generatePropertyAssignment = function (classDeclaration, static, memberDeclaration) {
+        var isStatic = memberDeclaration.staticKeyword() !== null;
+        if((static && !isStatic) || (!static && isStatic)) {
+            return null;
+        }
+        var declarator = memberDeclaration.variableDeclarator();
+        if(declarator.equalsValueClause() === null) {
+            return null;
+        }
+        var classIdentifier = classDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var memberIdentifier = declarator.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var receiver = static ? new IdentifierNameSyntax(classIdentifier).clone() : new ThisExpressionSyntax(SyntaxToken.createElastic({
+            kind: 33 /* ThisKeyword */ 
+        }));
+        receiver = new MemberAccessExpressionSyntax(receiver, SyntaxToken.createElastic({
+            kind: 73 /* DotToken */ 
+        }), new IdentifierNameSyntax(memberIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
+        var statement = new ExpressionStatementSyntax(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , receiver, SyntaxToken.createElastic({
+            kind: 104 /* EqualsToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.space
+            ]
+        }), declarator.equalsValueClause().value().accept1(this)), SyntaxToken.createElastic({
+            kind: 75 /* SemicolonToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.carriageReturnLineFeed
+            ]
+        }));
+        return statement;
+    };
     Emitter.prototype.generatePropertyAssignments = function (classDeclaration, static) {
         var result = [];
         var identifier = classDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
@@ -14148,33 +14178,10 @@ var Emitter = (function (_super) {
             if(classElement.kind() !== 134 /* MemberVariableDeclaration */ ) {
                 continue;
             }
-            var memberDeclaration = classElement;
-            if(memberDeclaration.staticKeyword() !== null) {
-                continue;
+            var statement = this.generatePropertyAssignment(classDeclaration, static, classElement);
+            if(statement !== null) {
+                result.push(statement);
             }
-            var declarator = memberDeclaration.variableDeclarator();
-            if(declarator.equalsValueClause() === null) {
-                continue;
-            }
-            var identifier = declarator.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
-            var receiver = static ? new IdentifierNameSyntax(identifier).clone() : new ThisExpressionSyntax(SyntaxToken.createElastic({
-                kind: 33 /* ThisKeyword */ 
-            }));
-            receiver = new MemberAccessExpressionSyntax(receiver, SyntaxToken.createElastic({
-                kind: 73 /* DotToken */ 
-            }), new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space)));
-            var statement = new ExpressionStatementSyntax(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , receiver, SyntaxToken.createElastic({
-                kind: 104 /* EqualsToken */ ,
-                trailingTrivia: [
-                    SyntaxTrivia.space
-                ]
-            }), declarator.equalsValueClause().value()), SyntaxToken.createElastic({
-                kind: 75 /* SemicolonToken */ ,
-                trailingTrivia: [
-                    SyntaxTrivia.carriageReturnLineFeed
-                ]
-            }));
-            result.push(statement);
         }
         return result;
     };
@@ -14220,6 +14227,38 @@ var Emitter = (function (_super) {
         }), functionSignature, block, null);
         return functionDeclaration;
     };
+    Emitter.prototype.convertMemberFunctionDeclaration = function (classDeclaration, functionDeclaration) {
+        if(functionDeclaration.block() === null) {
+            return null;
+        }
+    };
+    Emitter.prototype.convertClassElements = function (classDeclaration) {
+        var result = [];
+        var classElements = classDeclaration.classElements();
+        for(var i = 0, n = classElements.count(); i < n; i++) {
+            var classElement = classElements.syntaxNodeAt(i);
+            if(classElement.kind() === 135 /* ConstructorDeclaration */ ) {
+                continue;
+            }
+            if(classElement.kind() === 133 /* MemberFunctionDeclaration */ ) {
+                var converted = this.convertMemberFunctionDeclaration(classDeclaration, classElement);
+                if(converted !== null) {
+                    result.push(converted);
+                }
+            } else {
+                if(classElement.kind() === 134 /* MemberVariableDeclaration */ ) {
+                    var converted = this.generatePropertyAssignment(classDeclaration, true, classElement);
+                    if(converted !== null) {
+                        result.push(converted);
+                    }
+                } else {
+                    if(classElement.kind() === 136 /* GetMemberAccessorDeclaration */  || classElement.kind() === 137 /* SetMemberAccessorDeclaration */ ) {
+                    }
+                }
+            }
+        }
+        return result;
+    };
     Emitter.prototype.visitClassDeclaration = function (node) {
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
         var statements = [];
@@ -14229,7 +14268,13 @@ var Emitter = (function (_super) {
         if(constructorFunctionDeclaration !== null) {
             statements.push(constructorFunctionDeclaration);
         }
-        var returnIndentation = Indentation.indentationTrivia(this.options.indentSpaces + Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options), this.options);
+        var statementIndent = this.options.indentSpaces + Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+        var classElementStatements = this.convertClassElements(node);
+        for(var i = 0; i < classElementStatements.length; i++) {
+            classElementStatements[i] = this.changeIndentation(classElementStatements[i], true, statementIndent, 0);
+        }
+        statements.push.apply(statements, classElementStatements);
+        var returnIndentation = Indentation.indentationTrivia(statementIndent, this.options);
         var returnStatement = new ReturnStatementSyntax(SyntaxToken.createElastic({
             leadingTrivia: [
                 returnIndentation
@@ -47678,8 +47723,7 @@ var expectedTop1000Failures = {
     "JSFile800\\fedex_com\\InstantInvite3.js": true
 };
 var stringTable = new StringTable();
-var specificFile = "ClassDeclaration6";
-undefined;
+var specificFile = undefined;
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {

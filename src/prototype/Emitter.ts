@@ -409,7 +409,7 @@ class Emitter extends SyntaxRewriter {
             SyntaxKind.AssignmentExpression,
             <IdentifierNameSyntax>identifierName.clone(),
             SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: [SyntaxTrivia.space] }),
-            <ExpressionSyntax>parameter.equalsValueClause().value().clone());
+            <ExpressionSyntax>parameter.equalsValueClause().value().accept1(this).clone());
         
         var assignmentStatement = new ExpressionStatementSyntax(
             assignment,
@@ -469,6 +469,45 @@ class Emitter extends SyntaxRewriter {
         return ParameterSyntax.create(identifier);
     }
 
+    private generatePropertyAssignment(classDeclaration: ClassDeclarationSyntax,
+                                       static: bool,
+                                       memberDeclaration: MemberVariableDeclarationSyntax): ExpressionStatementSyntax {
+        var isStatic = memberDeclaration.staticKeyword() !== null;
+        if ((static && !isStatic) ||
+            (!static && isStatic)) {
+            return null;
+        }
+
+        var declarator = memberDeclaration.variableDeclarator();
+        if (declarator.equalsValueClause() === null) {
+            return null;
+        }
+
+        var classIdentifier = classDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
+                                                           .withTrailingTrivia(SyntaxTriviaList.empty);
+        var memberIdentifier = declarator.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
+                                                      .withTrailingTrivia(SyntaxTriviaList.empty);
+
+        var receiver = static
+            ? <ExpressionSyntax>new IdentifierNameSyntax(classIdentifier).clone()
+            : new ThisExpressionSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.ThisKeyword }));
+
+        receiver = new MemberAccessExpressionSyntax(
+            receiver,
+            SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
+            new IdentifierNameSyntax(memberIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
+
+        var statement = new ExpressionStatementSyntax(
+            new BinaryExpressionSyntax(
+                SyntaxKind.AssignmentExpression,
+                receiver,
+                SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: [SyntaxTrivia.space] }),
+                <ExpressionSyntax>declarator.equalsValueClause().value().accept1(this)),
+            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
+
+        return statement;
+    }
+
     private generatePropertyAssignments(classDeclaration: ClassDeclarationSyntax,
                                         static: bool): ExpressionStatementSyntax[] {
         var result: ExpressionStatementSyntax[] = [];
@@ -483,37 +522,11 @@ class Emitter extends SyntaxRewriter {
                 continue;
             }
 
-            var memberDeclaration = <MemberVariableDeclarationSyntax>classElement;
-            if (memberDeclaration.staticKeyword() !== null) {
-                continue;
+            var statement = this.generatePropertyAssignment(
+                classDeclaration, static, <MemberVariableDeclarationSyntax>classElement);
+            if (statement !== null) {
+                result.push(statement);
             }
-            
-            var declarator = memberDeclaration.variableDeclarator();
-            if (declarator.equalsValueClause() === null) {
-                continue;
-            }
-
-            var identifier = declarator.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
-                                                    .withTrailingTrivia(SyntaxTriviaList.empty);
-            
-            var receiver = static
-                ? <ExpressionSyntax>new IdentifierNameSyntax(identifier).clone()
-                : new ThisExpressionSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.ThisKeyword }));
-
-            receiver = new MemberAccessExpressionSyntax(
-                receiver,
-                SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
-                new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space)));
-
-            var statement = new ExpressionStatementSyntax(
-                new BinaryExpressionSyntax(
-                    SyntaxKind.AssignmentExpression,
-                    receiver,
-                    SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: [SyntaxTrivia.space] }),
-                    declarator.equalsValueClause().value()),
-                SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
-
-            result.push(statement);
         }
         
         return result;
@@ -586,6 +599,44 @@ class Emitter extends SyntaxRewriter {
         return functionDeclaration;
     }
 
+    private convertMemberFunctionDeclaration(classDeclaration: ClassDeclarationSyntax,
+                                             functionDeclaration: MemberFunctionDeclarationSyntax): ExpressionStatementSyntax {
+        if (functionDeclaration.block() === null) {
+            return null;
+        }
+    }
+
+    private convertClassElements(classDeclaration: ClassDeclarationSyntax): StatementSyntax[] {
+        var result: StatementSyntax[] = [];
+
+        var classElements = classDeclaration.classElements();
+        for (var i = 0, n = classElements.count(); i < n; i++) {
+            var classElement = <ClassElementSyntax>classElements.syntaxNodeAt(i);
+            if (classElement.kind() === SyntaxKind.ConstructorDeclaration) {
+                continue;
+            }
+
+            if (classElement.kind() === SyntaxKind.MemberFunctionDeclaration) {
+                var converted = this.convertMemberFunctionDeclaration(classDeclaration, <MemberFunctionDeclarationSyntax>classElement)
+                if (converted !== null) {
+                    result.push(converted);
+                }
+            }
+            else if (classElement.kind() === SyntaxKind.MemberVariableDeclaration) {
+                var converted = this.generatePropertyAssignment(classDeclaration, /*static:*/ true, <MemberVariableDeclarationSyntax>classElement);
+                if (converted !== null) {
+                    result.push(converted);
+                }
+            }
+            else if (classElement.kind() === SyntaxKind.GetMemberAccessorDeclaration ||
+                     classElement.kind() === SyntaxKind.SetMemberAccessorDeclaration) {
+                // TODO: handle properties.
+            }
+        }
+
+        return result;
+    }
+
     private visitClassDeclaration(node: ClassDeclarationSyntax): VariableStatementSyntax {
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
                                           .withTrailingTrivia(SyntaxTriviaList.empty);
@@ -599,9 +650,18 @@ class Emitter extends SyntaxRewriter {
             statements.push(constructorFunctionDeclaration)
         }
 
-        var returnIndentation = Indentation.indentationTrivia(
-            this.options.indentSpaces + Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options),
-            this.options);
+        var statementIndent = this.options.indentSpaces + Indentation.columnForStartOfToken(
+            node.firstToken(), this.syntaxInformationMap, this.options)
+
+        var classElementStatements = this.convertClassElements(node);
+        for (var i = 0; i < classElementStatements.length; i++) {
+            classElementStatements[i] = <StatementSyntax>this.changeIndentation(classElementStatements[i],
+                /*changeFirstToken:*/ true, statementIndent, 0);
+        }
+
+        statements.push.apply(statements, classElementStatements);
+
+        var returnIndentation = Indentation.indentationTrivia(statementIndent, this.options);
         
         var returnStatement = new ReturnStatementSyntax(
             SyntaxToken.createElastic({ leadingTrivia: [returnIndentation], kind: SyntaxKind.ReturnKeyword, trailingTrivia: [SyntaxTrivia.space] }),
