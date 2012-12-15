@@ -14392,6 +14392,14 @@ var Emitter = (function (_super) {
         var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
         return variableStatement;
     };
+    Emitter.prototype.visitVariableDeclarator = function (node) {
+        var result = _super.prototype.visitVariableDeclarator.call(this, node);
+        if(result.typeAnnotation() === null) {
+            return result;
+        }
+        var newTrailingTrivia = result.identifier().trailingTrivia().concat(result.typeAnnotation().trailingTrivia());
+        return result.withTypeAnnotation(null).withIdentifier(result.identifier().withTrailingTrivia(newTrailingTrivia));
+    };
     return Emitter;
 })(SyntaxRewriter);
 var ParserExpressionPrecedence;
@@ -19328,6 +19336,17 @@ var SyntaxTriviaList;
             list.syntaxTriviaAt(i).collectTextElements(elements);
         }
     }
+    function concat(list1, list2) {
+        if(list1.count() === 0) {
+            return list2;
+        }
+        if(list2.count() === 0) {
+            return list1;
+        }
+        var trivia = list1.toArray();
+        trivia.push.apply(trivia, list2.toArray());
+        return create(trivia);
+    }
     var EmptySyntaxTriviaList = (function () {
         function EmptySyntaxTriviaList() { }
         EmptySyntaxTriviaList.prototype.kind = function () {
@@ -19383,6 +19402,9 @@ var SyntaxTriviaList;
         };
         EmptySyntaxTriviaList.prototype.toArray = function () {
             return [];
+        };
+        EmptySyntaxTriviaList.prototype.concat = function (trivia) {
+            return concat(this, trivia);
         };
         return EmptySyntaxTriviaList;
     })();    
@@ -19453,6 +19475,9 @@ var SyntaxTriviaList;
             return [
                 this.item
             ];
+        };
+        SingletonSyntaxTriviaList.prototype.concat = function (trivia) {
+            return concat(this, trivia);
         };
         return SingletonSyntaxTriviaList;
     })();    
@@ -19529,6 +19554,9 @@ var SyntaxTriviaList;
         };
         NormalSyntaxTriviaList.prototype.toArray = function () {
             return this.trivia.slice(0);
+        };
+        NormalSyntaxTriviaList.prototype.concat = function (trivia) {
+            return concat(this, trivia);
         };
         return NormalSyntaxTriviaList;
     })();    

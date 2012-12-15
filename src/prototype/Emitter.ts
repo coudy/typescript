@@ -779,9 +779,16 @@ class Emitter extends SyntaxRewriter {
         return variableStatement;
     }
     
-    //private visitTypeAnnotation(node: TypeAnnotationSyntax): TypeAnnotationSyntax {
-    //    // TODO: it's unlikely that a type annotation would have comments on them.  But if it does,
-    //    // transfer it to the surrounding construct.
-    //    return null;
-    //}
+    private visitVariableDeclarator(node: VariableDeclaratorSyntax): VariableDeclaratorSyntax {
+        var result = super.visitVariableDeclarator(node);
+        if (result.typeAnnotation() === null) {
+            return result;
+        }
+
+        var newTrailingTrivia = result.identifier().trailingTrivia().concat(
+            result.typeAnnotation().trailingTrivia());
+
+        return result.withTypeAnnotation(null)
+                     .withIdentifier(result.identifier().withTrailingTrivia(newTrailingTrivia));
+    }
 }

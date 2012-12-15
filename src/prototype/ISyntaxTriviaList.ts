@@ -9,4 +9,6 @@ interface ISyntaxTriviaList extends ISyntaxElement {
 
     last(): ISyntaxTrivia;
     toArray(): ISyntaxTrivia[];
+
+    concat(trivia: ISyntaxTriviaList): ISyntaxTriviaList;
 }

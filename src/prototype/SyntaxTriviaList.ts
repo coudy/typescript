@@ -7,6 +7,21 @@ module SyntaxTriviaList {
         }
     }
 
+    function concat(list1: ISyntaxTriviaList, list2: ISyntaxTriviaList): ISyntaxTriviaList {
+        if (list1.count() === 0) {
+            return list2;
+        }
+
+        if (list2.count() === 0) {
+            return list1;
+        }
+
+        var trivia = list1.toArray();
+        trivia.push.apply(trivia, list2.toArray());
+
+        return create(trivia);
+    }
+
     class EmptySyntaxTriviaList implements ISyntaxTriviaList {
         public kind(): SyntaxKind { return SyntaxKind.TriviaList; }
         public isToken(): bool { return false; }
@@ -53,6 +68,10 @@ module SyntaxTriviaList {
 
         public toArray(): ISyntaxTrivia[] {
             return [];
+        }
+
+        public concat(trivia: ISyntaxTriviaList): ISyntaxTriviaList {
+            return concat(this, trivia);
         }
     }
 
@@ -116,6 +135,10 @@ module SyntaxTriviaList {
 
         public toArray(): ISyntaxTrivia[] {
             return [this.item];
+        }
+
+        public concat(trivia: ISyntaxTriviaList): ISyntaxTriviaList {
+            return concat(this, trivia);
         }
     }
 
@@ -190,6 +213,10 @@ module SyntaxTriviaList {
 
         public toArray(): ISyntaxTrivia[] {
             return this.trivia.slice(0);
+        }
+
+        public concat(trivia: ISyntaxTriviaList): ISyntaxTriviaList {
+            return concat(this, trivia);
         }
     }
 
