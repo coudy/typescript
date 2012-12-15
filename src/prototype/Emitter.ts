@@ -698,8 +698,12 @@ class Emitter extends SyntaxRewriter {
 
         block = block.withStatements(SyntaxList.create(blockStatements));
 
-        var callSignature = CallSignatureSyntax.create(
-            <ParameterListSyntax>functionDeclaration.functionSignature().parameterList().accept1(this));
+        var callSignatureParameterList = <ParameterListSyntax>functionDeclaration.functionSignature().parameterList().accept1(this);
+        if (!callSignatureParameterList.hasTrailingTrivia()) {
+            callSignatureParameterList = <ParameterListSyntax>callSignatureParameterList.withTrailingTrivia(SyntaxTriviaList.space);
+        }
+
+        var callSignature = CallSignatureSyntax.create(callSignatureParameterList);
 
         var functionExpression = FunctionExpressionSyntax.create(
             SyntaxToken.createElastic({ kind: SyntaxKind.FunctionKeyword }),

@@ -4891,6 +4891,9 @@ var SyntaxNode = (function () {
     SyntaxNode.prototype.withTrailingTrivia = function (trivia) {
         return this.replaceToken(this.lastToken(), this.lastToken().withTrailingTrivia(trivia));
     };
+    SyntaxNode.prototype.hasTrailingTrivia = function () {
+        return this.lastToken().hasTrailingTrivia();
+    };
     return SyntaxNode;
 })();
 var SyntaxList;
@@ -14340,7 +14343,11 @@ var Emitter = (function (_super) {
             blockStatements.unshift(assignment);
         }
         block = block.withStatements(SyntaxList.create(blockStatements));
-        var callSignature = CallSignatureSyntax.create(functionDeclaration.functionSignature().parameterList().accept1(this));
+        var callSignatureParameterList = functionDeclaration.functionSignature().parameterList().accept1(this);
+        if(!callSignatureParameterList.hasTrailingTrivia()) {
+            callSignatureParameterList = callSignatureParameterList.withTrailingTrivia(SyntaxTriviaList.space);
+        }
+        var callSignature = CallSignatureSyntax.create(callSignatureParameterList);
         var functionExpression = FunctionExpressionSyntax.create(SyntaxToken.createElastic({
             kind: 25 /* FunctionKeyword */ 
         }), callSignature, block);

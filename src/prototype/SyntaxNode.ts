@@ -88,4 +88,8 @@ class SyntaxNode implements ISyntaxElement {
     public withTrailingTrivia(trivia: ISyntaxTriviaList): SyntaxNode {
         return this.replaceToken(this.lastToken(), this.lastToken().withTrailingTrivia(trivia));
     }
+
+    public hasTrailingTrivia(): bool {
+        return this.lastToken().hasTrailingTrivia();
+    }
 }
