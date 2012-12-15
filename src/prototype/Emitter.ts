@@ -904,4 +904,24 @@ class Emitter extends SyntaxRewriter {
         // TODO: transfer trivia if important.
         return null;
     }
+
+    private visitEnumDeclaration(node: EnumDeclarationSyntax): StatementSyntax[] {
+        var result: StatementSyntax[] = [];
+
+        var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
+                                          .withTrailingTrivia(SyntaxTriviaList.empty);
+
+        var variableStatement = new VariableStatementSyntax(null, null,
+            new VariableDeclarationSyntax(
+                SyntaxToken.createElastic({
+                    leadingTrivia: node.leadingTrivia().toArray(),
+                    kind: SyntaxKind.VarKeyword,
+                    trailingTrivia: [SyntaxTrivia.space]
+                }),
+                SeparatedSyntaxList.create([VariableDeclaratorSyntax.create(identifier.clone())])),
+            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: [SyntaxTrivia.carriageReturnLineFeed] }));
+    
+        result.push(variableStatement);
+        return result;
+    }
 }

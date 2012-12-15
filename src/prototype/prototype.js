@@ -14546,6 +14546,26 @@ var Emitter = (function (_super) {
     Emitter.prototype.visitInterfaceDeclaration = function (node) {
         return null;
     };
+    Emitter.prototype.visitEnumDeclaration = function (node) {
+        var result = [];
+        var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var variableStatement = new VariableStatementSyntax(null, null, new VariableDeclarationSyntax(SyntaxToken.createElastic({
+            leadingTrivia: node.leadingTrivia().toArray(),
+            kind: 38 /* VarKeyword */ ,
+            trailingTrivia: [
+                SyntaxTrivia.space
+            ]
+        }), SeparatedSyntaxList.create([
+            VariableDeclaratorSyntax.create(identifier.clone())
+        ])), SyntaxToken.createElastic({
+            kind: 75 /* SemicolonToken */ ,
+            trailingTrivia: [
+                SyntaxTrivia.carriageReturnLineFeed
+            ]
+        }));
+        result.push(variableStatement);
+        return result;
+    };
     return Emitter;
 })(SyntaxRewriter);
 var ParserExpressionPrecedence;
