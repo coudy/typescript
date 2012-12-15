@@ -74,6 +74,7 @@
 
 ///<reference path='SyntaxToken.ts' />
 ///<reference path='SyntaxToken.generated.ts' />
+///<reference path='SyntaxTokenReplacer.ts' />
 ///<reference path='SyntaxTree.ts' />
 ///<reference path='SyntaxTrivia.ts' />
 

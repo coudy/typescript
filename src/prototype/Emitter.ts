@@ -791,4 +791,16 @@ class Emitter extends SyntaxRewriter {
         return result.withTypeAnnotation(null)
                      .withIdentifier(result.identifier().withTrailingTrivia(newTrailingTrivia));
     }
+
+    private visitCastExpression(node: CastExpressionSyntax): ExpressionSyntax {
+        var result = <CastExpressionSyntax>super.visitCastExpression(node);
+
+        var subExpression = result.expression();
+        var totalTrivia = result.leadingTrivia().concat(subExpression.leadingTrivia());
+
+        subExpression = <UnaryExpressionSyntax>subExpression.replaceToken(
+            subExpression.firstToken(), subExpression.firstToken().withLeadingTrivia(totalTrivia));
+
+        return subExpression;
+    }
 }

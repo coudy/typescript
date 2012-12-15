@@ -4882,6 +4882,9 @@ var SyntaxNode = (function () {
     SyntaxNode.prototype.clone = function () {
         return this.accept1(new SyntaxNodeCloner());
     };
+    SyntaxNode.prototype.replaceToken = function (token1, token2) {
+        return this.accept1(new SyntaxTokenReplacer(token1, token2));
+    };
     return SyntaxNode;
 })();
 var SyntaxList;
@@ -14400,6 +14403,13 @@ var Emitter = (function (_super) {
         var newTrailingTrivia = result.identifier().trailingTrivia().concat(result.typeAnnotation().trailingTrivia());
         return result.withTypeAnnotation(null).withIdentifier(result.identifier().withTrailingTrivia(newTrailingTrivia));
     };
+    Emitter.prototype.visitCastExpression = function (node) {
+        var result = _super.prototype.visitCastExpression.call(this, node);
+        var subExpression = result.expression();
+        var totalTrivia = result.leadingTrivia().concat(subExpression.leadingTrivia());
+        subExpression = subExpression.replaceToken(subExpression.firstToken(), subExpression.firstToken().withLeadingTrivia(totalTrivia));
+        return subExpression;
+    };
     return Emitter;
 })(SyntaxRewriter);
 var ParserExpressionPrecedence;
@@ -19207,6 +19217,18 @@ var SyntaxToken;
         return (value & 134217728 /* TriviaNewLineMask */ ) !== 0;
     }
 })(SyntaxToken || (SyntaxToken = {}));
+var SyntaxTokenReplacer = (function (_super) {
+    __extends(SyntaxTokenReplacer, _super);
+    function SyntaxTokenReplacer(token1, token2) {
+        _super.call(this);
+        this.token1 = token1;
+        this.token2 = token2;
+    }
+    SyntaxTokenReplacer.prototype.visitToken = function (token) {
+        return token === this.token1 ? this.token2 : token;
+    };
+    return SyntaxTokenReplacer;
+})(SyntaxRewriter);
 var SyntaxTree = (function () {
     function SyntaxTree(sourceUnit, diagnostics) {
         this._sourceUnit = sourceUnit;

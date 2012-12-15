@@ -76,4 +76,8 @@ class SyntaxNode implements ISyntaxElement {
     public clone(): SyntaxNode {
         return this.accept1(new SyntaxNodeCloner());
     }
+
+    public replaceToken(token1: ISyntaxToken, token2: ISyntaxToken): SyntaxNode {
+        return this.accept1(new SyntaxTokenReplacer(token1, token2));
+    }
 }
