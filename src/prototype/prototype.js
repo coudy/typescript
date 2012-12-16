@@ -20125,14 +20125,13 @@ var Emitter = (function (_super) {
         receiver = new MemberAccessExpressionSyntax(receiver, SyntaxToken.createElastic({
             kind: 73 /* DotToken */ 
         }), new IdentifierNameSyntax(memberIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
-        var statement = new ExpressionStatementSyntax(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , receiver, SyntaxToken.createElastic({
+        return new ExpressionStatementSyntax(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , receiver, SyntaxToken.createElastic({
             kind: 104 /* EqualsToken */ ,
             trailingTrivia: this.spaceList
         }), declarator.equalsValueClause().value().accept1(this)), SyntaxToken.createElastic({
             kind: 75 /* SemicolonToken */ ,
             trailingTrivia: this.newLineList
         }));
-        return statement;
     };
     Emitter.prototype.generatePropertyAssignments = function (classDeclaration, static) {
         var result = [];
@@ -20149,7 +20148,7 @@ var Emitter = (function (_super) {
         return result;
     };
     Emitter.prototype.createDefaultConstructorDeclaration = function (classDeclaration) {
-        var identifier = classDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var identifier = this.withNoTrivia(classDeclaration.identifier());
         var functionSignature = FunctionSignatureSyntax.create(identifier.clone(), ParameterListSyntax.create(SyntaxToken.createElastic({
             kind: 69 /* OpenParenToken */ 
         }), SyntaxToken.createElastic({
@@ -20208,7 +20207,7 @@ var Emitter = (function (_super) {
         if(constructorDeclaration === null || constructorDeclaration.block() === null) {
             return null;
         }
-        var identifier = classDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var identifier = this.withNoTrivia(classDeclaration.identifier());
         var constructorIndentationColumn = Indentation.columnForStartOfToken(constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options);
         var originalParameterListindentation = Indentation.columnForStartOfToken(constructorDeclaration.parameterList().firstToken(), this.syntaxInformationMap, this.options);
         var newParameterListIndentation = constructorIndentationColumn + SyntaxFacts.getText(25 /* FunctionKeyword */ ).length + 1 + identifier.width();

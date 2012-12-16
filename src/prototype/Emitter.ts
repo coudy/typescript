@@ -502,15 +502,13 @@ class Emitter extends SyntaxRewriter {
             SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
             new IdentifierNameSyntax(memberIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
 
-        var statement = new ExpressionStatementSyntax(
+        return new ExpressionStatementSyntax(
             new BinaryExpressionSyntax(
                 SyntaxKind.AssignmentExpression,
                 receiver,
                 SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceList }),
                 <ExpressionSyntax>declarator.equalsValueClause().value().accept1(this)),
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
-
-        return statement;
     }
 
     private generatePropertyAssignments(classDeclaration: ClassDeclarationSyntax,
@@ -531,14 +529,12 @@ class Emitter extends SyntaxRewriter {
                 result.push(statement);
             }
         }
-        
+
         return result;
     }
 
     private createDefaultConstructorDeclaration(classDeclaration: ClassDeclarationSyntax): FunctionDeclarationSyntax {
-        var identifier = classDeclaration.identifier()
-                                         .withLeadingTrivia(SyntaxTriviaList.empty)
-                                         .withTrailingTrivia(SyntaxTriviaList.empty);
+        var identifier = this.withNoTrivia(classDeclaration.identifier());
 
         var functionSignature = FunctionSignatureSyntax.create(
             identifier.clone(),
@@ -592,9 +588,7 @@ class Emitter extends SyntaxRewriter {
             return null;
         }
 
-        var identifier = classDeclaration.identifier()
-                                         .withLeadingTrivia(SyntaxTriviaList.empty)
-                                         .withTrailingTrivia(SyntaxTriviaList.empty);
+        var identifier = this.withNoTrivia(classDeclaration.identifier());
 
         var constructorIndentationColumn = Indentation.columnForStartOfToken(
             constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options);
