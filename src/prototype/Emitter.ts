@@ -795,7 +795,7 @@ class Emitter extends SyntaxRewriter {
             parameterList = <ParameterListSyntax>parameterList.withTrailingTrivia(SyntaxTriviaList.space);
         }
 
-        var block = memberAccessor.block();
+        var block = memberAccessor.block().accept1(this);
         block = <BlockSyntax>block.withTrailingTrivia(SyntaxTriviaList.empty);
 
         return new SimplePropertyAssignmentSyntax(

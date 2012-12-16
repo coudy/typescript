@@ -20326,7 +20326,7 @@ var Emitter = (function (_super) {
         if(!parameterList.hasTrailingTrivia()) {
             parameterList = parameterList.withTrailingTrivia(SyntaxTriviaList.space);
         }
-        var block = memberAccessor.block();
+        var block = memberAccessor.block().accept1(this);
         block = block.withTrailingTrivia(SyntaxTriviaList.empty);
         return new SimplePropertyAssignmentSyntax(SyntaxToken.createElastic({
             leadingTrivia: [
