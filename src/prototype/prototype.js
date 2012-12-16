@@ -14972,15 +14972,14 @@ var Emitter = (function (_super) {
             ]
         }))), block);
     };
-    Emitter.prototype.changeIndentation = function (node, changeFirstToken, indentAmount, minimumColumn) {
-        if (typeof minimumColumn === "undefined") { minimumColumn = this.options.indentSpaces; }
+    Emitter.prototype.changeIndentation = function (node, changeFirstToken, indentAmount) {
         if(indentAmount === 0) {
             return node;
         } else {
             if(indentAmount > 0) {
                 return SyntaxIndenter.indentNode(node, changeFirstToken, indentAmount, this.options);
             } else {
-                return SyntaxDedenter.dedentNode(node, changeFirstToken, -indentAmount, minimumColumn, this.options);
+                return SyntaxDedenter.dedentNode(node, changeFirstToken, -indentAmount, this.options.indentSpaces, this.options);
             }
         }
     };
@@ -15275,10 +15274,14 @@ var Emitter = (function (_super) {
             return null;
         }
         var identifier = classDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
-        var functionSignature = FunctionSignatureSyntax.create(identifier.clone(), constructorDeclaration.parameterList().accept1(this));
+        var constructorIndentationColumn = Indentation.columnForStartOfToken(constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options);
+        var originalParameterListindentation = Indentation.columnForStartOfToken(constructorDeclaration.parameterList().firstToken(), this.syntaxInformationMap, this.options);
+        var newParameterListIndentation = constructorIndentationColumn + SyntaxFacts.getText(25 /* FunctionKeyword */ ).length + 1 + identifier.width();
+        var parameterList = constructorDeclaration.parameterList().accept1(this);
+        parameterList = this.changeIndentation(parameterList, false, newParameterListIndentation - originalParameterListindentation);
+        var functionSignature = FunctionSignatureSyntax.create(identifier.clone(), parameterList);
         var block = constructorDeclaration.block().accept1(this);
         var statements = block.statements().toArray();
-        var constructorIndentationColumn = Indentation.columnForStartOfToken(constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options);
         var instanceAssignments = this.generatePropertyAssignments(classDeclaration, false);
         for(var i = instanceAssignments.length - 1; i >= 0; i--) {
             var expressionStatement = instanceAssignments[i];
@@ -15338,7 +15341,7 @@ var Emitter = (function (_super) {
         var functionColumn = Indentation.columnForStartOfToken(functionDeclaration.firstToken(), this.syntaxInformationMap, this.options);
         var blockStatements = block.statements().toArray();
         for(var i = defaultValueAssignments.length - 1; i >= 0; i--) {
-            var assignment = this.changeIndentation(defaultValueAssignments[i], true, functionColumn + this.options.indentSpaces, 0);
+            var assignment = this.changeIndentation(defaultValueAssignments[i], true, functionColumn + this.options.indentSpaces);
             blockStatements.unshift(assignment);
         }
         block = block.withStatements(SyntaxList.create(blockStatements));

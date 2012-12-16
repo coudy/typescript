@@ -221,8 +221,7 @@ class Emitter extends SyntaxRewriter {
 
     private changeIndentation(node: SyntaxNode,
                               changeFirstToken: bool,
-                              indentAmount: number,
-                              minimumColumn = this.options.indentSpaces): SyntaxNode {
+                              indentAmount: number): SyntaxNode {
         if (indentAmount === 0) {
             return node;
         }
@@ -239,7 +238,7 @@ class Emitter extends SyntaxRewriter {
                 node,
                 /*dedentFirstToken:*/ changeFirstToken,
                 /*dedentAmount:*/-indentAmount,
-                /*minimumColumn:*/minimumColumn,
+                /*minimumColumn:*/this.options.indentSpaces,
                 this.options);
         }
     }
@@ -605,16 +604,26 @@ class Emitter extends SyntaxRewriter {
                                          .withLeadingTrivia(SyntaxTriviaList.empty)
                                          .withTrailingTrivia(SyntaxTriviaList.empty);
 
+        var constructorIndentationColumn = Indentation.columnForStartOfToken(
+            constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options);
+
+        var originalParameterListindentation = Indentation.columnForStartOfToken(
+            constructorDeclaration.parameterList().firstToken(), this.syntaxInformationMap, this.options);
+
+        // The original indent + "function" + <space> + "ClassName"
+        var newParameterListIndentation = 
+            constructorIndentationColumn + SyntaxFacts.getText(SyntaxKind.FunctionKeyword).length + 1 + identifier.width();
+
+        var parameterList = constructorDeclaration.parameterList().accept1(this);
+        parameterList = this.changeIndentation(
+            parameterList, /*changeFirstToken:*/ false, newParameterListIndentation - originalParameterListindentation);
+
         var functionSignature = FunctionSignatureSyntax.create(
-            identifier.clone(),
-            constructorDeclaration.parameterList().accept1(this));
+            identifier.clone(), parameterList);
 
         var block = constructorDeclaration.block().accept1(this);
 
         var statements:StatementSyntax[] = block.statements().toArray();
-
-        var constructorIndentationColumn = Indentation.columnForStartOfToken(
-            constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options);
 
         // TODO: handle alignment here.
         var instanceAssignments = this.generatePropertyAssignments(
@@ -705,7 +714,7 @@ class Emitter extends SyntaxRewriter {
         var blockStatements = block.statements().toArray();
         for (var i = defaultValueAssignments.length - 1; i >= 0; i--) {
             var assignment = <StatementSyntax>this.changeIndentation(
-                defaultValueAssignments[i], /*changeFirstToken:*/ true, functionColumn + this.options.indentSpaces, 0);
+                defaultValueAssignments[i], /*changeFirstToken:*/ true, functionColumn + this.options.indentSpaces);
 
             blockStatements.unshift(assignment);
         }

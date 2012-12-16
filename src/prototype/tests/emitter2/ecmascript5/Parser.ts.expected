@@ -224,13 +224,12 @@ var ParserSkippedTokensAdder = (function(_super) {
 var Parser = (function(_super) {
     __extends(Parser, _super);
 
-    function Parser(
-        text,
-        languageVersion,
-        stringTable,
-        oldTree,
-        changes,
-        options) {
+    function Parser(text,
+                    languageVersion,
+                    stringTable,
+                    oldTree,
+                    changes,
+                    options) {
         if (typeof languageVersion === "undefined") { languageVersion = LanguageVersion.EcmaScript5; }
         if (typeof stringTable === "undefined") { stringTable = null; }
         if (typeof oldTree === "undefined") { oldTree = null; }
