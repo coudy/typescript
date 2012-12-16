@@ -377,16 +377,7 @@ class Emitter extends SyntaxRewriter {
     }
 
     private static parametersPropertyParameters(list: ISeparatedSyntaxList): ParameterSyntax[] {
-        var result: ParameterSyntax[] = [];
-        for (var i = 0, n = list.syntaxNodeCount(); i < n; i++) {
-            var parameter = <ParameterSyntax>list.syntaxNodeAt(i);
-
-            if (parameter.publicOrPrivateKeyword() !== null) {
-                result.push(parameter);
-            }
-        }
-
-        return result;
+        return ArrayUtilities.where(list.toSyntaxNodeArray(), p => p.publicOrPrivateKeyword() !== null);
     }
 
     private generatePropertyAssignmentStatement(parameter: ParameterSyntax): ExpressionStatementSyntax {

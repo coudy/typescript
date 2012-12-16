@@ -20020,14 +20020,9 @@ var Emitter = (function (_super) {
         });
     }
     Emitter.parametersPropertyParameters = function parametersPropertyParameters(list) {
-        var result = [];
-        for(var i = 0, n = list.syntaxNodeCount(); i < n; i++) {
-            var parameter = list.syntaxNodeAt(i);
-            if(parameter.publicOrPrivateKeyword() !== null) {
-                result.push(parameter);
-            }
-        }
-        return result;
+        return ArrayUtilities.where(list.toSyntaxNodeArray(), function (p) {
+            return p.publicOrPrivateKeyword() !== null;
+        });
     }
     Emitter.prototype.generatePropertyAssignmentStatement = function (parameter) {
         var identifier = parameter.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
