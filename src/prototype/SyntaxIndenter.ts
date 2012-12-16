@@ -2,12 +2,14 @@
 
 class SyntaxIndenter extends SyntaxRewriter {
     private lastTriviaWasNewLine: bool;
-    
+    private indentationTrivia: ISyntaxTrivia;
+
     constructor(indentFirstToken: bool, 
                 private indentationAmount: number,
                 private options: FormattingOptions) {
         super();
         this.lastTriviaWasNewLine = indentFirstToken;
+        this.indentationTrivia = Indentation.indentationTrivia(this.indentationAmount, this.options);
     }
 
     private visitToken(token: ISyntaxToken): ISyntaxToken {
@@ -67,7 +69,7 @@ class SyntaxIndenter extends SyntaxRewriter {
         // Then, if the last trivia was a newline (or there was no trivia at all), then just add the
         // indentation in right before the token.
         if(indentNextTrivia) {
-            result.push(Indentation.indentationTrivia(this.indentationAmount, this.options));
+            result.push(this.indentationTrivia);
         }
 
         return SyntaxTriviaList.create(result);
@@ -117,7 +119,7 @@ class SyntaxIndenter extends SyntaxRewriter {
         if (indentThisTrivia) {
             // The line started with a comment or skipped text.  Add an indentation based 
             // on the desired settings, and then add the trivia itself.
-            result.push(Indentation.indentationTrivia(this.indentationAmount, this.options));
+            result.push(this.indentationTrivia);
         }
 
         result.push(trivia);
@@ -127,7 +129,7 @@ class SyntaxIndenter extends SyntaxRewriter {
         if (indentThisTrivia) {
             // The line started with a multiline comment.  Add an indentation based 
             // on the desired settings, and then add the trivia itself.
-            result.push(Indentation.indentationTrivia(this.indentationAmount, this.options));
+            result.push(this.indentationTrivia);
         }
 
         // If the multiline comment spans multiple lines, we need to add the right indent amount to

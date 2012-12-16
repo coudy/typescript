@@ -263,6 +263,10 @@ class Emitter extends SyntaxRewriter {
         return Indentation.columnForEndOfToken(token, this.syntaxInformationMap, this.options);
     }
 
+    private indentationTrivia(indentationColumn: number): ISyntaxTrivia {
+        return Indentation.indentationTrivia(indentationColumn, this.options);
+    }
+
     private convertArrowFunctionBody(arrowFunction: ArrowFunctionExpressionSyntax): BlockSyntax {
         var rewrittenBody = this.visitNode(arrowFunction.body());
 
@@ -743,7 +747,7 @@ class Emitter extends SyntaxRewriter {
             ? "get" : "set";
 
         var accessorColumn = this.columnForStartOfToken(memberAccessor.firstToken());
-        var indentationTrivia = Indentation.indentationTrivia(accessorColumn, this.options);
+        var indentationTrivia = this.indentationTrivia(accessorColumn);
 
         var parameterList = <ParameterListSyntax>memberAccessor.parameterList().accept1(this);
         if (!parameterList.hasTrailingTrivia()) {
@@ -822,10 +826,10 @@ class Emitter extends SyntaxRewriter {
         }
 
         var accessorColumn = this.columnForStartOfToken(memberAccessor.firstToken());
-        var accessorTrivia = Indentation.indentationTrivia(accessorColumn, this.options);
+        var accessorTrivia = this.indentationTrivia(accessorColumn);
 
         var propertyColumn = accessorColumn + this.options.indentSpaces;
-        var propertyTrivia = Indentation.indentationTrivia(propertyColumn, this.options);
+        var propertyTrivia = this.indentationTrivia(propertyColumn);
 
         propertyAssignments.push(new SimplePropertyAssignmentSyntax(
             SyntaxToken.createElastic({ leadingTrivia: [propertyTrivia], kind: SyntaxKind.IdentifierNameToken, text: "enumerable" }),
@@ -938,7 +942,7 @@ class Emitter extends SyntaxRewriter {
         var classElementStatements = this.convertClassElements(node);
         statements.push.apply(statements, classElementStatements);
 
-        var returnIndentation = Indentation.indentationTrivia(statementIndent, this.options);
+        var returnIndentation = this.indentationTrivia(statementIndent);
         
         var returnStatement = new ReturnStatementSyntax(
             SyntaxToken.createElastic({ leadingTrivia: [returnIndentation], kind: SyntaxKind.ReturnKeyword, trailingTrivia: this.spaceList }),
@@ -949,7 +953,7 @@ class Emitter extends SyntaxRewriter {
 
         var classIndentation = this.columnForStartOfToken(node.firstToken());
         var closeCurlyIndentation = classIndentation > 0
-            ? [Indentation.indentationTrivia(classIndentation, this.options)]
+            ? [this.indentationTrivia(classIndentation)]
             : null;
 
         var block = new BlockSyntax(
@@ -1089,7 +1093,7 @@ class Emitter extends SyntaxRewriter {
             var indentationColumn = this.columnForStartOfToken(node.firstToken());
 
             var mapIndentationColumn = indentationColumn + this.options.indentSpaces;
-            var mapIndentationTrivia = Indentation.indentationTrivia(mapIndentationColumn, this.options);
+            var mapIndentationTrivia = this.indentationTrivia(mapIndentationColumn);
 
             var receiver: ExpressionSyntax = new MemberAccessExpressionSyntax(
                 new IdentifierNameSyntax(identifier.withLeadingTrivia(SyntaxTriviaList.create([mapIndentationTrivia]))),
@@ -1151,7 +1155,7 @@ class Emitter extends SyntaxRewriter {
                                           .withTrailingTrivia(SyntaxTriviaList.empty);
         
         var indentationColumn = this.columnForStartOfToken(node.firstToken());
-        var indentationTrivia = Indentation.indentationTrivia(indentationColumn, this.options);
+        var indentationTrivia = this.indentationTrivia(indentationColumn);
 
         var statements: StatementSyntax[] = [];
 
@@ -1218,7 +1222,7 @@ class Emitter extends SyntaxRewriter {
         result.push(variableStatement);
 
         var indentationColumn = this.columnForStartOfToken(node.firstToken());
-        var indentationTrivia = Indentation.indentationTrivia(indentationColumn, this.options);
+        var indentationTrivia = this.indentationTrivia(indentationColumn);
 
         var functionExpression = this.generateEnumFunctionExpression(node);
 
@@ -1286,7 +1290,7 @@ class Emitter extends SyntaxRewriter {
     }
 
     private convertSuperInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
-        var result = super.visitInvocationExpression(node);
+        var result = <InvocationExpressionSyntax>super.visitInvocationExpression(node);
 
         var expression = new MemberAccessExpressionSyntax(
             new IdentifierNameSyntax(SyntaxToken.createElastic({
