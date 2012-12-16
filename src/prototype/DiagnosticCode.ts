@@ -1,5 +1,3 @@
-// ///<reference path='References.ts' />
-
 enum DiagnosticCode {
     Unrecognized_escape_sequence,
     Unexpected_character_0,

@@ -1,4 +1,7 @@
-﻿
+﻿///<reference path='ISyntaxToken.ts' />
+///<reference path='IText.ts' />
+///<reference path='SyntaxToken.ts' />
+
 module SyntaxToken {
     class VariableWidthTokenWithNoTrivia implements ISyntaxToken {
         private _sourceText: IText;

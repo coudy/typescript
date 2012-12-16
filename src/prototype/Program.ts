@@ -1,6 +1,10 @@
-///<reference path='References.ts' />
-///<reference path='..\compiler\parser.ts' />
+// ///<reference path='..\compiler\parser.ts' />
+///<reference path='Emitter.ts' />
+///<reference path='Parser.ts' />
+///<reference path='Environment.ts' />
+///<reference path='StringText.ts' />
 ///<reference path='Test262.ts' />
+///<reference path='TextUtilities.ts' />
 ///<reference path='Top1000.ts' />
 
 var stringTable = new StringTable();
@@ -165,10 +169,10 @@ class Program {
         totalSize += contents.length;
 
         if (useTypeScript) {
-            var text1 = new TypeScript.StringSourceText(contents);
-            var parser1 = new TypeScript.Parser(); 
-            parser1.errorRecovery = true;
-            var unit1 = parser1.parse(text1, filePath, 0);
+            //var text1 = new TypeScript.StringSourceText(contents);
+            //var parser1 = new TypeScript.Parser(); 
+            //parser1.errorRecovery = true;
+            //var unit1 = parser1.parse(text1, filePath, 0);
 
             end = new Date().getTime();
             totalTime += (end - start);

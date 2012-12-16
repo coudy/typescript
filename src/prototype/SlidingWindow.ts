@@ -1,4 +1,4 @@
-// ///<reference path='References.ts' />
+///<reference path='ArrayUtilities.ts' />
 
 interface IRewindPoint {
     absoluteIndex: number;

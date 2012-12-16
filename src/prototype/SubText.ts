@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='TextBase.ts' />
 
 /// <summary>
 /// An IText that represents a subrange of another IText.

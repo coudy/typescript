@@ -1,4 +1,5 @@
 ///<reference path='ISyntaxElement.ts' />
+///<reference path='ISyntaxTrivia.ts' />
 
 interface ISyntaxTriviaList extends ISyntaxElement {
     count(): number;

@@ -1,4 +1,5 @@
 ///<reference path='CharacterCodes.ts' />
+///<reference path='Debug.ts' />
 
 class CharacterInfo {
     public static isDecimalDigit(c: number): bool {

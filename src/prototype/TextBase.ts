@@ -1,4 +1,6 @@
-///<reference path='References.ts' />
+///<reference path='IText.ts' />
+///<reference path='LineBreakInfo.ts' />
+///<reference path='TextLine.ts' />
 
 class TextBase implements IText {
     /// <summary>

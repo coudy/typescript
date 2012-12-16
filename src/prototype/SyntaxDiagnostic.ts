@@ -1,4 +1,5 @@
 ///<reference path='Diagnostic.ts' />
+///<reference path='Errors.ts' />
 
 class SyntaxDiagnostic extends Diagnostic {
     private _position: number;

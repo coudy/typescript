@@ -1,4 +1,5 @@
 ///<reference path='ISyntaxElement.ts' />
+///<reference path='SyntaxNode.ts' />
 
 interface ISeparatedSyntaxList extends ISyntaxElement {
     count();

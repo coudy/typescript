@@ -1,5 +1,3 @@
-///<reference path='References.ts' />
-
 class ParseOptions {
     private _allowAutomaticSemicolonInsertion: bool;
 

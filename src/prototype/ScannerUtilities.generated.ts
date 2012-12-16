@@ -1,4 +1,6 @@
-﻿
+﻿///<reference path='CharacterCodes.ts' />
+///<reference path='SyntaxKind.ts' />
+
 class ScannerUtilities {
     public static identifierKind(array: number[], startIndex: number, length: number): SyntaxKind {
         switch (length) {

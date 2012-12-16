@@ -1,3 +1,5 @@
+///<reference path='TextSpan.ts' />
+
 /// <summary>
 /// Immutable representation of a line in an IText instance.
 /// </summary>

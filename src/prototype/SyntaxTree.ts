@@ -1,4 +1,5 @@
-///<reference path='References.ts' />
+///<reference path='SyntaxNodes.generated.ts' />
+///<reference path='SyntaxDiagnostic.ts' />
 
 class SyntaxTree {
     private _sourceUnit: SourceUnitSyntax;

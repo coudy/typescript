@@ -1,9 +1,6 @@
-///<reference path='References.ts' />
-
-class LinebreakInfo {
-    constructor (public startPosition: number, public length: number) {
-    }
-}
+///<reference path='IText.ts' />
+///<reference path='LineBreakInfo.ts' />
+///<reference path='CharacterCodes.ts' />
 
 class TextUtilities {
     /// <summary>

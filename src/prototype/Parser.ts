@@ -1,4 +1,12 @@
-///<reference path='References.ts' />
+/// <reference path='SyntaxRewriter.generated.ts' />
+/// <reference path='SlidingWindow.ts' />
+
+/// <reference path='ParseOptions.ts' />
+/// <reference path='Scanner.ts' />
+/// <reference path='Strings.ts' />
+/// <reference path='SyntaxTree.ts' />
+/// <reference path='SyntaxTriviaList.ts' />
+/// <reference path='TextChangeRange.ts' />
 
 interface IParserRewindPoint extends IRewindPoint {
     previousToken: ISyntaxToken;

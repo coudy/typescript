@@ -1,4 +1,6 @@
-// ///<reference path='References.ts' />
+///<reference path='ArrayUtilities.ts' />
+///<reference path='Hash.ts' />
+///<reference path='StringUtilities.ts' />
 
 class StringTableEntry {
     constructor(public Text: string,

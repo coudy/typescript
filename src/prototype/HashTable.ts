@@ -1,3 +1,4 @@
+///<reference path='ArrayUtilities.ts' />
 ///<reference path='Hash.ts' />
 
 class HashTableEntry {

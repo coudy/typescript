@@ -1,4 +1,5 @@
-// ///<reference path='References.ts' />
+///<reference path='Errors.ts' />
+///<reference path='LanguageVersion.ts' />
 
 class Unicode {
     // Unicode range maps

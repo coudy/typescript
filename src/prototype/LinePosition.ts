@@ -1,4 +1,4 @@
-// ///<reference path='References.ts' />
+///<reference path='Errors.ts' />
 
 class LinePosition {
     private _line: number = 0;

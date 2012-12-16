@@ -1,14 +1,20 @@
 ﻿///<reference path='SlidingWindow.ts' />
 
+///<reference path='CharacterCodes.ts' />
+///<reference path='CharacterInfo.ts' />
 ///<reference path='Constants.ts' />
-///<reference path='DiagnosticCode.ts' />
 ///<reference path='LanguageVersion.ts' />
+///<reference path='ISyntaxToken.ts' />
 ///<reference path='IText.ts' />
 ///<reference path='..\harness\external\json2.ts' />
 ///<reference path='ScannerUtilities.generated.ts' />
 ///<reference path='StringTable.ts' />
 ///<reference path='SyntaxDiagnostic.ts' />
+///<reference path='SyntaxFacts.ts' />
+///<reference path='SyntaxKind.ts' />
+///<reference path='SyntaxToken.ts' />
 ///<reference path='SyntaxToken.generated.ts' />
+///<reference path='SyntaxTriviaList.ts' />
 ///<reference path='Unicode.ts' />
 
 class Scanner extends SlidingWindow {

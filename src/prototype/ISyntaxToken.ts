@@ -1,3 +1,4 @@
+///<reference path='ISyntaxElement.ts' />
 ///<reference path='ISyntaxTriviaList.ts' />
 
 interface ISyntaxToken extends ISyntaxElement {

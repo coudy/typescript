@@ -1,4 +1,5 @@
 ///<reference path='ISyntaxElement.ts' />
+///<reference path='SyntaxNode.ts' />
 
 interface ISyntaxList extends ISyntaxElement {
     count(): number;

@@ -1,4 +1,5 @@
 ///<reference path='IntegerUtilities.ts' />
+///<reference path='ISeparatedSyntaxList.ts' />
 ///<reference path='SyntaxFacts.ts' />
 
 module SeparatedSyntaxList {

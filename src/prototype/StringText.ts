@@ -1,4 +1,5 @@
-///<reference path='References.ts' />
+///<reference path='TextBase.ts' />
+///<reference path='SubText.ts' />
 
 /// <summary>
 /// Implementation of IText based on a <see cref="T:System.String"/> input

@@ -1,6 +1,4 @@
-﻿///<reference path='ISyntaxVisitor.ts' />
-
-class SyntaxRewriter implements ISyntaxVisitor1 {
+﻿class SyntaxRewriter implements ISyntaxVisitor1 {
     public visitToken(token: ISyntaxToken): ISyntaxToken {
         return token;
     }

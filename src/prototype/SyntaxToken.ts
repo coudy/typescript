@@ -1,3 +1,5 @@
+///<reference path='ISyntaxToken.ts' />
+///<reference path='Hash.ts' />
 ///<reference path='Scanner.ts' />
 
 module SyntaxToken {

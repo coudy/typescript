@@ -1,6 +1,7 @@
 ///<reference path='Errors.ts' />
 ///<reference path='ISyntaxElement.ts' />
 ///<reference path='ISyntaxToken.ts' />
+///<reference path='ISyntaxVisitor.ts' />
 ///<reference path='SyntaxNodeCloner.ts' />
 ///<reference path='SyntaxRealizer.ts' />
 ///<reference path='SyntaxTokenReplacer.ts' />

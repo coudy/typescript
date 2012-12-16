@@ -1,4 +1,4 @@
-// ///<reference path='References.ts' />
+///<reference path='ISyntaxList.ts' />
 
 module SyntaxList {
     function collectTextElements(elements: string[], list: ISyntaxList): void {

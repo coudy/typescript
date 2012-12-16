@@ -1,18 +1,10 @@
 ///<reference path='SyntaxRewriter.generated.ts' />
 
-///<reference path='ArrayUtilities.ts' />
 ///<reference path='FormattingOptions.ts' />
-///<reference path='Indentation.ts' />
-///<reference path='ISyntaxTrivia.ts' />
-///<reference path='SeparatedSyntaxList.ts' />
 ///<reference path='SyntaxDedenter.ts' />
 ///<reference path='SyntaxIndenter.ts' />
 ///<reference path='SyntaxInformationMap.ts' />
-///<reference path='SyntaxList.ts' />
 ///<reference path='SyntaxNodeInvariantsChecker.ts' />
-///<reference path='SyntaxToken.ts' />
-///<reference path='SyntaxTrivia.ts' />
-///<reference path='SyntaxTriviaList.ts' />
 
 class Emitter extends SyntaxRewriter {
     private syntaxInformationMap: SyntaxInformationMap;
@@ -145,6 +137,7 @@ class Emitter extends SyntaxRewriter {
     private convertModuleDeclaration(name: IdentifierNameSyntax, moduleElements: ModuleElementSyntax[]): ModuleElementSyntax[] {
         var moduleIdentifier = this.withNoTrivia(name.identifier());
 
+        // var M;
         var variableStatement = VariableStatementSyntax.create(
             new VariableDeclarationSyntax(
                 SyntaxToken.createElastic({ kind: SyntaxKind.VarKeyword, trailingTrivia: this.spaceList }),

@@ -1,4 +1,6 @@
 ///<reference path='Contract.ts' />
+///<reference path='Errors.ts' />
+///<reference path='MathPrototype.ts' />
 
 class TextSpan {
     private _start: number = 0;

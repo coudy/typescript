@@ -1,4 +1,5 @@
-///<reference path='References.ts' />
+///<reference path='IText.ts' />
+///<reference path='ITextLine.ts' />
 
 class TextLine implements ITextLine {
     private _text: IText = null;

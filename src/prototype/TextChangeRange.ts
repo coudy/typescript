@@ -1,4 +1,5 @@
-///<reference path='References.ts' />
+///<reference path='Constants.ts' />
+///<reference path='TextSpan.ts' />
 
 class TextChangeRange {
     private _span: TextSpan = null;

@@ -1684,8 +1684,9 @@ function generateNode(definition: ITypeDefinition): string {
 function generateNodes(): string {
     var result = "///<reference path='SyntaxNode.ts' />\r\n";
     result += "///<reference path='ISyntaxList.ts' />\r\n"
-    result += "///<reference path='ISeparatedSyntaxList.ts' />"
-
+    result += "///<reference path='ISeparatedSyntaxList.ts' />\r\n"
+    result += "///<reference path='SeparatedSyntaxList.ts' />\r\n"
+    result += "///<reference path='SyntaxList.ts' />"
 
     for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
@@ -1701,8 +1702,6 @@ function generateRewriter(): string {
     var result = "";
 
     result +=
-"///<reference path='ISyntaxVisitor.ts' />\r\n"+
-"\r\n" +
 "class SyntaxRewriter implements ISyntaxVisitor1 {\r\n" +
 "    public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n" +
 "        return token;\r\n" +
@@ -2068,7 +2067,10 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
 }
 
 function generateTokens(): string {
-    var result = "" +  // "///<reference path='References.ts' />\r\n" +
+    var result = 
+        "///<reference path='ISyntaxToken.ts' />\r\n" +
+        "///<reference path='IText.ts' />\r\n" +
+        "///<reference path='SyntaxToken.ts' />\r\n" +
         "\r\n" +
         "module SyntaxToken {\r\n";
 
@@ -2332,7 +2334,8 @@ function generateKeywordCondition(keywords: { text: string; kind: SyntaxKind; }[
 }
 
 function generateScannerUtilities(): string {
-    var result = "" + //;  // "// ///<reference path='References.ts' />\r\n" +
+    var result = "///<reference path='CharacterCodes.ts' />\r\n" +
+        "///<reference path='SyntaxKind.ts' />\r\n" +
         "\r\n" +
         "class ScannerUtilities {\r\n";
 

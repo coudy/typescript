@@ -1,4 +1,7 @@
-// ///<reference path='References.ts' />
+///<reference path='ArrayUtilities.ts' />
+///<reference path='Errors.ts' />
+///<reference path='ISyntaxTriviaList.ts' />
+///<reference path='SyntaxTrivia.ts' />
 
 module SyntaxTriviaList {
     function collectTextElements(elements: string[], list: ISyntaxTriviaList): void {
