@@ -90,6 +90,30 @@ class Emitter extends SyntaxRewriter {
         return SyntaxIndenter.indentNodes(nodes, /*indentFirstToken:*/ true, this.options.indentSpaces, this.options);
     }
 
+    private changeIndentation(node: SyntaxNode,
+                              changeFirstToken: bool,
+                              indentAmount: number): SyntaxNode {
+        if (indentAmount === 0) {
+            return node;
+        }
+        else if (indentAmount > 0) {
+            return SyntaxIndenter.indentNode(
+                node,
+                /*indentFirstToken:*/ changeFirstToken,
+                /*indentAmount:*/ indentAmount,
+                this.options);
+        }
+        else {
+            // Dedent the node.  But don't allow it go before the minimum indent amount.
+            return SyntaxDedenter.dedentNode(
+                node,
+                /*dedentFirstToken:*/ changeFirstToken,
+                /*dedentAmount:*/-indentAmount,
+                /*minimumColumn:*/this.options.indentSpaces,
+                this.options);
+        }
+    }
+
     private visitModuleDeclaration(node: ModuleDeclarationSyntax): ModuleElementSyntax[] {
         // Break up the dotted name into pieces.
         var names = Emitter.splitModuleName(node.moduleName());
@@ -207,8 +231,7 @@ class Emitter extends SyntaxRewriter {
     }
 
     private visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): FunctionExpressionSyntax {
-        var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
-                                          .withTrailingTrivia(SyntaxTriviaList.empty);
+        var identifier = this.withNoTrivia(node.identifier());
 
         var block = this.convertArrowFunctionBody(node);
 
@@ -230,30 +253,6 @@ class Emitter extends SyntaxRewriter {
             SyntaxToken.createElastic({ leadingTrivia: node.leadingTrivia().toArray(), kind: SyntaxKind.FunctionKeyword}),
             CallSignatureSyntax.create(parameterList),
             block);
-    }
-
-    private changeIndentation(node: SyntaxNode,
-                              changeFirstToken: bool,
-                              indentAmount: number): SyntaxNode {
-        if (indentAmount === 0) {
-            return node;
-        }
-        else if (indentAmount > 0) {
-            return SyntaxIndenter.indentNode(
-                node,
-                /*indentFirstToken:*/ changeFirstToken,
-                /*indentAmount:*/ indentAmount,
-                this.options);
-        }
-        else {
-            // Dedent the node.  But don't allow it go before the minimum indent amount.
-            return SyntaxDedenter.dedentNode(
-                node,
-                /*dedentFirstToken:*/ changeFirstToken,
-                /*dedentAmount:*/-indentAmount,
-                /*minimumColumn:*/this.options.indentSpaces,
-                this.options);
-        }
     }
 
     private convertArrowFunctionBody(arrowFunction: ArrowFunctionExpressionSyntax): BlockSyntax {
@@ -374,16 +373,7 @@ class Emitter extends SyntaxRewriter {
     }
 
     private static parametersDefaultParameters(list: ISeparatedSyntaxList): ParameterSyntax[] {
-        var result: ParameterSyntax[] = [];
-        for (var i = 0, n = list.syntaxNodeCount(); i < n; i++) {
-            var parameter = <ParameterSyntax>list.syntaxNodeAt(i);
-
-            if (parameter.equalsValueClause() !== null) {
-                result.push(parameter);
-            }
-        }
-
-        return result;
+        return ArrayUtilities.where(list.toSyntaxNodeArray(), p => p.equalsValueClause() !== null);
     }
 
     private static parametersPropertyParameters(list: ISeparatedSyntaxList): ParameterSyntax[] {

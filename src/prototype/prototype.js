@@ -12571,6 +12571,9 @@ var SeparatedSyntaxList;
         EmptySeparatedSyntaxList.prototype.toArray = function () {
             return [];
         };
+        EmptySeparatedSyntaxList.prototype.toSyntaxNodeArray = function () {
+            return [];
+        };
         return EmptySeparatedSyntaxList;
     })();    
     var SingletonSeparatedSyntaxList = (function () {
@@ -12646,6 +12649,11 @@ var SeparatedSyntaxList;
             return this.item.fullText();
         };
         SingletonSeparatedSyntaxList.prototype.toArray = function () {
+            return [
+                this.item
+            ];
+        };
+        SingletonSeparatedSyntaxList.prototype.toSyntaxNodeArray = function () {
             return [
                 this.item
             ];
@@ -12770,6 +12778,13 @@ var SeparatedSyntaxList;
         };
         NormalSeparatedSyntaxList.prototype.toArray = function () {
             return this.elements.slice(0);
+        };
+        NormalSeparatedSyntaxList.prototype.toSyntaxNodeArray = function () {
+            var result = [];
+            for(var i = 0, n = this.syntaxNodeCount(); i < n; i++) {
+                result.push(this.syntaxNodeAt(i));
+            }
+            return result;
         };
         return NormalSeparatedSyntaxList;
     })();    
@@ -19829,6 +19844,17 @@ var Emitter = (function (_super) {
     Emitter.prototype.adjustListIndentation = function (nodes) {
         return SyntaxIndenter.indentNodes(nodes, true, this.options.indentSpaces, this.options);
     };
+    Emitter.prototype.changeIndentation = function (node, changeFirstToken, indentAmount) {
+        if(indentAmount === 0) {
+            return node;
+        } else {
+            if(indentAmount > 0) {
+                return SyntaxIndenter.indentNode(node, changeFirstToken, indentAmount, this.options);
+            } else {
+                return SyntaxDedenter.dedentNode(node, changeFirstToken, -indentAmount, this.options.indentSpaces, this.options);
+            }
+        }
+    };
     Emitter.prototype.visitModuleDeclaration = function (node) {
         var names = Emitter.splitModuleName(node.moduleName());
         var moduleElements = this.convertModuleElements(node.moduleElements());
@@ -19922,7 +19948,7 @@ var Emitter = (function (_super) {
         return rewritten.withExpression(parenthesizedExpression);
     };
     Emitter.prototype.visitSimpleArrowFunctionExpression = function (node) {
-        var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var identifier = this.withNoTrivia(node.identifier());
         var block = this.convertArrowFunctionBody(node);
         return FunctionExpressionSyntax.create(SyntaxToken.createElastic({
             leadingTrivia: node.leadingTrivia().toArray(),
@@ -19943,17 +19969,6 @@ var Emitter = (function (_super) {
             leadingTrivia: node.leadingTrivia().toArray(),
             kind: 25 /* FunctionKeyword */ 
         }), CallSignatureSyntax.create(parameterList), block);
-    };
-    Emitter.prototype.changeIndentation = function (node, changeFirstToken, indentAmount) {
-        if(indentAmount === 0) {
-            return node;
-        } else {
-            if(indentAmount > 0) {
-                return SyntaxIndenter.indentNode(node, changeFirstToken, indentAmount, this.options);
-            } else {
-                return SyntaxDedenter.dedentNode(node, changeFirstToken, -indentAmount, this.options.indentSpaces, this.options);
-            }
-        }
     };
     Emitter.prototype.convertArrowFunctionBody = function (arrowFunction) {
         var rewrittenBody = this.visitNode(arrowFunction.body());
@@ -20000,14 +20015,9 @@ var Emitter = (function (_super) {
         return Emitter.parametersPropertyParameters(parameterList.parameters());
     }
     Emitter.parametersDefaultParameters = function parametersDefaultParameters(list) {
-        var result = [];
-        for(var i = 0, n = list.syntaxNodeCount(); i < n; i++) {
-            var parameter = list.syntaxNodeAt(i);
-            if(parameter.equalsValueClause() !== null) {
-                result.push(parameter);
-            }
-        }
-        return result;
+        return ArrayUtilities.where(list.toSyntaxNodeArray(), function (p) {
+            return p.equalsValueClause() !== null;
+        });
     }
     Emitter.parametersPropertyParameters = function parametersPropertyParameters(list) {
         var result = [];

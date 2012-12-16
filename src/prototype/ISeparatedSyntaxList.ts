@@ -3,7 +3,9 @@
 interface ISeparatedSyntaxList extends ISyntaxElement {
     count();
     itemAt(index: number): ISyntaxElement;
+
     toArray(): ISyntaxElement[];
+    toSyntaxNodeArray(): SyntaxNode[];
 
     syntaxNodeCount();
     syntaxNodeAt(index: number): SyntaxNode;
