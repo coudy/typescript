@@ -639,7 +639,8 @@ class Emitter extends SyntaxRewriter {
 
         var block = constructorDeclaration.block().accept1(this);
 
-        var statements:StatementSyntax[] = block.statements().toArray();
+        var statements: StatementSyntax[] = ArrayUtilities.where(block.statements().toArray(),
+            s => !Emitter.isSuperInvocationExpressionStatement(s));
 
         // TODO: handle alignment here.
         var instanceAssignments = this.generatePropertyAssignments(
@@ -661,6 +662,17 @@ class Emitter extends SyntaxRewriter {
             expressionStatement = <ExpressionStatementSyntax>this.changeIndentation(
                 expressionStatement, /*changeFirstToken:*/ true, this.options.indentSpaces + constructorIndentationColumn);
             statements.unshift(expressionStatement);
+        }
+
+        var superStatements = ArrayUtilities.where(block.statements().toArray(),
+            s => Emitter.isSuperInvocationExpressionStatement(s));
+
+        superStatements = ArrayUtilities.select(
+            superStatements,
+            s => this.convertSuperExpressionStatement(s));
+
+        for (var i = superStatements.length - 1; i >= 0; i--) {
+            statements.unshift(superStatements[i]);
         }
 
         var defaultValueAssignments = <ExpressionStatementSyntax[]>ArrayUtilities.select(
@@ -1089,28 +1101,38 @@ class Emitter extends SyntaxRewriter {
         return result;
     }
 
-    private visitInvocationExpression(invocationExpression: InvocationExpressionSyntax): InvocationExpressionSyntax {
-        var result = <InvocationExpressionSyntax>super.visitInvocationExpression(invocationExpression);
-        if (result.expression().kind() !== SyntaxKind.SuperExpression) {
-            return result;
-        }
+    private static isSuperInvocationExpressionStatement(node: SyntaxNode): bool {
+        return node.kind() === SyntaxKind.ExpressionStatement &&
+            Emitter.isSuperInvocationExpression((<ExpressionStatementSyntax>node).expression());
+    }
 
+    private static isSuperInvocationExpression(node: SyntaxNode): bool {
+        return node.kind() === SyntaxKind.InvocationExpression &&
+            (<InvocationExpressionSyntax>node).expression().kind() === SyntaxKind.SuperExpression;
+    }
+
+    private convertSuperExpressionStatement(expressionStatement: ExpressionStatementSyntax): ExpressionStatementSyntax {
+        Debug.assert(Emitter.isSuperInvocationExpressionStatement(expressionStatement));
+
+        var invocationExpression = <InvocationExpressionSyntax>expressionStatement.expression();
         var expression = new MemberAccessExpressionSyntax(
             new IdentifierNameSyntax(SyntaxToken.createElastic({
-                leadingTrivia: result.leadingTrivia().toArray(),
+                leadingTrivia: expressionStatement.leadingTrivia().toArray(),
                 kind: SyntaxKind.IdentifierNameToken,
                 text: "_super" })),
             SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
             new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "call" })));
 
-        var arguments = result.argumentList().arguments().toArray();
+        var arguments = invocationExpression.argumentList().arguments().toArray();
         if (arguments.length > 0) {
             arguments.unshift(SyntaxToken.createElastic({ kind: SyntaxKind.CommaToken, trailingTrivia: this.spaceList }));
         }
 
         arguments.unshift(new ThisExpressionSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.ThisKeyword })));
-        return result.withExpression(expression)
-                     .withArgumentList(result.argumentList().withArguments(
-                         SeparatedSyntaxList.create(arguments)));
+
+        return expressionStatement.withExpression(invocationExpression
+            .withExpression(expression)
+            .withArgumentList(invocationExpression.argumentList().withArguments(
+                SeparatedSyntaxList.create(arguments))));
     }
 }

@@ -15252,7 +15252,9 @@ var Emitter = (function (_super) {
         parameterList = this.changeIndentation(parameterList, false, newParameterListIndentation - originalParameterListindentation);
         var functionSignature = FunctionSignatureSyntax.create(identifier.clone(), parameterList);
         var block = constructorDeclaration.block().accept1(this);
-        var statements = block.statements().toArray();
+        var statements = ArrayUtilities.where(block.statements().toArray(), function (s) {
+            return !Emitter.isSuperInvocationExpressionStatement(s);
+        });
         var instanceAssignments = this.generatePropertyAssignments(classDeclaration, false);
         for(var i = instanceAssignments.length - 1; i >= 0; i--) {
             var expressionStatement = instanceAssignments[i];
@@ -15266,6 +15268,15 @@ var Emitter = (function (_super) {
             var expressionStatement = parameterPropertyAssignments[i];
             expressionStatement = this.changeIndentation(expressionStatement, true, this.options.indentSpaces + constructorIndentationColumn);
             statements.unshift(expressionStatement);
+        }
+        var superStatements = ArrayUtilities.where(block.statements().toArray(), function (s) {
+            return Emitter.isSuperInvocationExpressionStatement(s);
+        });
+        superStatements = ArrayUtilities.select(superStatements, function (s) {
+            return _this.convertSuperExpressionStatement(s);
+        });
+        for(var i = superStatements.length - 1; i >= 0; i--) {
+            statements.unshift(superStatements[i]);
         }
         var defaultValueAssignments = ArrayUtilities.select(Emitter.parameterListDefaultParameters(constructorDeclaration.parameterList()), function (p) {
             return _this.generateDefaultValueAssignmentStatement(p);
@@ -15604,13 +15615,17 @@ var Emitter = (function (_super) {
         result.push(expressionStatement);
         return result;
     };
-    Emitter.prototype.visitInvocationExpression = function (invocationExpression) {
-        var result = _super.prototype.visitInvocationExpression.call(this, invocationExpression);
-        if(result.expression().kind() !== 221 /* SuperExpression */ ) {
-            return result;
-        }
+    Emitter.isSuperInvocationExpressionStatement = function isSuperInvocationExpressionStatement(node) {
+        return node.kind() === 141 /* ExpressionStatement */  && Emitter.isSuperInvocationExpression((node).expression());
+    }
+    Emitter.isSuperInvocationExpression = function isSuperInvocationExpression(node) {
+        return node.kind() === 210 /* InvocationExpression */  && (node).expression().kind() === 221 /* SuperExpression */ ;
+    }
+    Emitter.prototype.convertSuperExpressionStatement = function (expressionStatement) {
+        Debug.assert(Emitter.isSuperInvocationExpressionStatement(expressionStatement));
+        var invocationExpression = expressionStatement.expression();
         var expression = new MemberAccessExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.createElastic({
-            leadingTrivia: result.leadingTrivia().toArray(),
+            leadingTrivia: expressionStatement.leadingTrivia().toArray(),
             kind: 9 /* IdentifierNameToken */ ,
             text: "_super"
         })), SyntaxToken.createElastic({
@@ -15619,7 +15634,7 @@ var Emitter = (function (_super) {
             kind: 9 /* IdentifierNameToken */ ,
             text: "call"
         })));
-        var arguments = result.argumentList().arguments().toArray();
+        var arguments = invocationExpression.argumentList().arguments().toArray();
         if(arguments.length > 0) {
             arguments.unshift(SyntaxToken.createElastic({
                 kind: 76 /* CommaToken */ ,
@@ -15629,7 +15644,7 @@ var Emitter = (function (_super) {
         arguments.unshift(new ThisExpressionSyntax(SyntaxToken.createElastic({
             kind: 33 /* ThisKeyword */ 
         })));
-        return result.withExpression(expression).withArgumentList(result.argumentList().withArguments(SeparatedSyntaxList.create(arguments)));
+        return expressionStatement.withExpression(invocationExpression.withExpression(expression).withArgumentList(invocationExpression.argumentList().withArguments(SeparatedSyntaxList.create(arguments))));
     };
     return Emitter;
 })(SyntaxRewriter);
