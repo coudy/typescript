@@ -15251,15 +15251,23 @@ var Emitter = (function (_super) {
         var parameterList = constructorDeclaration.parameterList().accept1(this);
         parameterList = this.changeIndentation(parameterList, false, newParameterListIndentation - originalParameterListindentation);
         var functionSignature = FunctionSignatureSyntax.create(identifier.clone(), parameterList);
-        var block = constructorDeclaration.block().accept1(this);
-        var statements = ArrayUtilities.where(block.statements().toArray(), function (s) {
+        var block = constructorDeclaration.block();
+        var allStatements = block.statements().toArray();
+        var normalStatements = ArrayUtilities.select(ArrayUtilities.where(allStatements, function (s) {
             return !Emitter.isSuperInvocationExpressionStatement(s);
+        }), function (s) {
+            return s.accept1(_this);
+        });
+        var superStatements = ArrayUtilities.select(ArrayUtilities.where(allStatements, function (s) {
+            return Emitter.isSuperInvocationExpressionStatement(s);
+        }), function (s) {
+            return s.accept1(_this);
         });
         var instanceAssignments = this.generatePropertyAssignments(classDeclaration, false);
         for(var i = instanceAssignments.length - 1; i >= 0; i--) {
             var expressionStatement = instanceAssignments[i];
             expressionStatement = this.changeIndentation(expressionStatement, true, this.options.indentSpaces);
-            statements.unshift(expressionStatement);
+            normalStatements.unshift(expressionStatement);
         }
         var parameterPropertyAssignments = ArrayUtilities.select(Emitter.parameterListPropertyParameters(constructorDeclaration.parameterList()), function (p) {
             return _this.generatePropertyAssignmentStatement(p);
@@ -15267,16 +15275,10 @@ var Emitter = (function (_super) {
         for(var i = parameterPropertyAssignments.length - 1; i >= 0; i--) {
             var expressionStatement = parameterPropertyAssignments[i];
             expressionStatement = this.changeIndentation(expressionStatement, true, this.options.indentSpaces + constructorIndentationColumn);
-            statements.unshift(expressionStatement);
+            normalStatements.unshift(expressionStatement);
         }
-        var superStatements = ArrayUtilities.where(block.statements().toArray(), function (s) {
-            return Emitter.isSuperInvocationExpressionStatement(s);
-        });
-        superStatements = ArrayUtilities.select(superStatements, function (s) {
-            return _this.convertSuperExpressionStatement(s);
-        });
         for(var i = superStatements.length - 1; i >= 0; i--) {
-            statements.unshift(superStatements[i]);
+            normalStatements.unshift(superStatements[i]);
         }
         var defaultValueAssignments = ArrayUtilities.select(Emitter.parameterListDefaultParameters(constructorDeclaration.parameterList()), function (p) {
             return _this.generateDefaultValueAssignmentStatement(p);
@@ -15284,9 +15286,9 @@ var Emitter = (function (_super) {
         for(var i = defaultValueAssignments.length - 1; i >= 0; i--) {
             var expressionStatement = defaultValueAssignments[i];
             expressionStatement = this.changeIndentation(expressionStatement, true, this.options.indentSpaces + constructorIndentationColumn);
-            statements.unshift(expressionStatement);
+            normalStatements.unshift(expressionStatement);
         }
-        block = block.withStatements(SyntaxList.create(statements));
+        block = block.withStatements(SyntaxList.create(normalStatements));
         var functionDeclaration = new FunctionDeclarationSyntax(null, null, SyntaxToken.createElastic({
             leadingTrivia: constructorDeclaration.leadingTrivia().toArray(),
             kind: 25 /* FunctionKeyword */ ,
@@ -15621,11 +15623,13 @@ var Emitter = (function (_super) {
     Emitter.isSuperInvocationExpression = function isSuperInvocationExpression(node) {
         return node.kind() === 210 /* InvocationExpression */  && (node).expression().kind() === 221 /* SuperExpression */ ;
     }
-    Emitter.prototype.convertSuperExpressionStatement = function (expressionStatement) {
-        Debug.assert(Emitter.isSuperInvocationExpressionStatement(expressionStatement));
-        var invocationExpression = expressionStatement.expression();
+    Emitter.prototype.visitInvocationExpression = function (node) {
+        var result = _super.prototype.visitInvocationExpression.call(this, node);
+        if(!Emitter.isSuperInvocationExpression(result)) {
+            return result;
+        }
         var expression = new MemberAccessExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.createElastic({
-            leadingTrivia: expressionStatement.leadingTrivia().toArray(),
+            leadingTrivia: result.leadingTrivia().toArray(),
             kind: 9 /* IdentifierNameToken */ ,
             text: "_super"
         })), SyntaxToken.createElastic({
@@ -15634,7 +15638,7 @@ var Emitter = (function (_super) {
             kind: 9 /* IdentifierNameToken */ ,
             text: "call"
         })));
-        var arguments = invocationExpression.argumentList().arguments().toArray();
+        var arguments = result.argumentList().arguments().toArray();
         if(arguments.length > 0) {
             arguments.unshift(SyntaxToken.createElastic({
                 kind: 76 /* CommaToken */ ,
@@ -15644,7 +15648,7 @@ var Emitter = (function (_super) {
         arguments.unshift(new ThisExpressionSyntax(SyntaxToken.createElastic({
             kind: 33 /* ThisKeyword */ 
         })));
-        return expressionStatement.withExpression(invocationExpression.withExpression(expression).withArgumentList(invocationExpression.argumentList().withArguments(SeparatedSyntaxList.create(arguments))));
+        return result.withExpression(expression).withArgumentList(result.argumentList().withArguments(SeparatedSyntaxList.create(arguments)));
     };
     return Emitter;
 })(SyntaxRewriter);
