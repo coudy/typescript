@@ -1,14 +1,11 @@
 ///<reference path='References.ts' />
 
-class Emitter extends SyntaxRewriter {
-    private syntaxInformationMap: SyntaxInformationMap;
-    private options: FormattingOptions;
-    private spaceList: ISyntaxTrivia[];
-    private newLineList: ISyntaxTrivia[];
+var Emitter = (function(_super) {
+    __extends(Emitter, _super);
 
-    constructor(syntaxInformationMap: SyntaxInformationMap,
-                options: FormattingOptions) {
-        super();
+    function Emitter(syntaxInformationMap,
+                     options) {
+        _super.call(this);
 
         this.syntaxInformationMap = syntaxInformationMap;
         this.options = options || FormattingOptions.defaultOptions;
@@ -18,18 +15,19 @@ class Emitter extends SyntaxRewriter {
         this.newLineList = [SyntaxTrivia.carriageReturnLineFeed];
     }
     
-    public static emit(input: SourceUnitSyntax, options: FormattingOptions = null): SourceUnitSyntax {
+    Emitter.emit = function(input, options) {
+        if (typeof options === "undefined") { options = null; }
         SyntaxNodeInvariantsChecker.checkInvariants(input);
         var emitter = new Emitter(SyntaxInformationMap.create(input), options);
 
-        var output = <SourceUnitSyntax>input.accept1(emitter);
+        var output = input.accept1(emitter);
         SyntaxNodeInvariantsChecker.checkInvariants(output);
 
         return output;
-    }
+    };
 
-    private visitSourceUnit(node: SourceUnitSyntax): SourceUnitSyntax {
-        var moduleElements: ModuleElementSyntax[] = [];
+    Emitter.prototype.visitSourceUnit = function(node) {
+        var moduleElements = [];
 
         for (var i = 0, n = node.moduleElements().count(); i < n; i++) {
             var moduleElement = node.moduleElements().syntaxNodeAt(i);
@@ -40,35 +38,35 @@ class Emitter extends SyntaxRewriter {
                     moduleElements.push.apply(moduleElements, converted);
                 }
                 else {
-                    moduleElements.push(<ModuleElementSyntax>converted);
+                    moduleElements.push(converted);
                 }
             }
         }
 
         return new SourceUnitSyntax(SyntaxList.create(moduleElements), node.endOfFileToken());
-    }
+    };
 
-    private static leftmostName(name: NameSyntax): IdentifierNameSyntax {
+    Emitter.leftmostName = function(name) {
         if (name.kind() === SyntaxKind.IdentifierName) {
-            return <IdentifierNameSyntax>name;
+            return name;
         }
         else if (name.kind() === SyntaxKind.QualifiedName) {
-            return Emitter.leftmostName((<QualifiedNameSyntax>name).left());
+            return Emitter.leftmostName((name).left());
         }
         else {
             throw Errors.invalidOperation();
         }
-    }
+    };
 
-    private static splitModuleName(name: NameSyntax): IdentifierNameSyntax[] {
-        var result: IdentifierNameSyntax[] = [];
+    Emitter.splitModuleName = function(name) {
+        var result = [];
         while (true) {
             if (name.kind() === SyntaxKind.IdentifierName) {
-                result.unshift(<IdentifierNameSyntax>name);
+                result.unshift(name);
                 return result;
             }
             else if (name.kind() === SyntaxKind.QualifiedName) {
-                var qualifiedName = <QualifiedNameSyntax>name;
+                var qualifiedName = name;
                 result.unshift(qualifiedName.right());
                 name = qualifiedName.left();
             }
@@ -76,14 +74,14 @@ class Emitter extends SyntaxRewriter {
                 throw Errors.invalidOperation();
             }
         }
-    }
+    };
 
-    private adjustListIndentation(nodes: SyntaxNode[]): SyntaxNode[] {
+    Emitter.prototype.adjustListIndentation = function(nodes) {
         // TODO: determine if we should actually indent the first token or not.
         return SyntaxIndenter.indentNodes(nodes, /*indentFirstToken:*/ true, this.options.indentSpaces, this.options);
-    }
+    };
 
-    private visitModuleDeclaration(node: ModuleDeclarationSyntax): ModuleElementSyntax[] {
+    Emitter.prototype.visitModuleDeclaration = function(node) {
         // Break up the dotted name into pieces.
         var names = Emitter.splitModuleName(node.moduleName());
 
@@ -91,7 +89,7 @@ class Emitter extends SyntaxRewriter {
         // members declared in the module.
 
         // Recurse downwards and get the rewritten children.
-        var moduleElements: ModuleElementSyntax[] = [];
+        var moduleElements = [];
         for (var i = 0, n = node.moduleElements().count(); i < n; i++) {
             var element = node.moduleElements().syntaxNodeAt(i);
             var converted = this.visitNode(element);
@@ -101,7 +99,7 @@ class Emitter extends SyntaxRewriter {
                     moduleElements.push.apply(moduleElements, converted);
                 }
                 else {
-                    moduleElements.push(<ModuleElementSyntax>converted);
+                    moduleElements.push(converted);
                 }
             }
         }
@@ -113,14 +111,14 @@ class Emitter extends SyntaxRewriter {
             if (nameIndex > 0) {
                 // We're popping out and generate each outer module.  As we do so, we have to
                 // indent whatever we've created so far appropriately.
-                moduleElements = <ModuleElementSyntax[]>this.adjustListIndentation(moduleElements);
+                moduleElements = this.adjustListIndentation(moduleElements);
             }
         }
 
         return moduleElements;
-    }
+    };
 
-    private convertModuleDeclaration(name: IdentifierNameSyntax, moduleElements: ModuleElementSyntax[]): ModuleElementSyntax[] {
+    Emitter.prototype.convertModuleDeclaration = function(name, moduleElements) {
         name = name.withIdentifier(
             name.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty));
 
@@ -151,13 +149,13 @@ class Emitter extends SyntaxRewriter {
         
         var logicalOrExpression = new BinaryExpressionSyntax(
             SyntaxKind.LogicalOrExpression,
-            <IdentifierNameSyntax>name.clone(),
+            name.clone(),
             SyntaxToken.createElastic({ kind: SyntaxKind.BarBarToken }),
             new ParenthesizedExpressionSyntax(
                 SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
                 new BinaryExpressionSyntax(
                     SyntaxKind.AssignmentExpression,
-                    <IdentifierNameSyntax>name.clone(),
+                    name.clone(),
                     SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken }),
                     new ObjectLiteralExpressionSyntax(
                         SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken }),
@@ -178,18 +176,18 @@ class Emitter extends SyntaxRewriter {
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
 
         return [variableStatement, expressionStatement];
-    }
+    };
 
-    private visitExpressionStatement(node: ExpressionStatementSyntax): ExpressionStatementSyntax {
+    Emitter.prototype.visitExpressionStatement = function(node) {
         // Can't have an expression statement with an anonymous function expression in it.
-        var rewritten = <ExpressionStatementSyntax>super.visitExpressionStatement(node);
+        var rewritten = _super.prototype.visitExpressionStatement.call(this, node);
         
         if (rewritten.expression().kind() !== SyntaxKind.FunctionExpression) {
             // Wasn't a function expression
             return rewritten;
         }
 
-        var functionExpression = <FunctionExpressionSyntax>rewritten.expression();
+        var functionExpression = rewritten.expression();
         if (functionExpression.identifier() !== null) {
             // Wasn't anonymous.
             return rewritten;
@@ -207,9 +205,9 @@ class Emitter extends SyntaxRewriter {
             SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }));
 
         return rewritten.withExpression(parenthesizedExpression);
-    }
+    };
 
-    private visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): FunctionExpressionSyntax {
+    Emitter.prototype.visitSimpleArrowFunctionExpression = function(node) {
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
                                           .withTrailingTrivia(SyntaxTriviaList.empty);
 
@@ -223,21 +221,21 @@ class Emitter extends SyntaxRewriter {
                     SeparatedSyntaxList.create([ParameterSyntax.create(identifier)]),
                     SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken, trailingTrivia: this.spaceList }))),
             block);
-    }
+    };
 
-    private visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): FunctionExpressionSyntax {
-        var parameterList = <ParameterListSyntax>node.callSignature().parameterList().accept1(this);
+    Emitter.prototype.visitParenthesizedArrowFunctionExpression = function(node) {
+        var parameterList = node.callSignature().parameterList().accept1(this);
         var block = this.convertArrowFunctionBody(node);
 
         return FunctionExpressionSyntax.create(
             SyntaxToken.createElastic({ leadingTrivia: node.leadingTrivia().toArray(), kind: SyntaxKind.FunctionKeyword}),
             CallSignatureSyntax.create(parameterList),
             block);
-    }
+    };
 
-    private changeIndentation(node: SyntaxNode,
-                              changeFirstToken: bool,
-                              indentAmount: number): SyntaxNode {
+    Emitter.prototype.changeIndentation = function(node,
+                              changeFirstToken,
+                              indentAmount) {
         if (indentAmount === 0) {
             return node;
         }
@@ -257,13 +255,13 @@ class Emitter extends SyntaxRewriter {
                 /*minimumColumn:*/this.options.indentSpaces,
                 this.options);
         }
-    }
+    };
 
-    private convertArrowFunctionBody(arrowFunction: ArrowFunctionExpressionSyntax): BlockSyntax {
+    Emitter.prototype.convertArrowFunctionBody = function(arrowFunction) {
         var rewrittenBody = this.visitNode(arrowFunction.body());
 
         if (rewrittenBody.kind() === SyntaxKind.Block) {
-            return <BlockSyntax>rewrittenBody;
+            return rewrittenBody;
         }
 
         var arrowToken = arrowFunction.equalsGreaterThanToken();
@@ -271,7 +269,7 @@ class Emitter extends SyntaxRewriter {
         // first, attach the expression to the return statement
         var returnStatement = new ReturnStatementSyntax(
             SyntaxToken.createElastic({ kind: SyntaxKind.ReturnKeyword, trailingTrivia: arrowToken.trailingTrivia().toArray() }),
-            <ExpressionSyntax>rewrittenBody,
+            rewrittenBody,
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
 
         // We want to adjust the indentation of the expression so that is aligns as it 
@@ -323,13 +321,13 @@ class Emitter extends SyntaxRewriter {
             difference = returnKeywordEndColumn - arrowEndColumn;
         }
 
-        returnStatement = <ReturnStatementSyntax>this.changeIndentation(
+        returnStatement = this.changeIndentation(
             returnStatement, /*changeFirstToken:*/ false, difference);
 
         // Next, indent the return statement.  It's going in a block, so it needs to be properly
         // indented.  Note we do this *after* we've ensured the expression aligns properly.
 
-        returnStatement = <ReturnStatementSyntax>SyntaxIndenter.indentNode(
+        returnStatement = SyntaxIndenter.indentNode(
             returnStatement, /*indentFirstToken:*/ true, this.options.indentSpaces, this.options);
 
         // Now wrap the return statement in a block.
@@ -358,28 +356,28 @@ class Emitter extends SyntaxRewriter {
         // parent structure.  Note: we don't wan to adjust the leading brace as that's going to go
         // after the function sigature.
 
-        block = <BlockSyntax>SyntaxIndenter.indentNode(block, /*indentFirstToken:*/ false,
+        block = SyntaxIndenter.indentNode(block, /*indentFirstToken:*/ false,
             Indentation.columnForStartOfFirstTokenInLineContainingToken(
                 arrowFunction.firstToken(), this.syntaxInformationMap, this.options), this.options);
         return block;
-    }
+    };
 
-    private static functionSignatureDefaultParameters(signature: FunctionSignatureSyntax): ParameterSyntax[] {
+    Emitter.functionSignatureDefaultParameters = function(signature) {
         return Emitter.parameterListDefaultParameters(signature.parameterList());
-    }
+    };
 
-    private static parameterListDefaultParameters(parameterList: ParameterListSyntax): ParameterSyntax[] {
+    Emitter.parameterListDefaultParameters = function(parameterList) {
         return Emitter.parametersDefaultParameters(parameterList.parameters());
-    }
+    };
 
-    private static parameterListPropertyParameters(parameterList: ParameterListSyntax): ParameterSyntax[] {
+    Emitter.parameterListPropertyParameters = function(parameterList) {
         return Emitter.parametersPropertyParameters(parameterList.parameters());
-    }
+    };
 
-    private static parametersDefaultParameters(list: ISeparatedSyntaxList): ParameterSyntax[] {
-        var result: ParameterSyntax[] = [];
+    Emitter.parametersDefaultParameters = function(list) {
+        var result = [];
         for (var i = 0, n = list.syntaxNodeCount(); i < n; i++) {
-            var parameter = <ParameterSyntax>list.syntaxNodeAt(i);
+            var parameter = list.syntaxNodeAt(i);
 
             if (parameter.equalsValueClause() !== null) {
                 result.push(parameter);
@@ -387,12 +385,12 @@ class Emitter extends SyntaxRewriter {
         }
 
         return result;
-    }
+    };
 
-    private static parametersPropertyParameters(list: ISeparatedSyntaxList): ParameterSyntax[] {
-        var result: ParameterSyntax[] = [];
+    Emitter.parametersPropertyParameters = function(list) {
+        var result = [];
         for (var i = 0, n = list.syntaxNodeCount(); i < n; i++) {
-            var parameter = <ParameterSyntax>list.syntaxNodeAt(i);
+            var parameter = list.syntaxNodeAt(i);
 
             if (parameter.publicOrPrivateKeyword() !== null) {
                 result.push(parameter);
@@ -400,9 +398,9 @@ class Emitter extends SyntaxRewriter {
         }
 
         return result;
-    }
+    };
 
-    private generatePropertyAssignmentStatement(parameter: ParameterSyntax): ExpressionStatementSyntax {
+    Emitter.prototype.generatePropertyAssignmentStatement = function(parameter) {
         var identifier = parameter.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
                                                .withTrailingTrivia(SyntaxTriviaList.empty);
 
@@ -416,9 +414,9 @@ class Emitter extends SyntaxRewriter {
                 SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceList }),
                 new IdentifierNameSyntax(identifier.clone())),
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
-    }
+    };
 
-    private generateDefaultValueAssignmentStatement(parameter: ParameterSyntax): IfStatementSyntax {
+    Emitter.prototype.generateDefaultValueAssignmentStatement = function(parameter) {
         var space = SyntaxTriviaList.create(this.spaceList);
         var name = parameter.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
                                          .withTrailingTrivia(space);
@@ -428,7 +426,7 @@ class Emitter extends SyntaxRewriter {
                 SyntaxKind.EqualsExpression,
                 new TypeOfExpressionSyntax(
                     SyntaxToken.createElastic({ kind: SyntaxKind.TypeOfKeyword, trailingTrivia: this.spaceList }),
-                    <IdentifierNameSyntax>identifierName.clone()),
+                    identifierName.clone()),
                 SyntaxToken.createElastic({ kind: SyntaxKind.EqualsEqualsEqualsToken, trailingTrivia: this.spaceList }),
                 new LiteralExpressionSyntax(
                     SyntaxKind.StringLiteralExpression,
@@ -436,9 +434,9 @@ class Emitter extends SyntaxRewriter {
 
         var assignment = new BinaryExpressionSyntax(
             SyntaxKind.AssignmentExpression,
-            <IdentifierNameSyntax>identifierName.clone(),
+            identifierName.clone(),
             SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceList }),
-            <ExpressionSyntax>parameter.equalsValueClause().value().accept1(this).clone());
+            parameter.equalsValueClause().value().accept1(this).clone());
         
         var assignmentStatement = new ExpressionStatementSyntax(
             assignment,
@@ -455,15 +453,15 @@ class Emitter extends SyntaxRewriter {
             condition,
             SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken, trailingTrivia: this.spaceList }),
             block, null);
-    }
+    };
 
-    private visitFunctionDeclaration(node: FunctionDeclarationSyntax): FunctionDeclarationSyntax {
+    Emitter.prototype.visitFunctionDeclaration = function(node) {
         if (node.block() === null) {
             // Function overloads aren't emitted.
             return null;
         }
 
-        var rewritten = <FunctionDeclarationSyntax>super.visitFunctionDeclaration(node);
+        var rewritten = _super.prototype.visitFunctionDeclaration.call(this, node);
         var parametersWithDefaults = Emitter.functionSignatureDefaultParameters(node.functionSignature());
 
         if (parametersWithDefaults.length === 0) {
@@ -471,36 +469,40 @@ class Emitter extends SyntaxRewriter {
         }
 
         var defaultValueAssignmentStatements = ArrayUtilities.select(
-            parametersWithDefaults, p => this.generateDefaultValueAssignmentStatement(p));
+            parametersWithDefaults, function(p) {
+                return this.generateDefaultValueAssignmentStatement(p);
+            });
 
         var functionDeclarationStartColumn = Indentation.columnForStartOfToken(
             node.firstToken(), this.syntaxInformationMap, this.options);
         var desiredColumn = functionDeclarationStartColumn + this.options.indentSpaces;
 
         defaultValueAssignmentStatements = ArrayUtilities.select(defaultValueAssignmentStatements,
-            s => SyntaxIndenter.indentNode(s, /*indentFirstToken:*/ true, desiredColumn, this.options));
+            function(s) {
+                return SyntaxIndenter.indentNode(s, /*indentFirstToken:*/ true, desiredColumn, this.options);
+            });
 
-        var statements: StatementSyntax[] = [];
+        var statements = [];
         statements.push.apply(statements, defaultValueAssignmentStatements);
         statements.push.apply(statements, rewritten.block().statements().toArray());
 
         // TODO: remove export/declare keywords.
         return rewritten.withBlock(rewritten.block().withStatements(
             SyntaxList.create(statements)));
-    }
+    };
 
-    public visitParameter(node: ParameterSyntax): ParameterSyntax {
+    Emitter.prototype.visitParameter = function(node) {
         // transfer the trivia from the first token to the the identifier.
         var identifier = node.identifier();
         identifier = identifier.withLeadingTrivia(node.leadingTrivia())
                                .withTrailingTrivia(node.trailingTrivia());
 
         return ParameterSyntax.create(identifier);
-    }
+    };
 
-    private generatePropertyAssignment(classDeclaration: ClassDeclarationSyntax,
-                                       static: bool,
-                                       memberDeclaration: MemberVariableDeclarationSyntax): ExpressionStatementSyntax {
+    Emitter.prototype.generatePropertyAssignment = function(classDeclaration,
+                                       static,
+                                       memberDeclaration) {
         var isStatic = memberDeclaration.staticKeyword() !== null;
         if ((static && !isStatic) ||
             (!static && isStatic)) {
@@ -518,7 +520,7 @@ class Emitter extends SyntaxRewriter {
                                                       .withTrailingTrivia(SyntaxTriviaList.empty);
 
         var receiver = static
-            ? <ExpressionSyntax>new IdentifierNameSyntax(classIdentifier.withLeadingTrivia(memberDeclaration.leadingTrivia()))
+            ? new IdentifierNameSyntax(classIdentifier.withLeadingTrivia(memberDeclaration.leadingTrivia()))
             : new ThisExpressionSyntax(SyntaxToken.createElastic({ leadingTrivia: memberDeclaration.leadingTrivia().toArray(), kind: SyntaxKind.ThisKeyword }));
 
         receiver = new MemberAccessExpressionSyntax(
@@ -531,15 +533,15 @@ class Emitter extends SyntaxRewriter {
                 SyntaxKind.AssignmentExpression,
                 receiver,
                 SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceList }),
-                <ExpressionSyntax>declarator.equalsValueClause().value().accept1(this)),
+                declarator.equalsValueClause().value().accept1(this)),
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
 
         return statement;
-    }
+    };
 
-    private generatePropertyAssignments(classDeclaration: ClassDeclarationSyntax,
-                                        static: bool): ExpressionStatementSyntax[] {
-        var result: ExpressionStatementSyntax[] = [];
+    Emitter.prototype.generatePropertyAssignments = function(classDeclaration,
+                                        static) {
+        var result = [];
 
         // TODO: handle alignment here.
         for (var i = classDeclaration.classElements().count() - 1; i >= 0; i--) {
@@ -550,16 +552,16 @@ class Emitter extends SyntaxRewriter {
             }
 
             var statement = this.generatePropertyAssignment(
-                classDeclaration, static, <MemberVariableDeclarationSyntax>classElement);
+                classDeclaration, static, classElement);
             if (statement !== null) {
                 result.push(statement);
             }
         }
         
         return result;
-    }
+    };
 
-    private createDefaultConstructorDeclaration(classDeclaration: ClassDeclarationSyntax): FunctionDeclarationSyntax {
+    Emitter.prototype.createDefaultConstructorDeclaration = function(classDeclaration) {
         var identifier = classDeclaration.identifier()
                                          .withLeadingTrivia(SyntaxTriviaList.empty)
                                          .withTrailingTrivia(SyntaxTriviaList.empty);
@@ -570,7 +572,7 @@ class Emitter extends SyntaxRewriter {
                 SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
                 SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken, trailingTrivia: this.spaceList })));
 
-        var statements: StatementSyntax[] = [];
+        var statements = [];
         if (classDeclaration.extendsClause() !== null) {
             var superStatement = new ExpressionStatementSyntax(
                 new InvocationExpressionSyntax(
@@ -587,7 +589,7 @@ class Emitter extends SyntaxRewriter {
                         SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }))),
                 SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
 
-            superStatement = <ExpressionStatementSyntax>SyntaxIndenter.indentNode(
+            superStatement = SyntaxIndenter.indentNode(
                 superStatement, /*indentFirstToken:*/ true, this.options.indentSpaces, this.options);
             statements.push(superStatement);
         }
@@ -605,12 +607,12 @@ class Emitter extends SyntaxRewriter {
         var classIndentation = Indentation.columnForStartOfToken(
             classDeclaration.firstToken(), this.syntaxInformationMap, this.options);
 
-        return <FunctionDeclarationSyntax>SyntaxIndenter.indentNode(
+        return SyntaxIndenter.indentNode(
             functionDeclaration, /*indentFirstToken:*/ true, this.options.indentSpaces + classIndentation, this.options);
-    }
+    };
 
-    private convertConstructorDeclaration(classDeclaration: ClassDeclarationSyntax,
-                                          constructorDeclaration: ConstructorDeclarationSyntax): FunctionDeclarationSyntax {
+    Emitter.prototype.convertConstructorDeclaration = function(classDeclaration,
+                                          constructorDeclaration) {
         if (constructorDeclaration === null ||
             constructorDeclaration.block() === null) {
             return null;
@@ -640,10 +642,18 @@ class Emitter extends SyntaxRewriter {
         var block = constructorDeclaration.block();
         var allStatements = block.statements().toArray();
 
-        var normalStatements: StatementSyntax[] = ArrayUtilities.select(ArrayUtilities.where(allStatements,
-            s => !Emitter.isSuperInvocationExpressionStatement(s)), s => s.accept1(this));
-        var superStatements: StatementSyntax[] = ArrayUtilities.select(ArrayUtilities.where(allStatements,
-            s => Emitter.isSuperInvocationExpressionStatement(s)), s => s.accept1(this));
+        var normalStatements = ArrayUtilities.select(ArrayUtilities.where(allStatements,
+            function(s) {
+                return !Emitter.isSuperInvocationExpressionStatement(s);
+            }), function(s) {
+                return s.accept1(this);
+            });
+        var superStatements = ArrayUtilities.select(ArrayUtilities.where(allStatements,
+            function(s) {
+                return Emitter.isSuperInvocationExpressionStatement(s);
+            }), function(s) {
+                return s.accept1(this);
+            });
 
         // TODO: handle alignment here.
         var instanceAssignments = this.generatePropertyAssignments(
@@ -651,18 +661,20 @@ class Emitter extends SyntaxRewriter {
 
         for (var i = instanceAssignments.length - 1; i >= 0; i--) {
             var expressionStatement = instanceAssignments[i];
-            expressionStatement = <ExpressionStatementSyntax>this.changeIndentation(
+            expressionStatement = this.changeIndentation(
                 expressionStatement, /*changeFirstToken:*/ true, this.options.indentSpaces);
             normalStatements.unshift(expressionStatement);
         }
 
-        var parameterPropertyAssignments = <ExpressionStatementSyntax[]>ArrayUtilities.select(
+        var parameterPropertyAssignments = ArrayUtilities.select(
             Emitter.parameterListPropertyParameters(constructorDeclaration.parameterList()),
-            p => this.generatePropertyAssignmentStatement(p));
+            function(p) {
+                return this.generatePropertyAssignmentStatement(p);
+            });
 
         for (var i = parameterPropertyAssignments.length - 1; i >= 0; i--) {
             var expressionStatement = parameterPropertyAssignments[i];
-            expressionStatement = <ExpressionStatementSyntax>this.changeIndentation(
+            expressionStatement = this.changeIndentation(
                 expressionStatement, /*changeFirstToken:*/ true, this.options.indentSpaces + constructorIndentationColumn);
             normalStatements.unshift(expressionStatement);
         }
@@ -671,13 +683,15 @@ class Emitter extends SyntaxRewriter {
             normalStatements.unshift(superStatements[i]);
         }
 
-        var defaultValueAssignments = <ExpressionStatementSyntax[]>ArrayUtilities.select(
+        var defaultValueAssignments = ArrayUtilities.select(
             Emitter.parameterListDefaultParameters(constructorDeclaration.parameterList()),
-            p => this.generateDefaultValueAssignmentStatement(p));
+            function(p) {
+                return this.generateDefaultValueAssignmentStatement(p);
+            });
 
         for (var i = defaultValueAssignments.length - 1; i >= 0; i--) {
             var expressionStatement = defaultValueAssignments[i];
-            expressionStatement = <ExpressionStatementSyntax>this.changeIndentation(
+            expressionStatement = this.changeIndentation(
                 expressionStatement, /*changeFirstToken:*/ true, this.options.indentSpaces + constructorIndentationColumn);
             normalStatements.unshift(expressionStatement);
         }
@@ -692,10 +706,10 @@ class Emitter extends SyntaxRewriter {
             block, null);
 
         return functionDeclaration;
-    }
+    };
 
-    private convertMemberFunctionDeclaration(classDeclaration: ClassDeclarationSyntax,
-                                             functionDeclaration: MemberFunctionDeclarationSyntax): ExpressionStatementSyntax {
+    Emitter.prototype.convertMemberFunctionDeclaration = function(classDeclaration,
+                                             functionDeclaration) {
         if (functionDeclaration.block() === null) {
             return null;
         }
@@ -707,7 +721,7 @@ class Emitter extends SyntaxRewriter {
                                                     .withLeadingTrivia(SyntaxTriviaList.empty)
                                                     .withTrailingTrivia(SyntaxTriviaList.empty);
 
-        var receiver: ExpressionSyntax = new IdentifierNameSyntax(
+        var receiver = new IdentifierNameSyntax(
             classIdentifier.withLeadingTrivia(functionDeclaration.leadingTrivia()));
          
         receiver = functionDeclaration.staticKeyword() !== null
@@ -722,22 +736,24 @@ class Emitter extends SyntaxRewriter {
             SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
             new IdentifierNameSyntax(functionIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
 
-        var block = <BlockSyntax>functionDeclaration.block().accept1(this);
+        var block = functionDeclaration.block().accept1(this);
         var blockTrailingTrivia = block.trailingTrivia();
 
         block = block.withCloseBraceToken(
             block.closeBraceToken().withTrailingTrivia(SyntaxTriviaList.empty));
         
         var defaultParameters = Emitter.functionSignatureDefaultParameters(functionDeclaration.functionSignature());
-        var defaultValueAssignments = <StatementSyntax[]>ArrayUtilities.select(defaultParameters,
-            p => this.generateDefaultValueAssignmentStatement(p));
+        var defaultValueAssignments = ArrayUtilities.select(defaultParameters,
+            function(p) {
+                return this.generateDefaultValueAssignmentStatement(p);
+            });
 
         var functionColumn = Indentation.columnForStartOfToken(
             functionDeclaration.firstToken(), this.syntaxInformationMap, this.options);
 
         var blockStatements = block.statements().toArray();
         for (var i = defaultValueAssignments.length - 1; i >= 0; i--) {
-            var assignment = <StatementSyntax>this.changeIndentation(
+            var assignment = this.changeIndentation(
                 defaultValueAssignments[i], /*changeFirstToken:*/ true, functionColumn + this.options.indentSpaces);
 
             blockStatements.unshift(assignment);
@@ -745,9 +761,9 @@ class Emitter extends SyntaxRewriter {
 
         block = block.withStatements(SyntaxList.create(blockStatements));
 
-        var callSignatureParameterList = <ParameterListSyntax>functionDeclaration.functionSignature().parameterList().accept1(this);
+        var callSignatureParameterList = functionDeclaration.functionSignature().parameterList().accept1(this);
         if (!callSignatureParameterList.hasTrailingTrivia()) {
-            callSignatureParameterList = <ParameterListSyntax>callSignatureParameterList.withTrailingTrivia(SyntaxTriviaList.space);
+            callSignatureParameterList = callSignatureParameterList.withTrailingTrivia(SyntaxTriviaList.space);
         }
 
         var callSignature = CallSignatureSyntax.create(callSignatureParameterList);
@@ -766,26 +782,26 @@ class Emitter extends SyntaxRewriter {
         return new ExpressionStatementSyntax(
             assignmentExpression,
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: blockTrailingTrivia.toArray() }));
-    }
+    };
 
-    private convertClassElements(classDeclaration: ClassDeclarationSyntax): StatementSyntax[] {
-        var result: StatementSyntax[] = [];
+    Emitter.prototype.convertClassElements = function(classDeclaration) {
+        var result = [];
 
         var classElements = classDeclaration.classElements();
         for (var i = 0, n = classElements.count(); i < n; i++) {
-            var classElement = <ClassElementSyntax>classElements.syntaxNodeAt(i);
+            var classElement = classElements.syntaxNodeAt(i);
             if (classElement.kind() === SyntaxKind.ConstructorDeclaration) {
                 continue;
             }
 
             if (classElement.kind() === SyntaxKind.MemberFunctionDeclaration) {
-                var converted = this.convertMemberFunctionDeclaration(classDeclaration, <MemberFunctionDeclarationSyntax>classElement)
+                var converted = this.convertMemberFunctionDeclaration(classDeclaration, classElement)
                 if (converted !== null) {
                     result.push(converted);
                 }
             }
             else if (classElement.kind() === SyntaxKind.MemberVariableDeclaration) {
-                var converted = this.generatePropertyAssignment(classDeclaration, /*static:*/ true, <MemberVariableDeclarationSyntax>classElement);
+                var converted = this.generatePropertyAssignment(classDeclaration, /*static:*/ true, classElement);
                 if (converted !== null) {
                     result.push(converted);
                 }
@@ -797,13 +813,13 @@ class Emitter extends SyntaxRewriter {
         }
 
         return result;
-    }
+    };
 
-    private visitClassDeclaration(node: ClassDeclarationSyntax): VariableStatementSyntax {
+    Emitter.prototype.visitClassDeclaration = function(node) {
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
                                           .withTrailingTrivia(SyntaxTriviaList.empty);
         
-        var statements: StatementSyntax[] = [];
+        var statements = [];
 
         var statementIndent = this.options.indentSpaces + Indentation.columnForStartOfToken(
             node.firstToken(), this.syntaxInformationMap, this.options)
@@ -824,12 +840,14 @@ class Emitter extends SyntaxRewriter {
                         SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }))),
                 SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
 
-            statements.push(<StatementSyntax>SyntaxIndenter.indentNode(
+            statements.push(SyntaxIndenter.indentNode(
                 extendsStatement, /*indentFirstToken:*/ true, statementIndent, this.options));
         }
 
-        var constructorDeclaration: ConstructorDeclarationSyntax =
-            ArrayUtilities.firstOrDefault(node.classElements().toArray(), c => c.kind() === SyntaxKind.ConstructorDeclaration);
+        var constructorDeclaration =
+            ArrayUtilities.firstOrDefault(node.classElements().toArray(), function(c) {
+                return c.kind() === SyntaxKind.ConstructorDeclaration;
+            });
 
         var constructorFunctionDeclaration = constructorDeclaration === null
             ? this.createDefaultConstructorDeclaration(node)
@@ -915,10 +933,10 @@ class Emitter extends SyntaxRewriter {
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
 
         return variableStatement;
-    }
+    };
     
-    private visitVariableDeclarator(node: VariableDeclaratorSyntax): VariableDeclaratorSyntax {
-        var result = super.visitVariableDeclarator(node);
+    Emitter.prototype.visitVariableDeclarator = function(node) {
+        var result = _super.prototype.visitVariableDeclarator.call(this, node);
         if (result.typeAnnotation() === null) {
             return result;
         }
@@ -928,29 +946,29 @@ class Emitter extends SyntaxRewriter {
 
         return result.withTypeAnnotation(null)
                      .withIdentifier(result.identifier().withTrailingTrivia(newTrailingTrivia));
-    }
+    };
 
-    private visitCastExpression(node: CastExpressionSyntax): ExpressionSyntax {
-        var result = <CastExpressionSyntax>super.visitCastExpression(node);
+    Emitter.prototype.visitCastExpression = function(node) {
+        var result = _super.prototype.visitCastExpression.call(this, node);
 
         var subExpression = result.expression();
         var totalTrivia = result.leadingTrivia().concat(subExpression.leadingTrivia());
 
-        subExpression = <UnaryExpressionSyntax>subExpression.replaceToken(
+        subExpression = subExpression.replaceToken(
             subExpression.firstToken(), subExpression.firstToken().withLeadingTrivia(totalTrivia));
 
         return subExpression;
-    }
+    };
 
-    private visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): InterfaceDeclarationSyntax {
+    Emitter.prototype.visitInterfaceDeclaration = function(node) {
         // TODO: transfer trivia if important.
         return null;
-    }
+    };
 
-    private generateEnumValueExpression(enumDeclaration: EnumDeclarationSyntax,
-                                        variableDeclarator: VariableDeclaratorSyntax,
-                                        assignDefaultValues: bool,
-                                        index: number): ExpressionSyntax {
+    Emitter.prototype.generateEnumValueExpression = function(enumDeclaration,
+                                        variableDeclarator,
+                                        assignDefaultValues,
+                                        index) {
         if (variableDeclarator.equalsValueClause() !== null) {
             // Use the value if one is provided.
             return variableDeclarator.equalsValueClause().value();
@@ -967,7 +985,7 @@ class Emitter extends SyntaxRewriter {
         // Add one to the previous value.
         var enumIdentifier = enumDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
                                                      .withTrailingTrivia(SyntaxTriviaList.empty);
-        var previousVariable = <VariableDeclaratorSyntax>enumDeclaration.variableDeclarators().syntaxNodeAt(index - 1);
+        var previousVariable = enumDeclaration.variableDeclarators().syntaxNodeAt(index - 1);
         var variableIdentifier = previousVariable.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
                                                      .withTrailingTrivia(SyntaxTriviaList.empty);
 
@@ -983,20 +1001,20 @@ class Emitter extends SyntaxRewriter {
             new LiteralExpressionSyntax(
                 SyntaxKind.NumericLiteralExpression,
                 SyntaxToken.createElastic({ kind: SyntaxKind.NumericLiteral, text: "1" })));
-    }
+    };
 
-    private generateEnumFunctionExpression(node: EnumDeclarationSyntax): FunctionExpressionSyntax {
+    Emitter.prototype.generateEnumFunctionExpression = function(node) {
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
                                           .withTrailingTrivia(SyntaxTriviaList.empty);
         
         var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
         var indentationTrivia = Indentation.indentationTrivia(indentationColumn, this.options);
 
-        var statements: StatementSyntax[] = [];
+        var statements = [];
 
         var assignDefaultValues = true;
         for (var i = 0, n = node.variableDeclarators().syntaxNodeCount(); i < n; i++) {
-            var variableDeclarator = <VariableDeclaratorSyntax>node.variableDeclarators().syntaxNodeAt(i);
+            var variableDeclarator = node.variableDeclarators().syntaxNodeAt(i);
             var variableIdentifier = variableDeclarator.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
                                                                     .withTrailingTrivia(SyntaxTriviaList.empty);
             assignDefaultValues = assignDefaultValues && variableDeclarator.equalsValueClause() === null;
@@ -1034,10 +1052,10 @@ class Emitter extends SyntaxRewriter {
             block);
 
         return functionExpression;
-    }
+    };
 
-    private visitEnumDeclaration(node: EnumDeclarationSyntax): StatementSyntax[] {
-        var result: StatementSyntax[] = [];
+    Emitter.prototype.visitEnumDeclaration = function(node) {
+        var result = [];
 
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
                                           .withTrailingTrivia(SyntaxTriviaList.empty);
@@ -1095,34 +1113,23 @@ class Emitter extends SyntaxRewriter {
         result.push(expressionStatement);
 
         return result;
-    }
+    };
 
-    private static isSuperInvocationExpressionStatement(node: SyntaxNode): bool {
+    Emitter.isSuperInvocationExpressionStatement = function(node) {
         return node.kind() === SyntaxKind.ExpressionStatement &&
-            Emitter.isSuperInvocationExpression((<ExpressionStatementSyntax>node).expression());
-    }
+            Emitter.isSuperInvocationExpression((node).expression());
+    };
 
-    private static isSuperInvocationExpression(node: SyntaxNode): bool {
+    Emitter.isSuperInvocationExpression = function(node) {
         return node.kind() === SyntaxKind.InvocationExpression &&
-            (<InvocationExpressionSyntax>node).expression().kind() === SyntaxKind.SuperExpression;
-    }
+            (node).expression().kind() === SyntaxKind.SuperExpression;
+    };
 
-    private static isSuperMemberAccess(node: ExpressionSyntax): bool {
-        if (node.kind() === SyntaxKind.MemberAccessExpression) {
-            var memberAccess = <MemberAccessExpressionSyntax>node;
-            return memberAccess.expression().kind() === SyntaxKind.SuperExpression;
+    Emitter.prototype.visitInvocationExpression = function(node) {
+        var result = _super.prototype.visitInvocationExpression.call(this, node);
+        if (!Emitter.isSuperInvocationExpression(result)) {
+            return result;
         }
-
-        return false;
-    }
-
-    private static isSuperMemberAccessInvocationExpression(node: SyntaxNode): bool {
-        return node.kind() === SyntaxKind.InvocationExpression &&
-            Emitter.isSuperMemberAccess((<InvocationExpressionSyntax>node).expression());
-    }
-
-    private convertSuperInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
-        var result = super.visitInvocationExpression(node);
 
         var expression = new MemberAccessExpressionSyntax(
             new IdentifierNameSyntax(SyntaxToken.createElastic({
@@ -1142,52 +1149,6 @@ class Emitter extends SyntaxRewriter {
         return result.withExpression(expression)
                      .withArgumentList(result.argumentList().withArguments(
                          SeparatedSyntaxList.create(arguments)));
-    }
-
-    private convertSuperMemberAccessInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
-        var result = <InvocationExpressionSyntax>super.visitInvocationExpression(node);
-        var originalMemberAccess = <MemberAccessExpressionSyntax>result.expression();
-
-        var receiver: ExpressionSyntax = new IdentifierNameSyntax(SyntaxToken.createElastic({
-            leadingTrivia: result.leadingTrivia().toArray(),
-            kind: SyntaxKind.IdentifierNameToken,
-            text: "_super"
-        }));
-
-        receiver = new MemberAccessExpressionSyntax(
-            new MemberAccessExpressionSyntax(
-                receiver,
-                SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
-                new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "prototype" }))),
-            SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
-            originalMemberAccess.identifierName());
-
-        var expression = new MemberAccessExpressionSyntax(
-            receiver,
-            SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
-            new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "call" })));
-
-        var arguments = result.argumentList().arguments().toArray();
-        if (arguments.length > 0) {
-            arguments.unshift(SyntaxToken.createElastic({ kind: SyntaxKind.CommaToken, trailingTrivia: this.spaceList }));
-        }
-
-        arguments.unshift(new ThisExpressionSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.ThisKeyword })));
-
-        return result.withExpression(expression)
-                     .withArgumentList(result.argumentList().withArguments(
-                         SeparatedSyntaxList.create(arguments)));
-    }
-
-    private visitInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
-        if (Emitter.isSuperInvocationExpression(node)) {
-            return this.convertSuperInvocationExpression(node);
-        }
-
-        if (Emitter.isSuperMemberAccessInvocationExpression(node)) {
-            return this.convertSuperMemberAccessInvocationExpression(node);
-        }
-
-        return super.visitInvocationExpression(node);
-    }
-}
+    };
+    return Emitter;
+})(SyntaxRewriter);

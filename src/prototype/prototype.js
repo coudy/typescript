@@ -15623,11 +15623,18 @@ var Emitter = (function (_super) {
     Emitter.isSuperInvocationExpression = function isSuperInvocationExpression(node) {
         return node.kind() === 210 /* InvocationExpression */  && (node).expression().kind() === 221 /* SuperExpression */ ;
     }
-    Emitter.prototype.visitInvocationExpression = function (node) {
-        var result = _super.prototype.visitInvocationExpression.call(this, node);
-        if(!Emitter.isSuperInvocationExpression(result)) {
-            return result;
+    Emitter.isSuperMemberAccess = function isSuperMemberAccess(node) {
+        if(node.kind() === 209 /* MemberAccessExpression */ ) {
+            var memberAccess = node;
+            return memberAccess.expression().kind() === 221 /* SuperExpression */ ;
         }
+        return false;
+    }
+    Emitter.isSuperMemberAccessInvocationExpression = function isSuperMemberAccessInvocationExpression(node) {
+        return node.kind() === 210 /* InvocationExpression */  && Emitter.isSuperMemberAccess((node).expression());
+    }
+    Emitter.prototype.convertSuperInvocationExpression = function (node) {
+        var result = _super.prototype.visitInvocationExpression.call(this, node);
         var expression = new MemberAccessExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.createElastic({
             leadingTrivia: result.leadingTrivia().toArray(),
             kind: 9 /* IdentifierNameToken */ ,
@@ -15649,6 +15656,49 @@ var Emitter = (function (_super) {
             kind: 33 /* ThisKeyword */ 
         })));
         return result.withExpression(expression).withArgumentList(result.argumentList().withArguments(SeparatedSyntaxList.create(arguments)));
+    };
+    Emitter.prototype.convertSuperMemberAccessInvocationExpression = function (node) {
+        var result = _super.prototype.visitInvocationExpression.call(this, node);
+        var originalMemberAccess = result.expression();
+        var receiver = new IdentifierNameSyntax(SyntaxToken.createElastic({
+            leadingTrivia: result.leadingTrivia().toArray(),
+            kind: 9 /* IdentifierNameToken */ ,
+            text: "_super"
+        }));
+        receiver = new MemberAccessExpressionSyntax(new MemberAccessExpressionSyntax(receiver, SyntaxToken.createElastic({
+            kind: 73 /* DotToken */ 
+        }), new IdentifierNameSyntax(SyntaxToken.createElastic({
+            kind: 9 /* IdentifierNameToken */ ,
+            text: "prototype"
+        }))), SyntaxToken.createElastic({
+            kind: 73 /* DotToken */ 
+        }), originalMemberAccess.identifierName());
+        var expression = new MemberAccessExpressionSyntax(receiver, SyntaxToken.createElastic({
+            kind: 73 /* DotToken */ 
+        }), new IdentifierNameSyntax(SyntaxToken.createElastic({
+            kind: 9 /* IdentifierNameToken */ ,
+            text: "call"
+        })));
+        var arguments = result.argumentList().arguments().toArray();
+        if(arguments.length > 0) {
+            arguments.unshift(SyntaxToken.createElastic({
+                kind: 76 /* CommaToken */ ,
+                trailingTrivia: this.spaceList
+            }));
+        }
+        arguments.unshift(new ThisExpressionSyntax(SyntaxToken.createElastic({
+            kind: 33 /* ThisKeyword */ 
+        })));
+        return result.withExpression(expression).withArgumentList(result.argumentList().withArguments(SeparatedSyntaxList.create(arguments)));
+    };
+    Emitter.prototype.visitInvocationExpression = function (node) {
+        if(Emitter.isSuperInvocationExpression(node)) {
+            return this.convertSuperInvocationExpression(node);
+        }
+        if(Emitter.isSuperMemberAccessInvocationExpression(node)) {
+            return this.convertSuperMemberAccessInvocationExpression(node);
+        }
+        return _super.prototype.visitInvocationExpression.call(this, node);
     };
     return Emitter;
 })(SyntaxRewriter);
