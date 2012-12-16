@@ -12579,99 +12579,106 @@ var Hash = (function () {
     }
     return Hash;
 })();
-var HashTableEntry = (function () {
-    function HashTableEntry(Key, Value, HashCode, Next) {
-        this.Key = Key;
-        this.Value = Value;
-        this.HashCode = HashCode;
-        this.Next = Next;
-    }
-    return HashTableEntry;
-})();
-var HashTable = (function () {
-    function HashTable(capacity, hash, equals) {
-        if (typeof capacity === "undefined") { capacity = HashTable.DefaultCapacity; }
-        if (typeof hash === "undefined") { hash = null; }
-        if (typeof equals === "undefined") { equals = null; }
-        this.hash = hash;
-        this.equals = equals;
-        this.entries = [];
-        this.count = 0;
-        var size = Hash.getPrime(capacity);
-        this.hash = hash;
-        this.equals = equals;
-        this.entries = ArrayUtilities.createArray(size);
-    }
-    HashTable.DefaultCapacity = 256;
-    HashTable.prototype.set = function (key, value) {
-        this.addOrSet(key, value, false);
-    };
-    HashTable.prototype.add = function (key, value) {
-        this.addOrSet(key, value, true);
-    };
-    HashTable.prototype.get = function (key) {
-        var hashCode = this.computeHashCode(key);
-        var entry = this.findEntry(key, hashCode);
-        return entry === null ? null : entry.Value;
-    };
-    HashTable.prototype.computeHashCode = function (key) {
-        var hashCode = this.hash === null ? key.hashCode() : this.hash(key);
-        hashCode = hashCode & 2147483647;
-        Debug.assert(hashCode > 0);
-        return hashCode;
-    };
-    HashTable.prototype.addOrSet = function (key, value, throwOnExistingEntry) {
-        var hashCode = this.computeHashCode(key);
-        var entry = this.findEntry(key, hashCode);
-        if(entry !== null) {
-            if(throwOnExistingEntry) {
-                throw Errors.argument('key', 'Key was already in table.');
-            }
-            entry.Key = key;
-            entry.Value = value;
-            return;
+var Collections;
+(function (Collections) {
+    Collections.DefaultHashTableCapacity = 256;
+    var HashTableEntry = (function () {
+        function HashTableEntry(Key, Value, HashCode, Next) {
+            this.Key = Key;
+            this.Value = Value;
+            this.HashCode = HashCode;
+            this.Next = Next;
         }
-        return this.addEntry(key, value, hashCode);
-    };
-    HashTable.prototype.findEntry = function (key, hashCode) {
-        for(var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
-            if(e.HashCode === hashCode) {
-                var equals = this.equals === null ? key === e.Key : this.equals(key, e.Key);
-                if(equals) {
-                    return e;
+        return HashTableEntry;
+    })();    
+    var HashTable = (function () {
+        function HashTable(capacity, hash, equals) {
+            this.hash = hash;
+            this.equals = equals;
+            this.entries = [];
+            this.count = 0;
+            var size = Hash.getPrime(capacity);
+            this.hash = hash;
+            this.equals = equals;
+            this.entries = ArrayUtilities.createArray(size);
+        }
+        HashTable.prototype.set = function (key, value) {
+            this.addOrSet(key, value, false);
+        };
+        HashTable.prototype.add = function (key, value) {
+            this.addOrSet(key, value, true);
+        };
+        HashTable.prototype.get = function (key) {
+            var hashCode = this.computeHashCode(key);
+            var entry = this.findEntry(key, hashCode);
+            return entry === null ? null : entry.Value;
+        };
+        HashTable.prototype.computeHashCode = function (key) {
+            var hashCode = this.hash === null ? key.hashCode() : this.hash(key);
+            hashCode = hashCode & 2147483647;
+            Debug.assert(hashCode > 0);
+            return hashCode;
+        };
+        HashTable.prototype.addOrSet = function (key, value, throwOnExistingEntry) {
+            var hashCode = this.computeHashCode(key);
+            var entry = this.findEntry(key, hashCode);
+            if(entry !== null) {
+                if(throwOnExistingEntry) {
+                    throw Errors.argument('key', 'Key was already in table.');
+                }
+                entry.Key = key;
+                entry.Value = value;
+                return;
+            }
+            return this.addEntry(key, value, hashCode);
+        };
+        HashTable.prototype.findEntry = function (key, hashCode) {
+            for(var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
+                if(e.HashCode === hashCode) {
+                    var equals = this.equals === null ? key === e.Key : this.equals(key, e.Key);
+                    if(equals) {
+                        return e;
+                    }
                 }
             }
-        }
-        return null;
-    };
-    HashTable.prototype.addEntry = function (key, value, hashCode) {
-        var index = hashCode % this.entries.length;
-        var e = new HashTableEntry(key, value, hashCode, this.entries[index]);
-        this.entries[index] = e;
-        if(this.count === this.entries.length) {
-            this.grow();
-        }
-        this.count++;
-        return e.Key;
-    };
-    HashTable.prototype.grow = function () {
-        var newSize = Hash.expandPrime(this.entries.length);
-        var oldEntries = this.entries;
-        var newEntries = ArrayUtilities.createArray(newSize);
-        this.entries = newEntries;
-        for(var i = 0; i < oldEntries.length; i++) {
-            var e = oldEntries[i];
-            while(e !== null) {
-                var newIndex = e.HashCode % newSize;
-                var tmp = e.Next;
-                e.Next = newEntries[newIndex];
-                newEntries[newIndex] = e;
-                e = tmp;
+            return null;
+        };
+        HashTable.prototype.addEntry = function (key, value, hashCode) {
+            var index = hashCode % this.entries.length;
+            var e = new HashTableEntry(key, value, hashCode, this.entries[index]);
+            this.entries[index] = e;
+            if(this.count === this.entries.length) {
+                this.grow();
             }
-        }
-    };
-    return HashTable;
-})();
+            this.count++;
+            return e.Key;
+        };
+        HashTable.prototype.grow = function () {
+            var newSize = Hash.expandPrime(this.entries.length);
+            var oldEntries = this.entries;
+            var newEntries = ArrayUtilities.createArray(newSize);
+            this.entries = newEntries;
+            for(var i = 0; i < oldEntries.length; i++) {
+                var e = oldEntries[i];
+                while(e !== null) {
+                    var newIndex = e.HashCode % newSize;
+                    var tmp = e.Next;
+                    e.Next = newEntries[newIndex];
+                    newEntries[newIndex] = e;
+                    e = tmp;
+                }
+            }
+        };
+        return HashTable;
+    })();    
+    function createHashTable(capacity, hash, equals) {
+        if (typeof capacity === "undefined") { capacity = Collections.DefaultHashTableCapacity; }
+        if (typeof hash === "undefined") { hash = null; }
+        if (typeof equals === "undefined") { equals = null; }
+        return new HashTable(capacity, hash, equals);
+    }
+    Collections.createHashTable = createHashTable;
+})(Collections || (Collections = {}));
 var SlidingWindow = (function () {
     function SlidingWindow(defaultWindowSize, defaultValue, sourceLength) {
         if (typeof sourceLength === "undefined") { sourceLength = -1; }
@@ -18909,7 +18916,7 @@ var SyntaxInformationMap = (function (_super) {
     function SyntaxInformationMap() {
         _super.apply(this, arguments);
 
-        this.tokenToInformation = new HashTable(HashTable.DefaultCapacity, SyntaxToken.hashCode);
+        this.tokenToInformation = Collections.createHashTable(Collections.DefaultHashTableCapacity, SyntaxToken.hashCode);
         this._previousToken = null;
         this._previousTokenInformation = null;
         this._currentPosition = 0;
@@ -19290,7 +19297,7 @@ var SyntaxNodeInvariantsChecker = (function (_super) {
     function SyntaxNodeInvariantsChecker() {
         _super.apply(this, arguments);
 
-        this.tokenTable = new HashTable(HashTable.DefaultCapacity, SyntaxToken.hashCode);
+        this.tokenTable = Collections.createHashTable(Collections.DefaultHashTableCapacity, SyntaxToken.hashCode);
     }
     SyntaxNodeInvariantsChecker.checkInvariants = function checkInvariants(node) {
         node.accept(new SyntaxNodeInvariantsChecker());
