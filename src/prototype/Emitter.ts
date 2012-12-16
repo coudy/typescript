@@ -1276,12 +1276,8 @@ class Emitter extends SyntaxRewriter {
     }
 
     private static isSuperMemberAccessExpression(node: ExpressionSyntax): bool {
-        if (node.kind() === SyntaxKind.MemberAccessExpression) {
-            var memberAccess = <MemberAccessExpressionSyntax>node;
-            return memberAccess.expression().kind() === SyntaxKind.SuperExpression;
-        }
-
-        return false;
+        return node.kind() === SyntaxKind.MemberAccessExpression &&
+            (<MemberAccessExpressionSyntax>node).expression().kind() === SyntaxKind.SuperExpression;
     }
 
     private static isSuperMemberAccessInvocationExpression(node: SyntaxNode): bool {

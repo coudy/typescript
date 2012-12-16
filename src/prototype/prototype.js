@@ -20794,11 +20794,7 @@ var Emitter = (function (_super) {
         return node.kind() === 210 /* InvocationExpression */  && (node).expression().kind() === 221 /* SuperExpression */ ;
     }
     Emitter.isSuperMemberAccessExpression = function isSuperMemberAccessExpression(node) {
-        if(node.kind() === 209 /* MemberAccessExpression */ ) {
-            var memberAccess = node;
-            return memberAccess.expression().kind() === 221 /* SuperExpression */ ;
-        }
-        return false;
+        return node.kind() === 209 /* MemberAccessExpression */  && (node).expression().kind() === 221 /* SuperExpression */ ;
     }
     Emitter.isSuperMemberAccessInvocationExpression = function isSuperMemberAccessInvocationExpression(node) {
         return node.kind() === 210 /* InvocationExpression */  && Emitter.isSuperMemberAccessExpression((node).expression());
