@@ -124,7 +124,7 @@ var ParserSkippedTokensAdder = (function(_super) {
             return node;
         }
 
-        return super.visitNode(node);
+        return _super.prototype.visitNode.call(this, node);
     };
 
     ParserSkippedTokensAdder.prototype.visitList = function(list) {
@@ -132,7 +132,7 @@ var ParserSkippedTokensAdder = (function(_super) {
             return list;
         }
 
-        return super.visitList(list);
+        return _super.prototype.visitList.call(this, list);
     };
 
     ParserSkippedTokensAdder.prototype.visitSeparatedList = function(list) {
@@ -140,7 +140,7 @@ var ParserSkippedTokensAdder = (function(_super) {
             return list;
         }
 
-        return super.visitSeparatedList(list);
+        return _super.prototype.visitSeparatedList.call(this, list);
     };
 
     ParserSkippedTokensAdder.prototype.visitToken = function(token) {

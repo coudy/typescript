@@ -180,7 +180,7 @@ var Emitter = (function(_super) {
 
     Emitter.prototype.visitExpressionStatement = function(node) {
         // Can't have an expression statement with an anonymous function expression in it.
-        var rewritten = super.visitExpressionStatement(node);
+        var rewritten = _super.prototype.visitExpressionStatement.call(this, node);
         
         if (rewritten.expression().kind() !== SyntaxKind.FunctionExpression) {
             // Wasn't a function expression
@@ -461,7 +461,7 @@ var Emitter = (function(_super) {
             return null;
         }
 
-        var rewritten = super.visitFunctionDeclaration(node);
+        var rewritten = _super.prototype.visitFunctionDeclaration.call(this, node);
         var parametersWithDefaults = Emitter.functionSignatureDefaultParameters(node.functionSignature());
 
         if (parametersWithDefaults.length === 0) {
@@ -936,7 +936,7 @@ var Emitter = (function(_super) {
     };
     
     Emitter.prototype.visitVariableDeclarator = function(node) {
-        var result = super.visitVariableDeclarator(node);
+        var result = _super.prototype.visitVariableDeclarator.call(this, node);
         if (result.typeAnnotation() === null) {
             return result;
         }
@@ -949,7 +949,7 @@ var Emitter = (function(_super) {
     };
 
     Emitter.prototype.visitCastExpression = function(node) {
-        var result = super.visitCastExpression(node);
+        var result = _super.prototype.visitCastExpression.call(this, node);
 
         var subExpression = result.expression();
         var totalTrivia = result.leadingTrivia().concat(subExpression.leadingTrivia());
@@ -1126,7 +1126,7 @@ var Emitter = (function(_super) {
     };
 
     Emitter.prototype.visitInvocationExpression = function(node) {
-        var result = super.visitInvocationExpression(node);
+        var result = _super.prototype.visitInvocationExpression.call(this, node);
         if (!Emitter.isSuperInvocationExpression(result)) {
             return result;
         }
