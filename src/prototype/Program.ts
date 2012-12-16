@@ -133,8 +133,7 @@ class Program {
 
         var text = new StringText(contents);
 
-        var parser = new Parser(text, languageVersion, stringTable);
-        var tree = parser.parseSyntaxTree();
+        var tree = Parser.parse(text, languageVersion, stringTable);
         var emitted = Emitter.emit(<SourceUnitSyntax>tree.sourceUnit());
 
         end = new Date().getTime();
@@ -179,13 +178,12 @@ class Program {
         }
         else {
             var text = new StringText(contents);
-            var parser = new Parser(text, languageVersion, stringTable);
-            var unit = parser.parseSyntaxTree();
+            var tree = Parser.parse(text, languageVersion, stringTable);
 
             end = new Date().getTime();
             totalTime += (end - start);
 
-            this.checkResult(filePath, unit, verify, generateBaseline, false);
+            this.checkResult(filePath, tree, verify, generateBaseline, false);
         }
     }
 
@@ -306,9 +304,7 @@ class Program {
 
                 try {
                     var stringText = new StringText(contents);
-                    var parser = new Parser(stringText, LanguageVersion.EcmaScript5, stringTable);
-
-                    var syntaxTree = parser.parseSyntaxTree();
+                    var tree = Parser.parse(stringText, LanguageVersion.EcmaScript5, stringTable);
 
                     if (isNegative) {
                         var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
@@ -316,14 +312,14 @@ class Program {
 
                         if (canParseSuccessfully) {
                             // We expected to parse this successfully.  Report an error if we didn't.
-                            if (syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
+                            if (tree.diagnostics() && tree.diagnostics().length > 0) {
                                 environment.standardOut.WriteLine("Negative test. Unexpected failure: " + filePath);
                                 failCount++;
                             }
                         }
                         else {
                             // We expected to fail on this.  Report an error if we don't.
-                            if (syntaxTree.diagnostics() === null || syntaxTree.diagnostics().length === 0) {
+                            if (tree.diagnostics() === null || tree.diagnostics().length === 0) {
                                 environment.standardOut.WriteLine("Negative test. Unexpected success: " + filePath);
                                 failCount++;
                             }
@@ -331,7 +327,7 @@ class Program {
                     }
                     else {
                         // Not a negative test.  We can't have any errors or skipped tokens.
-                        if (syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
+                        if (tree.diagnostics() && tree.diagnostics().length > 0) {
                             environment.standardOut.WriteLine("Unexpected failure: " + filePath);
                             failCount++;
                         }
@@ -388,21 +384,20 @@ class Program {
 
                 try {
                     var stringText = new StringText(contents);
-                    var parser = new Parser(stringText, LanguageVersion.EcmaScript5, stringTable);
+                    var tree = Parser.parse(stringText, LanguageVersion.EcmaScript5, stringTable);
 
-                    var syntaxTree = parser.parseSyntaxTree();
-            //environment.standardOut.WriteLine(filePath);
-            // environment.standardOut.Write(".");
+                    //environment.standardOut.WriteLine(filePath);
+                    // environment.standardOut.Write(".");
 
                     if (canParseSuccessfully) {
-                        if (syntaxTree.diagnostics() && syntaxTree.diagnostics().length > 0) {
+                        if (tree.diagnostics() && tree.diagnostics().length > 0) {
                             environment.standardOut.WriteLine("Unexpected failure: " + filePath);
                             failCount++;
                         }
                     }
                     else {
                         // We expected to fail on this.  Report an error if we don't.
-                        if (syntaxTree.diagnostics() === null || syntaxTree.diagnostics().length === 0) {
+                        if (tree.diagnostics() === null || tree.diagnostics().length === 0) {
                             environment.standardOut.WriteLine("Unexpected success: " + filePath);
                             failCount++;
                         }
