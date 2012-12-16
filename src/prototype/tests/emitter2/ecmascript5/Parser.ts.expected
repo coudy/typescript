@@ -58,6 +58,22 @@ var ParserExpressionPrecedence;
     //
     // Then you have "(!foo) || bar", not "!(foo || bar)"
     ParserExpressionPrecedence.UnaryExpressionPrecedence = 15;
+    ParserExpressionPrecedence._map = [];
+    ParserExpressionPrecedence._map[ParserExpressionPrecedence.CommaExpressionPrecedence]= "CommaExpressionPrecedence";
+    ParserExpressionPrecedence._map[ParserExpressionPrecedence.AssignmentExpressionPrecedence]= "AssignmentExpressionPrecedence";
+    ParserExpressionPrecedence._map[ParserExpressionPrecedence.ConditionalExpressionPrecedence]= "ConditionalExpressionPrecedence";
+    ParserExpressionPrecedence._map[ParserExpressionPrecedence.ArrowFunctionPrecedence]= "ArrowFunctionPrecedence";
+    ParserExpressionPrecedence._map[ParserExpressionPrecedence.LogicalOrExpressionPrecedence]= "LogicalOrExpressionPrecedence";
+    ParserExpressionPrecedence._map[ParserExpressionPrecedence.LogicalAndExpressionPrecedence]= "LogicalAndExpressionPrecedence";
+    ParserExpressionPrecedence._map[ParserExpressionPrecedence.BitwiseOrExpressionPrecedence]= "BitwiseOrExpressionPrecedence";
+    ParserExpressionPrecedence._map[ParserExpressionPrecedence.BitwiseExclusiveOrExpressionPrecedence]= "BitwiseExclusiveOrExpressionPrecedence";
+    ParserExpressionPrecedence._map[ParserExpressionPrecedence.BitwiseAndExpressionPrecedence]= "BitwiseAndExpressionPrecedence";
+    ParserExpressionPrecedence._map[ParserExpressionPrecedence.EqualityExpressionPrecedence]= "EqualityExpressionPrecedence";
+    ParserExpressionPrecedence._map[ParserExpressionPrecedence.RelationalExpressionPrecedence]= "RelationalExpressionPrecedence";
+    ParserExpressionPrecedence._map[ParserExpressionPrecedence.ShiftExpressionPrecdence]= "ShiftExpressionPrecdence";
+    ParserExpressionPrecedence._map[ParserExpressionPrecedence.AdditiveExpressionPrecedence]= "AdditiveExpressionPrecedence";
+    ParserExpressionPrecedence._map[ParserExpressionPrecedence.MultiplicativeExpressionPrecedence]= "MultiplicativeExpressionPrecedence";
+    ParserExpressionPrecedence._map[ParserExpressionPrecedence.UnaryExpressionPrecedence]= "UnaryExpressionPrecedence";
 })(ParserExpressionPrecedence||(ParserExpressionPrecedence={}));
 
 // The current state of the parser wrt to list parsing.  The way to read these is as:
@@ -108,6 +124,24 @@ var ParserListParsingState;
 
     ParserListParsingState.FirstListParsingState = SourceUnit_ModuleElements;
     ParserListParsingState.LastListParsingState = ParameterList_Parameters;
+    ParserListParsingState._map = [];
+    ParserListParsingState._map[ParserListParsingState.SourceUnit_ModuleElements]= "SourceUnit_ModuleElements";
+    ParserListParsingState._map[ParserListParsingState.ClassDeclaration_ClassElements]= "ClassDeclaration_ClassElements";
+    ParserListParsingState._map[ParserListParsingState.ModuleDeclaration_ModuleElements]= "ModuleDeclaration_ModuleElements";
+    ParserListParsingState._map[ParserListParsingState.SwitchStatement_SwitchClauses]= "SwitchStatement_SwitchClauses";
+    ParserListParsingState._map[ParserListParsingState.SwitchClause_Statements]= "SwitchClause_Statements";
+    ParserListParsingState._map[ParserListParsingState.Block_Statements]= "Block_Statements";
+    ParserListParsingState._map[ParserListParsingState.EnumDeclaration_VariableDeclarators]= "EnumDeclaration_VariableDeclarators";
+    ParserListParsingState._map[ParserListParsingState.ObjectType_TypeMembers]= "ObjectType_TypeMembers";
+    ParserListParsingState._map[ParserListParsingState.ExtendsOrImplementsClause_TypeNameList]= "ExtendsOrImplementsClause_TypeNameList";
+    ParserListParsingState._map[ParserListParsingState.VariableDeclaration_VariableDeclarators_AllowIn]= "VariableDeclaration_VariableDeclarators_AllowIn";
+    ParserListParsingState._map[ParserListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn]= "VariableDeclaration_VariableDeclarators_DisallowIn";
+    ParserListParsingState._map[ParserListParsingState.ArgumentList_AssignmentExpressions]= "ArgumentList_AssignmentExpressions";
+    ParserListParsingState._map[ParserListParsingState.ObjectLiteralExpression_PropertyAssignments]= "ObjectLiteralExpression_PropertyAssignments";
+    ParserListParsingState._map[ParserListParsingState.ArrayLiteralExpression_AssignmentExpressions]= "ArrayLiteralExpression_AssignmentExpressions";
+    ParserListParsingState._map[ParserListParsingState.ParameterList_Parameters]= "ParameterList_Parameters";
+    ParserListParsingState._map[ParserListParsingState.FirstListParsingState]= "FirstListParsingState";
+    ParserListParsingState._map[ParserListParsingState.LastListParsingState]= "LastListParsingState";
 })(ParserListParsingState||(ParserListParsingState={}));
 
 var ParserSkippedTokensAdder = (function(_super) {

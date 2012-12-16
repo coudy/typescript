@@ -20629,6 +20629,67 @@ var Emitter = (function (_super) {
             text: "1"
         })));
     };
+    Emitter.prototype.addEnumMapAssignments = function (node, statements) {
+        if(node.variableDeclarators().syntaxNodeCount() > 0) {
+            var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+            var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+            var mapIndentationColumn = indentationColumn + this.options.indentSpaces;
+            var mapIndentationTrivia = Indentation.indentationTrivia(mapIndentationColumn, this.options);
+            var receiver = new MemberAccessExpressionSyntax(new IdentifierNameSyntax(identifier.withLeadingTrivia(SyntaxTriviaList.create([
+                mapIndentationTrivia
+            ]))), SyntaxToken.createElastic({
+                kind: 73 /* DotToken */ 
+            }), new IdentifierNameSyntax(SyntaxToken.createElastic({
+                kind: 9 /* IdentifierNameToken */ ,
+                text: "_map",
+                trailingTrivia: this.spaceList
+            })));
+            var assignExpression = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , receiver, SyntaxToken.createElastic({
+                kind: 104 /* EqualsToken */ ,
+                trailingTrivia: this.spaceList
+            }), ArrayLiteralExpressionSyntax.create(SyntaxToken.createElastic({
+                kind: 71 /* OpenBracketToken */ 
+            }), SyntaxToken.createElastic({
+                kind: 72 /* CloseBracketToken */ 
+            })));
+            var expressionStatement = new ExpressionStatementSyntax(assignExpression, SyntaxToken.createElastic({
+                kind: 75 /* SemicolonToken */ ,
+                trailingTrivia: this.newLineList
+            }));
+            statements.push(expressionStatement);
+            for(var i = 0, n = node.variableDeclarators().syntaxNodeCount(); i < n; i++) {
+                var variableDeclarator = node.variableDeclarators().syntaxNodeAt(i);
+                var variableIdentifier = variableDeclarator.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+                var receiver = new MemberAccessExpressionSyntax(new IdentifierNameSyntax(identifier.withLeadingTrivia(SyntaxTriviaList.create([
+                    mapIndentationTrivia
+                ]))), SyntaxToken.createElastic({
+                    kind: 73 /* DotToken */ 
+                }), new IdentifierNameSyntax(SyntaxToken.createElastic({
+                    kind: 9 /* IdentifierNameToken */ ,
+                    text: "_map"
+                })));
+                receiver = new ElementAccessExpressionSyntax(receiver, SyntaxToken.createElastic({
+                    kind: 71 /* OpenBracketToken */ 
+                }), new MemberAccessExpressionSyntax(new IdentifierNameSyntax(identifier.clone()), SyntaxToken.createElastic({
+                    kind: 73 /* DotToken */ 
+                }), new IdentifierNameSyntax(variableIdentifier.clone())), SyntaxToken.createElastic({
+                    kind: 72 /* CloseBracketToken */ 
+                }));
+                var assignExpression = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , receiver, SyntaxToken.createElastic({
+                    kind: 104 /* EqualsToken */ ,
+                    trailingTrivia: this.spaceList
+                }), new LiteralExpressionSyntax(169 /* StringLiteralExpression */ , SyntaxToken.createElastic({
+                    kind: 12 /* StringLiteral */ ,
+                    text: '"' + variableIdentifier.text() + '"'
+                })));
+                var expressionStatement = new ExpressionStatementSyntax(assignExpression, SyntaxToken.createElastic({
+                    kind: 75 /* SemicolonToken */ ,
+                    trailingTrivia: this.newLineList
+                }));
+                statements.push(expressionStatement);
+            }
+        }
+    };
     Emitter.prototype.generateEnumFunctionExpression = function (node) {
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
         var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
@@ -20652,6 +20713,7 @@ var Emitter = (function (_super) {
             }));
             statements.push(expressionStatement);
         }
+        this.addEnumMapAssignments(node, statements);
         var block = new BlockSyntax(SyntaxToken.createElastic({
             kind: 67 /* OpenBraceToken */ ,
             trailingTrivia: this.newLineList

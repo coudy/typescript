@@ -1128,6 +1128,71 @@ class Emitter extends SyntaxRewriter {
                 SyntaxToken.createElastic({ kind: SyntaxKind.NumericLiteral, text: "1" })));
     }
 
+    private addEnumMapAssignments(node: EnumDeclarationSyntax, statements: StatementSyntax[]): void {
+        if (node.variableDeclarators().syntaxNodeCount() > 0) {
+            var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
+                                          .withTrailingTrivia(SyntaxTriviaList.empty);
+
+            var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+
+            var mapIndentationColumn = indentationColumn + this.options.indentSpaces;
+            var mapIndentationTrivia = Indentation.indentationTrivia(mapIndentationColumn, this.options);
+
+            var receiver: ExpressionSyntax = new MemberAccessExpressionSyntax(
+                new IdentifierNameSyntax(identifier.withLeadingTrivia(SyntaxTriviaList.create([mapIndentationTrivia]))),
+                SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
+                new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "_map", trailingTrivia: this.spaceList })));
+
+            var assignExpression = new BinaryExpressionSyntax(
+                SyntaxKind.AssignmentExpression,
+                receiver,
+                SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceList }),
+                ArrayLiteralExpressionSyntax.create(
+                    SyntaxToken.createElastic({ kind: SyntaxKind.OpenBracketToken }),
+                    SyntaxToken.createElastic({ kind: SyntaxKind.CloseBracketToken })));
+
+            var expressionStatement = new ExpressionStatementSyntax(
+                assignExpression,
+                SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
+
+            statements.push(expressionStatement);
+
+            for (var i = 0, n = node.variableDeclarators().syntaxNodeCount(); i < n; i++) {
+                var variableDeclarator = <VariableDeclaratorSyntax>node.variableDeclarators().syntaxNodeAt(i);
+                var variableIdentifier = variableDeclarator.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
+                                                                        .withTrailingTrivia(SyntaxTriviaList.empty);
+
+                var receiver: ExpressionSyntax = new MemberAccessExpressionSyntax(
+                    new IdentifierNameSyntax(identifier.withLeadingTrivia(SyntaxTriviaList.create([mapIndentationTrivia]))),
+                    SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
+                    new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "_map" })));
+
+                receiver = new ElementAccessExpressionSyntax(
+                    receiver,
+                    SyntaxToken.createElastic({ kind: SyntaxKind.OpenBracketToken }),
+                    new MemberAccessExpressionSyntax(
+                        new IdentifierNameSyntax(identifier.clone()),
+                            SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
+                            new IdentifierNameSyntax(variableIdentifier.clone())),
+                    SyntaxToken.createElastic({ kind: SyntaxKind.CloseBracketToken }));
+
+                var assignExpression = new BinaryExpressionSyntax(
+                    SyntaxKind.AssignmentExpression,
+                    receiver,
+                    SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceList }),
+                    new LiteralExpressionSyntax(
+                        SyntaxKind.StringLiteralExpression,
+                        SyntaxToken.createElastic({ kind: SyntaxKind.StringLiteral, text: '"' + variableIdentifier.text() + '"' })));
+
+                var expressionStatement = new ExpressionStatementSyntax(
+                    assignExpression,
+                    SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
+
+                statements.push(expressionStatement);
+            }
+        }
+    }
+
     private generateEnumFunctionExpression(node: EnumDeclarationSyntax): FunctionExpressionSyntax {
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
                                           .withTrailingTrivia(SyntaxTriviaList.empty);
@@ -1144,7 +1209,7 @@ class Emitter extends SyntaxRewriter {
                                                                     .withTrailingTrivia(SyntaxTriviaList.empty);
             assignDefaultValues = assignDefaultValues && variableDeclarator.equalsValueClause() === null;
 
-            var receiver = new MemberAccessExpressionSyntax(
+            var receiver: ExpressionSyntax = new MemberAccessExpressionSyntax(
                 new IdentifierNameSyntax(identifier.withLeadingTrivia(variableDeclarator.leadingTrivia()).clone()),
                 SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
                 new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
@@ -1161,6 +1226,9 @@ class Emitter extends SyntaxRewriter {
 
             statements.push(expressionStatement);
         }
+
+        // Add _map property
+        this.addEnumMapAssignments(node, statements);
 
         var block = new BlockSyntax(
             SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: this.newLineList }),
