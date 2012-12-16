@@ -6,8 +6,10 @@ class Parser {
 }
 
 module M1.M2 {
-    constructor(text: IText,
-                stringTable: StringTable = null,
-                oldTree?: SyntaxTree = null) {
+    class Parser {
+        constructor(text: IText,
+                    stringTable: StringTable = null,
+                    oldTree?: SyntaxTree = null) {
+        }
     }
 }

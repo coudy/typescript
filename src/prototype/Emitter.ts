@@ -598,7 +598,7 @@ class Emitter extends SyntaxRewriter {
             SyntaxToken.createElastic({ kind: SyntaxKind.CloseBraceToken, trailingTrivia: this.newLineList }));
 
         var functionDeclaration = new FunctionDeclarationSyntax(null, null,
-            SyntaxToken.createElastic({ kind: SyntaxKind.FunctionKeyword, trailingTrivia: [SyntaxTriviaList.space] }),
+            SyntaxToken.createElastic({ kind: SyntaxKind.FunctionKeyword, trailingTrivia: this.spaceList }),
             functionSignature,
             block, null);
 
@@ -797,6 +797,9 @@ class Emitter extends SyntaxRewriter {
         
         var statements: StatementSyntax[] = [];
 
+        var statementIndent = this.options.indentSpaces + Indentation.columnForStartOfToken(
+            node.firstToken(), this.syntaxInformationMap, this.options)
+
         if (node.extendsClause() !== null) {
             var extendsParameters = [];
             extendsParameters.push(new IdentifierNameSyntax(identifier.clone()));
@@ -814,7 +817,7 @@ class Emitter extends SyntaxRewriter {
                 SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
 
             statements.push(<StatementSyntax>SyntaxIndenter.indentNode(
-                extendsStatement, /*indentFirstToken:*/ true, this.options.indentSpaces, this.options));
+                extendsStatement, /*indentFirstToken:*/ true, statementIndent, this.options));
         }
 
         var constructorDeclaration: ConstructorDeclarationSyntax =
@@ -827,9 +830,6 @@ class Emitter extends SyntaxRewriter {
         if (constructorFunctionDeclaration !== null) {
             statements.push(constructorFunctionDeclaration)
         }
-
-        var statementIndent = this.options.indentSpaces + Indentation.columnForStartOfToken(
-            node.firstToken(), this.syntaxInformationMap, this.options)
 
         var classElementStatements = this.convertClassElements(node);
         statements.push.apply(statements, classElementStatements);
@@ -905,8 +905,6 @@ class Emitter extends SyntaxRewriter {
         var variableStatement = VariableStatementSyntax.create(
             variableDeclaration,
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
-
-        var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
 
         return variableStatement;
     }
@@ -1070,8 +1068,7 @@ class Emitter extends SyntaxRewriter {
                     new ObjectLiteralExpressionSyntax(
                         SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken }),
                         SeparatedSyntaxList.empty,
-                        SyntaxToken.createElastic({ kind: SyntaxKind.CloseBraceToken })
-                    )),
+                        SyntaxToken.createElastic({ kind: SyntaxKind.CloseBraceToken }))),
                 SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken })));
 
         var argumentList = new ArgumentListSyntax(
