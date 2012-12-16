@@ -235,6 +235,7 @@ var Parser = (function(_super) {
         if (typeof oldTree === "undefined") { oldTree = null; }
         if (typeof changes === "undefined") { changes = null; }
         if (typeof options === "undefined") { options = null; }
+        _super.call(this, 32, null);
 
         // Diagnostics created when parsing invalid code.  Any diagnosics created when speculative 
         // parsing need to removed when rewinding.  To do this we store the count of diagnostics when 
@@ -280,7 +281,6 @@ var Parser = (function(_super) {
 
         // Parsing options.
         this.options = null;
-        _super.call(this, 32, null);
 
         this.scanner = new Scanner(text, languageVersion, stringTable);
 
