@@ -54,6 +54,10 @@ module SeparatedSyntaxList {
         public fullText(): string {
             return "";
         }
+
+        public toArray(): ISyntaxElement[] {
+            return [];
+        }
     }
 
     class SingletonSeparatedSyntaxList implements ISeparatedSyntaxList {
@@ -118,6 +122,10 @@ module SeparatedSyntaxList {
 
         public fullText(): string {
             return this.item.fullText();
+        }
+
+        public toArray(): ISyntaxElement[] {
+            return [this.item];
         }
     }
 
@@ -237,9 +245,11 @@ module SeparatedSyntaxList {
             this.collectTextElements(elements);
             return elements.join("");
         }
+
+        public toArray(): ISyntaxElement[] {
+            return this.elements.slice(0);
+        }
     }
-    
-    export var empty: ISeparatedSyntaxList = new EmptySeparatedSyntaxList();
 
     export function create(nodes: ISyntaxElement[]): ISeparatedSyntaxList {
         return createAndValidate(nodes, false);
@@ -270,4 +280,6 @@ module SeparatedSyntaxList {
 
         return new NormalSeparatedSyntaxList(nodes);
     }
+    
+    export var empty: ISeparatedSyntaxList = new EmptySeparatedSyntaxList();
 }

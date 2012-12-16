@@ -3,7 +3,7 @@
         "var A = (function(_super) {",
         "    __extends(A, _super);",
         "    function A() {",
-        "        _super.call(this);",
+        "        _super.call(this, 1);",
         "    }",
         "    return A;",
         "})(B);",
@@ -14,7 +14,7 @@
         "        var A = (function(_super) {",
         "            __extends(A, _super);",
         "            function A() {",
-        "                _super.call(this);",
+        "                _super.call(this, 1);",
         "            }",
         "            return A;",
         "        })(B);",
@@ -346,6 +346,27 @@
                                                                                         "keywordKind": "ThisKeyword",
                                                                                         "width": 4,
                                                                                         "text": "this"
+                                                                                    }
+                                                                                },
+                                                                                {
+                                                                                    "kind": "CommaToken",
+                                                                                    "width": 1,
+                                                                                    "fullWidth": 2,
+                                                                                    "text": ",",
+                                                                                    "hasTrailingTrivia": true,
+                                                                                    "trailingTrivia": [
+                                                                                        {
+                                                                                            "kind": "WhitespaceTrivia",
+                                                                                            "text": " "
+                                                                                        }
+                                                                                    ]
+                                                                                },
+                                                                                {
+                                                                                    "kind": "NumericLiteralExpression",
+                                                                                    "_literalToken": {
+                                                                                        "kind": "NumericLiteral",
+                                                                                        "width": 1,
+                                                                                        "text": "1"
                                                                                     }
                                                                                 }
                                                                             ],
@@ -1075,6 +1096,27 @@
                                                                                                                                         "keywordKind": "ThisKeyword",
                                                                                                                                         "width": 4,
                                                                                                                                         "text": "this"
+                                                                                                                                    }
+                                                                                                                                },
+                                                                                                                                {
+                                                                                                                                    "kind": "CommaToken",
+                                                                                                                                    "width": 1,
+                                                                                                                                    "fullWidth": 2,
+                                                                                                                                    "text": ",",
+                                                                                                                                    "hasTrailingTrivia": true,
+                                                                                                                                    "trailingTrivia": [
+                                                                                                                                        {
+                                                                                                                                            "kind": "WhitespaceTrivia",
+                                                                                                                                            "text": " "
+                                                                                                                                        }
+                                                                                                                                    ]
+                                                                                                                                },
+                                                                                                                                {
+                                                                                                                                    "kind": "NumericLiteralExpression",
+                                                                                                                                    "_literalToken": {
+                                                                                                                                        "kind": "NumericLiteral",
+                                                                                                                                        "width": 1,
+                                                                                                                                        "text": "1"
                                                                                                                                     }
                                                                                                                                 }
                                                                                                                             ],

@@ -114,7 +114,7 @@ var ParserSkippedTokensAdder = (function(_super) {
     __extends(ParserSkippedTokensAdder, _super);
 
     function ParserSkippedTokensAdder(skippedTokens) {
-        super();
+        _super.call(this);
 
         this.skippedTokens = skippedTokens;
     }
@@ -280,7 +280,7 @@ var Parser = (function(_super) {
 
         // Parsing options.
         this.options = null;
-        super(32, null);
+        _super.call(this, 32, null);
 
         this.scanner = new Scanner(text, languageVersion, stringTable);
 

@@ -1,13 +1,13 @@
 class A extends B {
     constructor() {
-        super();
+        super(1, "");
     }
 }
 
 module M1.M2 {
     class A extends B {
         constructor() {
-            super();
+            super(1, "");
         }
     }
 }

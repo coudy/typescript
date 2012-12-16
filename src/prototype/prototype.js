@@ -1847,6 +1847,9 @@ var SeparatedSyntaxList;
         EmptySeparatedSyntaxList.prototype.fullText = function () {
             return "";
         };
+        EmptySeparatedSyntaxList.prototype.toArray = function () {
+            return [];
+        };
         return EmptySeparatedSyntaxList;
     })();    
     var SingletonSeparatedSyntaxList = (function () {
@@ -1920,6 +1923,11 @@ var SeparatedSyntaxList;
         };
         SingletonSeparatedSyntaxList.prototype.fullText = function () {
             return this.item.fullText();
+        };
+        SingletonSeparatedSyntaxList.prototype.toArray = function () {
+            return [
+                this.item
+            ];
         };
         return SingletonSeparatedSyntaxList;
     })();    
@@ -2039,9 +2047,11 @@ var SeparatedSyntaxList;
             this.collectTextElements(elements);
             return elements.join("");
         };
+        NormalSeparatedSyntaxList.prototype.toArray = function () {
+            return this.elements.slice(0);
+        };
         return NormalSeparatedSyntaxList;
     })();    
-    SeparatedSyntaxList.empty = new EmptySeparatedSyntaxList();
     function create(nodes) {
         return createAndValidate(nodes, false);
     }
@@ -2067,6 +2077,7 @@ var SeparatedSyntaxList;
         return new NormalSeparatedSyntaxList(nodes);
     }
     SeparatedSyntaxList.createAndValidate = createAndValidate;
+    SeparatedSyntaxList.empty = new EmptySeparatedSyntaxList();
 })(SeparatedSyntaxList || (SeparatedSyntaxList = {}));
 var ScannerUtilities = (function () {
     function ScannerUtilities() { }
@@ -15592,6 +15603,33 @@ var Emitter = (function (_super) {
         }));
         result.push(expressionStatement);
         return result;
+    };
+    Emitter.prototype.visitInvocationExpression = function (invocationExpression) {
+        var result = _super.prototype.visitInvocationExpression.call(this, invocationExpression);
+        if(result.expression().kind() !== 221 /* SuperExpression */ ) {
+            return result;
+        }
+        var expression = new MemberAccessExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.createElastic({
+            leadingTrivia: result.leadingTrivia().toArray(),
+            kind: 9 /* IdentifierNameToken */ ,
+            text: "_super"
+        })), SyntaxToken.createElastic({
+            kind: 73 /* DotToken */ 
+        }), new IdentifierNameSyntax(SyntaxToken.createElastic({
+            kind: 9 /* IdentifierNameToken */ ,
+            text: "call"
+        })));
+        var arguments = result.argumentList().arguments().toArray();
+        if(arguments.length > 0) {
+            arguments.unshift(SyntaxToken.createElastic({
+                kind: 76 /* CommaToken */ ,
+                trailingTrivia: this.spaceList
+            }));
+        }
+        arguments.unshift(new ThisExpressionSyntax(SyntaxToken.createElastic({
+            kind: 33 /* ThisKeyword */ 
+        })));
+        return result.withExpression(expression).withArgumentList(result.argumentList().withArguments(SeparatedSyntaxList.create(arguments)));
     };
     return Emitter;
 })(SyntaxRewriter);

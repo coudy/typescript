@@ -1088,4 +1088,29 @@ class Emitter extends SyntaxRewriter {
 
         return result;
     }
+
+    private visitInvocationExpression(invocationExpression: InvocationExpressionSyntax): InvocationExpressionSyntax {
+        var result = <InvocationExpressionSyntax>super.visitInvocationExpression(invocationExpression);
+        if (result.expression().kind() !== SyntaxKind.SuperExpression) {
+            return result;
+        }
+
+        var expression = new MemberAccessExpressionSyntax(
+            new IdentifierNameSyntax(SyntaxToken.createElastic({
+                leadingTrivia: result.leadingTrivia().toArray(),
+                kind: SyntaxKind.IdentifierNameToken,
+                text: "_super" })),
+            SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
+            new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "call" })));
+
+        var arguments = result.argumentList().arguments().toArray();
+        if (arguments.length > 0) {
+            arguments.unshift(SyntaxToken.createElastic({ kind: SyntaxKind.CommaToken, trailingTrivia: this.spaceList }));
+        }
+
+        arguments.unshift(new ThisExpressionSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.ThisKeyword })));
+        return result.withExpression(expression)
+                     .withArgumentList(result.argumentList().withArguments(
+                         SeparatedSyntaxList.create(arguments)));
+    }
 }
