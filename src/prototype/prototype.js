@@ -19840,13 +19840,16 @@ var Emitter = (function (_super) {
         }
         return moduleElements;
     };
+    Emitter.prototype.withNoTrivia = function (token) {
+        return token.withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+    };
     Emitter.prototype.convertModuleDeclaration = function (name, moduleElements) {
-        name = name.withIdentifier(name.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty));
+        var moduleIdentifier = this.withNoTrivia(name.identifier());
         var variableStatement = VariableStatementSyntax.create(new VariableDeclarationSyntax(SyntaxToken.createElastic({
             kind: 38 /* VarKeyword */ ,
             trailingTrivia: this.spaceList
         }), SeparatedSyntaxList.create([
-            VariableDeclaratorSyntax.create(name.identifier().clone())
+            VariableDeclaratorSyntax.create(moduleIdentifier.clone())
         ])), SyntaxToken.createElastic({
             kind: 75 /* SemicolonToken */ ,
             trailingTrivia: this.newLineList
@@ -19856,7 +19859,7 @@ var Emitter = (function (_super) {
         }), CallSignatureSyntax.create(new ParameterListSyntax(SyntaxToken.createElastic({
             kind: 69 /* OpenParenToken */ 
         }), SeparatedSyntaxList.create([
-            ParameterSyntax.create(name.identifier().clone())
+            ParameterSyntax.create(moduleIdentifier.clone())
         ]), SyntaxToken.createElastic({
             kind: 70 /* CloseParenToken */ ,
             trailingTrivia: this.spaceList
@@ -19871,11 +19874,11 @@ var Emitter = (function (_super) {
         }), functionExpression, SyntaxToken.createElastic({
             kind: 70 /* CloseParenToken */ 
         }));
-        var logicalOrExpression = new BinaryExpressionSyntax(184 /* LogicalOrExpression */ , name.clone(), SyntaxToken.createElastic({
+        var logicalOrExpression = new BinaryExpressionSyntax(184 /* LogicalOrExpression */ , new IdentifierNameSyntax(moduleIdentifier.clone()), SyntaxToken.createElastic({
             kind: 101 /* BarBarToken */ 
         }), new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
             kind: 69 /* OpenParenToken */ 
-        }), new BinaryExpressionSyntax(171 /* AssignmentExpression */ , name.clone(), SyntaxToken.createElastic({
+        }), new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new IdentifierNameSyntax(moduleIdentifier.clone()), SyntaxToken.createElastic({
             kind: 104 /* EqualsToken */ 
         }), new ObjectLiteralExpressionSyntax(SyntaxToken.createElastic({
             kind: 67 /* OpenBraceToken */ 

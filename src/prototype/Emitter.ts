@@ -114,15 +114,18 @@ class Emitter extends SyntaxRewriter {
         return moduleElements;
     }
 
+    private withNoTrivia(token: ISyntaxToken): ISyntaxToken {
+        return token.withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+    }
+
     private convertModuleDeclaration(name: IdentifierNameSyntax, moduleElements: ModuleElementSyntax[]): ModuleElementSyntax[] {
-        name = name.withIdentifier(
-            name.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty));
+        var moduleIdentifier = this.withNoTrivia(name.identifier());
 
         var variableStatement = VariableStatementSyntax.create(
             new VariableDeclarationSyntax(
                 SyntaxToken.createElastic({ kind: SyntaxKind.VarKeyword, trailingTrivia: this.spaceList }),
                 SeparatedSyntaxList.create(
-                    [VariableDeclaratorSyntax.create(name.identifier().clone())])),
+                    [VariableDeclaratorSyntax.create(moduleIdentifier.clone())])),
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
 
         var functionExpression = FunctionExpressionSyntax.create(
@@ -131,7 +134,7 @@ class Emitter extends SyntaxRewriter {
                 new ParameterListSyntax(
                     SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
                     SeparatedSyntaxList.create([
-                        ParameterSyntax.create(name.identifier().clone())]),
+                        ParameterSyntax.create(moduleIdentifier.clone())]),
                     SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken, trailingTrivia: this.spaceList  }))),
             new BlockSyntax(
                 SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: this.newLineList  }),
@@ -145,13 +148,13 @@ class Emitter extends SyntaxRewriter {
         
         var logicalOrExpression = new BinaryExpressionSyntax(
             SyntaxKind.LogicalOrExpression,
-            <IdentifierNameSyntax>name.clone(),
+            new IdentifierNameSyntax(moduleIdentifier.clone()),
             SyntaxToken.createElastic({ kind: SyntaxKind.BarBarToken }),
             new ParenthesizedExpressionSyntax(
                 SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
                 new BinaryExpressionSyntax(
                     SyntaxKind.AssignmentExpression,
-                    <IdentifierNameSyntax>name.clone(),
+                    new IdentifierNameSyntax(moduleIdentifier.clone()),
                     SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken }),
                     new ObjectLiteralExpressionSyntax(
                         SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken }),
