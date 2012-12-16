@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='SyntaxKind.ts' />
 
 interface ISyntaxElement {
     kind(): SyntaxKind;

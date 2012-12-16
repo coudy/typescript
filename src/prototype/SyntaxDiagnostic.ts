@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='Diagnostic.ts' />
 
 class SyntaxDiagnostic extends Diagnostic {
     private _position: number;

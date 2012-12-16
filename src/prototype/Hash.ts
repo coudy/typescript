@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+
 
 class Hash {
     // This table uses FNV1a as a string hash

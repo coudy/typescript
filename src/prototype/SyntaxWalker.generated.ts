@@ -1,4 +1,4 @@
-﻿///<reference path='References.ts' />
+﻿///<reference path='ISyntaxVisitor.ts' />
 
 class SyntaxWalker implements ISyntaxVisitor {
     public visitToken(token: ISyntaxToken): void {

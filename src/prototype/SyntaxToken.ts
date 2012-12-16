@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='Scanner.ts' />
 
 module SyntaxToken {
     export function hashCode(token: ISyntaxToken): number {

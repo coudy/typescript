@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+// ///<reference path='References.ts' />
 
 class StringTableEntry {
     constructor(public Text: string,
@@ -78,36 +78,36 @@ class StringTable {
         return e.Text;
     }
 
-    private dumpStats() {
-        var standardOut = Environment.standardOut;
+    //private dumpStats() {
+    //    var standardOut = Environment.standardOut;
         
-        standardOut.WriteLine("----------------------")
-        standardOut.WriteLine("String table stats");
-        standardOut.WriteLine("Count            : " + this.count);
-        standardOut.WriteLine("Entries Length   : " + this.entries.length);
+    //    standardOut.WriteLine("----------------------")
+    //    standardOut.WriteLine("String table stats");
+    //    standardOut.WriteLine("Count            : " + this.count);
+    //    standardOut.WriteLine("Entries Length   : " + this.entries.length);
 
-        var longestSlot = 0;
-        var occupiedSlots = 0;
-        for (var i = 0; i < this.entries.length; i++) {
-            if (this.entries[i] !== null) {
-                occupiedSlots++;
+    //    var longestSlot = 0;
+    //    var occupiedSlots = 0;
+    //    for (var i = 0; i < this.entries.length; i++) {
+    //        if (this.entries[i] !== null) {
+    //            occupiedSlots++;
 
-                var current = this.entries[i];
-                var slotCount = 0;
-                while (current !== null) {
-                    slotCount++;
-                    current = current.Next;
-                }
+    //            var current = this.entries[i];
+    //            var slotCount = 0;
+    //            while (current !== null) {
+    //                slotCount++;
+    //                current = current.Next;
+    //            }
 
-                longestSlot = MathPrototype.max(longestSlot, slotCount);
-            }
-        }
+    //            longestSlot = MathPrototype.max(longestSlot, slotCount);
+    //        }
+    //    }
         
-        standardOut.WriteLine("Occupied slots   : " + occupiedSlots);
-        standardOut.WriteLine("Longest  slot    : " + longestSlot);
-        standardOut.WriteLine("Avg Length/Slot  : " + (this.count / occupiedSlots));
-        standardOut.WriteLine("----------------------");
-    }
+    //    standardOut.WriteLine("Occupied slots   : " + occupiedSlots);
+    //    standardOut.WriteLine("Longest  slot    : " + longestSlot);
+    //    standardOut.WriteLine("Avg Length/Slot  : " + (this.count / occupiedSlots));
+    //    standardOut.WriteLine("----------------------");
+    //}
     
     private grow(): void {
         // this.dumpStats();

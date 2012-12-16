@@ -1,5 +1,3 @@
-///<reference path='References.ts' />
-
 class Contract {
     public static requires(expression: bool): void {
         if (!expression) {

@@ -1,4 +1,9 @@
-///<reference path='References.ts' />
+///<reference path='Errors.ts' />
+///<reference path='ISyntaxElement.ts' />
+///<reference path='ISyntaxToken.ts' />
+///<reference path='SyntaxNodeCloner.ts' />
+///<reference path='SyntaxRealizer.ts' />
+///<reference path='SyntaxTokenReplacer.ts' />
 
 class SyntaxNode implements ISyntaxElement {
     public isToken(): bool { return false; }

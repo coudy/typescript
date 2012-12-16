@@ -1,4 +1,5 @@
-///<reference path='References.ts' />
+///<reference path='IntegerUtilities.ts' />
+///<reference path='SyntaxFacts.ts' />
 
 module SeparatedSyntaxList {
     function collectTextElements(elements: string[], list: ISeparatedSyntaxList): void {

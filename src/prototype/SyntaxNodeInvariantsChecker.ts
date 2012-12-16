@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='SyntaxWalker.generated.ts' />
 
 // A debug class that we use to make sure a syntax node is valid.  Currently, this simply verifies
 // that the same token does not appear in the tree multiple times.  This is important for 

@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='SyntaxRewriter.generated.ts' />
 
 class SyntaxTokenReplacer extends SyntaxRewriter {
     constructor(private token1: ISyntaxToken,

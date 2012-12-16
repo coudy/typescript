@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='Hash.ts' />
 
 class HashTableEntry {
     constructor(public Key: any,
@@ -104,25 +104,25 @@ class HashTable {
         return e.Key;
     }
 
-    private dumpStats() {
-        var standardOut = Environment.standardOut;
+    //private dumpStats() {
+    //    var standardOut = Environment.standardOut;
         
-        standardOut.WriteLine("----------------------")
-        standardOut.WriteLine("Hash table stats");
-        standardOut.WriteLine("Count            : " + this.count);
-        standardOut.WriteLine("Entries Length   : " + this.entries.length);
+    //    standardOut.WriteLine("----------------------")
+    //    standardOut.WriteLine("Hash table stats");
+    //    standardOut.WriteLine("Count            : " + this.count);
+    //    standardOut.WriteLine("Entries Length   : " + this.entries.length);
 
-        var occupiedSlots = 0;
-        for (var i = 0; i < this.entries.length; i++) {
-            if (this.entries[i] !== null) {
-                occupiedSlots++;
-            }
-        }
+    //    var occupiedSlots = 0;
+    //    for (var i = 0; i < this.entries.length; i++) {
+    //        if (this.entries[i] !== null) {
+    //            occupiedSlots++;
+    //        }
+    //    }
         
-        standardOut.WriteLine("Occupied slots   : " + occupiedSlots);
-        standardOut.WriteLine("Avg Length/Slot  : " + (this.count / occupiedSlots));
-        standardOut.WriteLine("----------------------");
-    }
+    //    standardOut.WriteLine("Occupied slots   : " + occupiedSlots);
+    //    standardOut.WriteLine("Avg Length/Slot  : " + (this.count / occupiedSlots));
+    //    standardOut.WriteLine("----------------------");
+    //}
     
     private grow(): void {
         // this.dumpStats();

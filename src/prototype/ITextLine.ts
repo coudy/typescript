@@ -1,5 +1,3 @@
-///<reference path='References.ts' />
-
 /// <summary>
 /// Immutable representation of a line in an IText instance.
 /// </summary>

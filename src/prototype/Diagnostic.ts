@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+// ///<reference path='References.ts' />
 
 class Diagnostic {
     private _diagnosticCode: DiagnosticCode = 0;

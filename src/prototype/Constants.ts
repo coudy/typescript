@@ -1,5 +1,3 @@
-///<reference path='References.ts' />
-
 enum Constants {
     // 2^30-1
     Max31BitInteger = 1073741823,

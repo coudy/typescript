@@ -1,3 +1,4 @@
+///<reference path='Debug.ts' />
 ///<reference path='Errors.ts' />
 
 class ArrayUtilities {

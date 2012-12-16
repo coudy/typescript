@@ -1,4 +1,18 @@
-///<reference path='References.ts' />
+///<reference path='SyntaxRewriter.generated.ts' />
+
+///<reference path='ArrayUtilities.ts' />
+///<reference path='FormattingOptions.ts' />
+///<reference path='Indentation.ts' />
+///<reference path='ISyntaxTrivia.ts' />
+///<reference path='SeparatedSyntaxList.ts' />
+///<reference path='SyntaxDedenter.ts' />
+///<reference path='SyntaxIndenter.ts' />
+///<reference path='SyntaxInformationMap.ts' />
+///<reference path='SyntaxList.ts' />
+///<reference path='SyntaxNodeInvariantsChecker.ts' />
+///<reference path='SyntaxToken.ts' />
+///<reference path='SyntaxTrivia.ts' />
+///<reference path='SyntaxTriviaList.ts' />
 
 class Emitter extends SyntaxRewriter {
     private syntaxInformationMap: SyntaxInformationMap;
@@ -768,31 +782,160 @@ class Emitter extends SyntaxRewriter {
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: blockTrailingTrivia.toArray() }));
     }
 
+    private convertMemberAccessor(memberAccessor: MemberAccessorDeclarationSyntax): PropertyAssignmentSyntax {
+        var propertyName = memberAccessor.kind() === SyntaxKind.GetMemberAccessorDeclaration
+            ? "get" : "set";
+
+        var accessorColumn = Indentation.columnForStartOfToken(
+            memberAccessor.firstToken(), this.syntaxInformationMap, this.options);
+        var indentationTrivia = Indentation.indentationTrivia(accessorColumn, this.options);
+
+        var parameterList = <ParameterListSyntax>memberAccessor.parameterList().accept1(this);
+        if (!parameterList.hasTrailingTrivia()) {
+            parameterList = <ParameterListSyntax>parameterList.withTrailingTrivia(SyntaxTriviaList.space);
+        }
+
+        var block = memberAccessor.block();
+        block = <BlockSyntax>block.withTrailingTrivia(SyntaxTriviaList.empty);
+
+        return new SimplePropertyAssignmentSyntax(
+            SyntaxToken.createElastic({ leadingTrivia: [indentationTrivia], kind: SyntaxKind.IdentifierNameToken, text: propertyName }),
+            SyntaxToken.createElastic({ kind: SyntaxKind.ColonToken, trailingTrivia: this.spaceList }),
+            FunctionExpressionSyntax.create(
+                SyntaxToken.createElastic({ kind: SyntaxKind.FunctionKeyword }),
+                CallSignatureSyntax.create(parameterList),
+                block));
+    }
+
+    private convertMemberAccessorDeclaration(classDeclaration: ClassDeclarationSyntax,
+                                    memberAccessor: MemberAccessorDeclarationSyntax,
+                                    classElements: ClassElementSyntax[]): StatementSyntax {
+        if (memberAccessor.block() === null) {
+            return null;
+        }
+
+        var name = <string>memberAccessor.identifier().value();
+
+        // Find all the accessors with that name.
+        var accessors: MemberAccessorDeclarationSyntax[] = [memberAccessor];
+
+        for (var i = classElements.length - 1; i >= 0; i--) {
+            var element = classElements[i];
+            if (element.kind() === SyntaxKind.GetMemberAccessorDeclaration ||
+                element.kind() === SyntaxKind.SetMemberAccessorDeclaration) {
+
+                var otherAccessor = <MemberAccessorDeclarationSyntax>element;
+                if (otherAccessor.identifier().value() === name &&
+                    otherAccessor.block() !== null) {
+                    accessors.push(otherAccessor);
+                    classElements.splice(i, 1);
+                }
+            }
+        }
+
+        var receiver = new MemberAccessExpressionSyntax(
+            new IdentifierNameSyntax(SyntaxToken.createElastic({ 
+                leadingTrivia: memberAccessor.leadingTrivia().toArray(),
+                kind: SyntaxKind.IdentifierNameToken,
+                text: "Object" })),
+            SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
+            new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "defineProperty" })));
+
+        var arguments = [];
+
+        var classIdentifier = classDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
+                                                           .withTrailingTrivia(SyntaxTriviaList.empty);
+        arguments.push(new MemberAccessExpressionSyntax(
+            new IdentifierNameSyntax(classIdentifier.clone()),
+            SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
+            new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "prototype" }))));
+        arguments.push(SyntaxToken.createElastic({ kind: SyntaxKind.CommaToken, trailingTrivia: this.spaceList }));
+
+        arguments.push(new LiteralExpressionSyntax(
+            SyntaxKind.StringLiteralExpression,
+            SyntaxToken.createElastic({ kind: SyntaxKind.StringLiteral, text: '"' + memberAccessor.identifier().text() + '"' })));
+        arguments.push(SyntaxToken.createElastic({ kind: SyntaxKind.CommaToken, trailingTrivia: this.spaceList }));
+
+        var propertyAssignments = [];
+        for (var i = 0; i < accessors.length; i++) {
+            var converted = this.convertMemberAccessor(accessors[i]);
+            converted = <PropertyAssignmentSyntax>this.changeIndentation(
+                converted, /*changeFirstToken:*/ true, this.options.indentSpaces);
+            propertyAssignments.push(converted);
+            propertyAssignments.push(
+                SyntaxToken.createElastic({ kind: SyntaxKind.CommaToken, trailingTrivia: this.newLineList }));
+        }
+
+        var accessorColumn = Indentation.columnForStartOfToken(
+            memberAccessor.firstToken(), this.syntaxInformationMap, this.options);
+        var accessorTrivia = Indentation.indentationTrivia(accessorColumn, this.options);
+
+        var propertyColumn = accessorColumn + this.options.indentSpaces;
+        var propertyTrivia = Indentation.indentationTrivia(propertyColumn, this.options);
+
+        propertyAssignments.push(new SimplePropertyAssignmentSyntax(
+            SyntaxToken.createElastic({ leadingTrivia: [propertyTrivia], kind: SyntaxKind.IdentifierNameToken, text: "enumerable" }),
+            SyntaxToken.createElastic({ kind: SyntaxKind.ColonToken, trailingTrivia: this.spaceList }),
+            new LiteralExpressionSyntax(
+                SyntaxKind.BooleanLiteralExpression,
+                SyntaxToken.createElastic({ kind: SyntaxKind.TrueKeyword }))));
+        propertyAssignments.push(
+            SyntaxToken.createElastic({ kind: SyntaxKind.CommaToken, trailingTrivia: this.newLineList }));
+        
+        propertyAssignments.push(new SimplePropertyAssignmentSyntax(
+            SyntaxToken.createElastic({ leadingTrivia: [propertyTrivia], kind: SyntaxKind.IdentifierNameToken, text: "configurable" }),
+            SyntaxToken.createElastic({ kind: SyntaxKind.ColonToken, trailingTrivia: this.spaceList }),
+            new LiteralExpressionSyntax(
+                SyntaxKind.BooleanLiteralExpression,
+                SyntaxToken.createElastic({ kind: SyntaxKind.TrueKeyword, trailingTrivia: this.newLineList }))));
+
+        var objectLiteral = new ObjectLiteralExpressionSyntax(
+            SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: this.newLineList }),
+            SeparatedSyntaxList.create(propertyAssignments),
+            SyntaxToken.createElastic({ leadingTrivia: [accessorTrivia], kind: SyntaxKind.CloseBraceToken }));
+
+        arguments.push(objectLiteral);
+
+        var argumentList = new ArgumentListSyntax(
+            SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+            SeparatedSyntaxList.create(arguments),
+            SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }));
+
+        var invocationExpression = new InvocationExpressionSyntax(
+            receiver, argumentList);
+
+        var expressionStatement = new ExpressionStatementSyntax(
+            invocationExpression,
+            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
+
+        return expressionStatement;
+    }
+
     private convertClassElements(classDeclaration: ClassDeclarationSyntax): StatementSyntax[] {
         var result: StatementSyntax[] = [];
 
-        var classElements = classDeclaration.classElements();
-        for (var i = 0, n = classElements.count(); i < n; i++) {
-            var classElement = <ClassElementSyntax>classElements.syntaxNodeAt(i);
+        var classElements = <ClassElementSyntax[]>classDeclaration.classElements().toArray();
+        while (classElements.length > 0) {
+            var classElement = classElements.shift();
             if (classElement.kind() === SyntaxKind.ConstructorDeclaration) {
                 continue;
             }
 
+            var converted: StatementSyntax = null;
             if (classElement.kind() === SyntaxKind.MemberFunctionDeclaration) {
-                var converted = this.convertMemberFunctionDeclaration(classDeclaration, <MemberFunctionDeclarationSyntax>classElement)
-                if (converted !== null) {
-                    result.push(converted);
-                }
+                var converted = this.convertMemberFunctionDeclaration(classDeclaration, <MemberFunctionDeclarationSyntax>classElement);
             }
             else if (classElement.kind() === SyntaxKind.MemberVariableDeclaration) {
                 var converted = this.generatePropertyAssignment(classDeclaration, /*static:*/ true, <MemberVariableDeclarationSyntax>classElement);
-                if (converted !== null) {
-                    result.push(converted);
-                }
             }
             else if (classElement.kind() === SyntaxKind.GetMemberAccessorDeclaration ||
                      classElement.kind() === SyntaxKind.SetMemberAccessorDeclaration) {
                 // TODO: handle properties.
+                var converted = this.convertMemberAccessorDeclaration(classDeclaration, <MemberAccessorDeclarationSyntax>classElement, classElements);
+            }
+
+            if (converted !== null) {
+                result.push(converted);
             }
         }
 

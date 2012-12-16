@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='Contract.ts' />
 
 class TextSpan {
     private _start: number = 0;

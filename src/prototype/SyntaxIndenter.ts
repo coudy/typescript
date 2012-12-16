@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='SyntaxRewriter.generated.ts' />
 
 class SyntaxIndenter extends SyntaxRewriter {
     private lastTriviaWasNewLine: bool;

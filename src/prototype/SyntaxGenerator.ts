@@ -1682,7 +1682,10 @@ function generateNode(definition: ITypeDefinition): string {
 }
 
 function generateNodes(): string {
-    var result = "///<reference path='References.ts' />";
+    var result = "///<reference path='SyntaxNode.ts' />\r\n";
+    result += "///<reference path='ISyntaxList.ts' />\r\n"
+    result += "///<reference path='ISeparatedSyntaxList.ts' />"
+
 
     for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
@@ -1698,7 +1701,7 @@ function generateRewriter(): string {
     var result = "";
 
     result +=
-"///<reference path='References.ts' />\r\n"+
+"///<reference path='ISyntaxVisitor.ts' />\r\n"+
 "\r\n" +
 "class SyntaxRewriter implements ISyntaxVisitor1 {\r\n" +
 "    public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n" +
@@ -2065,7 +2068,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
 }
 
 function generateTokens(): string {
-    var result = "///<reference path='References.ts' />\r\n" +
+    var result = "" +  // "///<reference path='References.ts' />\r\n" +
         "\r\n" +
         "module SyntaxToken {\r\n";
 
@@ -2199,7 +2202,7 @@ function generateWalker(): string {
     var result = "";
 
     result +=
-"///<reference path='References.ts' />\r\n"+
+"///<reference path='ISyntaxVisitor.ts' />\r\n"+
 "\r\n" +
 "class SyntaxWalker implements ISyntaxVisitor {\r\n" +
 "    public visitToken(token: ISyntaxToken): void {\r\n" +
@@ -2329,7 +2332,7 @@ function generateKeywordCondition(keywords: { text: string; kind: SyntaxKind; }[
 }
 
 function generateScannerUtilities(): string {
-    var result = "///<reference path='References.ts' />\r\n" +
+    var result = "" + //;  // "// ///<reference path='References.ts' />\r\n" +
         "\r\n" +
         "class ScannerUtilities {\r\n";
 

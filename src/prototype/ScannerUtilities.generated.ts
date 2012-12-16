@@ -1,5 +1,4 @@
-﻿///<reference path='References.ts' />
-
+﻿
 class ScannerUtilities {
     public static identifierKind(array: number[], startIndex: number, length: number): SyntaxKind {
         switch (length) {

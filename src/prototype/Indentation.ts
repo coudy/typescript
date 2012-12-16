@@ -1,4 +1,7 @@
-///<reference path='References.ts' />
+///<reference path='CharacterCodes.ts' />
+///<reference path='CharacterInfo.ts' />
+///<reference path='MathPrototype.ts' />
+///<reference path='StringUtilities.ts' />
 
 module Indentation {
     export function columnForEndOfToken(

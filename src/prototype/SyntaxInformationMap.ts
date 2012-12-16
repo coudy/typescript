@@ -1,4 +1,6 @@
-///<reference path='References.ts' />
+///<reference path='SyntaxWalker.generated.ts' />
+
+///<reference path='HashTable.ts' />
 
 interface ITokenInformation {
     fullStart: number;

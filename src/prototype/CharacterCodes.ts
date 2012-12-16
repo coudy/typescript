@@ -1,5 +1,3 @@
-///<reference path='References.ts' />
-
 enum CharacterCodes {
     nullCharacter = 0,
     maxAsciiCharacter = 127,

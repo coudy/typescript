@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='SyntaxNodes.generated.ts' />
 
 interface ISyntaxVisitor {
     visitSourceUnit(node: SourceUnitSyntax): void;

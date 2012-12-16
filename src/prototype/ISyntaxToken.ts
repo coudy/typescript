@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='ISyntaxTriviaList.ts' />
 
 interface ISyntaxToken extends ISyntaxElement {
     // Same as syntaxKind, just exposed through a property for perf.

@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+// ///<reference path='References.ts' />
 
 module SyntaxTriviaList {
     function collectTextElements(elements: string[], list: ISyntaxTriviaList): void {

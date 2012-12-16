@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+// ///<reference path='References.ts' />
 
 module SyntaxTrivia {
     class SimpleSyntaxTrivia implements ISyntaxTrivia {

@@ -1,3 +1,12 @@
+var Debug = (function () {
+    function Debug() { }
+    Debug.assert = function assert(expression) {
+        if(!expression) {
+            throw new Error("Debug Failure. False expression.");
+        }
+    }
+    return Debug;
+})();
 var Errors = (function () {
     function Errors() { }
     Errors.argument = function argument(argument, message) {
@@ -433,15 +442,6 @@ var StringUtilities = (function () {
         return Array(count + 1).join(value);
     }
     return StringUtilities;
-})();
-var Debug = (function () {
-    function Debug() { }
-    Debug.assert = function assert(expression) {
-        if(!expression) {
-            throw new Error("Debug Failure. False expression.");
-        }
-    }
-    return Debug;
 })();
 var SyntaxFacts = (function () {
     function SyntaxFacts() { }
@@ -3857,7 +3857,9 @@ function generateNode(definition) {
     return result;
 }
 function generateNodes() {
-    var result = "///<reference path='References.ts' />";
+    var result = "///<reference path='SyntaxNode.ts' />\r\n";
+    result += "///<reference path='ISyntaxList.ts' />\r\n";
+    result += "///<reference path='ISeparatedSyntaxList.ts' />";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         result += "\r\n\r\n";
@@ -3867,7 +3869,7 @@ function generateNodes() {
 }
 function generateRewriter() {
     var result = "";
-    result += "///<reference path='References.ts' />\r\n" + "\r\n" + "class SyntaxRewriter implements ISyntaxVisitor1 {\r\n" + "    public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n" + "        return token;\r\n" + "    }\r\n" + "\r\n" + "    public visitNode(node: SyntaxNode): SyntaxNode {\r\n" + "        return node === null ? null : node.accept1(this);\r\n" + "    }\r\n" + "\r\n" + "    public visitList(list: ISyntaxList): ISyntaxList {\r\n" + "        var newItems: SyntaxNode[] = null;\r\n" + "\r\n" + "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" + "            var item = list.syntaxNodeAt(i);\r\n" + "            var newItem = <SyntaxNode>item.accept1(this);\r\n" + "\r\n" + "            if (item !== newItem && newItems === null) {\r\n" + "                newItems = [];\r\n" + "                for (var j = 0; j < i; j++) {\r\n" + "                    newItems.push(list.syntaxNodeAt(j));\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            if (newItems) {\r\n" + "                newItems.push(newItem);\r\n" + "            }\r\n" + "        }\r\n" + "\r\n" + "        Debug.assert(newItems === null || newItems.length === list.count());\r\n" + "        return newItems === null ? list : SyntaxList.create(newItems);\r\n" + "    }\r\n" + "\r\n" + "    public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n" + "        var newItems: any[] = null;\r\n" + "\r\n" + "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" + "            var item = list.itemAt(i);\r\n" + "            var newItem = item.isToken() ? <ISyntaxElement>this.visitToken(<ISyntaxToken>item) : this.visitNode(<SyntaxNode>item);\r\n" + "\r\n" + "            if (item !== newItem && newItems === null) {\r\n" + "                newItems = [];\r\n" + "                for (var j = 0; j < i; j++) {\r\n" + "                    newItems.push(list.itemAt(j));\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            if (newItems) {\r\n" + "                newItems.push(newItem);\r\n" + "            }\r\n" + "        }\r\n" + "\r\n" + "        Debug.assert(newItems === null || newItems.length === list.count());\r\n" + "        return newItems === null ? list : SeparatedSyntaxList.create(newItems);\r\n" + "    }\r\n";
+    result += "///<reference path='ISyntaxVisitor.ts' />\r\n" + "\r\n" + "class SyntaxRewriter implements ISyntaxVisitor1 {\r\n" + "    public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n" + "        return token;\r\n" + "    }\r\n" + "\r\n" + "    public visitNode(node: SyntaxNode): SyntaxNode {\r\n" + "        return node === null ? null : node.accept1(this);\r\n" + "    }\r\n" + "\r\n" + "    public visitList(list: ISyntaxList): ISyntaxList {\r\n" + "        var newItems: SyntaxNode[] = null;\r\n" + "\r\n" + "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" + "            var item = list.syntaxNodeAt(i);\r\n" + "            var newItem = <SyntaxNode>item.accept1(this);\r\n" + "\r\n" + "            if (item !== newItem && newItems === null) {\r\n" + "                newItems = [];\r\n" + "                for (var j = 0; j < i; j++) {\r\n" + "                    newItems.push(list.syntaxNodeAt(j));\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            if (newItems) {\r\n" + "                newItems.push(newItem);\r\n" + "            }\r\n" + "        }\r\n" + "\r\n" + "        Debug.assert(newItems === null || newItems.length === list.count());\r\n" + "        return newItems === null ? list : SyntaxList.create(newItems);\r\n" + "    }\r\n" + "\r\n" + "    public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n" + "        var newItems: any[] = null;\r\n" + "\r\n" + "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" + "            var item = list.itemAt(i);\r\n" + "            var newItem = item.isToken() ? <ISyntaxElement>this.visitToken(<ISyntaxToken>item) : this.visitNode(<SyntaxNode>item);\r\n" + "\r\n" + "            if (item !== newItem && newItems === null) {\r\n" + "                newItems = [];\r\n" + "                for (var j = 0; j < i; j++) {\r\n" + "                    newItems.push(list.itemAt(j));\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            if (newItems) {\r\n" + "                newItems.push(newItem);\r\n" + "            }\r\n" + "        }\r\n" + "\r\n" + "        Debug.assert(newItems === null || newItems.length === list.count());\r\n" + "        return newItems === null ? list : SeparatedSyntaxList.create(newItems);\r\n" + "    }\r\n";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         if(definition.isAbstract) {
@@ -4090,7 +4092,7 @@ function generateToken(isPunctuation, isKeyword, leading, trailing) {
     return result;
 }
 function generateTokens() {
-    var result = "///<reference path='References.ts' />\r\n" + "\r\n" + "module SyntaxToken {\r\n";
+    var result = "" + "\r\n" + "module SyntaxToken {\r\n";
     result += generateToken(false, false, false, false);
     result += "\r\n";
     result += generateToken(false, false, true, false);
@@ -4122,7 +4124,7 @@ function generateTokens() {
 }
 function generateWalker() {
     var result = "";
-    result += "///<reference path='References.ts' />\r\n" + "\r\n" + "class SyntaxWalker implements ISyntaxVisitor {\r\n" + "    public visitToken(token: ISyntaxToken): void {\r\n" + "    }\r\n" + "\r\n" + "    private visitOptionalToken(token: ISyntaxToken): void {\r\n" + "        if (token === null) {\r\n" + "            return;\r\n" + "        }\r\n" + "\r\n" + "        this.visitToken(token);\r\n" + "    }\r\n" + "\r\n" + "    public visitOptionalNode(node: SyntaxNode): void {\r\n" + "        if (node === null) {\r\n" + "            return;\r\n" + "        }\r\n" + "\r\n" + "        node.accept1(this);\r\n" + "    }\r\n" + "\r\n" + "    public visitList(list: ISyntaxList): void {\r\n" + "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" + "           list.syntaxNodeAt(i).accept(this);\r\n" + "        }\r\n" + "    }\r\n" + "\r\n" + "    public visitSeparatedList(list: ISeparatedSyntaxList): void {\r\n" + "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" + "            var item = list.itemAt(i);\r\n" + "            if (item.isToken()) {\r\n" + "                this.visitToken(<ISyntaxToken>item);\r\n" + "            }\r\n" + "            else {\r\n" + "                (<SyntaxNode>item).accept(this);\r\n" + "            }\r\n" + "        }\r\n" + "    }\r\n";
+    result += "///<reference path='ISyntaxVisitor.ts' />\r\n" + "\r\n" + "class SyntaxWalker implements ISyntaxVisitor {\r\n" + "    public visitToken(token: ISyntaxToken): void {\r\n" + "    }\r\n" + "\r\n" + "    private visitOptionalToken(token: ISyntaxToken): void {\r\n" + "        if (token === null) {\r\n" + "            return;\r\n" + "        }\r\n" + "\r\n" + "        this.visitToken(token);\r\n" + "    }\r\n" + "\r\n" + "    public visitOptionalNode(node: SyntaxNode): void {\r\n" + "        if (node === null) {\r\n" + "            return;\r\n" + "        }\r\n" + "\r\n" + "        node.accept1(this);\r\n" + "    }\r\n" + "\r\n" + "    public visitList(list: ISyntaxList): void {\r\n" + "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" + "           list.syntaxNodeAt(i).accept(this);\r\n" + "        }\r\n" + "    }\r\n" + "\r\n" + "    public visitSeparatedList(list: ISeparatedSyntaxList): void {\r\n" + "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" + "            var item = list.itemAt(i);\r\n" + "            if (item.isToken()) {\r\n" + "                this.visitToken(<ISyntaxToken>item);\r\n" + "            }\r\n" + "            else {\r\n" + "                (<SyntaxNode>item).accept(this);\r\n" + "            }\r\n" + "        }\r\n" + "    }\r\n";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         if(definition.isAbstract) {
@@ -4201,7 +4203,7 @@ function generateKeywordCondition(keywords, currentCharacter, indent) {
     return result;
 }
 function generateScannerUtilities() {
-    var result = "///<reference path='References.ts' />\r\n" + "\r\n" + "class ScannerUtilities {\r\n";
+    var result = "" + "\r\n" + "class ScannerUtilities {\r\n";
     var keywords = [];
     for(var i = SyntaxKind.FirstKeyword; i <= SyntaxKind.LastKeyword; i++) {
         keywords.push({

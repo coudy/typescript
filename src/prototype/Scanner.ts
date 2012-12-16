@@ -1,4 +1,15 @@
-﻿///<reference path='References.ts' />
+﻿///<reference path='SlidingWindow.ts' />
+
+///<reference path='Constants.ts' />
+///<reference path='DiagnosticCode.ts' />
+///<reference path='LanguageVersion.ts' />
+///<reference path='IText.ts' />
+///<reference path='..\harness\external\json2.ts' />
+///<reference path='ScannerUtilities.generated.ts' />
+///<reference path='StringTable.ts' />
+///<reference path='SyntaxDiagnostic.ts' />
+///<reference path='SyntaxToken.generated.ts' />
+///<reference path='Unicode.ts' />
 
 class Scanner extends SlidingWindow {
     private text: IText = null;
