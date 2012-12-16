@@ -391,8 +391,7 @@ class Emitter extends SyntaxRewriter {
     }
 
     private generatePropertyAssignmentStatement(parameter: ParameterSyntax): ExpressionStatementSyntax {
-        var identifier = parameter.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
-                                               .withTrailingTrivia(SyntaxTriviaList.empty);
+        var identifier = this.withNoTrivia(parameter.identifier());
 
         return new ExpressionStatementSyntax(
             new BinaryExpressionSyntax(
@@ -675,12 +674,8 @@ class Emitter extends SyntaxRewriter {
             return null;
         }
 
-        var classIdentifier = classDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
-                                                           .withTrailingTrivia(SyntaxTriviaList.empty);
-        var functionIdentifier = functionDeclaration.functionSignature()
-                                                    .identifier()
-                                                    .withLeadingTrivia(SyntaxTriviaList.empty)
-                                                    .withTrailingTrivia(SyntaxTriviaList.empty);
+        var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
+        var functionIdentifier = this.withNoTrivia(functionDeclaration.functionSignature().identifier());
 
         var receiver: ExpressionSyntax = new IdentifierNameSyntax(
             classIdentifier.withLeadingTrivia(functionDeclaration.leadingTrivia()));
@@ -802,8 +797,7 @@ class Emitter extends SyntaxRewriter {
 
         var arguments = [];
 
-        var classIdentifier = classDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
-                                                           .withTrailingTrivia(SyntaxTriviaList.empty);
+        var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
         arguments.push(new MemberAccessExpressionSyntax(
             new IdentifierNameSyntax(classIdentifier.clone()),
             SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
@@ -901,8 +895,7 @@ class Emitter extends SyntaxRewriter {
     }
 
     private visitClassDeclaration(node: ClassDeclarationSyntax): VariableStatementSyntax {
-        var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
-                                          .withTrailingTrivia(SyntaxTriviaList.empty);
+        var identifier = this.withNoTrivia(node.identifier());
         
         var statements: StatementSyntax[] = [];
 
@@ -1065,11 +1058,9 @@ class Emitter extends SyntaxRewriter {
         }
 
         // Add one to the previous value.
-        var enumIdentifier = enumDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
-                                                     .withTrailingTrivia(SyntaxTriviaList.empty);
+        var enumIdentifier = this.withNoTrivia(enumDeclaration.identifier());
         var previousVariable = <VariableDeclaratorSyntax>enumDeclaration.variableDeclarators().syntaxNodeAt(index - 1);
-        var variableIdentifier = previousVariable.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
-                                                     .withTrailingTrivia(SyntaxTriviaList.empty);
+        var variableIdentifier = this.withNoTrivia(previousVariable.identifier());
 
         var receiver = new MemberAccessExpressionSyntax(
             new IdentifierNameSyntax(enumIdentifier.clone()),
@@ -1087,8 +1078,7 @@ class Emitter extends SyntaxRewriter {
 
     private addEnumMapAssignments(node: EnumDeclarationSyntax, statements: StatementSyntax[]): void {
         if (node.variableDeclarators().syntaxNodeCount() > 0) {
-            var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
-                                          .withTrailingTrivia(SyntaxTriviaList.empty);
+            var identifier = this.withNoTrivia(node.identifier());
 
             var indentationColumn = this.columnForStartOfToken(node.firstToken());
 
@@ -1116,8 +1106,7 @@ class Emitter extends SyntaxRewriter {
 
             for (var i = 0, n = node.variableDeclarators().syntaxNodeCount(); i < n; i++) {
                 var variableDeclarator = <VariableDeclaratorSyntax>node.variableDeclarators().syntaxNodeAt(i);
-                var variableIdentifier = variableDeclarator.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
-                                                                        .withTrailingTrivia(SyntaxTriviaList.empty);
+                var variableIdentifier = this.withNoTrivia(variableDeclarator.identifier());
 
                 var receiver: ExpressionSyntax = new MemberAccessExpressionSyntax(
                     new IdentifierNameSyntax(identifier.withLeadingTrivia(SyntaxTriviaList.create([mapIndentationTrivia]))),
@@ -1151,8 +1140,7 @@ class Emitter extends SyntaxRewriter {
     }
 
     private generateEnumFunctionExpression(node: EnumDeclarationSyntax): FunctionExpressionSyntax {
-        var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
-                                          .withTrailingTrivia(SyntaxTriviaList.empty);
+        var identifier = this.withNoTrivia(node.identifier());
         
         var indentationColumn = this.columnForStartOfToken(node.firstToken());
         var indentationTrivia = this.indentationTrivia(indentationColumn);
@@ -1162,8 +1150,7 @@ class Emitter extends SyntaxRewriter {
         var assignDefaultValues = true;
         for (var i = 0, n = node.variableDeclarators().syntaxNodeCount(); i < n; i++) {
             var variableDeclarator = <VariableDeclaratorSyntax>node.variableDeclarators().syntaxNodeAt(i);
-            var variableIdentifier = variableDeclarator.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
-                                                                    .withTrailingTrivia(SyntaxTriviaList.empty);
+            var variableIdentifier = this.withNoTrivia(variableDeclarator.identifier());
             assignDefaultValues = assignDefaultValues && variableDeclarator.equalsValueClause() === null;
 
             var receiver: ExpressionSyntax = new MemberAccessExpressionSyntax(
@@ -1207,8 +1194,7 @@ class Emitter extends SyntaxRewriter {
     private visitEnumDeclaration(node: EnumDeclarationSyntax): StatementSyntax[] {
         var result: StatementSyntax[] = [];
 
-        var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
-                                          .withTrailingTrivia(SyntaxTriviaList.empty);
+        var identifier = this.withNoTrivia(node.identifier());
 
         var variableStatement = new VariableStatementSyntax(null, null,
             new VariableDeclarationSyntax(

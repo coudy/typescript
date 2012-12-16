@@ -20035,7 +20035,7 @@ var Emitter = (function (_super) {
         });
     }
     Emitter.prototype.generatePropertyAssignmentStatement = function (parameter) {
-        var identifier = parameter.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var identifier = this.withNoTrivia(parameter.identifier());
         return new ExpressionStatementSyntax(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new MemberAccessExpressionSyntax(new ThisExpressionSyntax(SyntaxToken.createElastic({
             kind: 33 /* ThisKeyword */ 
         })), SyntaxToken.createElastic({
@@ -20274,8 +20274,8 @@ var Emitter = (function (_super) {
         if(functionDeclaration.block() === null) {
             return null;
         }
-        var classIdentifier = classDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
-        var functionIdentifier = functionDeclaration.functionSignature().identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
+        var functionIdentifier = this.withNoTrivia(functionDeclaration.functionSignature().identifier());
         var receiver = new IdentifierNameSyntax(classIdentifier.withLeadingTrivia(functionDeclaration.leadingTrivia()));
         receiver = functionDeclaration.staticKeyword() !== null ? receiver : new MemberAccessExpressionSyntax(receiver, SyntaxToken.createElastic({
             kind: 73 /* DotToken */ 
@@ -20369,7 +20369,7 @@ var Emitter = (function (_super) {
             text: "defineProperty"
         })));
         var arguments = [];
-        var classIdentifier = classDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
         arguments.push(new MemberAccessExpressionSyntax(new IdentifierNameSyntax(classIdentifier.clone()), SyntaxToken.createElastic({
             kind: 73 /* DotToken */ 
         }), new IdentifierNameSyntax(SyntaxToken.createElastic({
@@ -20480,7 +20480,7 @@ var Emitter = (function (_super) {
         return result;
     };
     Emitter.prototype.visitClassDeclaration = function (node) {
-        var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var identifier = this.withNoTrivia(node.identifier());
         var statements = [];
         var statementIndent = this.options.indentSpaces + this.columnForStartOfToken(node.firstToken());
         if(node.extendsClause() !== null) {
@@ -20614,9 +20614,9 @@ var Emitter = (function (_super) {
                 text: index.toString()
             }));
         }
-        var enumIdentifier = enumDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var enumIdentifier = this.withNoTrivia(enumDeclaration.identifier());
         var previousVariable = enumDeclaration.variableDeclarators().syntaxNodeAt(index - 1);
-        var variableIdentifier = previousVariable.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var variableIdentifier = this.withNoTrivia(previousVariable.identifier());
         var receiver = new MemberAccessExpressionSyntax(new IdentifierNameSyntax(enumIdentifier.clone()), SyntaxToken.createElastic({
             kind: 73 /* DotToken */ 
         }), new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
@@ -20630,7 +20630,7 @@ var Emitter = (function (_super) {
     };
     Emitter.prototype.addEnumMapAssignments = function (node, statements) {
         if(node.variableDeclarators().syntaxNodeCount() > 0) {
-            var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+            var identifier = this.withNoTrivia(node.identifier());
             var indentationColumn = this.columnForStartOfToken(node.firstToken());
             var mapIndentationColumn = indentationColumn + this.options.indentSpaces;
             var mapIndentationTrivia = this.indentationTrivia(mapIndentationColumn);
@@ -20658,7 +20658,7 @@ var Emitter = (function (_super) {
             statements.push(expressionStatement);
             for(var i = 0, n = node.variableDeclarators().syntaxNodeCount(); i < n; i++) {
                 var variableDeclarator = node.variableDeclarators().syntaxNodeAt(i);
-                var variableIdentifier = variableDeclarator.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+                var variableIdentifier = this.withNoTrivia(variableDeclarator.identifier());
                 var receiver = new MemberAccessExpressionSyntax(new IdentifierNameSyntax(identifier.withLeadingTrivia(SyntaxTriviaList.create([
                     mapIndentationTrivia
                 ]))), SyntaxToken.createElastic({
@@ -20690,14 +20690,14 @@ var Emitter = (function (_super) {
         }
     };
     Emitter.prototype.generateEnumFunctionExpression = function (node) {
-        var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var identifier = this.withNoTrivia(node.identifier());
         var indentationColumn = this.columnForStartOfToken(node.firstToken());
         var indentationTrivia = this.indentationTrivia(indentationColumn);
         var statements = [];
         var assignDefaultValues = true;
         for(var i = 0, n = node.variableDeclarators().syntaxNodeCount(); i < n; i++) {
             var variableDeclarator = node.variableDeclarators().syntaxNodeAt(i);
-            var variableIdentifier = variableDeclarator.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+            var variableIdentifier = this.withNoTrivia(variableDeclarator.identifier());
             assignDefaultValues = assignDefaultValues && variableDeclarator.equalsValueClause() === null;
             var receiver = new MemberAccessExpressionSyntax(new IdentifierNameSyntax(identifier.withLeadingTrivia(variableDeclarator.leadingTrivia()).clone()), SyntaxToken.createElastic({
                 kind: 73 /* DotToken */ 
@@ -20736,7 +20736,7 @@ var Emitter = (function (_super) {
     };
     Emitter.prototype.visitEnumDeclaration = function (node) {
         var result = [];
-        var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var identifier = this.withNoTrivia(node.identifier());
         var variableStatement = new VariableStatementSyntax(null, null, new VariableDeclarationSyntax(SyntaxToken.createElastic({
             leadingTrivia: node.leadingTrivia().toArray(),
             kind: 38 /* VarKeyword */ ,
