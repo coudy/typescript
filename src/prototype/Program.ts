@@ -7,7 +7,7 @@
 ///<reference path='TextUtilities.ts' />
 ///<reference path='Top1000.ts' />
 
-var stringTable = new StringTable();
+var stringTable = Collections.createStringTable();
 
 var specificFile = 
     // "SuperExpression4";
@@ -199,7 +199,7 @@ class Program {
         start = new Date().getTime();
 
         var text = new StringText(contents);
-        var scanner = Scanner.create(text, languageVersion);
+        var scanner = new Scanner(text, languageVersion, stringTable);
 
         var tokens: ISyntaxToken[] = [];
         var textArray: string[] = [];
@@ -232,7 +232,7 @@ class Program {
         start = new Date().getTime();
 
         var text = new StringText(contents);
-        var scanner = Scanner.create(text, languageVersion);
+        var scanner = new Scanner(text, languageVersion, stringTable);
 
         var tokens: ISyntaxToken[] = [];
         var textArray: string[] = [];

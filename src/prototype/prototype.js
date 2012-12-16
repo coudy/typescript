@@ -12670,7 +12670,8 @@ var Collections;
             }
         };
         return HashTable;
-    })();    
+    })();
+    Collections.HashTable = HashTable;    
     function createHashTable(capacity, hash, equals) {
         if (typeof capacity === "undefined") { capacity = Collections.DefaultHashTableCapacity; }
         if (typeof hash === "undefined") { hash = null; }
@@ -13641,81 +13642,90 @@ var StringUtilities = (function () {
     }
     return StringUtilities;
 })();
-var StringTableEntry = (function () {
-    function StringTableEntry(Text, HashCode, Next) {
-        this.Text = Text;
-        this.HashCode = HashCode;
-        this.Next = Next;
-    }
-    return StringTableEntry;
-})();
-var StringTable = (function () {
-    function StringTable(capacity) {
-        if (typeof capacity === "undefined") { capacity = 256; }
-        this.entries = [];
-        this.count = 0;
-        var size = Hash.getPrime(capacity);
-        this.entries = ArrayUtilities.createArray(size);
-    }
-    StringTable.prototype.addCharArray = function (key, start, len) {
-        var hashCode = Hash.computeSimple31BitCharArrayHashCode(key, start, len) & 2147483647;
-        Debug.assert(hashCode > 0);
-        var entry = this.findCharArrayEntry(key, start, len, hashCode);
-        if(entry !== null) {
-            return entry.Text;
+var Collections;
+(function (Collections) {
+    Collections.DefaultStringTableCapacity = 256;
+    var StringTableEntry = (function () {
+        function StringTableEntry(Text, HashCode, Next) {
+            this.Text = Text;
+            this.HashCode = HashCode;
+            this.Next = Next;
         }
-        var slice = key.slice(start, start + len);
-        return this.addEntry(StringUtilities.fromCharCodeArray(slice), hashCode);
-    };
-    StringTable.prototype.findCharArrayEntry = function (key, start, len, hashCode) {
-        for(var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
-            if(e.HashCode === hashCode && StringTable.textCharArrayEquals(e.Text, key, start, len)) {
-                return e;
+        return StringTableEntry;
+    })();    
+    var StringTable = (function () {
+        function StringTable(capacity) {
+            this.entries = [];
+            this.count = 0;
+            var size = Hash.getPrime(capacity);
+            this.entries = ArrayUtilities.createArray(size);
+        }
+        StringTable.prototype.addCharArray = function (key, start, len) {
+            var hashCode = Hash.computeSimple31BitCharArrayHashCode(key, start, len) & 2147483647;
+            Debug.assert(hashCode > 0);
+            var entry = this.findCharArrayEntry(key, start, len, hashCode);
+            if(entry !== null) {
+                return entry.Text;
             }
-        }
-        return null;
-    };
-    StringTable.prototype.addEntry = function (text, hashCode) {
-        var index = hashCode % this.entries.length;
-        var e = new StringTableEntry(text, hashCode, this.entries[index]);
-        this.entries[index] = e;
-        if(this.count === this.entries.length) {
-            this.grow();
-        }
-        this.count++;
-        return e.Text;
-    };
-    StringTable.prototype.grow = function () {
-        var newSize = Hash.expandPrime(this.entries.length);
-        var oldEntries = this.entries;
-        var newEntries = ArrayUtilities.createArray(newSize);
-        this.entries = newEntries;
-        for(var i = 0; i < oldEntries.length; i++) {
-            var e = oldEntries[i];
-            while(e !== null) {
-                var newIndex = e.HashCode % newSize;
-                var tmp = e.Next;
-                e.Next = newEntries[newIndex];
-                newEntries[newIndex] = e;
-                e = tmp;
+            var slice = key.slice(start, start + len);
+            return this.addEntry(StringUtilities.fromCharCodeArray(slice), hashCode);
+        };
+        StringTable.prototype.findCharArrayEntry = function (key, start, len, hashCode) {
+            for(var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
+                if(e.HashCode === hashCode && StringTable.textCharArrayEquals(e.Text, key, start, len)) {
+                    return e;
+                }
             }
-        }
-    };
-    StringTable.textCharArrayEquals = function textCharArrayEquals(text, array, start, length) {
-        if(text.length !== length) {
-            return false;
-        }
-        var s = start;
-        for(var i = 0; i < length; i++) {
-            if(text.charCodeAt(i) !== array[s]) {
+            return null;
+        };
+        StringTable.prototype.addEntry = function (text, hashCode) {
+            var index = hashCode % this.entries.length;
+            var e = new StringTableEntry(text, hashCode, this.entries[index]);
+            this.entries[index] = e;
+            if(this.count === this.entries.length) {
+                this.grow();
+            }
+            this.count++;
+            return e.Text;
+        };
+        StringTable.prototype.grow = function () {
+            var newSize = Hash.expandPrime(this.entries.length);
+            var oldEntries = this.entries;
+            var newEntries = ArrayUtilities.createArray(newSize);
+            this.entries = newEntries;
+            for(var i = 0; i < oldEntries.length; i++) {
+                var e = oldEntries[i];
+                while(e !== null) {
+                    var newIndex = e.HashCode % newSize;
+                    var tmp = e.Next;
+                    e.Next = newEntries[newIndex];
+                    newEntries[newIndex] = e;
+                    e = tmp;
+                }
+            }
+        };
+        StringTable.textCharArrayEquals = function textCharArrayEquals(text, array, start, length) {
+            if(text.length !== length) {
                 return false;
             }
-            s++;
+            var s = start;
+            for(var i = 0; i < length; i++) {
+                if(text.charCodeAt(i) !== array[s]) {
+                    return false;
+                }
+                s++;
+            }
+            return true;
         }
-        return true;
+        return StringTable;
+    })();
+    Collections.StringTable = StringTable;    
+    function createStringTable(capacity) {
+        if (typeof capacity === "undefined") { capacity = Collections.DefaultStringTableCapacity; }
+        return new StringTable(capacity);
     }
-    return StringTable;
-})();
+    Collections.createStringTable = createStringTable;
+})(Collections || (Collections = {}));
 var DiagnosticCode;
 (function (DiagnosticCode) {
     DiagnosticCode._map = [];
@@ -17565,9 +17575,6 @@ var Scanner = (function (_super) {
                 Scanner.isKeywordStartCharacter[keyword.charCodeAt(0)] = true;
             }
         }
-    }
-    Scanner.create = function create(text, languageVersion) {
-        return new Scanner(text, languageVersion, new StringTable());
     }
     Scanner.prototype.fetchMoreItems = function (argument, sourceIndex, window, destinationIndex, spaceAvailable) {
         var charactersRemaining = this.text.length() - sourceIndex;
@@ -25546,7 +25553,7 @@ var expectedTop1000Failures = {
     "JSFile600\\xstreetsl_com\\mootools_1_2_3_production.js": true,
     "JSFile800\\fedex_com\\InstantInvite3.js": true
 };
-var stringTable = new StringTable();
+var stringTable = Collections.createStringTable();
 var specificFile = undefined;
 var Program = (function () {
     function Program() { }
@@ -25685,7 +25692,7 @@ var Program = (function () {
         var start, end;
         start = new Date().getTime();
         var text = new StringText(contents);
-        var scanner = Scanner.create(text, languageVersion);
+        var scanner = new Scanner(text, languageVersion, stringTable);
         var tokens = [];
         var textArray = [];
         var diagnostics = [];
@@ -25708,7 +25715,7 @@ var Program = (function () {
         var start, end;
         start = new Date().getTime();
         var text = new StringText(contents);
-        var scanner = Scanner.create(text, languageVersion);
+        var scanner = new Scanner(text, languageVersion, stringTable);
         var tokens = [];
         var textArray = [];
         var diagnostics = [];

@@ -4,11 +4,6 @@
 module Collections {
     export var DefaultHashTableCapacity = 256;
 
-    export interface IHashTable {
-        add(key: any, value: any): void;
-        get (key: any): any;
-    }
-
     class HashTableEntry {
         constructor(public Key: any,
                     public Value: any,
@@ -17,7 +12,7 @@ module Collections {
         }
     }
 
-    class HashTable implements IHashTable {
+    export class HashTable {
         private entries: HashTableEntry[] = [];
         private count: number = 0;
 
@@ -159,7 +154,7 @@ module Collections {
 
     export function createHashTable(capacity: number = DefaultHashTableCapacity,
                            hash: (k: any) => number = null,
-                           equals: (k1: any, k2: any) => bool = null): IHashTable {
+                           equals: (k1: any, k2: any) => bool = null): HashTable {
         return new HashTable(capacity, hash, equals);
     }
 }

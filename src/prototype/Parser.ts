@@ -302,7 +302,7 @@ module Parser {
 
         constructor(text: IText,
                     languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
-                    stringTable: StringTable = null,
+                    stringTable: Collections.StringTable = null,
                     oldTree?: SyntaxTree = null,
                     changes?: TextChangeRange[] = null,
                     options?: ParseOptions = null) {
@@ -3930,7 +3930,7 @@ module Parser {
 
     export function parse(text: IText,
                           languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
-                          stringTable: StringTable = null): SyntaxTree {
+                          stringTable: Collections.StringTable = null): SyntaxTree {
         return new ParserImpl(text, languageVersion, stringTable).parseSyntaxTree();
     }
 }

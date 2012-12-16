@@ -19,7 +19,7 @@
 
 class Scanner extends SlidingWindow {
     private text: IText = null;
-    private stringTable: StringTable;
+    private stringTable: Collections.StringTable;
     private languageVersion: LanguageVersion;
 
     private static isKeywordStartCharacter: bool[] = [];
@@ -60,11 +60,11 @@ class Scanner extends SlidingWindow {
         }
     }
 
-    public static create(text: IText, languageVersion: LanguageVersion): Scanner {
-        return new Scanner(text, languageVersion, new StringTable());
-    }
+    //public static create(text: IText, languageVersion: LanguageVersion): Scanner {
+    //    return new Scanner(text, languageVersion, new StringTable());
+    //}
 
-    constructor(text: IText, languageVersion: LanguageVersion, stringTable: StringTable) {
+    constructor(text: IText, languageVersion: LanguageVersion, stringTable: Collections.StringTable) {
         super(2048, 0, text.length());
         Scanner.initializeStaticData();
 
