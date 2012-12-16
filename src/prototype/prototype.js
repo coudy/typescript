@@ -19970,6 +19970,12 @@ var Emitter = (function (_super) {
             kind: 25 /* FunctionKeyword */ 
         }), CallSignatureSyntax.create(parameterList), block);
     };
+    Emitter.prototype.columnForStartOfToken = function (token) {
+        return Indentation.columnForStartOfToken(token, this.syntaxInformationMap, this.options);
+    };
+    Emitter.prototype.columnForEndOfToken = function (token) {
+        return Indentation.columnForEndOfToken(token, this.syntaxInformationMap, this.options);
+    };
     Emitter.prototype.convertArrowFunctionBody = function (arrowFunction) {
         var rewrittenBody = this.visitNode(arrowFunction.body());
         if(rewrittenBody.kind() === 138 /* Block */ ) {
@@ -19985,10 +19991,10 @@ var Emitter = (function (_super) {
         }));
         var difference = 0;
         if(arrowToken.hasTrailingNewLineTrivia()) {
-            var arrowFunctionStart = Indentation.columnForStartOfToken(arrowFunction.firstToken(), this.syntaxInformationMap, this.options);
+            var arrowFunctionStart = this.columnForStartOfToken(arrowFunction.firstToken());
             difference = -arrowFunctionStart;
         } else {
-            var arrowEndColumn = Indentation.columnForEndOfToken(arrowToken, this.syntaxInformationMap, this.options);
+            var arrowEndColumn = this.columnForEndOfToken(arrowToken);
             var returnKeywordEndColumn = returnStatement.returnKeyword().width();
             difference = returnKeywordEndColumn - arrowEndColumn;
         }
@@ -20092,7 +20098,7 @@ var Emitter = (function (_super) {
         var defaultValueAssignmentStatements = ArrayUtilities.select(parametersWithDefaults, function (p) {
             return _this.generateDefaultValueAssignmentStatement(p);
         });
-        var functionDeclarationStartColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+        var functionDeclarationStartColumn = this.columnForStartOfToken(node.firstToken());
         var desiredColumn = functionDeclarationStartColumn + this.options.indentSpaces;
         defaultValueAssignmentStatements = ArrayUtilities.select(defaultValueAssignmentStatements, function (s) {
             return SyntaxIndenter.indentNode(s, true, desiredColumn, _this.options);
@@ -20199,7 +20205,7 @@ var Emitter = (function (_super) {
             kind: 25 /* FunctionKeyword */ ,
             trailingTrivia: this.spaceList
         }), functionSignature, block, null);
-        var classIndentation = Indentation.columnForStartOfToken(classDeclaration.firstToken(), this.syntaxInformationMap, this.options);
+        var classIndentation = this.columnForStartOfToken(classDeclaration.firstToken());
         return SyntaxIndenter.indentNode(functionDeclaration, true, this.options.indentSpaces + classIndentation, this.options);
     };
     Emitter.prototype.convertConstructorDeclaration = function (classDeclaration, constructorDeclaration) {
@@ -20208,8 +20214,8 @@ var Emitter = (function (_super) {
             return null;
         }
         var identifier = this.withNoTrivia(classDeclaration.identifier());
-        var constructorIndentationColumn = Indentation.columnForStartOfToken(constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options);
-        var originalParameterListindentation = Indentation.columnForStartOfToken(constructorDeclaration.parameterList().firstToken(), this.syntaxInformationMap, this.options);
+        var constructorIndentationColumn = this.columnForStartOfToken(constructorDeclaration.firstToken());
+        var originalParameterListindentation = this.columnForStartOfToken(constructorDeclaration.parameterList().firstToken());
         var newParameterListIndentation = constructorIndentationColumn + SyntaxFacts.getText(25 /* FunctionKeyword */ ).length + 1 + identifier.width();
         var parameterList = constructorDeclaration.parameterList().accept1(this);
         parameterList = this.changeIndentation(parameterList, false, newParameterListIndentation - originalParameterListindentation);
@@ -20283,7 +20289,7 @@ var Emitter = (function (_super) {
         var defaultValueAssignments = ArrayUtilities.select(defaultParameters, function (p) {
             return _this.generateDefaultValueAssignmentStatement(p);
         });
-        var functionColumn = Indentation.columnForStartOfToken(functionDeclaration.firstToken(), this.syntaxInformationMap, this.options);
+        var functionColumn = this.columnForStartOfToken(functionDeclaration.firstToken());
         var blockStatements = block.statements().toArray();
         for(var i = defaultValueAssignments.length - 1; i >= 0; i--) {
             var assignment = this.changeIndentation(defaultValueAssignments[i], true, functionColumn + this.options.indentSpaces);
@@ -20309,7 +20315,7 @@ var Emitter = (function (_super) {
     };
     Emitter.prototype.convertMemberAccessor = function (memberAccessor) {
         var propertyName = memberAccessor.kind() === 136 /* GetMemberAccessorDeclaration */  ? "get" : "set";
-        var accessorColumn = Indentation.columnForStartOfToken(memberAccessor.firstToken(), this.syntaxInformationMap, this.options);
+        var accessorColumn = this.columnForStartOfToken(memberAccessor.firstToken());
         var indentationTrivia = Indentation.indentationTrivia(accessorColumn, this.options);
         var parameterList = memberAccessor.parameterList().accept1(this);
         if(!parameterList.hasTrailingTrivia()) {
@@ -20388,7 +20394,7 @@ var Emitter = (function (_super) {
                 trailingTrivia: this.newLineList
             }));
         }
-        var accessorColumn = Indentation.columnForStartOfToken(memberAccessor.firstToken(), this.syntaxInformationMap, this.options);
+        var accessorColumn = this.columnForStartOfToken(memberAccessor.firstToken());
         var accessorTrivia = Indentation.indentationTrivia(accessorColumn, this.options);
         var propertyColumn = accessorColumn + this.options.indentSpaces;
         var propertyTrivia = Indentation.indentationTrivia(propertyColumn, this.options);
@@ -20472,7 +20478,7 @@ var Emitter = (function (_super) {
     Emitter.prototype.visitClassDeclaration = function (node) {
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
         var statements = [];
-        var statementIndent = this.options.indentSpaces + Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+        var statementIndent = this.options.indentSpaces + this.columnForStartOfToken(node.firstToken());
         if(node.extendsClause() !== null) {
             var extendsParameters = [];
             extendsParameters.push(new IdentifierNameSyntax(identifier.clone()));
@@ -20518,7 +20524,7 @@ var Emitter = (function (_super) {
             trailingTrivia: this.newLineList
         }));
         statements.push(returnStatement);
-        var classIndentation = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+        var classIndentation = this.columnForStartOfToken(node.firstToken());
         var closeCurlyIndentation = classIndentation > 0 ? [
             Indentation.indentationTrivia(classIndentation, this.options)
         ] : null;
@@ -20621,7 +20627,7 @@ var Emitter = (function (_super) {
     Emitter.prototype.addEnumMapAssignments = function (node, statements) {
         if(node.variableDeclarators().syntaxNodeCount() > 0) {
             var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
-            var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+            var indentationColumn = this.columnForStartOfToken(node.firstToken());
             var mapIndentationColumn = indentationColumn + this.options.indentSpaces;
             var mapIndentationTrivia = Indentation.indentationTrivia(mapIndentationColumn, this.options);
             var receiver = new MemberAccessExpressionSyntax(new IdentifierNameSyntax(identifier.withLeadingTrivia(SyntaxTriviaList.create([
@@ -20681,7 +20687,7 @@ var Emitter = (function (_super) {
     };
     Emitter.prototype.generateEnumFunctionExpression = function (node) {
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
-        var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+        var indentationColumn = this.columnForStartOfToken(node.firstToken());
         var indentationTrivia = Indentation.indentationTrivia(indentationColumn, this.options);
         var statements = [];
         var assignDefaultValues = true;
@@ -20738,7 +20744,7 @@ var Emitter = (function (_super) {
             trailingTrivia: this.newLineList
         }));
         result.push(variableStatement);
-        var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+        var indentationColumn = this.columnForStartOfToken(node.firstToken());
         var indentationTrivia = Indentation.indentationTrivia(indentationColumn, this.options);
         var functionExpression = this.generateEnumFunctionExpression(node);
         var parenthesizedExpression = new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({

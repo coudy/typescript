@@ -255,6 +255,14 @@ class Emitter extends SyntaxRewriter {
             block);
     }
 
+    private columnForStartOfToken(token: ISyntaxToken): number {
+        return Indentation.columnForStartOfToken(token, this.syntaxInformationMap, this.options);
+    }
+
+    private columnForEndOfToken(token: ISyntaxToken): number {
+        return Indentation.columnForEndOfToken(token, this.syntaxInformationMap, this.options);
+    }
+
     private convertArrowFunctionBody(arrowFunction: ArrowFunctionExpressionSyntax): BlockSyntax {
         var rewrittenBody = this.visitNode(arrowFunction.body());
 
@@ -298,9 +306,7 @@ class Emitter extends SyntaxRewriter {
             //
             // and we adjust based on the column difference between the start of the arrow function
             // and the start of the expr.
-            var arrowFunctionStart = Indentation.columnForStartOfToken(arrowFunction.firstToken(), this.syntaxInformationMap, this.options);
-            // var expressionStart = Indentation.columnForStartOfToken(arrowFunction.body().firstToken(), this.syntaxInformationMap, this.options);
-            // var originalOffset = expressionStart - arrowFunctionStart;
+            var arrowFunctionStart = this.columnForStartOfToken(arrowFunction.firstToken());
             difference = -arrowFunctionStart;
         }
         else {
@@ -314,7 +320,7 @@ class Emitter extends SyntaxRewriter {
             //
             // and we adjust based on the column difference between the end of the arrow token and 
             // the end of the return statement.
-            var arrowEndColumn = Indentation.columnForEndOfToken(arrowToken, this.syntaxInformationMap, this.options);
+            var arrowEndColumn = this.columnForEndOfToken(arrowToken);
             var returnKeywordEndColumn = returnStatement.returnKeyword().width();
             difference = returnKeywordEndColumn - arrowEndColumn;
         }
@@ -451,8 +457,7 @@ class Emitter extends SyntaxRewriter {
         var defaultValueAssignmentStatements = ArrayUtilities.select(
             parametersWithDefaults, p => this.generateDefaultValueAssignmentStatement(p));
 
-        var functionDeclarationStartColumn = Indentation.columnForStartOfToken(
-            node.firstToken(), this.syntaxInformationMap, this.options);
+        var functionDeclarationStartColumn = this.columnForStartOfToken(node.firstToken());
         var desiredColumn = functionDeclarationStartColumn + this.options.indentSpaces;
 
         defaultValueAssignmentStatements = ArrayUtilities.select(defaultValueAssignmentStatements,
@@ -574,8 +579,7 @@ class Emitter extends SyntaxRewriter {
             functionSignature,
             block, null);
 
-        var classIndentation = Indentation.columnForStartOfToken(
-            classDeclaration.firstToken(), this.syntaxInformationMap, this.options);
+        var classIndentation = this.columnForStartOfToken(classDeclaration.firstToken());
 
         return <FunctionDeclarationSyntax>SyntaxIndenter.indentNode(
             functionDeclaration, /*indentFirstToken:*/ true, this.options.indentSpaces + classIndentation, this.options);
@@ -590,11 +594,8 @@ class Emitter extends SyntaxRewriter {
 
         var identifier = this.withNoTrivia(classDeclaration.identifier());
 
-        var constructorIndentationColumn = Indentation.columnForStartOfToken(
-            constructorDeclaration.firstToken(), this.syntaxInformationMap, this.options);
-
-        var originalParameterListindentation = Indentation.columnForStartOfToken(
-            constructorDeclaration.parameterList().firstToken(), this.syntaxInformationMap, this.options);
+        var constructorIndentationColumn = this.columnForStartOfToken(constructorDeclaration.firstToken());
+        var originalParameterListindentation = this.columnForStartOfToken(constructorDeclaration.parameterList().firstToken());
 
         // The original indent + "function" + <space> + "ClassName"
         var newParameterListIndentation = 
@@ -702,8 +703,7 @@ class Emitter extends SyntaxRewriter {
         var defaultValueAssignments = <StatementSyntax[]>ArrayUtilities.select(defaultParameters,
             p => this.generateDefaultValueAssignmentStatement(p));
 
-        var functionColumn = Indentation.columnForStartOfToken(
-            functionDeclaration.firstToken(), this.syntaxInformationMap, this.options);
+        var functionColumn = this.columnForStartOfToken(functionDeclaration.firstToken());
 
         var blockStatements = block.statements().toArray();
         for (var i = defaultValueAssignments.length - 1; i >= 0; i--) {
@@ -742,8 +742,7 @@ class Emitter extends SyntaxRewriter {
         var propertyName = memberAccessor.kind() === SyntaxKind.GetMemberAccessorDeclaration
             ? "get" : "set";
 
-        var accessorColumn = Indentation.columnForStartOfToken(
-            memberAccessor.firstToken(), this.syntaxInformationMap, this.options);
+        var accessorColumn = this.columnForStartOfToken(memberAccessor.firstToken());
         var indentationTrivia = Indentation.indentationTrivia(accessorColumn, this.options);
 
         var parameterList = <ParameterListSyntax>memberAccessor.parameterList().accept1(this);
@@ -822,8 +821,7 @@ class Emitter extends SyntaxRewriter {
                 SyntaxToken.createElastic({ kind: SyntaxKind.CommaToken, trailingTrivia: this.newLineList }));
         }
 
-        var accessorColumn = Indentation.columnForStartOfToken(
-            memberAccessor.firstToken(), this.syntaxInformationMap, this.options);
+        var accessorColumn = this.columnForStartOfToken(memberAccessor.firstToken());
         var accessorTrivia = Indentation.indentationTrivia(accessorColumn, this.options);
 
         var propertyColumn = accessorColumn + this.options.indentSpaces;
@@ -904,8 +902,7 @@ class Emitter extends SyntaxRewriter {
         
         var statements: StatementSyntax[] = [];
 
-        var statementIndent = this.options.indentSpaces + Indentation.columnForStartOfToken(
-            node.firstToken(), this.syntaxInformationMap, this.options)
+        var statementIndent = this.options.indentSpaces + this.columnForStartOfToken(node.firstToken());
 
         if (node.extendsClause() !== null) {
             var extendsParameters = [];
@@ -950,7 +947,7 @@ class Emitter extends SyntaxRewriter {
 
         statements.push(returnStatement);
 
-        var classIndentation = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+        var classIndentation = this.columnForStartOfToken(node.firstToken());
         var closeCurlyIndentation = classIndentation > 0
             ? [Indentation.indentationTrivia(classIndentation, this.options)]
             : null;
@@ -1089,7 +1086,7 @@ class Emitter extends SyntaxRewriter {
             var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
                                           .withTrailingTrivia(SyntaxTriviaList.empty);
 
-            var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+            var indentationColumn = this.columnForStartOfToken(node.firstToken());
 
             var mapIndentationColumn = indentationColumn + this.options.indentSpaces;
             var mapIndentationTrivia = Indentation.indentationTrivia(mapIndentationColumn, this.options);
@@ -1153,7 +1150,7 @@ class Emitter extends SyntaxRewriter {
         var identifier = node.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
                                           .withTrailingTrivia(SyntaxTriviaList.empty);
         
-        var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+        var indentationColumn = this.columnForStartOfToken(node.firstToken());
         var indentationTrivia = Indentation.indentationTrivia(indentationColumn, this.options);
 
         var statements: StatementSyntax[] = [];
@@ -1220,7 +1217,7 @@ class Emitter extends SyntaxRewriter {
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
         result.push(variableStatement);
 
-        var indentationColumn = Indentation.columnForStartOfToken(node.firstToken(), this.syntaxInformationMap, this.options);
+        var indentationColumn = this.columnForStartOfToken(node.firstToken());
         var indentationTrivia = Indentation.indentationTrivia(indentationColumn, this.options);
 
         var functionExpression = this.generateEnumFunctionExpression(node);
