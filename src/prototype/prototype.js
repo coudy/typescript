@@ -20116,8 +20116,8 @@ var Emitter = (function (_super) {
         if(declarator.equalsValueClause() === null) {
             return null;
         }
-        var classIdentifier = classDeclaration.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
-        var memberIdentifier = declarator.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+        var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
+        var memberIdentifier = this.withNoTrivia(declarator.identifier());
         var receiver = static ? new IdentifierNameSyntax(classIdentifier.withLeadingTrivia(memberDeclaration.leadingTrivia())) : new ThisExpressionSyntax(SyntaxToken.createElastic({
             leadingTrivia: memberDeclaration.leadingTrivia().toArray(),
             kind: 33 /* ThisKeyword */ 
