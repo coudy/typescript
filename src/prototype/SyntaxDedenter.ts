@@ -21,6 +21,10 @@ class SyntaxDedenter extends SyntaxRewriter {
     }
 
     private visitToken(token: ISyntaxToken): ISyntaxToken {
+        if (token.isMissing()) {
+            return token;
+        }
+
         var result = token;
         if (this.lastTriviaWasNewLine) {
             // have to add our indentation to every line that this token hits.

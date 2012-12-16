@@ -6,7 +6,7 @@
 var stringTable = new StringTable();
 
 var specificFile = 
-    // "EnumDeclaration1";
+    // "SuperExpression4";
     undefined;
 
 class Program {
@@ -16,14 +16,6 @@ class Program {
         environment.standardOut.WriteLine("Testing trivia.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\trivia\\ecmascript5",
             filePath => this.runTrivia(environment, filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false));
-            
-        environment.standardOut.WriteLine("Testing emitter.");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5",
-            filePath => this.runEmitter(environment, filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false, null));
-            
-        environment.standardOut.WriteLine("Testing emitter.");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter2\\ecmascript5",
-            filePath => this.runEmitter(environment, filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false, /*justText:*/ true));
 
         environment.standardOut.WriteLine("Testing scanner.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
@@ -32,7 +24,15 @@ class Program {
         environment.standardOut.WriteLine("Testing parser.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
             filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ false));
+
+        environment.standardOut.WriteLine("Testing emitter.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5",
+            filePath => this.runEmitter(environment, filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false, false));
             
+        environment.standardOut.WriteLine("Testing emitter.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter2\\ecmascript5",
+            filePath => this.runEmitter(environment, filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false, /*justText:*/ true));
+
         environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests(environment, "C:\\temp\\monoco-files",
             filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ false));
@@ -63,7 +63,6 @@ class Program {
             if (specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
                 continue;
             }
-
 
             try {
                 action(filePath);
