@@ -14972,6 +14972,14 @@ var Emitter = (function (_super) {
             ]
         }))), block);
     };
+    Emitter.prototype.visitParenthesizedArrowFunctionExpression = function (node) {
+        var parameterList = node.callSignature().parameterList().accept1(this);
+        var block = this.convertArrowFunctionBody(node);
+        return FunctionExpressionSyntax.create(SyntaxToken.createElastic({
+            leadingTrivia: node.leadingTrivia().toArray(),
+            kind: 25 /* FunctionKeyword */ 
+        }), CallSignatureSyntax.create(parameterList), block);
+    };
     Emitter.prototype.changeIndentation = function (node, changeFirstToken, indentAmount) {
         if(indentAmount === 0) {
             return node;

@@ -219,6 +219,16 @@ class Emitter extends SyntaxRewriter {
             block);
     }
 
+    private visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): FunctionExpressionSyntax {
+        var parameterList = <ParameterListSyntax>node.callSignature().parameterList().accept1(this);
+        var block = this.convertArrowFunctionBody(node);
+
+        return FunctionExpressionSyntax.create(
+            SyntaxToken.createElastic({ leadingTrivia: node.leadingTrivia().toArray(), kind: SyntaxKind.FunctionKeyword}),
+            CallSignatureSyntax.create(parameterList),
+            block);
+    }
+
     private changeIndentation(node: SyntaxNode,
                               changeFirstToken: bool,
                               indentAmount: number): SyntaxNode {

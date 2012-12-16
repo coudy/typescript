@@ -681,7 +681,9 @@ var Parser = (function(_super) {
         var sourceUnit = this.parseSourceUnit();
 
         var allDiagnostics = this.tokenDiagnostics.concat(this.diagnostics);
-        allDiagnostics.sort((a, b) => a.position() - b.position());
+        allDiagnostics.sort(function(a, b) {
+            return a.position() - b.position();
+        });
 
         sourceUnit = this.addSkippedTokensTo(sourceUnit);
 
