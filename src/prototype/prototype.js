@@ -20487,71 +20487,71 @@ var TextChangeRange = (function () {
 })();
 var Parser;
 (function (Parser) {
-    var ParserExpressionPrecedence;
-    (function (ParserExpressionPrecedence) {
-        ParserExpressionPrecedence._map = [];
-        ParserExpressionPrecedence.CommaExpressionPrecedence = 1;
-        ParserExpressionPrecedence.AssignmentExpressionPrecedence = 2;
-        ParserExpressionPrecedence.ConditionalExpressionPrecedence = 3;
-        ParserExpressionPrecedence.ArrowFunctionPrecedence = 4;
-        ParserExpressionPrecedence.LogicalOrExpressionPrecedence = 5;
-        ParserExpressionPrecedence.LogicalAndExpressionPrecedence = 6;
-        ParserExpressionPrecedence.BitwiseOrExpressionPrecedence = 7;
-        ParserExpressionPrecedence.BitwiseExclusiveOrExpressionPrecedence = 8;
-        ParserExpressionPrecedence.BitwiseAndExpressionPrecedence = 9;
-        ParserExpressionPrecedence.EqualityExpressionPrecedence = 10;
-        ParserExpressionPrecedence.RelationalExpressionPrecedence = 11;
-        ParserExpressionPrecedence.ShiftExpressionPrecdence = 12;
-        ParserExpressionPrecedence.AdditiveExpressionPrecedence = 13;
-        ParserExpressionPrecedence.MultiplicativeExpressionPrecedence = 14;
-        ParserExpressionPrecedence.UnaryExpressionPrecedence = 15;
-    })(ParserExpressionPrecedence || (ParserExpressionPrecedence = {}));
-    var ParserListParsingState;
-    (function (ParserListParsingState) {
-        ParserListParsingState._map = [];
-        ParserListParsingState.SourceUnit_ModuleElements = 1 << 0;
-        ParserListParsingState.ClassDeclaration_ClassElements = 1 << 1;
-        ParserListParsingState.ModuleDeclaration_ModuleElements = 1 << 2;
-        ParserListParsingState.SwitchStatement_SwitchClauses = 1 << 3;
-        ParserListParsingState.SwitchClause_Statements = 1 << 4;
-        ParserListParsingState.Block_Statements = 1 << 5;
-        ParserListParsingState.EnumDeclaration_VariableDeclarators = 1 << 7;
-        ParserListParsingState.ObjectType_TypeMembers = 1 << 8;
-        ParserListParsingState.ExtendsOrImplementsClause_TypeNameList = 1 << 9;
-        ParserListParsingState.VariableDeclaration_VariableDeclarators_AllowIn = 1 << 10;
-        ParserListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn = 1 << 11;
-        ParserListParsingState.ArgumentList_AssignmentExpressions = 1 << 12;
-        ParserListParsingState.ObjectLiteralExpression_PropertyAssignments = 1 << 13;
-        ParserListParsingState.ArrayLiteralExpression_AssignmentExpressions = 1 << 14;
-        ParserListParsingState.ParameterList_Parameters = 1 << 15;
-        ParserListParsingState.FirstListParsingState = ParserListParsingState.SourceUnit_ModuleElements;
-        ParserListParsingState.LastListParsingState = ParserListParsingState.ParameterList_Parameters;
-    })(ParserListParsingState || (ParserListParsingState = {}));
-    var ParserSkippedTokensAdder = (function (_super) {
-        __extends(ParserSkippedTokensAdder, _super);
-        function ParserSkippedTokensAdder(skippedTokens) {
+    var ExpressionPrecedence;
+    (function (ExpressionPrecedence) {
+        ExpressionPrecedence._map = [];
+        ExpressionPrecedence.CommaExpressionPrecedence = 1;
+        ExpressionPrecedence.AssignmentExpressionPrecedence = 2;
+        ExpressionPrecedence.ConditionalExpressionPrecedence = 3;
+        ExpressionPrecedence.ArrowFunctionPrecedence = 4;
+        ExpressionPrecedence.LogicalOrExpressionPrecedence = 5;
+        ExpressionPrecedence.LogicalAndExpressionPrecedence = 6;
+        ExpressionPrecedence.BitwiseOrExpressionPrecedence = 7;
+        ExpressionPrecedence.BitwiseExclusiveOrExpressionPrecedence = 8;
+        ExpressionPrecedence.BitwiseAndExpressionPrecedence = 9;
+        ExpressionPrecedence.EqualityExpressionPrecedence = 10;
+        ExpressionPrecedence.RelationalExpressionPrecedence = 11;
+        ExpressionPrecedence.ShiftExpressionPrecdence = 12;
+        ExpressionPrecedence.AdditiveExpressionPrecedence = 13;
+        ExpressionPrecedence.MultiplicativeExpressionPrecedence = 14;
+        ExpressionPrecedence.UnaryExpressionPrecedence = 15;
+    })(ExpressionPrecedence || (ExpressionPrecedence = {}));
+    var ListParsingState;
+    (function (ListParsingState) {
+        ListParsingState._map = [];
+        ListParsingState.SourceUnit_ModuleElements = 1 << 0;
+        ListParsingState.ClassDeclaration_ClassElements = 1 << 1;
+        ListParsingState.ModuleDeclaration_ModuleElements = 1 << 2;
+        ListParsingState.SwitchStatement_SwitchClauses = 1 << 3;
+        ListParsingState.SwitchClause_Statements = 1 << 4;
+        ListParsingState.Block_Statements = 1 << 5;
+        ListParsingState.EnumDeclaration_VariableDeclarators = 1 << 7;
+        ListParsingState.ObjectType_TypeMembers = 1 << 8;
+        ListParsingState.ExtendsOrImplementsClause_TypeNameList = 1 << 9;
+        ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn = 1 << 10;
+        ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn = 1 << 11;
+        ListParsingState.ArgumentList_AssignmentExpressions = 1 << 12;
+        ListParsingState.ObjectLiteralExpression_PropertyAssignments = 1 << 13;
+        ListParsingState.ArrayLiteralExpression_AssignmentExpressions = 1 << 14;
+        ListParsingState.ParameterList_Parameters = 1 << 15;
+        ListParsingState.FirstListParsingState = ListParsingState.SourceUnit_ModuleElements;
+        ListParsingState.LastListParsingState = ListParsingState.ParameterList_Parameters;
+    })(ListParsingState || (ListParsingState = {}));
+    var SkippedTokensAdder = (function (_super) {
+        __extends(SkippedTokensAdder, _super);
+        function SkippedTokensAdder(skippedTokens) {
                 _super.call(this);
             this.skippedTokens = skippedTokens;
         }
-        ParserSkippedTokensAdder.prototype.visitNode = function (node) {
+        SkippedTokensAdder.prototype.visitNode = function (node) {
             if(this.skippedTokens.length === 0) {
                 return node;
             }
             return _super.prototype.visitNode.call(this, node);
         };
-        ParserSkippedTokensAdder.prototype.visitList = function (list) {
+        SkippedTokensAdder.prototype.visitList = function (list) {
             if(this.skippedTokens.length === 0) {
                 return list;
             }
             return _super.prototype.visitList.call(this, list);
         };
-        ParserSkippedTokensAdder.prototype.visitSeparatedList = function (list) {
+        SkippedTokensAdder.prototype.visitSeparatedList = function (list) {
             if(this.skippedTokens.length === 0) {
                 return list;
             }
             return _super.prototype.visitSeparatedList.call(this, list);
         };
-        ParserSkippedTokensAdder.prototype.visitToken = function (token) {
+        SkippedTokensAdder.prototype.visitToken = function (token) {
             if(this.skippedTokens.length === 0) {
                 return token;
             }
@@ -20583,18 +20583,18 @@ var Parser;
             }
             return result;
         };
-        ParserSkippedTokensAdder.prototype.addTriviaTo = function (list, array) {
+        SkippedTokensAdder.prototype.addTriviaTo = function (list, array) {
             for(var i = 0, n = list.count(); i < n; i++) {
                 array.push(list.syntaxTriviaAt(i));
             }
         };
-        ParserSkippedTokensAdder.prototype.addSkippedTokenTo = function (skippedToken, array) {
+        SkippedTokensAdder.prototype.addSkippedTokenTo = function (skippedToken, array) {
             Debug.assert(skippedToken.text().length > 0);
             this.addTriviaTo(skippedToken.leadingTrivia(), array);
             array.push(SyntaxTrivia.create(8 /* SkippedTextTrivia */ , skippedToken.text()));
             this.addTriviaTo(skippedToken.trailingTrivia(), array);
         };
-        return ParserSkippedTokensAdder;
+        return SkippedTokensAdder;
     })(SyntaxRewriter);    
     var ParserImpl = (function (_super) {
         __extends(ParserImpl, _super);
@@ -20933,7 +20933,7 @@ var Parser;
             if(this.skippedTokens.length === 0) {
                 return sourceUnit;
             }
-            return sourceUnit.accept1(new ParserSkippedTokensAdder(this.skippedTokens));
+            return sourceUnit.accept1(new SkippedTokensAdder(this.skippedTokens));
         };
         ParserImpl.prototype.parseSourceUnit = function () {
             var savedIsInStrictMode = this.isInStrictMode;
@@ -22719,7 +22719,7 @@ var Parser;
         };
         ParserImpl.prototype.abortParsingListOrMoveToNextToken = function (currentListType, itemCount) {
             this.reportUnexpectedTokenDiagnostic(currentListType);
-            for(var state = ParserListParsingState.LastListParsingState; state >= ParserListParsingState.FirstListParsingState; state >>= 1) {
+            for(var state = ListParsingState.LastListParsingState; state >= ListParsingState.FirstListParsingState; state >>= 1) {
                 if((this.listParsingState & state) !== 0) {
                     if(this.isExpectedListTerminator(state, itemCount) || this.isExpectedListItem(state, true)) {
                         return true;

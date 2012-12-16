@@ -47,7 +47,7 @@ module Parser {
     //     / \
     //    a   b
 
-    enum ParserExpressionPrecedence {
+    enum ExpressionPrecedence {
         // Intuitively, commas have the lowest precedence.  "a || b, c" is "(a || b), c", not
         // "a || (b, c)"
         CommaExpressionPrecedence = 1,
@@ -105,7 +105,7 @@ module Parser {
     // If none of the higher up states consider this a stop or start token, then we will simply consume
     // the token and add it to our list of 'skipped tokens'.  We will then repeat the above algorithm
     // until we resynchronize at some point.
-    enum ParserListParsingState {
+    enum ListParsingState {
         SourceUnit_ModuleElements = 1 << 0,
         ClassDeclaration_ClassElements = 1 << 1,
         ModuleDeclaration_ModuleElements = 1 << 2,
@@ -127,7 +127,7 @@ module Parser {
     }
 
     // Information we collect in the parser when we skip a token.
-    interface ParserSkippedToken {
+    interface SkippedToken {
         // The token we skipped.
         skippedToken: ISyntaxToken;
 
@@ -137,10 +137,10 @@ module Parser {
         owningToken: ISyntaxToken;
     }
 
-    class ParserSkippedTokensAdder extends SyntaxRewriter {
-        private skippedTokens: ParserSkippedToken[];
+    class SkippedTokensAdder extends SyntaxRewriter {
+        private skippedTokens: SkippedToken[];
 
-        constructor(skippedTokens: ParserSkippedToken[]) {
+        constructor(skippedTokens: SkippedToken[]) {
             super();
 
             this.skippedTokens = skippedTokens;
@@ -281,7 +281,7 @@ module Parser {
         // TODO: do we need to store/restore this when speculative parsing?  I don't think so.  The
         // parsing logic already handles storing/restoring this and should work properly even if we're
         // speculative parsing.
-        private listParsingState: ParserListParsingState = 0;
+        private listParsingState: ListParsingState = 0;
 
         // Whether or not we are in strict parsing mode.  All that changes in strict parsing mode is
         // that some tokens that would be considered identifiers may be considered keywords.  When 
@@ -292,7 +292,7 @@ module Parser {
         // tokens that are skipped when speculative parsing need to removed when rewinding.  To do this
         // we store the count of skipped tokens when we start speculative parsing.  And if we rewind,
         // we restore this to the same count that we started at.
-        private skippedTokens: ParserSkippedToken[] = [];
+        private skippedTokens: SkippedToken[] = [];
 
         // Diagnostics created when parsing invalid code.  Any diagnosics created when speculative 
         // parsing need to removed when rewinding.  To do this we store the count of diagnostics when 
@@ -599,10 +599,10 @@ module Parser {
             throw Errors.notYetImplemented();
         }
 
-        private static getPrecedence(expressionKind: SyntaxKind): ParserExpressionPrecedence {
+        private static getPrecedence(expressionKind: SyntaxKind): ExpressionPrecedence {
             switch (expressionKind) {
                 case SyntaxKind.CommaExpression:
-                    return ParserExpressionPrecedence.CommaExpressionPrecedence;
+                    return ExpressionPrecedence.CommaExpressionPrecedence;
 
                 case SyntaxKind.AssignmentExpression:
                 case SyntaxKind.AddAssignmentExpression:
@@ -616,31 +616,31 @@ module Parser {
                 case SyntaxKind.LeftShiftAssignmentExpression:
                 case SyntaxKind.SignedRightShiftAssignmentExpression:
                 case SyntaxKind.UnsignedRightShiftAssignmentExpression:
-                    return ParserExpressionPrecedence.AssignmentExpressionPrecedence;
+                    return ExpressionPrecedence.AssignmentExpressionPrecedence;
 
                 case SyntaxKind.ConditionalExpression:
-                    return ParserExpressionPrecedence.ConditionalExpressionPrecedence;
+                    return ExpressionPrecedence.ConditionalExpressionPrecedence;
 
                 case SyntaxKind.LogicalOrExpression:
-                    return ParserExpressionPrecedence.LogicalOrExpressionPrecedence;
+                    return ExpressionPrecedence.LogicalOrExpressionPrecedence;
 
                 case SyntaxKind.LogicalAndExpression:
-                    return ParserExpressionPrecedence.LogicalAndExpressionPrecedence;
+                    return ExpressionPrecedence.LogicalAndExpressionPrecedence;
 
                 case SyntaxKind.BitwiseOrExpression:
-                    return ParserExpressionPrecedence.BitwiseOrExpressionPrecedence;
+                    return ExpressionPrecedence.BitwiseOrExpressionPrecedence;
 
                 case SyntaxKind.BitwiseExclusiveOrExpression:
-                    return ParserExpressionPrecedence.BitwiseExclusiveOrExpressionPrecedence;
+                    return ExpressionPrecedence.BitwiseExclusiveOrExpressionPrecedence;
 
                 case SyntaxKind.BitwiseAndExpression:
-                    return ParserExpressionPrecedence.BitwiseAndExpressionPrecedence;
+                    return ExpressionPrecedence.BitwiseAndExpressionPrecedence;
 
                 case SyntaxKind.EqualsWithTypeConversionExpression:
                 case SyntaxKind.NotEqualsWithTypeConversionExpression:
                 case SyntaxKind.EqualsExpression:
                 case SyntaxKind.NotEqualsExpression:
-                    return ParserExpressionPrecedence.EqualityExpressionPrecedence;
+                    return ExpressionPrecedence.EqualityExpressionPrecedence;
 
                 case SyntaxKind.LessThanExpression:
                 case SyntaxKind.GreaterThanExpression:
@@ -648,21 +648,21 @@ module Parser {
                 case SyntaxKind.GreaterThanOrEqualExpression:
                 case SyntaxKind.InstanceOfExpression:
                 case SyntaxKind.InExpression:
-                    return ParserExpressionPrecedence.RelationalExpressionPrecedence;
+                    return ExpressionPrecedence.RelationalExpressionPrecedence;
 
                 case SyntaxKind.LeftShiftExpression:
                 case SyntaxKind.SignedRightShiftExpression:
                 case SyntaxKind.UnsignedRightShiftExpression:
-                    return ParserExpressionPrecedence.ShiftExpressionPrecdence;
+                    return ExpressionPrecedence.ShiftExpressionPrecdence;
 
                 case SyntaxKind.AddExpression:
                 case SyntaxKind.SubtractExpression:
-                    return ParserExpressionPrecedence.AdditiveExpressionPrecedence;
+                    return ExpressionPrecedence.AdditiveExpressionPrecedence;
 
                 case SyntaxKind.MultiplyExpression:
                 case SyntaxKind.DivideExpression:
                 case SyntaxKind.ModuloExpression:
-                    return ParserExpressionPrecedence.MultiplicativeExpressionPrecedence;
+                    return ExpressionPrecedence.MultiplicativeExpressionPrecedence;
 
                 case SyntaxKind.PlusExpression:
                 case SyntaxKind.NegateExpression:
@@ -673,7 +673,7 @@ module Parser {
                 case SyntaxKind.VoidExpression:
                 case SyntaxKind.PreIncrementExpression:
                 case SyntaxKind.PreDecrementExpression:
-                    return ParserExpressionPrecedence.UnaryExpressionPrecedence;
+                    return ExpressionPrecedence.UnaryExpressionPrecedence;
             }
 
             throw Errors.invalidOperation();
@@ -720,7 +720,7 @@ module Parser {
                 return sourceUnit;
             }
 
-            return sourceUnit.accept1(new ParserSkippedTokensAdder(this.skippedTokens));
+            return sourceUnit.accept1(new SkippedTokensAdder(this.skippedTokens));
         }
 
         private parseSourceUnit(): SourceUnitSyntax {
@@ -728,7 +728,7 @@ module Parser {
             // level parsing entrypoint.  So it will always start as false and be reset to false when the
             // loop ends.  However, for sake of symmetry and consistancy we do this.
             var savedIsInStrictMode = this.isInStrictMode;
-            var moduleElements = this.parseSyntaxList(ParserListParsingState.SourceUnit_ModuleElements, ParserImpl.updateStrictModeState);
+            var moduleElements = this.parseSyntaxList(ListParsingState.SourceUnit_ModuleElements, ParserImpl.updateStrictModeState);
             this.isInStrictMode = savedIsInStrictMode;
 
             return new SourceUnitSyntax(moduleElements, this.currentToken());
@@ -884,7 +884,7 @@ module Parser {
             var variableDeclarators: ISeparatedSyntaxList = SeparatedSyntaxList.empty;
 
             if (!openBraceToken.isMissing()) {
-                variableDeclarators = this.parseSeparatedSyntaxList(ParserListParsingState.EnumDeclaration_VariableDeclarators);
+                variableDeclarators = this.parseSeparatedSyntaxList(ListParsingState.EnumDeclaration_VariableDeclarators);
             }
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -934,7 +934,7 @@ module Parser {
             var classElements: ISyntaxList = SyntaxList.empty;
 
             if (!openBraceToken.isMissing()) {
-                classElements = this.parseSyntaxList(ParserListParsingState.ClassDeclaration_ClassElements);
+                classElements = this.parseSyntaxList(ListParsingState.ClassDeclaration_ClassElements);
             }
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -1265,7 +1265,7 @@ module Parser {
 
             var moduleElements: ISyntaxList = SyntaxList.empty;
             if (!openBraceToken.isMissing()) {
-                moduleElements = this.parseSyntaxList(ParserListParsingState.ModuleDeclaration_ModuleElements);
+                moduleElements = this.parseSyntaxList(ListParsingState.ModuleDeclaration_ModuleElements);
             }
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -1309,7 +1309,7 @@ module Parser {
 
             var typeMembers: ISeparatedSyntaxList = SeparatedSyntaxList.empty;
             if (!openBraceToken.isMissing()) {
-                typeMembers = this.parseSeparatedSyntaxList(ParserListParsingState.ObjectType_TypeMembers);
+                typeMembers = this.parseSeparatedSyntaxList(ListParsingState.ObjectType_TypeMembers);
             }
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -1431,7 +1431,7 @@ module Parser {
             Debug.assert(this.isExtendsClause());
 
             var extendsKeyword = this.eatKeyword(SyntaxKind.ExtendsKeyword);
-            var typeNames = this.parseSeparatedSyntaxList(ParserListParsingState.ExtendsOrImplementsClause_TypeNameList);
+            var typeNames = this.parseSeparatedSyntaxList(ListParsingState.ExtendsOrImplementsClause_TypeNameList);
 
             return new ExtendsClauseSyntax(extendsKeyword, typeNames);
         }
@@ -1444,7 +1444,7 @@ module Parser {
             Debug.assert(this.isImplementsClause());
 
             var implementsKeyword = this.eatKeyword(SyntaxKind.ImplementsKeyword);
-            var typeNames = this.parseSeparatedSyntaxList(ParserListParsingState.ExtendsOrImplementsClause_TypeNameList);
+            var typeNames = this.parseSeparatedSyntaxList(ListParsingState.ExtendsOrImplementsClause_TypeNameList);
 
             return new ImplementsClauseSyntax(implementsKeyword, typeNames);
         }
@@ -1873,7 +1873,7 @@ module Parser {
 
             var switchClauses: ISyntaxList = SyntaxList.empty;
             if (!openBraceToken.isMissing()) {
-                switchClauses = this.parseSyntaxList(ParserListParsingState.SwitchStatement_SwitchClauses);
+                switchClauses = this.parseSyntaxList(ListParsingState.SwitchStatement_SwitchClauses);
             }
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -1912,7 +1912,7 @@ module Parser {
             var caseKeyword = this.eatKeyword(SyntaxKind.CaseKeyword);
             var expression = this.parseExpression(/*allowIn:*/ true);
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
-            var statements = this.parseSyntaxList(ParserListParsingState.SwitchClause_Statements);
+            var statements = this.parseSyntaxList(ListParsingState.SwitchClause_Statements);
 
             return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements);
         }
@@ -1922,7 +1922,7 @@ module Parser {
 
             var defaultKeyword = this.eatKeyword(SyntaxKind.DefaultKeyword);
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
-            var statements = this.parseSyntaxList(ParserListParsingState.SwitchClause_Statements);
+            var statements = this.parseSyntaxList(ListParsingState.SwitchClause_Statements);
 
             return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements);
         }
@@ -2160,8 +2160,8 @@ module Parser {
             var varKeyword = this.eatKeyword(SyntaxKind.VarKeyword);
 
             var listParsingState = allowIn
-                ? ParserListParsingState.VariableDeclaration_VariableDeclarators_AllowIn
-                : ParserListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn;
+                ? ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn
+                : ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn;
 
             var variableDeclarators = this.parseSeparatedSyntaxList(listParsingState);
             return new VariableDeclarationSyntax(varKeyword, variableDeclarators);
@@ -2209,7 +2209,7 @@ module Parser {
         // precedence than 'comma'.  Otherwise we'll get: "var a = (1, (b = 2))", instead of
         // "var a = (1), b = (2)");
         private parseAssignmentExpression(allowIn: bool): ExpressionSyntax {
-            return this.parseSubExpression(ParserExpressionPrecedence.AssignmentExpressionPrecedence, allowIn);
+            return this.parseSubExpression(ExpressionPrecedence.AssignmentExpressionPrecedence, allowIn);
         }
 
         private parseUnaryExpression(): UnaryExpressionSyntax {
@@ -2227,7 +2227,7 @@ module Parser {
             }
         }
 
-        private parseSubExpression(precedence: ParserExpressionPrecedence, allowIn: bool): ExpressionSyntax {
+        private parseSubExpression(precedence: ExpressionPrecedence, allowIn: bool): ExpressionSyntax {
             // Because unary expression have the highest precedence, we can always parse one, regardless 
             // of what precedence was passed in.
             var leftOperand: ExpressionSyntax = this.parseUnaryExpression();
@@ -2282,7 +2282,7 @@ module Parser {
                 // if we have: "x = f ? a : b", then we would want to consume the "?" as part of "f".
                 //
                 // Note: if we have "m = f ? x ? y : z : b, then we do want the second "?" to go with 'x'.
-                if (currentTokenKind === SyntaxKind.QuestionToken && precedence <= ParserExpressionPrecedence.ConditionalExpressionPrecedence) {
+                if (currentTokenKind === SyntaxKind.QuestionToken && precedence <= ExpressionPrecedence.ConditionalExpressionPrecedence) {
                     var questionToken = this.eatToken(SyntaxKind.QuestionToken);
 
                     var whenTrueExpression = this.parseAssignmentExpression(allowIn);
@@ -2382,7 +2382,7 @@ module Parser {
             Debug.assert(this.isArgumentList());
 
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
-            var arguments = this.parseSeparatedSyntaxList(ParserListParsingState.ArgumentList_AssignmentExpressions);
+            var arguments = this.parseSeparatedSyntaxList(ListParsingState.ArgumentList_AssignmentExpressions);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
 
             return new ArgumentListSyntax(openParenToken, arguments, closeParenToken);
@@ -2938,7 +2938,7 @@ module Parser {
             Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenBraceToken);
 
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
-            var propertyAssignments = this.parseSeparatedSyntaxList(ParserListParsingState.ObjectLiteralExpression_PropertyAssignments);
+            var propertyAssignments = this.parseSeparatedSyntaxList(ListParsingState.ObjectLiteralExpression_PropertyAssignments);
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
 
             return new ObjectLiteralExpressionSyntax(
@@ -3048,7 +3048,7 @@ module Parser {
             Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenBracketToken);
 
             var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
-            var expressions = this.parseSeparatedSyntaxList(ParserListParsingState.ArrayLiteralExpression_AssignmentExpressions);
+            var expressions = this.parseSeparatedSyntaxList(ListParsingState.ArrayLiteralExpression_AssignmentExpressions);
             var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
 
             return new ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken);
@@ -3073,7 +3073,7 @@ module Parser {
 
             if (!openBraceToken.isMissing()) {
                 var savedIsInStrictMode = this.isInStrictMode;
-                statements = this.parseSyntaxList(ParserListParsingState.Block_Statements, ParserImpl.updateStrictModeState);
+                statements = this.parseSyntaxList(ListParsingState.Block_Statements, ParserImpl.updateStrictModeState);
                 this.isInStrictMode = savedIsInStrictMode;
             }
 
@@ -3094,7 +3094,7 @@ module Parser {
             var parameters: ISeparatedSyntaxList = SeparatedSyntaxList.empty;
 
             if (!openParenToken.isMissing()) {
-                parameters = this.parseSeparatedSyntaxList(ParserListParsingState.ParameterList_Parameters);
+                parameters = this.parseSeparatedSyntaxList(ListParsingState.ParameterList_Parameters);
             }
 
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
@@ -3274,7 +3274,7 @@ module Parser {
             return new ParameterSyntax(dotDotDotToken, publicOrPrivateToken, identifier, questionToken, typeAnnotation, equalsValueClause);
         }
 
-        private parseSyntaxList(currentListType: ParserListParsingState,
+        private parseSyntaxList(currentListType: ListParsingState,
             processItems: (parser: ParserImpl, items: any[]) => void = null): ISyntaxList {
             var savedListParsingState = this.listParsingState;
             this.listParsingState |= currentListType;
@@ -3286,7 +3286,7 @@ module Parser {
             return result;
         }
 
-        private parseSeparatedSyntaxList(currentListType: ParserListParsingState): ISeparatedSyntaxList {
+        private parseSeparatedSyntaxList(currentListType: ListParsingState): ISeparatedSyntaxList {
             var savedListParsingState = this.listParsingState;
             this.listParsingState |= currentListType;
 
@@ -3298,7 +3298,7 @@ module Parser {
         }
 
         // Returns true if we should abort parsing the list.
-        private abortParsingListOrMoveToNextToken(currentListType: ParserListParsingState, itemCount: number): bool {
+        private abortParsingListOrMoveToNextToken(currentListType: ListParsingState, itemCount: number): bool {
             // Ok.  It wasn't a terminator and it wasn't the start of an item in the list. 
             // Definitely report an error for this token.
             this.reportUnexpectedTokenDiagnostic(currentListType);
@@ -3307,8 +3307,8 @@ module Parser {
             // in one of our parent lists.  If so, we won't want to consume the token.  We've 
             // already reported the error, so just return to our caller so that a higher up 
             // production can consume it.
-            for (var state = ParserListParsingState.LastListParsingState;
-                 state >= ParserListParsingState.FirstListParsingState;
+            for (var state = ListParsingState.LastListParsingState;
+                 state >= ListParsingState.FirstListParsingState;
                  state >>= 1) {
 
                 if ((this.listParsingState & state) !== 0) {
@@ -3328,7 +3328,7 @@ module Parser {
             return false;
         }
 
-        private tryParseExpectedListItem(currentListType: ParserListParsingState,
+        private tryParseExpectedListItem(currentListType: ListParsingState,
             inErrorRecovery: bool,
             items: any[],
             processItems: (parser: ParserImpl, items: any[]) => void ): any[] {
@@ -3347,12 +3347,12 @@ module Parser {
             return items;
         }
 
-        private listIsTerminated(currentListType: ParserListParsingState, itemCount: number): bool {
+        private listIsTerminated(currentListType: ListParsingState, itemCount: number): bool {
             return this.isExpectedListTerminator(currentListType, itemCount) ||
                    this.currentToken().tokenKind === SyntaxKind.EndOfFileToken;
         }
 
-        private parseSyntaxListWorker(currentListType: ParserListParsingState,
+        private parseSyntaxListWorker(currentListType: ListParsingState,
             processItems: (parser: ParserImpl, items: any[]) => void ): ISyntaxList {
             var items: any[] = null;
 
@@ -3383,7 +3383,7 @@ module Parser {
             return SyntaxList.create(items);
         }
 
-        private parseSeparatedSyntaxListWorker(currentListType: ParserListParsingState): ISeparatedSyntaxList {
+        private parseSeparatedSyntaxListWorker(currentListType: ListParsingState): ISeparatedSyntaxList {
             var items: any[] = null;
 
             var allowTrailingSeparator = this.allowsTrailingSeparator(currentListType);
@@ -3483,106 +3483,106 @@ module Parser {
             return SeparatedSyntaxList.create(items);
         }
 
-        private allowsTrailingSeparator(currentListType: ParserListParsingState): bool {
+        private allowsTrailingSeparator(currentListType: ListParsingState): bool {
             switch (currentListType) {
-                case ParserListParsingState.EnumDeclaration_VariableDeclarators:
-                case ParserListParsingState.ObjectType_TypeMembers:
-                case ParserListParsingState.ObjectLiteralExpression_PropertyAssignments:
-                case ParserListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+                case ListParsingState.EnumDeclaration_VariableDeclarators:
+                case ListParsingState.ObjectType_TypeMembers:
+                case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+                case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                     return true;
 
-                case ParserListParsingState.ExtendsOrImplementsClause_TypeNameList:
-                case ParserListParsingState.ArgumentList_AssignmentExpressions:
-                case ParserListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
-                case ParserListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
-                case ParserListParsingState.ParameterList_Parameters:
+                case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                case ListParsingState.ArgumentList_AssignmentExpressions:
+                case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+                case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
+                case ListParsingState.ParameterList_Parameters:
                     // TODO: It would be great to allow trailing separators for parameters.
                     return false;
 
-                case ParserListParsingState.SourceUnit_ModuleElements:
-                case ParserListParsingState.ClassDeclaration_ClassElements:
-                case ParserListParsingState.ModuleDeclaration_ModuleElements:
-                case ParserListParsingState.SwitchStatement_SwitchClauses:
-                case ParserListParsingState.SwitchClause_Statements:
-                case ParserListParsingState.Block_Statements:
+                case ListParsingState.SourceUnit_ModuleElements:
+                case ListParsingState.ClassDeclaration_ClassElements:
+                case ListParsingState.ModuleDeclaration_ModuleElements:
+                case ListParsingState.SwitchStatement_SwitchClauses:
+                case ListParsingState.SwitchClause_Statements:
+                case ListParsingState.Block_Statements:
                 default:
                     throw Errors.notYetImplemented();
             }
         }
 
-        private requiresAtLeastOneItem(currentListType: ParserListParsingState): bool {
+        private requiresAtLeastOneItem(currentListType: ListParsingState): bool {
             switch (currentListType) {
-                case ParserListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
-                case ParserListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
-                case ParserListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+                case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
+                case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
                     return true;
 
-                case ParserListParsingState.ObjectType_TypeMembers:
-                case ParserListParsingState.EnumDeclaration_VariableDeclarators:
-                case ParserListParsingState.ArgumentList_AssignmentExpressions:
-                case ParserListParsingState.ObjectLiteralExpression_PropertyAssignments:
-                case ParserListParsingState.ParameterList_Parameters:
-                case ParserListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+                case ListParsingState.ObjectType_TypeMembers:
+                case ListParsingState.EnumDeclaration_VariableDeclarators:
+                case ListParsingState.ArgumentList_AssignmentExpressions:
+                case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+                case ListParsingState.ParameterList_Parameters:
+                case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                     return false;
 
-                case ParserListParsingState.SourceUnit_ModuleElements:
-                case ParserListParsingState.ClassDeclaration_ClassElements:
-                case ParserListParsingState.ModuleDeclaration_ModuleElements:
-                case ParserListParsingState.SwitchStatement_SwitchClauses:
-                case ParserListParsingState.SwitchClause_Statements:
-                case ParserListParsingState.Block_Statements:
+                case ListParsingState.SourceUnit_ModuleElements:
+                case ListParsingState.ClassDeclaration_ClassElements:
+                case ListParsingState.ModuleDeclaration_ModuleElements:
+                case ListParsingState.SwitchStatement_SwitchClauses:
+                case ListParsingState.SwitchClause_Statements:
+                case ListParsingState.Block_Statements:
                 default:
                     throw Errors.notYetImplemented();
             }
         }
 
-        private allowsAutomaticSemicolonInsertion(currentListType: ParserListParsingState): bool {
+        private allowsAutomaticSemicolonInsertion(currentListType: ListParsingState): bool {
             switch (currentListType) {
-                case ParserListParsingState.ObjectType_TypeMembers:
+                case ListParsingState.ObjectType_TypeMembers:
                     return true;
 
-                case ParserListParsingState.ExtendsOrImplementsClause_TypeNameList:
-                case ParserListParsingState.EnumDeclaration_VariableDeclarators:
-                case ParserListParsingState.ArgumentList_AssignmentExpressions:
-                case ParserListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
-                case ParserListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
-                case ParserListParsingState.ObjectLiteralExpression_PropertyAssignments:
-                case ParserListParsingState.ParameterList_Parameters:
-                case ParserListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+                case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                case ListParsingState.EnumDeclaration_VariableDeclarators:
+                case ListParsingState.ArgumentList_AssignmentExpressions:
+                case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+                case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
+                case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+                case ListParsingState.ParameterList_Parameters:
+                case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                     return false;
 
-                case ParserListParsingState.SourceUnit_ModuleElements:
-                case ParserListParsingState.ClassDeclaration_ClassElements:
-                case ParserListParsingState.ModuleDeclaration_ModuleElements:
-                case ParserListParsingState.SwitchStatement_SwitchClauses:
-                case ParserListParsingState.SwitchClause_Statements:
-                case ParserListParsingState.Block_Statements:
+                case ListParsingState.SourceUnit_ModuleElements:
+                case ListParsingState.ClassDeclaration_ClassElements:
+                case ListParsingState.ModuleDeclaration_ModuleElements:
+                case ListParsingState.SwitchStatement_SwitchClauses:
+                case ListParsingState.SwitchClause_Statements:
+                case ListParsingState.Block_Statements:
                 default:
                     throw Errors.notYetImplemented();
             }
         }
 
-        private separatorKind(currentListType: ParserListParsingState): SyntaxKind {
+        private separatorKind(currentListType: ListParsingState): SyntaxKind {
             switch (currentListType) {
-                case ParserListParsingState.ExtendsOrImplementsClause_TypeNameList:
-                case ParserListParsingState.ArgumentList_AssignmentExpressions:
-                case ParserListParsingState.EnumDeclaration_VariableDeclarators:
-                case ParserListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
-                case ParserListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
-                case ParserListParsingState.ObjectLiteralExpression_PropertyAssignments:
-                case ParserListParsingState.ParameterList_Parameters:
-                case ParserListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+                case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                case ListParsingState.ArgumentList_AssignmentExpressions:
+                case ListParsingState.EnumDeclaration_VariableDeclarators:
+                case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+                case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
+                case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
+                case ListParsingState.ParameterList_Parameters:
+                case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                     return SyntaxKind.CommaToken;
 
-                case ParserListParsingState.ObjectType_TypeMembers:
+                case ListParsingState.ObjectType_TypeMembers:
                     return SyntaxKind.SemicolonToken;
 
-                case ParserListParsingState.SourceUnit_ModuleElements:
-                case ParserListParsingState.ClassDeclaration_ClassElements:
-                case ParserListParsingState.ModuleDeclaration_ModuleElements:
-                case ParserListParsingState.SwitchStatement_SwitchClauses:
-                case ParserListParsingState.SwitchClause_Statements:
-                case ParserListParsingState.Block_Statements:
+                case ListParsingState.SourceUnit_ModuleElements:
+                case ListParsingState.ClassDeclaration_ClassElements:
+                case ListParsingState.ModuleDeclaration_ModuleElements:
+                case ListParsingState.SwitchStatement_SwitchClauses:
+                case ListParsingState.SwitchClause_Statements:
+                case ListParsingState.Block_Statements:
                 default:
                     throw Errors.notYetImplemented();
             }
@@ -3593,7 +3593,7 @@ module Parser {
                 this.diagnostics[this.diagnostics.length - 1].position() === position;
         }
 
-        private reportUnexpectedTokenDiagnostic(listType: ParserListParsingState): void {
+        private reportUnexpectedTokenDiagnostic(listType: ListParsingState): void {
             var token = this.currentToken();
 
             var diagnostic = new SyntaxDiagnostic(
@@ -3611,51 +3611,51 @@ module Parser {
             this.diagnostics.push(diagnostic);
         }
 
-        private isExpectedListTerminator(currentListType: ParserListParsingState, itemCount: number): bool {
+        private isExpectedListTerminator(currentListType: ListParsingState, itemCount: number): bool {
             switch (currentListType) {
-                case ParserListParsingState.SourceUnit_ModuleElements:
+                case ListParsingState.SourceUnit_ModuleElements:
                     return this.isExpectedSourceUnit_ModuleElementsTerminator();
 
-                case ParserListParsingState.ClassDeclaration_ClassElements:
+                case ListParsingState.ClassDeclaration_ClassElements:
                     return this.isExpectedClassDeclaration_ClassElementsTerminator();
 
-                case ParserListParsingState.ModuleDeclaration_ModuleElements:
+                case ListParsingState.ModuleDeclaration_ModuleElements:
                     return this.isExpectedModuleDeclaration_ModuleElementsTerminator();
 
-                case ParserListParsingState.SwitchStatement_SwitchClauses:
+                case ListParsingState.SwitchStatement_SwitchClauses:
                     return this.isExpectedSwitchStatement_SwitchClausesTerminator();
 
-                case ParserListParsingState.SwitchClause_Statements:
+                case ListParsingState.SwitchClause_Statements:
                     return this.isExpectedSwitchClause_StatementsTerminator();
 
-                case ParserListParsingState.Block_Statements:
+                case ListParsingState.Block_Statements:
                     return this.isExpectedBlock_StatementsTerminator();
 
-                case ParserListParsingState.EnumDeclaration_VariableDeclarators:
+                case ListParsingState.EnumDeclaration_VariableDeclarators:
                     return this.isExpectedEnumDeclaration_VariableDeclaratorsTerminator();
 
-                case ParserListParsingState.ObjectType_TypeMembers:
+                case ListParsingState.ObjectType_TypeMembers:
                     return this.isExpectedObjectType_TypeMembersTerminator();
 
-                case ParserListParsingState.ArgumentList_AssignmentExpressions:
+                case ListParsingState.ArgumentList_AssignmentExpressions:
                     return this.isExpectedArgumentList_AssignmentExpressionsTerminator();
 
-                case ParserListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
                     return this.isExpectedExtendsOrImplementsClause_TypeNameListTerminator();
 
-                case ParserListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+                case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
                     return this.isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator(itemCount);
 
-                case ParserListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
+                case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
                     return this.isExpectedVariableDeclaration_VariableDeclarators_DisallowInTerminator();
 
-                case ParserListParsingState.ObjectLiteralExpression_PropertyAssignments:
+                case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
                     return this.isExpectedObjectLiteralExpression_PropertyAssignmentsTerminator();
 
-                case ParserListParsingState.ParameterList_Parameters:
+                case ListParsingState.ParameterList_Parameters:
                     return this.isExpectedParameterList_ParametersTerminator();
 
-                case ParserListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+                case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                     return this.isExpectedLiteralExpression_AssignmentExpressionsTerminator();
 
                 default:
@@ -3779,47 +3779,47 @@ module Parser {
             return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken;
         }
 
-        private isExpectedListItem(currentListType: ParserListParsingState, inErrorRecovery: bool): any {
+        private isExpectedListItem(currentListType: ListParsingState, inErrorRecovery: bool): any {
             switch (currentListType) {
-                case ParserListParsingState.SourceUnit_ModuleElements:
+                case ListParsingState.SourceUnit_ModuleElements:
                     return this.isModuleElement();
 
-                case ParserListParsingState.ClassDeclaration_ClassElements:
+                case ListParsingState.ClassDeclaration_ClassElements:
                     return this.isClassElement();
 
-                case ParserListParsingState.ModuleDeclaration_ModuleElements:
+                case ListParsingState.ModuleDeclaration_ModuleElements:
                     return this.isModuleElement();
 
-                case ParserListParsingState.SwitchStatement_SwitchClauses:
+                case ListParsingState.SwitchStatement_SwitchClauses:
                     return this.isSwitchClause();
 
-                case ParserListParsingState.SwitchClause_Statements:
+                case ListParsingState.SwitchClause_Statements:
                     return this.isStatement(/*allowFunctionDeclaration:*/ true);
 
-                case ParserListParsingState.Block_Statements:
+                case ListParsingState.Block_Statements:
                     return this.isStatement(/*allowFunctionDeclaration:*/ true);
 
-                case ParserListParsingState.EnumDeclaration_VariableDeclarators:
-                case ParserListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
-                case ParserListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
+                case ListParsingState.EnumDeclaration_VariableDeclarators:
+                case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+                case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
                     return this.isVariableDeclarator();
 
-                case ParserListParsingState.ObjectType_TypeMembers:
+                case ListParsingState.ObjectType_TypeMembers:
                     return this.isTypeMember();
 
-                case ParserListParsingState.ArgumentList_AssignmentExpressions:
+                case ListParsingState.ArgumentList_AssignmentExpressions:
                     return this.isExpression();
 
-                case ParserListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
                     return this.isName();
 
-                case ParserListParsingState.ObjectLiteralExpression_PropertyAssignments:
+                case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
                     return this.isPropertyAssignment(inErrorRecovery);
 
-                case ParserListParsingState.ParameterList_Parameters:
+                case ListParsingState.ParameterList_Parameters:
                     return this.isParameter();
 
-                case ParserListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+                case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                     return this.isAssignmentOrOmittedExpression();
 
                 default:
@@ -3827,51 +3827,51 @@ module Parser {
             }
         }
 
-        private parseExpectedListItem(currentListType: ParserListParsingState): any {
+        private parseExpectedListItem(currentListType: ListParsingState): any {
             switch (currentListType) {
-                case ParserListParsingState.SourceUnit_ModuleElements:
+                case ListParsingState.SourceUnit_ModuleElements:
                     return this.parseModuleElement();
 
-                case ParserListParsingState.ClassDeclaration_ClassElements:
+                case ListParsingState.ClassDeclaration_ClassElements:
                     return this.parseClassElement();
 
-                case ParserListParsingState.ModuleDeclaration_ModuleElements:
+                case ListParsingState.ModuleDeclaration_ModuleElements:
                     return this.parseModuleElement();
 
-                case ParserListParsingState.SwitchStatement_SwitchClauses:
+                case ListParsingState.SwitchStatement_SwitchClauses:
                     return this.parseSwitchClause();
 
-                case ParserListParsingState.SwitchClause_Statements:
+                case ListParsingState.SwitchClause_Statements:
                     return this.parseStatement(/*allowFunctionDeclaration:*/ false);
 
-                case ParserListParsingState.Block_Statements:
+                case ListParsingState.Block_Statements:
                     return this.parseStatement(/*allowFunctionDeclaration:*/ true);
 
-                case ParserListParsingState.EnumDeclaration_VariableDeclarators:
+                case ListParsingState.EnumDeclaration_VariableDeclarators:
                     return this.parseVariableDeclarator(/*allowIn:*/ true);
 
-                case ParserListParsingState.ObjectType_TypeMembers:
+                case ListParsingState.ObjectType_TypeMembers:
                     return this.parseTypeMember();
 
-                case ParserListParsingState.ArgumentList_AssignmentExpressions:
+                case ListParsingState.ArgumentList_AssignmentExpressions:
                     return this.parseAssignmentExpression(/*allowIn:*/ true);
 
-                case ParserListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
                     return this.parseName();
 
-                case ParserListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+                case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
                     return this.parseVariableDeclarator(/*allowIn:*/ true);
 
-                case ParserListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
+                case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
                     return this.parseVariableDeclarator(/*allowIn:*/ false);
 
-                case ParserListParsingState.ObjectLiteralExpression_PropertyAssignments:
+                case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
                     return this.parsePropertyAssignment();
 
-                case ParserListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+                case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                     return this.parseAssignmentOrOmittedExpression();
 
-                case ParserListParsingState.ParameterList_Parameters:
+                case ListParsingState.ParameterList_Parameters:
                     return this.parseParameter();
 
                 default:
@@ -3879,47 +3879,47 @@ module Parser {
             }
         }
 
-        private getExpectedListElementType(currentListType: ParserListParsingState): string {
+        private getExpectedListElementType(currentListType: ListParsingState): string {
             switch (currentListType) {
-                case ParserListParsingState.SourceUnit_ModuleElements:
+                case ListParsingState.SourceUnit_ModuleElements:
                     return Strings.module__class__interface__enum__import_or_statement;
 
-                case ParserListParsingState.ClassDeclaration_ClassElements:
+                case ListParsingState.ClassDeclaration_ClassElements:
                     return Strings.constructor__function__accessor_or_variable;
 
-                case ParserListParsingState.ModuleDeclaration_ModuleElements:
+                case ListParsingState.ModuleDeclaration_ModuleElements:
                     return Strings.module__class__interface__enum__import_or_statement;
 
-                case ParserListParsingState.SwitchStatement_SwitchClauses:
+                case ListParsingState.SwitchStatement_SwitchClauses:
                     return Strings.case_or_default_clause;
 
-                case ParserListParsingState.SwitchClause_Statements:
+                case ListParsingState.SwitchClause_Statements:
                     return Strings.statement;
 
-                case ParserListParsingState.Block_Statements:
+                case ListParsingState.Block_Statements:
                     return Strings.statement;
 
-                case ParserListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
-                case ParserListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
-                case ParserListParsingState.EnumDeclaration_VariableDeclarators:
+                case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
+                case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
+                case ListParsingState.EnumDeclaration_VariableDeclarators:
                     return Strings.identifier;
 
-                case ParserListParsingState.ObjectType_TypeMembers:
+                case ListParsingState.ObjectType_TypeMembers:
                     return Strings.call__construct__index__property_or_function_signature;
 
-                case ParserListParsingState.ArgumentList_AssignmentExpressions:
+                case ListParsingState.ArgumentList_AssignmentExpressions:
                     return Strings.expression;
 
-                case ParserListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
                     return Strings.type_name;
 
-                case ParserListParsingState.ObjectLiteralExpression_PropertyAssignments:
+                case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
                     return Strings.property_or_accessor;
 
-                case ParserListParsingState.ParameterList_Parameters:
+                case ListParsingState.ParameterList_Parameters:
                     return Strings.parameter;
 
-                case ParserListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+                case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                     return Strings.expression;
 
                 default:
