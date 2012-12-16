@@ -43,10 +43,15 @@ class Emitter extends SyntaxRewriter {
     }
 
     private visitSourceUnit(node: SourceUnitSyntax): SourceUnitSyntax {
+        var moduleElements = this.convertModuleElements(node.moduleElements());
+        return node.withModuleElements(SyntaxList.create(moduleElements));
+    }
+
+    private convertModuleElements(list: ISyntaxList): ModuleElementSyntax[] {
         var moduleElements: ModuleElementSyntax[] = [];
 
-        for (var i = 0, n = node.moduleElements().count(); i < n; i++) {
-            var moduleElement = node.moduleElements().syntaxNodeAt(i);
+        for (var i = 0, n = list.count(); i < n; i++) {
+            var moduleElement = list.syntaxNodeAt(i);
 
             var converted = this.visitNode(moduleElement);
             if (converted !== null) {
@@ -58,20 +63,8 @@ class Emitter extends SyntaxRewriter {
                 }
             }
         }
-
-        return new SourceUnitSyntax(SyntaxList.create(moduleElements), node.endOfFileToken());
-    }
-
-    private static leftmostName(name: NameSyntax): IdentifierNameSyntax {
-        if (name.kind() === SyntaxKind.IdentifierName) {
-            return <IdentifierNameSyntax>name;
-        }
-        else if (name.kind() === SyntaxKind.QualifiedName) {
-            return Emitter.leftmostName((<QualifiedNameSyntax>name).left());
-        }
-        else {
-            throw Errors.invalidOperation();
-        }
+        
+        return moduleElements;
     }
 
     private static splitModuleName(name: NameSyntax): IdentifierNameSyntax[] {
@@ -105,20 +98,7 @@ class Emitter extends SyntaxRewriter {
         // members declared in the module.
 
         // Recurse downwards and get the rewritten children.
-        var moduleElements: ModuleElementSyntax[] = [];
-        for (var i = 0, n = node.moduleElements().count(); i < n; i++) {
-            var element = node.moduleElements().syntaxNodeAt(i);
-            var converted = this.visitNode(element);
-
-            if (converted !== null) {
-                if (ArrayUtilities.isArray(converted)) {
-                    moduleElements.push.apply(moduleElements, converted);
-                }
-                else {
-                    moduleElements.push(<ModuleElementSyntax>converted);
-                }
-            }
-        }
+        var moduleElements = this.convertModuleElements(node.moduleElements());
 
         // Then, for all the names left of that name, wrap what we've created in a larger module.
         for (var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {

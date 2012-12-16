@@ -19791,9 +19791,13 @@ var Emitter = (function (_super) {
         return output;
     }
     Emitter.prototype.visitSourceUnit = function (node) {
+        var moduleElements = this.convertModuleElements(node.moduleElements());
+        return node.withModuleElements(SyntaxList.create(moduleElements));
+    };
+    Emitter.prototype.convertModuleElements = function (list) {
         var moduleElements = [];
-        for(var i = 0, n = node.moduleElements().count(); i < n; i++) {
-            var moduleElement = node.moduleElements().syntaxNodeAt(i);
+        for(var i = 0, n = list.count(); i < n; i++) {
+            var moduleElement = list.syntaxNodeAt(i);
             var converted = this.visitNode(moduleElement);
             if(converted !== null) {
                 if(ArrayUtilities.isArray(converted)) {
@@ -19803,19 +19807,8 @@ var Emitter = (function (_super) {
                 }
             }
         }
-        return new SourceUnitSyntax(SyntaxList.create(moduleElements), node.endOfFileToken());
+        return moduleElements;
     };
-    Emitter.leftmostName = function leftmostName(name) {
-        if(name.kind() === 120 /* IdentifierName */ ) {
-            return name;
-        } else {
-            if(name.kind() === 121 /* QualifiedName */ ) {
-                return Emitter.leftmostName((name).left());
-            } else {
-                throw Errors.invalidOperation();
-            }
-        }
-    }
     Emitter.splitModuleName = function splitModuleName(name) {
         var result = [];
         while(true) {
@@ -19838,18 +19831,7 @@ var Emitter = (function (_super) {
     };
     Emitter.prototype.visitModuleDeclaration = function (node) {
         var names = Emitter.splitModuleName(node.moduleName());
-        var moduleElements = [];
-        for(var i = 0, n = node.moduleElements().count(); i < n; i++) {
-            var element = node.moduleElements().syntaxNodeAt(i);
-            var converted = this.visitNode(element);
-            if(converted !== null) {
-                if(ArrayUtilities.isArray(converted)) {
-                    moduleElements.push.apply(moduleElements, converted);
-                } else {
-                    moduleElements.push(converted);
-                }
-            }
-        }
+        var moduleElements = this.convertModuleElements(node.moduleElements());
         for(var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
             moduleElements = this.convertModuleDeclaration(names[nameIndex], moduleElements);
             if(nameIndex > 0) {
