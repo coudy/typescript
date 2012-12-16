@@ -1046,7 +1046,8 @@ class Emitter extends SyntaxRewriter {
                                         index: number): ExpressionSyntax {
         if (variableDeclarator.equalsValueClause() !== null) {
             // Use the value if one is provided.
-            return variableDeclarator.equalsValueClause().value();
+            return <ExpressionSyntax>variableDeclarator.equalsValueClause().value()
+                                                       .withTrailingTrivia(SyntaxTriviaList.empty);
         }
 
         // Didn't have a value.  Synthesize one if we're doing that, or use the previous item's value
@@ -1076,104 +1077,88 @@ class Emitter extends SyntaxRewriter {
                 SyntaxToken.createElastic({ kind: SyntaxKind.NumericLiteral, text: "1" })));
     }
 
-    private addEnumMapAssignments(node: EnumDeclarationSyntax, statements: StatementSyntax[]): void {
+    private generateEnumFunctionExpression(node: EnumDeclarationSyntax): FunctionExpressionSyntax {
+        var identifier = this.withNoTrivia(node.identifier());
+        
+        var enumColumn = this.columnForStartOfToken(node.firstToken());
+
+        var statements: StatementSyntax[] = [];
+
+        var initIndentationColumn = enumColumn + this.options.indentSpaces;
+        var initIndentationTrivia = this.indentationTrivia(initIndentationColumn);
+
         if (node.variableDeclarators().syntaxNodeCount() > 0) {
-            var identifier = this.withNoTrivia(node.identifier());
+            // var _ = E;
+            statements.push(new VariableStatementSyntax(null, null,
+                new VariableDeclarationSyntax(
+                    SyntaxToken.createElastic({ leadingTrivia: [initIndentationTrivia], kind: SyntaxKind.VarKeyword, trailingTrivia: this.spaceList }),
+                    SeparatedSyntaxList.create([new VariableDeclaratorSyntax(
+                        SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "_", trailingTrivia: this.spaceList }),
+                        null,
+                        new EqualsValueClauseSyntax(
+                            SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceList }),
+                            new IdentifierNameSyntax(identifier.clone())))])),
+                SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList })));
 
-            var indentationColumn = this.columnForStartOfToken(node.firstToken());
+            // _._map = []
+            statements.push(new ExpressionStatementSyntax(
+                new BinaryExpressionSyntax(
+                    SyntaxKind.AssignmentExpression,
+                    new MemberAccessExpressionSyntax(
+                        new IdentifierNameSyntax(SyntaxToken.createElastic({ leadingTrivia: [initIndentationTrivia], kind: SyntaxKind.IdentifierNameToken, text: "_" })),
+                        SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
+                        new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "_map", trailingTrivia: this.spaceList }))),
+                    SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceList }),
+                    ArrayLiteralExpressionSyntax.create(
+                        SyntaxToken.createElastic({ kind: SyntaxKind.OpenBracketToken }),
+                        SyntaxToken.createElastic({ kind: SyntaxKind.CloseBracketToken }))),
+                SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList })));
 
-            var mapIndentationColumn = indentationColumn + this.options.indentSpaces;
-            var mapIndentationTrivia = this.indentationTrivia(mapIndentationColumn);
-
-            var receiver: ExpressionSyntax = new MemberAccessExpressionSyntax(
-                new IdentifierNameSyntax(identifier.withLeadingTrivia(SyntaxTriviaList.create([mapIndentationTrivia]))),
-                SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
-                new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "_map", trailingTrivia: this.spaceList })));
-
-            var assignExpression = new BinaryExpressionSyntax(
-                SyntaxKind.AssignmentExpression,
-                receiver,
-                SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceList }),
-                ArrayLiteralExpressionSyntax.create(
-                    SyntaxToken.createElastic({ kind: SyntaxKind.OpenBracketToken }),
-                    SyntaxToken.createElastic({ kind: SyntaxKind.CloseBracketToken })));
-
-            var expressionStatement = new ExpressionStatementSyntax(
-                assignExpression,
-                SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
-
-            statements.push(expressionStatement);
-
+            var assignDefaultValues = { value: true };
             for (var i = 0, n = node.variableDeclarators().syntaxNodeCount(); i < n; i++) {
-                var variableDeclarator = <VariableDeclaratorSyntax>node.variableDeclarators().syntaxNodeAt(i);
+                var variableDeclarator = <VariableDeclaratorSyntax>node.variableDeclarators().syntaxNodeAt(i)
                 var variableIdentifier = this.withNoTrivia(variableDeclarator.identifier());
 
-                var receiver: ExpressionSyntax = new MemberAccessExpressionSyntax(
-                    new IdentifierNameSyntax(identifier.withLeadingTrivia(SyntaxTriviaList.create([mapIndentationTrivia]))),
-                    SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
-                    new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "_map" })));
+                assignDefaultValues.value = assignDefaultValues.value && variableDeclarator.equalsValueClause() === null;
 
-                receiver = new ElementAccessExpressionSyntax(
-                    receiver,
-                    SyntaxToken.createElastic({ kind: SyntaxKind.OpenBracketToken }),
-                    new MemberAccessExpressionSyntax(
-                        new IdentifierNameSyntax(identifier.clone()),
-                            SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
-                            new IdentifierNameSyntax(variableIdentifier.clone())),
-                    SyntaxToken.createElastic({ kind: SyntaxKind.CloseBracketToken }));
-
-                var assignExpression = new BinaryExpressionSyntax(
+                // _.Foo = 1
+                var innerAssign = new BinaryExpressionSyntax(
                     SyntaxKind.AssignmentExpression,
-                    receiver,
+                    new MemberAccessExpressionSyntax(
+                        new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "_" })),
+                        SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
+                        new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space))),
+                    SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceList }),
+                    this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues.value, i))
+
+                // _._map[_.Foo = 1]
+                var elementAccessExpression = new ElementAccessExpressionSyntax(
+                    new MemberAccessExpressionSyntax(
+                        new IdentifierNameSyntax(SyntaxToken.createElastic({ leadingTrivia: [initIndentationTrivia], kind: SyntaxKind.IdentifierNameToken, text: "_" })),
+                        SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
+                        new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "_map" }))),
+                    SyntaxToken.createElastic({ kind: SyntaxKind.OpenBracketToken }),
+                    innerAssign,
+                    SyntaxToken.createElastic({ kind: SyntaxKind.CloseBracketToken, trailingTrivia: this.spaceList }));
+
+                //_._map[_.Foo = 1] = "Foo"
+                var outerAssign = new BinaryExpressionSyntax(
+                    SyntaxKind.AssignmentExpression,
+                    elementAccessExpression,
                     SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceList }),
                     new LiteralExpressionSyntax(
                         SyntaxKind.StringLiteralExpression,
                         SyntaxToken.createElastic({ kind: SyntaxKind.StringLiteral, text: '"' + variableIdentifier.text() + '"' })));
 
                 var expressionStatement = new ExpressionStatementSyntax(
-                    assignExpression,
+                    outerAssign,
                     SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
 
                 statements.push(expressionStatement);
             }
         }
-    }
-
-    private generateEnumFunctionExpression(node: EnumDeclarationSyntax): FunctionExpressionSyntax {
-        var identifier = this.withNoTrivia(node.identifier());
-        
-        var indentationColumn = this.columnForStartOfToken(node.firstToken());
-        var indentationTrivia = this.indentationTrivia(indentationColumn);
-
-        var statements: StatementSyntax[] = [];
-
-        var assignDefaultValues = true;
-        for (var i = 0, n = node.variableDeclarators().syntaxNodeCount(); i < n; i++) {
-            var variableDeclarator = <VariableDeclaratorSyntax>node.variableDeclarators().syntaxNodeAt(i);
-            var variableIdentifier = this.withNoTrivia(variableDeclarator.identifier());
-            assignDefaultValues = assignDefaultValues && variableDeclarator.equalsValueClause() === null;
-
-            var receiver: ExpressionSyntax = new MemberAccessExpressionSyntax(
-                new IdentifierNameSyntax(identifier.withLeadingTrivia(variableDeclarator.leadingTrivia()).clone()),
-                SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
-                new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
-
-            var assignExpression = new BinaryExpressionSyntax(
-                SyntaxKind.AssignmentExpression,
-                receiver,
-                SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceList }),
-                this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues, i));
-
-            var expressionStatement = new ExpressionStatementSyntax(
-                assignExpression,
-                SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
-
-            statements.push(expressionStatement);
-        }
-
-        // Add _map property
-        this.addEnumMapAssignments(node, statements);
-
+    
+        var indentationTrivia = this.indentationTrivia(enumColumn);
         var block = new BlockSyntax(
             SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: this.newLineList }),
             SyntaxList.create(statements),
