@@ -15623,7 +15623,7 @@ var Emitter = (function (_super) {
     Emitter.isSuperInvocationExpression = function isSuperInvocationExpression(node) {
         return node.kind() === 210 /* InvocationExpression */  && (node).expression().kind() === 221 /* SuperExpression */ ;
     }
-    Emitter.isSuperMemberAccess = function isSuperMemberAccess(node) {
+    Emitter.isSuperMemberAccessExpression = function isSuperMemberAccessExpression(node) {
         if(node.kind() === 209 /* MemberAccessExpression */ ) {
             var memberAccess = node;
             return memberAccess.expression().kind() === 221 /* SuperExpression */ ;
@@ -15631,7 +15631,7 @@ var Emitter = (function (_super) {
         return false;
     }
     Emitter.isSuperMemberAccessInvocationExpression = function isSuperMemberAccessInvocationExpression(node) {
-        return node.kind() === 210 /* InvocationExpression */  && Emitter.isSuperMemberAccess((node).expression());
+        return node.kind() === 210 /* InvocationExpression */  && Emitter.isSuperMemberAccessExpression((node).expression());
     }
     Emitter.prototype.convertSuperInvocationExpression = function (node) {
         var result = _super.prototype.visitInvocationExpression.call(this, node);
@@ -15659,21 +15659,7 @@ var Emitter = (function (_super) {
     };
     Emitter.prototype.convertSuperMemberAccessInvocationExpression = function (node) {
         var result = _super.prototype.visitInvocationExpression.call(this, node);
-        var originalMemberAccess = result.expression();
-        var receiver = new IdentifierNameSyntax(SyntaxToken.createElastic({
-            leadingTrivia: result.leadingTrivia().toArray(),
-            kind: 9 /* IdentifierNameToken */ ,
-            text: "_super"
-        }));
-        receiver = new MemberAccessExpressionSyntax(new MemberAccessExpressionSyntax(receiver, SyntaxToken.createElastic({
-            kind: 73 /* DotToken */ 
-        }), new IdentifierNameSyntax(SyntaxToken.createElastic({
-            kind: 9 /* IdentifierNameToken */ ,
-            text: "prototype"
-        }))), SyntaxToken.createElastic({
-            kind: 73 /* DotToken */ 
-        }), originalMemberAccess.identifierName());
-        var expression = new MemberAccessExpressionSyntax(receiver, SyntaxToken.createElastic({
+        var expression = new MemberAccessExpressionSyntax(result.expression(), SyntaxToken.createElastic({
             kind: 73 /* DotToken */ 
         }), new IdentifierNameSyntax(SyntaxToken.createElastic({
             kind: 9 /* IdentifierNameToken */ ,
@@ -15699,6 +15685,25 @@ var Emitter = (function (_super) {
             return this.convertSuperMemberAccessInvocationExpression(node);
         }
         return _super.prototype.visitInvocationExpression.call(this, node);
+    };
+    Emitter.prototype.visitMemberAccessExpression = function (node) {
+        var result = _super.prototype.visitMemberAccessExpression.call(this, node);
+        if(!Emitter.isSuperMemberAccessExpression(result)) {
+            return result;
+        }
+        var receiver = new IdentifierNameSyntax(SyntaxToken.createElastic({
+            leadingTrivia: result.leadingTrivia().toArray(),
+            kind: 9 /* IdentifierNameToken */ ,
+            text: "_super"
+        }));
+        return new MemberAccessExpressionSyntax(new MemberAccessExpressionSyntax(receiver, SyntaxToken.createElastic({
+            kind: 73 /* DotToken */ 
+        }), new IdentifierNameSyntax(SyntaxToken.createElastic({
+            kind: 9 /* IdentifierNameToken */ ,
+            text: "prototype"
+        }))), SyntaxToken.createElastic({
+            kind: 73 /* DotToken */ 
+        }), result.identifierName());
     };
     return Emitter;
 })(SyntaxRewriter);
@@ -49113,8 +49118,7 @@ var expectedTop1000Failures = {
     "JSFile800\\fedex_com\\InstantInvite3.js": true
 };
 var stringTable = new StringTable();
-var specificFile = "SuperExpression4";
-undefined;
+var specificFile = undefined;
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {

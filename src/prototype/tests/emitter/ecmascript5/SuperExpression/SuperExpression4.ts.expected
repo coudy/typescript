@@ -4,7 +4,7 @@
         "    function C() {",
         "    }",
         "    C.prototype.foo = function() {",
-        "        super.foo = 1",
+        "        _super.prototype.foo = 1",
         "    };",
         "    return C;",
         "})();",
@@ -16,7 +16,7 @@
         "            function C() {",
         "            }",
         "            C.prototype.foo = function() {",
-        "                super.foo = 1",
+        "                _super.prototype.foo = 1",
         "            };",
         "            return C;",
         "        })();",
@@ -362,20 +362,35 @@
                                                                                 "_left": {
                                                                                     "kind": "MemberAccessExpression",
                                                                                     "_expression": {
-                                                                                        "kind": "SuperExpression",
-                                                                                        "_superKeyword": {
-                                                                                            "kind": "IdentifierNameToken",
-                                                                                            "keywordKind": "SuperKeyword",
-                                                                                            "width": 5,
-                                                                                            "fullWidth": 13,
-                                                                                            "text": "super",
-                                                                                            "hasLeadingTrivia": true,
-                                                                                            "leadingTrivia": [
-                                                                                                {
-                                                                                                    "kind": "WhitespaceTrivia",
-                                                                                                    "text": "        "
-                                                                                                }
-                                                                                            ]
+                                                                                        "kind": "MemberAccessExpression",
+                                                                                        "_expression": {
+                                                                                            "kind": "IdentifierName",
+                                                                                            "_identifier": {
+                                                                                                "kind": "IdentifierNameToken",
+                                                                                                "width": 6,
+                                                                                                "fullWidth": 14,
+                                                                                                "text": "_super",
+                                                                                                "hasLeadingTrivia": true,
+                                                                                                "leadingTrivia": [
+                                                                                                    {
+                                                                                                        "kind": "WhitespaceTrivia",
+                                                                                                        "text": "        "
+                                                                                                    }
+                                                                                                ]
+                                                                                            }
+                                                                                        },
+                                                                                        "_dotToken": {
+                                                                                            "kind": "DotToken",
+                                                                                            "width": 1,
+                                                                                            "text": "."
+                                                                                        },
+                                                                                        "_identifierName": {
+                                                                                            "kind": "IdentifierName",
+                                                                                            "_identifier": {
+                                                                                                "kind": "IdentifierNameToken",
+                                                                                                "width": 9,
+                                                                                                "text": "prototype"
+                                                                                            }
                                                                                         }
                                                                                     },
                                                                                     "_dotToken": {
@@ -1155,20 +1170,35 @@
                                                                                                                                 "_left": {
                                                                                                                                     "kind": "MemberAccessExpression",
                                                                                                                                     "_expression": {
-                                                                                                                                        "kind": "SuperExpression",
-                                                                                                                                        "_superKeyword": {
-                                                                                                                                            "kind": "IdentifierNameToken",
-                                                                                                                                            "keywordKind": "SuperKeyword",
-                                                                                                                                            "width": 5,
-                                                                                                                                            "fullWidth": 21,
-                                                                                                                                            "text": "super",
-                                                                                                                                            "hasLeadingTrivia": true,
-                                                                                                                                            "leadingTrivia": [
-                                                                                                                                                {
-                                                                                                                                                    "kind": "WhitespaceTrivia",
-                                                                                                                                                    "text": "                "
-                                                                                                                                                }
-                                                                                                                                            ]
+                                                                                                                                        "kind": "MemberAccessExpression",
+                                                                                                                                        "_expression": {
+                                                                                                                                            "kind": "IdentifierName",
+                                                                                                                                            "_identifier": {
+                                                                                                                                                "kind": "IdentifierNameToken",
+                                                                                                                                                "width": 6,
+                                                                                                                                                "fullWidth": 22,
+                                                                                                                                                "text": "_super",
+                                                                                                                                                "hasLeadingTrivia": true,
+                                                                                                                                                "leadingTrivia": [
+                                                                                                                                                    {
+                                                                                                                                                        "kind": "WhitespaceTrivia",
+                                                                                                                                                        "text": "                "
+                                                                                                                                                    }
+                                                                                                                                                ]
+                                                                                                                                            }
+                                                                                                                                        },
+                                                                                                                                        "_dotToken": {
+                                                                                                                                            "kind": "DotToken",
+                                                                                                                                            "width": 1,
+                                                                                                                                            "text": "."
+                                                                                                                                        },
+                                                                                                                                        "_identifierName": {
+                                                                                                                                            "kind": "IdentifierName",
+                                                                                                                                            "_identifier": {
+                                                                                                                                                "kind": "IdentifierNameToken",
+                                                                                                                                                "width": 9,
+                                                                                                                                                "text": "prototype"
+                                                                                                                                            }
                                                                                                                                         }
                                                                                                                                     },
                                                                                                                                     "_dotToken": {

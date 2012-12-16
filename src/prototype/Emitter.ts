@@ -1107,7 +1107,7 @@ class Emitter extends SyntaxRewriter {
             (<InvocationExpressionSyntax>node).expression().kind() === SyntaxKind.SuperExpression;
     }
 
-    private static isSuperMemberAccess(node: ExpressionSyntax): bool {
+    private static isSuperMemberAccessExpression(node: ExpressionSyntax): bool {
         if (node.kind() === SyntaxKind.MemberAccessExpression) {
             var memberAccess = <MemberAccessExpressionSyntax>node;
             return memberAccess.expression().kind() === SyntaxKind.SuperExpression;
@@ -1118,7 +1118,7 @@ class Emitter extends SyntaxRewriter {
 
     private static isSuperMemberAccessInvocationExpression(node: SyntaxNode): bool {
         return node.kind() === SyntaxKind.InvocationExpression &&
-            Emitter.isSuperMemberAccess((<InvocationExpressionSyntax>node).expression());
+            Emitter.isSuperMemberAccessExpression((<InvocationExpressionSyntax>node).expression());
     }
 
     private convertSuperInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
@@ -1146,24 +1146,9 @@ class Emitter extends SyntaxRewriter {
 
     private convertSuperMemberAccessInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
         var result = <InvocationExpressionSyntax>super.visitInvocationExpression(node);
-        var originalMemberAccess = <MemberAccessExpressionSyntax>result.expression();
-
-        var receiver: ExpressionSyntax = new IdentifierNameSyntax(SyntaxToken.createElastic({
-            leadingTrivia: result.leadingTrivia().toArray(),
-            kind: SyntaxKind.IdentifierNameToken,
-            text: "_super"
-        }));
-
-        receiver = new MemberAccessExpressionSyntax(
-            new MemberAccessExpressionSyntax(
-                receiver,
-                SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
-                new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "prototype" }))),
-            SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
-            originalMemberAccess.identifierName());
 
         var expression = new MemberAccessExpressionSyntax(
-            receiver,
+            result.expression(),
             SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
             new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "call" })));
 
@@ -1189,5 +1174,26 @@ class Emitter extends SyntaxRewriter {
         }
 
         return super.visitInvocationExpression(node);
+    }
+
+    private visitMemberAccessExpression(node: MemberAccessExpressionSyntax): MemberAccessExpressionSyntax {
+        var result = <MemberAccessExpressionSyntax>super.visitMemberAccessExpression(node);
+        if (!Emitter.isSuperMemberAccessExpression(result)) {
+            return result;
+        }
+
+        var receiver: ExpressionSyntax = new IdentifierNameSyntax(SyntaxToken.createElastic({
+            leadingTrivia: result.leadingTrivia().toArray(),
+            kind: SyntaxKind.IdentifierNameToken,
+            text: "_super"
+        }));
+
+        return new MemberAccessExpressionSyntax(
+            new MemberAccessExpressionSyntax(
+                receiver,
+                SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
+                new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "prototype" }))),
+            SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
+            result.identifierName());
     }
 }
