@@ -20501,9 +20501,7 @@ var Emitter;
             return rewritten.withExportKeyword(null).withDeclareKeyword(null).withLeadingTrivia(rewritten.leadingTrivia());
         };
         EmitterImpl.prototype.visitParameter = function (node) {
-            var identifier = node.identifier();
-            identifier = identifier.withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(node.trailingTrivia());
-            return ParameterSyntax.create(identifier);
+            return ParameterSyntax.create(node.identifier()).withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(node.trailingTrivia());
         };
         EmitterImpl.prototype.generatePropertyAssignment = function (classDeclaration, static, memberDeclaration) {
             var isStatic = memberDeclaration.staticKeyword() !== null;

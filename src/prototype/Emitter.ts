@@ -478,6 +478,7 @@ module Emitter {
         private generatePropertyAssignmentStatement(parameter: ParameterSyntax): ExpressionStatementSyntax {
             var identifier = this.withNoTrivia(parameter.identifier());
 
+            // this.foo = foo;
             return ExpressionStatementSyntax.create1(
                 new BinaryExpressionSyntax(
                     SyntaxKind.AssignmentExpression,
@@ -494,6 +495,7 @@ module Emitter {
                                              .withTrailingTrivia(space);
             var identifierName = new IdentifierNameSyntax(name);
 
+            // typeof foo === 'undefined'
             var condition = new BinaryExpressionSyntax(
                     SyntaxKind.EqualsExpression,
                     new TypeOfExpressionSyntax(
@@ -504,12 +506,14 @@ module Emitter {
                         SyntaxKind.StringLiteralExpression,
                         SyntaxToken.create(SyntaxKind.StringLiteral, { text: '"undefined"' })));
 
+            // foo = expr
             var assignment = new BinaryExpressionSyntax(
                 SyntaxKind.AssignmentExpression,
                 identifierName,
                 SyntaxToken.create(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
                 parameter.equalsValueClause().value().accept(this));
 
+            // foo = expr; 
             var assignmentStatement = ExpressionStatementSyntax.create1(
                 assignment).withTrailingTrivia(this.spaceList);
 
@@ -518,6 +522,7 @@ module Emitter {
                 SyntaxList.create([assignmentStatement]),
                 SyntaxToken.create(SyntaxKind.CloseBraceToken, { trailingTrivia: this.newLineArray }));
 
+            // if (typeof foo === 'undefined') { foo = expr; }
             return new IfStatementSyntax(
                 SyntaxToken.create(SyntaxKind.IfKeyword, { trailingTrivia: this.spaceArray }),
                 SyntaxToken.create(SyntaxKind.OpenParenToken),
@@ -549,7 +554,6 @@ module Emitter {
                 statements.push.apply(statements, defaultValueAssignmentStatements);
                 statements.push.apply(statements, rewritten.block().statements().toArray());
 
-                // TODO: remove export/declare keywords.
                 rewritten = rewritten.withBlock(rewritten.block().withStatements(
                     SyntaxList.create(statements)));
             }
@@ -561,11 +565,9 @@ module Emitter {
 
         private visitParameter(node: ParameterSyntax): ParameterSyntax {
             // transfer the trivia from the first token to the the identifier.
-            var identifier = node.identifier();
-            identifier = identifier.withLeadingTrivia(node.leadingTrivia())
-                                   .withTrailingTrivia(node.trailingTrivia());
-
-            return ParameterSyntax.create(identifier);
+            return ParameterSyntax.create(node.identifier())
+                                  .withLeadingTrivia(node.leadingTrivia())
+                                  .withTrailingTrivia(node.trailingTrivia())
         }
 
         private generatePropertyAssignment(classDeclaration: ClassDeclarationSyntax,
