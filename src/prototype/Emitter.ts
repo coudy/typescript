@@ -1250,18 +1250,15 @@ class Emitter extends SyntaxRewriter {
                     SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken }),
                     ObjectLiteralExpressionSyntax.create1())));
 
-        var argumentList = new ArgumentListSyntax(
-            SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
-            SeparatedSyntaxList.create([logicalOrExpression]),
-            SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }))
+        var argumentList = ArgumentListSyntax.create1().withArguments(
+            SeparatedSyntaxList.create([logicalOrExpression]));
 
         var invocationExpression = new InvocationExpressionSyntax(
             parenthesizedExpression,
             argumentList);
 
-        var expressionStatement = new ExpressionStatementSyntax(
-            invocationExpression,
-            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineArray }));
+        var expressionStatement = ExpressionStatementSyntax.create1(
+            invocationExpression).withTrailingTrivia(this.newLineList);
 
         result.push(expressionStatement);
 

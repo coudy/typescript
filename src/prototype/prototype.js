@@ -21374,18 +21374,11 @@ var Emitter = (function (_super) {
         }), ParenthesizedExpressionSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new IdentifierNameSyntax(identifier.clone()), SyntaxToken.createElastic({
             kind: 104 /* EqualsToken */ 
         }), ObjectLiteralExpressionSyntax.create1())));
-        var argumentList = new ArgumentListSyntax(SyntaxToken.createElastic({
-            kind: 69 /* OpenParenToken */ 
-        }), SeparatedSyntaxList.create([
+        var argumentList = ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create([
             logicalOrExpression
-        ]), SyntaxToken.createElastic({
-            kind: 70 /* CloseParenToken */ 
-        }));
+        ]));
         var invocationExpression = new InvocationExpressionSyntax(parenthesizedExpression, argumentList);
-        var expressionStatement = new ExpressionStatementSyntax(invocationExpression, SyntaxToken.createElastic({
-            kind: 75 /* SemicolonToken */ ,
-            trailingTrivia: this.newLineArray
-        }));
+        var expressionStatement = ExpressionStatementSyntax.create1(invocationExpression).withTrailingTrivia(this.newLineList);
         result.push(expressionStatement);
         return result;
     };
