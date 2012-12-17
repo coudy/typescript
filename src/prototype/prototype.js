@@ -20505,7 +20505,7 @@ var Emitter;
         };
         EmitterImpl.prototype.generatePropertyAssignment = function (classDeclaration, static, memberDeclaration) {
             var isStatic = memberDeclaration.staticKeyword() !== null;
-            if((static && !isStatic) || (!static && isStatic)) {
+            if(static !== isStatic) {
                 return null;
             }
             var declarator = memberDeclaration.variableDeclarator();

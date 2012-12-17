@@ -572,10 +572,9 @@ module Emitter {
 
         private generatePropertyAssignment(classDeclaration: ClassDeclarationSyntax,
                                            static: bool,
-            memberDeclaration: MemberVariableDeclarationSyntax): ExpressionStatementSyntax {
+                                           memberDeclaration: MemberVariableDeclarationSyntax): ExpressionStatementSyntax {
             var isStatic = memberDeclaration.staticKeyword() !== null;
-            if ((static && !isStatic) ||
-                (!static && isStatic)) {
+            if (static !== isStatic) {
                 return null;
             }
 
