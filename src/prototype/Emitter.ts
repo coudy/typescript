@@ -111,8 +111,78 @@ class Emitter extends SyntaxRewriter {
         }
     }
 
-    private handleExportedModuleElement(moduleElement: ModuleElementSyntax, elements: ModuleElementSyntax[]): void {
-        
+    private leftmostName(name: NameSyntax): IdentifierNameSyntax {
+        while (name.kind() === SyntaxKind.QualifiedName) {
+            name = (<QualifiedNameSyntax>name).left();
+        }
+
+        return <IdentifierNameSyntax>name;
+    }
+
+    private rightmostName(name: NameSyntax): IdentifierNameSyntax {
+        return name.kind() === SyntaxKind.QualifiedName
+            ? (<QualifiedNameSyntax>name).right()
+            : <IdentifierNameSyntax>name;
+    }
+
+    private createExportStatement(moduleDeclaration: ModuleDeclarationSyntax,
+                                  moduleElement: ModuleElementSyntax,
+                                  identifier: ISyntaxToken) {
+        var moduleIdentifier = this.withNoTrivia(this.rightmostName(moduleDeclaration.moduleName()).identifier());
+        identifier = this.withNoTrivia(identifier);
+
+        var indentationTrivia = this.indentationTriviaForStartOfToken(moduleElement.firstToken());
+
+        return new ExpressionStatementSyntax(
+            new BinaryExpressionSyntax(
+                SyntaxKind.AssignmentExpression,
+                new MemberAccessExpressionSyntax(
+                    new IdentifierNameSyntax(moduleIdentifier.withLeadingTrivia(SyntaxTriviaList.create([indentationTrivia]))),
+                    SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
+                    new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))),
+                SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceList }),
+                new IdentifierNameSyntax(identifier.clone())),
+            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
+    }
+
+    private handleExportedModuleElement(moduleDeclaration: ModuleDeclarationSyntax,
+                                        moduleElement: ModuleElementSyntax,
+                                        elements: ModuleElementSyntax[]): void {
+        switch (moduleElement.kind()) {
+            case SyntaxKind.VariableStatement:
+                var variableStatement = <VariableStatementSyntax>moduleElement;
+                if (variableStatement.exportKeyword() !== null) {
+                    var declarators = variableStatement.variableDeclaration().variableDeclarators();
+                    for (var i = 0, n = declarators.syntaxNodeCount(); i < n; i++) {
+                        var declarator = <VariableDeclaratorSyntax>declarators.syntaxNodeAt(i);
+                        elements.push(this.createExportStatement(moduleDeclaration, moduleElement, declarator.identifier()));
+                    }
+                }
+                return;
+
+            case SyntaxKind.FunctionDeclaration:
+                var functionDeclaration = <FunctionDeclarationSyntax>moduleElement;
+                if (functionDeclaration.exportKeyword() !== null) {
+                     elements.push(this.createExportStatement(
+                         moduleDeclaration, moduleElement, functionDeclaration.functionSignature().identifier()));
+                }
+                return;
+
+            case SyntaxKind.ClassDeclaration:
+                var classDeclaration = <ClassDeclarationSyntax>moduleElement;
+                if (classDeclaration.exportKeyword() !== null) {
+                     elements.push(this.createExportStatement(moduleDeclaration, moduleElement, classDeclaration.identifier()));
+                }
+                return;
+
+            case SyntaxKind.ModuleDeclaration:
+                var childModule = <ModuleDeclarationSyntax>moduleElement;
+                if (childModule.exportKeyword() !== null) {
+                     elements.push(this.createExportStatement(
+                         moduleDeclaration, moduleElement, this.leftmostName(childModule.moduleName()).identifier()));
+                }
+                return;
+        }
     }
 
     private visitModuleDeclaration(node: ModuleDeclarationSyntax): ModuleElementSyntax[] {
@@ -125,10 +195,9 @@ class Emitter extends SyntaxRewriter {
         // Recurse downwards and get the rewritten children.
         var moduleElements = this.convertModuleElements(node.moduleElements());
 
-        // NOTE: we are adding to the array we are iterating over.  So the choice of indices here 
-        // is important.  Do not errantly change.
-        for (var i = 0, n = moduleElements.length; i < n; i++) {
-            this.handleExportedModuleElement(moduleElements[i], moduleElements);
+        for (var i = 0, n = node.moduleElements().count(); i < n; i++) {
+            this.handleExportedModuleElement(
+                node, <ModuleElementSyntax>node.moduleElements().syntaxNodeAt(i), moduleElements);
         }
         
         // Then, for all the names left of that name, wrap what we've created in a larger module.
@@ -278,6 +347,10 @@ class Emitter extends SyntaxRewriter {
 
     private indentationTrivia(indentationColumn: number): ISyntaxTrivia {
         return Indentation.indentationTrivia(indentationColumn, this.options);
+    }
+
+    private indentationTriviaForStartOfToken(token: ISyntaxToken): ISyntaxTrivia {
+        return this.indentationTrivia(this.columnForStartOfToken(token));
     }
 
     private convertArrowFunctionBody(arrowFunction: ArrowFunctionExpressionSyntax): BlockSyntax {
@@ -754,8 +827,7 @@ class Emitter extends SyntaxRewriter {
         var propertyName = memberAccessor.kind() === SyntaxKind.GetMemberAccessorDeclaration
             ? "get" : "set";
 
-        var accessorColumn = this.columnForStartOfToken(memberAccessor.firstToken());
-        var indentationTrivia = this.indentationTrivia(accessorColumn);
+        var indentationTrivia = this.indentationTriviaForStartOfToken(memberAccessor.firstToken());
 
         var parameterList = <ParameterListSyntax>memberAccessor.parameterList().accept(this);
         if (!parameterList.hasTrailingTrivia()) {
@@ -1205,8 +1277,7 @@ class Emitter extends SyntaxRewriter {
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
         result.push(variableStatement);
 
-        var indentationColumn = this.columnForStartOfToken(node.firstToken());
-        var indentationTrivia = this.indentationTrivia(indentationColumn);
+        var indentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
 
         var functionExpression = this.generateEnumFunctionExpression(node);
 

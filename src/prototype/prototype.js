@@ -19468,13 +19468,76 @@ var Emitter = (function (_super) {
             }
         }
     };
-    Emitter.prototype.handleExportedModuleElement = function (moduleElement, elements) {
+    Emitter.prototype.leftmostName = function (name) {
+        while(name.kind() === 121 /* QualifiedName */ ) {
+            name = (name).left();
+        }
+        return name;
+    };
+    Emitter.prototype.rightmostName = function (name) {
+        return name.kind() === 121 /* QualifiedName */  ? (name).right() : name;
+    };
+    Emitter.prototype.createExportStatement = function (moduleDeclaration, moduleElement, identifier) {
+        var moduleIdentifier = this.withNoTrivia(this.rightmostName(moduleDeclaration.moduleName()).identifier());
+        identifier = this.withNoTrivia(identifier);
+        var indentationTrivia = this.indentationTriviaForStartOfToken(moduleElement.firstToken());
+        return new ExpressionStatementSyntax(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new MemberAccessExpressionSyntax(new IdentifierNameSyntax(moduleIdentifier.withLeadingTrivia(SyntaxTriviaList.create([
+            indentationTrivia
+        ]))), SyntaxToken.createElastic({
+            kind: 73 /* DotToken */ 
+        }), new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))), SyntaxToken.createElastic({
+            kind: 104 /* EqualsToken */ ,
+            trailingTrivia: this.spaceList
+        }), new IdentifierNameSyntax(identifier.clone())), SyntaxToken.createElastic({
+            kind: 75 /* SemicolonToken */ ,
+            trailingTrivia: this.newLineList
+        }));
+    };
+    Emitter.prototype.handleExportedModuleElement = function (moduleDeclaration, moduleElement, elements) {
+        switch(moduleElement.kind()) {
+            case 140 /* VariableStatement */ : {
+                var variableStatement = moduleElement;
+                if(variableStatement.exportKeyword() !== null) {
+                    var declarators = variableStatement.variableDeclaration().variableDeclarators();
+                    for(var i = 0, n = declarators.syntaxNodeCount(); i < n; i++) {
+                        var declarator = declarators.syntaxNodeAt(i);
+                        elements.push(this.createExportStatement(moduleDeclaration, moduleElement, declarator.identifier()));
+                    }
+                }
+                return;
+
+            }
+            case 128 /* FunctionDeclaration */ : {
+                var functionDeclaration = moduleElement;
+                if(functionDeclaration.exportKeyword() !== null) {
+                    elements.push(this.createExportStatement(moduleDeclaration, moduleElement, functionDeclaration.functionSignature().identifier()));
+                }
+                return;
+
+            }
+            case 130 /* ClassDeclaration */ : {
+                var classDeclaration = moduleElement;
+                if(classDeclaration.exportKeyword() !== null) {
+                    elements.push(this.createExportStatement(moduleDeclaration, moduleElement, classDeclaration.identifier()));
+                }
+                return;
+
+            }
+            case 129 /* ModuleDeclaration */ : {
+                var childModule = moduleElement;
+                if(childModule.exportKeyword() !== null) {
+                    elements.push(this.createExportStatement(moduleDeclaration, moduleElement, this.leftmostName(childModule.moduleName()).identifier()));
+                }
+                return;
+
+            }
+        }
     };
     Emitter.prototype.visitModuleDeclaration = function (node) {
         var names = Emitter.splitModuleName(node.moduleName());
         var moduleElements = this.convertModuleElements(node.moduleElements());
-        for(var i = 0, n = moduleElements.length; i < n; i++) {
-            this.handleExportedModuleElement(moduleElements[i], moduleElements);
+        for(var i = 0, n = node.moduleElements().count(); i < n; i++) {
+            this.handleExportedModuleElement(node, node.moduleElements().syntaxNodeAt(i), moduleElements);
         }
         for(var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
             moduleElements = this.convertModuleDeclaration(names[nameIndex], moduleElements);
@@ -19596,6 +19659,9 @@ var Emitter = (function (_super) {
     };
     Emitter.prototype.indentationTrivia = function (indentationColumn) {
         return Indentation.indentationTrivia(indentationColumn, this.options);
+    };
+    Emitter.prototype.indentationTriviaForStartOfToken = function (token) {
+        return this.indentationTrivia(this.columnForStartOfToken(token));
     };
     Emitter.prototype.convertArrowFunctionBody = function (arrowFunction) {
         var rewrittenBody = this.visitNode(arrowFunction.body());
@@ -19936,8 +20002,7 @@ var Emitter = (function (_super) {
     };
     Emitter.prototype.convertMemberAccessor = function (memberAccessor) {
         var propertyName = memberAccessor.kind() === 136 /* GetMemberAccessorDeclaration */  ? "get" : "set";
-        var accessorColumn = this.columnForStartOfToken(memberAccessor.firstToken());
-        var indentationTrivia = this.indentationTrivia(accessorColumn);
+        var indentationTrivia = this.indentationTriviaForStartOfToken(memberAccessor.firstToken());
         var parameterList = memberAccessor.parameterList().accept(this);
         if(!parameterList.hasTrailingTrivia()) {
             parameterList = parameterList.withTrailingTrivia(SyntaxTriviaList.space);
@@ -20377,8 +20442,7 @@ var Emitter = (function (_super) {
             trailingTrivia: this.newLineList
         }));
         result.push(variableStatement);
-        var indentationColumn = this.columnForStartOfToken(node.firstToken());
-        var indentationTrivia = this.indentationTrivia(indentationColumn);
+        var indentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
         var functionExpression = this.generateEnumFunctionExpression(node);
         var parenthesizedExpression = new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
             leadingTrivia: [

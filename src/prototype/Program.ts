@@ -9,7 +9,7 @@
 var stringTable = Collections.createStringTable();
 
 var specificFile = 
-    // "SuperExpression4";
+    // "ClassDeclaration11";
     undefined;
 
 class Program {
