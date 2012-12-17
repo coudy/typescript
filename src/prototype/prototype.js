@@ -19624,7 +19624,7 @@ var Emitter = (function (_super) {
         if(functionExpression.identifier() !== null) {
             return rewritten;
         }
-        var newFunctionExpression = functionExpression.withFunctionKeyword(functionExpression.functionKeyword().withLeadingTrivia(SyntaxTriviaList.empty));
+        var newFunctionExpression = functionExpression.withLeadingTrivia(SyntaxTriviaList.empty);
         var parenthesizedExpression = new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
             leadingTrivia: functionExpression.leadingTrivia().toArray(),
             kind: 69 /* OpenParenToken */ 

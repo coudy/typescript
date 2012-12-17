@@ -133,6 +133,7 @@ class Emitter extends SyntaxRewriter {
 
         var indentationTrivia = this.indentationTriviaForStartOfToken(moduleElement.firstToken());
 
+        // M1.e = e;
         return new ExpressionStatementSyntax(
             new BinaryExpressionSyntax(
                 SyntaxKind.AssignmentExpression,
@@ -276,8 +277,7 @@ class Emitter extends SyntaxRewriter {
                     new ObjectLiteralExpressionSyntax(
                         SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken }),
                         SeparatedSyntaxList.empty,
-                        SyntaxToken.createElastic({ kind: SyntaxKind.CloseBraceToken })
-                    )),
+                        SyntaxToken.createElastic({ kind: SyntaxKind.CloseBraceToken }))),
                 SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken })));
 
         // (function(M) { ... })(M||(M={}))
@@ -300,6 +300,7 @@ class Emitter extends SyntaxRewriter {
         // Can't have an expression statement with an anonymous function expression in it.
         var rewritten = <ExpressionStatementSyntax>super.visitExpressionStatement(node);
         
+        // convert: function() { ... };  to (function() { ... });
         if (rewritten.expression().kind() !== SyntaxKind.FunctionExpression) {
             // Wasn't a function expression
             return rewritten;
@@ -313,8 +314,7 @@ class Emitter extends SyntaxRewriter {
 
         // Remove the leading trivia from the function keyword.  We'll put it on the open paren 
         // token instead.
-        var newFunctionExpression = functionExpression.withFunctionKeyword(
-            functionExpression.functionKeyword().withLeadingTrivia(SyntaxTriviaList.empty));
+        var newFunctionExpression = <FunctionExpressionSyntax>functionExpression.withLeadingTrivia(SyntaxTriviaList.empty);
 
         // Now, wrap the function expression in parens to make it legal in javascript.
         var parenthesizedExpression = new ParenthesizedExpressionSyntax(
