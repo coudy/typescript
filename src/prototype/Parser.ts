@@ -452,7 +452,7 @@ module Parser {
             if (this.canEatAutomaticSemicolon(allowWithoutNewline)) {
                 // Note: the missing token needs to go between real tokens.  So we place it at the 
                 // fullstart of the current token.
-                var semicolonToken = SyntaxToken.createEmpty(SyntaxKind.SemicolonToken, SyntaxKind.None);
+                var semicolonToken = Syntax.emptyToken(SyntaxKind.SemicolonToken, SyntaxKind.None);
 
                 if (!this.options.allowAutomaticSemicolonInsertion()) {
                     // Report the missing semicolon at the end of the *previous* token.
@@ -567,7 +567,7 @@ module Parser {
 
             // The missing token will be at the full start of the current token.  That way empty tokens
             // will always be between real tokens and not inside an actual token.
-            return SyntaxToken.createEmpty(expectedKind, expectedKeywordKind);
+            return Syntax.emptyToken(expectedKind, expectedKeywordKind);
         }
 
         private getExpectedTokenDiagnostic(expectedKind: SyntaxKind, expectedKeywordKind: SyntaxKind, actual: ISyntaxToken): SyntaxDiagnostic {

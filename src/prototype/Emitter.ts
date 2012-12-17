@@ -5,11 +5,12 @@
 ///<reference path='SyntaxIndenter.ts' />
 ///<reference path='SyntaxInformationMap.ts' />
 ///<reference path='SyntaxNodeInvariantsChecker.ts' />
+///<reference path='Syntax.ts' />
 
 module Emitter {
     // Class that makes sure we're not reusing tokens in a tree
     class EnsureTokenUniquenessRewriter extends SyntaxRewriter {
-        private tokenTable = Collections.createHashTable(Collections.DefaultHashTableCapacity, SyntaxToken.hashCode);
+        private tokenTable = Collections.createHashTable(Collections.DefaultHashTableCapacity, Syntax.tokenHashCode);
 
         private visitToken(token: ISyntaxToken): ISyntaxToken {
             if (this.tokenTable.containsKey(token)) {
@@ -172,7 +173,7 @@ module Emitter {
                     MemberAccessExpressionSyntax.create1(
                         new IdentifierNameSyntax(moduleIdentifier.withLeadingTrivia(SyntaxTriviaList.create(indentationTrivia))),
                         new IdentifierNameSyntax(elementIdentifier.withTrailingTrivia(SyntaxTriviaList.space))),
-                    SyntaxToken.create(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
+                    Syntax.token(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
                     new IdentifierNameSyntax(elementIdentifier))).withTrailingTrivia(this.newLineList);
         }
 
@@ -265,20 +266,20 @@ module Emitter {
             // var M;
             var variableStatement = VariableStatementSyntax.create1(
                     new VariableDeclarationSyntax(
-                        SyntaxToken.create(SyntaxKind.VarKeyword, { trailingTrivia: this.spaceArray }),
+                        Syntax.token(SyntaxKind.VarKeyword, { trailingTrivia: this.spaceArray }),
                         SeparatedSyntaxList.create(
                             [VariableDeclaratorSyntax.create(moduleIdentifier)]))
                 ).withLeadingTrivia(leadingTrivia).withTrailingTrivia(this.newLineList);
 
             // function(M) { ... }
             var functionExpression = FunctionExpressionSyntax.create(
-                SyntaxToken.create(SyntaxKind.FunctionKeyword),
+                Syntax.token(SyntaxKind.FunctionKeyword),
                 CallSignatureSyntax.create(
                     ParameterListSyntax.create1().withParameter(ParameterSyntax.create(moduleIdentifier))).withTrailingTrivia(this.spaceList),
                 new BlockSyntax(
-                    SyntaxToken.create(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
+                    Syntax.token(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
                     SyntaxList.create(moduleElements),
-                    SyntaxToken.create(SyntaxKind.CloseBraceToken, { leadingTrivia: moduleIndentation.toArray() })));
+                    Syntax.token(SyntaxKind.CloseBraceToken, { leadingTrivia: moduleIndentation.toArray() })));
 
             // (function(M) { ... })
             var parenthesizedFunctionExpression = ParenthesizedExpressionSyntax.create1(functionExpression);
@@ -287,12 +288,12 @@ module Emitter {
             var logicalOrExpression = new BinaryExpressionSyntax(
                 SyntaxKind.LogicalOrExpression,
                 moduleName,
-                SyntaxToken.create(SyntaxKind.BarBarToken),
+                Syntax.token(SyntaxKind.BarBarToken),
                 ParenthesizedExpressionSyntax.create1(
                     new BinaryExpressionSyntax(
                         SyntaxKind.AssignmentExpression,
                         moduleName,
-                        SyntaxToken.create(SyntaxKind.EqualsToken),
+                        Syntax.token(SyntaxKind.EqualsToken),
                         ObjectLiteralExpressionSyntax.create1())));
 
             // (function(M) { ... })(M||(M={}))
@@ -339,7 +340,7 @@ module Emitter {
             var block = this.convertArrowFunctionBody(node);
 
             return FunctionExpressionSyntax.create(
-                SyntaxToken.create(SyntaxKind.FunctionKeyword, { leadingTrivia: node.leadingTrivia().toArray() }),
+                Syntax.token(SyntaxKind.FunctionKeyword, { leadingTrivia: node.leadingTrivia().toArray() }),
                 CallSignatureSyntax.create(
                     ParameterListSyntax.create1().withParameter(ParameterSyntax.create(identifier))).withTrailingTrivia(this.spaceList),
                 block);
@@ -347,7 +348,7 @@ module Emitter {
 
         private visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): FunctionExpressionSyntax {
             return FunctionExpressionSyntax.create(
-                SyntaxToken.create(SyntaxKind.FunctionKeyword),
+                Syntax.token(SyntaxKind.FunctionKeyword),
                 CallSignatureSyntax.create(node.callSignature().parameterList().accept(this)),
                 this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
         }
@@ -363,9 +364,9 @@ module Emitter {
 
             // first, attach the expression to the return statement
             var returnStatement = new ReturnStatementSyntax(
-                SyntaxToken.create(SyntaxKind.ReturnKeyword, { trailingTrivia: arrowToken.trailingTrivia().toArray() }),
+                Syntax.token(SyntaxKind.ReturnKeyword, { trailingTrivia: arrowToken.trailingTrivia().toArray() }),
                 <ExpressionSyntax>rewrittenBody,
-                SyntaxToken.create(SyntaxKind.SemicolonToken, { trailingTrivia: this.newLineArray }));
+                Syntax.token(SyntaxKind.SemicolonToken, { trailingTrivia: this.newLineArray }));
 
             // We want to adjust the indentation of the expression so that is aligns as it 
             // did before.  For example, if we started with:
@@ -425,9 +426,9 @@ module Emitter {
 
             // Now wrap the return statement in a block.
             var block = new BlockSyntax(
-                SyntaxToken.create(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
+                Syntax.token(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
                 SyntaxList.create([returnStatement]),
-                SyntaxToken.create(SyntaxKind.CloseBraceToken));
+                Syntax.token(SyntaxKind.CloseBraceToken));
 
             // Note: if we started with something like:
             //
@@ -485,7 +486,7 @@ module Emitter {
                     MemberAccessExpressionSyntax.create1(
                         ThisExpressionSyntax.create1(),
                         new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))),
-                    SyntaxToken.create(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
+                    Syntax.token(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
                     new IdentifierNameSyntax(identifier))).withTrailingTrivia(this.newLineList);
         }
 
@@ -499,18 +500,18 @@ module Emitter {
             var condition = new BinaryExpressionSyntax(
                     SyntaxKind.EqualsExpression,
                     new TypeOfExpressionSyntax(
-                        SyntaxToken.create(SyntaxKind.TypeOfKeyword, { trailingTrivia: this.spaceArray }),
+                        Syntax.token(SyntaxKind.TypeOfKeyword, { trailingTrivia: this.spaceArray }),
                         identifierName),
-                    SyntaxToken.create(SyntaxKind.EqualsEqualsEqualsToken, { trailingTrivia: this.spaceArray }),
+                    Syntax.token(SyntaxKind.EqualsEqualsEqualsToken, { trailingTrivia: this.spaceArray }),
                     new LiteralExpressionSyntax(
                         SyntaxKind.StringLiteralExpression,
-                        SyntaxToken.create(SyntaxKind.StringLiteral, { text: '"undefined"' })));
+                        Syntax.token(SyntaxKind.StringLiteral, { text: '"undefined"' })));
 
             // foo = expr
             var assignment = new BinaryExpressionSyntax(
                 SyntaxKind.AssignmentExpression,
                 identifierName,
-                SyntaxToken.create(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
+                Syntax.token(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
                 parameter.equalsValueClause().value().accept(this));
 
             // foo = expr; 
@@ -518,16 +519,16 @@ module Emitter {
                 assignment).withTrailingTrivia(this.spaceList);
 
             var block = new BlockSyntax(
-                SyntaxToken.create(SyntaxKind.OpenBraceToken, { trailingTrivia: this.spaceArray }),
+                Syntax.token(SyntaxKind.OpenBraceToken, { trailingTrivia: this.spaceArray }),
                 SyntaxList.create([assignmentStatement]),
-                SyntaxToken.create(SyntaxKind.CloseBraceToken, { trailingTrivia: this.newLineArray }));
+                Syntax.token(SyntaxKind.CloseBraceToken, { trailingTrivia: this.newLineArray }));
 
             // if (typeof foo === 'undefined') { foo = expr; }
             return new IfStatementSyntax(
-                SyntaxToken.create(SyntaxKind.IfKeyword, { trailingTrivia: this.spaceArray }),
-                SyntaxToken.create(SyntaxKind.OpenParenToken),
+                Syntax.token(SyntaxKind.IfKeyword, { trailingTrivia: this.spaceArray }),
+                Syntax.token(SyntaxKind.OpenParenToken),
                 condition,
-                SyntaxToken.create(SyntaxKind.CloseParenToken, { trailingTrivia: this.spaceArray }),
+                Syntax.token(SyntaxKind.CloseParenToken, { trailingTrivia: this.spaceArray }),
                 block, null);
         }
 
@@ -599,7 +600,7 @@ module Emitter {
                     new BinaryExpressionSyntax(
                         SyntaxKind.AssignmentExpression,
                         receiver,
-                        SyntaxToken.create(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
+                        Syntax.token(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
                         <ExpressionSyntax>declarator.equalsValueClause().value().accept(this))
                 ).withLeadingTrivia(memberDeclaration.leadingTrivia()).withTrailingTrivia(this.newLineList);
         }
@@ -635,13 +636,13 @@ module Emitter {
                 var superStatement = ExpressionStatementSyntax.create1(
                         new InvocationExpressionSyntax(
                             MemberAccessExpressionSyntax.create1(
-                                new IdentifierNameSyntax(SyntaxToken.createIdentifier("_super")),
-                                new IdentifierNameSyntax(SyntaxToken.createIdentifier("apply"))),
+                                new IdentifierNameSyntax(Syntax.identifier("_super")),
+                                new IdentifierNameSyntax(Syntax.identifier("apply"))),
                             ArgumentListSyntax.create1().withArguments(
                                 SeparatedSyntaxList.create([
                                     ThisExpressionSyntax.create1(),
-                                    SyntaxToken.create(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }),
-                                    new IdentifierNameSyntax(SyntaxToken.createIdentifier("arguments"))])))
+                                    Syntax.token(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }),
+                                    new IdentifierNameSyntax(Syntax.identifier("arguments"))])))
                     ).withTrailingTrivia(this.newLineList);
 
                 superStatement = <ExpressionStatementSyntax>this.changeIndentation(
@@ -650,12 +651,12 @@ module Emitter {
             }
 
             var block = new BlockSyntax(
-                SyntaxToken.create(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
+                Syntax.token(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
                 SyntaxList.create(statements),
-                SyntaxToken.create(SyntaxKind.CloseBraceToken, { trailingTrivia: this.newLineArray }));
+                Syntax.token(SyntaxKind.CloseBraceToken, { trailingTrivia: this.newLineArray }));
 
             var functionDeclaration = new FunctionDeclarationSyntax(null, null,
-                SyntaxToken.create(SyntaxKind.FunctionKeyword, { trailingTrivia: this.spaceArray }),
+                Syntax.token(SyntaxKind.FunctionKeyword, { trailingTrivia: this.spaceArray }),
                 functionSignature,
                 block, null);
 
@@ -735,7 +736,7 @@ module Emitter {
             block = block.withStatements(SyntaxList.create(normalStatements));
 
             var functionDeclaration = new FunctionDeclarationSyntax(null, null,
-                SyntaxToken.create(SyntaxKind.FunctionKeyword, {
+                Syntax.token(SyntaxKind.FunctionKeyword, {
                     leadingTrivia: constructorDeclaration.leadingTrivia().toArray(),
                     trailingTrivia: this.spaceArray
                 }),
@@ -761,7 +762,7 @@ module Emitter {
                 ? receiver
                 : MemberAccessExpressionSyntax.create1(
                     receiver,
-                    new IdentifierNameSyntax(SyntaxToken.createIdentifier("prototype")));
+                    new IdentifierNameSyntax(Syntax.identifier("prototype")));
 
             receiver = MemberAccessExpressionSyntax.create1(
                 receiver,
@@ -796,14 +797,14 @@ module Emitter {
             var callSignature = CallSignatureSyntax.create(callSignatureParameterList);
 
             var functionExpression = FunctionExpressionSyntax.create(
-                SyntaxToken.create(SyntaxKind.FunctionKeyword),
+                Syntax.token(SyntaxKind.FunctionKeyword),
                 callSignature,
                 block);
 
             var assignmentExpression = new BinaryExpressionSyntax(
                 SyntaxKind.AssignmentExpression,
                 receiver,
-                SyntaxToken.create(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
+                Syntax.token(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
                 functionExpression);
 
             return ExpressionStatementSyntax.create1(assignmentExpression)
@@ -825,10 +826,10 @@ module Emitter {
             block = block.withTrailingTrivia(SyntaxTriviaList.empty);
 
             return new SimplePropertyAssignmentSyntax(
-                SyntaxToken.createIdentifier(propertyName, { leadingTrivia: indentationTrivia }),
-                SyntaxToken.create(SyntaxKind.ColonToken, { trailingTrivia: this.spaceArray }),
+                Syntax.identifier(propertyName, { leadingTrivia: indentationTrivia }),
+                Syntax.token(SyntaxKind.ColonToken, { trailingTrivia: this.spaceArray }),
                 FunctionExpressionSyntax.create(
-                    SyntaxToken.create(SyntaxKind.FunctionKeyword),
+                    Syntax.token(SyntaxKind.FunctionKeyword),
                     CallSignatureSyntax.create(parameterList),
                     block));
         }
@@ -860,21 +861,21 @@ module Emitter {
             }
 
             var receiver = MemberAccessExpressionSyntax.create1(
-                new IdentifierNameSyntax(SyntaxToken.createIdentifier("Object")),
-                new IdentifierNameSyntax(SyntaxToken.createIdentifier("defineProperty"))).withLeadingTrivia(memberAccessor.leadingTrivia());
+                new IdentifierNameSyntax(Syntax.identifier("Object")),
+                new IdentifierNameSyntax(Syntax.identifier("defineProperty"))).withLeadingTrivia(memberAccessor.leadingTrivia());
 
             var arguments = [];
 
             var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
             arguments.push(MemberAccessExpressionSyntax.create1(
                 new IdentifierNameSyntax(classIdentifier),
-                new IdentifierNameSyntax(SyntaxToken.createIdentifier("prototype"))));
-            arguments.push(SyntaxToken.create(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }));
+                new IdentifierNameSyntax(Syntax.identifier("prototype"))));
+            arguments.push(Syntax.token(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }));
 
             arguments.push(new LiteralExpressionSyntax(
                 SyntaxKind.StringLiteralExpression,
-                SyntaxToken.create(SyntaxKind.StringLiteral, { text: '"' + memberAccessor.identifier().text() + '"' })));
-            arguments.push(SyntaxToken.create(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }));
+                Syntax.token(SyntaxKind.StringLiteral, { text: '"' + memberAccessor.identifier().text() + '"' })));
+            arguments.push(Syntax.token(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }));
 
             var propertyAssignments = [];
             for (var i = 0; i < accessors.length; i++) {
@@ -883,7 +884,7 @@ module Emitter {
                     converted, /*changeFirstToken:*/ true, this.options.indentSpaces);
                 propertyAssignments.push(converted);
                 propertyAssignments.push(
-                    SyntaxToken.create(SyntaxKind.CommaToken, { trailingTrivia: this.newLineArray }));
+                    Syntax.token(SyntaxKind.CommaToken, { trailingTrivia: this.newLineArray }));
             }
 
             var accessorColumn = this.columnForStartOfToken(memberAccessor.firstToken());
@@ -893,25 +894,25 @@ module Emitter {
             var propertyTrivia = this.indentationTrivia(propertyColumn);
 
             propertyAssignments.push(new SimplePropertyAssignmentSyntax(
-                SyntaxToken.createIdentifier("enumerable", { leadingTrivia: propertyTrivia }),
-                SyntaxToken.create(SyntaxKind.ColonToken, { trailingTrivia: this.spaceArray }),
+                Syntax.identifier("enumerable", { leadingTrivia: propertyTrivia }),
+                Syntax.token(SyntaxKind.ColonToken, { trailingTrivia: this.spaceArray }),
                 new LiteralExpressionSyntax(
                     SyntaxKind.BooleanLiteralExpression,
-                    SyntaxToken.create(SyntaxKind.TrueKeyword))));
+                    Syntax.token(SyntaxKind.TrueKeyword))));
             propertyAssignments.push(
-                SyntaxToken.create(SyntaxKind.CommaToken, { trailingTrivia: this.newLineArray }));
+                Syntax.token(SyntaxKind.CommaToken, { trailingTrivia: this.newLineArray }));
 
             propertyAssignments.push(new SimplePropertyAssignmentSyntax(
-                SyntaxToken.createIdentifier("configurable", { leadingTrivia: propertyTrivia }),
-                SyntaxToken.create(SyntaxKind.ColonToken, { trailingTrivia: this.spaceArray }),
+                Syntax.identifier("configurable", { leadingTrivia: propertyTrivia }),
+                Syntax.token(SyntaxKind.ColonToken, { trailingTrivia: this.spaceArray }),
                 new LiteralExpressionSyntax(
                     SyntaxKind.BooleanLiteralExpression,
-                    SyntaxToken.create(SyntaxKind.TrueKeyword, { trailingTrivia: this.newLineArray }))));
+                    Syntax.token(SyntaxKind.TrueKeyword, { trailingTrivia: this.newLineArray }))));
 
             var objectLiteral = new ObjectLiteralExpressionSyntax(
-                SyntaxToken.create(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
+                Syntax.token(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
                 SeparatedSyntaxList.create(propertyAssignments),
-                SyntaxToken.create(SyntaxKind.CloseBraceToken, { leadingTrivia: accessorTrivia }));
+                Syntax.token(SyntaxKind.CloseBraceToken, { leadingTrivia: accessorTrivia }));
 
             arguments.push(objectLiteral);
 
@@ -965,13 +966,13 @@ module Emitter {
             if (node.extendsClause() !== null) {
                 var extendsParameters = [];
                 extendsParameters.push(new IdentifierNameSyntax(identifier));
-                extendsParameters.push(SyntaxToken.create(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }));
+                extendsParameters.push(Syntax.token(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }));
                 extendsParameters.push(new IdentifierNameSyntax(
-                    SyntaxToken.createIdentifier("_super")));
+                    Syntax.identifier("_super")));
 
                 var extendsStatement = ExpressionStatementSyntax.create1(
                     new InvocationExpressionSyntax(
-                        new IdentifierNameSyntax(SyntaxToken.createIdentifier("__extends")),
+                        new IdentifierNameSyntax(Syntax.identifier("__extends")),
                         ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create(extendsParameters)))).withTrailingTrivia(this.newLineList);
 
                 statements.push(<StatementSyntax>this.changeIndentation(
@@ -995,23 +996,23 @@ module Emitter {
             var returnIndentation = this.indentationTrivia(statementIndent);
 
             var returnStatement = new ReturnStatementSyntax(
-                SyntaxToken.create(SyntaxKind.ReturnKeyword, { leadingTrivia: returnIndentation, trailingTrivia: this.spaceArray }),
+                Syntax.token(SyntaxKind.ReturnKeyword, { leadingTrivia: returnIndentation, trailingTrivia: this.spaceArray }),
                 new IdentifierNameSyntax(identifier),
-                SyntaxToken.create(SyntaxKind.SemicolonToken)).withTrailingTrivia(this.newLineList);
+                Syntax.token(SyntaxKind.SemicolonToken)).withTrailingTrivia(this.newLineList);
 
             statements.push(returnStatement);
 
             var classIndentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
 
             var block = new BlockSyntax(
-                SyntaxToken.create(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
+                Syntax.token(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
                 SyntaxList.create(statements),
-                SyntaxToken.create(SyntaxKind.CloseBraceToken, { leadingTrivia: classIndentationTrivia }));
+                Syntax.token(SyntaxKind.CloseBraceToken, { leadingTrivia: classIndentationTrivia }));
 
             var callParameters = [];
             if (node.extendsClause() !== null) {
                 callParameters.push(ParameterSyntax.create(
-                    SyntaxToken.createIdentifier("_super")));
+                    Syntax.identifier("_super")));
             }
 
             var callSignature = CallSignatureSyntax.create(
@@ -1019,7 +1020,7 @@ module Emitter {
                     SeparatedSyntaxList.create(callParameters))).withTrailingTrivia(this.spaceList);
 
             var functionExpression = FunctionExpressionSyntax.create(
-                SyntaxToken.create(SyntaxKind.FunctionKeyword),
+                Syntax.token(SyntaxKind.FunctionKeyword),
                 callSignature,
                 block);
 
@@ -1040,11 +1041,11 @@ module Emitter {
             var variableDeclarator = VariableDeclaratorSyntax.create(
                 identifier.withTrailingTrivia(SyntaxTriviaList.space)).withEqualsValueClause(
                     new EqualsValueClauseSyntax(
-                        SyntaxToken.create(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
+                        Syntax.token(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
                         invocationExpression));
 
             var variableDeclaration = new VariableDeclarationSyntax(
-                SyntaxToken.create(SyntaxKind.VarKeyword, { trailingTrivia: this.spaceArray }),
+                Syntax.token(SyntaxKind.VarKeyword, { trailingTrivia: this.spaceArray }),
                 SeparatedSyntaxList.create([variableDeclarator])).withLeadingTrivia(node.leadingTrivia());
 
             return VariableStatementSyntax.create1(variableDeclaration)
@@ -1093,7 +1094,7 @@ module Emitter {
             if (assignDefaultValues) {
                 return new LiteralExpressionSyntax(
                     SyntaxKind.NumericLiteralExpression,
-                    SyntaxToken.create(SyntaxKind.NumericLiteral, { text: index.toString() }));
+                    Syntax.token(SyntaxKind.NumericLiteral, { text: index.toString() }));
             }
 
             // Add one to the previous value.
@@ -1108,10 +1109,10 @@ module Emitter {
             return new BinaryExpressionSyntax(
                 SyntaxKind.PlusExpression,
                 receiver,
-                SyntaxToken.create(SyntaxKind.PlusToken, { trailingTrivia: this.spaceArray }),
+                Syntax.token(SyntaxKind.PlusToken, { trailingTrivia: this.spaceArray }),
                 new LiteralExpressionSyntax(
                     SyntaxKind.NumericLiteralExpression,
-                    SyntaxToken.create(SyntaxKind.NumericLiteral, { text: "1" })));
+                    Syntax.token(SyntaxKind.NumericLiteral, { text: "1" })));
         }
 
         private generateEnumFunctionExpression(node: EnumDeclarationSyntax): FunctionExpressionSyntax {
@@ -1128,24 +1129,24 @@ module Emitter {
                 // var _ = E;
                 statements.push(new VariableStatementSyntax(null, null,
                     new VariableDeclarationSyntax(
-                        SyntaxToken.create(SyntaxKind.VarKeyword, { leadingTrivia: initIndentationTrivia, trailingTrivia: this.spaceArray }),
+                        Syntax.token(SyntaxKind.VarKeyword, { leadingTrivia: initIndentationTrivia, trailingTrivia: this.spaceArray }),
                         SeparatedSyntaxList.create([new VariableDeclaratorSyntax(
-                            SyntaxToken.createIdentifier("_", { trailingTrivia: this.spaceArray }),
+                            Syntax.identifier("_", { trailingTrivia: this.spaceArray }),
                             null,
                             new EqualsValueClauseSyntax(
-                                SyntaxToken.create(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
+                                Syntax.token(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
                                 new IdentifierNameSyntax(identifier)))])),
-                    SyntaxToken.create(SyntaxKind.SemicolonToken, { trailingTrivia: this.newLineArray })));
+                    Syntax.token(SyntaxKind.SemicolonToken, { trailingTrivia: this.newLineArray })));
 
                 // _._map = []
                 statements.push(ExpressionStatementSyntax.create1(
                     new BinaryExpressionSyntax(
                         SyntaxKind.AssignmentExpression,
                         new MemberAccessExpressionSyntax(
-                            new IdentifierNameSyntax(SyntaxToken.createIdentifier("_", { leadingTrivia: initIndentationTrivia })),
-                            SyntaxToken.create(SyntaxKind.DotToken),
-                            new IdentifierNameSyntax(SyntaxToken.createIdentifier("_map", { trailingTrivia: this.spaceArray }))),
-                        SyntaxToken.create(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
+                            new IdentifierNameSyntax(Syntax.identifier("_", { leadingTrivia: initIndentationTrivia })),
+                            Syntax.token(SyntaxKind.DotToken),
+                            new IdentifierNameSyntax(Syntax.identifier("_map", { trailingTrivia: this.spaceArray }))),
+                        Syntax.token(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
                         ArrayLiteralExpressionSyntax.create1())).withTrailingTrivia(this.newLineList));
 
                 var assignDefaultValues = { value: true };
@@ -1159,26 +1160,26 @@ module Emitter {
                     var innerAssign = new BinaryExpressionSyntax(
                         SyntaxKind.AssignmentExpression,
                         MemberAccessExpressionSyntax.create1(
-                            new IdentifierNameSyntax(SyntaxToken.createIdentifier("_")),
+                            new IdentifierNameSyntax(Syntax.identifier("_")),
                             new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space))),
-                        SyntaxToken.create(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
+                        Syntax.token(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
                         this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues.value, i))
 
                     // _._map[_.Foo = 1]
                     var elementAccessExpression = ElementAccessExpressionSyntax.create1(
                         MemberAccessExpressionSyntax.create1(
-                            new IdentifierNameSyntax(SyntaxToken.createIdentifier("_",  { leadingTrivia: initIndentationTrivia })),
-                            new IdentifierNameSyntax(SyntaxToken.createIdentifier("_map"))),
+                            new IdentifierNameSyntax(Syntax.identifier("_",  { leadingTrivia: initIndentationTrivia })),
+                            new IdentifierNameSyntax(Syntax.identifier("_map"))),
                         innerAssign).withTrailingTrivia(this.spaceList);
 
                     //_._map[_.Foo = 1] = "Foo"
                     var outerAssign = new BinaryExpressionSyntax(
                         SyntaxKind.AssignmentExpression,
                         elementAccessExpression,
-                        SyntaxToken.create(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
+                        Syntax.token(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
                         new LiteralExpressionSyntax(
                             SyntaxKind.StringLiteralExpression,
-                            SyntaxToken.create(SyntaxKind.StringLiteral, { text: '"' + variableIdentifier.text() + '"' })));
+                            Syntax.token(SyntaxKind.StringLiteral, { text: '"' + variableIdentifier.text() + '"' })));
 
                     var expressionStatement = ExpressionStatementSyntax.create1(
                         outerAssign).withTrailingTrivia(this.newLineList);
@@ -1189,17 +1190,17 @@ module Emitter {
 
             var indentationTrivia = this.indentationTrivia(enumColumn);
             var block = new BlockSyntax(
-                SyntaxToken.create(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
+                Syntax.token(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
                 SyntaxList.create(statements),
-                SyntaxToken.create(SyntaxKind.CloseBraceToken, { leadingTrivia: indentationTrivia }));
+                Syntax.token(SyntaxKind.CloseBraceToken, { leadingTrivia: indentationTrivia }));
 
             var functionExpression = FunctionExpressionSyntax.create(
-                SyntaxToken.create(SyntaxKind.FunctionKeyword),
+                Syntax.token(SyntaxKind.FunctionKeyword),
                 CallSignatureSyntax.create(
                     new ParameterListSyntax(
-                        SyntaxToken.create(SyntaxKind.OpenParenToken),
+                        Syntax.token(SyntaxKind.OpenParenToken),
                         SeparatedSyntaxList.create([new IdentifierNameSyntax(identifier)]),
-                        SyntaxToken.create(SyntaxKind.CloseParenToken, { trailingTrivia: this.spaceArray }))),
+                        Syntax.token(SyntaxKind.CloseParenToken, { trailingTrivia: this.spaceArray }))),
                 block);
 
             return functionExpression;
@@ -1213,7 +1214,7 @@ module Emitter {
             // var E;
             result.push(VariableStatementSyntax.create1(
                     new VariableDeclarationSyntax(
-                        SyntaxToken.create(SyntaxKind.VarKeyword, { trailingTrivia: this.spaceArray }),
+                        Syntax.token(SyntaxKind.VarKeyword, { trailingTrivia: this.spaceArray }),
                         SeparatedSyntaxList.create([VariableDeclaratorSyntax.create(identifier)]))
                 ).withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(this.newLineList));
 
@@ -1225,12 +1226,12 @@ module Emitter {
             var logicalOrExpression = new BinaryExpressionSyntax(
                 SyntaxKind.LogicalOrExpression,
                 new IdentifierNameSyntax(identifier),
-                SyntaxToken.create(SyntaxKind.BarBarToken),
+                Syntax.token(SyntaxKind.BarBarToken),
                 ParenthesizedExpressionSyntax.create1(
                     new BinaryExpressionSyntax(
                         SyntaxKind.AssignmentExpression,
                         new IdentifierNameSyntax(identifier),
-                        SyntaxToken.create(SyntaxKind.EqualsToken),
+                        Syntax.token(SyntaxKind.EqualsToken),
                         ObjectLiteralExpressionSyntax.create1())));
 
             // (function(E) { E.e1 = ... })(E||(E={}))
@@ -1272,12 +1273,12 @@ module Emitter {
             var result = <InvocationExpressionSyntax>super.visitInvocationExpression(node);
 
             var expression = MemberAccessExpressionSyntax.create1(
-                new IdentifierNameSyntax(SyntaxToken.createIdentifier("_super", { leadingTrivia: result.leadingTrivia().toArray() })),
-                new IdentifierNameSyntax(SyntaxToken.createIdentifier("call")));
+                new IdentifierNameSyntax(Syntax.identifier("_super", { leadingTrivia: result.leadingTrivia().toArray() })),
+                new IdentifierNameSyntax(Syntax.identifier("call")));
 
             var arguments = result.argumentList().arguments().toArray();
             if (arguments.length > 0) {
-                arguments.unshift(SyntaxToken.create(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }));
+                arguments.unshift(Syntax.token(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }));
             }
 
             arguments.unshift(ThisExpressionSyntax.create1());
@@ -1292,11 +1293,11 @@ module Emitter {
 
             var expression = MemberAccessExpressionSyntax.create1(
                 result.expression(),
-                new IdentifierNameSyntax(SyntaxToken.createIdentifier("call")));
+                new IdentifierNameSyntax(Syntax.identifier("call")));
 
             var arguments = result.argumentList().arguments().toArray();
             if (arguments.length > 0) {
-                arguments.unshift(SyntaxToken.create(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }));
+                arguments.unshift(Syntax.token(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }));
             }
 
             arguments.unshift(ThisExpressionSyntax.create1());
@@ -1326,29 +1327,33 @@ module Emitter {
 
             return MemberAccessExpressionSyntax.create1(
                 MemberAccessExpressionSyntax.create1(
-                    new IdentifierNameSyntax(SyntaxToken.createIdentifier("_super")),
-                    new IdentifierNameSyntax(SyntaxToken.createIdentifier("prototype"))),
+                    new IdentifierNameSyntax(Syntax.identifier("_super")),
+                    new IdentifierNameSyntax(Syntax.identifier("prototype"))),
                 result.identifierName()).withLeadingTrivia(result.leadingTrivia());
         }
 
         private visitVariableStatement(node: VariableStatementSyntax): VariableStatementSyntax {
-            var result = <VariableStatementSyntax>super.visitVariableStatement(node);
+            var result: VariableStatementSyntax = super.visitVariableStatement(node);
 
-            return <VariableStatementSyntax>result.withExportKeyword(null)
-                                                  .withDeclareKeyword(null)
-                                                  .withLeadingTrivia(result.leadingTrivia());
+            return result.withExportKeyword(null)
+                         .withDeclareKeyword(null)
+                         .withLeadingTrivia(result.leadingTrivia());
         }
     }
 
     export function emit(input: SourceUnitSyntax, options: FormattingOptions = null): SourceUnitSyntax {
+        // Make sure no one is passing us a bogus tree.
         SyntaxNodeInvariantsChecker.checkInvariants(input);
+
+        // If there's nothing typescript specific about this node, then just return it as is.
         if (!input.isTypeScriptSpecific()) {
             return input;
         }
 
-        var emitter = new EmitterImpl(SyntaxInformationMap.create(input), options);
-
-        var output = <SourceUnitSyntax>input.accept(emitter);
+        // Do the initial conversion. Note: the result at this point may be 'bogus'.  For example,
+        // it make contain the same token instance multiple times in the tree.
+        var output: SourceUnitSyntax = input.accept(
+            new EmitterImpl(SyntaxInformationMap.create(input), options));
 
         // Make sure we clone any nodes/tokens we used in multiple places in the result.  That way
         // we don't break the invariant that all tokens in a tree are unique.

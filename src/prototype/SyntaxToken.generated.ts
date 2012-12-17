@@ -2,7 +2,7 @@
 ///<reference path='IText.ts' />
 ///<reference path='SyntaxToken.ts' />
 
-module SyntaxToken {
+module Syntax {
     class VariableWidthTokenWithNoTrivia implements ISyntaxToken {
         private _sourceText: IText;
         private _fullStart: number;
@@ -837,7 +837,7 @@ module SyntaxToken {
         }
     }
 
-    function createFixedWidthToken(sourceText: IText, fullStart: number,
+    function fixedWidthToken(sourceText: IText, fullStart: number,
         kind: SyntaxKind,
         leadingTriviaInfo: number,
         trailingTriviaInfo: number): ISyntaxToken {
@@ -858,7 +858,7 @@ module SyntaxToken {
         }
     }
 
-    function createVariableWidthToken(sourceText: IText, fullStart: number,
+    function variableWidthToken(sourceText: IText, fullStart: number,
         kind: SyntaxKind,
         leadingTriviaInfo: number,
         width: number,
@@ -880,7 +880,7 @@ module SyntaxToken {
         }
     }
 
-    function createKeyword(sourceText: IText, fullStart: number,
+    function keyword(sourceText: IText, fullStart: number,
         keywordKind: SyntaxKind,
         leadingTriviaInfo: number,
         trailingTriviaInfo: number): ISyntaxToken {
@@ -901,19 +901,19 @@ module SyntaxToken {
         }
     }
 
-    export function createFromText(text: IText, fullStart: number,
+    export function tokenFromText(text: IText, fullStart: number,
         kind: SyntaxKind,
         leadingTriviaInfo: number,
         width: number,
         trailingTriviaInfo: number): ISyntaxToken {
         if (SyntaxFacts.isAnyPunctuation(kind)) {
-            return createFixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
+            return fixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
         }
         else if (SyntaxFacts.isAnyKeyword(kind)) {
-            return createKeyword(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
+            return keyword(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
         }
         else {
-            return createVariableWidthToken(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);
+            return variableWidthToken(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);
         }
     }
 

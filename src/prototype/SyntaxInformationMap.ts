@@ -11,7 +11,7 @@ interface ITokenInformation {
 
 class SyntaxInformationMap extends SyntaxWalker {
     // TODO: in the future we could also track the position of syntax nodes.
-    private tokenToInformation = Collections.createHashTable(Collections.DefaultHashTableCapacity, SyntaxToken.hashCode);
+    private tokenToInformation = Collections.createHashTable(Collections.DefaultHashTableCapacity, Syntax.tokenHashCode);
 
     private _previousToken = null;
     private _previousTokenInformation: ITokenInformation = null;

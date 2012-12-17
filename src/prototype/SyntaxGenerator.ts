@@ -1385,7 +1385,7 @@ function generateFactory2Method(definition: ITypeDefinition): string {
             result += "\r\n            null";
         }
         else if (child.isToken) {
-            result += "\r\n            SyntaxToken.create(SyntaxKind." + tokenKinds(child)[0] + ")";
+            result += "\r\n            Syntax.token(SyntaxKind." + tokenKinds(child)[0] + ")";
         }
         else {
             result += "\r\n            " + child.type + ".create1()";
@@ -2318,7 +2318,7 @@ function generateTokens(): string {
         "///<reference path='IText.ts' />\r\n" +
         "///<reference path='SyntaxToken.ts' />\r\n" +
         "\r\n" +
-        "module SyntaxToken {\r\n";
+        "module Syntax {\r\n";
 
     result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ false, /*leading:*/ false, /*trailing:*/ false);
     result += "\r\n";
@@ -2348,7 +2348,7 @@ function generateTokens(): string {
     result += "\r\n";
 
     result += 
-"    function createFixedWidthToken(sourceText: IText, fullStart: number,\r\n" +
+"    function fixedWidthToken(sourceText: IText, fullStart: number,\r\n" +
 "        kind: SyntaxKind,\r\n" +
 "        leadingTriviaInfo: number,\r\n" +
 "        trailingTriviaInfo: number): ISyntaxToken {\r\n" +
@@ -2369,7 +2369,7 @@ function generateTokens(): string {
 "        }\r\n" +
 "    }\r\n" +
 "\r\n" +
-"    function createVariableWidthToken(sourceText: IText, fullStart: number,\r\n" +
+"    function variableWidthToken(sourceText: IText, fullStart: number,\r\n" +
 "        kind: SyntaxKind,\r\n" +
 "        leadingTriviaInfo: number,\r\n" +
 "        width: number,\r\n" +
@@ -2391,7 +2391,7 @@ function generateTokens(): string {
 "        }\r\n" +
 "    }\r\n" +
 "\r\n" +
-"    function createKeyword(sourceText: IText, fullStart: number,\r\n" +
+"    function keyword(sourceText: IText, fullStart: number,\r\n" +
 "        keywordKind: SyntaxKind,\r\n" +
 "        leadingTriviaInfo: number,\r\n" +
 "        trailingTriviaInfo: number): ISyntaxToken {\r\n" +
@@ -2412,19 +2412,19 @@ function generateTokens(): string {
 "        }\r\n" +
 "    }\r\n" +
 "\r\n" +
-"    export function createFromText(text: IText, fullStart: number,\r\n" +
+"    export function tokenFromText(text: IText, fullStart: number,\r\n" +
 "        kind: SyntaxKind,\r\n" +
 "        leadingTriviaInfo: number,\r\n" +
 "        width: number,\r\n" +
 "        trailingTriviaInfo: number): ISyntaxToken {\r\n" +
 "        if (SyntaxFacts.isAnyPunctuation(kind)) {\r\n" +
-"            return createFixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" +
+"            return fixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" +
 "        }\r\n" +
 "        else if (SyntaxFacts.isAnyKeyword(kind)) {\r\n" +
-"            return createKeyword(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" +
+"            return keyword(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" +
 "        }\r\n" +
 "        else {\r\n" +
-"            return createVariableWidthToken(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);\r\n" +
+"            return variableWidthToken(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);\r\n" +
 "        }\r\n" +
 "    }\r\n\r\n"
 

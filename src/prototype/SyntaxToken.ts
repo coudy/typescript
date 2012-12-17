@@ -2,8 +2,8 @@
 ///<reference path='Hash.ts' />
 ///<reference path='Scanner.ts' />
 
-module SyntaxToken {
-    export function hashCode(token: ISyntaxToken): number {
+module Syntax {
+    export function tokenHashCode(token: ISyntaxToken): number {
         var hash = 0;
 
         hash = Hash.combine(token.leadingTriviaWidth(), hash);
@@ -190,7 +190,7 @@ module SyntaxToken {
         }
     }
 
-    export function createEmpty(kind: SyntaxKind, keywordKind: SyntaxKind): ISyntaxToken {
+    export function emptyToken(kind: SyntaxKind, keywordKind: SyntaxKind): ISyntaxToken {
         return new EmptyToken(kind, keywordKind);
     }
 
@@ -276,7 +276,7 @@ module SyntaxToken {
         }
     }
 
-    export function create(kind: SyntaxKind, info: ITokenInfo = null): ISyntaxToken {
+    export function token(kind: SyntaxKind, info: ITokenInfo = null): ISyntaxToken {
         var text = (info !== null && info.text) ? info.text : SyntaxFacts.getText(kind);
         var value = (info !== null && info.value) ? info.value : null;
         
@@ -296,9 +296,9 @@ module SyntaxToken {
             /*isMissing:*/ false);
     }
     
-    export function createIdentifier(text: string, info: ITokenInfo = null): ISyntaxToken {
+    export function identifier(text: string, info: ITokenInfo = null): ISyntaxToken {
         info = info || {};
         info.text = text;
-        return create(SyntaxKind.IdentifierNameToken, info);
+        return token(SyntaxKind.IdentifierNameToken, info);
     }
 }
