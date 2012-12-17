@@ -20915,11 +20915,8 @@ var Emitter;
             }), SyntaxList.create(statements), Syntax.token(68 /* CloseBraceToken */ , {
                 leadingTrivia: indentationTrivia
             }));
-            var functionExpression = FunctionExpressionSyntax.create(Syntax.token(25 /* FunctionKeyword */ ), CallSignatureSyntax.create(new ParameterListSyntax(Syntax.token(69 /* OpenParenToken */ ), SeparatedSyntaxList.create([
-                new IdentifierNameSyntax(identifier)
-            ]), Syntax.token(70 /* CloseParenToken */ , {
-                trailingTrivia: this.spaceArray
-            }))), block);
+            var parameterList = ParameterListSyntax.create1().withParameter(ParameterSyntax.create1(identifier)).withTrailingTrivia(this.spaceList);
+            var functionExpression = FunctionExpressionSyntax.create1().withCallSignature(CallSignatureSyntax.create(parameterList)).withBlock(block);
             return functionExpression;
         };
         EmitterImpl.prototype.visitEnumDeclaration = function (node) {
