@@ -1,10 +1,10 @@
-﻿class SyntaxRewriter implements ISyntaxVisitor1 {
+﻿class SyntaxRewriter implements ISyntaxVisitor {
     public visitToken(token: ISyntaxToken): ISyntaxToken {
         return token;
     }
 
     public visitNode(node: SyntaxNode): SyntaxNode {
-        return node === null ? null : node.accept1(this);
+        return node === null ? null : node.accept(this);
     }
 
     public visitList(list: ISyntaxList): ISyntaxList {
@@ -12,7 +12,7 @@
 
         for (var i = 0, n = list.count(); i < n; i++) {
             var item = list.syntaxNodeAt(i);
-            var newItem = <SyntaxNode>item.accept1(this);
+            var newItem = <SyntaxNode>item.accept(this);
 
             if (item !== newItem && newItems === null) {
                 newItems = [];

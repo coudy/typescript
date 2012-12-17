@@ -182,7 +182,7 @@ class SyntaxDedenter extends SyntaxRewriter {
 
     public static dedentNode(node: SyntaxNode, dedentFirstToken: bool, dedentAmount: number, minimumIndent: number, options: FormattingOptions): SyntaxNode {
         var dedenter = new SyntaxDedenter(dedentFirstToken, dedentAmount, minimumIndent, options);
-        var result = node.accept1(dedenter);
+        var result = node.accept(dedenter);
 
         if (dedenter.isAborted()) {
             // We failed to dedent a token in this node.  Return the original node as is.

@@ -148,7 +148,7 @@ class SyntaxIndenter extends SyntaxRewriter {
 
     public static indentNode(node: SyntaxNode, indentFirstToken: bool, indentAmount: number, options: FormattingOptions): SyntaxNode {
         var indenter = new SyntaxIndenter(indentFirstToken, indentAmount, options);
-        return node.accept1(indenter);
+        return node.accept(indenter);
     }
 
     public static indentNodes(nodes: SyntaxNode[], indentFirstToken: bool, indentAmount: number, options: FormattingOptions): SyntaxNode[] {
@@ -157,7 +157,7 @@ class SyntaxIndenter extends SyntaxRewriter {
         // with a newline.  The indenter will track that for us.
         
         var indenter = new SyntaxIndenter(indentFirstToken, indentAmount, options);
-        var result = ArrayUtilities.select(nodes, n => n.accept1(indenter));
+        var result = ArrayUtilities.select(nodes, n => n.accept(indenter));
 
         return result;
     }

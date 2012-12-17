@@ -720,7 +720,7 @@ module Parser {
                 return sourceUnit;
             }
 
-            return sourceUnit.accept1(new SkippedTokensAdder(this.skippedTokens));
+            return sourceUnit.accept(new SkippedTokensAdder(this.skippedTokens));
         }
 
         private parseSourceUnit(): SourceUnitSyntax {

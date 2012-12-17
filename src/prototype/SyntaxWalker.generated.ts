@@ -17,7 +17,7 @@ class SyntaxWalker implements ISyntaxVisitor {
             return;
         }
 
-        node.accept1(this);
+        node.accept(this);
     }
 
     public visitList(list: ISyntaxList): void {

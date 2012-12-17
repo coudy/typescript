@@ -53,16 +53,12 @@ class SyntaxNode implements ISyntaxElement {
         return result;
     }
 
-    public accept(visitor: ISyntaxVisitor): void {
-        throw Errors.abstract();
-    }
-
-    public accept1(visitor: ISyntaxVisitor1): any {
+    public accept(visitor: ISyntaxVisitor): any {
         throw Errors.abstract();
     }
 
     public realize(): SyntaxNode {
-        return this.accept1(new SyntaxRealizer());
+        return this.accept(new SyntaxRealizer());
     }
 
     public collectTextElements(elements: string[]): void {
@@ -80,11 +76,11 @@ class SyntaxNode implements ISyntaxElement {
     }
 
     public clone(): SyntaxNode {
-        return this.accept1(new SyntaxNodeCloner());
+        return this.accept(new SyntaxNodeCloner());
     }
 
     public replaceToken(token1: ISyntaxToken, token2: ISyntaxToken): SyntaxNode {
-        return this.accept1(new SyntaxTokenReplacer(token1, token2));
+        return this.accept(new SyntaxTokenReplacer(token1, token2));
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): SyntaxNode {

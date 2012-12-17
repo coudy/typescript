@@ -28,7 +28,7 @@ class Emitter extends SyntaxRewriter {
         SyntaxNodeInvariantsChecker.checkInvariants(input);
         var emitter = new Emitter(SyntaxInformationMap.create(input), options);
 
-        var output = <SourceUnitSyntax>input.accept1(emitter);
+        var output = <SourceUnitSyntax>input.accept(emitter);
         SyntaxNodeInvariantsChecker.checkInvariants(output);
 
         return output;
@@ -239,7 +239,7 @@ class Emitter extends SyntaxRewriter {
     }
 
     private visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): FunctionExpressionSyntax {
-        var parameterList = <ParameterListSyntax>node.callSignature().parameterList().accept1(this);
+        var parameterList = <ParameterListSyntax>node.callSignature().parameterList().accept(this);
         var block = this.convertArrowFunctionBody(node);
 
         return FunctionExpressionSyntax.create(
@@ -418,7 +418,7 @@ class Emitter extends SyntaxRewriter {
             SyntaxKind.AssignmentExpression,
             <IdentifierNameSyntax>identifierName.clone(),
             SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceList }),
-            <ExpressionSyntax>parameter.equalsValueClause().value().accept1(this).clone());
+            <ExpressionSyntax>parameter.equalsValueClause().value().accept(this).clone());
         
         var assignmentStatement = new ExpressionStatementSyntax(
             assignment,
@@ -508,7 +508,7 @@ class Emitter extends SyntaxRewriter {
                 SyntaxKind.AssignmentExpression,
                 receiver,
                 SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceList }),
-                <ExpressionSyntax>declarator.equalsValueClause().value().accept1(this)),
+                <ExpressionSyntax>declarator.equalsValueClause().value().accept(this)),
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
     }
 
@@ -597,7 +597,7 @@ class Emitter extends SyntaxRewriter {
         var newParameterListIndentation = 
             constructorIndentationColumn + SyntaxFacts.getText(SyntaxKind.FunctionKeyword).length + 1 + identifier.width();
 
-        var parameterList = constructorDeclaration.parameterList().accept1(this);
+        var parameterList = constructorDeclaration.parameterList().accept(this);
         parameterList = this.changeIndentation(
             parameterList, /*changeFirstToken:*/ false, newParameterListIndentation - originalParameterListindentation);
 
@@ -608,9 +608,9 @@ class Emitter extends SyntaxRewriter {
         var allStatements = block.statements().toArray();
 
         var normalStatements: StatementSyntax[] = ArrayUtilities.select(ArrayUtilities.where(allStatements,
-            s => !Emitter.isSuperInvocationExpressionStatement(s)), s => s.accept1(this));
+            s => !Emitter.isSuperInvocationExpressionStatement(s)), s => s.accept(this));
         var superStatements: StatementSyntax[] = ArrayUtilities.select(ArrayUtilities.where(allStatements,
-            s => Emitter.isSuperInvocationExpressionStatement(s)), s => s.accept1(this));
+            s => Emitter.isSuperInvocationExpressionStatement(s)), s => s.accept(this));
 
         // TODO: handle alignment here.
         var instanceAssignments = this.generatePropertyAssignments(
@@ -685,7 +685,7 @@ class Emitter extends SyntaxRewriter {
             SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
             new IdentifierNameSyntax(functionIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
 
-        var block = <BlockSyntax>functionDeclaration.block().accept1(this);
+        var block = <BlockSyntax>functionDeclaration.block().accept(this);
         var blockTrailingTrivia = block.trailingTrivia();
 
         block = block.withCloseBraceToken(
@@ -707,7 +707,7 @@ class Emitter extends SyntaxRewriter {
 
         block = block.withStatements(SyntaxList.create(blockStatements));
 
-        var callSignatureParameterList = <ParameterListSyntax>functionDeclaration.functionSignature().parameterList().accept1(this);
+        var callSignatureParameterList = <ParameterListSyntax>functionDeclaration.functionSignature().parameterList().accept(this);
         if (!callSignatureParameterList.hasTrailingTrivia()) {
             callSignatureParameterList = <ParameterListSyntax>callSignatureParameterList.withTrailingTrivia(SyntaxTriviaList.space);
         }
@@ -737,12 +737,12 @@ class Emitter extends SyntaxRewriter {
         var accessorColumn = this.columnForStartOfToken(memberAccessor.firstToken());
         var indentationTrivia = this.indentationTrivia(accessorColumn);
 
-        var parameterList = <ParameterListSyntax>memberAccessor.parameterList().accept1(this);
+        var parameterList = <ParameterListSyntax>memberAccessor.parameterList().accept(this);
         if (!parameterList.hasTrailingTrivia()) {
             parameterList = <ParameterListSyntax>parameterList.withTrailingTrivia(SyntaxTriviaList.space);
         }
 
-        var block = memberAccessor.block().accept1(this);
+        var block = memberAccessor.block().accept(this);
         block = <BlockSyntax>block.withTrailingTrivia(SyntaxTriviaList.empty);
 
         return new SimplePropertyAssignmentSyntax(

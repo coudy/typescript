@@ -1240,12 +1240,7 @@ function generateAcceptMethods(definition: ITypeDefinition): string {
 
     if (!definition.isAbstract) {
         result += "\r\n";
-        result += "    public accept(visitor: ISyntaxVisitor): void {\r\n";
-        result += "        visitor.visit" + getNameWithoutSuffix(definition) + "(this);\r\n";
-        result += "    }\r\n";
-
-        result += "\r\n";
-        result += "    public accept1(visitor: ISyntaxVisitor1): any {\r\n";
+        result += "    public accept(visitor: ISyntaxVisitor): any {\r\n";
         result += "        return visitor.visit" + getNameWithoutSuffix(definition) + "(this);\r\n";
         result += "    }\r\n";
     }
@@ -1702,13 +1697,13 @@ function generateRewriter(): string {
     var result = "";
 
     result +=
-"class SyntaxRewriter implements ISyntaxVisitor1 {\r\n" +
+"class SyntaxRewriter implements ISyntaxVisitor {\r\n" +
 "    public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n" +
 "        return token;\r\n" +
 "    }\r\n" +
 "\r\n" +
 "    public visitNode(node: SyntaxNode): SyntaxNode {\r\n" +
-"        return node === null ? null : node.accept1(this);\r\n" +
+"        return node === null ? null : node.accept(this);\r\n" +
 "    }\r\n" +
 "\r\n" +
 "    public visitList(list: ISyntaxList): ISyntaxList {\r\n" +
@@ -1716,7 +1711,7 @@ function generateRewriter(): string {
 "\r\n" +
 "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" +
 "            var item = list.syntaxNodeAt(i);\r\n" +
-"            var newItem = <SyntaxNode>item.accept1(this);\r\n" +
+"            var newItem = <SyntaxNode>item.accept(this);\r\n" +
 "\r\n" +
 "            if (item !== newItem && newItems === null) {\r\n" +
 "                newItems = [];\r\n" +
@@ -2223,7 +2218,7 @@ function generateWalker(): string {
 "            return;\r\n" +
 "        }\r\n" +
 "\r\n" +
-"        node.accept1(this);\r\n" +
+"        node.accept(this);\r\n" +
 "    }\r\n" +
 "\r\n" +
 "    public visitList(list: ISyntaxList): void {\r\n" +
