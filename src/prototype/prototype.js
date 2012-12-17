@@ -20219,20 +20219,18 @@ var Emitter;
         EmitterImpl.prototype.columnForEndOfToken = function (token) {
             return Indentation.columnForEndOfToken(token, this.syntaxInformationMap, this.options);
         };
-        EmitterImpl.prototype.indentationTrivia = function (column) {
-            return column === 0 ? null : [
+        EmitterImpl.prototype.indentationTriviaList = function (column) {
+            var triviaArray = column === 0 ? null : [
                 Indentation.indentationTrivia(column, this.options)
             ];
-        };
-        EmitterImpl.prototype.indentationTriviaList = function (column) {
-            return SyntaxTriviaList.create(this.indentationTrivia(column));
-        };
-        EmitterImpl.prototype.indentationTriviaForStartOfToken = function (token) {
-            var column = this.columnForStartOfToken(token);
-            return this.indentationTrivia(column);
+            return SyntaxTriviaList.create(triviaArray);
         };
         EmitterImpl.prototype.indentationTriviaListForStartOfToken = function (token) {
-            return SyntaxTriviaList.create(this.indentationTriviaForStartOfToken(token));
+            var column = this.columnForStartOfToken(token);
+            var triviaArray = column === 0 ? null : [
+                Indentation.indentationTrivia(column, this.options)
+            ];
+            return SyntaxTriviaList.create(triviaArray);
         };
         EmitterImpl.prototype.adjustListIndentation = function (nodes) {
             return SyntaxIndenter.indentNodes(nodes, true, this.options.indentSpaces, this.options);
@@ -20298,8 +20296,8 @@ var Emitter;
         EmitterImpl.prototype.exportModuleElement = function (moduleIdentifier, moduleElement, elementIdentifier) {
             moduleIdentifier = this.withNoTrivia(moduleIdentifier);
             elementIdentifier = this.withNoTrivia(elementIdentifier);
-            var indentationTrivia = this.indentationTriviaForStartOfToken(moduleElement.firstToken());
-            return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(moduleIdentifier.withLeadingTrivia(SyntaxTriviaList.create(indentationTrivia))), new IdentifierNameSyntax(elementIdentifier.withTrailingTrivia(SyntaxTriviaList.space))), Syntax.token(104 /* EqualsToken */ , {
+            var indentationTrivia = this.indentationTriviaListForStartOfToken(moduleElement.firstToken());
+            return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(moduleIdentifier.withLeadingTrivia(indentationTrivia)), new IdentifierNameSyntax(elementIdentifier.withTrailingTrivia(SyntaxTriviaList.space))), Syntax.token(104 /* EqualsToken */ , {
                 trailingTrivia: this.spaceArray
             }), new IdentifierNameSyntax(elementIdentifier))).withTrailingTrivia(this.newLineList);
         };
@@ -20663,18 +20661,16 @@ var Emitter;
         };
         EmitterImpl.prototype.convertMemberAccessor = function (memberAccessor) {
             var propertyName = memberAccessor.kind() === 136 /* GetMemberAccessorDeclaration */  ? "get" : "set";
-            var indentationTrivia = this.indentationTriviaForStartOfToken(memberAccessor.firstToken());
+            var indentationTrivia = this.indentationTriviaListForStartOfToken(memberAccessor.firstToken());
             var parameterList = memberAccessor.parameterList().accept(this);
             if(!parameterList.hasTrailingTrivia()) {
                 parameterList = parameterList.withTrailingTrivia(SyntaxTriviaList.space);
             }
             var block = memberAccessor.block().accept(this);
             block = block.withTrailingTrivia(SyntaxTriviaList.empty);
-            return new SimplePropertyAssignmentSyntax(Syntax.identifier(propertyName, {
-                leadingTrivia: indentationTrivia
-            }), Syntax.token(103 /* ColonToken */ , {
+            return new SimplePropertyAssignmentSyntax(Syntax.identifier(propertyName), Syntax.token(103 /* ColonToken */ , {
                 trailingTrivia: this.spaceArray
-            }), FunctionExpressionSyntax.create(Syntax.token(25 /* FunctionKeyword */ ), CallSignatureSyntax.create(parameterList), block));
+            }), FunctionExpressionSyntax.create(Syntax.token(25 /* FunctionKeyword */ ), CallSignatureSyntax.create(parameterList), block)).withLeadingTrivia(indentationTrivia);
         };
         EmitterImpl.prototype.convertMemberAccessorDeclaration = function (classDeclaration, memberAccessor, classElements) {
             if(memberAccessor.block() === null) {
@@ -20789,12 +20785,10 @@ var Emitter;
                 trailingTrivia: this.spaceArray
             }), new IdentifierNameSyntax(identifier), Syntax.token(75 /* SemicolonToken */ )).withLeadingTrivia(returnIndentation).withTrailingTrivia(this.newLineList);
             statements.push(returnStatement);
-            var classIndentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
+            var classIndentationTrivia = this.indentationTriviaListForStartOfToken(node.firstToken());
             var block = new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ , {
                 trailingTrivia: this.newLineArray
-            }), SyntaxList.create(statements), Syntax.token(68 /* CloseBraceToken */ , {
-                leadingTrivia: classIndentationTrivia
-            }));
+            }), SyntaxList.create(statements), Syntax.token(68 /* CloseBraceToken */ ).withLeadingTrivia(classIndentationTrivia));
             var callParameters = [];
             if(node.extendsClause() !== null) {
                 callParameters.push(ParameterSyntax.create(Syntax.identifier("_super")));

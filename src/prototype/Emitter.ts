@@ -55,21 +55,15 @@ module Emitter {
             return Indentation.columnForEndOfToken(token, this.syntaxInformationMap, this.options);
         }
 
-        private indentationTrivia(column: number): ISyntaxTrivia[] {
-            return column === 0 ? null : [Indentation.indentationTrivia(column, this.options)];
-        }
-
         private indentationTriviaList(column: number): ISyntaxTriviaList {
-            return SyntaxTriviaList.create(this.indentationTrivia(column));
-        }
-
-        private indentationTriviaForStartOfToken(token: ISyntaxToken): ISyntaxTrivia[] {
-            var column = this.columnForStartOfToken(token);
-            return this.indentationTrivia(column);
+            var triviaArray = column === 0 ? null : [Indentation.indentationTrivia(column, this.options)];
+            return SyntaxTriviaList.create(triviaArray);
         }
 
         private indentationTriviaListForStartOfToken(token: ISyntaxToken): ISyntaxTriviaList {
-            return SyntaxTriviaList.create(this.indentationTriviaForStartOfToken(token));
+            var column = this.columnForStartOfToken(token);
+            var triviaArray = column === 0 ? null : [Indentation.indentationTrivia(column, this.options)];
+            return SyntaxTriviaList.create(triviaArray);
         }
 
         private adjustListIndentation(nodes: SyntaxNode[]): SyntaxNode[] {
@@ -168,14 +162,14 @@ module Emitter {
             moduleIdentifier = this.withNoTrivia(moduleIdentifier);
             elementIdentifier = this.withNoTrivia(elementIdentifier);
 
-            var indentationTrivia = this.indentationTriviaForStartOfToken(moduleElement.firstToken());
+            var indentationTrivia = this.indentationTriviaListForStartOfToken(moduleElement.firstToken());
 
             // M1.e = e;
             return ExpressionStatementSyntax.create1(
                 new BinaryExpressionSyntax(
                     SyntaxKind.AssignmentExpression,
                     MemberAccessExpressionSyntax.create1(
-                        new IdentifierNameSyntax(moduleIdentifier.withLeadingTrivia(SyntaxTriviaList.create(indentationTrivia))),
+                        new IdentifierNameSyntax(moduleIdentifier.withLeadingTrivia(indentationTrivia)),
                         new IdentifierNameSyntax(elementIdentifier.withTrailingTrivia(SyntaxTriviaList.space))),
                     Syntax.token(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
                     new IdentifierNameSyntax(elementIdentifier))).withTrailingTrivia(this.newLineList);
@@ -817,7 +811,7 @@ module Emitter {
             var propertyName = memberAccessor.kind() === SyntaxKind.GetMemberAccessorDeclaration
                 ? "get" : "set";
 
-            var indentationTrivia = this.indentationTriviaForStartOfToken(memberAccessor.firstToken());
+            var indentationTrivia = this.indentationTriviaListForStartOfToken(memberAccessor.firstToken());
 
             var parameterList = <ParameterListSyntax>memberAccessor.parameterList().accept(this);
             if (!parameterList.hasTrailingTrivia()) {
@@ -828,12 +822,12 @@ module Emitter {
             block = block.withTrailingTrivia(SyntaxTriviaList.empty);
 
             return new SimplePropertyAssignmentSyntax(
-                Syntax.identifier(propertyName, { leadingTrivia: indentationTrivia }),
+                Syntax.identifier(propertyName),
                 Syntax.token(SyntaxKind.ColonToken, { trailingTrivia: this.spaceArray }),
                 FunctionExpressionSyntax.create(
                     Syntax.token(SyntaxKind.FunctionKeyword),
                     CallSignatureSyntax.create(parameterList),
-                    block));
+                    block)).withLeadingTrivia(indentationTrivia);
         }
 
         private convertMemberAccessorDeclaration(classDeclaration: ClassDeclarationSyntax,
@@ -1004,12 +998,12 @@ module Emitter {
 
             statements.push(returnStatement);
 
-            var classIndentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
+            var classIndentationTrivia = this.indentationTriviaListForStartOfToken(node.firstToken());
 
             var block = new BlockSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
                 SyntaxList.create(statements),
-                Syntax.token(SyntaxKind.CloseBraceToken, { leadingTrivia: classIndentationTrivia }));
+                Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(classIndentationTrivia));
 
             var callParameters = [];
             if (node.extendsClause() !== null) {
