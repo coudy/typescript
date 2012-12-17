@@ -20683,9 +20683,7 @@ var Emitter;
                     }
                 }
             }
-            var receiver = MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(SyntaxToken.createIdentifier("Object", {
-                leadingTrivia: memberAccessor.leadingTrivia().toArray()
-            })), new IdentifierNameSyntax(SyntaxToken.createIdentifier("defineProperty")));
+            var receiver = MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(SyntaxToken.createIdentifier("Object")), new IdentifierNameSyntax(SyntaxToken.createIdentifier("defineProperty"))).withLeadingTrivia(memberAccessor.leadingTrivia());
             var arguments = [];
             var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
             arguments.push(MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(classIdentifier), new IdentifierNameSyntax(SyntaxToken.createIdentifier("prototype"))));
@@ -20789,9 +20787,7 @@ var Emitter;
             var returnStatement = new ReturnStatementSyntax(SyntaxToken.create(31 /* ReturnKeyword */ , {
                 leadingTrivia: returnIndentation,
                 trailingTrivia: this.spaceArray
-            }), new IdentifierNameSyntax(identifier), SyntaxToken.create(75 /* SemicolonToken */ , {
-                trailingTrivia: this.newLineArray
-            }));
+            }), new IdentifierNameSyntax(identifier), SyntaxToken.create(75 /* SemicolonToken */ )).withTrailingTrivia(this.newLineList);
             statements.push(returnStatement);
             var classIndentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
             var block = new BlockSyntax(SyntaxToken.create(67 /* OpenBraceToken */ , {
@@ -20811,15 +20807,14 @@ var Emitter;
                 invocationParameters.push(node.extendsClause().typeNames().syntaxNodeAt(0).withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty));
             }
             var invocationExpression = new InvocationExpressionSyntax(parenthesizedExpression, ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create(invocationParameters)));
-            var variableDeclarator = new VariableDeclaratorSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space), null, new EqualsValueClauseSyntax(SyntaxToken.create(104 /* EqualsToken */ , {
+            var variableDeclarator = VariableDeclaratorSyntax.create(identifier.withTrailingTrivia(SyntaxTriviaList.space)).withEqualsValueClause(new EqualsValueClauseSyntax(SyntaxToken.create(104 /* EqualsToken */ , {
                 trailingTrivia: this.spaceArray
             }), invocationExpression));
             var variableDeclaration = new VariableDeclarationSyntax(SyntaxToken.create(38 /* VarKeyword */ , {
-                leadingTrivia: node.leadingTrivia().toArray(),
                 trailingTrivia: this.spaceArray
             }), SeparatedSyntaxList.create([
                 variableDeclarator
-            ]));
+            ])).withLeadingTrivia(node.leadingTrivia());
             return VariableStatementSyntax.create1(variableDeclaration).withTrailingTrivia(this.newLineList);
         };
         EmitterImpl.prototype.visitVariableDeclarator = function (node) {
