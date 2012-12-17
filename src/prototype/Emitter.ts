@@ -890,31 +890,32 @@ module Emitter {
             }
 
             var accessorColumn = this.columnForStartOfToken(memberAccessor.firstToken());
-            var accessorTrivia = this.indentationTrivia(accessorColumn);
+            var accessorTrivia = this.indentationTriviaList(accessorColumn);
 
             var propertyColumn = accessorColumn + this.options.indentSpaces;
-            var propertyTrivia = this.indentationTrivia(propertyColumn);
+            var propertyTrivia = this.indentationTriviaList(propertyColumn);
 
             propertyAssignments.push(new SimplePropertyAssignmentSyntax(
-                Syntax.identifier("enumerable", { leadingTrivia: propertyTrivia }),
+                Syntax.identifier("enumerable"),
                 Syntax.token(SyntaxKind.ColonToken, { trailingTrivia: this.spaceArray }),
                 new LiteralExpressionSyntax(
                     SyntaxKind.BooleanLiteralExpression,
-                    Syntax.token(SyntaxKind.TrueKeyword))));
+                    Syntax.token(SyntaxKind.TrueKeyword))).withLeadingTrivia(propertyTrivia));
             propertyAssignments.push(
                 Syntax.token(SyntaxKind.CommaToken, { trailingTrivia: this.newLineArray }));
 
             propertyAssignments.push(new SimplePropertyAssignmentSyntax(
-                Syntax.identifier("configurable", { leadingTrivia: propertyTrivia }),
-                Syntax.token(SyntaxKind.ColonToken, { trailingTrivia: this.spaceArray }),
-                new LiteralExpressionSyntax(
-                    SyntaxKind.BooleanLiteralExpression,
-                    Syntax.token(SyntaxKind.TrueKeyword, { trailingTrivia: this.newLineArray }))));
+                    Syntax.identifier("configurable"),
+                    Syntax.token(SyntaxKind.ColonToken, { trailingTrivia: this.spaceArray }),
+                    new LiteralExpressionSyntax(
+                        SyntaxKind.BooleanLiteralExpression,
+                        Syntax.token(SyntaxKind.TrueKeyword))
+                ).withLeadingTrivia(propertyTrivia).withTrailingTrivia(this.newLineList));
 
             var objectLiteral = new ObjectLiteralExpressionSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
                 SeparatedSyntaxList.create(propertyAssignments),
-                Syntax.token(SyntaxKind.CloseBraceToken, { leadingTrivia: accessorTrivia }));
+                Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(accessorTrivia));
 
             arguments.push(objectLiteral);
 
@@ -1185,11 +1186,11 @@ module Emitter {
                 }
             }
 
-            var indentationTrivia = this.indentationTrivia(enumColumn);
+            var indentationTrivia = this.indentationTriviaList(enumColumn);
             var block = new BlockSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
                 SyntaxList.create(statements),
-                Syntax.token(SyntaxKind.CloseBraceToken, { leadingTrivia: indentationTrivia }));
+                Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(indentationTrivia));
 
             var parameterList = ParameterListSyntax.create1().withParameter(ParameterSyntax.create1(identifier)).withTrailingTrivia(this.spaceList);
 

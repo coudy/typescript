@@ -20717,29 +20717,21 @@ var Emitter;
                 }));
             }
             var accessorColumn = this.columnForStartOfToken(memberAccessor.firstToken());
-            var accessorTrivia = this.indentationTrivia(accessorColumn);
+            var accessorTrivia = this.indentationTriviaList(accessorColumn);
             var propertyColumn = accessorColumn + this.options.indentSpaces;
-            var propertyTrivia = this.indentationTrivia(propertyColumn);
-            propertyAssignments.push(new SimplePropertyAssignmentSyntax(Syntax.identifier("enumerable", {
-                leadingTrivia: propertyTrivia
-            }), Syntax.token(103 /* ColonToken */ , {
+            var propertyTrivia = this.indentationTriviaList(propertyColumn);
+            propertyAssignments.push(new SimplePropertyAssignmentSyntax(Syntax.identifier("enumerable"), Syntax.token(103 /* ColonToken */ , {
                 trailingTrivia: this.spaceArray
-            }), new LiteralExpressionSyntax(165 /* BooleanLiteralExpression */ , Syntax.token(35 /* TrueKeyword */ ))));
+            }), new LiteralExpressionSyntax(165 /* BooleanLiteralExpression */ , Syntax.token(35 /* TrueKeyword */ ))).withLeadingTrivia(propertyTrivia));
             propertyAssignments.push(Syntax.token(76 /* CommaToken */ , {
                 trailingTrivia: this.newLineArray
             }));
-            propertyAssignments.push(new SimplePropertyAssignmentSyntax(Syntax.identifier("configurable", {
-                leadingTrivia: propertyTrivia
-            }), Syntax.token(103 /* ColonToken */ , {
+            propertyAssignments.push(new SimplePropertyAssignmentSyntax(Syntax.identifier("configurable"), Syntax.token(103 /* ColonToken */ , {
                 trailingTrivia: this.spaceArray
-            }), new LiteralExpressionSyntax(165 /* BooleanLiteralExpression */ , Syntax.token(35 /* TrueKeyword */ , {
-                trailingTrivia: this.newLineArray
-            }))));
+            }), new LiteralExpressionSyntax(165 /* BooleanLiteralExpression */ , Syntax.token(35 /* TrueKeyword */ ))).withLeadingTrivia(propertyTrivia).withTrailingTrivia(this.newLineList));
             var objectLiteral = new ObjectLiteralExpressionSyntax(Syntax.token(67 /* OpenBraceToken */ , {
                 trailingTrivia: this.newLineArray
-            }), SeparatedSyntaxList.create(propertyAssignments), Syntax.token(68 /* CloseBraceToken */ , {
-                leadingTrivia: accessorTrivia
-            }));
+            }), SeparatedSyntaxList.create(propertyAssignments), Syntax.token(68 /* CloseBraceToken */ ).withLeadingTrivia(accessorTrivia));
             arguments.push(objectLiteral);
             var argumentList = ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create(arguments));
             var invocationExpression = new InvocationExpressionSyntax(receiver, argumentList);
@@ -20901,12 +20893,10 @@ var Emitter;
                     statements.push(expressionStatement);
                 }
             }
-            var indentationTrivia = this.indentationTrivia(enumColumn);
+            var indentationTrivia = this.indentationTriviaList(enumColumn);
             var block = new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ , {
                 trailingTrivia: this.newLineArray
-            }), SyntaxList.create(statements), Syntax.token(68 /* CloseBraceToken */ , {
-                leadingTrivia: indentationTrivia
-            }));
+            }), SyntaxList.create(statements), Syntax.token(68 /* CloseBraceToken */ ).withLeadingTrivia(indentationTrivia));
             var parameterList = ParameterListSyntax.create1().withParameter(ParameterSyntax.create1(identifier)).withTrailingTrivia(this.spaceList);
             return FunctionExpressionSyntax.create1().withCallSignature(CallSignatureSyntax.create(parameterList)).withBlock(block);
         };
