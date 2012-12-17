@@ -97,8 +97,8 @@ module Emitter {
         }
 
         private visitSourceUnit(node: SourceUnitSyntax): SourceUnitSyntax {
-            var moduleElements = this.convertModuleElements(node.moduleElements());
-            return node.withModuleElements(SyntaxList.create(moduleElements));
+            return node.withModuleElements(SyntaxList.create(
+                this.convertModuleElements(node.moduleElements())));
         }
 
         private convertModuleElements(list: ISyntaxList): ModuleElementSyntax[] {
@@ -153,11 +153,11 @@ module Emitter {
                 : <IdentifierNameSyntax>name;
         }
 
-        private createExportStatement(parentModule: ISyntaxToken,
-            moduleElement: ModuleElementSyntax,
-            identifier: ISyntaxToken): ExpressionStatementSyntax {
-            var moduleIdentifier = this.withNoTrivia(parentModule);
-            identifier = this.withNoTrivia(identifier);
+        private exportModuleElement(moduleIdentifier: ISyntaxToken,
+                                    moduleElement: ModuleElementSyntax,
+                                    elementIdentifier: ISyntaxToken): ExpressionStatementSyntax {
+            moduleIdentifier = this.withNoTrivia(moduleIdentifier);
+            elementIdentifier = this.withNoTrivia(elementIdentifier);
 
             var indentationTrivia = this.indentationTriviaForStartOfToken(moduleElement.firstToken());
 
@@ -167,9 +167,9 @@ module Emitter {
                     SyntaxKind.AssignmentExpression,
                     MemberAccessExpressionSyntax.create1(
                         new IdentifierNameSyntax(moduleIdentifier.withLeadingTrivia(SyntaxTriviaList.create(indentationTrivia))),
-                        new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))),
+                        new IdentifierNameSyntax(elementIdentifier.withTrailingTrivia(SyntaxTriviaList.space))),
                     SyntaxToken.create(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
-                    new IdentifierNameSyntax(identifier))).withTrailingTrivia(this.newLineList);
+                    new IdentifierNameSyntax(elementIdentifier))).withTrailingTrivia(this.newLineList);
         }
 
         private handleExportedModuleElement(parentModule: ISyntaxToken,
@@ -182,7 +182,7 @@ module Emitter {
                         var declarators = variableStatement.variableDeclaration().variableDeclarators();
                         for (var i = 0, n = declarators.syntaxNodeCount(); i < n; i++) {
                             var declarator = <VariableDeclaratorSyntax>declarators.syntaxNodeAt(i);
-                            elements.push(this.createExportStatement(parentModule, moduleElement, declarator.identifier()));
+                            elements.push(this.exportModuleElement(parentModule, moduleElement, declarator.identifier()));
                         }
                     }
                     return;
@@ -190,7 +190,7 @@ module Emitter {
                 case SyntaxKind.FunctionDeclaration:
                     var functionDeclaration = <FunctionDeclarationSyntax>moduleElement;
                     if (functionDeclaration.exportKeyword() !== null) {
-                        elements.push(this.createExportStatement(
+                        elements.push(this.exportModuleElement(
                             parentModule, moduleElement, functionDeclaration.functionSignature().identifier()));
                     }
                     return;
@@ -198,14 +198,14 @@ module Emitter {
                 case SyntaxKind.ClassDeclaration:
                     var classDeclaration = <ClassDeclarationSyntax>moduleElement;
                     if (classDeclaration.exportKeyword() !== null) {
-                        elements.push(this.createExportStatement(parentModule, moduleElement, classDeclaration.identifier()));
+                        elements.push(this.exportModuleElement(parentModule, moduleElement, classDeclaration.identifier()));
                     }
                     return;
 
                 case SyntaxKind.ModuleDeclaration:
                     var childModule = <ModuleDeclarationSyntax>moduleElement;
                     if (childModule.exportKeyword() !== null) {
-                        elements.push(this.createExportStatement(
+                        elements.push(this.exportModuleElement(
                             parentModule, moduleElement, this.leftmostName(childModule.moduleName()).identifier()));
                     }
                     return;
@@ -236,7 +236,7 @@ module Emitter {
                 if (nameIndex > 0) {
                     // We're popping out and generate each outer module.  As we do so, we have to
                     // indent whatever we've created so far appropriately.
-                    moduleElements.push(this.createExportStatement(
+                    moduleElements.push(this.exportModuleElement(
                         names[nameIndex - 1].identifier(), node, names[nameIndex].identifier()));
 
                     moduleElements = <ModuleElementSyntax[]>this.adjustListIndentation(moduleElements);

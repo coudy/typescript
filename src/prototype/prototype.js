@@ -20150,8 +20150,7 @@ var Emitter;
             return token.withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
         };
         EmitterImpl.prototype.visitSourceUnit = function (node) {
-            var moduleElements = this.convertModuleElements(node.moduleElements());
-            return node.withModuleElements(SyntaxList.create(moduleElements));
+            return node.withModuleElements(SyntaxList.create(this.convertModuleElements(node.moduleElements())));
         };
         EmitterImpl.prototype.convertModuleElements = function (list) {
             var moduleElements = [];
@@ -20194,13 +20193,13 @@ var Emitter;
         EmitterImpl.prototype.rightmostName = function (name) {
             return name.kind() === 121 /* QualifiedName */  ? (name).right() : name;
         };
-        EmitterImpl.prototype.createExportStatement = function (parentModule, moduleElement, identifier) {
-            var moduleIdentifier = this.withNoTrivia(parentModule);
-            identifier = this.withNoTrivia(identifier);
+        EmitterImpl.prototype.exportModuleElement = function (moduleIdentifier, moduleElement, elementIdentifier) {
+            moduleIdentifier = this.withNoTrivia(moduleIdentifier);
+            elementIdentifier = this.withNoTrivia(elementIdentifier);
             var indentationTrivia = this.indentationTriviaForStartOfToken(moduleElement.firstToken());
-            return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(moduleIdentifier.withLeadingTrivia(SyntaxTriviaList.create(indentationTrivia))), new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))), SyntaxToken.create(104 /* EqualsToken */ , {
+            return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(moduleIdentifier.withLeadingTrivia(SyntaxTriviaList.create(indentationTrivia))), new IdentifierNameSyntax(elementIdentifier.withTrailingTrivia(SyntaxTriviaList.space))), SyntaxToken.create(104 /* EqualsToken */ , {
                 trailingTrivia: this.spaceArray
-            }), new IdentifierNameSyntax(identifier))).withTrailingTrivia(this.newLineList);
+            }), new IdentifierNameSyntax(elementIdentifier))).withTrailingTrivia(this.newLineList);
         };
         EmitterImpl.prototype.handleExportedModuleElement = function (parentModule, moduleElement, elements) {
             switch(moduleElement.kind()) {
@@ -20210,7 +20209,7 @@ var Emitter;
                         var declarators = variableStatement.variableDeclaration().variableDeclarators();
                         for(var i = 0, n = declarators.syntaxNodeCount(); i < n; i++) {
                             var declarator = declarators.syntaxNodeAt(i);
-                            elements.push(this.createExportStatement(parentModule, moduleElement, declarator.identifier()));
+                            elements.push(this.exportModuleElement(parentModule, moduleElement, declarator.identifier()));
                         }
                     }
                     return;
@@ -20219,7 +20218,7 @@ var Emitter;
                 case 128 /* FunctionDeclaration */ : {
                     var functionDeclaration = moduleElement;
                     if(functionDeclaration.exportKeyword() !== null) {
-                        elements.push(this.createExportStatement(parentModule, moduleElement, functionDeclaration.functionSignature().identifier()));
+                        elements.push(this.exportModuleElement(parentModule, moduleElement, functionDeclaration.functionSignature().identifier()));
                     }
                     return;
 
@@ -20227,7 +20226,7 @@ var Emitter;
                 case 130 /* ClassDeclaration */ : {
                     var classDeclaration = moduleElement;
                     if(classDeclaration.exportKeyword() !== null) {
-                        elements.push(this.createExportStatement(parentModule, moduleElement, classDeclaration.identifier()));
+                        elements.push(this.exportModuleElement(parentModule, moduleElement, classDeclaration.identifier()));
                     }
                     return;
 
@@ -20235,7 +20234,7 @@ var Emitter;
                 case 129 /* ModuleDeclaration */ : {
                     var childModule = moduleElement;
                     if(childModule.exportKeyword() !== null) {
-                        elements.push(this.createExportStatement(parentModule, moduleElement, this.leftmostName(childModule.moduleName()).identifier()));
+                        elements.push(this.exportModuleElement(parentModule, moduleElement, this.leftmostName(childModule.moduleName()).identifier()));
                     }
                     return;
 
@@ -20252,7 +20251,7 @@ var Emitter;
             for(var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
                 moduleElements = this.convertModuleDeclaration(node, names[nameIndex], moduleElements, nameIndex === 0);
                 if(nameIndex > 0) {
-                    moduleElements.push(this.createExportStatement(names[nameIndex - 1].identifier(), node, names[nameIndex].identifier()));
+                    moduleElements.push(this.exportModuleElement(names[nameIndex - 1].identifier(), node, names[nameIndex].identifier()));
                     moduleElements = this.adjustListIndentation(moduleElements);
                 }
             }
