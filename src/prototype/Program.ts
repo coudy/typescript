@@ -4,7 +4,6 @@
 ///<reference path='Environment.ts' />
 ///<reference path='TextFactory.ts' />
 ///<reference path='Test262.ts' />
-///<reference path='TextUtilities.ts' />
 ///<reference path='Top1000.ts' />
 
 var stringTable = Collections.createStringTable();

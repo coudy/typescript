@@ -23554,6 +23554,55 @@ var Environment = (function () {
 })();
 var TextFactory;
 (function (TextFactory) {
+    function getLengthOfLineBreakSlow(text, index, c) {
+        if(c === 13 /* carriageReturn */ ) {
+            var next = index + 1;
+            return (next < text.length()) && 10 /* lineFeed */  === text.charCodeAt(next) ? 2 : 1;
+        } else {
+            if(isAnyLineBreakCharacter(c)) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+    function getLengthOfLineBreak(text, index) {
+        var c = text.charCodeAt(index);
+        if(c > 13 /* carriageReturn */  && c <= 127) {
+            return 0;
+        }
+        return getLengthOfLineBreakSlow(text, index, c);
+    }
+    function isAnyLineBreakCharacter(c) {
+        return c === 10 /* lineFeed */  || c === 13 /* carriageReturn */  || c === 133 /* nextLine */  || c === 8232 /* lineSeparator */  || c === 8233 /* paragraphSeparator */ ;
+    }
+    function getStartAndLengthOfLineBreakEndingAt(text, index, info) {
+        var c = text.charCodeAt(index);
+        if(c === 10 /* lineFeed */ ) {
+            if(index > 0 && text.charCodeAt(index - 1) === 13 /* carriageReturn */ ) {
+                info.startPosition = index - 1;
+                info.length = 2;
+            } else {
+                info.startPosition = index;
+                info.length = 1;
+            }
+        } else {
+            if(isAnyLineBreakCharacter(c)) {
+                info.startPosition = index;
+                info.length = 1;
+            } else {
+                info.startPosition = index + 1;
+                info.length = 0;
+            }
+        }
+    }
+    var LinebreakInfo = (function () {
+        function LinebreakInfo(startPosition, length) {
+            this.startPosition = startPosition;
+            this.length = length;
+        }
+        return LinebreakInfo;
+    })();    
     var TextLine = (function () {
         function TextLine(text, body, lineBreakLength, lineNumber) {
             this._text = null;
@@ -23646,7 +23695,7 @@ var TextFactory;
             if(lineNumber === lineStarts.length - 1) {
                 return new TextLine(this, new TextSpan(first, this.length() - first), 0, lineNumber);
             } else {
-                TextUtilities.getStartAndLengthOfLineBreakEndingAt(this, lineStarts[lineNumber + 1] - 1, this.linebreakInfo);
+                getStartAndLengthOfLineBreakEndingAt(this, lineStarts[lineNumber + 1] - 1, this.linebreakInfo);
                 return new TextLine(this, new TextSpan(first, this.linebreakInfo.startPosition - first), this.linebreakInfo.length, lineNumber);
             }
         };
@@ -23704,7 +23753,7 @@ var TextFactory;
                         if(c === 10 /* lineFeed */ ) {
                             lineBreakLength = 1;
                         } else {
-                            lineBreakLength = TextUtilities.getLengthOfLineBreak(this, index);
+                            lineBreakLength = getLengthOfLineBreak(this, index);
                         }
                     }
                 }
@@ -24276,59 +24325,6 @@ var negative262ExpectedResults = {
     '15.3.5-1gs.js': true,
     '15.3.5-2gs.js': true
 };
-var LinebreakInfo = (function () {
-    function LinebreakInfo(startPosition, length) {
-        this.startPosition = startPosition;
-        this.length = length;
-    }
-    return LinebreakInfo;
-})();
-var TextUtilities = (function () {
-    function TextUtilities() { }
-    TextUtilities.getStartAndLengthOfLineBreakEndingAt = function getStartAndLengthOfLineBreakEndingAt(text, index, info) {
-        var c = text.charCodeAt(index);
-        if(c === 10 /* lineFeed */ ) {
-            if(index > 0 && text.charCodeAt(index - 1) === 13 /* carriageReturn */ ) {
-                info.startPosition = index - 1;
-                info.length = 2;
-            } else {
-                info.startPosition = index;
-                info.length = 1;
-            }
-        } else {
-            if(TextUtilities.isAnyLineBreakCharacter(c)) {
-                info.startPosition = index;
-                info.length = 1;
-            } else {
-                info.startPosition = index + 1;
-                info.length = 0;
-            }
-        }
-    }
-    TextUtilities.isAnyLineBreakCharacter = function isAnyLineBreakCharacter(c) {
-        return c === 10 /* lineFeed */  || c === 13 /* carriageReturn */  || c === 133 /* nextLine */  || c === 8232 /* lineSeparator */  || c === 8233 /* paragraphSeparator */ ;
-    }
-    TextUtilities.getLengthOfLineBreak = function getLengthOfLineBreak(text, index) {
-        var c = text.charCodeAt(index);
-        if(c > 13 /* carriageReturn */  && c <= 127) {
-            return 0;
-        }
-        return this.getLengthOfLineBreakSlow(text, index, c);
-    }
-    TextUtilities.getLengthOfLineBreakSlow = function getLengthOfLineBreakSlow(text, index, c) {
-        if(c === 13 /* carriageReturn */ ) {
-            var next = index + 1;
-            return (next < text.length()) && 10 /* lineFeed */  === text.charCodeAt(next) ? 2 : 1;
-        } else {
-            if(TextUtilities.isAnyLineBreakCharacter(c)) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-    }
-    return TextUtilities;
-})();
 var expectedTop1000Failures = {
     "JSFile100\\4shared_com\\UploadModule.js": true,
     "JSFile100\\addthis_com\\addthis_widget.js": true,
