@@ -20356,10 +20356,9 @@ var Emitter;
             var variableStatement = VariableStatementSyntax.create1(new VariableDeclarationSyntax(Syntax.token(38 /* VarKeyword */ ).withTrailingTrivia(this.space), SeparatedSyntaxList.create([
                 VariableDeclaratorSyntax.create(moduleIdentifier)
             ]))).withLeadingTrivia(leadingTrivia).withTrailingTrivia(this.newLine);
-            var functionExpression = FunctionExpressionSyntax.create(Syntax.token(25 /* FunctionKeyword */ ), CallSignatureSyntax.create(ParameterListSyntax.create1().withParameter(ParameterSyntax.create(moduleIdentifier))).withTrailingTrivia(this.space), new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), SyntaxList.create(moduleElements), Syntax.token(68 /* CloseBraceToken */ ).withLeadingTrivia(moduleIndentation)));
-            var parenthesizedFunctionExpression = ParenthesizedExpressionSyntax.create1(functionExpression);
+            var functionExpression = FunctionExpressionSyntax.create1().withCallSignature(CallSignatureSyntax.create(ParameterListSyntax.create1().withParameter(ParameterSyntax.create(moduleIdentifier))).withTrailingTrivia(this.space)).withBlock(new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), SyntaxList.create(moduleElements), Syntax.token(68 /* CloseBraceToken */ ).withLeadingTrivia(moduleIndentation)));
             var logicalOrExpression = new BinaryExpressionSyntax(184 /* LogicalOrExpression */ , moduleName, Syntax.token(101 /* BarBarToken */ ), ParenthesizedExpressionSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , moduleName, Syntax.token(104 /* EqualsToken */ ), ObjectLiteralExpressionSyntax.create1())));
-            var invocationExpression = new InvocationExpressionSyntax(parenthesizedFunctionExpression, ArgumentListSyntax.create1().withArgument(logicalOrExpression));
+            var invocationExpression = new InvocationExpressionSyntax(ParenthesizedExpressionSyntax.create1(functionExpression), ArgumentListSyntax.create1().withArgument(logicalOrExpression));
             var expressionStatement = ExpressionStatementSyntax.create1(invocationExpression).withLeadingTrivia(moduleIndentation).withTrailingTrivia(this.newLine);
             return [
                 variableStatement, 
@@ -20381,9 +20380,7 @@ var Emitter;
         EmitterImpl.prototype.visitSimpleArrowFunctionExpression = function (node) {
             var identifier = this.withNoTrivia(node.identifier());
             var block = this.convertArrowFunctionBody(node);
-            return FunctionExpressionSyntax.create(Syntax.token(25 /* FunctionKeyword */ , {
-                leadingTrivia: node.leadingTrivia().toArray()
-            }), CallSignatureSyntax.create(ParameterListSyntax.create1().withParameter(ParameterSyntax.create(identifier))).withTrailingTrivia(this.space), block);
+            return FunctionExpressionSyntax.create1().withCallSignature(CallSignatureSyntax.create(ParameterListSyntax.create1().withParameter(ParameterSyntax.create(identifier))).withTrailingTrivia(this.space)).withBlock(block).withLeadingTrivia(node.leadingTrivia());
         };
         EmitterImpl.prototype.visitParenthesizedArrowFunctionExpression = function (node) {
             return FunctionExpressionSyntax.create(Syntax.token(25 /* FunctionKeyword */ ), CallSignatureSyntax.create(node.callSignature().parameterList().accept(this)), this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());

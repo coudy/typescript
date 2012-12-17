@@ -170,8 +170,8 @@ module Emitter {
         }
 
         private handleExportedModuleElement(parentModule: ISyntaxToken,
-            moduleElement: ModuleElementSyntax,
-            elements: ModuleElementSyntax[]): void {
+                                            moduleElement: ModuleElementSyntax,
+                                            elements: ModuleElementSyntax[]): void {
             switch (moduleElement.kind()) {
                 case SyntaxKind.VariableStatement:
                     var variableStatement = <VariableStatementSyntax>moduleElement;
@@ -219,6 +219,7 @@ module Emitter {
             // Recurse downwards and get the rewritten children.
             var moduleElements = this.convertModuleElements(node.moduleElements());
 
+            // Handle the case where the child is an export.
             var parentModule = this.rightmostName(node.moduleName()).identifier()
             for (var i = 0, n = node.moduleElements().count(); i < n; i++) {
                 this.handleExportedModuleElement(
@@ -264,17 +265,12 @@ module Emitter {
                 ).withLeadingTrivia(leadingTrivia).withTrailingTrivia(this.newLine);
 
             // function(M) { ... }
-            var functionExpression = FunctionExpressionSyntax.create(
-                Syntax.token(SyntaxKind.FunctionKeyword),
-                CallSignatureSyntax.create(
-                    ParameterListSyntax.create1().withParameter(ParameterSyntax.create(moduleIdentifier))).withTrailingTrivia(this.space),
-                new BlockSyntax(
+            var functionExpression = FunctionExpressionSyntax.create1()
+                .withCallSignature(CallSignatureSyntax.create(ParameterListSyntax.create1().withParameter(ParameterSyntax.create(moduleIdentifier))).withTrailingTrivia(this.space))
+                .withBlock(new BlockSyntax(
                     Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
                     SyntaxList.create(moduleElements),
                     Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(moduleIndentation)));
-
-            // (function(M) { ... })
-            var parenthesizedFunctionExpression = ParenthesizedExpressionSyntax.create1(functionExpression);
 
             // M||(M={})
             var logicalOrExpression = new BinaryExpressionSyntax(
@@ -290,7 +286,7 @@ module Emitter {
 
             // (function(M) { ... })(M||(M={}))
             var invocationExpression = new InvocationExpressionSyntax(
-                parenthesizedFunctionExpression,
+                ParenthesizedExpressionSyntax.create1(functionExpression),
                 ArgumentListSyntax.create1().withArgument(logicalOrExpression));
 
             // (function(M) { ... })(M||(M={}));
@@ -302,7 +298,7 @@ module Emitter {
 
         private visitExpressionStatement(node: ExpressionStatementSyntax): ExpressionStatementSyntax {
             // Can't have an expression statement with an anonymous function expression in it.
-            var rewritten = <ExpressionStatementSyntax>super.visitExpressionStatement(node);
+            var rewritten: ExpressionStatementSyntax = super.visitExpressionStatement(node);
 
             // convert: function() { ... };  to (function() { ... });
             if (rewritten.expression().kind() !== SyntaxKind.FunctionExpression) {
@@ -331,11 +327,9 @@ module Emitter {
 
             var block = this.convertArrowFunctionBody(node);
 
-            return FunctionExpressionSyntax.create(
-                Syntax.token(SyntaxKind.FunctionKeyword, { leadingTrivia: node.leadingTrivia().toArray() }),
-                CallSignatureSyntax.create(
-                    ParameterListSyntax.create1().withParameter(ParameterSyntax.create(identifier))).withTrailingTrivia(this.space),
-                block);
+            return FunctionExpressionSyntax.create1()
+                .withCallSignature(CallSignatureSyntax.create(ParameterListSyntax.create1().withParameter(ParameterSyntax.create(identifier))).withTrailingTrivia(this.space))
+                .withBlock(block).withLeadingTrivia(node.leadingTrivia());
         }
 
         private visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): FunctionExpressionSyntax {
