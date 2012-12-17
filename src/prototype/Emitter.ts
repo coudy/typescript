@@ -39,6 +39,56 @@ class Emitter extends SyntaxRewriter {
         return output;
     }
 
+    private columnForStartOfToken(token: ISyntaxToken): number {
+        return Indentation.columnForStartOfToken(token, this.syntaxInformationMap, this.options);
+    }
+
+    private columnForEndOfToken(token: ISyntaxToken): number {
+        return Indentation.columnForEndOfToken(token, this.syntaxInformationMap, this.options);
+    }
+
+    private indentationTrivia(column: number): ISyntaxTrivia[] {
+        return column === 0 ? null : [Indentation.indentationTrivia(column, this.options)];
+    }
+
+    private indentationTriviaForStartOfToken(token: ISyntaxToken): ISyntaxTrivia[] {
+        var column = this.columnForStartOfToken(token);
+        return this.indentationTrivia(column);
+    }
+
+    private adjustListIndentation(nodes: SyntaxNode[]): SyntaxNode[] {
+        // TODO: determine if we should actually indent the first token or not.
+        return SyntaxIndenter.indentNodes(nodes, /*indentFirstToken:*/ true, this.options.indentSpaces, this.options);
+    }
+
+    private changeIndentation(node: SyntaxNode,
+                              changeFirstToken: bool,
+                              indentAmount: number): SyntaxNode {
+        if (indentAmount === 0) {
+            return node;
+        }
+        else if (indentAmount > 0) {
+            return SyntaxIndenter.indentNode(
+                node,
+                /*indentFirstToken:*/ changeFirstToken,
+                /*indentAmount:*/ indentAmount,
+                this.options);
+        }
+        else {
+            // Dedent the node.  But don't allow it go before the minimum indent amount.
+            return SyntaxDedenter.dedentNode(
+                node,
+                /*dedentFirstToken:*/ changeFirstToken,
+                /*dedentAmount:*/-indentAmount,
+                /*minimumColumn:*/this.options.indentSpaces,
+                this.options);
+        }
+    }
+
+    private withNoTrivia(token: ISyntaxToken): ISyntaxToken {
+        return token.withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+    }
+
     private visitSourceUnit(node: SourceUnitSyntax): SourceUnitSyntax {
         var moduleElements = this.convertModuleElements(node.moduleElements());
         return node.withModuleElements(SyntaxList.create(moduleElements));
@@ -79,35 +129,6 @@ class Emitter extends SyntaxRewriter {
             else {
                 throw Errors.invalidOperation();
             }
-        }
-    }
-
-    private adjustListIndentation(nodes: SyntaxNode[]): SyntaxNode[] {
-        // TODO: determine if we should actually indent the first token or not.
-        return SyntaxIndenter.indentNodes(nodes, /*indentFirstToken:*/ true, this.options.indentSpaces, this.options);
-    }
-
-    private changeIndentation(node: SyntaxNode,
-                              changeFirstToken: bool,
-                              indentAmount: number): SyntaxNode {
-        if (indentAmount === 0) {
-            return node;
-        }
-        else if (indentAmount > 0) {
-            return SyntaxIndenter.indentNode(
-                node,
-                /*indentFirstToken:*/ changeFirstToken,
-                /*indentAmount:*/ indentAmount,
-                this.options);
-        }
-        else {
-            // Dedent the node.  But don't allow it go before the minimum indent amount.
-            return SyntaxDedenter.dedentNode(
-                node,
-                /*dedentFirstToken:*/ changeFirstToken,
-                /*dedentAmount:*/-indentAmount,
-                /*minimumColumn:*/this.options.indentSpaces,
-                this.options);
         }
     }
 
@@ -218,10 +239,6 @@ class Emitter extends SyntaxRewriter {
         }
 
         return moduleElements;
-    }
-
-    private withNoTrivia(token: ISyntaxToken): ISyntaxToken {
-        return token.withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
     }
 
     private convertModuleDeclaration(moduleDeclaration: ModuleDeclarationSyntax,
@@ -348,23 +365,6 @@ class Emitter extends SyntaxRewriter {
             SyntaxToken.createElastic({ leadingTrivia: node.leadingTrivia().toArray(), kind: SyntaxKind.FunctionKeyword}),
             CallSignatureSyntax.create(parameterList),
             block);
-    }
-
-    private columnForStartOfToken(token: ISyntaxToken): number {
-        return Indentation.columnForStartOfToken(token, this.syntaxInformationMap, this.options);
-    }
-
-    private columnForEndOfToken(token: ISyntaxToken): number {
-        return Indentation.columnForEndOfToken(token, this.syntaxInformationMap, this.options);
-    }
-
-    private indentationTrivia(column: number): ISyntaxTrivia[] {
-        return column === 0 ? null : [Indentation.indentationTrivia(column, this.options)];
-    }
-
-    private indentationTriviaForStartOfToken(token: ISyntaxToken): ISyntaxTrivia[] {
-        var column = this.columnForStartOfToken(token);
-        return this.indentationTrivia(column);
     }
 
     private convertArrowFunctionBody(arrowFunction: ArrowFunctionExpressionSyntax): BlockSyntax {
@@ -577,7 +577,7 @@ class Emitter extends SyntaxRewriter {
                                                    .withLeadingTrivia(rewritten.leadingTrivia());
     }
 
-    public visitParameter(node: ParameterSyntax): ParameterSyntax {
+    private visitParameter(node: ParameterSyntax): ParameterSyntax {
         // transfer the trivia from the first token to the the identifier.
         var identifier = node.identifier();
         identifier = identifier.withLeadingTrivia(node.leadingTrivia())

@@ -19418,6 +19418,38 @@ var Emitter = (function (_super) {
         Debug.assert(!output.isTypeScriptSpecific());
         return output;
     }
+    Emitter.prototype.columnForStartOfToken = function (token) {
+        return Indentation.columnForStartOfToken(token, this.syntaxInformationMap, this.options);
+    };
+    Emitter.prototype.columnForEndOfToken = function (token) {
+        return Indentation.columnForEndOfToken(token, this.syntaxInformationMap, this.options);
+    };
+    Emitter.prototype.indentationTrivia = function (column) {
+        return column === 0 ? null : [
+            Indentation.indentationTrivia(column, this.options)
+        ];
+    };
+    Emitter.prototype.indentationTriviaForStartOfToken = function (token) {
+        var column = this.columnForStartOfToken(token);
+        return this.indentationTrivia(column);
+    };
+    Emitter.prototype.adjustListIndentation = function (nodes) {
+        return SyntaxIndenter.indentNodes(nodes, true, this.options.indentSpaces, this.options);
+    };
+    Emitter.prototype.changeIndentation = function (node, changeFirstToken, indentAmount) {
+        if(indentAmount === 0) {
+            return node;
+        } else {
+            if(indentAmount > 0) {
+                return SyntaxIndenter.indentNode(node, changeFirstToken, indentAmount, this.options);
+            } else {
+                return SyntaxDedenter.dedentNode(node, changeFirstToken, -indentAmount, this.options.indentSpaces, this.options);
+            }
+        }
+    };
+    Emitter.prototype.withNoTrivia = function (token) {
+        return token.withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+    };
     Emitter.prototype.visitSourceUnit = function (node) {
         var moduleElements = this.convertModuleElements(node.moduleElements());
         return node.withModuleElements(SyntaxList.create(moduleElements));
@@ -19454,20 +19486,6 @@ var Emitter = (function (_super) {
             }
         }
     }
-    Emitter.prototype.adjustListIndentation = function (nodes) {
-        return SyntaxIndenter.indentNodes(nodes, true, this.options.indentSpaces, this.options);
-    };
-    Emitter.prototype.changeIndentation = function (node, changeFirstToken, indentAmount) {
-        if(indentAmount === 0) {
-            return node;
-        } else {
-            if(indentAmount > 0) {
-                return SyntaxIndenter.indentNode(node, changeFirstToken, indentAmount, this.options);
-            } else {
-                return SyntaxDedenter.dedentNode(node, changeFirstToken, -indentAmount, this.options.indentSpaces, this.options);
-            }
-        }
-    };
     Emitter.prototype.leftmostName = function (name) {
         while(name.kind() === 121 /* QualifiedName */ ) {
             name = (name).left();
@@ -19546,9 +19564,6 @@ var Emitter = (function (_super) {
             }
         }
         return moduleElements;
-    };
-    Emitter.prototype.withNoTrivia = function (token) {
-        return token.withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
     };
     Emitter.prototype.convertModuleDeclaration = function (moduleDeclaration, name, moduleElements, outermost) {
         var moduleIdentifier = this.withNoTrivia(name.identifier());
@@ -19655,21 +19670,6 @@ var Emitter = (function (_super) {
             leadingTrivia: node.leadingTrivia().toArray(),
             kind: 25 /* FunctionKeyword */ 
         }), CallSignatureSyntax.create(parameterList), block);
-    };
-    Emitter.prototype.columnForStartOfToken = function (token) {
-        return Indentation.columnForStartOfToken(token, this.syntaxInformationMap, this.options);
-    };
-    Emitter.prototype.columnForEndOfToken = function (token) {
-        return Indentation.columnForEndOfToken(token, this.syntaxInformationMap, this.options);
-    };
-    Emitter.prototype.indentationTrivia = function (column) {
-        return column === 0 ? null : [
-            Indentation.indentationTrivia(column, this.options)
-        ];
-    };
-    Emitter.prototype.indentationTriviaForStartOfToken = function (token) {
-        var column = this.columnForStartOfToken(token);
-        return this.indentationTrivia(column);
     };
     Emitter.prototype.convertArrowFunctionBody = function (arrowFunction) {
         var rewrittenBody = this.visitNode(arrowFunction.body());
