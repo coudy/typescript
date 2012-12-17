@@ -1268,37 +1268,36 @@ module Emitter {
         }
 
         private convertSuperInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
-            var result = <InvocationExpressionSyntax>super.visitInvocationExpression(node);
+            var result: InvocationExpressionSyntax = super.visitInvocationExpression(node);
 
             var expression = MemberAccessExpressionSyntax.create1(
-                new IdentifierNameSyntax(Syntax.identifier("_super", { leadingTrivia: result.leadingTrivia().toArray() })),
-                Syntax.identifierName("call"));
+                Syntax.identifierName("_super"), Syntax.identifierName("call"));
 
             var arguments = result.argumentList().arguments().toArray();
             if (arguments.length > 0) {
-                arguments.unshift(Syntax.token(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }));
+                arguments.unshift(Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.spaceList));
             }
 
             arguments.unshift(ThisExpressionSyntax.create1());
 
             return result.withExpression(expression)
                          .withArgumentList(result.argumentList().withArguments(
-                             SeparatedSyntaxList.create(arguments)));
+                             SeparatedSyntaxList.create(arguments)))
+                         .withLeadingTrivia(result.leadingTrivia());
         }
 
         private convertSuperMemberAccessInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
-            var result = <InvocationExpressionSyntax>super.visitInvocationExpression(node);
-
-            var expression = MemberAccessExpressionSyntax.create1(
-                result.expression(), Syntax.identifierName("call"));
+            var result: InvocationExpressionSyntax = super.visitInvocationExpression(node);
 
             var arguments = result.argumentList().arguments().toArray();
             if (arguments.length > 0) {
-                arguments.unshift(Syntax.token(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }));
+                arguments.unshift(Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.spaceList));
             }
 
             arguments.unshift(ThisExpressionSyntax.create1());
 
+            var expression = MemberAccessExpressionSyntax.create1(
+                result.expression(), Syntax.identifierName("call"));
             return result.withExpression(expression)
                          .withArgumentList(result.argumentList().withArguments(
                              SeparatedSyntaxList.create(arguments)));
@@ -1308,8 +1307,7 @@ module Emitter {
             if (EmitterImpl.isSuperInvocationExpression(node)) {
                 return this.convertSuperInvocationExpression(node);
             }
-
-            if (EmitterImpl.isSuperMemberAccessInvocationExpression(node)) {
+            else if (EmitterImpl.isSuperMemberAccessInvocationExpression(node)) {
                 return this.convertSuperMemberAccessInvocationExpression(node);
             }
 
@@ -1317,7 +1315,7 @@ module Emitter {
         }
 
         private visitMemberAccessExpression(node: MemberAccessExpressionSyntax): MemberAccessExpressionSyntax {
-            var result = <MemberAccessExpressionSyntax>super.visitMemberAccessExpression(node);
+            var result: MemberAccessExpressionSyntax = super.visitMemberAccessExpression(node);
             if (!EmitterImpl.isSuperMemberAccessExpression(result)) {
                 return result;
             }

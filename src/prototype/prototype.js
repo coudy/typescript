@@ -20953,36 +20953,31 @@ var Emitter;
         }
         EmitterImpl.prototype.convertSuperInvocationExpression = function (node) {
             var result = _super.prototype.visitInvocationExpression.call(this, node);
-            var expression = MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(Syntax.identifier("_super", {
-                leadingTrivia: result.leadingTrivia().toArray()
-            })), Syntax.identifierName("call"));
+            var expression = MemberAccessExpressionSyntax.create1(Syntax.identifierName("_super"), Syntax.identifierName("call"));
             var arguments = result.argumentList().arguments().toArray();
             if(arguments.length > 0) {
-                arguments.unshift(Syntax.token(76 /* CommaToken */ , {
-                    trailingTrivia: this.spaceArray
-                }));
+                arguments.unshift(Syntax.token(76 /* CommaToken */ ).withTrailingTrivia(this.spaceList));
             }
             arguments.unshift(ThisExpressionSyntax.create1());
-            return result.withExpression(expression).withArgumentList(result.argumentList().withArguments(SeparatedSyntaxList.create(arguments)));
+            return result.withExpression(expression).withArgumentList(result.argumentList().withArguments(SeparatedSyntaxList.create(arguments))).withLeadingTrivia(result.leadingTrivia());
         };
         EmitterImpl.prototype.convertSuperMemberAccessInvocationExpression = function (node) {
             var result = _super.prototype.visitInvocationExpression.call(this, node);
-            var expression = MemberAccessExpressionSyntax.create1(result.expression(), Syntax.identifierName("call"));
             var arguments = result.argumentList().arguments().toArray();
             if(arguments.length > 0) {
-                arguments.unshift(Syntax.token(76 /* CommaToken */ , {
-                    trailingTrivia: this.spaceArray
-                }));
+                arguments.unshift(Syntax.token(76 /* CommaToken */ ).withTrailingTrivia(this.spaceList));
             }
             arguments.unshift(ThisExpressionSyntax.create1());
+            var expression = MemberAccessExpressionSyntax.create1(result.expression(), Syntax.identifierName("call"));
             return result.withExpression(expression).withArgumentList(result.argumentList().withArguments(SeparatedSyntaxList.create(arguments)));
         };
         EmitterImpl.prototype.visitInvocationExpression = function (node) {
             if(EmitterImpl.isSuperInvocationExpression(node)) {
                 return this.convertSuperInvocationExpression(node);
-            }
-            if(EmitterImpl.isSuperMemberAccessInvocationExpression(node)) {
-                return this.convertSuperMemberAccessInvocationExpression(node);
+            } else {
+                if(EmitterImpl.isSuperMemberAccessInvocationExpression(node)) {
+                    return this.convertSuperMemberAccessInvocationExpression(node);
+                }
             }
             return _super.prototype.visitInvocationExpression.call(this, node);
         };
