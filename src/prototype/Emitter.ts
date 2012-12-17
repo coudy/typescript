@@ -322,11 +322,10 @@ class Emitter extends SyntaxRewriter {
 
         // Remove the leading trivia from the function keyword.  We'll put it on the open paren 
         // token instead.
-        var newFunctionExpression = functionExpression.withLeadingTrivia(SyntaxTriviaList.empty);
 
         // Now, wrap the function expression in parens to make it legal in javascript.
         var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(
-            newFunctionExpression).withLeadingTrivia(functionExpression.leadingTrivia());
+            functionExpression.withLeadingTrivia(SyntaxTriviaList.empty)).withLeadingTrivia(functionExpression.leadingTrivia());
 
         return rewritten.withExpression(parenthesizedExpression);
     }
@@ -482,16 +481,14 @@ class Emitter extends SyntaxRewriter {
     private generatePropertyAssignmentStatement(parameter: ParameterSyntax): ExpressionStatementSyntax {
         var identifier = this.withNoTrivia(parameter.identifier());
 
-        return new ExpressionStatementSyntax(
+        return ExpressionStatementSyntax.create1(
             new BinaryExpressionSyntax(
                 SyntaxKind.AssignmentExpression,
-                new MemberAccessExpressionSyntax(
-                    new ThisExpressionSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.ThisKeyword })),
-                    SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
+                MemberAccessExpressionSyntax.create1(
+                    ThisExpressionSyntax.create1(),
                     new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))),
                 SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceArray }),
-                new IdentifierNameSyntax(identifier.clone())),
-            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineArray }));
+                new IdentifierNameSyntax(identifier.clone()))).withTrailingTrivia(this.newLineList);
     }
 
     private generateDefaultValueAssignmentStatement(parameter: ParameterSyntax): IfStatementSyntax {

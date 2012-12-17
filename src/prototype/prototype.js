@@ -20676,8 +20676,7 @@ var Emitter = (function (_super) {
         if(functionExpression.identifier() !== null) {
             return rewritten;
         }
-        var newFunctionExpression = functionExpression.withLeadingTrivia(SyntaxTriviaList.empty);
-        var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(newFunctionExpression).withLeadingTrivia(functionExpression.leadingTrivia());
+        var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(functionExpression.withLeadingTrivia(SyntaxTriviaList.empty)).withLeadingTrivia(functionExpression.leadingTrivia());
         return rewritten.withExpression(parenthesizedExpression);
     };
     Emitter.prototype.visitSimpleArrowFunctionExpression = function (node) {
@@ -20759,17 +20758,10 @@ var Emitter = (function (_super) {
     }
     Emitter.prototype.generatePropertyAssignmentStatement = function (parameter) {
         var identifier = this.withNoTrivia(parameter.identifier());
-        return new ExpressionStatementSyntax(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new MemberAccessExpressionSyntax(new ThisExpressionSyntax(SyntaxToken.createElastic({
-            kind: 33 /* ThisKeyword */ 
-        })), SyntaxToken.createElastic({
-            kind: 73 /* DotToken */ 
-        }), new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))), SyntaxToken.createElastic({
+        return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , MemberAccessExpressionSyntax.create1(ThisExpressionSyntax.create1(), new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))), SyntaxToken.createElastic({
             kind: 104 /* EqualsToken */ ,
             trailingTrivia: this.spaceArray
-        }), new IdentifierNameSyntax(identifier.clone())), SyntaxToken.createElastic({
-            kind: 75 /* SemicolonToken */ ,
-            trailingTrivia: this.newLineArray
-        }));
+        }), new IdentifierNameSyntax(identifier.clone()))).withTrailingTrivia(this.newLineList);
     };
     Emitter.prototype.generateDefaultValueAssignmentStatement = function (parameter) {
         var space = SyntaxTriviaList.create(this.spaceArray);
