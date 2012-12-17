@@ -20515,22 +20515,20 @@ var Emitter;
             var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
             var memberIdentifier = this.withNoTrivia(declarator.identifier());
             var receiver = static ? new IdentifierNameSyntax(classIdentifier) : ThisExpressionSyntax.create1();
-            receiver = receiver.withLeadingTrivia(memberDeclaration.leadingTrivia());
             receiver = MemberAccessExpressionSyntax.create1(receiver, new IdentifierNameSyntax(memberIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
             return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , receiver, SyntaxToken.create(104 /* EqualsToken */ , {
                 trailingTrivia: this.spaceArray
-            }), declarator.equalsValueClause().value().accept(this))).withTrailingTrivia(this.newLineList);
+            }), declarator.equalsValueClause().value().accept(this))).withLeadingTrivia(memberDeclaration.leadingTrivia()).withTrailingTrivia(this.newLineList);
         };
         EmitterImpl.prototype.generatePropertyAssignments = function (classDeclaration, static) {
             var result = [];
             for(var i = classDeclaration.classElements().count() - 1; i >= 0; i--) {
                 var classElement = classDeclaration.classElements().syntaxNodeAt(i);
-                if(classElement.kind() !== 134 /* MemberVariableDeclaration */ ) {
-                    continue;
-                }
-                var statement = this.generatePropertyAssignment(classDeclaration, static, classElement);
-                if(statement !== null) {
-                    result.push(statement);
+                if(classElement.kind() === 134 /* MemberVariableDeclaration */ ) {
+                    var statement = this.generatePropertyAssignment(classDeclaration, static, classElement);
+                    if(statement !== null) {
+                        result.push(statement);
+                    }
                 }
             }
             return result;
@@ -20540,13 +20538,13 @@ var Emitter;
             var functionSignature = FunctionSignatureSyntax.create1(identifier).withTrailingTrivia(this.spaceList);
             var statements = [];
             if(classDeclaration.extendsClause() !== null) {
-                var superStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(SyntaxToken.createIdentifier("_super")), new IdentifierNameSyntax(SyntaxToken.createIdentifier("apply"))), new ArgumentListSyntax(SyntaxToken.create(69 /* OpenParenToken */ ), SeparatedSyntaxList.create([
+                var superStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(SyntaxToken.createIdentifier("_super")), new IdentifierNameSyntax(SyntaxToken.createIdentifier("apply"))), ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create([
                     ThisExpressionSyntax.create1(), 
                     SyntaxToken.create(76 /* CommaToken */ , {
                         trailingTrivia: this.spaceArray
                     }), 
                     new IdentifierNameSyntax(SyntaxToken.createIdentifier("arguments"))
-                ]), SyntaxToken.create(70 /* CloseParenToken */ )))).withTrailingTrivia(this.newLineList);
+                ])))).withTrailingTrivia(this.newLineList);
                 superStatement = this.changeIndentation(superStatement, true, this.options.indentSpaces);
                 statements.push(superStatement);
             }

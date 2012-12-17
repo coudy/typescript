@@ -590,18 +590,18 @@ module Emitter {
                 ? <ExpressionSyntax>new IdentifierNameSyntax(classIdentifier)
                 : ThisExpressionSyntax.create1();
 
-            receiver = receiver.withLeadingTrivia(memberDeclaration.leadingTrivia());
-
+            // this.foo = expr;
             receiver = MemberAccessExpressionSyntax.create1(
                 receiver,
                 new IdentifierNameSyntax(memberIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
 
             return ExpressionStatementSyntax.create1(
-                new BinaryExpressionSyntax(
-                    SyntaxKind.AssignmentExpression,
-                    receiver,
-                    SyntaxToken.create(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
-                    <ExpressionSyntax>declarator.equalsValueClause().value().accept(this))).withTrailingTrivia(this.newLineList);
+                    new BinaryExpressionSyntax(
+                        SyntaxKind.AssignmentExpression,
+                        receiver,
+                        SyntaxToken.create(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
+                        <ExpressionSyntax>declarator.equalsValueClause().value().accept(this))
+                ).withLeadingTrivia(memberDeclaration.leadingTrivia()).withTrailingTrivia(this.newLineList);
         }
 
         private generatePropertyAssignments(classDeclaration: ClassDeclarationSyntax,
@@ -612,14 +612,12 @@ module Emitter {
             for (var i = classDeclaration.classElements().count() - 1; i >= 0; i--) {
                 var classElement = classDeclaration.classElements().syntaxNodeAt(i);
 
-                if (classElement.kind() !== SyntaxKind.MemberVariableDeclaration) {
-                    continue;
-                }
-
-                var statement = this.generatePropertyAssignment(
-                    classDeclaration, static , <MemberVariableDeclarationSyntax>classElement);
-                if (statement !== null) {
-                    result.push(statement);
+                if (classElement.kind() === SyntaxKind.MemberVariableDeclaration) {
+                    var statement = this.generatePropertyAssignment(
+                        classDeclaration, static, <MemberVariableDeclarationSyntax>classElement);
+                    if (statement !== null) {
+                        result.push(statement);
+                    }
                 }
             }
 
@@ -635,17 +633,16 @@ module Emitter {
             var statements: StatementSyntax[] = [];
             if (classDeclaration.extendsClause() !== null) {
                 var superStatement = ExpressionStatementSyntax.create1(
-                    new InvocationExpressionSyntax(
-                        MemberAccessExpressionSyntax.create1(
-                            new IdentifierNameSyntax(SyntaxToken.createIdentifier("_super")),
-                            new IdentifierNameSyntax(SyntaxToken.createIdentifier("apply"))),
-                        new ArgumentListSyntax(
-                            SyntaxToken.create(SyntaxKind.OpenParenToken),
-                            SeparatedSyntaxList.create([
-                                ThisExpressionSyntax.create1(),
-                                SyntaxToken.create(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }),
-                                new IdentifierNameSyntax(SyntaxToken.createIdentifier("arguments"))]),
-                            SyntaxToken.create(SyntaxKind.CloseParenToken)))).withTrailingTrivia(this.newLineList);
+                        new InvocationExpressionSyntax(
+                            MemberAccessExpressionSyntax.create1(
+                                new IdentifierNameSyntax(SyntaxToken.createIdentifier("_super")),
+                                new IdentifierNameSyntax(SyntaxToken.createIdentifier("apply"))),
+                            ArgumentListSyntax.create1().withArguments(
+                                SeparatedSyntaxList.create([
+                                    ThisExpressionSyntax.create1(),
+                                    SyntaxToken.create(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }),
+                                    new IdentifierNameSyntax(SyntaxToken.createIdentifier("arguments"))])))
+                    ).withTrailingTrivia(this.newLineList);
 
                 superStatement = <ExpressionStatementSyntax>this.changeIndentation(
                     superStatement, /*indentFirstToken:*/ true, this.options.indentSpaces);
