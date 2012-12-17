@@ -21252,9 +21252,7 @@ var Emitter = (function (_super) {
         var enumIdentifier = this.withNoTrivia(enumDeclaration.identifier());
         var previousVariable = enumDeclaration.variableDeclarators().syntaxNodeAt(index - 1);
         var variableIdentifier = this.withNoTrivia(previousVariable.identifier());
-        var receiver = new MemberAccessExpressionSyntax(new IdentifierNameSyntax(enumIdentifier.clone()), SyntaxToken.createElastic({
-            kind: 73 /* DotToken */ 
-        }), new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
+        var receiver = MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(enumIdentifier.clone()), new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
         return new BinaryExpressionSyntax(156 /* PlusExpression */ , receiver, SyntaxToken.createElastic({
             kind: 86 /* PlusToken */ ,
             trailingTrivia: this.spaceArray
@@ -21287,7 +21285,7 @@ var Emitter = (function (_super) {
                 kind: 75 /* SemicolonToken */ ,
                 trailingTrivia: this.newLineArray
             })));
-            statements.push(new ExpressionStatementSyntax(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new MemberAccessExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.createElastic({
+            statements.push(ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new MemberAccessExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.createElastic({
                 leadingTrivia: initIndentationTrivia,
                 kind: 9 /* IdentifierNameToken */ ,
                 text: "_"
@@ -21300,14 +21298,7 @@ var Emitter = (function (_super) {
             }))), SyntaxToken.createElastic({
                 kind: 104 /* EqualsToken */ ,
                 trailingTrivia: this.spaceArray
-            }), ArrayLiteralExpressionSyntax.create(SyntaxToken.createElastic({
-                kind: 71 /* OpenBracketToken */ 
-            }), SyntaxToken.createElastic({
-                kind: 72 /* CloseBracketToken */ 
-            }))), SyntaxToken.createElastic({
-                kind: 75 /* SemicolonToken */ ,
-                trailingTrivia: this.newLineArray
-            })));
+            }), ArrayLiteralExpressionSyntax.create1())).withTrailingTrivia(this.newLineList));
             var assignDefaultValues = {
                 value: true
             };

@@ -1095,8 +1095,8 @@ class Emitter extends SyntaxRewriter {
                                         index: number): ExpressionSyntax {
         if (variableDeclarator.equalsValueClause() !== null) {
             // Use the value if one is provided.
-            return <ExpressionSyntax>variableDeclarator.equalsValueClause().value()
-                                                       .withTrailingTrivia(SyntaxTriviaList.empty);
+            return variableDeclarator.equalsValueClause().value()
+                                     .withTrailingTrivia(SyntaxTriviaList.empty);
         }
 
         // Didn't have a value.  Synthesize one if we're doing that, or use the previous item's value
@@ -1112,9 +1112,8 @@ class Emitter extends SyntaxRewriter {
         var previousVariable = <VariableDeclaratorSyntax>enumDeclaration.variableDeclarators().syntaxNodeAt(index - 1);
         var variableIdentifier = this.withNoTrivia(previousVariable.identifier());
 
-        var receiver = new MemberAccessExpressionSyntax(
+        var receiver = MemberAccessExpressionSyntax.create1(
             new IdentifierNameSyntax(enumIdentifier.clone()),
-            SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
             new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
 
         return new BinaryExpressionSyntax(
@@ -1150,7 +1149,7 @@ class Emitter extends SyntaxRewriter {
                 SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineArray })));
 
             // _._map = []
-            statements.push(new ExpressionStatementSyntax(
+            statements.push(ExpressionStatementSyntax.create1(
                 new BinaryExpressionSyntax(
                     SyntaxKind.AssignmentExpression,
                     new MemberAccessExpressionSyntax(
@@ -1158,10 +1157,7 @@ class Emitter extends SyntaxRewriter {
                         SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
                         new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "_map", trailingTrivia: this.spaceArray }))),
                     SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceArray }),
-                    ArrayLiteralExpressionSyntax.create(
-                        SyntaxToken.createElastic({ kind: SyntaxKind.OpenBracketToken }),
-                        SyntaxToken.createElastic({ kind: SyntaxKind.CloseBracketToken }))),
-                SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineArray })));
+                    ArrayLiteralExpressionSyntax.create1())).withTrailingTrivia(this.newLineList));
 
             var assignDefaultValues = { value: true };
             for (var i = 0, n = node.variableDeclarators().syntaxNodeCount(); i < n; i++) {
