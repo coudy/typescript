@@ -19481,9 +19481,7 @@ var Emitter = (function (_super) {
         var moduleIdentifier = this.withNoTrivia(parentModule);
         identifier = this.withNoTrivia(identifier);
         var indentationTrivia = this.indentationTriviaForStartOfToken(moduleElement.firstToken());
-        return new ExpressionStatementSyntax(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new MemberAccessExpressionSyntax(new IdentifierNameSyntax(moduleIdentifier.withLeadingTrivia(SyntaxTriviaList.create([
-            indentationTrivia
-        ]))), SyntaxToken.createElastic({
+        return new ExpressionStatementSyntax(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new MemberAccessExpressionSyntax(new IdentifierNameSyntax(moduleIdentifier.withLeadingTrivia(SyntaxTriviaList.create(indentationTrivia))), SyntaxToken.createElastic({
             kind: 73 /* DotToken */ 
         }), new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))), SyntaxToken.createElastic({
             kind: 104 /* EqualsToken */ ,
@@ -19659,11 +19657,14 @@ var Emitter = (function (_super) {
     Emitter.prototype.columnForEndOfToken = function (token) {
         return Indentation.columnForEndOfToken(token, this.syntaxInformationMap, this.options);
     };
-    Emitter.prototype.indentationTrivia = function (indentationColumn) {
-        return Indentation.indentationTrivia(indentationColumn, this.options);
+    Emitter.prototype.indentationTrivia = function (column) {
+        return column === 0 ? null : [
+            Indentation.indentationTrivia(column, this.options)
+        ];
     };
     Emitter.prototype.indentationTriviaForStartOfToken = function (token) {
-        return this.indentationTrivia(this.columnForStartOfToken(token));
+        var column = this.columnForStartOfToken(token);
+        return this.indentationTrivia(column);
     };
     Emitter.prototype.convertArrowFunctionBody = function (arrowFunction) {
         var rewrittenBody = this.visitNode(arrowFunction.body());
@@ -20012,9 +20013,7 @@ var Emitter = (function (_super) {
         var block = memberAccessor.block().accept(this);
         block = block.withTrailingTrivia(SyntaxTriviaList.empty);
         return new SimplePropertyAssignmentSyntax(SyntaxToken.createElastic({
-            leadingTrivia: [
-                indentationTrivia
-            ],
+            leadingTrivia: indentationTrivia,
             kind: 9 /* IdentifierNameToken */ ,
             text: propertyName
         }), SyntaxToken.createElastic({
@@ -20087,9 +20086,7 @@ var Emitter = (function (_super) {
         var propertyColumn = accessorColumn + this.options.indentSpaces;
         var propertyTrivia = this.indentationTrivia(propertyColumn);
         propertyAssignments.push(new SimplePropertyAssignmentSyntax(SyntaxToken.createElastic({
-            leadingTrivia: [
-                propertyTrivia
-            ],
+            leadingTrivia: propertyTrivia,
             kind: 9 /* IdentifierNameToken */ ,
             text: "enumerable"
         }), SyntaxToken.createElastic({
@@ -20103,9 +20100,7 @@ var Emitter = (function (_super) {
             trailingTrivia: this.newLineList
         }));
         propertyAssignments.push(new SimplePropertyAssignmentSyntax(SyntaxToken.createElastic({
-            leadingTrivia: [
-                propertyTrivia
-            ],
+            leadingTrivia: propertyTrivia,
             kind: 9 /* IdentifierNameToken */ ,
             text: "configurable"
         }), SyntaxToken.createElastic({
@@ -20119,9 +20114,7 @@ var Emitter = (function (_super) {
             kind: 67 /* OpenBraceToken */ ,
             trailingTrivia: this.newLineList
         }), SeparatedSyntaxList.create(propertyAssignments), SyntaxToken.createElastic({
-            leadingTrivia: [
-                accessorTrivia
-            ],
+            leadingTrivia: accessorTrivia,
             kind: 68 /* CloseBraceToken */ 
         }));
         arguments.push(objectLiteral);
@@ -20202,9 +20195,7 @@ var Emitter = (function (_super) {
         statements.push.apply(statements, classElementStatements);
         var returnIndentation = this.indentationTrivia(statementIndent);
         var returnStatement = new ReturnStatementSyntax(SyntaxToken.createElastic({
-            leadingTrivia: [
-                returnIndentation
-            ],
+            leadingTrivia: returnIndentation,
             kind: 31 /* ReturnKeyword */ ,
             trailingTrivia: this.spaceList
         }), new IdentifierNameSyntax(identifier.clone()), SyntaxToken.createElastic({
@@ -20212,15 +20203,12 @@ var Emitter = (function (_super) {
             trailingTrivia: this.newLineList
         }));
         statements.push(returnStatement);
-        var classIndentation = this.columnForStartOfToken(node.firstToken());
-        var closeCurlyIndentation = classIndentation > 0 ? [
-            this.indentationTrivia(classIndentation)
-        ] : null;
+        var classIndentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
         var block = new BlockSyntax(SyntaxToken.createElastic({
             kind: 67 /* OpenBraceToken */ ,
             trailingTrivia: this.newLineList
         }), SyntaxList.create(statements), SyntaxToken.createElastic({
-            leadingTrivia: closeCurlyIndentation,
+            leadingTrivia: classIndentationTrivia,
             kind: 68 /* CloseBraceToken */ 
         }));
         var callParameters = [];
@@ -20320,9 +20308,7 @@ var Emitter = (function (_super) {
         var initIndentationTrivia = this.indentationTrivia(initIndentationColumn);
         if(node.variableDeclarators().syntaxNodeCount() > 0) {
             statements.push(new VariableStatementSyntax(null, null, new VariableDeclarationSyntax(SyntaxToken.createElastic({
-                leadingTrivia: [
-                    initIndentationTrivia
-                ],
+                leadingTrivia: initIndentationTrivia,
                 kind: 38 /* VarKeyword */ ,
                 trailingTrivia: this.spaceList
             }), SeparatedSyntaxList.create([
@@ -20339,9 +20325,7 @@ var Emitter = (function (_super) {
                 trailingTrivia: this.newLineList
             })));
             statements.push(new ExpressionStatementSyntax(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new MemberAccessExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.createElastic({
-                leadingTrivia: [
-                    initIndentationTrivia
-                ],
+                leadingTrivia: initIndentationTrivia,
                 kind: 9 /* IdentifierNameToken */ ,
                 text: "_"
             })), SyntaxToken.createElastic({
@@ -20378,9 +20362,7 @@ var Emitter = (function (_super) {
                     trailingTrivia: this.spaceList
                 }), this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues.value, i));
                 var elementAccessExpression = new ElementAccessExpressionSyntax(new MemberAccessExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.createElastic({
-                    leadingTrivia: [
-                        initIndentationTrivia
-                    ],
+                    leadingTrivia: initIndentationTrivia,
                     kind: 9 /* IdentifierNameToken */ ,
                     text: "_"
                 })), SyntaxToken.createElastic({
@@ -20413,9 +20395,7 @@ var Emitter = (function (_super) {
             kind: 67 /* OpenBraceToken */ ,
             trailingTrivia: this.newLineList
         }), SyntaxList.create(statements), SyntaxToken.createElastic({
-            leadingTrivia: [
-                indentationTrivia
-            ],
+            leadingTrivia: indentationTrivia,
             kind: 68 /* CloseBraceToken */ 
         }));
         var functionExpression = FunctionExpressionSyntax.create(SyntaxToken.createElastic({
@@ -20447,9 +20427,7 @@ var Emitter = (function (_super) {
         var indentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
         var functionExpression = this.generateEnumFunctionExpression(node);
         var parenthesizedExpression = new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
-            leadingTrivia: [
-                indentationTrivia
-            ],
+            leadingTrivia: indentationTrivia,
             kind: 69 /* OpenParenToken */ 
         }), functionExpression, SyntaxToken.createElastic({
             kind: 70 /* CloseParenToken */ 
