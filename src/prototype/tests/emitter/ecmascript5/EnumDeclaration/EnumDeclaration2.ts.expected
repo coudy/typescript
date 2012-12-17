@@ -19,6 +19,7 @@
         "            _._map[_.A2 = 1] = \"A2\";",
         "        })(A||(A={}));",
         "    })(N||(N={}));",
+        "    M.N = N;",
         "})(M||(M={}));",
         ""
     ],
@@ -1795,6 +1796,90 @@
                                                     "kind": "CloseParenToken",
                                                     "width": 1,
                                                     "text": ")"
+                                                }
+                                            }
+                                        },
+                                        "_semicolonToken": {
+                                            "kind": "SemicolonToken",
+                                            "width": 1,
+                                            "fullWidth": 3,
+                                            "text": ";",
+                                            "hasTrailingTrivia": true,
+                                            "hasTrailingNewLineTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "NewLineTrivia",
+                                                    "text": "\r\n"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "kind": "ExpressionStatement",
+                                        "_expression": {
+                                            "kind": "AssignmentExpression",
+                                            "_left": {
+                                                "kind": "MemberAccessExpression",
+                                                "_expression": {
+                                                    "kind": "IdentifierName",
+                                                    "_identifier": {
+                                                        "kind": "IdentifierNameToken",
+                                                        "width": 1,
+                                                        "fullWidth": 5,
+                                                        "text": "M",
+                                                        "valueText": "M",
+                                                        "hasLeadingTrivia": true,
+                                                        "leadingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "text": "    "
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                "_dotToken": {
+                                                    "kind": "DotToken",
+                                                    "width": 1,
+                                                    "text": "."
+                                                },
+                                                "_identifierName": {
+                                                    "kind": "IdentifierName",
+                                                    "_identifier": {
+                                                        "kind": "IdentifierNameToken",
+                                                        "width": 1,
+                                                        "fullWidth": 2,
+                                                        "text": "N",
+                                                        "valueText": "N",
+                                                        "hasTrailingTrivia": true,
+                                                        "trailingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "text": " "
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "_operatorToken": {
+                                                "kind": "EqualsToken",
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": "=",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
+                                            },
+                                            "_right": {
+                                                "kind": "IdentifierName",
+                                                "_identifier": {
+                                                    "kind": "IdentifierNameToken",
+                                                    "width": 1,
+                                                    "text": "N",
+                                                    "valueText": "N"
                                                 }
                                             }
                                         },

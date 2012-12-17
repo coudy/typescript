@@ -19477,8 +19477,8 @@ var Emitter = (function (_super) {
     Emitter.prototype.rightmostName = function (name) {
         return name.kind() === 121 /* QualifiedName */  ? (name).right() : name;
     };
-    Emitter.prototype.createExportStatement = function (moduleDeclaration, moduleElement, identifier) {
-        var moduleIdentifier = this.withNoTrivia(this.rightmostName(moduleDeclaration.moduleName()).identifier());
+    Emitter.prototype.createExportStatement = function (parentModule, moduleElement, identifier) {
+        var moduleIdentifier = this.withNoTrivia(parentModule);
         identifier = this.withNoTrivia(identifier);
         var indentationTrivia = this.indentationTriviaForStartOfToken(moduleElement.firstToken());
         return new ExpressionStatementSyntax(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new MemberAccessExpressionSyntax(new IdentifierNameSyntax(moduleIdentifier.withLeadingTrivia(SyntaxTriviaList.create([
@@ -19493,7 +19493,7 @@ var Emitter = (function (_super) {
             trailingTrivia: this.newLineList
         }));
     };
-    Emitter.prototype.handleExportedModuleElement = function (moduleDeclaration, moduleElement, elements) {
+    Emitter.prototype.handleExportedModuleElement = function (parentModule, moduleElement, elements) {
         switch(moduleElement.kind()) {
             case 140 /* VariableStatement */ : {
                 var variableStatement = moduleElement;
@@ -19501,7 +19501,7 @@ var Emitter = (function (_super) {
                     var declarators = variableStatement.variableDeclaration().variableDeclarators();
                     for(var i = 0, n = declarators.syntaxNodeCount(); i < n; i++) {
                         var declarator = declarators.syntaxNodeAt(i);
-                        elements.push(this.createExportStatement(moduleDeclaration, moduleElement, declarator.identifier()));
+                        elements.push(this.createExportStatement(parentModule, moduleElement, declarator.identifier()));
                     }
                 }
                 return;
@@ -19510,7 +19510,7 @@ var Emitter = (function (_super) {
             case 128 /* FunctionDeclaration */ : {
                 var functionDeclaration = moduleElement;
                 if(functionDeclaration.exportKeyword() !== null) {
-                    elements.push(this.createExportStatement(moduleDeclaration, moduleElement, functionDeclaration.functionSignature().identifier()));
+                    elements.push(this.createExportStatement(parentModule, moduleElement, functionDeclaration.functionSignature().identifier()));
                 }
                 return;
 
@@ -19518,7 +19518,7 @@ var Emitter = (function (_super) {
             case 130 /* ClassDeclaration */ : {
                 var classDeclaration = moduleElement;
                 if(classDeclaration.exportKeyword() !== null) {
-                    elements.push(this.createExportStatement(moduleDeclaration, moduleElement, classDeclaration.identifier()));
+                    elements.push(this.createExportStatement(parentModule, moduleElement, classDeclaration.identifier()));
                 }
                 return;
 
@@ -19526,7 +19526,7 @@ var Emitter = (function (_super) {
             case 129 /* ModuleDeclaration */ : {
                 var childModule = moduleElement;
                 if(childModule.exportKeyword() !== null) {
-                    elements.push(this.createExportStatement(moduleDeclaration, moduleElement, this.leftmostName(childModule.moduleName()).identifier()));
+                    elements.push(this.createExportStatement(parentModule, moduleElement, this.leftmostName(childModule.moduleName()).identifier()));
                 }
                 return;
 
@@ -19536,12 +19536,14 @@ var Emitter = (function (_super) {
     Emitter.prototype.visitModuleDeclaration = function (node) {
         var names = Emitter.splitModuleName(node.moduleName());
         var moduleElements = this.convertModuleElements(node.moduleElements());
+        var parentModule = this.rightmostName(node.moduleName()).identifier();
         for(var i = 0, n = node.moduleElements().count(); i < n; i++) {
-            this.handleExportedModuleElement(node, node.moduleElements().syntaxNodeAt(i), moduleElements);
+            this.handleExportedModuleElement(parentModule, node.moduleElements().syntaxNodeAt(i), moduleElements);
         }
         for(var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
             moduleElements = this.convertModuleDeclaration(names[nameIndex], moduleElements);
             if(nameIndex > 0) {
+                moduleElements.push(this.createExportStatement(names[nameIndex - 1].identifier(), node, names[nameIndex].identifier()));
                 moduleElements = this.adjustListIndentation(moduleElements);
             }
         }

@@ -125,10 +125,10 @@ class Emitter extends SyntaxRewriter {
             : <IdentifierNameSyntax>name;
     }
 
-    private createExportStatement(moduleDeclaration: ModuleDeclarationSyntax,
+    private createExportStatement(parentModule: ISyntaxToken,
                                   moduleElement: ModuleElementSyntax,
                                   identifier: ISyntaxToken) {
-        var moduleIdentifier = this.withNoTrivia(this.rightmostName(moduleDeclaration.moduleName()).identifier());
+        var moduleIdentifier = this.withNoTrivia(parentModule);
         identifier = this.withNoTrivia(identifier);
 
         var indentationTrivia = this.indentationTriviaForStartOfToken(moduleElement.firstToken());
@@ -145,7 +145,7 @@ class Emitter extends SyntaxRewriter {
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
     }
 
-    private handleExportedModuleElement(moduleDeclaration: ModuleDeclarationSyntax,
+    private handleExportedModuleElement(parentModule: ISyntaxToken,
                                         moduleElement: ModuleElementSyntax,
                                         elements: ModuleElementSyntax[]): void {
         switch (moduleElement.kind()) {
@@ -155,7 +155,7 @@ class Emitter extends SyntaxRewriter {
                     var declarators = variableStatement.variableDeclaration().variableDeclarators();
                     for (var i = 0, n = declarators.syntaxNodeCount(); i < n; i++) {
                         var declarator = <VariableDeclaratorSyntax>declarators.syntaxNodeAt(i);
-                        elements.push(this.createExportStatement(moduleDeclaration, moduleElement, declarator.identifier()));
+                        elements.push(this.createExportStatement(parentModule, moduleElement, declarator.identifier()));
                     }
                 }
                 return;
@@ -164,14 +164,14 @@ class Emitter extends SyntaxRewriter {
                 var functionDeclaration = <FunctionDeclarationSyntax>moduleElement;
                 if (functionDeclaration.exportKeyword() !== null) {
                      elements.push(this.createExportStatement(
-                         moduleDeclaration, moduleElement, functionDeclaration.functionSignature().identifier()));
+                         parentModule, moduleElement, functionDeclaration.functionSignature().identifier()));
                 }
                 return;
 
             case SyntaxKind.ClassDeclaration:
                 var classDeclaration = <ClassDeclarationSyntax>moduleElement;
                 if (classDeclaration.exportKeyword() !== null) {
-                     elements.push(this.createExportStatement(moduleDeclaration, moduleElement, classDeclaration.identifier()));
+                     elements.push(this.createExportStatement(parentModule, moduleElement, classDeclaration.identifier()));
                 }
                 return;
 
@@ -179,7 +179,7 @@ class Emitter extends SyntaxRewriter {
                 var childModule = <ModuleDeclarationSyntax>moduleElement;
                 if (childModule.exportKeyword() !== null) {
                      elements.push(this.createExportStatement(
-                         moduleDeclaration, moduleElement, this.leftmostName(childModule.moduleName()).identifier()));
+                         parentModule, moduleElement, this.leftmostName(childModule.moduleName()).identifier()));
                 }
                 return;
         }
@@ -195,9 +195,10 @@ class Emitter extends SyntaxRewriter {
         // Recurse downwards and get the rewritten children.
         var moduleElements = this.convertModuleElements(node.moduleElements());
 
+        var parentModule = this.rightmostName(node.moduleName()).identifier()
         for (var i = 0, n = node.moduleElements().count(); i < n; i++) {
             this.handleExportedModuleElement(
-                node, <ModuleElementSyntax>node.moduleElements().syntaxNodeAt(i), moduleElements);
+                parentModule, <ModuleElementSyntax>node.moduleElements().syntaxNodeAt(i), moduleElements);
         }
         
         // Then, for all the names left of that name, wrap what we've created in a larger module.
@@ -207,6 +208,9 @@ class Emitter extends SyntaxRewriter {
             if (nameIndex > 0) {
                 // We're popping out and generate each outer module.  As we do so, we have to
                 // indent whatever we've created so far appropriately.
+                moduleElements.push(this.createExportStatement(
+                    names[nameIndex - 1].identifier(), node, names[nameIndex].identifier()));
+
                 moduleElements = <ModuleElementSyntax[]>this.adjustListIndentation(moduleElements);
             }
         }
