@@ -20840,20 +20840,13 @@ var Emitter = (function (_super) {
         }
         var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
         var memberIdentifier = this.withNoTrivia(declarator.identifier());
-        var receiver = static ? new IdentifierNameSyntax(classIdentifier.withLeadingTrivia(memberDeclaration.leadingTrivia())) : new ThisExpressionSyntax(SyntaxToken.createElastic({
-            leadingTrivia: memberDeclaration.leadingTrivia().toArray(),
-            kind: 33 /* ThisKeyword */ 
-        }));
-        receiver = new MemberAccessExpressionSyntax(receiver, SyntaxToken.createElastic({
-            kind: 73 /* DotToken */ 
-        }), new IdentifierNameSyntax(memberIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
-        return new ExpressionStatementSyntax(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , receiver, SyntaxToken.createElastic({
+        var receiver = static ? new IdentifierNameSyntax(classIdentifier) : ThisExpressionSyntax.create1();
+        receiver = receiver.withLeadingTrivia(memberDeclaration.leadingTrivia());
+        receiver = MemberAccessExpressionSyntax.create1(receiver, new IdentifierNameSyntax(memberIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
+        return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , receiver, SyntaxToken.createElastic({
             kind: 104 /* EqualsToken */ ,
             trailingTrivia: this.spaceArray
-        }), declarator.equalsValueClause().value().accept(this)), SyntaxToken.createElastic({
-            kind: 75 /* SemicolonToken */ ,
-            trailingTrivia: this.newLineArray
-        }));
+        }), declarator.equalsValueClause().value().accept(this))).withTrailingTrivia(this.newLineList);
     };
     Emitter.prototype.generatePropertyAssignments = function (classDeclaration, static) {
         var result = [];
@@ -20871,12 +20864,7 @@ var Emitter = (function (_super) {
     };
     Emitter.prototype.createDefaultConstructorDeclaration = function (classDeclaration) {
         var identifier = this.withNoTrivia(classDeclaration.identifier());
-        var functionSignature = FunctionSignatureSyntax.create(identifier.clone(), ParameterListSyntax.create(SyntaxToken.createElastic({
-            kind: 69 /* OpenParenToken */ 
-        }), SyntaxToken.createElastic({
-            kind: 70 /* CloseParenToken */ ,
-            trailingTrivia: this.spaceArray
-        })));
+        var functionSignature = FunctionSignatureSyntax.create1(identifier.clone()).withTrailingTrivia(this.spaceList);
         var statements = [];
         if(classDeclaration.extendsClause() !== null) {
             var superStatement = new ExpressionStatementSyntax(new InvocationExpressionSyntax(new MemberAccessExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.createElastic({

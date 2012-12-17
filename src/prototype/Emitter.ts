@@ -589,21 +589,21 @@ class Emitter extends SyntaxRewriter {
         var memberIdentifier = this.withNoTrivia(declarator.identifier());
 
         var receiver = static
-            ? <ExpressionSyntax>new IdentifierNameSyntax(classIdentifier.withLeadingTrivia(memberDeclaration.leadingTrivia()))
-            : new ThisExpressionSyntax(SyntaxToken.createElastic({ leadingTrivia: memberDeclaration.leadingTrivia().toArray(), kind: SyntaxKind.ThisKeyword }));
+            ? <ExpressionSyntax>new IdentifierNameSyntax(classIdentifier)
+            : ThisExpressionSyntax.create1(); 
 
-        receiver = new MemberAccessExpressionSyntax(
+        receiver = receiver.withLeadingTrivia(memberDeclaration.leadingTrivia());
+
+        receiver = MemberAccessExpressionSyntax.create1(
             receiver,
-            SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
             new IdentifierNameSyntax(memberIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
 
-        return new ExpressionStatementSyntax(
+        return ExpressionStatementSyntax.create1(
             new BinaryExpressionSyntax(
                 SyntaxKind.AssignmentExpression,
                 receiver,
                 SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceArray }),
-                <ExpressionSyntax>declarator.equalsValueClause().value().accept(this)),
-            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineArray }));
+                <ExpressionSyntax>declarator.equalsValueClause().value().accept(this))).withTrailingTrivia(this.newLineList);
     }
 
     private generatePropertyAssignments(classDeclaration: ClassDeclarationSyntax,
@@ -631,11 +631,8 @@ class Emitter extends SyntaxRewriter {
     private createDefaultConstructorDeclaration(classDeclaration: ClassDeclarationSyntax): FunctionDeclarationSyntax {
         var identifier = this.withNoTrivia(classDeclaration.identifier());
 
-        var functionSignature = FunctionSignatureSyntax.create(
-            identifier.clone(),
-            ParameterListSyntax.create(
-                SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
-                SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken, trailingTrivia: this.spaceArray })));
+        var functionSignature = FunctionSignatureSyntax.create1(
+            identifier.clone()).withTrailingTrivia(this.spaceList);
 
         var statements: StatementSyntax[] = [];
         if (classDeclaration.extendsClause() !== null) {
