@@ -20967,9 +20967,7 @@ var Emitter = (function (_super) {
     };
     Emitter.prototype.convertSuperMemberAccessInvocationExpression = function (node) {
         var result = _super.prototype.visitInvocationExpression.call(this, node);
-        var expression = new MemberAccessExpressionSyntax(result.expression(), SyntaxToken.createElastic({
-            kind: 73 /* DotToken */ 
-        }), new IdentifierNameSyntax(SyntaxToken.createElastic({
+        var expression = MemberAccessExpressionSyntax.create1(result.expression(), new IdentifierNameSyntax(SyntaxToken.createElastic({
             kind: 9 /* IdentifierNameToken */ ,
             text: "call"
         })));
@@ -20980,9 +20978,7 @@ var Emitter = (function (_super) {
                 trailingTrivia: this.spaceList
             }));
         }
-        arguments.unshift(new ThisExpressionSyntax(SyntaxToken.createElastic({
-            kind: 33 /* ThisKeyword */ 
-        })));
+        arguments.unshift(ThisExpressionSyntax.create1());
         return result.withExpression(expression).withArgumentList(result.argumentList().withArguments(SeparatedSyntaxList.create(arguments)));
     };
     Emitter.prototype.visitInvocationExpression = function (node) {
