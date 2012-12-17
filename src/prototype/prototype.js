@@ -20140,6 +20140,9 @@ var Emitter;
             var column = this.columnForStartOfToken(token);
             return this.indentationTrivia(column);
         };
+        EmitterImpl.prototype.indentationTriviaListForStartOfToken = function (token) {
+            return SyntaxTriviaList.create(this.indentationTriviaForStartOfToken(token));
+        };
         EmitterImpl.prototype.adjustListIndentation = function (nodes) {
             return SyntaxIndenter.indentNodes(nodes, true, this.options.indentSpaces, this.options);
         };
@@ -20861,16 +20864,13 @@ var Emitter;
             }), SeparatedSyntaxList.create([
                 VariableDeclaratorSyntax.create(identifier)
             ]))).withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(this.newLineList));
-            var indentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
-            var functionExpression = this.generateEnumFunctionExpression(node);
-            var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(functionExpression).withLeadingTrivia(SyntaxTriviaList.create(indentationTrivia));
+            var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(this.generateEnumFunctionExpression(node));
             var logicalOrExpression = new BinaryExpressionSyntax(184 /* LogicalOrExpression */ , new IdentifierNameSyntax(identifier), SyntaxToken.create(101 /* BarBarToken */ ), ParenthesizedExpressionSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new IdentifierNameSyntax(identifier), SyntaxToken.create(104 /* EqualsToken */ ), ObjectLiteralExpressionSyntax.create1())));
-            var argumentList = ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create([
+            var invocationExpression = new InvocationExpressionSyntax(parenthesizedExpression, ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create([
                 logicalOrExpression
-            ]));
-            var invocationExpression = new InvocationExpressionSyntax(parenthesizedExpression, argumentList);
-            var expressionStatement = ExpressionStatementSyntax.create1(invocationExpression).withTrailingTrivia(this.newLineList);
-            result.push(expressionStatement);
+            ])));
+            var expressionStatement = ExpressionStatementSyntax.create1(invocationExpression);
+            result.push(expressionStatement.withLeadingTrivia(this.indentationTriviaListForStartOfToken(node.firstToken())).withTrailingTrivia(this.newLineList));
             return result;
         };
         EmitterImpl.isSuperInvocationExpressionStatement = function isSuperInvocationExpressionStatement(node) {

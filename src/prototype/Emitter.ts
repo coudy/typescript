@@ -63,6 +63,10 @@ module Emitter {
             return this.indentationTrivia(column);
         }
 
+        private indentationTriviaListForStartOfToken(token: ISyntaxToken): ISyntaxTriviaList {
+            return SyntaxTriviaList.create(this.indentationTriviaForStartOfToken(token));
+        }
+
         private adjustListIndentation(nodes: SyntaxNode[]): SyntaxNode[] {
             // TODO: determine if we should actually indent the first token or not.
             return SyntaxIndenter.indentNodes(nodes, /*indentFirstToken:*/ true, this.options.indentSpaces, this.options);
@@ -1229,13 +1233,11 @@ module Emitter {
                         SeparatedSyntaxList.create([VariableDeclaratorSyntax.create(identifier)]))
                 ).withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(this.newLineList));
 
-            var indentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
-
-            var functionExpression = this.generateEnumFunctionExpression(node);
-
+            // (function(E) { E.e1 = ... })
             var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(
-                functionExpression).withLeadingTrivia(SyntaxTriviaList.create(indentationTrivia));
+                this.generateEnumFunctionExpression(node));
 
+            // E||(E={})
             var logicalOrExpression = new BinaryExpressionSyntax(
                 SyntaxKind.LogicalOrExpression,
                 new IdentifierNameSyntax(identifier),
@@ -1247,17 +1249,17 @@ module Emitter {
                         SyntaxToken.create(SyntaxKind.EqualsToken),
                         ObjectLiteralExpressionSyntax.create1())));
 
-            var argumentList = ArgumentListSyntax.create1().withArguments(
-                SeparatedSyntaxList.create([logicalOrExpression]));
-
+            // (function(E) { E.e1 = ... })(E||(E={}))
             var invocationExpression = new InvocationExpressionSyntax(
                 parenthesizedExpression,
-                argumentList);
+                ArgumentListSyntax.create1().withArguments(
+                    SeparatedSyntaxList.create([logicalOrExpression])));
+            
+            // (function(E) { E.e1 = ... })(E||(E={}));
+            var expressionStatement = ExpressionStatementSyntax.create1(invocationExpression);
 
-            var expressionStatement = ExpressionStatementSyntax.create1(
-                invocationExpression).withTrailingTrivia(this.newLineList);
-
-            result.push(expressionStatement);
+            result.push(expressionStatement.withLeadingTrivia(this.indentationTriviaListForStartOfToken(node.firstToken()))
+                                           .withTrailingTrivia(this.newLineList));
 
             return result;
         }
