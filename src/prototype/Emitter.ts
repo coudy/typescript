@@ -257,17 +257,18 @@ module Emitter {
             moduleName = moduleName.withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
             var moduleIdentifier = moduleName.identifier();
 
-            var moduleIndentation = this.indentationTriviaForStartOfToken(moduleDeclaration.firstToken());
+            var moduleIndentation = this.indentationTriviaListForStartOfToken(moduleDeclaration.firstToken());
             var leadingTrivia = outermost
-                ? moduleDeclaration.leadingTrivia().toArray()
+                ? moduleDeclaration.leadingTrivia()
                 : moduleIndentation;
 
             // var M;
             var variableStatement = VariableStatementSyntax.create1(
-                new VariableDeclarationSyntax(
-                    SyntaxToken.create(SyntaxKind.VarKeyword, { leadingTrivia: leadingTrivia, trailingTrivia: this.spaceArray }),
-                    SeparatedSyntaxList.create(
-                        [VariableDeclaratorSyntax.create(moduleIdentifier)]))).withTrailingTrivia(this.newLineList);
+                    new VariableDeclarationSyntax(
+                        SyntaxToken.create(SyntaxKind.VarKeyword, { trailingTrivia: this.spaceArray }),
+                        SeparatedSyntaxList.create(
+                            [VariableDeclaratorSyntax.create(moduleIdentifier)]))
+                ).withLeadingTrivia(leadingTrivia).withTrailingTrivia(this.newLineList);
 
             // function(M) { ... }
             var functionExpression = FunctionExpressionSyntax.create(
@@ -278,11 +279,10 @@ module Emitter {
                 new BlockSyntax(
                     SyntaxToken.create(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
                     SyntaxList.create(moduleElements),
-                    SyntaxToken.create(SyntaxKind.CloseBraceToken, { leadingTrivia: moduleIndentation })));
+                    SyntaxToken.create(SyntaxKind.CloseBraceToken, { leadingTrivia: moduleIndentation.toArray() })));
 
             // (function(M) { ... })
-            var parenthesizedFunctionExpression = ParenthesizedExpressionSyntax.create1(
-                functionExpression).withLeadingTrivia(SyntaxTriviaList.create(moduleIndentation));
+            var parenthesizedFunctionExpression = ParenthesizedExpressionSyntax.create1(functionExpression);
 
             // M||(M={})
             var logicalOrExpression = new BinaryExpressionSyntax(
@@ -305,8 +305,8 @@ module Emitter {
                     SyntaxToken.create(SyntaxKind.CloseParenToken)));
 
             // (function(M) { ... })(M||(M={}));
-            var expressionStatement = ExpressionStatementSyntax.create1(
-                invocationExpression).withTrailingTrivia(this.newLineList);
+            var expressionStatement = ExpressionStatementSyntax.create1(invocationExpression)
+                .withLeadingTrivia(moduleIndentation).withTrailingTrivia(this.newLineList);
 
             return [variableStatement, expressionStatement];
         }

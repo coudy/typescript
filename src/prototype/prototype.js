@@ -20271,27 +20271,26 @@ var Emitter;
         EmitterImpl.prototype.convertModuleDeclaration = function (moduleDeclaration, moduleName, moduleElements, outermost) {
             moduleName = moduleName.withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
             var moduleIdentifier = moduleName.identifier();
-            var moduleIndentation = this.indentationTriviaForStartOfToken(moduleDeclaration.firstToken());
-            var leadingTrivia = outermost ? moduleDeclaration.leadingTrivia().toArray() : moduleIndentation;
+            var moduleIndentation = this.indentationTriviaListForStartOfToken(moduleDeclaration.firstToken());
+            var leadingTrivia = outermost ? moduleDeclaration.leadingTrivia() : moduleIndentation;
             var variableStatement = VariableStatementSyntax.create1(new VariableDeclarationSyntax(SyntaxToken.create(38 /* VarKeyword */ , {
-                leadingTrivia: leadingTrivia,
                 trailingTrivia: this.spaceArray
             }), SeparatedSyntaxList.create([
                 VariableDeclaratorSyntax.create(moduleIdentifier)
-            ]))).withTrailingTrivia(this.newLineList);
+            ]))).withLeadingTrivia(leadingTrivia).withTrailingTrivia(this.newLineList);
             var functionExpression = FunctionExpressionSyntax.create(SyntaxToken.create(25 /* FunctionKeyword */ ), CallSignatureSyntax.create(ParameterListSyntax.create1().withParameters(SeparatedSyntaxList.create([
                 ParameterSyntax.create(moduleIdentifier)
             ])).withTrailingTrivia(this.spaceList)), new BlockSyntax(SyntaxToken.create(67 /* OpenBraceToken */ , {
                 trailingTrivia: this.newLineArray
             }), SyntaxList.create(moduleElements), SyntaxToken.create(68 /* CloseBraceToken */ , {
-                leadingTrivia: moduleIndentation
+                leadingTrivia: moduleIndentation.toArray()
             })));
-            var parenthesizedFunctionExpression = ParenthesizedExpressionSyntax.create1(functionExpression).withLeadingTrivia(SyntaxTriviaList.create(moduleIndentation));
+            var parenthesizedFunctionExpression = ParenthesizedExpressionSyntax.create1(functionExpression);
             var logicalOrExpression = new BinaryExpressionSyntax(184 /* LogicalOrExpression */ , moduleName, SyntaxToken.create(101 /* BarBarToken */ ), ParenthesizedExpressionSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , moduleName, SyntaxToken.create(104 /* EqualsToken */ ), ObjectLiteralExpressionSyntax.create1())));
             var invocationExpression = new InvocationExpressionSyntax(parenthesizedFunctionExpression, new ArgumentListSyntax(SyntaxToken.create(69 /* OpenParenToken */ ), SeparatedSyntaxList.create([
                 logicalOrExpression
             ]), SyntaxToken.create(70 /* CloseParenToken */ )));
-            var expressionStatement = ExpressionStatementSyntax.create1(invocationExpression).withTrailingTrivia(this.newLineList);
+            var expressionStatement = ExpressionStatementSyntax.create1(invocationExpression).withLeadingTrivia(moduleIndentation).withTrailingTrivia(this.newLineList);
             return [
                 variableStatement, 
                 expressionStatement
