@@ -19781,21 +19781,21 @@ var Emitter = (function (_super) {
         }
         var rewritten = _super.prototype.visitFunctionDeclaration.call(this, node);
         var parametersWithDefaults = Emitter.functionSignatureDefaultParameters(node.functionSignature());
-        if(parametersWithDefaults.length === 0) {
-            return rewritten;
+        if(parametersWithDefaults.length !== 0) {
+            var defaultValueAssignmentStatements = ArrayUtilities.select(parametersWithDefaults, function (p) {
+                return _this.generateDefaultValueAssignmentStatement(p);
+            });
+            var functionDeclarationStartColumn = this.columnForStartOfToken(node.firstToken());
+            var desiredColumn = functionDeclarationStartColumn + this.options.indentSpaces;
+            defaultValueAssignmentStatements = ArrayUtilities.select(defaultValueAssignmentStatements, function (s) {
+                return SyntaxIndenter.indentNode(s, true, desiredColumn, _this.options);
+            });
+            var statements = [];
+            statements.push.apply(statements, defaultValueAssignmentStatements);
+            statements.push.apply(statements, rewritten.block().statements().toArray());
+            rewritten = rewritten.withBlock(rewritten.block().withStatements(SyntaxList.create(statements)));
         }
-        var defaultValueAssignmentStatements = ArrayUtilities.select(parametersWithDefaults, function (p) {
-            return _this.generateDefaultValueAssignmentStatement(p);
-        });
-        var functionDeclarationStartColumn = this.columnForStartOfToken(node.firstToken());
-        var desiredColumn = functionDeclarationStartColumn + this.options.indentSpaces;
-        defaultValueAssignmentStatements = ArrayUtilities.select(defaultValueAssignmentStatements, function (s) {
-            return SyntaxIndenter.indentNode(s, true, desiredColumn, _this.options);
-        });
-        var statements = [];
-        statements.push.apply(statements, defaultValueAssignmentStatements);
-        statements.push.apply(statements, rewritten.block().statements().toArray());
-        return rewritten.withBlock(rewritten.block().withStatements(SyntaxList.create(statements)));
+        return rewritten.withExportKeyword(null).withDeclareKeyword(null).withLeadingTrivia(rewritten.leadingTrivia());
     };
     Emitter.prototype.visitParameter = function (node) {
         var identifier = node.identifier();
@@ -20565,6 +20565,10 @@ var Emitter = (function (_super) {
         }))), SyntaxToken.createElastic({
             kind: 73 /* DotToken */ 
         }), result.identifierName());
+    };
+    Emitter.prototype.visitVariableStatement = function (node) {
+        var result = _super.prototype.visitVariableStatement.call(this, node);
+        return result.withExportKeyword(null).withDeclareKeyword(null).withLeadingTrivia(result.leadingTrivia());
     };
     return Emitter;
 })(SyntaxRewriter);

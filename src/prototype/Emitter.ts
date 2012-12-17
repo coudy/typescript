@@ -543,26 +543,28 @@ class Emitter extends SyntaxRewriter {
         var rewritten = <FunctionDeclarationSyntax>super.visitFunctionDeclaration(node);
         var parametersWithDefaults = Emitter.functionSignatureDefaultParameters(node.functionSignature());
 
-        if (parametersWithDefaults.length === 0) {
-            return rewritten;
+        if (parametersWithDefaults.length !== 0) {
+            var defaultValueAssignmentStatements = ArrayUtilities.select(
+                parametersWithDefaults, p => this.generateDefaultValueAssignmentStatement(p));
+
+            var functionDeclarationStartColumn = this.columnForStartOfToken(node.firstToken());
+            var desiredColumn = functionDeclarationStartColumn + this.options.indentSpaces;
+
+            defaultValueAssignmentStatements = ArrayUtilities.select(defaultValueAssignmentStatements,
+                s => SyntaxIndenter.indentNode(s, /*indentFirstToken:*/ true, desiredColumn, this.options));
+
+            var statements: StatementSyntax[] = [];
+            statements.push.apply(statements, defaultValueAssignmentStatements);
+            statements.push.apply(statements, rewritten.block().statements().toArray());
+
+            // TODO: remove export/declare keywords.
+            rewritten = rewritten.withBlock(rewritten.block().withStatements(
+                SyntaxList.create(statements)));
         }
 
-        var defaultValueAssignmentStatements = ArrayUtilities.select(
-            parametersWithDefaults, p => this.generateDefaultValueAssignmentStatement(p));
-
-        var functionDeclarationStartColumn = this.columnForStartOfToken(node.firstToken());
-        var desiredColumn = functionDeclarationStartColumn + this.options.indentSpaces;
-
-        defaultValueAssignmentStatements = ArrayUtilities.select(defaultValueAssignmentStatements,
-            s => SyntaxIndenter.indentNode(s, /*indentFirstToken:*/ true, desiredColumn, this.options));
-
-        var statements: StatementSyntax[] = [];
-        statements.push.apply(statements, defaultValueAssignmentStatements);
-        statements.push.apply(statements, rewritten.block().statements().toArray());
-
-        // TODO: remove export/declare keywords.
-        return rewritten.withBlock(rewritten.block().withStatements(
-            SyntaxList.create(statements)));
+        return <FunctionDeclarationSyntax>rewritten.withExportKeyword(null)
+                                                   .withDeclareKeyword(null)
+                                                   .withLeadingTrivia(rewritten.leadingTrivia());
     }
 
     public visitParameter(node: ParameterSyntax): ParameterSyntax {
@@ -1418,5 +1420,13 @@ class Emitter extends SyntaxRewriter {
                 new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "prototype" }))),
             SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
             result.identifierName());
+    }
+
+    private visitVariableStatement(node: VariableStatementSyntax): VariableStatementSyntax {
+        var result = <VariableStatementSyntax>super.visitVariableStatement(node);
+        
+        return <VariableStatementSyntax>result.withExportKeyword(null)
+                                              .withDeclareKeyword(null)
+                                              .withLeadingTrivia(result.leadingTrivia());
     }
 }
