@@ -1293,7 +1293,9 @@ function isKeywordOrPunctuation(kind: string): bool {
         return true;
     }
     
-    if (StringUtilities.endsWith(kind, "Token") && kind !== "IdentifierNameToken") {
+    if (StringUtilities.endsWith(kind, "Token") && 
+        kind !== "IdentifierNameToken" &&
+        kind !== "EndOfFileToken") {
         return true;
     }
 
@@ -1341,7 +1343,7 @@ function isMandatory(child: IMemberDefinition): bool {
 }
 
 function generateFactory2Method(definition: ITypeDefinition): string {
-    var mandatoryChildren = ArrayUtilities.where(definition.children, isMandatory);
+    var mandatoryChildren: IMemberDefinition[] = ArrayUtilities.where(definition.children, isMandatory);
     if (mandatoryChildren.length === definition.children.length) {
         return "";
     }
@@ -1360,31 +1362,36 @@ function generateFactory2Method(definition: ITypeDefinition): string {
 
     result += "): " + definition.name + " {\r\n";
 
-    // result += "        return new " + definition.name + "(";
+     result += "        return new " + definition.name + "(";
     
-    //for (var i = 0; i < definition.children.length; i++) {
-    //    var child = definition.children[i];
+    for (var i = 0; i < definition.children.length; i++) {
+        var child = definition.children[i];
 
-    //    if (i > 0) {
-    //        result += ", ";
-    //    }
+        if (i > 0) {
+            result += ",";
+        }
 
-    //    if (isMandatory(child)) {
-    //        result += child.name;
-    //    }
-    //    else if (child.isList) {
-    //        result += "SyntaxList.empty";
-    //    }
-    //    else if (child.isSeparatedList) {
-    //        result += "SeparatedSyntaxList.empty";
-    //    }
-    //    else {
-    //        result += "null";
-    //    }
-    //}
+        if (isMandatory(child)) {
+            result += "\r\n            " + child.name;
+        }
+        else if (child.isList) {
+            result += "\r\n            SyntaxList.empty";
+        }
+        else if (child.isSeparatedList) {
+            result += "\r\n            SeparatedSyntaxList.empty";
+        }
+        else if (isOptional(child)) {
+            result += "\r\n            null";
+        }
+        else if (child.isToken) {
+            result += "\r\n            SyntaxToken.createElastic({ kind: SyntaxKind." + tokenKinds(child)[0] + " })";
+        }
+        else {
+            result += "\r\n            " + child.type + ".create1()";
+        }
+    }
 
-    //result += ");\r\n";
-    result += "        return null;\r\n";
+    result += ");\r\n";
     result += "    }\r\n";
 
     return result;

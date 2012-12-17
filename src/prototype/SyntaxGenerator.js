@@ -3643,7 +3643,7 @@ function isKeywordOrPunctuation(kind) {
     if(StringUtilities.endsWith(kind, "Keyword")) {
         return true;
     }
-    if(StringUtilities.endsWith(kind, "Token") && kind !== "IdentifierNameToken") {
+    if(StringUtilities.endsWith(kind, "Token") && kind !== "IdentifierNameToken" && kind !== "EndOfFileToken") {
         return true;
     }
     return false;
@@ -3687,7 +3687,35 @@ function generateFactory2Method(definition) {
         }
     }
     result += "): " + definition.name + " {\r\n";
-    result += "        return null;\r\n";
+    result += "        return new " + definition.name + "(";
+    for(var i = 0; i < definition.children.length; i++) {
+        var child = definition.children[i];
+        if(i > 0) {
+            result += ",";
+        }
+        if(isMandatory(child)) {
+            result += "\r\n            " + child.name;
+        } else {
+            if(child.isList) {
+                result += "\r\n            SyntaxList.empty";
+            } else {
+                if(child.isSeparatedList) {
+                    result += "\r\n            SeparatedSyntaxList.empty";
+                } else {
+                    if(isOptional(child)) {
+                        result += "\r\n            null";
+                    } else {
+                        if(child.isToken) {
+                            result += "\r\n            SyntaxToken.createElastic({ kind: SyntaxKind." + tokenKinds(child)[0] + " })";
+                        } else {
+                            result += "\r\n            " + child.type + ".create1()";
+                        }
+                    }
+                }
+            }
+        }
+    }
+    result += ");\r\n";
     result += "    }\r\n";
     return result;
 }
