@@ -3919,6 +3919,16 @@ function generateWithMethods(definition) {
     }
     return result;
 }
+function generateTriviaMethods(definition) {
+    var result = "\r\n";
+    result += "    public withLeadingTrivia(trivia: ISyntaxTriviaList): " + definition.name + " {\r\n";
+    result += "        return <" + definition.name + ">super.withLeadingTrivia(trivia);\r\n";
+    result += "    }\r\n\r\n";
+    result += "    public withTrailingTrivia(trivia: ISyntaxTriviaList): " + definition.name + " {\r\n";
+    result += "        return <" + definition.name + ">super.withTrailingTrivia(trivia);\r\n";
+    result += "    }\r\n";
+    return result;
+}
 function generateUpdateMethod(definition) {
     if(definition.isAbstract) {
         return "";
@@ -4026,6 +4036,7 @@ function generateNode(definition) {
     result += generateLastTokenMethod(definition);
     result += generateAccessors(definition);
     result += generateUpdateMethod(definition);
+    result += generateTriviaMethods(definition);
     result += generateWithMethods(definition);
     result += generateCollectTextElementsMethod(definition);
     result += generateIsTypeScriptSpecificMethod(definition);

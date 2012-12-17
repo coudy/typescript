@@ -70,6 +70,14 @@ class SourceUnitSyntax extends SyntaxNode {
         return new SourceUnitSyntax(moduleElements, endOfFileToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): SourceUnitSyntax {
+        return <SourceUnitSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): SourceUnitSyntax {
+        return <SourceUnitSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withModuleElements(moduleElements: ISyntaxList): SourceUnitSyntax {
         return this.update(moduleElements, this._endOfFileToken);
     }
@@ -94,6 +102,14 @@ class ModuleElementSyntax extends SyntaxNode {
         super();
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ModuleElementSyntax {
+        return <ModuleElementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ModuleElementSyntax {
+        return <ModuleElementSyntax>super.withTrailingTrivia(trivia);
+    }
+
     private isTypeScriptSpecific(): bool {
         return false;
     }
@@ -102,6 +118,14 @@ class ModuleElementSyntax extends SyntaxNode {
 class ModuleReferenceSyntax extends SyntaxNode {
     constructor() {
         super();
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ModuleReferenceSyntax {
+        return <ModuleReferenceSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ModuleReferenceSyntax {
+        return <ModuleReferenceSyntax>super.withTrailingTrivia(trivia);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -201,6 +225,14 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         return new ExternalModuleReferenceSyntax(moduleKeyword, openParenToken, stringLiteral, closeParenToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ExternalModuleReferenceSyntax {
+        return <ExternalModuleReferenceSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ExternalModuleReferenceSyntax {
+        return <ExternalModuleReferenceSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withModuleKeyword(moduleKeyword: ISyntaxToken): ExternalModuleReferenceSyntax {
         return this.update(moduleKeyword, this._openParenToken, this._stringLiteral, this._closeParenToken);
     }
@@ -275,6 +307,14 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         }
 
         return new ModuleNameModuleReferenceSyntax(moduleName);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ModuleNameModuleReferenceSyntax {
+        return <ModuleNameModuleReferenceSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ModuleNameModuleReferenceSyntax {
+        return <ModuleNameModuleReferenceSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withModuleName(moduleName: NameSyntax): ModuleNameModuleReferenceSyntax {
@@ -394,6 +434,14 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
         }
 
         return new ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ImportDeclarationSyntax {
+        return <ImportDeclarationSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ImportDeclarationSyntax {
+        return <ImportDeclarationSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withImportKeyword(importKeyword: ISyntaxToken): ImportDeclarationSyntax {
@@ -595,6 +643,14 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
         return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ClassDeclarationSyntax {
+        return <ClassDeclarationSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ClassDeclarationSyntax {
+        return <ClassDeclarationSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withExportKeyword(exportKeyword: ISyntaxToken): ClassDeclarationSyntax {
         return this.update(exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
     }
@@ -760,6 +816,14 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
         return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, extendsClause, body);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): InterfaceDeclarationSyntax {
+        return <InterfaceDeclarationSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): InterfaceDeclarationSyntax {
+        return <InterfaceDeclarationSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withExportKeyword(exportKeyword: ISyntaxToken): InterfaceDeclarationSyntax {
         return this.update(exportKeyword, this._interfaceKeyword, this._identifier, this._extendsClause, this._body);
     }
@@ -859,6 +923,14 @@ class ExtendsClauseSyntax extends SyntaxNode {
         return new ExtendsClauseSyntax(extendsKeyword, typeNames);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ExtendsClauseSyntax {
+        return <ExtendsClauseSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ExtendsClauseSyntax {
+        return <ExtendsClauseSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withExtendsKeyword(extendsKeyword: ISyntaxToken): ExtendsClauseSyntax {
         return this.update(extendsKeyword, this._typeNames);
     }
@@ -941,6 +1013,14 @@ class ImplementsClauseSyntax extends SyntaxNode {
         }
 
         return new ImplementsClauseSyntax(implementsKeyword, typeNames);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ImplementsClauseSyntax {
+        return <ImplementsClauseSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ImplementsClauseSyntax {
+        return <ImplementsClauseSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withImplementsKeyword(implementsKeyword: ISyntaxToken): ImplementsClauseSyntax {
@@ -1116,6 +1196,14 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
         return new ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ModuleDeclarationSyntax {
+        return <ModuleDeclarationSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ModuleDeclarationSyntax {
+        return <ModuleDeclarationSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withExportKeyword(exportKeyword: ISyntaxToken): ModuleDeclarationSyntax {
         return this.update(exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, this._moduleElements, this._closeBraceToken);
     }
@@ -1167,6 +1255,14 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
 class StatementSyntax extends ModuleElementSyntax {
     constructor() {
         super();
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): StatementSyntax {
+        return <StatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): StatementSyntax {
+        return <StatementSyntax>super.withTrailingTrivia(trivia);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -1300,6 +1396,14 @@ class FunctionDeclarationSyntax extends StatementSyntax {
         }
 
         return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): FunctionDeclarationSyntax {
+        return <FunctionDeclarationSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): FunctionDeclarationSyntax {
+        return <FunctionDeclarationSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withExportKeyword(exportKeyword: ISyntaxToken): FunctionDeclarationSyntax {
@@ -1445,6 +1549,14 @@ class VariableStatementSyntax extends StatementSyntax {
         return new VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): VariableStatementSyntax {
+        return <VariableStatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): VariableStatementSyntax {
+        return <VariableStatementSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withExportKeyword(exportKeyword: ISyntaxToken): VariableStatementSyntax {
         return this.update(exportKeyword, this._declareKeyword, this._variableDeclaration, this._semicolonToken);
     }
@@ -1481,6 +1593,14 @@ class ExpressionSyntax extends SyntaxNode {
         super();
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ExpressionSyntax {
+        return <ExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ExpressionSyntax {
+        return <ExpressionSyntax>super.withTrailingTrivia(trivia);
+    }
+
     private isTypeScriptSpecific(): bool {
         return false;
     }
@@ -1489,6 +1609,14 @@ class ExpressionSyntax extends SyntaxNode {
 class UnaryExpressionSyntax extends ExpressionSyntax {
     constructor() {
         super();
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): UnaryExpressionSyntax {
+        return <UnaryExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): UnaryExpressionSyntax {
+        return <UnaryExpressionSyntax>super.withTrailingTrivia(trivia);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -1560,6 +1688,14 @@ class VariableDeclarationSyntax extends SyntaxNode {
         }
 
         return new VariableDeclarationSyntax(varKeyword, variableDeclarators);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): VariableDeclarationSyntax {
+        return <VariableDeclarationSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): VariableDeclarationSyntax {
+        return <VariableDeclarationSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withVarKeyword(varKeyword: ISyntaxToken): VariableDeclarationSyntax {
@@ -1662,6 +1798,14 @@ class VariableDeclaratorSyntax extends SyntaxNode {
         return new VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): VariableDeclaratorSyntax {
+        return <VariableDeclaratorSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): VariableDeclaratorSyntax {
+        return <VariableDeclaratorSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withIdentifier(identifier: ISyntaxToken): VariableDeclaratorSyntax {
         return this.update(identifier, this._typeAnnotation, this._equalsValueClause);
     }
@@ -1751,6 +1895,14 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         }
 
         return new EqualsValueClauseSyntax(equalsToken, value);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): EqualsValueClauseSyntax {
+        return <EqualsValueClauseSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): EqualsValueClauseSyntax {
+        return <EqualsValueClauseSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withEqualsToken(equalsToken: ISyntaxToken): EqualsValueClauseSyntax {
@@ -1847,6 +1999,14 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
         return new PrefixUnaryExpressionSyntax(kind, operatorToken, operand);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): PrefixUnaryExpressionSyntax {
+        return <PrefixUnaryExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): PrefixUnaryExpressionSyntax {
+        return <PrefixUnaryExpressionSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withKind(kind: SyntaxKind): PrefixUnaryExpressionSyntax {
         return this.update(kind, this._operatorToken, this._operand);
     }
@@ -1921,6 +2081,14 @@ class ThisExpressionSyntax extends UnaryExpressionSyntax {
         }
 
         return new ThisExpressionSyntax(thisKeyword);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ThisExpressionSyntax {
+        return <ThisExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ThisExpressionSyntax {
+        return <ThisExpressionSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withThisKeyword(thisKeyword: ISyntaxToken): ThisExpressionSyntax {
@@ -2004,6 +2172,14 @@ class LiteralExpressionSyntax extends UnaryExpressionSyntax {
         }
 
         return new LiteralExpressionSyntax(kind, literalToken);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): LiteralExpressionSyntax {
+        return <LiteralExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): LiteralExpressionSyntax {
+        return <LiteralExpressionSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withKind(kind: SyntaxKind): LiteralExpressionSyntax {
@@ -2107,6 +2283,14 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
         return new ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ArrayLiteralExpressionSyntax {
+        return <ArrayLiteralExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ArrayLiteralExpressionSyntax {
+        return <ArrayLiteralExpressionSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withOpenBracketToken(openBracketToken: ISyntaxToken): ArrayLiteralExpressionSyntax {
         return this.update(openBracketToken, this._expressions, this._closeBracketToken);
     }
@@ -2160,6 +2344,14 @@ class OmittedExpressionSyntax extends ExpressionSyntax {
 
     private update(): OmittedExpressionSyntax {
         return this;
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): OmittedExpressionSyntax {
+        return <OmittedExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): OmittedExpressionSyntax {
+        return <OmittedExpressionSyntax>super.withTrailingTrivia(trivia);
     }
 
     private collectTextElements(elements: string[]): void {
@@ -2249,6 +2441,14 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
         return new ParenthesizedExpressionSyntax(openParenToken, expression, closeParenToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ParenthesizedExpressionSyntax {
+        return <ParenthesizedExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ParenthesizedExpressionSyntax {
+        return <ParenthesizedExpressionSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withOpenParenToken(openParenToken: ISyntaxToken): ParenthesizedExpressionSyntax {
         return this.update(openParenToken, this._expression, this._closeParenToken);
     }
@@ -2284,6 +2484,14 @@ class ArrowFunctionExpressionSyntax extends UnaryExpressionSyntax {
 
     public body(): SyntaxNode {
         throw Errors.abstract();
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ArrowFunctionExpressionSyntax {
+        return <ArrowFunctionExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ArrowFunctionExpressionSyntax {
+        return <ArrowFunctionExpressionSyntax>super.withTrailingTrivia(trivia);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2369,6 +2577,14 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
         }
 
         return new SimpleArrowFunctionExpressionSyntax(identifier, equalsGreaterThanToken, body);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): SimpleArrowFunctionExpressionSyntax {
+        return <SimpleArrowFunctionExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): SimpleArrowFunctionExpressionSyntax {
+        return <SimpleArrowFunctionExpressionSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withIdentifier(identifier: ISyntaxToken): SimpleArrowFunctionExpressionSyntax {
@@ -2473,6 +2689,14 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
         return new ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ParenthesizedArrowFunctionExpressionSyntax {
+        return <ParenthesizedArrowFunctionExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ParenthesizedArrowFunctionExpressionSyntax {
+        return <ParenthesizedArrowFunctionExpressionSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withCallSignature(callSignature: CallSignatureSyntax): ParenthesizedArrowFunctionExpressionSyntax {
         return this.update(callSignature, this._equalsGreaterThanToken, this._body);
     }
@@ -2501,6 +2725,14 @@ class TypeSyntax extends UnaryExpressionSyntax {
         super();
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeSyntax {
+        return <TypeSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): TypeSyntax {
+        return <TypeSyntax>super.withTrailingTrivia(trivia);
+    }
+
     private isTypeScriptSpecific(): bool {
         return false;
     }
@@ -2509,6 +2741,14 @@ class TypeSyntax extends UnaryExpressionSyntax {
 class NameSyntax extends TypeSyntax {
     constructor() {
         super();
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): NameSyntax {
+        return <NameSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): NameSyntax {
+        return <NameSyntax>super.withTrailingTrivia(trivia);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2562,6 +2802,14 @@ class IdentifierNameSyntax extends NameSyntax {
         }
 
         return new IdentifierNameSyntax(identifier);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): IdentifierNameSyntax {
+        return <IdentifierNameSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): IdentifierNameSyntax {
+        return <IdentifierNameSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withIdentifier(identifier: ISyntaxToken): IdentifierNameSyntax {
@@ -2655,6 +2903,14 @@ class QualifiedNameSyntax extends NameSyntax {
         }
 
         return new QualifiedNameSyntax(left, dotToken, right);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): QualifiedNameSyntax {
+        return <QualifiedNameSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): QualifiedNameSyntax {
+        return <QualifiedNameSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withLeft(left: NameSyntax): QualifiedNameSyntax {
@@ -2774,6 +3030,14 @@ class ConstructorTypeSyntax extends TypeSyntax {
         return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ConstructorTypeSyntax {
+        return <ConstructorTypeSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ConstructorTypeSyntax {
+        return <ConstructorTypeSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withNewKeyword(newKeyword: ISyntaxToken): ConstructorTypeSyntax {
         return this.update(newKeyword, this._parameterList, this._equalsGreaterThanToken, this._type);
     }
@@ -2879,6 +3143,14 @@ class FunctionTypeSyntax extends TypeSyntax {
         }
 
         return new FunctionTypeSyntax(parameterList, equalsGreaterThanToken, type);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): FunctionTypeSyntax {
+        return <FunctionTypeSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): FunctionTypeSyntax {
+        return <FunctionTypeSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withParameterList(parameterList: ParameterListSyntax): FunctionTypeSyntax {
@@ -2988,6 +3260,14 @@ class ObjectTypeSyntax extends TypeSyntax {
         return new ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ObjectTypeSyntax {
+        return <ObjectTypeSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ObjectTypeSyntax {
+        return <ObjectTypeSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withOpenBraceToken(openBraceToken: ISyntaxToken): ObjectTypeSyntax {
         return this.update(openBraceToken, this._typeMembers, this._closeBraceToken);
     }
@@ -3090,6 +3370,14 @@ class ArrayTypeSyntax extends TypeSyntax {
         return new ArrayTypeSyntax(type, openBracketToken, closeBracketToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ArrayTypeSyntax {
+        return <ArrayTypeSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ArrayTypeSyntax {
+        return <ArrayTypeSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withType(type: TypeSyntax): ArrayTypeSyntax {
         return this.update(type, this._openBracketToken, this._closeBracketToken);
     }
@@ -3170,6 +3458,14 @@ class PredefinedTypeSyntax extends TypeSyntax {
         return new PredefinedTypeSyntax(keyword);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): PredefinedTypeSyntax {
+        return <PredefinedTypeSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): PredefinedTypeSyntax {
+        return <PredefinedTypeSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withKeyword(keyword: ISyntaxToken): PredefinedTypeSyntax {
         return this.update(keyword);
     }
@@ -3247,6 +3543,14 @@ class TypeAnnotationSyntax extends SyntaxNode {
         }
 
         return new TypeAnnotationSyntax(colonToken, type);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeAnnotationSyntax {
+        return <TypeAnnotationSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): TypeAnnotationSyntax {
+        return <TypeAnnotationSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withColonToken(colonToken: ISyntaxToken): TypeAnnotationSyntax {
@@ -3349,6 +3653,14 @@ class BlockSyntax extends StatementSyntax {
         }
 
         return new BlockSyntax(openBraceToken, statements, closeBraceToken);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): BlockSyntax {
+        return <BlockSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): BlockSyntax {
+        return <BlockSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withOpenBraceToken(openBraceToken: ISyntaxToken): BlockSyntax {
@@ -3501,6 +3813,14 @@ class ParameterSyntax extends SyntaxNode {
         return new ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ParameterSyntax {
+        return <ParameterSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ParameterSyntax {
+        return <ParameterSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withDotDotDotToken(dotDotDotToken: ISyntaxToken): ParameterSyntax {
         return this.update(dotDotDotToken, this._publicOrPrivateKeyword, this._identifier, this._questionToken, this._typeAnnotation, this._equalsValueClause);
     }
@@ -3624,6 +3944,14 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
         return new MemberAccessExpressionSyntax(expression, dotToken, identifierName);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): MemberAccessExpressionSyntax {
+        return <MemberAccessExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): MemberAccessExpressionSyntax {
+        return <MemberAccessExpressionSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withExpression(expression: ExpressionSyntax): MemberAccessExpressionSyntax {
         return this.update(expression, this._dotToken, this._identifierName);
     }
@@ -3712,6 +4040,14 @@ class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
         }
 
         return new PostfixUnaryExpressionSyntax(kind, operand, operatorToken);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): PostfixUnaryExpressionSyntax {
+        return <PostfixUnaryExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): PostfixUnaryExpressionSyntax {
+        return <PostfixUnaryExpressionSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withKind(kind: SyntaxKind): PostfixUnaryExpressionSyntax {
@@ -3830,6 +4166,14 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
         return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ElementAccessExpressionSyntax {
+        return <ElementAccessExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ElementAccessExpressionSyntax {
+        return <ElementAccessExpressionSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withExpression(expression: ExpressionSyntax): ElementAccessExpressionSyntax {
         return this.update(expression, this._openBracketToken, this._argumentExpression, this._closeBracketToken);
     }
@@ -3924,6 +4268,14 @@ class InvocationExpressionSyntax extends UnaryExpressionSyntax {
         }
 
         return new InvocationExpressionSyntax(expression, argumentList);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): InvocationExpressionSyntax {
+        return <InvocationExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): InvocationExpressionSyntax {
+        return <InvocationExpressionSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withExpression(expression: ExpressionSyntax): InvocationExpressionSyntax {
@@ -4028,6 +4380,14 @@ class ArgumentListSyntax extends SyntaxNode {
         }
 
         return new ArgumentListSyntax(openParenToken, _arguments, closeParenToken);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ArgumentListSyntax {
+        return <ArgumentListSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ArgumentListSyntax {
+        return <ArgumentListSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withOpenParenToken(openParenToken: ISyntaxToken): ArgumentListSyntax {
@@ -4172,6 +4532,14 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
         return new BinaryExpressionSyntax(kind, left, operatorToken, right);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): BinaryExpressionSyntax {
+        return <BinaryExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): BinaryExpressionSyntax {
+        return <BinaryExpressionSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withKind(kind: SyntaxKind): BinaryExpressionSyntax {
         return this.update(kind, this._left, this._operatorToken, this._right);
     }
@@ -4308,6 +4676,14 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
         return new ConditionalExpressionSyntax(condition, questionToken, whenTrue, colonToken, whenFalse);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ConditionalExpressionSyntax {
+        return <ConditionalExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ConditionalExpressionSyntax {
+        return <ConditionalExpressionSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withCondition(condition: ExpressionSyntax): ConditionalExpressionSyntax {
         return this.update(condition, this._questionToken, this._whenTrue, this._colonToken, this._whenFalse);
     }
@@ -4351,6 +4727,14 @@ class TypeMemberSyntax extends SyntaxNode {
 
     public typeAnnotation(): TypeAnnotationSyntax {
         throw Errors.abstract();
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeMemberSyntax {
+        return <TypeMemberSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): TypeMemberSyntax {
+        return <TypeMemberSyntax>super.withTrailingTrivia(trivia);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -4439,6 +4823,14 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         }
 
         return new ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ConstructSignatureSyntax {
+        return <ConstructSignatureSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ConstructSignatureSyntax {
+        return <ConstructSignatureSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withNewKeyword(newKeyword: ISyntaxToken): ConstructSignatureSyntax {
@@ -4560,6 +4952,14 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         }
 
         return new FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): FunctionSignatureSyntax {
+        return <FunctionSignatureSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): FunctionSignatureSyntax {
+        return <FunctionSignatureSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withIdentifier(identifier: ISyntaxToken): FunctionSignatureSyntax {
@@ -4689,6 +5089,14 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): IndexSignatureSyntax {
+        return <IndexSignatureSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): IndexSignatureSyntax {
+        return <IndexSignatureSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withOpenBracketToken(openBracketToken: ISyntaxToken): IndexSignatureSyntax {
         return this.update(openBracketToken, this._parameter, this._closeBracketToken, this._typeAnnotation);
     }
@@ -4801,6 +5209,14 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         return new PropertySignatureSyntax(identifier, questionToken, typeAnnotation);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): PropertySignatureSyntax {
+        return <PropertySignatureSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): PropertySignatureSyntax {
+        return <PropertySignatureSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withIdentifier(identifier: ISyntaxToken): PropertySignatureSyntax {
         return this.update(identifier, this._questionToken, this._typeAnnotation);
     }
@@ -4908,6 +5324,14 @@ class ParameterListSyntax extends SyntaxNode {
         return new ParameterListSyntax(openParenToken, parameters, closeParenToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ParameterListSyntax {
+        return <ParameterListSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ParameterListSyntax {
+        return <ParameterListSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withOpenParenToken(openParenToken: ISyntaxToken): ParameterListSyntax {
         return this.update(openParenToken, this._parameters, this._closeParenToken);
     }
@@ -5001,6 +5425,14 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         return new CallSignatureSyntax(parameterList, typeAnnotation);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): CallSignatureSyntax {
+        return <CallSignatureSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): CallSignatureSyntax {
+        return <CallSignatureSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withParameterList(parameterList: ParameterListSyntax): CallSignatureSyntax {
         return this.update(parameterList, this._typeAnnotation);
     }
@@ -5085,6 +5517,14 @@ class ElseClauseSyntax extends SyntaxNode {
         }
 
         return new ElseClauseSyntax(elseKeyword, statement);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ElseClauseSyntax {
+        return <ElseClauseSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ElseClauseSyntax {
+        return <ElseClauseSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withElseKeyword(elseKeyword: ISyntaxToken): ElseClauseSyntax {
@@ -5232,6 +5672,14 @@ class IfStatementSyntax extends StatementSyntax {
         return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): IfStatementSyntax {
+        return <IfStatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): IfStatementSyntax {
+        return <IfStatementSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withIfKeyword(ifKeyword: ISyntaxToken): IfStatementSyntax {
         return this.update(ifKeyword, this._openParenToken, this._condition, this._closeParenToken, this._statement, this._elseClause);
     }
@@ -5339,6 +5787,14 @@ class ExpressionStatementSyntax extends StatementSyntax {
         return new ExpressionStatementSyntax(expression, semicolonToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ExpressionStatementSyntax {
+        return <ExpressionStatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ExpressionStatementSyntax {
+        return <ExpressionStatementSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withExpression(expression: ExpressionSyntax): ExpressionStatementSyntax {
         return this.update(expression, this._semicolonToken);
     }
@@ -5361,6 +5817,14 @@ class ExpressionStatementSyntax extends StatementSyntax {
 class ClassElementSyntax extends SyntaxNode {
     constructor() {
         super();
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ClassElementSyntax {
+        return <ClassElementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ClassElementSyntax {
+        return <ClassElementSyntax>super.withTrailingTrivia(trivia);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -5466,6 +5930,14 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
         return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ConstructorDeclarationSyntax {
+        return <ConstructorDeclarationSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ConstructorDeclarationSyntax {
+        return <ConstructorDeclarationSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withConstructorKeyword(constructorKeyword: ISyntaxToken): ConstructorDeclarationSyntax {
         return this.update(constructorKeyword, this._parameterList, this._block, this._semicolonToken);
     }
@@ -5505,6 +5977,14 @@ class MemberDeclarationSyntax extends ClassElementSyntax {
 
     public staticKeyword(): ISyntaxToken {
         throw Errors.abstract();
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): MemberDeclarationSyntax {
+        return <MemberDeclarationSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): MemberDeclarationSyntax {
+        return <MemberDeclarationSyntax>super.withTrailingTrivia(trivia);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -5626,6 +6106,14 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
         return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): MemberFunctionDeclarationSyntax {
+        return <MemberFunctionDeclarationSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): MemberFunctionDeclarationSyntax {
+        return <MemberFunctionDeclarationSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withPublicOrPrivateKeyword(publicOrPrivateKeyword: ISyntaxToken): MemberFunctionDeclarationSyntax {
         return this.update(publicOrPrivateKeyword, this._staticKeyword, this._functionSignature, this._block, this._semicolonToken);
     }
@@ -5682,6 +6170,14 @@ class MemberAccessorDeclarationSyntax extends MemberDeclarationSyntax {
 
     public block(): BlockSyntax {
         throw Errors.abstract();
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): MemberAccessorDeclarationSyntax {
+        return <MemberAccessorDeclarationSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): MemberAccessorDeclarationSyntax {
+        return <MemberAccessorDeclarationSyntax>super.withTrailingTrivia(trivia);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -5828,6 +6324,14 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         }
 
         return new GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): GetMemberAccessorDeclarationSyntax {
+        return <GetMemberAccessorDeclarationSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): GetMemberAccessorDeclarationSyntax {
+        return <GetMemberAccessorDeclarationSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withPublicOrPrivateKeyword(publicOrPrivateKeyword: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
@@ -6002,6 +6506,14 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return new SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): SetMemberAccessorDeclarationSyntax {
+        return <SetMemberAccessorDeclarationSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): SetMemberAccessorDeclarationSyntax {
+        return <SetMemberAccessorDeclarationSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withPublicOrPrivateKeyword(publicOrPrivateKeyword: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
         return this.update(publicOrPrivateKeyword, this._staticKeyword, this._setKeyword, this._identifier, this._parameterList, this._block);
     }
@@ -6141,6 +6653,14 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
         return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolonToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): MemberVariableDeclarationSyntax {
+        return <MemberVariableDeclarationSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): MemberVariableDeclarationSyntax {
+        return <MemberVariableDeclarationSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withPublicOrPrivateKeyword(publicOrPrivateKeyword: ISyntaxToken): MemberVariableDeclarationSyntax {
         return this.update(publicOrPrivateKeyword, this._staticKeyword, this._variableDeclarator, this._semicolonToken);
     }
@@ -6246,6 +6766,14 @@ class ThrowStatementSyntax extends StatementSyntax {
         }
 
         return new ThrowStatementSyntax(throwKeyword, expression, semicolonToken);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ThrowStatementSyntax {
+        return <ThrowStatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ThrowStatementSyntax {
+        return <ThrowStatementSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withThrowKeyword(throwKeyword: ISyntaxToken): ThrowStatementSyntax {
@@ -6355,6 +6883,14 @@ class ReturnStatementSyntax extends StatementSyntax {
         return new ReturnStatementSyntax(returnKeyword, expression, semicolonToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ReturnStatementSyntax {
+        return <ReturnStatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ReturnStatementSyntax {
+        return <ReturnStatementSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withReturnKeyword(returnKeyword: ISyntaxToken): ReturnStatementSyntax {
         return this.update(returnKeyword, this._expression, this._semicolonToken);
     }
@@ -6460,6 +6996,14 @@ class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
         }
 
         return new ObjectCreationExpressionSyntax(newKeyword, expression, argumentList);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ObjectCreationExpressionSyntax {
+        return <ObjectCreationExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ObjectCreationExpressionSyntax {
+        return <ObjectCreationExpressionSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withNewKeyword(newKeyword: ISyntaxToken): ObjectCreationExpressionSyntax {
@@ -6627,6 +7171,14 @@ class SwitchStatementSyntax extends StatementSyntax {
         return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, caseClauses, closeBraceToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): SwitchStatementSyntax {
+        return <SwitchStatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): SwitchStatementSyntax {
+        return <SwitchStatementSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withSwitchKeyword(switchKeyword: ISyntaxToken): SwitchStatementSyntax {
         return this.update(switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._caseClauses, this._closeBraceToken);
     }
@@ -6683,6 +7235,14 @@ class SwitchClauseSyntax extends SyntaxNode {
 
     public statements(): ISyntaxList {
         throw Errors.abstract();
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): SwitchClauseSyntax {
+        return <SwitchClauseSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): SwitchClauseSyntax {
+        return <SwitchClauseSyntax>super.withTrailingTrivia(trivia);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -6786,6 +7346,14 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         }
 
         return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): CaseSwitchClauseSyntax {
+        return <CaseSwitchClauseSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): CaseSwitchClauseSyntax {
+        return <CaseSwitchClauseSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withCaseKeyword(caseKeyword: ISyntaxToken): CaseSwitchClauseSyntax {
@@ -6902,6 +7470,14 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): DefaultSwitchClauseSyntax {
+        return <DefaultSwitchClauseSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): DefaultSwitchClauseSyntax {
+        return <DefaultSwitchClauseSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withDefaultKeyword(defaultKeyword: ISyntaxToken): DefaultSwitchClauseSyntax {
         return this.update(defaultKeyword, this._colonToken, this._statements);
     }
@@ -7010,6 +7586,14 @@ class BreakStatementSyntax extends StatementSyntax {
         }
 
         return new BreakStatementSyntax(breakKeyword, identifier, semicolonToken);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): BreakStatementSyntax {
+        return <BreakStatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): BreakStatementSyntax {
+        return <BreakStatementSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withBreakKeyword(breakKeyword: ISyntaxToken): BreakStatementSyntax {
@@ -7121,6 +7705,14 @@ class ContinueStatementSyntax extends StatementSyntax {
         return new ContinueStatementSyntax(continueKeyword, identifier, semicolonToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ContinueStatementSyntax {
+        return <ContinueStatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ContinueStatementSyntax {
+        return <ContinueStatementSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withContinueKeyword(continueKeyword: ISyntaxToken): ContinueStatementSyntax {
         return this.update(continueKeyword, this._identifier, this._semicolonToken);
     }
@@ -7161,6 +7753,14 @@ class IterationStatementSyntax extends StatementSyntax {
         throw Errors.abstract();
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): IterationStatementSyntax {
+        return <IterationStatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): IterationStatementSyntax {
+        return <IterationStatementSyntax>super.withTrailingTrivia(trivia);
+    }
+
     private isTypeScriptSpecific(): bool {
         return false;
     }
@@ -7189,6 +7789,14 @@ class BaseForStatementSyntax extends IterationStatementSyntax {
 
     public statement(): StatementSyntax {
         throw Errors.abstract();
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): BaseForStatementSyntax {
+        return <BaseForStatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): BaseForStatementSyntax {
+        return <BaseForStatementSyntax>super.withTrailingTrivia(trivia);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -7369,6 +7977,14 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         }
 
         return new ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ForStatementSyntax {
+        return <ForStatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ForStatementSyntax {
+        return <ForStatementSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withForKeyword(forKeyword: ISyntaxToken): ForStatementSyntax {
@@ -7586,6 +8202,14 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         return new ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration, left, inKeyword, expression, closeParenToken, statement);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ForInStatementSyntax {
+        return <ForInStatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ForInStatementSyntax {
+        return <ForInStatementSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withForKeyword(forKeyword: ISyntaxToken): ForInStatementSyntax {
         return this.update(forKeyword, this._openParenToken, this._variableDeclaration, this._left, this._inKeyword, this._expression, this._closeParenToken, this._statement);
     }
@@ -7744,6 +8368,14 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         return new WhileStatementSyntax(whileKeyword, openParenToken, condition, closeParenToken, statement);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): WhileStatementSyntax {
+        return <WhileStatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): WhileStatementSyntax {
+        return <WhileStatementSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withWhileKeyword(whileKeyword: ISyntaxToken): WhileStatementSyntax {
         return this.update(whileKeyword, this._openParenToken, this._condition, this._closeParenToken, this._statement);
     }
@@ -7883,6 +8515,14 @@ class WithStatementSyntax extends StatementSyntax {
         }
 
         return new WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): WithStatementSyntax {
+        return <WithStatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): WithStatementSyntax {
+        return <WithStatementSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withWithKeyword(withKeyword: ISyntaxToken): WithStatementSyntax {
@@ -8047,6 +8687,14 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
         return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): EnumDeclarationSyntax {
+        return <EnumDeclarationSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): EnumDeclarationSyntax {
+        return <EnumDeclarationSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withExportKeyword(exportKeyword: ISyntaxToken): EnumDeclarationSyntax {
         return this.update(exportKeyword, this._enumKeyword, this._identifier, this._openBraceToken, this._variableDeclarators, this._closeBraceToken);
     }
@@ -8178,6 +8826,14 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
         return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): CastExpressionSyntax {
+        return <CastExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): CastExpressionSyntax {
+        return <CastExpressionSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withLessThanToken(lessThanToken: ISyntaxToken): CastExpressionSyntax {
         return this.update(lessThanToken, this._type, this._greaterThanToken, this._expression);
     }
@@ -8290,6 +8946,14 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
         return new ObjectLiteralExpressionSyntax(openBraceToken, propertyAssignments, closeBraceToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ObjectLiteralExpressionSyntax {
+        return <ObjectLiteralExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ObjectLiteralExpressionSyntax {
+        return <ObjectLiteralExpressionSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withOpenBraceToken(openBraceToken: ISyntaxToken): ObjectLiteralExpressionSyntax {
         return this.update(openBraceToken, this._propertyAssignments, this._closeBraceToken);
     }
@@ -8321,6 +8985,14 @@ class PropertyAssignmentSyntax extends SyntaxNode {
 
     public propertyName(): ISyntaxToken {
         throw Errors.abstract();
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): PropertyAssignmentSyntax {
+        return <PropertyAssignmentSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): PropertyAssignmentSyntax {
+        return <PropertyAssignmentSyntax>super.withTrailingTrivia(trivia);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -8415,6 +9087,14 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         return new SimplePropertyAssignmentSyntax(propertyName, colonToken, expression);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): SimplePropertyAssignmentSyntax {
+        return <SimplePropertyAssignmentSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): SimplePropertyAssignmentSyntax {
+        return <SimplePropertyAssignmentSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withPropertyName(propertyName: ISyntaxToken): SimplePropertyAssignmentSyntax {
         return this.update(propertyName, this._colonToken, this._expression);
     }
@@ -8458,6 +9138,14 @@ class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
 
     public block(): BlockSyntax {
         throw Errors.abstract();
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): AccessorPropertyAssignmentSyntax {
+        return <AccessorPropertyAssignmentSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): AccessorPropertyAssignmentSyntax {
+        return <AccessorPropertyAssignmentSyntax>super.withTrailingTrivia(trivia);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -8568,6 +9256,14 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         }
 
         return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): GetAccessorPropertyAssignmentSyntax {
+        return <GetAccessorPropertyAssignmentSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): GetAccessorPropertyAssignmentSyntax {
+        return <GetAccessorPropertyAssignmentSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withGetKeyword(getKeyword: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
@@ -8723,6 +9419,14 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): SetAccessorPropertyAssignmentSyntax {
+        return <SetAccessorPropertyAssignmentSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): SetAccessorPropertyAssignmentSyntax {
+        return <SetAccessorPropertyAssignmentSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withSetKeyword(setKeyword: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
         return this.update(setKeyword, this._propertyName, this._openParenToken, this._parameterName, this._closeParenToken, this._block);
     }
@@ -8862,6 +9566,14 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
         return new FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): FunctionExpressionSyntax {
+        return <FunctionExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): FunctionExpressionSyntax {
+        return <FunctionExpressionSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withFunctionKeyword(functionKeyword: ISyntaxToken): FunctionExpressionSyntax {
         return this.update(functionKeyword, this._identifier, this._callSignature, this._block);
     }
@@ -8945,6 +9657,14 @@ class EmptyStatementSyntax extends StatementSyntax {
         return new EmptyStatementSyntax(semicolonToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): EmptyStatementSyntax {
+        return <EmptyStatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): EmptyStatementSyntax {
+        return <EmptyStatementSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withSemicolonToken(semicolonToken: ISyntaxToken): EmptyStatementSyntax {
         return this.update(semicolonToken);
     }
@@ -9009,6 +9729,14 @@ class SuperExpressionSyntax extends UnaryExpressionSyntax {
         }
 
         return new SuperExpressionSyntax(superKeyword);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): SuperExpressionSyntax {
+        return <SuperExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): SuperExpressionSyntax {
+        return <SuperExpressionSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withSuperKeyword(superKeyword: ISyntaxToken): SuperExpressionSyntax {
@@ -9117,6 +9845,14 @@ class TryStatementSyntax extends StatementSyntax {
         }
 
         return new TryStatementSyntax(tryKeyword, block, catchClause, finallyClause);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): TryStatementSyntax {
+        return <TryStatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): TryStatementSyntax {
+        return <TryStatementSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withTryKeyword(tryKeyword: ISyntaxToken): TryStatementSyntax {
@@ -9255,6 +9991,14 @@ class CatchClauseSyntax extends SyntaxNode {
         return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): CatchClauseSyntax {
+        return <CatchClauseSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): CatchClauseSyntax {
+        return <CatchClauseSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withCatchKeyword(catchKeyword: ISyntaxToken): CatchClauseSyntax {
         return this.update(catchKeyword, this._openParenToken, this._identifier, this._closeParenToken, this._block);
     }
@@ -9355,6 +10099,14 @@ class FinallyClauseSyntax extends SyntaxNode {
         return new FinallyClauseSyntax(finallyKeyword, block);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): FinallyClauseSyntax {
+        return <FinallyClauseSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): FinallyClauseSyntax {
+        return <FinallyClauseSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withFinallyKeyword(finallyKeyword: ISyntaxToken): FinallyClauseSyntax {
         return this.update(finallyKeyword, this._block);
     }
@@ -9452,6 +10204,14 @@ class LabeledStatement extends StatementSyntax {
         }
 
         return new LabeledStatement(identifier, colonToken, statement);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): LabeledStatement {
+        return <LabeledStatement>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): LabeledStatement {
+        return <LabeledStatement>super.withTrailingTrivia(trivia);
     }
 
     public withIdentifier(identifier: ISyntaxToken): LabeledStatement {
@@ -9610,6 +10370,14 @@ class DoStatementSyntax extends IterationStatementSyntax {
         return new DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): DoStatementSyntax {
+        return <DoStatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): DoStatementSyntax {
+        return <DoStatementSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withDoKeyword(doKeyword: ISyntaxToken): DoStatementSyntax {
         return this.update(doKeyword, this._statement, this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, this._semicolonToken);
     }
@@ -9721,6 +10489,14 @@ class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
         return new TypeOfExpressionSyntax(typeOfKeyword, expression);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeOfExpressionSyntax {
+        return <TypeOfExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): TypeOfExpressionSyntax {
+        return <TypeOfExpressionSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withTypeOfKeyword(typeOfKeyword: ISyntaxToken): TypeOfExpressionSyntax {
         return this.update(typeOfKeyword, this._expression);
     }
@@ -9804,6 +10580,14 @@ class DeleteExpressionSyntax extends UnaryExpressionSyntax {
         }
 
         return new DeleteExpressionSyntax(deleteKeyword, expression);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): DeleteExpressionSyntax {
+        return <DeleteExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): DeleteExpressionSyntax {
+        return <DeleteExpressionSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withDeleteKeyword(deleteKeyword: ISyntaxToken): DeleteExpressionSyntax {
@@ -9891,6 +10675,14 @@ class VoidExpressionSyntax extends UnaryExpressionSyntax {
         return new VoidExpressionSyntax(voidKeyword, expression);
     }
 
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): VoidExpressionSyntax {
+        return <VoidExpressionSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): VoidExpressionSyntax {
+        return <VoidExpressionSyntax>super.withTrailingTrivia(trivia);
+    }
+
     public withVoidKeyword(voidKeyword: ISyntaxToken): VoidExpressionSyntax {
         return this.update(voidKeyword, this._expression);
     }
@@ -9974,6 +10766,14 @@ class DebuggerStatementSyntax extends StatementSyntax {
         }
 
         return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): DebuggerStatementSyntax {
+        return <DebuggerStatementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): DebuggerStatementSyntax {
+        return <DebuggerStatementSyntax>super.withTrailingTrivia(trivia);
     }
 
     public withDebuggerKeyword(debuggerKeyword: ISyntaxToken): DebuggerStatementSyntax {
