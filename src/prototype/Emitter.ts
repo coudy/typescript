@@ -1169,22 +1169,18 @@ class Emitter extends SyntaxRewriter {
                 // _.Foo = 1
                 var innerAssign = new BinaryExpressionSyntax(
                     SyntaxKind.AssignmentExpression,
-                    new MemberAccessExpressionSyntax(
+                    MemberAccessExpressionSyntax.create1(
                         new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "_" })),
-                        SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
                         new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space))),
                     SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceArray }),
                     this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues.value, i))
 
                 // _._map[_.Foo = 1]
-                var elementAccessExpression = new ElementAccessExpressionSyntax(
-                    new MemberAccessExpressionSyntax(
+                var elementAccessExpression = ElementAccessExpressionSyntax.create1(
+                    MemberAccessExpressionSyntax.create1(
                         new IdentifierNameSyntax(SyntaxToken.createElastic({ leadingTrivia: initIndentationTrivia, kind: SyntaxKind.IdentifierNameToken, text: "_" })),
-                        SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
                         new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "_map" }))),
-                    SyntaxToken.createElastic({ kind: SyntaxKind.OpenBracketToken }),
-                    innerAssign,
-                    SyntaxToken.createElastic({ kind: SyntaxKind.CloseBracketToken, trailingTrivia: this.spaceArray }));
+                    innerAssign).withTrailingTrivia(this.spaceList);
 
                 //_._map[_.Foo = 1] = "Foo"
                 var outerAssign = new BinaryExpressionSyntax(
@@ -1195,9 +1191,8 @@ class Emitter extends SyntaxRewriter {
                         SyntaxKind.StringLiteralExpression,
                         SyntaxToken.createElastic({ kind: SyntaxKind.StringLiteral, text: '"' + variableIdentifier.text() + '"' })));
 
-                var expressionStatement = new ExpressionStatementSyntax(
-                    outerAssign,
-                    SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineArray }));
+                var expressionStatement = ExpressionStatementSyntax.create1(
+                    outerAssign).withTrailingTrivia(this.newLineList);
 
                 statements.push(expressionStatement);
             }
