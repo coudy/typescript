@@ -2293,7 +2293,8 @@ var definitions = [
             {
                 name: 'questionToken',
                 isToken: true,
-                isOptional: true
+                isOptional: true,
+                itTypeScriptSpecific: true
             }, 
             {
                 name: 'parameterList',
@@ -3831,7 +3832,7 @@ function generateUpdateMethod(definition) {
             result += ",\r\n                  ";
         }
     }
-    result += ") {\r\n";
+    result += "): " + definition.name + " {\r\n";
     if(definition.children.length === 0) {
         result += "        return this;\r\n";
     } else {

@@ -56,7 +56,7 @@ class SourceUnitSyntax extends SyntaxNode {
     }
 
     public update(moduleElements: ISyntaxList,
-                  endOfFileToken: ISyntaxToken) {
+                  endOfFileToken: ISyntaxToken): SourceUnitSyntax {
         if (this._moduleElements === moduleElements && this._endOfFileToken === endOfFileToken) {
             return this;
         }
@@ -179,7 +179,7 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
     public update(moduleKeyword: ISyntaxToken,
                   openParenToken: ISyntaxToken,
                   stringLiteral: ISyntaxToken,
-                  closeParenToken: ISyntaxToken) {
+                  closeParenToken: ISyntaxToken): ExternalModuleReferenceSyntax {
         if (this._moduleKeyword === moduleKeyword && this._openParenToken === openParenToken && this._stringLiteral === stringLiteral && this._closeParenToken === closeParenToken) {
             return this;
         }
@@ -255,7 +255,7 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         return this._moduleName;
     }
 
-    private update(moduleName: NameSyntax) {
+    private update(moduleName: NameSyntax): ModuleNameModuleReferenceSyntax {
         if (this._moduleName === moduleName) {
             return this;
         }
@@ -364,7 +364,7 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
                   identifier: ISyntaxToken,
                   equalsToken: ISyntaxToken,
                   moduleReference: ModuleReferenceSyntax,
-                  semicolonToken: ISyntaxToken) {
+                  semicolonToken: ISyntaxToken): ImportDeclarationSyntax {
         if (this._importKeyword === importKeyword && this._identifier === identifier && this._equalsToken === equalsToken && this._moduleReference === moduleReference && this._semicolonToken === semicolonToken) {
             return this;
         }
@@ -550,7 +550,7 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
                   implementsClause: ImplementsClauseSyntax,
                   openBraceToken: ISyntaxToken,
                   classElements: ISyntaxList,
-                  closeBraceToken: ISyntaxToken) {
+                  closeBraceToken: ISyntaxToken): ClassDeclarationSyntax {
         if (this._exportKeyword === exportKeyword && this._declareKeyword === declareKeyword && this._classKeyword === classKeyword && this._identifier === identifier && this._extendsClause === extendsClause && this._implementsClause === implementsClause && this._openBraceToken === openBraceToken && this._classElements === classElements && this._closeBraceToken === closeBraceToken) {
             return this;
         }
@@ -706,7 +706,7 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
                   interfaceKeyword: ISyntaxToken,
                   identifier: ISyntaxToken,
                   extendsClause: ExtendsClauseSyntax,
-                  body: ObjectTypeSyntax) {
+                  body: ObjectTypeSyntax): InterfaceDeclarationSyntax {
         if (this._exportKeyword === exportKeyword && this._interfaceKeyword === interfaceKeyword && this._identifier === identifier && this._extendsClause === extendsClause && this._body === body) {
             return this;
         }
@@ -803,7 +803,7 @@ class ExtendsClauseSyntax extends SyntaxNode {
     }
 
     public update(extendsKeyword: ISyntaxToken,
-                  typeNames: ISeparatedSyntaxList) {
+                  typeNames: ISeparatedSyntaxList): ExtendsClauseSyntax {
         if (this._extendsKeyword === extendsKeyword && this._typeNames === typeNames) {
             return this;
         }
@@ -885,7 +885,7 @@ class ImplementsClauseSyntax extends SyntaxNode {
     }
 
     public update(implementsKeyword: ISyntaxToken,
-                  typeNames: ISeparatedSyntaxList) {
+                  typeNames: ISeparatedSyntaxList): ImplementsClauseSyntax {
         if (this._implementsKeyword === implementsKeyword && this._typeNames === typeNames) {
             return this;
         }
@@ -1046,7 +1046,7 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
                   stringLiteral: ISyntaxToken,
                   openBraceToken: ISyntaxToken,
                   moduleElements: ISyntaxList,
-                  closeBraceToken: ISyntaxToken) {
+                  closeBraceToken: ISyntaxToken): ModuleDeclarationSyntax {
         if (this._exportKeyword === exportKeyword && this._declareKeyword === declareKeyword && this._moduleKeyword === moduleKeyword && this._moduleName === moduleName && this._stringLiteral === stringLiteral && this._openBraceToken === openBraceToken && this._moduleElements === moduleElements && this._closeBraceToken === closeBraceToken) {
             return this;
         }
@@ -1222,7 +1222,7 @@ class FunctionDeclarationSyntax extends StatementSyntax {
                   functionKeyword: ISyntaxToken,
                   functionSignature: FunctionSignatureSyntax,
                   block: BlockSyntax,
-                  semicolonToken: ISyntaxToken) {
+                  semicolonToken: ISyntaxToken): FunctionDeclarationSyntax {
         if (this._exportKeyword === exportKeyword && this._declareKeyword === declareKeyword && this._functionKeyword === functionKeyword && this._functionSignature === functionSignature && this._block === block && this._semicolonToken === semicolonToken) {
             return this;
         }
@@ -1357,7 +1357,7 @@ class VariableStatementSyntax extends StatementSyntax {
     public update(exportKeyword: ISyntaxToken,
                   declareKeyword: ISyntaxToken,
                   variableDeclaration: VariableDeclarationSyntax,
-                  semicolonToken: ISyntaxToken) {
+                  semicolonToken: ISyntaxToken): VariableStatementSyntax {
         if (this._exportKeyword === exportKeyword && this._declareKeyword === declareKeyword && this._variableDeclaration === variableDeclaration && this._semicolonToken === semicolonToken) {
             return this;
         }
@@ -1472,7 +1472,7 @@ class VariableDeclarationSyntax extends SyntaxNode {
     }
 
     public update(varKeyword: ISyntaxToken,
-                  variableDeclarators: ISeparatedSyntaxList) {
+                  variableDeclarators: ISeparatedSyntaxList): VariableDeclarationSyntax {
         if (this._varKeyword === varKeyword && this._variableDeclarators === variableDeclarators) {
             return this;
         }
@@ -1565,7 +1565,7 @@ class VariableDeclaratorSyntax extends SyntaxNode {
 
     public update(identifier: ISyntaxToken,
                   typeAnnotation: TypeAnnotationSyntax,
-                  equalsValueClause: EqualsValueClauseSyntax) {
+                  equalsValueClause: EqualsValueClauseSyntax): VariableDeclaratorSyntax {
         if (this._identifier === identifier && this._typeAnnotation === typeAnnotation && this._equalsValueClause === equalsValueClause) {
             return this;
         }
@@ -1650,7 +1650,7 @@ class EqualsValueClauseSyntax extends SyntaxNode {
     }
 
     public update(equalsToken: ISyntaxToken,
-                  value: ExpressionSyntax) {
+                  value: ExpressionSyntax): EqualsValueClauseSyntax {
         if (this._equalsToken === equalsToken && this._value === value) {
             return this;
         }
@@ -1744,7 +1744,7 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
 
     public update(kind: SyntaxKind,
                   operatorToken: ISyntaxToken,
-                  operand: UnaryExpressionSyntax) {
+                  operand: UnaryExpressionSyntax): PrefixUnaryExpressionSyntax {
         if (this._kind === kind && this._operatorToken === operatorToken && this._operand === operand) {
             return this;
         }
@@ -1815,7 +1815,7 @@ class ThisExpressionSyntax extends UnaryExpressionSyntax {
         return this._thisKeyword;
     }
 
-    private update(thisKeyword: ISyntaxToken) {
+    private update(thisKeyword: ISyntaxToken): ThisExpressionSyntax {
         if (this._thisKeyword === thisKeyword) {
             return this;
         }
@@ -1898,7 +1898,7 @@ class LiteralExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     public update(kind: SyntaxKind,
-                  literalToken: ISyntaxToken) {
+                  literalToken: ISyntaxToken): LiteralExpressionSyntax {
         if (this._kind === kind && this._literalToken === literalToken) {
             return this;
         }
@@ -1992,7 +1992,7 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
 
     public update(openBracketToken: ISyntaxToken,
                   expressions: ISeparatedSyntaxList,
-                  closeBracketToken: ISyntaxToken) {
+                  closeBracketToken: ISyntaxToken): ArrayLiteralExpressionSyntax {
         if (this._openBracketToken === openBracketToken && this._expressions === expressions && this._closeBracketToken === closeBracketToken) {
             return this;
         }
@@ -2051,7 +2051,7 @@ class OmittedExpressionSyntax extends ExpressionSyntax {
         return null;
     }
 
-    private update() {
+    private update(): OmittedExpressionSyntax {
         return this;
     }
 
@@ -2127,7 +2127,7 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
 
     public update(openParenToken: ISyntaxToken,
                   expression: ExpressionSyntax,
-                  closeParenToken: ISyntaxToken) {
+                  closeParenToken: ISyntaxToken): ParenthesizedExpressionSyntax {
         if (this._openParenToken === openParenToken && this._expression === expression && this._closeParenToken === closeParenToken) {
             return this;
         }
@@ -2241,7 +2241,7 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
 
     public update(identifier: ISyntaxToken,
                   equalsGreaterThanToken: ISyntaxToken,
-                  body: SyntaxNode) {
+                  body: SyntaxNode): SimpleArrowFunctionExpressionSyntax {
         if (this._identifier === identifier && this._equalsGreaterThanToken === equalsGreaterThanToken && this._body === body) {
             return this;
         }
@@ -2336,7 +2336,7 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
 
     public update(callSignature: CallSignatureSyntax,
                   equalsGreaterThanToken: ISyntaxToken,
-                  body: SyntaxNode) {
+                  body: SyntaxNode): ParenthesizedArrowFunctionExpressionSyntax {
         if (this._callSignature === callSignature && this._equalsGreaterThanToken === equalsGreaterThanToken && this._body === body) {
             return this;
         }
@@ -2427,7 +2427,7 @@ class IdentifierNameSyntax extends NameSyntax {
         return this._identifier;
     }
 
-    private update(identifier: ISyntaxToken) {
+    private update(identifier: ISyntaxToken): IdentifierNameSyntax {
         if (this._identifier === identifier) {
             return this;
         }
@@ -2512,7 +2512,7 @@ class QualifiedNameSyntax extends NameSyntax {
 
     public update(left: NameSyntax,
                   dotToken: ISyntaxToken,
-                  right: IdentifierNameSyntax) {
+                  right: IdentifierNameSyntax): QualifiedNameSyntax {
         if (this._left === left && this._dotToken === dotToken && this._right === right) {
             return this;
         }
@@ -2621,7 +2621,7 @@ class ConstructorTypeSyntax extends TypeSyntax {
     public update(newKeyword: ISyntaxToken,
                   parameterList: ParameterListSyntax,
                   equalsGreaterThanToken: ISyntaxToken,
-                  type: TypeSyntax) {
+                  type: TypeSyntax): ConstructorTypeSyntax {
         if (this._newKeyword === newKeyword && this._parameterList === parameterList && this._equalsGreaterThanToken === equalsGreaterThanToken && this._type === type) {
             return this;
         }
@@ -2721,7 +2721,7 @@ class FunctionTypeSyntax extends TypeSyntax {
 
     public update(parameterList: ParameterListSyntax,
                   equalsGreaterThanToken: ISyntaxToken,
-                  type: TypeSyntax) {
+                  type: TypeSyntax): FunctionTypeSyntax {
         if (this._parameterList === parameterList && this._equalsGreaterThanToken === equalsGreaterThanToken && this._type === type) {
             return this;
         }
@@ -2821,7 +2821,7 @@ class ObjectTypeSyntax extends TypeSyntax {
 
     public update(openBraceToken: ISyntaxToken,
                   typeMembers: ISeparatedSyntaxList,
-                  closeBraceToken: ISyntaxToken) {
+                  closeBraceToken: ISyntaxToken): ObjectTypeSyntax {
         if (this._openBraceToken === openBraceToken && this._typeMembers === typeMembers && this._closeBraceToken === closeBraceToken) {
             return this;
         }
@@ -2916,7 +2916,7 @@ class ArrayTypeSyntax extends TypeSyntax {
 
     public update(type: TypeSyntax,
                   openBracketToken: ISyntaxToken,
-                  closeBracketToken: ISyntaxToken) {
+                  closeBracketToken: ISyntaxToken): ArrayTypeSyntax {
         if (this._type === type && this._openBracketToken === openBracketToken && this._closeBracketToken === closeBracketToken) {
             return this;
         }
@@ -2996,7 +2996,7 @@ class PredefinedTypeSyntax extends TypeSyntax {
         return this._keyword;
     }
 
-    private update(keyword: ISyntaxToken) {
+    private update(keyword: ISyntaxToken): PredefinedTypeSyntax {
         if (this._keyword === keyword) {
             return this;
         }
@@ -3069,7 +3069,7 @@ class TypeAnnotationSyntax extends SyntaxNode {
     }
 
     public update(colonToken: ISyntaxToken,
-                  type: TypeSyntax) {
+                  type: TypeSyntax): TypeAnnotationSyntax {
         if (this._colonToken === colonToken && this._type === type) {
             return this;
         }
@@ -3164,7 +3164,7 @@ class BlockSyntax extends StatementSyntax {
 
     public update(openBraceToken: ISyntaxToken,
                   statements: ISyntaxList,
-                  closeBraceToken: ISyntaxToken) {
+                  closeBraceToken: ISyntaxToken): BlockSyntax {
         if (this._openBraceToken === openBraceToken && this._statements === statements && this._closeBraceToken === closeBraceToken) {
             return this;
         }
@@ -3304,7 +3304,7 @@ class ParameterSyntax extends SyntaxNode {
                   identifier: ISyntaxToken,
                   questionToken: ISyntaxToken,
                   typeAnnotation: TypeAnnotationSyntax,
-                  equalsValueClause: EqualsValueClauseSyntax) {
+                  equalsValueClause: EqualsValueClauseSyntax): ParameterSyntax {
         if (this._dotDotDotToken === dotDotDotToken && this._publicOrPrivateKeyword === publicOrPrivateKeyword && this._identifier === identifier && this._questionToken === questionToken && this._typeAnnotation === typeAnnotation && this._equalsValueClause === equalsValueClause) {
             return this;
         }
@@ -3419,7 +3419,7 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
 
     public update(expression: ExpressionSyntax,
                   dotToken: ISyntaxToken,
-                  identifierName: IdentifierNameSyntax) {
+                  identifierName: IdentifierNameSyntax): MemberAccessExpressionSyntax {
         if (this._expression === expression && this._dotToken === dotToken && this._identifierName === identifierName) {
             return this;
         }
@@ -3509,7 +3509,7 @@ class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
 
     public update(kind: SyntaxKind,
                   operand: ExpressionSyntax,
-                  operatorToken: ISyntaxToken) {
+                  operatorToken: ISyntaxToken): PostfixUnaryExpressionSyntax {
         if (this._kind === kind && this._operand === operand && this._operatorToken === operatorToken) {
             return this;
         }
@@ -3616,7 +3616,7 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
     public update(expression: ExpressionSyntax,
                   openBracketToken: ISyntaxToken,
                   argumentExpression: ExpressionSyntax,
-                  closeBracketToken: ISyntaxToken) {
+                  closeBracketToken: ISyntaxToken): ElementAccessExpressionSyntax {
         if (this._expression === expression && this._openBracketToken === openBracketToken && this._argumentExpression === argumentExpression && this._closeBracketToken === closeBracketToken) {
             return this;
         }
@@ -3706,7 +3706,7 @@ class InvocationExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     public update(expression: ExpressionSyntax,
-                  argumentList: ArgumentListSyntax) {
+                  argumentList: ArgumentListSyntax): InvocationExpressionSyntax {
         if (this._expression === expression && this._argumentList === argumentList) {
             return this;
         }
@@ -3803,7 +3803,7 @@ class ArgumentListSyntax extends SyntaxNode {
 
     public update(openParenToken: ISyntaxToken,
                   _arguments: ISeparatedSyntaxList,
-                  closeParenToken: ISyntaxToken) {
+                  closeParenToken: ISyntaxToken): ArgumentListSyntax {
         if (this._openParenToken === openParenToken && this._arguments === _arguments && this._closeParenToken === closeParenToken) {
             return this;
         }
@@ -3945,7 +3945,7 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
     public update(kind: SyntaxKind,
                   left: ExpressionSyntax,
                   operatorToken: ISyntaxToken,
-                  right: ExpressionSyntax) {
+                  right: ExpressionSyntax): BinaryExpressionSyntax {
         if (this._kind === kind && this._left === left && this._operatorToken === operatorToken && this._right === right) {
             return this;
         }
@@ -4070,7 +4070,7 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
                   questionToken: ISyntaxToken,
                   whenTrue: ExpressionSyntax,
                   colonToken: ISyntaxToken,
-                  whenFalse: ExpressionSyntax) {
+                  whenFalse: ExpressionSyntax): ConditionalExpressionSyntax {
         if (this._condition === condition && this._questionToken === questionToken && this._whenTrue === whenTrue && this._colonToken === colonToken && this._whenFalse === whenFalse) {
             return this;
         }
@@ -4196,7 +4196,7 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
 
     public update(newKeyword: ISyntaxToken,
                   parameterList: ParameterListSyntax,
-                  typeAnnotation: TypeAnnotationSyntax) {
+                  typeAnnotation: TypeAnnotationSyntax): ConstructSignatureSyntax {
         if (this._newKeyword === newKeyword && this._parameterList === parameterList && this._typeAnnotation === typeAnnotation) {
             return this;
         }
@@ -4309,7 +4309,7 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
     public update(identifier: ISyntaxToken,
                   questionToken: ISyntaxToken,
                   parameterList: ParameterListSyntax,
-                  typeAnnotation: TypeAnnotationSyntax) {
+                  typeAnnotation: TypeAnnotationSyntax): FunctionSignatureSyntax {
         if (this._identifier === identifier && this._questionToken === questionToken && this._parameterList === parameterList && this._typeAnnotation === typeAnnotation) {
             return this;
         }
@@ -4428,7 +4428,7 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
     public update(openBracketToken: ISyntaxToken,
                   parameter: ParameterSyntax,
                   closeBracketToken: ISyntaxToken,
-                  typeAnnotation: TypeAnnotationSyntax) {
+                  typeAnnotation: TypeAnnotationSyntax): IndexSignatureSyntax {
         if (this._openBracketToken === openBracketToken && this._parameter === parameter && this._closeBracketToken === closeBracketToken && this._typeAnnotation === typeAnnotation) {
             return this;
         }
@@ -4533,7 +4533,7 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
 
     public update(identifier: ISyntaxToken,
                   questionToken: ISyntaxToken,
-                  typeAnnotation: TypeAnnotationSyntax) {
+                  typeAnnotation: TypeAnnotationSyntax): PropertySignatureSyntax {
         if (this._identifier === identifier && this._questionToken === questionToken && this._typeAnnotation === typeAnnotation) {
             return this;
         }
@@ -4633,7 +4633,7 @@ class ParameterListSyntax extends SyntaxNode {
 
     public update(openParenToken: ISyntaxToken,
                   parameters: ISeparatedSyntaxList,
-                  closeParenToken: ISyntaxToken) {
+                  closeParenToken: ISyntaxToken): ParameterListSyntax {
         if (this._openParenToken === openParenToken && this._parameters === parameters && this._closeParenToken === closeParenToken) {
             return this;
         }
@@ -4720,7 +4720,7 @@ class CallSignatureSyntax extends TypeMemberSyntax {
     }
 
     public update(parameterList: ParameterListSyntax,
-                  typeAnnotation: TypeAnnotationSyntax) {
+                  typeAnnotation: TypeAnnotationSyntax): CallSignatureSyntax {
         if (this._parameterList === parameterList && this._typeAnnotation === typeAnnotation) {
             return this;
         }
@@ -4800,7 +4800,7 @@ class ElseClauseSyntax extends SyntaxNode {
     }
 
     public update(elseKeyword: ISyntaxToken,
-                  statement: StatementSyntax) {
+                  statement: StatementSyntax): ElseClauseSyntax {
         if (this._elseKeyword === elseKeyword && this._statement === statement) {
             return this;
         }
@@ -4934,7 +4934,7 @@ class IfStatementSyntax extends StatementSyntax {
                   condition: ExpressionSyntax,
                   closeParenToken: ISyntaxToken,
                   statement: StatementSyntax,
-                  elseClause: ElseClauseSyntax) {
+                  elseClause: ElseClauseSyntax): IfStatementSyntax {
         if (this._ifKeyword === ifKeyword && this._openParenToken === openParenToken && this._condition === condition && this._closeParenToken === closeParenToken && this._statement === statement && this._elseClause === elseClause) {
             return this;
         }
@@ -5035,7 +5035,7 @@ class ExpressionStatementSyntax extends StatementSyntax {
     }
 
     public update(expression: ExpressionSyntax,
-                  semicolonToken: ISyntaxToken) {
+                  semicolonToken: ISyntaxToken): ExpressionStatementSyntax {
         if (this._expression === expression && this._semicolonToken === semicolonToken) {
             return this;
         }
@@ -5154,7 +5154,7 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
     public update(constructorKeyword: ISyntaxToken,
                   parameterList: ParameterListSyntax,
                   block: BlockSyntax,
-                  semicolonToken: ISyntaxToken) {
+                  semicolonToken: ISyntaxToken): ConstructorDeclarationSyntax {
         if (this._constructorKeyword === constructorKeyword && this._parameterList === parameterList && this._block === block && this._semicolonToken === semicolonToken) {
             return this;
         }
@@ -5305,7 +5305,7 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
                   staticKeyword: ISyntaxToken,
                   functionSignature: FunctionSignatureSyntax,
                   block: BlockSyntax,
-                  semicolonToken: ISyntaxToken) {
+                  semicolonToken: ISyntaxToken): MemberFunctionDeclarationSyntax {
         if (this._publicOrPrivateKeyword === publicOrPrivateKeyword && this._staticKeyword === staticKeyword && this._functionSignature === functionSignature && this._block === block && this._semicolonToken === semicolonToken) {
             return this;
         }
@@ -5498,7 +5498,7 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
                   identifier: ISyntaxToken,
                   parameterList: ParameterListSyntax,
                   typeAnnotation: TypeAnnotationSyntax,
-                  block: BlockSyntax) {
+                  block: BlockSyntax): GetMemberAccessorDeclarationSyntax {
         if (this._publicOrPrivateKeyword === publicOrPrivateKeyword && this._staticKeyword === staticKeyword && this._getKeyword === getKeyword && this._identifier === identifier && this._parameterList === parameterList && this._typeAnnotation === typeAnnotation && this._block === block) {
             return this;
         }
@@ -5660,7 +5660,7 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
                   setKeyword: ISyntaxToken,
                   identifier: ISyntaxToken,
                   parameterList: ParameterListSyntax,
-                  block: BlockSyntax) {
+                  block: BlockSyntax): SetMemberAccessorDeclarationSyntax {
         if (this._publicOrPrivateKeyword === publicOrPrivateKeyword && this._staticKeyword === staticKeyword && this._setKeyword === setKeyword && this._identifier === identifier && this._parameterList === parameterList && this._block === block) {
             return this;
         }
@@ -5791,7 +5791,7 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
     public update(publicOrPrivateKeyword: ISyntaxToken,
                   staticKeyword: ISyntaxToken,
                   variableDeclarator: VariableDeclaratorSyntax,
-                  semicolonToken: ISyntaxToken) {
+                  semicolonToken: ISyntaxToken): MemberVariableDeclarationSyntax {
         if (this._publicOrPrivateKeyword === publicOrPrivateKeyword && this._staticKeyword === staticKeyword && this._variableDeclarator === variableDeclarator && this._semicolonToken === semicolonToken) {
             return this;
         }
@@ -5891,7 +5891,7 @@ class ThrowStatementSyntax extends StatementSyntax {
 
     public update(throwKeyword: ISyntaxToken,
                   expression: ExpressionSyntax,
-                  semicolonToken: ISyntaxToken) {
+                  semicolonToken: ISyntaxToken): ThrowStatementSyntax {
         if (this._throwKeyword === throwKeyword && this._expression === expression && this._semicolonToken === semicolonToken) {
             return this;
         }
@@ -5991,7 +5991,7 @@ class ReturnStatementSyntax extends StatementSyntax {
 
     public update(returnKeyword: ISyntaxToken,
                   expression: ExpressionSyntax,
-                  semicolonToken: ISyntaxToken) {
+                  semicolonToken: ISyntaxToken): ReturnStatementSyntax {
         if (this._returnKeyword === returnKeyword && this._expression === expression && this._semicolonToken === semicolonToken) {
             return this;
         }
@@ -6091,7 +6091,7 @@ class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
 
     public update(newKeyword: ISyntaxToken,
                   expression: ExpressionSyntax,
-                  argumentList: ArgumentListSyntax) {
+                  argumentList: ArgumentListSyntax): ObjectCreationExpressionSyntax {
         if (this._newKeyword === newKeyword && this._expression === expression && this._argumentList === argumentList) {
             return this;
         }
@@ -6245,7 +6245,7 @@ class SwitchStatementSyntax extends StatementSyntax {
                   closeParenToken: ISyntaxToken,
                   openBraceToken: ISyntaxToken,
                   caseClauses: ISyntaxList,
-                  closeBraceToken: ISyntaxToken) {
+                  closeBraceToken: ISyntaxToken): SwitchStatementSyntax {
         if (this._switchKeyword === switchKeyword && this._openParenToken === openParenToken && this._expression === expression && this._closeParenToken === closeParenToken && this._openBraceToken === openBraceToken && this._caseClauses === caseClauses && this._closeBraceToken === closeBraceToken) {
             return this;
         }
@@ -6398,7 +6398,7 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
     public update(caseKeyword: ISyntaxToken,
                   expression: ExpressionSyntax,
                   colonToken: ISyntaxToken,
-                  statements: ISyntaxList) {
+                  statements: ISyntaxList): CaseSwitchClauseSyntax {
         if (this._caseKeyword === caseKeyword && this._expression === expression && this._colonToken === colonToken && this._statements === statements) {
             return this;
         }
@@ -6505,7 +6505,7 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
 
     public update(defaultKeyword: ISyntaxToken,
                   colonToken: ISyntaxToken,
-                  statements: ISyntaxList) {
+                  statements: ISyntaxList): DefaultSwitchClauseSyntax {
         if (this._defaultKeyword === defaultKeyword && this._colonToken === colonToken && this._statements === statements) {
             return this;
         }
@@ -6608,7 +6608,7 @@ class BreakStatementSyntax extends StatementSyntax {
 
     public update(breakKeyword: ISyntaxToken,
                   identifier: ISyntaxToken,
-                  semicolonToken: ISyntaxToken) {
+                  semicolonToken: ISyntaxToken): BreakStatementSyntax {
         if (this._breakKeyword === breakKeyword && this._identifier === identifier && this._semicolonToken === semicolonToken) {
             return this;
         }
@@ -6710,7 +6710,7 @@ class ContinueStatementSyntax extends StatementSyntax {
 
     public update(continueKeyword: ISyntaxToken,
                   identifier: ISyntaxToken,
-                  semicolonToken: ISyntaxToken) {
+                  semicolonToken: ISyntaxToken): ContinueStatementSyntax {
         if (this._continueKeyword === continueKeyword && this._identifier === identifier && this._semicolonToken === semicolonToken) {
             return this;
         }
@@ -6946,7 +6946,7 @@ class ForStatementSyntax extends BaseForStatementSyntax {
                   secondSemicolonToken: ISyntaxToken,
                   incrementor: ExpressionSyntax,
                   closeParenToken: ISyntaxToken,
-                  statement: StatementSyntax) {
+                  statement: StatementSyntax): ForStatementSyntax {
         if (this._forKeyword === forKeyword && this._openParenToken === openParenToken && this._variableDeclaration === variableDeclaration && this._initializer === initializer && this._firstSemicolonToken === firstSemicolonToken && this._condition === condition && this._secondSemicolonToken === secondSemicolonToken && this._incrementor === incrementor && this._closeParenToken === closeParenToken && this._statement === statement) {
             return this;
         }
@@ -7148,7 +7148,7 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
                   inKeyword: ISyntaxToken,
                   expression: ExpressionSyntax,
                   closeParenToken: ISyntaxToken,
-                  statement: StatementSyntax) {
+                  statement: StatementSyntax): ForInStatementSyntax {
         if (this._forKeyword === forKeyword && this._openParenToken === openParenToken && this._variableDeclaration === variableDeclaration && this._left === left && this._inKeyword === inKeyword && this._expression === expression && this._closeParenToken === closeParenToken && this._statement === statement) {
             return this;
         }
@@ -7296,7 +7296,7 @@ class WhileStatementSyntax extends IterationStatementSyntax {
                   openParenToken: ISyntaxToken,
                   condition: ExpressionSyntax,
                   closeParenToken: ISyntaxToken,
-                  statement: StatementSyntax) {
+                  statement: StatementSyntax): WhileStatementSyntax {
         if (this._whileKeyword === whileKeyword && this._openParenToken === openParenToken && this._condition === condition && this._closeParenToken === closeParenToken && this._statement === statement) {
             return this;
         }
@@ -7427,7 +7427,7 @@ class WithStatementSyntax extends StatementSyntax {
                   openParenToken: ISyntaxToken,
                   condition: ExpressionSyntax,
                   closeParenToken: ISyntaxToken,
-                  statement: StatementSyntax) {
+                  statement: StatementSyntax): WithStatementSyntax {
         if (this._withKeyword === withKeyword && this._openParenToken === openParenToken && this._condition === condition && this._closeParenToken === closeParenToken && this._statement === statement) {
             return this;
         }
@@ -7579,7 +7579,7 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
                   identifier: ISyntaxToken,
                   openBraceToken: ISyntaxToken,
                   variableDeclarators: ISeparatedSyntaxList,
-                  closeBraceToken: ISyntaxToken) {
+                  closeBraceToken: ISyntaxToken): EnumDeclarationSyntax {
         if (this._exportKeyword === exportKeyword && this._enumKeyword === enumKeyword && this._identifier === identifier && this._openBraceToken === openBraceToken && this._variableDeclarators === variableDeclarators && this._closeBraceToken === closeBraceToken) {
             return this;
         }
@@ -7701,7 +7701,7 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
     public update(lessThanToken: ISyntaxToken,
                   type: TypeSyntax,
                   greaterThanToken: ISyntaxToken,
-                  expression: UnaryExpressionSyntax) {
+                  expression: UnaryExpressionSyntax): CastExpressionSyntax {
         if (this._lessThanToken === lessThanToken && this._type === type && this._greaterThanToken === greaterThanToken && this._expression === expression) {
             return this;
         }
@@ -7806,7 +7806,7 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
 
     public update(openBraceToken: ISyntaxToken,
                   propertyAssignments: ISeparatedSyntaxList,
-                  closeBraceToken: ISyntaxToken) {
+                  closeBraceToken: ISyntaxToken): ObjectLiteralExpressionSyntax {
         if (this._openBraceToken === openBraceToken && this._propertyAssignments === propertyAssignments && this._closeBraceToken === closeBraceToken) {
             return this;
         }
@@ -7923,7 +7923,7 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
 
     public update(propertyName: ISyntaxToken,
                   colonToken: ISyntaxToken,
-                  expression: ExpressionSyntax) {
+                  expression: ExpressionSyntax): SimplePropertyAssignmentSyntax {
         if (this._propertyName === propertyName && this._colonToken === colonToken && this._expression === expression) {
             return this;
         }
@@ -8069,7 +8069,7 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
                   propertyName: ISyntaxToken,
                   openParenToken: ISyntaxToken,
                   closeParenToken: ISyntaxToken,
-                  block: BlockSyntax) {
+                  block: BlockSyntax): GetAccessorPropertyAssignmentSyntax {
         if (this._getKeyword === getKeyword && this._propertyName === propertyName && this._openParenToken === openParenToken && this._closeParenToken === closeParenToken && this._block === block) {
             return this;
         }
@@ -8211,7 +8211,7 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
                   openParenToken: ISyntaxToken,
                   parameterName: ISyntaxToken,
                   closeParenToken: ISyntaxToken,
-                  block: BlockSyntax) {
+                  block: BlockSyntax): SetAccessorPropertyAssignmentSyntax {
         if (this._setKeyword === setKeyword && this._propertyName === propertyName && this._openParenToken === openParenToken && this._parameterName === parameterName && this._closeParenToken === closeParenToken && this._block === block) {
             return this;
         }
@@ -8342,7 +8342,7 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
     public update(functionKeyword: ISyntaxToken,
                   identifier: ISyntaxToken,
                   callSignature: CallSignatureSyntax,
-                  block: BlockSyntax) {
+                  block: BlockSyntax): FunctionExpressionSyntax {
         if (this._functionKeyword === functionKeyword && this._identifier === identifier && this._callSignature === callSignature && this._block === block) {
             return this;
         }
@@ -8420,7 +8420,7 @@ class EmptyStatementSyntax extends StatementSyntax {
         return this._semicolonToken;
     }
 
-    private update(semicolonToken: ISyntaxToken) {
+    private update(semicolonToken: ISyntaxToken): EmptyStatementSyntax {
         if (this._semicolonToken === semicolonToken) {
             return this;
         }
@@ -8481,7 +8481,7 @@ class SuperExpressionSyntax extends UnaryExpressionSyntax {
         return this._superKeyword;
     }
 
-    private update(superKeyword: ISyntaxToken) {
+    private update(superKeyword: ISyntaxToken): SuperExpressionSyntax {
         if (this._superKeyword === superKeyword) {
             return this;
         }
@@ -8581,7 +8581,7 @@ class TryStatementSyntax extends StatementSyntax {
     public update(tryKeyword: ISyntaxToken,
                   block: BlockSyntax,
                   catchClause: CatchClauseSyntax,
-                  finallyClause: FinallyClauseSyntax) {
+                  finallyClause: FinallyClauseSyntax): TryStatementSyntax {
         if (this._tryKeyword === tryKeyword && this._block === block && this._catchClause === catchClause && this._finallyClause === finallyClause) {
             return this;
         }
@@ -8708,7 +8708,7 @@ class CatchClauseSyntax extends SyntaxNode {
                   openParenToken: ISyntaxToken,
                   identifier: ISyntaxToken,
                   closeParenToken: ISyntaxToken,
-                  block: BlockSyntax) {
+                  block: BlockSyntax): CatchClauseSyntax {
         if (this._catchKeyword === catchKeyword && this._openParenToken === openParenToken && this._identifier === identifier && this._closeParenToken === closeParenToken && this._block === block) {
             return this;
         }
@@ -8802,7 +8802,7 @@ class FinallyClauseSyntax extends SyntaxNode {
     }
 
     public update(finallyKeyword: ISyntaxToken,
-                  block: BlockSyntax) {
+                  block: BlockSyntax): FinallyClauseSyntax {
         if (this._finallyKeyword === finallyKeyword && this._block === block) {
             return this;
         }
@@ -8893,7 +8893,7 @@ class LabeledStatement extends StatementSyntax {
 
     public update(identifier: ISyntaxToken,
                   colonToken: ISyntaxToken,
-                  statement: StatementSyntax) {
+                  statement: StatementSyntax): LabeledStatement {
         if (this._identifier === identifier && this._colonToken === colonToken && this._statement === statement) {
             return this;
         }
@@ -9037,7 +9037,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
                   openParenToken: ISyntaxToken,
                   condition: ExpressionSyntax,
                   closeParenToken: ISyntaxToken,
-                  semicolonToken: ISyntaxToken) {
+                  semicolonToken: ISyntaxToken): DoStatementSyntax {
         if (this._doKeyword === doKeyword && this._statement === statement && this._whileKeyword === whileKeyword && this._openParenToken === openParenToken && this._condition === condition && this._closeParenToken === closeParenToken && this._semicolonToken === semicolonToken) {
             return this;
         }
@@ -9142,7 +9142,7 @@ class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     public update(typeOfKeyword: ISyntaxToken,
-                  expression: ExpressionSyntax) {
+                  expression: ExpressionSyntax): TypeOfExpressionSyntax {
         if (this._typeOfKeyword === typeOfKeyword && this._expression === expression) {
             return this;
         }
@@ -9221,7 +9221,7 @@ class DeleteExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     public update(deleteKeyword: ISyntaxToken,
-                  expression: ExpressionSyntax) {
+                  expression: ExpressionSyntax): DeleteExpressionSyntax {
         if (this._deleteKeyword === deleteKeyword && this._expression === expression) {
             return this;
         }
@@ -9300,7 +9300,7 @@ class VoidExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     public update(voidKeyword: ISyntaxToken,
-                  expression: ExpressionSyntax) {
+                  expression: ExpressionSyntax): VoidExpressionSyntax {
         if (this._voidKeyword === voidKeyword && this._expression === expression) {
             return this;
         }
@@ -9379,7 +9379,7 @@ class DebuggerStatementSyntax extends StatementSyntax {
     }
 
     public update(debuggerKeyword: ISyntaxToken,
-                  semicolonToken: ISyntaxToken) {
+                  semicolonToken: ISyntaxToken): DebuggerStatementSyntax {
         if (this._debuggerKeyword === debuggerKeyword && this._semicolonToken === semicolonToken) {
             return this;
         }

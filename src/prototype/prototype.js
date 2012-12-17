@@ -19468,9 +19468,14 @@ var Emitter = (function (_super) {
             }
         }
     };
+    Emitter.prototype.handleExportedModuleElement = function (moduleElement, elements) {
+    };
     Emitter.prototype.visitModuleDeclaration = function (node) {
         var names = Emitter.splitModuleName(node.moduleName());
         var moduleElements = this.convertModuleElements(node.moduleElements());
+        for(var i = 0, n = moduleElements.length; i < n; i++) {
+            this.handleExportedModuleElement(moduleElements[i], moduleElements);
+        }
         for(var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
             moduleElements = this.convertModuleDeclaration(names[nameIndex], moduleElements);
             if(nameIndex > 0) {

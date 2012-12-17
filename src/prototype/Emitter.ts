@@ -111,6 +111,10 @@ class Emitter extends SyntaxRewriter {
         }
     }
 
+    private handleExportedModuleElement(moduleElement: ModuleElementSyntax, elements: ModuleElementSyntax[]): void {
+        
+    }
+
     private visitModuleDeclaration(node: ModuleDeclarationSyntax): ModuleElementSyntax[] {
         // Break up the dotted name into pieces.
         var names = Emitter.splitModuleName(node.moduleName());
@@ -121,6 +125,12 @@ class Emitter extends SyntaxRewriter {
         // Recurse downwards and get the rewritten children.
         var moduleElements = this.convertModuleElements(node.moduleElements());
 
+        // NOTE: we are adding to the array we are iterating over.  So the choice of indices here 
+        // is important.  Do not errantly change.
+        for (var i = 0, n = moduleElements.length; i < n; i++) {
+            this.handleExportedModuleElement(moduleElements[i], moduleElements);
+        }
+        
         // Then, for all the names left of that name, wrap what we've created in a larger module.
         for (var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
             moduleElements = this.convertModuleDeclaration(names[nameIndex], moduleElements);
@@ -150,6 +160,7 @@ class Emitter extends SyntaxRewriter {
                     [VariableDeclaratorSyntax.create(moduleIdentifier.clone())])),
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
 
+        // function(M) { ... }
         var functionExpression = FunctionExpressionSyntax.create(
             SyntaxToken.createElastic({ kind: SyntaxKind.FunctionKeyword }),
             CallSignatureSyntax.create(
@@ -163,11 +174,13 @@ class Emitter extends SyntaxRewriter {
                 SyntaxList.create(moduleElements),
                 SyntaxToken.createElastic({ kind: SyntaxKind.CloseBraceToken })));
 
+        // (function(M) { ... })
         var parenthesizedFunctionExpression = new ParenthesizedExpressionSyntax(
             SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
             functionExpression,
             SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }));
         
+        // M||(M={})
         var logicalOrExpression = new BinaryExpressionSyntax(
             SyntaxKind.LogicalOrExpression,
             new IdentifierNameSyntax(moduleIdentifier.clone()),
@@ -185,13 +198,15 @@ class Emitter extends SyntaxRewriter {
                     )),
                 SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken })));
 
+        // (function(M) { ... })(M||(M={}))
         var invocationExpression = new InvocationExpressionSyntax(
             parenthesizedFunctionExpression,
             new ArgumentListSyntax(
                 SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
                 SeparatedSyntaxList.create([logicalOrExpression]),
                 SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken })));
-
+        
+        // (function(M) { ... })(M||(M={}));
         var expressionStatement = new ExpressionStatementSyntax(
             invocationExpression,
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));

@@ -484,7 +484,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'TypeMemberSyntax',
         children: [
             <any>{ name: 'identifier', isToken: true, tokenKinds: ["IdentifierNameToken"] },
-            <any>{ name: 'questionToken', isToken: true, isOptional: true },
+            <any>{ name: 'questionToken', isToken: true, isOptional: true, itTypeScriptSpecific: true },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
             <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true }
         ]
@@ -1556,7 +1556,7 @@ function generateUpdateMethod(definition: ITypeDefinition): string {
         }
     }
 
-    result += ") {\r\n";
+    result += "): " + definition.name + " {\r\n";
 
     if (definition.children.length === 0) {
         result += "        return this;\r\n";
