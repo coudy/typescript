@@ -274,8 +274,7 @@ module Emitter {
             var functionExpression = FunctionExpressionSyntax.create(
                 SyntaxToken.create(SyntaxKind.FunctionKeyword),
                 CallSignatureSyntax.create(
-                    ParameterListSyntax.create1().withParameters(SeparatedSyntaxList.create([ParameterSyntax.create(moduleIdentifier)]))
-                                                 .withTrailingTrivia(this.spaceList)),
+                    ParameterListSyntax.create1().withParameter(ParameterSyntax.create(moduleIdentifier))).withTrailingTrivia(this.spaceList),
                 new BlockSyntax(
                     SyntaxToken.create(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
                     SyntaxList.create(moduleElements),
@@ -299,10 +298,7 @@ module Emitter {
             // (function(M) { ... })(M||(M={}))
             var invocationExpression = new InvocationExpressionSyntax(
                 parenthesizedFunctionExpression,
-                new ArgumentListSyntax(
-                    SyntaxToken.create(SyntaxKind.OpenParenToken),
-                    SeparatedSyntaxList.create([logicalOrExpression]),
-                    SyntaxToken.create(SyntaxKind.CloseParenToken)));
+                ArgumentListSyntax.create1().withArgument(logicalOrExpression));
 
             // (function(M) { ... })(M||(M={}));
             var expressionStatement = ExpressionStatementSyntax.create1(invocationExpression)
