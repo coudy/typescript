@@ -322,13 +322,11 @@ class Emitter extends SyntaxRewriter {
 
         // Remove the leading trivia from the function keyword.  We'll put it on the open paren 
         // token instead.
-        var newFunctionExpression = <FunctionExpressionSyntax>functionExpression.withLeadingTrivia(SyntaxTriviaList.empty);
+        var newFunctionExpression = functionExpression.withLeadingTrivia(SyntaxTriviaList.empty);
 
         // Now, wrap the function expression in parens to make it legal in javascript.
-        var parenthesizedExpression = new ParenthesizedExpressionSyntax(
-            SyntaxToken.createElastic({ leadingTrivia: functionExpression.leadingTrivia().toArray(), kind: SyntaxKind.OpenParenToken }),
-            newFunctionExpression,
-            SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }));
+        var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(
+            newFunctionExpression).withLeadingTrivia(functionExpression.leadingTrivia());
 
         return rewritten.withExpression(parenthesizedExpression);
     }

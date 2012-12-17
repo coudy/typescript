@@ -20677,12 +20677,7 @@ var Emitter = (function (_super) {
             return rewritten;
         }
         var newFunctionExpression = functionExpression.withLeadingTrivia(SyntaxTriviaList.empty);
-        var parenthesizedExpression = new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
-            leadingTrivia: functionExpression.leadingTrivia().toArray(),
-            kind: 69 /* OpenParenToken */ 
-        }), newFunctionExpression, SyntaxToken.createElastic({
-            kind: 70 /* CloseParenToken */ 
-        }));
+        var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(newFunctionExpression).withLeadingTrivia(functionExpression.leadingTrivia());
         return rewritten.withExpression(parenthesizedExpression);
     };
     Emitter.prototype.visitSimpleArrowFunctionExpression = function (node) {
