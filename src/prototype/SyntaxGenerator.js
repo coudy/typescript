@@ -1332,7 +1332,8 @@ var definitions = [
         children: [
             {
                 name: 'moduleElements',
-                isList: true
+                isList: true,
+                elementType: "ModuleElementSyntax"
             }, 
             {
                 name: 'endOfFileToken',
@@ -1458,7 +1459,8 @@ var definitions = [
             }, 
             {
                 name: 'classElements',
-                isList: true
+                isList: true,
+                elementType: "ClassElementSyntax"
             }, 
             {
                 name: 'closeBraceToken',
@@ -1510,7 +1512,8 @@ var definitions = [
             {
                 name: 'typeNames',
                 isSeparatedList: true,
-                requiresAtLeastOneItem: true
+                requiresAtLeastOneItem: true,
+                elementType: "NameSyntax"
             }
         ],
         isTypeScriptSpecific: true
@@ -1526,7 +1529,8 @@ var definitions = [
             {
                 name: 'typeNames',
                 isSeparatedList: true,
-                requiresAtLeastOneItem: true
+                requiresAtLeastOneItem: true,
+                elementType: "NameSyntax"
             }
         ],
         isTypeScriptSpecific: true
@@ -1565,7 +1569,8 @@ var definitions = [
             }, 
             {
                 name: 'moduleElements',
-                isList: true
+                isList: true,
+                elementType: "ModuleElementSyntax"
             }, 
             {
                 name: 'closeBraceToken',
@@ -1665,7 +1670,8 @@ var definitions = [
             {
                 name: 'variableDeclarators',
                 isSeparatedList: true,
-                requiresAtLeastOneItem: true
+                requiresAtLeastOneItem: true,
+                elementType: "VariableDeclaratorSyntax"
             }
         ]
     }, 
@@ -1775,7 +1781,8 @@ var definitions = [
             }, 
             {
                 name: 'expressions',
-                isSeparatedList: true
+                isSeparatedList: true,
+                elementType: "ExpressionSyntax"
             }, 
             {
                 name: 'closeBracketToken',
@@ -1949,7 +1956,8 @@ var definitions = [
             }, 
             {
                 name: 'typeMembers',
-                isSeparatedList: true
+                isSeparatedList: true,
+                elementType: "TypeMemberSyntax"
             }, 
             {
                 name: 'closeBraceToken',
@@ -2020,7 +2028,8 @@ var definitions = [
             }, 
             {
                 name: 'statements',
-                isList: true
+                isList: true,
+                elementType: "StatementSyntax"
             }, 
             {
                 name: 'closeBraceToken',
@@ -2161,7 +2170,8 @@ var definitions = [
             }, 
             {
                 name: 'arguments',
-                isSeparatedList: true
+                isSeparatedList: true,
+                elementType: "ExpressionSyntax"
             }, 
             {
                 name: 'closeParenToken',
@@ -2368,7 +2378,8 @@ var definitions = [
             }, 
             {
                 name: 'parameters',
-                isSeparatedList: true
+                isSeparatedList: true,
+                elementType: "ParameterSyntax"
             }, 
             {
                 name: 'closeParenToken',
@@ -2727,8 +2738,9 @@ var definitions = [
                 isToken: true
             }, 
             {
-                name: 'caseClauses',
-                isList: true
+                name: 'switchClauses',
+                isList: true,
+                elementType: "SwitchClauseSyntax"
             }, 
             {
                 name: 'closeBraceToken',
@@ -2760,7 +2772,8 @@ var definitions = [
             }, 
             {
                 name: 'statements',
-                isList: true
+                isList: true,
+                elementType: "StatementSyntax"
             }
         ]
     }, 
@@ -2778,7 +2791,8 @@ var definitions = [
             }, 
             {
                 name: 'statements',
-                isList: true
+                isList: true,
+                elementType: "StatementSyntax"
             }
         ]
     }, 
@@ -3012,7 +3026,8 @@ var definitions = [
             }, 
             {
                 name: 'variableDeclarators',
-                isSeparatedList: true
+                isSeparatedList: true,
+                elementType: "VariableDeclaratorSyntax"
             }, 
             {
                 name: 'closeBraceToken',
@@ -3054,7 +3069,8 @@ var definitions = [
             }, 
             {
                 name: 'propertyAssignments',
-                isSeparatedList: true
+                isSeparatedList: true,
+                elementType: "PropertyAssignmentSyntax"
             }, 
             {
                 name: 'closeBraceToken',
@@ -3388,12 +3404,9 @@ var definitions = [
         ]
     }
 ];
-function endsWith(string, value) {
-    return string.substring(string.length - value.length, string.length) === value;
-}
 function getNameWithoutSuffix(definition) {
     var name = definition.name;
-    if(endsWith(name, "Syntax")) {
+    if(StringUtilities.endsWith(name, "Syntax")) {
         return name.substring(0, name.length - "Syntax".length);
     }
     return name;
@@ -3909,13 +3922,31 @@ function generateWithMethod(definition, child) {
     }
     result += ");\r\n";
     result += "    }\r\n";
+    if(child.isList || child.isSeparatedList) {
+        if(StringUtilities.endsWith(child.name, "s")) {
+            var pascalName = pascalCase(child.name);
+            pascalName = pascalName.substring(0, pascalName.length - 1);
+            var argName = getSafeName(child);
+            argName = argName.substring(0, argName.length - 1);
+            result += "\r\n";
+            result += "    public with" + pascalName + "(" + argName + ": " + child.elementType + "): " + definition.name + " {\r\n";
+            result += "        return this.with" + pascalCase(child.name) + "(";
+            if(child.isList) {
+                result += "SyntaxList.create([" + argName + "])";
+            } else {
+                result += "SeparatedSyntaxList.create([" + argName + "])";
+            }
+            result += ");\r\n";
+            result += "    }\r\n";
+        }
+    }
     return result;
 }
 function generateWithMethods(definition) {
     var result = "";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
-        result += this.generateWithMethod(definition, child);
+        result += generateWithMethod(definition, child);
     }
     return result;
 }

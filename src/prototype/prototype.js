@@ -211,7 +211,7 @@ var SyntaxRewriter = (function () {
         return node.update(this.visitToken(node.newKeyword()), this.visitNode(node.expression()), this.visitNode(node.argumentList()));
     };
     SyntaxRewriter.prototype.visitSwitchStatement = function (node) {
-        return node.update(this.visitToken(node.switchKeyword()), this.visitToken(node.openParenToken()), this.visitNode(node.expression()), this.visitToken(node.closeParenToken()), this.visitToken(node.openBraceToken()), this.visitList(node.caseClauses()), this.visitToken(node.closeBraceToken()));
+        return node.update(this.visitToken(node.switchKeyword()), this.visitToken(node.openParenToken()), this.visitNode(node.expression()), this.visitToken(node.closeParenToken()), this.visitToken(node.openBraceToken()), this.visitList(node.switchClauses()), this.visitToken(node.closeBraceToken()));
     };
     SyntaxRewriter.prototype.visitCaseSwitchClause = function (node) {
         return node.update(this.visitToken(node.caseKeyword()), this.visitNode(node.expression()), this.visitToken(node.colonToken()), this.visitList(node.statements()));
@@ -1993,6 +1993,11 @@ var SourceUnitSyntax = (function (_super) {
     SourceUnitSyntax.prototype.withModuleElements = function (moduleElements) {
         return this.update(moduleElements, this._endOfFileToken);
     };
+    SourceUnitSyntax.prototype.withModuleElement = function (moduleElement) {
+        return this.withModuleElements(SyntaxList.create([
+            moduleElement
+        ]));
+    };
     SourceUnitSyntax.prototype.withEndOfFileToken = function (endOfFileToken) {
         return this.update(this._moduleElements, endOfFileToken);
     };
@@ -2575,6 +2580,11 @@ var ClassDeclarationSyntax = (function (_super) {
     ClassDeclarationSyntax.prototype.withClassElements = function (classElements) {
         return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, classElements, this._closeBraceToken);
     };
+    ClassDeclarationSyntax.prototype.withClassElement = function (classElement) {
+        return this.withClassElements(SyntaxList.create([
+            classElement
+        ]));
+    };
     ClassDeclarationSyntax.prototype.withCloseBraceToken = function (closeBraceToken) {
         return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, closeBraceToken);
     };
@@ -2827,6 +2837,11 @@ var ExtendsClauseSyntax = (function (_super) {
     ExtendsClauseSyntax.prototype.withTypeNames = function (typeNames) {
         return this.update(this._extendsKeyword, typeNames);
     };
+    ExtendsClauseSyntax.prototype.withTypeName = function (typeName) {
+        return this.withTypeNames(SeparatedSyntaxList.create([
+            typeName
+        ]));
+    };
     ExtendsClauseSyntax.prototype.collectTextElements = function (elements) {
         this._extendsKeyword.collectTextElements(elements);
         this._typeNames.collectTextElements(elements);
@@ -2910,6 +2925,11 @@ var ImplementsClauseSyntax = (function (_super) {
     };
     ImplementsClauseSyntax.prototype.withTypeNames = function (typeNames) {
         return this.update(this._implementsKeyword, typeNames);
+    };
+    ImplementsClauseSyntax.prototype.withTypeName = function (typeName) {
+        return this.withTypeNames(SeparatedSyntaxList.create([
+            typeName
+        ]));
     };
     ImplementsClauseSyntax.prototype.collectTextElements = function (elements) {
         this._implementsKeyword.collectTextElements(elements);
@@ -3111,6 +3131,11 @@ var ModuleDeclarationSyntax = (function (_super) {
     };
     ModuleDeclarationSyntax.prototype.withModuleElements = function (moduleElements) {
         return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, moduleElements, this._closeBraceToken);
+    };
+    ModuleDeclarationSyntax.prototype.withModuleElement = function (moduleElement) {
+        return this.withModuleElements(SyntaxList.create([
+            moduleElement
+        ]));
     };
     ModuleDeclarationSyntax.prototype.withCloseBraceToken = function (closeBraceToken) {
         return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, this._moduleElements, closeBraceToken);
@@ -3594,6 +3619,11 @@ var VariableDeclarationSyntax = (function (_super) {
     };
     VariableDeclarationSyntax.prototype.withVariableDeclarators = function (variableDeclarators) {
         return this.update(this._varKeyword, variableDeclarators);
+    };
+    VariableDeclarationSyntax.prototype.withVariableDeclarator = function (variableDeclarator) {
+        return this.withVariableDeclarators(SeparatedSyntaxList.create([
+            variableDeclarator
+        ]));
     };
     VariableDeclarationSyntax.prototype.collectTextElements = function (elements) {
         this._varKeyword.collectTextElements(elements);
@@ -4158,6 +4188,11 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
     };
     ArrayLiteralExpressionSyntax.prototype.withExpressions = function (expressions) {
         return this.update(this._openBracketToken, expressions, this._closeBracketToken);
+    };
+    ArrayLiteralExpressionSyntax.prototype.withExpression = function (expression) {
+        return this.withExpressions(SeparatedSyntaxList.create([
+            expression
+        ]));
     };
     ArrayLiteralExpressionSyntax.prototype.withCloseBracketToken = function (closeBracketToken) {
         return this.update(this._openBracketToken, this._expressions, closeBracketToken);
@@ -5075,6 +5110,11 @@ var ObjectTypeSyntax = (function (_super) {
     ObjectTypeSyntax.prototype.withTypeMembers = function (typeMembers) {
         return this.update(this._openBraceToken, typeMembers, this._closeBraceToken);
     };
+    ObjectTypeSyntax.prototype.withTypeMember = function (typeMember) {
+        return this.withTypeMembers(SeparatedSyntaxList.create([
+            typeMember
+        ]));
+    };
     ObjectTypeSyntax.prototype.withCloseBraceToken = function (closeBraceToken) {
         return this.update(this._openBraceToken, this._typeMembers, closeBraceToken);
     };
@@ -5441,6 +5481,11 @@ var BlockSyntax = (function (_super) {
     };
     BlockSyntax.prototype.withStatements = function (statements) {
         return this.update(this._openBraceToken, statements, this._closeBraceToken);
+    };
+    BlockSyntax.prototype.withStatement = function (statement) {
+        return this.withStatements(SyntaxList.create([
+            statement
+        ]));
     };
     BlockSyntax.prototype.withCloseBraceToken = function (closeBraceToken) {
         return this.update(this._openBraceToken, this._statements, closeBraceToken);
@@ -6164,6 +6209,11 @@ var ArgumentListSyntax = (function (_super) {
     };
     ArgumentListSyntax.prototype.withArguments = function (_arguments) {
         return this.update(this._openParenToken, _arguments, this._closeParenToken);
+    };
+    ArgumentListSyntax.prototype.withArgument = function (_argument) {
+        return this.withArguments(SeparatedSyntaxList.create([
+            _argument
+        ]));
     };
     ArgumentListSyntax.prototype.withCloseParenToken = function (closeParenToken) {
         return this.update(this._openParenToken, this._arguments, closeParenToken);
@@ -7085,6 +7135,11 @@ var ParameterListSyntax = (function (_super) {
     };
     ParameterListSyntax.prototype.withParameters = function (parameters) {
         return this.update(this._openParenToken, parameters, this._closeParenToken);
+    };
+    ParameterListSyntax.prototype.withParameter = function (parameter) {
+        return this.withParameters(SeparatedSyntaxList.create([
+            parameter
+        ]));
     };
     ParameterListSyntax.prototype.withCloseParenToken = function (closeParenToken) {
         return this.update(this._openParenToken, this._parameters, closeParenToken);
@@ -8734,13 +8789,13 @@ var ObjectCreationExpressionSyntax = (function (_super) {
 })(UnaryExpressionSyntax);
 var SwitchStatementSyntax = (function (_super) {
     __extends(SwitchStatementSyntax, _super);
-    function SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, caseClauses, closeBraceToken) {
+    function SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, switchClauses, closeBraceToken) {
         _super.call(this);
         if(expression === null) {
             throw Errors.argumentNull('expression');
         }
-        if(caseClauses === null) {
-            throw Errors.argumentNull('caseClauses');
+        if(switchClauses === null) {
+            throw Errors.argumentNull('switchClauses');
         }
         if(switchKeyword.keywordKind() !== 32 /* SwitchKeyword */ ) {
             throw Errors.argument('switchKeyword');
@@ -8762,7 +8817,7 @@ var SwitchStatementSyntax = (function (_super) {
         this._expression = expression;
         this._closeParenToken = closeParenToken;
         this._openBraceToken = openBraceToken;
-        this._caseClauses = caseClauses;
+        this._switchClauses = switchClauses;
         this._closeBraceToken = closeBraceToken;
     }
     SwitchStatementSyntax.create = function create(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, closeBraceToken) {
@@ -8793,7 +8848,7 @@ var SwitchStatementSyntax = (function (_super) {
         if(!this._openBraceToken.isMissing()) {
             return false;
         }
-        if(!this._caseClauses.isMissing()) {
+        if(!this._switchClauses.isMissing()) {
             return false;
         }
         if(!this._closeBraceToken.isMissing()) {
@@ -8818,7 +8873,7 @@ var SwitchStatementSyntax = (function (_super) {
         if(this._openBraceToken.width() > 0) {
             return this._openBraceToken;
         }
-        if((token = this._caseClauses.firstToken()) !== null) {
+        if((token = this._switchClauses.firstToken()) !== null) {
             return token;
         }
         if(this._closeBraceToken.width() > 0) {
@@ -8831,7 +8886,7 @@ var SwitchStatementSyntax = (function (_super) {
         if(this._closeBraceToken.width() > 0) {
             return this._closeBraceToken;
         }
-        if((token = this._caseClauses.lastToken()) !== null) {
+        if((token = this._switchClauses.lastToken()) !== null) {
             return token;
         }
         if(this._openBraceToken.width() > 0) {
@@ -8866,17 +8921,17 @@ var SwitchStatementSyntax = (function (_super) {
     SwitchStatementSyntax.prototype.openBraceToken = function () {
         return this._openBraceToken;
     };
-    SwitchStatementSyntax.prototype.caseClauses = function () {
-        return this._caseClauses;
+    SwitchStatementSyntax.prototype.switchClauses = function () {
+        return this._switchClauses;
     };
     SwitchStatementSyntax.prototype.closeBraceToken = function () {
         return this._closeBraceToken;
     };
-    SwitchStatementSyntax.prototype.update = function (switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, caseClauses, closeBraceToken) {
-        if(this._switchKeyword === switchKeyword && this._openParenToken === openParenToken && this._expression === expression && this._closeParenToken === closeParenToken && this._openBraceToken === openBraceToken && this._caseClauses === caseClauses && this._closeBraceToken === closeBraceToken) {
+    SwitchStatementSyntax.prototype.update = function (switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, switchClauses, closeBraceToken) {
+        if(this._switchKeyword === switchKeyword && this._openParenToken === openParenToken && this._expression === expression && this._closeParenToken === closeParenToken && this._openBraceToken === openBraceToken && this._switchClauses === switchClauses && this._closeBraceToken === closeBraceToken) {
             return this;
         }
-        return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, caseClauses, closeBraceToken);
+        return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, switchClauses, closeBraceToken);
     };
     SwitchStatementSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -8885,25 +8940,30 @@ var SwitchStatementSyntax = (function (_super) {
         return _super.prototype.withTrailingTrivia.call(this, trivia);
     };
     SwitchStatementSyntax.prototype.withSwitchKeyword = function (switchKeyword) {
-        return this.update(switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._caseClauses, this._closeBraceToken);
+        return this.update(switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._switchClauses, this._closeBraceToken);
     };
     SwitchStatementSyntax.prototype.withOpenParenToken = function (openParenToken) {
-        return this.update(this._switchKeyword, openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._caseClauses, this._closeBraceToken);
+        return this.update(this._switchKeyword, openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._switchClauses, this._closeBraceToken);
     };
     SwitchStatementSyntax.prototype.withExpression = function (expression) {
-        return this.update(this._switchKeyword, this._openParenToken, expression, this._closeParenToken, this._openBraceToken, this._caseClauses, this._closeBraceToken);
+        return this.update(this._switchKeyword, this._openParenToken, expression, this._closeParenToken, this._openBraceToken, this._switchClauses, this._closeBraceToken);
     };
     SwitchStatementSyntax.prototype.withCloseParenToken = function (closeParenToken) {
-        return this.update(this._switchKeyword, this._openParenToken, this._expression, closeParenToken, this._openBraceToken, this._caseClauses, this._closeBraceToken);
+        return this.update(this._switchKeyword, this._openParenToken, this._expression, closeParenToken, this._openBraceToken, this._switchClauses, this._closeBraceToken);
     };
     SwitchStatementSyntax.prototype.withOpenBraceToken = function (openBraceToken) {
-        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, openBraceToken, this._caseClauses, this._closeBraceToken);
+        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, openBraceToken, this._switchClauses, this._closeBraceToken);
     };
-    SwitchStatementSyntax.prototype.withCaseClauses = function (caseClauses) {
-        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, caseClauses, this._closeBraceToken);
+    SwitchStatementSyntax.prototype.withSwitchClauses = function (switchClauses) {
+        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, switchClauses, this._closeBraceToken);
+    };
+    SwitchStatementSyntax.prototype.withSwitchClause = function (switchClause) {
+        return this.withSwitchClauses(SyntaxList.create([
+            switchClause
+        ]));
     };
     SwitchStatementSyntax.prototype.withCloseBraceToken = function (closeBraceToken) {
-        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._caseClauses, closeBraceToken);
+        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._switchClauses, closeBraceToken);
     };
     SwitchStatementSyntax.prototype.collectTextElements = function (elements) {
         this._switchKeyword.collectTextElements(elements);
@@ -8911,14 +8971,14 @@ var SwitchStatementSyntax = (function (_super) {
         this._expression.collectTextElements(elements);
         this._closeParenToken.collectTextElements(elements);
         this._openBraceToken.collectTextElements(elements);
-        this._caseClauses.collectTextElements(elements);
+        this._switchClauses.collectTextElements(elements);
         this._closeBraceToken.collectTextElements(elements);
     };
     SwitchStatementSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._expression.isTypeScriptSpecific()) {
             return true;
         }
-        if(this._caseClauses.isTypeScriptSpecific()) {
+        if(this._switchClauses.isTypeScriptSpecific()) {
             return true;
         }
         return false;
@@ -9063,6 +9123,11 @@ var CaseSwitchClauseSyntax = (function (_super) {
     CaseSwitchClauseSyntax.prototype.withStatements = function (statements) {
         return this.update(this._caseKeyword, this._expression, this._colonToken, statements);
     };
+    CaseSwitchClauseSyntax.prototype.withStatement = function (statement) {
+        return this.withStatements(SyntaxList.create([
+            statement
+        ]));
+    };
     CaseSwitchClauseSyntax.prototype.collectTextElements = function (elements) {
         this._caseKeyword.collectTextElements(elements);
         this._expression.collectTextElements(elements);
@@ -9176,6 +9241,11 @@ var DefaultSwitchClauseSyntax = (function (_super) {
     };
     DefaultSwitchClauseSyntax.prototype.withStatements = function (statements) {
         return this.update(this._defaultKeyword, this._colonToken, statements);
+    };
+    DefaultSwitchClauseSyntax.prototype.withStatement = function (statement) {
+        return this.withStatements(SyntaxList.create([
+            statement
+        ]));
     };
     DefaultSwitchClauseSyntax.prototype.collectTextElements = function (elements) {
         this._defaultKeyword.collectTextElements(elements);
@@ -10396,6 +10466,11 @@ var EnumDeclarationSyntax = (function (_super) {
     EnumDeclarationSyntax.prototype.withVariableDeclarators = function (variableDeclarators) {
         return this.update(this._exportKeyword, this._enumKeyword, this._identifier, this._openBraceToken, variableDeclarators, this._closeBraceToken);
     };
+    EnumDeclarationSyntax.prototype.withVariableDeclarator = function (variableDeclarator) {
+        return this.withVariableDeclarators(SeparatedSyntaxList.create([
+            variableDeclarator
+        ]));
+    };
     EnumDeclarationSyntax.prototype.withCloseBraceToken = function (closeBraceToken) {
         return this.update(this._exportKeyword, this._enumKeyword, this._identifier, this._openBraceToken, this._variableDeclarators, closeBraceToken);
     };
@@ -10631,6 +10706,11 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
     };
     ObjectLiteralExpressionSyntax.prototype.withPropertyAssignments = function (propertyAssignments) {
         return this.update(this._openBraceToken, propertyAssignments, this._closeBraceToken);
+    };
+    ObjectLiteralExpressionSyntax.prototype.withPropertyAssignment = function (propertyAssignment) {
+        return this.withPropertyAssignments(SeparatedSyntaxList.create([
+            propertyAssignment
+        ]));
     };
     ObjectLiteralExpressionSyntax.prototype.withCloseBraceToken = function (closeBraceToken) {
         return this.update(this._openBraceToken, this._propertyAssignments, closeBraceToken);
@@ -12991,7 +13071,7 @@ var SyntaxWalker = (function () {
         node.expression().accept(this);
         this.visitToken(node.closeParenToken());
         this.visitToken(node.openBraceToken());
-        this.visitList(node.caseClauses());
+        this.visitList(node.switchClauses());
         this.visitToken(node.closeBraceToken());
     };
     SyntaxWalker.prototype.visitCaseSwitchClause = function (node) {

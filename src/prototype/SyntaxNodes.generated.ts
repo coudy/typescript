@@ -82,6 +82,10 @@ class SourceUnitSyntax extends SyntaxNode {
         return this.update(moduleElements, this._endOfFileToken);
     }
 
+    public withModuleElement(moduleElement: ModuleElementSyntax): SourceUnitSyntax {
+        return this.withModuleElements(SyntaxList.create([moduleElement]));
+    }
+
     public withEndOfFileToken(endOfFileToken: ISyntaxToken): SourceUnitSyntax {
         return this.update(this._moduleElements, endOfFileToken);
     }
@@ -683,6 +687,10 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
         return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, classElements, this._closeBraceToken);
     }
 
+    public withClassElement(classElement: ClassElementSyntax): ClassDeclarationSyntax {
+        return this.withClassElements(SyntaxList.create([classElement]));
+    }
+
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): ClassDeclarationSyntax {
         return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, closeBraceToken);
     }
@@ -939,6 +947,10 @@ class ExtendsClauseSyntax extends SyntaxNode {
         return this.update(this._extendsKeyword, typeNames);
     }
 
+    public withTypeName(typeName: NameSyntax): ExtendsClauseSyntax {
+        return this.withTypeNames(SeparatedSyntaxList.create([typeName]));
+    }
+
     private collectTextElements(elements: string[]): void {
         this._extendsKeyword.collectTextElements(elements);
         this._typeNames.collectTextElements(elements);
@@ -1029,6 +1041,10 @@ class ImplementsClauseSyntax extends SyntaxNode {
 
     public withTypeNames(typeNames: ISeparatedSyntaxList): ImplementsClauseSyntax {
         return this.update(this._implementsKeyword, typeNames);
+    }
+
+    public withTypeName(typeName: NameSyntax): ImplementsClauseSyntax {
+        return this.withTypeNames(SeparatedSyntaxList.create([typeName]));
     }
 
     private collectTextElements(elements: string[]): void {
@@ -1230,6 +1246,10 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
 
     public withModuleElements(moduleElements: ISyntaxList): ModuleDeclarationSyntax {
         return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, moduleElements, this._closeBraceToken);
+    }
+
+    public withModuleElement(moduleElement: ModuleElementSyntax): ModuleDeclarationSyntax {
+        return this.withModuleElements(SyntaxList.create([moduleElement]));
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): ModuleDeclarationSyntax {
@@ -1704,6 +1724,10 @@ class VariableDeclarationSyntax extends SyntaxNode {
 
     public withVariableDeclarators(variableDeclarators: ISeparatedSyntaxList): VariableDeclarationSyntax {
         return this.update(this._varKeyword, variableDeclarators);
+    }
+
+    public withVariableDeclarator(variableDeclarator: VariableDeclaratorSyntax): VariableDeclarationSyntax {
+        return this.withVariableDeclarators(SeparatedSyntaxList.create([variableDeclarator]));
     }
 
     private collectTextElements(elements: string[]): void {
@@ -2297,6 +2321,10 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
 
     public withExpressions(expressions: ISeparatedSyntaxList): ArrayLiteralExpressionSyntax {
         return this.update(this._openBracketToken, expressions, this._closeBracketToken);
+    }
+
+    public withExpression(expression: ExpressionSyntax): ArrayLiteralExpressionSyntax {
+        return this.withExpressions(SeparatedSyntaxList.create([expression]));
     }
 
     public withCloseBracketToken(closeBracketToken: ISyntaxToken): ArrayLiteralExpressionSyntax {
@@ -3276,6 +3304,10 @@ class ObjectTypeSyntax extends TypeSyntax {
         return this.update(this._openBraceToken, typeMembers, this._closeBraceToken);
     }
 
+    public withTypeMember(typeMember: TypeMemberSyntax): ObjectTypeSyntax {
+        return this.withTypeMembers(SeparatedSyntaxList.create([typeMember]));
+    }
+
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): ObjectTypeSyntax {
         return this.update(this._openBraceToken, this._typeMembers, closeBraceToken);
     }
@@ -3669,6 +3701,10 @@ class BlockSyntax extends StatementSyntax {
 
     public withStatements(statements: ISyntaxList): BlockSyntax {
         return this.update(this._openBraceToken, statements, this._closeBraceToken);
+    }
+
+    public withStatement(statement: StatementSyntax): BlockSyntax {
+        return this.withStatements(SyntaxList.create([statement]));
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): BlockSyntax {
@@ -4396,6 +4432,10 @@ class ArgumentListSyntax extends SyntaxNode {
 
     public withArguments(_arguments: ISeparatedSyntaxList): ArgumentListSyntax {
         return this.update(this._openParenToken, _arguments, this._closeParenToken);
+    }
+
+    public withArgument(_argument: ExpressionSyntax): ArgumentListSyntax {
+        return this.withArguments(SeparatedSyntaxList.create([_argument]));
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): ArgumentListSyntax {
@@ -5338,6 +5378,10 @@ class ParameterListSyntax extends SyntaxNode {
 
     public withParameters(parameters: ISeparatedSyntaxList): ParameterListSyntax {
         return this.update(this._openParenToken, parameters, this._closeParenToken);
+    }
+
+    public withParameter(parameter: ParameterSyntax): ParameterListSyntax {
+        return this.withParameters(SeparatedSyntaxList.create([parameter]));
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): ParameterListSyntax {
@@ -7037,7 +7081,7 @@ class SwitchStatementSyntax extends StatementSyntax {
     private _expression: ExpressionSyntax;
     private _closeParenToken: ISyntaxToken;
     private _openBraceToken: ISyntaxToken;
-    private _caseClauses: ISyntaxList;
+    private _switchClauses: ISyntaxList;
     private _closeBraceToken: ISyntaxToken;
 
     constructor(switchKeyword: ISyntaxToken,
@@ -7045,12 +7089,12 @@ class SwitchStatementSyntax extends StatementSyntax {
                 expression: ExpressionSyntax,
                 closeParenToken: ISyntaxToken,
                 openBraceToken: ISyntaxToken,
-                caseClauses: ISyntaxList,
+                switchClauses: ISyntaxList,
                 closeBraceToken: ISyntaxToken) {
         super();
 
         if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (caseClauses === null) { throw Errors.argumentNull('caseClauses'); }
+        if (switchClauses === null) { throw Errors.argumentNull('switchClauses'); }
         if (switchKeyword.keywordKind() !== SyntaxKind.SwitchKeyword) { throw Errors.argument('switchKeyword'); }
         if (openParenToken.kind() !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
         if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
@@ -7062,7 +7106,7 @@ class SwitchStatementSyntax extends StatementSyntax {
         this._expression = expression;
         this._closeParenToken = closeParenToken;
         this._openBraceToken = openBraceToken;
-        this._caseClauses = caseClauses;
+        this._switchClauses = switchClauses;
         this._closeBraceToken = closeBraceToken;
     }
 
@@ -7100,7 +7144,7 @@ class SwitchStatementSyntax extends StatementSyntax {
         if (!this._expression.isMissing()) { return false; }
         if (!this._closeParenToken.isMissing()) { return false; }
         if (!this._openBraceToken.isMissing()) { return false; }
-        if (!this._caseClauses.isMissing()) { return false; }
+        if (!this._switchClauses.isMissing()) { return false; }
         if (!this._closeBraceToken.isMissing()) { return false; }
         return true;
     }
@@ -7112,7 +7156,7 @@ class SwitchStatementSyntax extends StatementSyntax {
         if ((token = this._expression.firstToken()) !== null) { return token; }
         if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
         if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
-        if ((token = this._caseClauses.firstToken()) !== null) { return token; }
+        if ((token = this._switchClauses.firstToken()) !== null) { return token; }
         if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
         return null;
     }
@@ -7120,7 +7164,7 @@ class SwitchStatementSyntax extends StatementSyntax {
     public lastToken(): ISyntaxToken {
         var token = null;
         if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
-        if ((token = this._caseClauses.lastToken()) !== null) { return token; }
+        if ((token = this._switchClauses.lastToken()) !== null) { return token; }
         if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
         if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
         if ((token = this._expression.lastToken()) !== null) { return token; }
@@ -7149,8 +7193,8 @@ class SwitchStatementSyntax extends StatementSyntax {
         return this._openBraceToken;
     }
 
-    public caseClauses(): ISyntaxList {
-        return this._caseClauses;
+    public switchClauses(): ISyntaxList {
+        return this._switchClauses;
     }
 
     public closeBraceToken(): ISyntaxToken {
@@ -7162,13 +7206,13 @@ class SwitchStatementSyntax extends StatementSyntax {
                   expression: ExpressionSyntax,
                   closeParenToken: ISyntaxToken,
                   openBraceToken: ISyntaxToken,
-                  caseClauses: ISyntaxList,
+                  switchClauses: ISyntaxList,
                   closeBraceToken: ISyntaxToken): SwitchStatementSyntax {
-        if (this._switchKeyword === switchKeyword && this._openParenToken === openParenToken && this._expression === expression && this._closeParenToken === closeParenToken && this._openBraceToken === openBraceToken && this._caseClauses === caseClauses && this._closeBraceToken === closeBraceToken) {
+        if (this._switchKeyword === switchKeyword && this._openParenToken === openParenToken && this._expression === expression && this._closeParenToken === closeParenToken && this._openBraceToken === openBraceToken && this._switchClauses === switchClauses && this._closeBraceToken === closeBraceToken) {
             return this;
         }
 
-        return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, caseClauses, closeBraceToken);
+        return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, switchClauses, closeBraceToken);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): SwitchStatementSyntax {
@@ -7180,31 +7224,35 @@ class SwitchStatementSyntax extends StatementSyntax {
     }
 
     public withSwitchKeyword(switchKeyword: ISyntaxToken): SwitchStatementSyntax {
-        return this.update(switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._caseClauses, this._closeBraceToken);
+        return this.update(switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._switchClauses, this._closeBraceToken);
     }
 
     public withOpenParenToken(openParenToken: ISyntaxToken): SwitchStatementSyntax {
-        return this.update(this._switchKeyword, openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._caseClauses, this._closeBraceToken);
+        return this.update(this._switchKeyword, openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._switchClauses, this._closeBraceToken);
     }
 
     public withExpression(expression: ExpressionSyntax): SwitchStatementSyntax {
-        return this.update(this._switchKeyword, this._openParenToken, expression, this._closeParenToken, this._openBraceToken, this._caseClauses, this._closeBraceToken);
+        return this.update(this._switchKeyword, this._openParenToken, expression, this._closeParenToken, this._openBraceToken, this._switchClauses, this._closeBraceToken);
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): SwitchStatementSyntax {
-        return this.update(this._switchKeyword, this._openParenToken, this._expression, closeParenToken, this._openBraceToken, this._caseClauses, this._closeBraceToken);
+        return this.update(this._switchKeyword, this._openParenToken, this._expression, closeParenToken, this._openBraceToken, this._switchClauses, this._closeBraceToken);
     }
 
     public withOpenBraceToken(openBraceToken: ISyntaxToken): SwitchStatementSyntax {
-        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, openBraceToken, this._caseClauses, this._closeBraceToken);
+        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, openBraceToken, this._switchClauses, this._closeBraceToken);
     }
 
-    public withCaseClauses(caseClauses: ISyntaxList): SwitchStatementSyntax {
-        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, caseClauses, this._closeBraceToken);
+    public withSwitchClauses(switchClauses: ISyntaxList): SwitchStatementSyntax {
+        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, switchClauses, this._closeBraceToken);
+    }
+
+    public withSwitchClause(switchClause: SwitchClauseSyntax): SwitchStatementSyntax {
+        return this.withSwitchClauses(SyntaxList.create([switchClause]));
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): SwitchStatementSyntax {
-        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._caseClauses, closeBraceToken);
+        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._switchClauses, closeBraceToken);
     }
 
     private collectTextElements(elements: string[]): void {
@@ -7213,13 +7261,13 @@ class SwitchStatementSyntax extends StatementSyntax {
         this._expression.collectTextElements(elements);
         this._closeParenToken.collectTextElements(elements);
         this._openBraceToken.collectTextElements(elements);
-        this._caseClauses.collectTextElements(elements);
+        this._switchClauses.collectTextElements(elements);
         this._closeBraceToken.collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
-        if (this._caseClauses.isTypeScriptSpecific()) { return true; }
+        if (this._switchClauses.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
@@ -7372,6 +7420,10 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         return this.update(this._caseKeyword, this._expression, this._colonToken, statements);
     }
 
+    public withStatement(statement: StatementSyntax): CaseSwitchClauseSyntax {
+        return this.withStatements(SyntaxList.create([statement]));
+    }
+
     private collectTextElements(elements: string[]): void {
         this._caseKeyword.collectTextElements(elements);
         this._expression.collectTextElements(elements);
@@ -7488,6 +7540,10 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
 
     public withStatements(statements: ISyntaxList): DefaultSwitchClauseSyntax {
         return this.update(this._defaultKeyword, this._colonToken, statements);
+    }
+
+    public withStatement(statement: StatementSyntax): DefaultSwitchClauseSyntax {
+        return this.withStatements(SyntaxList.create([statement]));
     }
 
     private collectTextElements(elements: string[]): void {
@@ -8715,6 +8771,10 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
         return this.update(this._exportKeyword, this._enumKeyword, this._identifier, this._openBraceToken, variableDeclarators, this._closeBraceToken);
     }
 
+    public withVariableDeclarator(variableDeclarator: VariableDeclaratorSyntax): EnumDeclarationSyntax {
+        return this.withVariableDeclarators(SeparatedSyntaxList.create([variableDeclarator]));
+    }
+
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): EnumDeclarationSyntax {
         return this.update(this._exportKeyword, this._enumKeyword, this._identifier, this._openBraceToken, this._variableDeclarators, closeBraceToken);
     }
@@ -8960,6 +9020,10 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
 
     public withPropertyAssignments(propertyAssignments: ISeparatedSyntaxList): ObjectLiteralExpressionSyntax {
         return this.update(this._openBraceToken, propertyAssignments, this._closeBraceToken);
+    }
+
+    public withPropertyAssignment(propertyAssignment: PropertyAssignmentSyntax): ObjectLiteralExpressionSyntax {
+        return this.withPropertyAssignments(SeparatedSyntaxList.create([propertyAssignment]));
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): ObjectLiteralExpressionSyntax {

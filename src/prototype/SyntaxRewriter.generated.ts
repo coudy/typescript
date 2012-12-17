@@ -474,7 +474,7 @@
             <ExpressionSyntax>this.visitNode(node.expression()),
             this.visitToken(node.closeParenToken()),
             this.visitToken(node.openBraceToken()),
-            this.visitList(node.caseClauses()),
+            this.visitList(node.switchClauses()),
             this.visitToken(node.closeBraceToken()));
     }
 
