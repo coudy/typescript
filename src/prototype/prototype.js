@@ -21368,25 +21368,12 @@ var Emitter = (function (_super) {
         result.push(variableStatement);
         var indentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
         var functionExpression = this.generateEnumFunctionExpression(node);
-        var parenthesizedExpression = new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
-            leadingTrivia: indentationTrivia,
-            kind: 69 /* OpenParenToken */ 
-        }), functionExpression, SyntaxToken.createElastic({
-            kind: 70 /* CloseParenToken */ 
-        }));
+        var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(functionExpression).withLeadingTrivia(SyntaxTriviaList.create(indentationTrivia));
         var logicalOrExpression = new BinaryExpressionSyntax(184 /* LogicalOrExpression */ , new IdentifierNameSyntax(identifier.clone()), SyntaxToken.createElastic({
             kind: 101 /* BarBarToken */ 
-        }), new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
-            kind: 69 /* OpenParenToken */ 
-        }), new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new IdentifierNameSyntax(identifier.clone()), SyntaxToken.createElastic({
+        }), ParenthesizedExpressionSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new IdentifierNameSyntax(identifier.clone()), SyntaxToken.createElastic({
             kind: 104 /* EqualsToken */ 
-        }), new ObjectLiteralExpressionSyntax(SyntaxToken.createElastic({
-            kind: 67 /* OpenBraceToken */ 
-        }), SeparatedSyntaxList.empty, SyntaxToken.createElastic({
-            kind: 68 /* CloseBraceToken */ 
-        }))), SyntaxToken.createElastic({
-            kind: 70 /* CloseParenToken */ 
-        })));
+        }), ObjectLiteralExpressionSyntax.create1())));
         var argumentList = new ArgumentListSyntax(SyntaxToken.createElastic({
             kind: 69 /* OpenParenToken */ 
         }), SeparatedSyntaxList.create([

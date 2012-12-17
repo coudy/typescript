@@ -1236,26 +1236,19 @@ class Emitter extends SyntaxRewriter {
 
         var functionExpression = this.generateEnumFunctionExpression(node);
 
-        var parenthesizedExpression = new ParenthesizedExpressionSyntax(
-            SyntaxToken.createElastic({ leadingTrivia: indentationTrivia, kind: SyntaxKind.OpenParenToken }),
-            functionExpression,
-            SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }));
+        var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(
+            functionExpression).withLeadingTrivia(SyntaxTriviaList.create(indentationTrivia));
 
         var logicalOrExpression = new BinaryExpressionSyntax(
             SyntaxKind.LogicalOrExpression,
             new IdentifierNameSyntax(identifier.clone()),
             SyntaxToken.createElastic({ kind: SyntaxKind.BarBarToken }),
-            new ParenthesizedExpressionSyntax(
-                SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+            ParenthesizedExpressionSyntax.create1(
                 new BinaryExpressionSyntax(
                     SyntaxKind.AssignmentExpression,
                     new IdentifierNameSyntax(identifier.clone()),
                     SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken }),
-                    new ObjectLiteralExpressionSyntax(
-                        SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken }),
-                        SeparatedSyntaxList.empty,
-                        SyntaxToken.createElastic({ kind: SyntaxKind.CloseBraceToken }))),
-                SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken })));
+                    ObjectLiteralExpressionSyntax.create1())));
 
         var argumentList = new ArgumentListSyntax(
             SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
