@@ -55,15 +55,14 @@ module Emitter {
             return Indentation.columnForEndOfToken(token, this.syntaxInformationMap, this.options);
         }
 
-        private indentationTriviaList(column: number): ISyntaxTriviaList {
+        private indentationTrivia(column: number): ISyntaxTriviaList {
             var triviaArray = column === 0 ? null : [Indentation.indentationTrivia(column, this.options)];
             return SyntaxTriviaList.create(triviaArray);
         }
 
-        private indentationTriviaListForStartOfToken(token: ISyntaxToken): ISyntaxTriviaList {
+        private indentationTriviaForStartOfToken(token: ISyntaxToken): ISyntaxTriviaList {
             var column = this.columnForStartOfToken(token);
-            var triviaArray = column === 0 ? null : [Indentation.indentationTrivia(column, this.options)];
-            return SyntaxTriviaList.create(triviaArray);
+            return this.indentationTrivia(column);
         }
 
         private adjustListIndentation(nodes: SyntaxNode[]): SyntaxNode[] {
@@ -162,7 +161,7 @@ module Emitter {
             moduleIdentifier = this.withNoTrivia(moduleIdentifier);
             elementIdentifier = this.withNoTrivia(elementIdentifier);
 
-            var indentationTrivia = this.indentationTriviaListForStartOfToken(moduleElement.firstToken());
+            var indentationTrivia = this.indentationTriviaForStartOfToken(moduleElement.firstToken());
 
             // M1.e = e;
             return ExpressionStatementSyntax.create1(
@@ -256,7 +255,7 @@ module Emitter {
             moduleName = moduleName.withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
             var moduleIdentifier = moduleName.identifier();
 
-            var moduleIndentation = this.indentationTriviaListForStartOfToken(moduleDeclaration.firstToken());
+            var moduleIndentation = this.indentationTriviaForStartOfToken(moduleDeclaration.firstToken());
             var leadingTrivia = outermost
                 ? moduleDeclaration.leadingTrivia()
                 : moduleIndentation;
@@ -811,7 +810,7 @@ module Emitter {
             var propertyName = memberAccessor.kind() === SyntaxKind.GetMemberAccessorDeclaration
                 ? "get" : "set";
 
-            var indentationTrivia = this.indentationTriviaListForStartOfToken(memberAccessor.firstToken());
+            var indentationTrivia = this.indentationTriviaForStartOfToken(memberAccessor.firstToken());
 
             var parameterList = <ParameterListSyntax>memberAccessor.parameterList().accept(this);
             if (!parameterList.hasTrailingTrivia()) {
@@ -884,10 +883,10 @@ module Emitter {
             }
 
             var accessorColumn = this.columnForStartOfToken(memberAccessor.firstToken());
-            var accessorTrivia = this.indentationTriviaList(accessorColumn);
+            var accessorTrivia = this.indentationTrivia(accessorColumn);
 
             var propertyColumn = accessorColumn + this.options.indentSpaces;
-            var propertyTrivia = this.indentationTriviaList(propertyColumn);
+            var propertyTrivia = this.indentationTrivia(propertyColumn);
 
             propertyAssignments.push(new SimplePropertyAssignmentSyntax(
                 Syntax.identifier("enumerable"),
@@ -989,7 +988,7 @@ module Emitter {
             var classElementStatements = this.convertClassElements(node);
             statements.push.apply(statements, classElementStatements);
 
-            var returnIndentation = this.indentationTriviaList(statementIndent);
+            var returnIndentation = this.indentationTrivia(statementIndent);
 
             var returnStatement = new ReturnStatementSyntax(
                 Syntax.token(SyntaxKind.ReturnKeyword, { trailingTrivia: this.spaceArray }),
@@ -998,7 +997,7 @@ module Emitter {
 
             statements.push(returnStatement);
 
-            var classIndentationTrivia = this.indentationTriviaListForStartOfToken(node.firstToken());
+            var classIndentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
 
             var block = new BlockSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
@@ -1118,7 +1117,7 @@ module Emitter {
             var statements: StatementSyntax[] = [];
 
             var initIndentationColumn = enumColumn + this.options.indentSpaces;
-            var initIndentationTrivia = this.indentationTriviaList(initIndentationColumn);
+            var initIndentationTrivia = this.indentationTrivia(initIndentationColumn);
 
             if (node.variableDeclarators().syntaxNodeCount() > 0) {
                 // var _ = E;
@@ -1180,7 +1179,7 @@ module Emitter {
                 }
             }
 
-            var indentationTrivia = this.indentationTriviaList(enumColumn);
+            var indentationTrivia = this.indentationTrivia(enumColumn);
             var block = new BlockSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken, { trailingTrivia: this.newLineArray }),
                 SyntaxList.create(statements),
@@ -1230,7 +1229,7 @@ module Emitter {
             // (function(E) { E.e1 = ... })(E||(E={}));
             var expressionStatement = ExpressionStatementSyntax.create1(invocationExpression);
 
-            result.push(expressionStatement.withLeadingTrivia(this.indentationTriviaListForStartOfToken(node.firstToken()))
+            result.push(expressionStatement.withLeadingTrivia(this.indentationTriviaForStartOfToken(node.firstToken()))
                                            .withTrailingTrivia(this.newLineList));
 
             return result;
