@@ -34,7 +34,6 @@ interface ISyntaxToken extends ISyntaxElement {
 }
 
 interface ITokenInfo {
-    kind: SyntaxKind;
     leadingTrivia?: ISyntaxTrivia[];
     text?: string;
     value?: any;

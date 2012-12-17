@@ -276,27 +276,23 @@ module SyntaxToken {
         }
     }
 
-    export function create(token: ITokenInfo): ISyntaxToken {
-        var text = token.text ? token.text : SyntaxFacts.getText(token.kind);
-        var value = token.value || null;
-
-        var kind: SyntaxKind, keywordKind: SyntaxKind;
-        if (SyntaxFacts.isAnyKeyword(token.kind)) {
+    export function create(kind: SyntaxKind, token: ITokenInfo = null): ISyntaxToken {
+        var text = (token !== null && token.text) ? token.text : SyntaxFacts.getText(kind);
+        var value = (token !== null && token.value) ? token.value : null;
+        
+        var keywordKind = SyntaxKind.None;
+        if (SyntaxFacts.isAnyKeyword(kind)) {
+            keywordKind = kind;
             kind = SyntaxKind.IdentifierNameToken;
-            keywordKind = token.kind;
-        }
-        else {
-            kind = token.kind;
-            keywordKind = SyntaxKind.None;
         }
 
         return new RealizedToken(
             kind,
             keywordKind,
-            SyntaxTriviaList.create(token.leadingTrivia),
+            SyntaxTriviaList.create(token === null ? null : token.leadingTrivia),
             text,
             value,
-            SyntaxTriviaList.create(token.trailingTrivia),
+            SyntaxTriviaList.create(token === null ? null : token.trailingTrivia),
             /*isMissing:*/ false);
     }
 }

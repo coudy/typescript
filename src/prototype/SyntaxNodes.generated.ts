@@ -158,10 +158,10 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
 
     public static create1(stringLiteral: ISyntaxToken): ExternalModuleReferenceSyntax {
         return new ExternalModuleReferenceSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.ModuleKeyword }),
-            SyntaxToken.create({ kind: SyntaxKind.OpenParenToken }),
+            SyntaxToken.create(SyntaxKind.ModuleKeyword),
+            SyntaxToken.create(SyntaxKind.OpenParenToken),
             stringLiteral,
-            SyntaxToken.create({ kind: SyntaxKind.CloseParenToken }));
+            SyntaxToken.create(SyntaxKind.CloseParenToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -360,11 +360,11 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
     public static create1(identifier: ISyntaxToken,
                           moduleReference: ModuleReferenceSyntax): ImportDeclarationSyntax {
         return new ImportDeclarationSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.ImportKeyword }),
+            SyntaxToken.create(SyntaxKind.ImportKeyword),
             identifier,
-            SyntaxToken.create({ kind: SyntaxKind.EqualsToken }),
+            SyntaxToken.create(SyntaxKind.EqualsToken),
             moduleReference,
-            SyntaxToken.create({ kind: SyntaxKind.SemicolonToken }));
+            SyntaxToken.create(SyntaxKind.SemicolonToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -533,13 +533,13 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
         return new ClassDeclarationSyntax(
             null,
             null,
-            SyntaxToken.create({ kind: SyntaxKind.ClassKeyword }),
+            SyntaxToken.create(SyntaxKind.ClassKeyword),
             identifier,
             null,
             null,
-            SyntaxToken.create({ kind: SyntaxKind.OpenBraceToken }),
+            SyntaxToken.create(SyntaxKind.OpenBraceToken),
             SyntaxList.empty,
-            SyntaxToken.create({ kind: SyntaxKind.CloseBraceToken }));
+            SyntaxToken.create(SyntaxKind.CloseBraceToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -741,7 +741,7 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
     public static create1(identifier: ISyntaxToken): InterfaceDeclarationSyntax {
         return new InterfaceDeclarationSyntax(
             null,
-            SyntaxToken.create({ kind: SyntaxKind.InterfaceKeyword }),
+            SyntaxToken.create(SyntaxKind.InterfaceKeyword),
             identifier,
             null,
             ObjectTypeSyntax.create1());
@@ -874,7 +874,7 @@ class ExtendsClauseSyntax extends SyntaxNode {
 
     public static create1(typeNames: ISeparatedSyntaxList): ExtendsClauseSyntax {
         return new ExtendsClauseSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.ExtendsKeyword }),
+            SyntaxToken.create(SyntaxKind.ExtendsKeyword),
             typeNames);
     }
 
@@ -966,7 +966,7 @@ class ImplementsClauseSyntax extends SyntaxNode {
 
     public static create1(typeNames: ISeparatedSyntaxList): ImplementsClauseSyntax {
         return new ImplementsClauseSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.ImplementsKeyword }),
+            SyntaxToken.create(SyntaxKind.ImplementsKeyword),
             typeNames);
     }
 
@@ -1095,12 +1095,12 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
         return new ModuleDeclarationSyntax(
             null,
             null,
-            SyntaxToken.create({ kind: SyntaxKind.ModuleKeyword }),
+            SyntaxToken.create(SyntaxKind.ModuleKeyword),
             null,
             null,
-            SyntaxToken.create({ kind: SyntaxKind.OpenBraceToken }),
+            SyntaxToken.create(SyntaxKind.OpenBraceToken),
             SyntaxList.empty,
-            SyntaxToken.create({ kind: SyntaxKind.CloseBraceToken }));
+            SyntaxToken.create(SyntaxKind.CloseBraceToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -1315,7 +1315,7 @@ class FunctionDeclarationSyntax extends StatementSyntax {
         return new FunctionDeclarationSyntax(
             null,
             null,
-            SyntaxToken.create({ kind: SyntaxKind.FunctionKeyword }),
+            SyntaxToken.create(SyntaxKind.FunctionKeyword),
             functionSignature,
             null,
             null);
@@ -1485,7 +1485,7 @@ class VariableStatementSyntax extends StatementSyntax {
             null,
             null,
             variableDeclaration,
-            SyntaxToken.create({ kind: SyntaxKind.SemicolonToken }));
+            SyntaxToken.create(SyntaxKind.SemicolonToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -1641,7 +1641,7 @@ class VariableDeclarationSyntax extends SyntaxNode {
 
     public static create1(variableDeclarators: ISeparatedSyntaxList): VariableDeclarationSyntax {
         return new VariableDeclarationSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.VarKeyword }),
+            SyntaxToken.create(SyntaxKind.VarKeyword),
             variableDeclarators);
     }
 
@@ -1848,7 +1848,7 @@ class EqualsValueClauseSyntax extends SyntaxNode {
 
     public static create1(value: ExpressionSyntax): EqualsValueClauseSyntax {
         return new EqualsValueClauseSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.EqualsToken }),
+            SyntaxToken.create(SyntaxKind.EqualsToken),
             value);
     }
 
@@ -2043,7 +2043,7 @@ class ThisExpressionSyntax extends UnaryExpressionSyntax {
 
     public static create1(): ThisExpressionSyntax {
         return new ThisExpressionSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.ThisKeyword }));
+            SyntaxToken.create(SyntaxKind.ThisKeyword));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -2225,9 +2225,9 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
 
     public static create1(): ArrayLiteralExpressionSyntax {
         return new ArrayLiteralExpressionSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.OpenBracketToken }),
+            SyntaxToken.create(SyntaxKind.OpenBracketToken),
             SeparatedSyntaxList.empty,
-            SyntaxToken.create({ kind: SyntaxKind.CloseBracketToken }));
+            SyntaxToken.create(SyntaxKind.CloseBracketToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -2383,9 +2383,9 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
 
     public static create1(expression: ExpressionSyntax): ParenthesizedExpressionSyntax {
         return new ParenthesizedExpressionSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.OpenParenToken }),
+            SyntaxToken.create(SyntaxKind.OpenParenToken),
             expression,
-            SyntaxToken.create({ kind: SyntaxKind.CloseParenToken }));
+            SyntaxToken.create(SyntaxKind.CloseParenToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -2522,7 +2522,7 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
                           body: SyntaxNode): SimpleArrowFunctionExpressionSyntax {
         return new SimpleArrowFunctionExpressionSyntax(
             identifier,
-            SyntaxToken.create({ kind: SyntaxKind.EqualsGreaterThanToken }),
+            SyntaxToken.create(SyntaxKind.EqualsGreaterThanToken),
             body);
     }
 
@@ -2632,7 +2632,7 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
     public static create1(body: SyntaxNode): ParenthesizedArrowFunctionExpressionSyntax {
         return new ParenthesizedArrowFunctionExpressionSyntax(
             CallSignatureSyntax.create1(),
-            SyntaxToken.create({ kind: SyntaxKind.EqualsGreaterThanToken }),
+            SyntaxToken.create(SyntaxKind.EqualsGreaterThanToken),
             body);
     }
 
@@ -2848,7 +2848,7 @@ class QualifiedNameSyntax extends NameSyntax {
                           right: IdentifierNameSyntax): QualifiedNameSyntax {
         return new QualifiedNameSyntax(
             left,
-            SyntaxToken.create({ kind: SyntaxKind.DotToken }),
+            SyntaxToken.create(SyntaxKind.DotToken),
             right);
     }
 
@@ -2963,9 +2963,9 @@ class ConstructorTypeSyntax extends TypeSyntax {
 
     public static create1(type: TypeSyntax): ConstructorTypeSyntax {
         return new ConstructorTypeSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.NewKeyword }),
+            SyntaxToken.create(SyntaxKind.NewKeyword),
             ParameterListSyntax.create1(),
-            SyntaxToken.create({ kind: SyntaxKind.EqualsGreaterThanToken }),
+            SyntaxToken.create(SyntaxKind.EqualsGreaterThanToken),
             type);
     }
 
@@ -3088,7 +3088,7 @@ class FunctionTypeSyntax extends TypeSyntax {
     public static create1(type: TypeSyntax): FunctionTypeSyntax {
         return new FunctionTypeSyntax(
             ParameterListSyntax.create1(),
-            SyntaxToken.create({ kind: SyntaxKind.EqualsGreaterThanToken }),
+            SyntaxToken.create(SyntaxKind.EqualsGreaterThanToken),
             type);
     }
 
@@ -3202,9 +3202,9 @@ class ObjectTypeSyntax extends TypeSyntax {
 
     public static create1(): ObjectTypeSyntax {
         return new ObjectTypeSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.OpenBraceToken }),
+            SyntaxToken.create(SyntaxKind.OpenBraceToken),
             SeparatedSyntaxList.empty,
-            SyntaxToken.create({ kind: SyntaxKind.CloseBraceToken }));
+            SyntaxToken.create(SyntaxKind.CloseBraceToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -3313,8 +3313,8 @@ class ArrayTypeSyntax extends TypeSyntax {
     public static create1(type: TypeSyntax): ArrayTypeSyntax {
         return new ArrayTypeSyntax(
             type,
-            SyntaxToken.create({ kind: SyntaxKind.OpenBracketToken }),
-            SyntaxToken.create({ kind: SyntaxKind.CloseBracketToken }));
+            SyntaxToken.create(SyntaxKind.OpenBracketToken),
+            SyntaxToken.create(SyntaxKind.CloseBracketToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -3496,7 +3496,7 @@ class TypeAnnotationSyntax extends SyntaxNode {
 
     public static create1(type: TypeSyntax): TypeAnnotationSyntax {
         return new TypeAnnotationSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.ColonToken }),
+            SyntaxToken.create(SyntaxKind.ColonToken),
             type);
     }
 
@@ -3597,9 +3597,9 @@ class BlockSyntax extends StatementSyntax {
 
     public static create1(): BlockSyntax {
         return new BlockSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.OpenBraceToken }),
+            SyntaxToken.create(SyntaxKind.OpenBraceToken),
             SyntaxList.empty,
-            SyntaxToken.create({ kind: SyntaxKind.CloseBraceToken }));
+            SyntaxToken.create(SyntaxKind.CloseBraceToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -3887,7 +3887,7 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
                           identifierName: IdentifierNameSyntax): MemberAccessExpressionSyntax {
         return new MemberAccessExpressionSyntax(
             expression,
-            SyntaxToken.create({ kind: SyntaxKind.DotToken }),
+            SyntaxToken.create(SyntaxKind.DotToken),
             identifierName);
     }
 
@@ -4100,9 +4100,9 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
                           argumentExpression: ExpressionSyntax): ElementAccessExpressionSyntax {
         return new ElementAccessExpressionSyntax(
             expression,
-            SyntaxToken.create({ kind: SyntaxKind.OpenBracketToken }),
+            SyntaxToken.create(SyntaxKind.OpenBracketToken),
             argumentExpression,
-            SyntaxToken.create({ kind: SyntaxKind.CloseBracketToken }));
+            SyntaxToken.create(SyntaxKind.CloseBracketToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -4324,9 +4324,9 @@ class ArgumentListSyntax extends SyntaxNode {
 
     public static create1(): ArgumentListSyntax {
         return new ArgumentListSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.OpenParenToken }),
+            SyntaxToken.create(SyntaxKind.OpenParenToken),
             SeparatedSyntaxList.empty,
-            SyntaxToken.create({ kind: SyntaxKind.CloseParenToken }));
+            SyntaxToken.create(SyntaxKind.CloseParenToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -4601,9 +4601,9 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
                           whenFalse: ExpressionSyntax): ConditionalExpressionSyntax {
         return new ConditionalExpressionSyntax(
             condition,
-            SyntaxToken.create({ kind: SyntaxKind.QuestionToken }),
+            SyntaxToken.create(SyntaxKind.QuestionToken),
             whenTrue,
-            SyntaxToken.create({ kind: SyntaxKind.ColonToken }),
+            SyntaxToken.create(SyntaxKind.ColonToken),
             whenFalse);
     }
 
@@ -4767,7 +4767,7 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
 
     public static create1(): ConstructSignatureSyntax {
         return new ConstructSignatureSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.NewKeyword }),
+            SyntaxToken.create(SyntaxKind.NewKeyword),
             ParameterListSyntax.create1(),
             null);
     }
@@ -5022,9 +5022,9 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
 
     public static create1(parameter: ParameterSyntax): IndexSignatureSyntax {
         return new IndexSignatureSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.OpenBracketToken }),
+            SyntaxToken.create(SyntaxKind.OpenBracketToken),
             parameter,
-            SyntaxToken.create({ kind: SyntaxKind.CloseBracketToken }),
+            SyntaxToken.create(SyntaxKind.CloseBracketToken),
             null);
     }
 
@@ -5266,9 +5266,9 @@ class ParameterListSyntax extends SyntaxNode {
 
     public static create1(): ParameterListSyntax {
         return new ParameterListSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.OpenParenToken }),
+            SyntaxToken.create(SyntaxKind.OpenParenToken),
             SeparatedSyntaxList.empty,
-            SyntaxToken.create({ kind: SyntaxKind.CloseParenToken }));
+            SyntaxToken.create(SyntaxKind.CloseParenToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -5470,7 +5470,7 @@ class ElseClauseSyntax extends SyntaxNode {
 
     public static create1(statement: StatementSyntax): ElseClauseSyntax {
         return new ElseClauseSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.ElseKeyword }),
+            SyntaxToken.create(SyntaxKind.ElseKeyword),
             statement);
     }
 
@@ -5587,10 +5587,10 @@ class IfStatementSyntax extends StatementSyntax {
     public static create1(condition: ExpressionSyntax,
                           statement: StatementSyntax): IfStatementSyntax {
         return new IfStatementSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.IfKeyword }),
-            SyntaxToken.create({ kind: SyntaxKind.OpenParenToken }),
+            SyntaxToken.create(SyntaxKind.IfKeyword),
+            SyntaxToken.create(SyntaxKind.OpenParenToken),
             condition,
-            SyntaxToken.create({ kind: SyntaxKind.CloseParenToken }),
+            SyntaxToken.create(SyntaxKind.CloseParenToken),
             statement,
             null);
     }
@@ -5739,7 +5739,7 @@ class ExpressionStatementSyntax extends StatementSyntax {
     public static create1(expression: ExpressionSyntax): ExpressionStatementSyntax {
         return new ExpressionStatementSyntax(
             expression,
-            SyntaxToken.create({ kind: SyntaxKind.SemicolonToken }));
+            SyntaxToken.create(SyntaxKind.SemicolonToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -5863,7 +5863,7 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
 
     public static create1(): ConstructorDeclarationSyntax {
         return new ConstructorDeclarationSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.ConstructorKeyword }),
+            SyntaxToken.create(SyntaxKind.ConstructorKeyword),
             ParameterListSyntax.create1(),
             null,
             null);
@@ -6234,7 +6234,7 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return new GetMemberAccessorDeclarationSyntax(
             null,
             null,
-            SyntaxToken.create({ kind: SyntaxKind.GetKeyword }),
+            SyntaxToken.create(SyntaxKind.GetKeyword),
             identifier,
             ParameterListSyntax.create1(),
             null,
@@ -6423,7 +6423,7 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return new SetMemberAccessorDeclarationSyntax(
             null,
             null,
-            SyntaxToken.create({ kind: SyntaxKind.SetKeyword }),
+            SyntaxToken.create(SyntaxKind.SetKeyword),
             identifier,
             ParameterListSyntax.create1(),
             BlockSyntax.create1());
@@ -6589,7 +6589,7 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
             null,
             null,
             variableDeclarator,
-            SyntaxToken.create({ kind: SyntaxKind.SemicolonToken }));
+            SyntaxToken.create(SyntaxKind.SemicolonToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -6710,9 +6710,9 @@ class ThrowStatementSyntax extends StatementSyntax {
 
     public static create1(expression: ExpressionSyntax): ThrowStatementSyntax {
         return new ThrowStatementSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.ThrowKeyword }),
+            SyntaxToken.create(SyntaxKind.ThrowKeyword),
             expression,
-            SyntaxToken.create({ kind: SyntaxKind.SemicolonToken }));
+            SyntaxToken.create(SyntaxKind.SemicolonToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -6825,9 +6825,9 @@ class ReturnStatementSyntax extends StatementSyntax {
 
     public static create1(): ReturnStatementSyntax {
         return new ReturnStatementSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.ReturnKeyword }),
+            SyntaxToken.create(SyntaxKind.ReturnKeyword),
             null,
-            SyntaxToken.create({ kind: SyntaxKind.SemicolonToken }));
+            SyntaxToken.create(SyntaxKind.SemicolonToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -6940,7 +6940,7 @@ class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
 
     public static create1(expression: ExpressionSyntax): ObjectCreationExpressionSyntax {
         return new ObjectCreationExpressionSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.NewKeyword }),
+            SyntaxToken.create(SyntaxKind.NewKeyword),
             expression,
             null);
     }
@@ -7077,13 +7077,13 @@ class SwitchStatementSyntax extends StatementSyntax {
 
     public static create1(expression: ExpressionSyntax): SwitchStatementSyntax {
         return new SwitchStatementSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.SwitchKeyword }),
-            SyntaxToken.create({ kind: SyntaxKind.OpenParenToken }),
+            SyntaxToken.create(SyntaxKind.SwitchKeyword),
+            SyntaxToken.create(SyntaxKind.OpenParenToken),
             expression,
-            SyntaxToken.create({ kind: SyntaxKind.CloseParenToken }),
-            SyntaxToken.create({ kind: SyntaxKind.OpenBraceToken }),
+            SyntaxToken.create(SyntaxKind.CloseParenToken),
+            SyntaxToken.create(SyntaxKind.OpenBraceToken),
             SyntaxList.empty,
-            SyntaxToken.create({ kind: SyntaxKind.CloseBraceToken }));
+            SyntaxToken.create(SyntaxKind.CloseBraceToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -7281,9 +7281,9 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
 
     public static create1(expression: ExpressionSyntax): CaseSwitchClauseSyntax {
         return new CaseSwitchClauseSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.CaseKeyword }),
+            SyntaxToken.create(SyntaxKind.CaseKeyword),
             expression,
-            SyntaxToken.create({ kind: SyntaxKind.ColonToken }),
+            SyntaxToken.create(SyntaxKind.ColonToken),
             SyntaxList.empty);
     }
 
@@ -7412,8 +7412,8 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
 
     public static create1(): DefaultSwitchClauseSyntax {
         return new DefaultSwitchClauseSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.DefaultKeyword }),
-            SyntaxToken.create({ kind: SyntaxKind.ColonToken }),
+            SyntaxToken.create(SyntaxKind.DefaultKeyword),
+            SyntaxToken.create(SyntaxKind.ColonToken),
             SyntaxList.empty);
     }
 
@@ -7530,9 +7530,9 @@ class BreakStatementSyntax extends StatementSyntax {
 
     public static create1(): BreakStatementSyntax {
         return new BreakStatementSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.BreakKeyword }),
+            SyntaxToken.create(SyntaxKind.BreakKeyword),
             null,
-            SyntaxToken.create({ kind: SyntaxKind.SemicolonToken }));
+            SyntaxToken.create(SyntaxKind.SemicolonToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -7647,9 +7647,9 @@ class ContinueStatementSyntax extends StatementSyntax {
 
     public static create1(): ContinueStatementSyntax {
         return new ContinueStatementSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.ContinueKeyword }),
+            SyntaxToken.create(SyntaxKind.ContinueKeyword),
             null,
-            SyntaxToken.create({ kind: SyntaxKind.SemicolonToken }));
+            SyntaxToken.create(SyntaxKind.SemicolonToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -7858,15 +7858,15 @@ class ForStatementSyntax extends BaseForStatementSyntax {
 
     public static create1(statement: StatementSyntax): ForStatementSyntax {
         return new ForStatementSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.ForKeyword }),
-            SyntaxToken.create({ kind: SyntaxKind.OpenParenToken }),
+            SyntaxToken.create(SyntaxKind.ForKeyword),
+            SyntaxToken.create(SyntaxKind.OpenParenToken),
             null,
             null,
-            SyntaxToken.create({ kind: SyntaxKind.SemicolonToken }),
+            SyntaxToken.create(SyntaxKind.SemicolonToken),
             null,
-            SyntaxToken.create({ kind: SyntaxKind.SemicolonToken }),
+            SyntaxToken.create(SyntaxKind.SemicolonToken),
             null,
-            SyntaxToken.create({ kind: SyntaxKind.CloseParenToken }),
+            SyntaxToken.create(SyntaxKind.CloseParenToken),
             statement);
     }
 
@@ -8099,13 +8099,13 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
     public static create1(expression: ExpressionSyntax,
                           statement: StatementSyntax): ForInStatementSyntax {
         return new ForInStatementSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.ForKeyword }),
-            SyntaxToken.create({ kind: SyntaxKind.OpenParenToken }),
+            SyntaxToken.create(SyntaxKind.ForKeyword),
+            SyntaxToken.create(SyntaxKind.OpenParenToken),
             null,
             null,
-            SyntaxToken.create({ kind: SyntaxKind.InKeyword }),
+            SyntaxToken.create(SyntaxKind.InKeyword),
             expression,
-            SyntaxToken.create({ kind: SyntaxKind.CloseParenToken }),
+            SyntaxToken.create(SyntaxKind.CloseParenToken),
             statement);
     }
 
@@ -8292,10 +8292,10 @@ class WhileStatementSyntax extends IterationStatementSyntax {
     public static create1(condition: ExpressionSyntax,
                           statement: StatementSyntax): WhileStatementSyntax {
         return new WhileStatementSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.WhileKeyword }),
-            SyntaxToken.create({ kind: SyntaxKind.OpenParenToken }),
+            SyntaxToken.create(SyntaxKind.WhileKeyword),
+            SyntaxToken.create(SyntaxKind.OpenParenToken),
             condition,
-            SyntaxToken.create({ kind: SyntaxKind.CloseParenToken }),
+            SyntaxToken.create(SyntaxKind.CloseParenToken),
             statement);
     }
 
@@ -8441,10 +8441,10 @@ class WithStatementSyntax extends StatementSyntax {
     public static create1(condition: ExpressionSyntax,
                           statement: StatementSyntax): WithStatementSyntax {
         return new WithStatementSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.WithKeyword }),
-            SyntaxToken.create({ kind: SyntaxKind.OpenParenToken }),
+            SyntaxToken.create(SyntaxKind.WithKeyword),
+            SyntaxToken.create(SyntaxKind.OpenParenToken),
             condition,
-            SyntaxToken.create({ kind: SyntaxKind.CloseParenToken }),
+            SyntaxToken.create(SyntaxKind.CloseParenToken),
             statement);
     }
 
@@ -8603,11 +8603,11 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
     public static create1(identifier: ISyntaxToken): EnumDeclarationSyntax {
         return new EnumDeclarationSyntax(
             null,
-            SyntaxToken.create({ kind: SyntaxKind.EnumKeyword }),
+            SyntaxToken.create(SyntaxKind.EnumKeyword),
             identifier,
-            SyntaxToken.create({ kind: SyntaxKind.OpenBraceToken }),
+            SyntaxToken.create(SyntaxKind.OpenBraceToken),
             SeparatedSyntaxList.empty,
-            SyntaxToken.create({ kind: SyntaxKind.CloseBraceToken }));
+            SyntaxToken.create(SyntaxKind.CloseBraceToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -8759,9 +8759,9 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
     public static create1(type: TypeSyntax,
                           expression: UnaryExpressionSyntax): CastExpressionSyntax {
         return new CastExpressionSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.LessThanToken }),
+            SyntaxToken.create(SyntaxKind.LessThanToken),
             type,
-            SyntaxToken.create({ kind: SyntaxKind.GreaterThanToken }),
+            SyntaxToken.create(SyntaxKind.GreaterThanToken),
             expression);
     }
 
@@ -8888,9 +8888,9 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
 
     public static create1(): ObjectLiteralExpressionSyntax {
         return new ObjectLiteralExpressionSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.OpenBraceToken }),
+            SyntaxToken.create(SyntaxKind.OpenBraceToken),
             SeparatedSyntaxList.empty,
-            SyntaxToken.create({ kind: SyntaxKind.CloseBraceToken }));
+            SyntaxToken.create(SyntaxKind.CloseBraceToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -9030,7 +9030,7 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
                           expression: ExpressionSyntax): SimplePropertyAssignmentSyntax {
         return new SimplePropertyAssignmentSyntax(
             propertyName,
-            SyntaxToken.create({ kind: SyntaxKind.ColonToken }),
+            SyntaxToken.create(SyntaxKind.ColonToken),
             expression);
     }
 
@@ -9182,10 +9182,10 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
 
     public static create1(propertyName: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
         return new GetAccessorPropertyAssignmentSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.GetKeyword }),
+            SyntaxToken.create(SyntaxKind.GetKeyword),
             propertyName,
-            SyntaxToken.create({ kind: SyntaxKind.OpenParenToken }),
-            SyntaxToken.create({ kind: SyntaxKind.CloseParenToken }),
+            SyntaxToken.create(SyntaxKind.OpenParenToken),
+            SyntaxToken.create(SyntaxKind.CloseParenToken),
             BlockSyntax.create1());
     }
 
@@ -9334,11 +9334,11 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
     public static create1(propertyName: ISyntaxToken,
                           parameterName: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
         return new SetAccessorPropertyAssignmentSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.SetKeyword }),
+            SyntaxToken.create(SyntaxKind.SetKeyword),
             propertyName,
-            SyntaxToken.create({ kind: SyntaxKind.OpenParenToken }),
+            SyntaxToken.create(SyntaxKind.OpenParenToken),
             parameterName,
-            SyntaxToken.create({ kind: SyntaxKind.CloseParenToken }),
+            SyntaxToken.create(SyntaxKind.CloseParenToken),
             BlockSyntax.create1());
     }
 
@@ -9499,7 +9499,7 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
 
     public static create1(): FunctionExpressionSyntax {
         return new FunctionExpressionSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.FunctionKeyword }),
+            SyntaxToken.create(SyntaxKind.FunctionKeyword),
             null,
             CallSignatureSyntax.create1(),
             BlockSyntax.create1());
@@ -9617,7 +9617,7 @@ class EmptyStatementSyntax extends StatementSyntax {
 
     public static create1(): EmptyStatementSyntax {
         return new EmptyStatementSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.SemicolonToken }));
+            SyntaxToken.create(SyntaxKind.SemicolonToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -9691,7 +9691,7 @@ class SuperExpressionSyntax extends UnaryExpressionSyntax {
 
     public static create1(): SuperExpressionSyntax {
         return new SuperExpressionSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.SuperKeyword }));
+            SyntaxToken.create(SyntaxKind.SuperKeyword));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -9780,7 +9780,7 @@ class TryStatementSyntax extends StatementSyntax {
 
     public static create1(): TryStatementSyntax {
         return new TryStatementSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.TryKeyword }),
+            SyntaxToken.create(SyntaxKind.TryKeyword),
             BlockSyntax.create1(),
             null,
             null);
@@ -9915,10 +9915,10 @@ class CatchClauseSyntax extends SyntaxNode {
 
     public static create1(identifier: ISyntaxToken): CatchClauseSyntax {
         return new CatchClauseSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.CatchKeyword }),
-            SyntaxToken.create({ kind: SyntaxKind.OpenParenToken }),
+            SyntaxToken.create(SyntaxKind.CatchKeyword),
+            SyntaxToken.create(SyntaxKind.OpenParenToken),
             identifier,
-            SyntaxToken.create({ kind: SyntaxKind.CloseParenToken }),
+            SyntaxToken.create(SyntaxKind.CloseParenToken),
             BlockSyntax.create1());
     }
 
@@ -10050,7 +10050,7 @@ class FinallyClauseSyntax extends SyntaxNode {
 
     public static create1(): FinallyClauseSyntax {
         return new FinallyClauseSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.FinallyKeyword }),
+            SyntaxToken.create(SyntaxKind.FinallyKeyword),
             BlockSyntax.create1());
     }
 
@@ -10149,7 +10149,7 @@ class LabeledStatement extends StatementSyntax {
                           statement: StatementSyntax): LabeledStatement {
         return new LabeledStatement(
             identifier,
-            SyntaxToken.create({ kind: SyntaxKind.ColonToken }),
+            SyntaxToken.create(SyntaxKind.ColonToken),
             statement);
     }
 
@@ -10276,13 +10276,13 @@ class DoStatementSyntax extends IterationStatementSyntax {
     public static create1(statement: StatementSyntax,
                           condition: ExpressionSyntax): DoStatementSyntax {
         return new DoStatementSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.DoKeyword }),
+            SyntaxToken.create(SyntaxKind.DoKeyword),
             statement,
-            SyntaxToken.create({ kind: SyntaxKind.WhileKeyword }),
-            SyntaxToken.create({ kind: SyntaxKind.OpenParenToken }),
+            SyntaxToken.create(SyntaxKind.WhileKeyword),
+            SyntaxToken.create(SyntaxKind.OpenParenToken),
             condition,
-            SyntaxToken.create({ kind: SyntaxKind.CloseParenToken }),
-            SyntaxToken.create({ kind: SyntaxKind.SemicolonToken }));
+            SyntaxToken.create(SyntaxKind.CloseParenToken),
+            SyntaxToken.create(SyntaxKind.SemicolonToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -10440,7 +10440,7 @@ class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
 
     public static create1(expression: ExpressionSyntax): TypeOfExpressionSyntax {
         return new TypeOfExpressionSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.TypeOfKeyword }),
+            SyntaxToken.create(SyntaxKind.TypeOfKeyword),
             expression);
     }
 
@@ -10533,7 +10533,7 @@ class DeleteExpressionSyntax extends UnaryExpressionSyntax {
 
     public static create1(expression: ExpressionSyntax): DeleteExpressionSyntax {
         return new DeleteExpressionSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.DeleteKeyword }),
+            SyntaxToken.create(SyntaxKind.DeleteKeyword),
             expression);
     }
 
@@ -10626,7 +10626,7 @@ class VoidExpressionSyntax extends UnaryExpressionSyntax {
 
     public static create1(expression: ExpressionSyntax): VoidExpressionSyntax {
         return new VoidExpressionSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.VoidKeyword }),
+            SyntaxToken.create(SyntaxKind.VoidKeyword),
             expression);
     }
 
@@ -10719,8 +10719,8 @@ class DebuggerStatementSyntax extends StatementSyntax {
 
     public static create1(): DebuggerStatementSyntax {
         return new DebuggerStatementSyntax(
-            SyntaxToken.create({ kind: SyntaxKind.DebuggerKeyword }),
-            SyntaxToken.create({ kind: SyntaxKind.SemicolonToken }));
+            SyntaxToken.create(SyntaxKind.DebuggerKeyword),
+            SyntaxToken.create(SyntaxKind.SemicolonToken));
     }
 
     public accept(visitor: ISyntaxVisitor): any {

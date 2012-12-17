@@ -3706,7 +3706,7 @@ function generateFactory2Method(definition) {
                         result += "\r\n            null";
                     } else {
                         if(child.isToken) {
-                            result += "\r\n            SyntaxToken.createElastic({ kind: SyntaxKind." + tokenKinds(child)[0] + " })";
+                            result += "\r\n            SyntaxToken.create(SyntaxKind." + tokenKinds(child)[0] + ")";
                         } else {
                             result += "\r\n            " + child.type + ".create1()";
                         }
