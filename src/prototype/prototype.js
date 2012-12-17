@@ -20179,6 +20179,10 @@ var Syntax;
         return new IdentifierNameSyntax(Syntax.identifier(text));
     }
     Syntax.identifierName = identifierName;
+    function callSignature(parameter) {
+        return CallSignatureSyntax.create1().withParameterList(ParameterListSyntax.create1().withParameter(parameter));
+    }
+    Syntax.callSignature = callSignature;
 })(Syntax || (Syntax = {}));
 var Emitter;
 (function (Emitter) {
@@ -20356,7 +20360,7 @@ var Emitter;
             var variableStatement = VariableStatementSyntax.create1(new VariableDeclarationSyntax(Syntax.token(38 /* VarKeyword */ ).withTrailingTrivia(this.space), SeparatedSyntaxList.create([
                 VariableDeclaratorSyntax.create(moduleIdentifier)
             ]))).withLeadingTrivia(leadingTrivia).withTrailingTrivia(this.newLine);
-            var functionExpression = FunctionExpressionSyntax.create1().withCallSignature(CallSignatureSyntax.create(ParameterListSyntax.create1().withParameter(ParameterSyntax.create(moduleIdentifier))).withTrailingTrivia(this.space)).withBlock(new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), SyntaxList.create(moduleElements), Syntax.token(68 /* CloseBraceToken */ ).withLeadingTrivia(moduleIndentation)));
+            var functionExpression = FunctionExpressionSyntax.create1().withCallSignature(Syntax.callSignature(ParameterSyntax.create(moduleIdentifier)).withTrailingTrivia(this.space)).withBlock(new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), SyntaxList.create(moduleElements), Syntax.token(68 /* CloseBraceToken */ ).withLeadingTrivia(moduleIndentation)));
             var logicalOrExpression = new BinaryExpressionSyntax(184 /* LogicalOrExpression */ , moduleName, Syntax.token(101 /* BarBarToken */ ), ParenthesizedExpressionSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , moduleName, Syntax.token(104 /* EqualsToken */ ), ObjectLiteralExpressionSyntax.create1())));
             var invocationExpression = new InvocationExpressionSyntax(ParenthesizedExpressionSyntax.create1(functionExpression), ArgumentListSyntax.create1().withArgument(logicalOrExpression));
             var expressionStatement = ExpressionStatementSyntax.create1(invocationExpression).withLeadingTrivia(moduleIndentation).withTrailingTrivia(this.newLine);
@@ -20379,7 +20383,7 @@ var Emitter;
         };
         EmitterImpl.prototype.visitSimpleArrowFunctionExpression = function (node) {
             var identifier = this.withNoTrivia(node.identifier());
-            return FunctionExpressionSyntax.create1().withCallSignature(CallSignatureSyntax.create(ParameterListSyntax.create1().withParameter(ParameterSyntax.create(identifier))).withTrailingTrivia(this.space)).withBlock(this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
+            return FunctionExpressionSyntax.create1().withCallSignature(Syntax.callSignature(ParameterSyntax.create(identifier)).withTrailingTrivia(this.space)).withBlock(this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
         };
         EmitterImpl.prototype.visitParenthesizedArrowFunctionExpression = function (node) {
             return FunctionExpressionSyntax.create1().withCallSignature(CallSignatureSyntax.create(node.callSignature().parameterList().accept(this))).withBlock(this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
@@ -20598,8 +20602,7 @@ var Emitter;
             if(!callSignatureParameterList.hasTrailingTrivia()) {
                 callSignatureParameterList = callSignatureParameterList.withTrailingTrivia(SyntaxTriviaList.space);
             }
-            var callSignature = CallSignatureSyntax.create(callSignatureParameterList);
-            var functionExpression = FunctionExpressionSyntax.create(Syntax.token(25 /* FunctionKeyword */ ), callSignature, block);
+            var functionExpression = FunctionExpressionSyntax.create1().withCallSignature(CallSignatureSyntax.create(callSignatureParameterList)).withBlock(block);
             var assignmentExpression = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , receiver, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), functionExpression);
             return ExpressionStatementSyntax.create1(assignmentExpression).withTrailingTrivia(blockTrailingTrivia);
         };

@@ -12,14 +12,14 @@
         "        },",
         "        enumerable: true,",
         "        configurable: true",
-        "}    );",
+        "    });",
         "    return C;",
         "})();",
         "",
         "var M1;",
-        "(function(M1) {",
+        "(function(M1){",
         "    var M2;",
-        "    (function(M2) {",
+        "    (function(M2){",
         "        var C = (function() {",
         "            function C() {",
         "            }",
@@ -32,7 +32,7 @@
         "                },",
         "                enumerable: true,",
         "                configurable: true",
-        "    }        );",
+        "            });",
         "            return C;",
         "        })();",
         "    })(M2||(M2={}));",
@@ -887,8 +887,8 @@
                                                                             "width": 1,
                                                                             "fullWidth": 5,
                                                                             "text": "}",
-                                                                            "hasTrailingTrivia": true,
-                                                                            "trailingTrivia": [
+                                                                            "hasLeadingTrivia": true,
+                                                                            "leadingTrivia": [
                                                                                 {
                                                                                     "kind": "WhitespaceTrivia",
                                                                                     "text": "    "
@@ -1109,15 +1109,7 @@
                                     "_closeParenToken": {
                                         "kind": "CloseParenToken",
                                         "width": 1,
-                                        "fullWidth": 2,
-                                        "text": ")",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
+                                        "text": ")"
                                     }
                                 }
                             },
@@ -1240,15 +1232,7 @@
                                                             "_closeParenToken": {
                                                                 "kind": "CloseParenToken",
                                                                 "width": 1,
-                                                                "fullWidth": 2,
-                                                                "text": ")",
-                                                                "hasTrailingTrivia": true,
-                                                                "trailingTrivia": [
-                                                                    {
-                                                                        "kind": "WhitespaceTrivia",
-                                                                        "text": " "
-                                                                    }
-                                                                ]
+                                                                "text": ")"
                                                             }
                                                         }
                                                     },
@@ -2121,17 +2105,10 @@
                                                                                                                             "fullWidth": 13,
                                                                                                                             "text": "}",
                                                                                                                             "hasLeadingTrivia": true,
-                                                                                                                            "hasTrailingTrivia": true,
                                                                                                                             "leadingTrivia": [
                                                                                                                                 {
                                                                                                                                     "kind": "WhitespaceTrivia",
-                                                                                                                                    "text": "    "
-                                                                                                                                }
-                                                                                                                            ],
-                                                                                                                            "trailingTrivia": [
-                                                                                                                                {
-                                                                                                                                    "kind": "WhitespaceTrivia",
-                                                                                                                                    "text": "        "
+                                                                                                                                    "text": "            "
                                                                                                                                 }
                                                                                                                             ]
                                                                                                                         }

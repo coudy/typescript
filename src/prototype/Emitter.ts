@@ -266,7 +266,7 @@ module Emitter {
 
             // function(M) { ... }
             var functionExpression = FunctionExpressionSyntax.create1()
-                .withCallSignature(CallSignatureSyntax.create(ParameterListSyntax.create1().withParameter(ParameterSyntax.create(moduleIdentifier))).withTrailingTrivia(this.space))
+                .withCallSignature(Syntax.callSignature(ParameterSyntax.create(moduleIdentifier)).withTrailingTrivia(this.space))
                 .withBlock(new BlockSyntax(
                     Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
                     SyntaxList.create(moduleElements),
@@ -326,7 +326,7 @@ module Emitter {
             var identifier = this.withNoTrivia(node.identifier());
 
             return FunctionExpressionSyntax.create1()
-                .withCallSignature(CallSignatureSyntax.create(ParameterListSyntax.create1().withParameter(ParameterSyntax.create(identifier))).withTrailingTrivia(this.space))
+                .withCallSignature(Syntax.callSignature(ParameterSyntax.create(identifier)).withTrailingTrivia(this.space))
                 .withBlock(this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
         }
 
@@ -769,12 +769,9 @@ module Emitter {
                 callSignatureParameterList = <ParameterListSyntax>callSignatureParameterList.withTrailingTrivia(SyntaxTriviaList.space);
             }
 
-            var callSignature = CallSignatureSyntax.create(callSignatureParameterList);
-
-            var functionExpression = FunctionExpressionSyntax.create(
-                Syntax.token(SyntaxKind.FunctionKeyword),
-                callSignature,
-                block);
+            var functionExpression = FunctionExpressionSyntax.create1()
+                .withCallSignature(CallSignatureSyntax.create(callSignatureParameterList))
+                .withBlock(block);
 
             var assignmentExpression = new BinaryExpressionSyntax(
                 SyntaxKind.AssignmentExpression,
