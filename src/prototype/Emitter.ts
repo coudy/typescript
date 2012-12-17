@@ -1420,12 +1420,10 @@ class Emitter extends SyntaxRewriter {
             text: "_super"
         }));
 
-        return new MemberAccessExpressionSyntax(
-            new MemberAccessExpressionSyntax(
+        return MemberAccessExpressionSyntax.create1(
+            MemberAccessExpressionSyntax.create1(
                 receiver,
-                SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
                 new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "prototype" }))),
-            SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
             result.identifierName());
     }
 
