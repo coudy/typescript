@@ -1356,12 +1356,11 @@ class Emitter extends SyntaxRewriter {
     private convertSuperInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
         var result = <InvocationExpressionSyntax>super.visitInvocationExpression(node);
 
-        var expression = new MemberAccessExpressionSyntax(
+        var expression = MemberAccessExpressionSyntax.create1(
             new IdentifierNameSyntax(SyntaxToken.createElastic({
                 leadingTrivia: result.leadingTrivia().toArray(),
                 kind: SyntaxKind.IdentifierNameToken,
                 text: "_super" })),
-            SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
             new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "call" })));
 
         var arguments = result.argumentList().arguments().toArray();
@@ -1369,7 +1368,7 @@ class Emitter extends SyntaxRewriter {
             arguments.unshift(SyntaxToken.createElastic({ kind: SyntaxKind.CommaToken, trailingTrivia: this.spaceList }));
         }
 
-        arguments.unshift(new ThisExpressionSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.ThisKeyword })));
+        arguments.unshift(ThisExpressionSyntax.create1());
 
         return result.withExpression(expression)
                      .withArgumentList(result.argumentList().withArguments(
