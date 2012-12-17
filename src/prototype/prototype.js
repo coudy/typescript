@@ -21001,10 +21001,7 @@ var Emitter = (function (_super) {
             kind: 104 /* EqualsToken */ ,
             trailingTrivia: this.spaceArray
         }), functionExpression);
-        return new ExpressionStatementSyntax(assignmentExpression, SyntaxToken.createElastic({
-            kind: 75 /* SemicolonToken */ ,
-            trailingTrivia: blockTrailingTrivia.toArray()
-        }));
+        return ExpressionStatementSyntax.create1(assignmentExpression).withTrailingTrivia(blockTrailingTrivia);
     };
     Emitter.prototype.convertMemberAccessor = function (memberAccessor) {
         var propertyName = memberAccessor.kind() === 136 /* GetMemberAccessorDeclaration */  ? "get" : "set";

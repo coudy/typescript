@@ -811,9 +811,8 @@ class Emitter extends SyntaxRewriter {
             SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceArray }),
             functionExpression);
 
-        return new ExpressionStatementSyntax(
-            assignmentExpression,
-            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: blockTrailingTrivia.toArray() }));
+        return ExpressionStatementSyntax.create1(
+            assignmentExpression).withTrailingTrivia(blockTrailingTrivia);
     }
 
     private convertMemberAccessor(memberAccessor: MemberAccessorDeclarationSyntax): PropertyAssignmentSyntax {
