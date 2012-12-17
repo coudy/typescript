@@ -21114,17 +21114,9 @@ var Emitter = (function (_super) {
             kind: 68 /* CloseBraceToken */ 
         }));
         arguments.push(objectLiteral);
-        var argumentList = new ArgumentListSyntax(SyntaxToken.createElastic({
-            kind: 69 /* OpenParenToken */ 
-        }), SeparatedSyntaxList.create(arguments), SyntaxToken.createElastic({
-            kind: 70 /* CloseParenToken */ 
-        }));
+        var argumentList = ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create(arguments));
         var invocationExpression = new InvocationExpressionSyntax(receiver, argumentList);
-        var expressionStatement = new ExpressionStatementSyntax(invocationExpression, SyntaxToken.createElastic({
-            kind: 75 /* SemicolonToken */ ,
-            trailingTrivia: this.newLineArray
-        }));
-        return expressionStatement;
+        return ExpressionStatementSyntax.create1(invocationExpression).withTrailingTrivia(this.newLineList);
     };
     Emitter.prototype.convertClassElements = function (classDeclaration) {
         var result = [];

@@ -923,19 +923,13 @@ class Emitter extends SyntaxRewriter {
 
         arguments.push(objectLiteral);
 
-        var argumentList = new ArgumentListSyntax(
-            SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
-            SeparatedSyntaxList.create(arguments),
-            SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }));
+        var argumentList = ArgumentListSyntax.create1().withArguments(
+            SeparatedSyntaxList.create(arguments));
 
-        var invocationExpression = new InvocationExpressionSyntax(
-            receiver, argumentList);
+        var invocationExpression = new InvocationExpressionSyntax(receiver, argumentList);
 
-        var expressionStatement = new ExpressionStatementSyntax(
-            invocationExpression,
-            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineArray }));
-
-        return expressionStatement;
+        return ExpressionStatementSyntax.create1(
+            invocationExpression).withTrailingTrivia(this.newLineList);
     }
 
     private convertClassElements(classDeclaration: ClassDeclarationSyntax): StatementSyntax[] {
