@@ -21234,8 +21234,7 @@ var Emitter = (function (_super) {
         var result = _super.prototype.visitCastExpression.call(this, node);
         var subExpression = result.expression();
         var totalTrivia = result.leadingTrivia().concat(subExpression.leadingTrivia());
-        subExpression = subExpression.replaceToken(subExpression.firstToken(), subExpression.firstToken().withLeadingTrivia(totalTrivia));
-        return subExpression;
+        return subExpression.withLeadingTrivia(totalTrivia);
     };
     Emitter.prototype.visitInterfaceDeclaration = function (node) {
         return null;

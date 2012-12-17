@@ -1081,10 +1081,7 @@ class Emitter extends SyntaxRewriter {
         var subExpression = result.expression();
         var totalTrivia = result.leadingTrivia().concat(subExpression.leadingTrivia());
 
-        subExpression = <UnaryExpressionSyntax>subExpression.replaceToken(
-            subExpression.firstToken(), subExpression.firstToken().withLeadingTrivia(totalTrivia));
-
-        return subExpression;
+        return subExpression.withLeadingTrivia(totalTrivia);
     }
 
     private visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): InterfaceDeclarationSyntax {
