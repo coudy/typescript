@@ -19694,7 +19694,7 @@ var Emitter = (function (_super) {
             difference = returnKeywordEndColumn - arrowEndColumn;
         }
         returnStatement = this.changeIndentation(returnStatement, false, difference);
-        returnStatement = SyntaxIndenter.indentNode(returnStatement, true, this.options.indentSpaces, this.options);
+        returnStatement = this.changeIndentation(returnStatement, true, this.options.indentSpaces);
         var block = new BlockSyntax(SyntaxToken.createElastic({
             kind: 67 /* OpenBraceToken */ ,
             trailingTrivia: this.newLineList
@@ -19703,7 +19703,7 @@ var Emitter = (function (_super) {
         ]), SyntaxToken.createElastic({
             kind: 68 /* CloseBraceToken */ 
         }));
-        block = SyntaxIndenter.indentNode(block, false, Indentation.columnForStartOfFirstTokenInLineContainingToken(arrowFunction.firstToken(), this.syntaxInformationMap, this.options), this.options);
+        block = this.changeIndentation(block, false, Indentation.columnForStartOfFirstTokenInLineContainingToken(arrowFunction.firstToken(), this.syntaxInformationMap, this.options));
         return block;
     };
     Emitter.functionSignatureDefaultParameters = function functionSignatureDefaultParameters(signature) {
@@ -19794,7 +19794,7 @@ var Emitter = (function (_super) {
             var functionDeclarationStartColumn = this.columnForStartOfToken(node.firstToken());
             var desiredColumn = functionDeclarationStartColumn + this.options.indentSpaces;
             defaultValueAssignmentStatements = ArrayUtilities.select(defaultValueAssignmentStatements, function (s) {
-                return SyntaxIndenter.indentNode(s, true, desiredColumn, _this.options);
+                return _this.changeIndentation(s, true, desiredColumn);
             });
             var statements = [];
             statements.push.apply(statements, defaultValueAssignmentStatements);
@@ -19886,7 +19886,7 @@ var Emitter = (function (_super) {
                 kind: 75 /* SemicolonToken */ ,
                 trailingTrivia: this.newLineList
             }));
-            superStatement = SyntaxIndenter.indentNode(superStatement, true, this.options.indentSpaces, this.options);
+            superStatement = this.changeIndentation(superStatement, true, this.options.indentSpaces);
             statements.push(superStatement);
         }
         var block = new BlockSyntax(SyntaxToken.createElastic({
@@ -19901,7 +19901,7 @@ var Emitter = (function (_super) {
             trailingTrivia: this.spaceList
         }), functionSignature, block, null);
         var classIndentation = this.columnForStartOfToken(classDeclaration.firstToken());
-        return SyntaxIndenter.indentNode(functionDeclaration, true, this.options.indentSpaces + classIndentation, this.options);
+        return this.changeIndentation(functionDeclaration, true, this.options.indentSpaces + classIndentation);
     };
     Emitter.prototype.convertConstructorDeclaration = function (classDeclaration, constructorDeclaration) {
         var _this = this;
@@ -20187,7 +20187,7 @@ var Emitter = (function (_super) {
                 kind: 75 /* SemicolonToken */ ,
                 trailingTrivia: this.newLineList
             }));
-            statements.push(SyntaxIndenter.indentNode(extendsStatement, true, statementIndent, this.options));
+            statements.push(this.changeIndentation(extendsStatement, true, statementIndent));
         }
         var constructorDeclaration = ArrayUtilities.firstOrDefault(node.classElements().toArray(), function (c) {
             return c.kind() === 135 /* ConstructorDeclaration */ ;

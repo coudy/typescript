@@ -435,8 +435,8 @@ class Emitter extends SyntaxRewriter {
         // Next, indent the return statement.  It's going in a block, so it needs to be properly
         // indented.  Note we do this *after* we've ensured the expression aligns properly.
 
-        returnStatement = <ReturnStatementSyntax>SyntaxIndenter.indentNode(
-            returnStatement, /*indentFirstToken:*/ true, this.options.indentSpaces, this.options);
+        returnStatement = <ReturnStatementSyntax>this.changeIndentation(
+            returnStatement, /*indentFirstToken:*/ true, this.options.indentSpaces);
 
         // Now wrap the return statement in a block.
         var block = new BlockSyntax(
@@ -464,9 +464,9 @@ class Emitter extends SyntaxRewriter {
         // parent structure.  Note: we don't wan to adjust the leading brace as that's going to go
         // after the function sigature.
 
-        block = <BlockSyntax>SyntaxIndenter.indentNode(block, /*indentFirstToken:*/ false,
+        block = <BlockSyntax>this.changeIndentation(block, /*indentFirstToken:*/ false,
             Indentation.columnForStartOfFirstTokenInLineContainingToken(
-                arrowFunction.firstToken(), this.syntaxInformationMap, this.options), this.options);
+                arrowFunction.firstToken(), this.syntaxInformationMap, this.options));
         return block;
     }
 
@@ -561,7 +561,7 @@ class Emitter extends SyntaxRewriter {
             var desiredColumn = functionDeclarationStartColumn + this.options.indentSpaces;
 
             defaultValueAssignmentStatements = ArrayUtilities.select(defaultValueAssignmentStatements,
-                s => SyntaxIndenter.indentNode(s, /*indentFirstToken:*/ true, desiredColumn, this.options));
+                s => this.changeIndentation(s, /*indentFirstToken:*/ true, desiredColumn));
 
             var statements: StatementSyntax[] = [];
             statements.push.apply(statements, defaultValueAssignmentStatements);
@@ -669,8 +669,8 @@ class Emitter extends SyntaxRewriter {
                         SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }))),
                 SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
 
-            superStatement = <ExpressionStatementSyntax>SyntaxIndenter.indentNode(
-                superStatement, /*indentFirstToken:*/ true, this.options.indentSpaces, this.options);
+            superStatement = <ExpressionStatementSyntax>this.changeIndentation(
+                superStatement, /*indentFirstToken:*/ true, this.options.indentSpaces);
             statements.push(superStatement);
         }
 
@@ -686,8 +686,8 @@ class Emitter extends SyntaxRewriter {
 
         var classIndentation = this.columnForStartOfToken(classDeclaration.firstToken());
 
-        return <FunctionDeclarationSyntax>SyntaxIndenter.indentNode(
-            functionDeclaration, /*indentFirstToken:*/ true, this.options.indentSpaces + classIndentation, this.options);
+        return <FunctionDeclarationSyntax>this.changeIndentation(
+            functionDeclaration, /*indentFirstToken:*/ true, this.options.indentSpaces + classIndentation);
     }
 
     private convertConstructorDeclaration(classDeclaration: ClassDeclarationSyntax,
@@ -1018,8 +1018,8 @@ class Emitter extends SyntaxRewriter {
                         SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }))),
                 SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
 
-            statements.push(<StatementSyntax>SyntaxIndenter.indentNode(
-                extendsStatement, /*indentFirstToken:*/ true, statementIndent, this.options));
+            statements.push(<StatementSyntax>this.changeIndentation(
+                extendsStatement, /*indentFirstToken:*/ true, statementIndent));
         }
 
         var constructorDeclaration: ConstructorDeclarationSyntax =
