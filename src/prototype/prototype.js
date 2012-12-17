@@ -20661,10 +20661,7 @@ var Emitter = (function (_super) {
         ]), SyntaxToken.createElastic({
             kind: 70 /* CloseParenToken */ 
         })));
-        var expressionStatement = new ExpressionStatementSyntax(invocationExpression, SyntaxToken.createElastic({
-            kind: 75 /* SemicolonToken */ ,
-            trailingTrivia: this.newLineArray
-        }));
+        var expressionStatement = ExpressionStatementSyntax.create1(invocationExpression).withTrailingTrivia(this.newLineList);
         return [
             variableStatement, 
             expressionStatement

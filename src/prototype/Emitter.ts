@@ -298,9 +298,8 @@ class Emitter extends SyntaxRewriter {
                 SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken })));
         
         // (function(M) { ... })(M||(M={}));
-        var expressionStatement = new ExpressionStatementSyntax(
-            invocationExpression,
-            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineArray }));
+        var expressionStatement = ExpressionStatementSyntax.create1(
+            invocationExpression).withTrailingTrivia(this.newLineList);
 
         return [variableStatement, expressionStatement];
     }
