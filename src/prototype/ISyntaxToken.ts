@@ -33,9 +33,10 @@ interface ISyntaxToken extends ISyntaxElement {
     clone(): ISyntaxToken;
 }
 
-interface IElasticToken {
+interface ITokenInfo {
     kind: SyntaxKind;
     leadingTrivia?: ISyntaxTrivia[];
     text?: string;
+    value?: any;
     trailingTrivia?: ISyntaxTrivia[];
 }

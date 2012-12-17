@@ -19830,121 +19830,6 @@ var SyntaxToken;
         return new EmptyToken(kind, keywordKind);
     }
     SyntaxToken.createEmpty = createEmpty;
-    var ElasticToken = (function () {
-        function ElasticToken(kind, keywordKind, leadingTrivia, text, trailingTrivia) {
-            this.tokenKind = kind;
-            this._keywordKind = keywordKind;
-            this._leadingTrivia = leadingTrivia;
-            this._text = text;
-            this._trailingTrivia = trailingTrivia;
-        }
-        ElasticToken.prototype.clone = function () {
-            return new ElasticToken(this.tokenKind, this._keywordKind, this._leadingTrivia, this._text, this._trailingTrivia);
-        };
-        ElasticToken.prototype.isToken = function () {
-            return true;
-        };
-        ElasticToken.prototype.isNode = function () {
-            return false;
-        };
-        ElasticToken.prototype.isList = function () {
-            return false;
-        };
-        ElasticToken.prototype.isSeparatedList = function () {
-            return false;
-        };
-        ElasticToken.prototype.isTrivia = function () {
-            return false;
-        };
-        ElasticToken.prototype.isTriviaList = function () {
-            return false;
-        };
-        ElasticToken.prototype.isMissing = function () {
-            return false;
-        };
-        ElasticToken.prototype.toJSON = function (key) {
-            return toJSON(this);
-        };
-        ElasticToken.prototype.kind = function () {
-            return this.tokenKind;
-        };
-        ElasticToken.prototype.keywordKind = function () {
-            return this._keywordKind;
-        };
-        ElasticToken.prototype.fullStart = function () {
-            return 0;
-        };
-        ElasticToken.prototype.fullEnd = function () {
-            throw Errors.notYetImplemented();
-        };
-        ElasticToken.prototype.start = function () {
-            throw Errors.notYetImplemented();
-        };
-        ElasticToken.prototype.end = function () {
-            throw Errors.notYetImplemented();
-        };
-        ElasticToken.prototype.fullWidth = function () {
-            return this._leadingTrivia.fullWidth() + this.width() + this._trailingTrivia.fullWidth();
-        };
-        ElasticToken.prototype.width = function () {
-            return this._text.length;
-        };
-        ElasticToken.prototype.text = function () {
-            return this._text;
-        };
-        ElasticToken.prototype.fullText = function () {
-            return this._leadingTrivia.fullText() + this.text() + this._trailingTrivia.fullText();
-        };
-        ElasticToken.prototype.value = function () {
-            return null;
-        };
-        ElasticToken.prototype.valueText = function () {
-            return null;
-        };
-        ElasticToken.prototype.hasLeadingTrivia = function () {
-            return this._leadingTrivia.count() > 0;
-        };
-        ElasticToken.prototype.hasLeadingCommentTrivia = function () {
-            return this._leadingTrivia.hasComment();
-        };
-        ElasticToken.prototype.hasLeadingNewLineTrivia = function () {
-            return this._leadingTrivia.hasNewLine();
-        };
-        ElasticToken.prototype.leadingTriviaWidth = function () {
-            return this._leadingTrivia.fullWidth();
-        };
-        ElasticToken.prototype.hasTrailingTrivia = function () {
-            return this._trailingTrivia.count() > 0;
-        };
-        ElasticToken.prototype.hasTrailingCommentTrivia = function () {
-            return this._trailingTrivia.hasComment();
-        };
-        ElasticToken.prototype.trailingTriviaWidth = function () {
-            return this._trailingTrivia.fullWidth();
-        };
-        ElasticToken.prototype.hasTrailingNewLineTrivia = function () {
-            return this._trailingTrivia.hasNewLine();
-        };
-        ElasticToken.prototype.leadingTrivia = function () {
-            return this._leadingTrivia;
-        };
-        ElasticToken.prototype.trailingTrivia = function () {
-            return this._trailingTrivia;
-        };
-        ElasticToken.prototype.realize = function () {
-            return realize(this);
-        };
-        ElasticToken.prototype.collectTextElements = function (elements) {
-            collectTextElements(this, elements);
-        };
-        ElasticToken.prototype.withLeadingTrivia = function (leadingTrivia) {
-            return this.realize().withLeadingTrivia(leadingTrivia);
-        };
-        ElasticToken.prototype.withTrailingTrivia = function (trailingTrivia) {
-            return this.realize().withTrailingTrivia(trailingTrivia);
-        };
-        return ElasticToken;
-    })();    
     var RealizedToken = (function () {
         function RealizedToken(tokenKind, keywordKind, leadingTrivia, text, value, trailingTrivia, isMissing) {
             this.tokenKind = tokenKind;
@@ -20049,6 +19934,7 @@ var SyntaxToken;
     })();    
     function create(token) {
         var text = token.text ? token.text : SyntaxFacts.getText(token.kind);
+        var value = token.value || null;
         var kind, keywordKind;
         if(SyntaxFacts.isAnyKeyword(token.kind)) {
             kind = 9 /* IdentifierNameToken */ ;
@@ -20057,7 +19943,7 @@ var SyntaxToken;
             kind = token.kind;
             keywordKind = 0 /* None */ ;
         }
-        return new ElasticToken(kind, keywordKind, SyntaxTriviaList.create(token.leadingTrivia), text, SyntaxTriviaList.create(token.trailingTrivia));
+        return new RealizedToken(kind, keywordKind, SyntaxTriviaList.create(token.leadingTrivia), text, value, SyntaxTriviaList.create(token.trailingTrivia), false);
     }
     SyntaxToken.create = create;
 })(SyntaxToken || (SyntaxToken = {}));

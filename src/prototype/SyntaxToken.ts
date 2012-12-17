@@ -194,120 +194,6 @@ module SyntaxToken {
         return new EmptyToken(kind, keywordKind);
     }
 
-    class ElasticToken implements ISyntaxToken {
-        private _keywordKind: SyntaxKind;
-        private _leadingTrivia: ISyntaxTriviaList;
-        private _text: string;
-        private _trailingTrivia: ISyntaxTriviaList;
-
-        constructor(kind: SyntaxKind,
-            keywordKind: SyntaxKind,
-            leadingTrivia: ISyntaxTriviaList,
-            text: string,
-            trailingTrivia: ISyntaxTriviaList) {
-            this.tokenKind = kind;
-            this._keywordKind = keywordKind;
-            this._leadingTrivia = leadingTrivia;
-            this._text = text;
-            this._trailingTrivia = trailingTrivia;
-        }
-
-        public clone(): ISyntaxToken {
-            return new ElasticToken(this.tokenKind, this._keywordKind, this._leadingTrivia, this._text, this._trailingTrivia);
-        }
-
-        public isToken(): bool { return true; }
-        public isNode(): bool { return false; }
-        public isList(): bool { return false; }
-        public isSeparatedList(): bool { return false; }
-        public isTrivia(): bool { return false; }
-        public isTriviaList(): bool { return false; }
-        public isMissing(): bool { return false; }
-
-        public tokenKind: SyntaxKind;
-
-        public toJSON(key) { return toJSON(this); }
-
-        public kind(): SyntaxKind { return this.tokenKind; }
-        public keywordKind(): SyntaxKind { return this._keywordKind; }
-
-        public fullStart(): number { return 0; }
-        public fullEnd(): number { throw Errors.notYetImplemented(); }
-
-        public start(): number { throw Errors.notYetImplemented(); }
-        public end(): number { throw Errors.notYetImplemented(); }
-
-        public fullWidth(): number {
-            return this._leadingTrivia.fullWidth() + this.width() + this._trailingTrivia.fullWidth();
-        }
-
-        public width(): number {
-            return this._text.length;
-        }
-
-        public text(): string {
-            return this._text;
-        }
-
-        public fullText(): string {
-            return this._leadingTrivia.fullText() + this.text() + this._trailingTrivia.fullText();
-        }
-
-        public value(): any {
-            return null;
-        }
-
-        public valueText(): string {
-            return null;
-        }
-
-        public hasLeadingTrivia(): bool {
-            return this._leadingTrivia.count() > 0;
-        }
-
-        public hasLeadingCommentTrivia(): bool {
-            return this._leadingTrivia.hasComment();
-        }
-
-        public hasLeadingNewLineTrivia(): bool {
-            return this._leadingTrivia.hasNewLine();
-        }
-
-        public leadingTriviaWidth(): number {
-            return this._leadingTrivia.fullWidth();
-        }
-
-        public hasTrailingTrivia(): bool {
-            return this._trailingTrivia.count() > 0;
-        }
-
-        public hasTrailingCommentTrivia(): bool {
-            return this._trailingTrivia.hasComment();
-        }
-
-        public trailingTriviaWidth(): number {
-            return this._trailingTrivia.fullWidth();
-        }
-
-        public hasTrailingNewLineTrivia(): bool {
-            return this._trailingTrivia.hasNewLine();
-        }
-
-        public leadingTrivia(): ISyntaxTriviaList { return this._leadingTrivia; }
-        public trailingTrivia(): ISyntaxTriviaList { return this._trailingTrivia; }
-        
-        public realize(): ISyntaxToken { return realize(this); }
-        public collectTextElements(elements: string[]): void { collectTextElements(this, elements); }
-
-        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
-            return this.realize().withLeadingTrivia(leadingTrivia);
-        }
-
-        public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
-            return this.realize().withTrailingTrivia(trailingTrivia);
-        }
-    }
-
     class RealizedToken implements ISyntaxToken {
         public tokenKind: SyntaxKind;
         private _keywordKind: SyntaxKind;
@@ -390,8 +276,9 @@ module SyntaxToken {
         }
     }
 
-    export function create(token: IElasticToken): ISyntaxToken {
+    export function create(token: ITokenInfo): ISyntaxToken {
         var text = token.text ? token.text : SyntaxFacts.getText(token.kind);
+        var value = token.value || null;
 
         var kind: SyntaxKind, keywordKind: SyntaxKind;
         if (SyntaxFacts.isAnyKeyword(token.kind)) {
@@ -403,11 +290,13 @@ module SyntaxToken {
             keywordKind = SyntaxKind.None;
         }
 
-        return new ElasticToken(
+        return new RealizedToken(
             kind,
             keywordKind,
             SyntaxTriviaList.create(token.leadingTrivia),
             text,
-            SyntaxTriviaList.create(token.trailingTrivia));
+            value,
+            SyntaxTriviaList.create(token.trailingTrivia),
+            /*isMissing:*/ false);
     }
 }
