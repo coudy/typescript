@@ -1509,7 +1509,8 @@ var definitions = [
             }, 
             {
                 name: 'typeNames',
-                isSeparatedList: true
+                isSeparatedList: true,
+                requiresAtLeastOneItem: true
             }
         ],
         isTypeScriptSpecific: true
@@ -1524,7 +1525,8 @@ var definitions = [
             }, 
             {
                 name: 'typeNames',
-                isSeparatedList: true
+                isSeparatedList: true,
+                requiresAtLeastOneItem: true
             }
         ],
         isTypeScriptSpecific: true
@@ -1662,7 +1664,8 @@ var definitions = [
             }, 
             {
                 name: 'variableDeclarators',
-                isSeparatedList: true
+                isSeparatedList: true,
+                requiresAtLeastOneItem: true
             }
         ]
     }, 
@@ -3517,6 +3520,11 @@ function generateSwitchKindCheck(child, tokenKinds, indent) {
     result += indent + "        }\r\n";
     return result;
 }
+function tokenKinds(child) {
+    return child.tokenKinds ? child.tokenKinds : [
+        pascalCase(child.name)
+    ];
+}
 function generateKindCheck(child) {
     var indent = "";
     var result = "";
@@ -3524,13 +3532,11 @@ function generateKindCheck(child) {
         indent = "    ";
         result += "        if (" + child.name + " !== null) {\r\n";
     }
-    var tokenKinds = child.tokenKinds ? child.tokenKinds : [
-        pascalCase(child.name)
-    ];
-    if(tokenKinds.length <= 2) {
-        result += generateIfKindCheck(child, tokenKinds, indent);
+    var kinds = tokenKinds(child);
+    if(kinds.length <= 2) {
+        result += generateIfKindCheck(child, kinds, indent);
     } else {
-        result += generateSwitchKindCheck(child, tokenKinds, indent);
+        result += generateSwitchKindCheck(child, kinds, indent);
     }
     if(child.isOptional) {
         result += "        }\r\n";
@@ -3581,11 +3587,22 @@ function generateConstructor(definition) {
     result += "    }\r\n";
     return result;
 }
-function isMandatory(child) {
-    return !child.isOptional && !child.isList && !child.isSeparatedList;
+function isOptional(child) {
+    if(child.isOptional) {
+        return true;
+    }
+    if(child.isList && !child.requiresAtLeastOneItem) {
+        return true;
+    }
+    if(child.isSeparatedList && !child.requiresAtLeastOneItem) {
+        return true;
+    }
+    return false;
 }
-function generateFactoryMethod(definition) {
-    var mandatoryChildren = ArrayUtilities.where(definition.children, isMandatory);
+function generateFactory1Method(definition) {
+    var mandatoryChildren = ArrayUtilities.where(definition.children, function (c) {
+        return !isOptional(c);
+    });
     if(mandatoryChildren.length === definition.children.length) {
         return "";
     }
@@ -3604,7 +3621,7 @@ function generateFactoryMethod(definition) {
         if(i > 0) {
             result += ", ";
         }
-        if(isMandatory(child)) {
+        if(!isOptional(child)) {
             result += child.name;
         } else {
             if(child.isList) {
@@ -3621,6 +3638,61 @@ function generateFactoryMethod(definition) {
     result += ");\r\n";
     result += "    }\r\n";
     return result;
+}
+function isKeywordOrPunctuation(kind) {
+    if(StringUtilities.endsWith(kind, "Keyword")) {
+        return true;
+    }
+    if(StringUtilities.endsWith(kind, "Token") && kind !== "IdentifierNameToken") {
+        return true;
+    }
+    return false;
+}
+function isDefaultConstructable(definition) {
+    if(definition === null || definition.isAbstract) {
+        return false;
+    }
+    for(var i = 0; i < definition.children.length; i++) {
+        if(isMandatory(definition.children[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+function isMandatory(child) {
+    if(isOptional(child)) {
+        return false;
+    }
+    if(child.type === "SyntaxKind" || child.isList || child.isSeparatedList) {
+        return true;
+    }
+    if(child.isToken) {
+        var kinds = tokenKinds(child);
+        var isFixed = kinds.length === 1 && isKeywordOrPunctuation(kinds[0]);
+        return !isFixed;
+    }
+    return !isDefaultConstructable(memberDefinitionType(child));
+}
+function generateFactory2Method(definition) {
+    var mandatoryChildren = ArrayUtilities.where(definition.children, isMandatory);
+    if(mandatoryChildren.length === definition.children.length) {
+        return "";
+    }
+    var result = "\r\n    public static create1(";
+    for(var i = 0; i < mandatoryChildren.length; i++) {
+        var child = mandatoryChildren[i];
+        result += child.name + ": " + getType(child);
+        if(i < mandatoryChildren.length - 1) {
+            result += ",\r\n                          ";
+        }
+    }
+    result += "): " + definition.name + " {\r\n";
+    result += "        return null;\r\n";
+    result += "    }\r\n";
+    return result;
+}
+function generateFactoryMethod(definition) {
+    return generateFactory1Method(definition) + generateFactory2Method(definition);
 }
 function generateAcceptMethods(definition) {
     var result = "";
@@ -3738,6 +3810,12 @@ function generateLastTokenMethod(definition) {
 function baseType(definition) {
     return ArrayUtilities.firstOrDefault(definitions, function (d) {
         return d.name === definition.baseType;
+    });
+}
+function memberDefinitionType(child) {
+    Debug.assert(child.type !== undefined);
+    return ArrayUtilities.firstOrDefault(definitions, function (d) {
+        return d.name === child.type;
     });
 }
 function derivesFrom(def1, def2) {

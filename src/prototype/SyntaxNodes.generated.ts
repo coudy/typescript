@@ -312,7 +312,7 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
     }
 
     public static create1(identifier: ISyntaxToken,
-                         moduleReference: ModuleReferenceSyntax): ImportDeclarationSyntax {
+                          moduleReference: ModuleReferenceSyntax): ImportDeclarationSyntax {
         return null;
     }
 
@@ -783,11 +783,7 @@ class ExtendsClauseSyntax extends SyntaxNode {
         this._typeNames = typeNames;
     }
 
-    public static create(extendsKeyword: ISyntaxToken): ExtendsClauseSyntax {
-        return new ExtendsClauseSyntax(extendsKeyword, SeparatedSyntaxList.empty);
-    }
-
-    public static create1(): ExtendsClauseSyntax {
+    public static create1(typeNames: ISeparatedSyntaxList): ExtendsClauseSyntax {
         return null;
     }
 
@@ -869,11 +865,7 @@ class ImplementsClauseSyntax extends SyntaxNode {
         this._typeNames = typeNames;
     }
 
-    public static create(implementsKeyword: ISyntaxToken): ImplementsClauseSyntax {
-        return new ImplementsClauseSyntax(implementsKeyword, SeparatedSyntaxList.empty);
-    }
-
-    public static create1(): ImplementsClauseSyntax {
+    public static create1(typeNames: ISeparatedSyntaxList): ImplementsClauseSyntax {
         return null;
     }
 
@@ -1341,7 +1333,7 @@ class VariableStatementSyntax extends StatementSyntax {
         return new VariableStatementSyntax(null, null, variableDeclaration, semicolonToken);
     }
 
-    public static create1(): VariableStatementSyntax {
+    public static create1(variableDeclaration: VariableDeclarationSyntax): VariableStatementSyntax {
         return null;
     }
 
@@ -1472,11 +1464,7 @@ class VariableDeclarationSyntax extends SyntaxNode {
         this._variableDeclarators = variableDeclarators;
     }
 
-    public static create(varKeyword: ISyntaxToken): VariableDeclarationSyntax {
-        return new VariableDeclarationSyntax(varKeyword, SeparatedSyntaxList.empty);
-    }
-
-    public static create1(): VariableDeclarationSyntax {
+    public static create1(variableDeclarators: ISeparatedSyntaxList): VariableDeclarationSyntax {
         return null;
     }
 
@@ -2262,7 +2250,7 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
     }
 
     public static create1(identifier: ISyntaxToken,
-                         body: SyntaxNode): SimpleArrowFunctionExpressionSyntax {
+                          body: SyntaxNode): SimpleArrowFunctionExpressionSyntax {
         return null;
     }
 
@@ -2542,7 +2530,7 @@ class QualifiedNameSyntax extends NameSyntax {
     }
 
     public static create1(left: NameSyntax,
-                         right: IdentifierNameSyntax): QualifiedNameSyntax {
+                          right: IdentifierNameSyntax): QualifiedNameSyntax {
         return null;
     }
 
@@ -3482,7 +3470,7 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     public static create1(expression: ExpressionSyntax,
-                         identifierName: IdentifierNameSyntax): MemberAccessExpressionSyntax {
+                          identifierName: IdentifierNameSyntax): MemberAccessExpressionSyntax {
         return null;
     }
 
@@ -3676,7 +3664,7 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     public static create1(expression: ExpressionSyntax,
-                         argumentExpression: ExpressionSyntax): ElementAccessExpressionSyntax {
+                          argumentExpression: ExpressionSyntax): ElementAccessExpressionSyntax {
         return null;
     }
 
@@ -4135,8 +4123,8 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
     }
 
     public static create1(condition: ExpressionSyntax,
-                         whenTrue: ExpressionSyntax,
-                         whenFalse: ExpressionSyntax): ConditionalExpressionSyntax {
+                          whenTrue: ExpressionSyntax,
+                          whenFalse: ExpressionSyntax): ConditionalExpressionSyntax {
         return null;
     }
 
@@ -5025,7 +5013,7 @@ class IfStatementSyntax extends StatementSyntax {
     }
 
     public static create1(condition: ExpressionSyntax,
-                         statement: StatementSyntax): IfStatementSyntax {
+                          statement: StatementSyntax): IfStatementSyntax {
         return null;
     }
 
@@ -7288,7 +7276,7 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
     }
 
     public static create1(expression: ExpressionSyntax,
-                         statement: StatementSyntax): ForInStatementSyntax {
+                          statement: StatementSyntax): ForInStatementSyntax {
         return null;
     }
 
@@ -7465,7 +7453,7 @@ class WhileStatementSyntax extends IterationStatementSyntax {
     }
 
     public static create1(condition: ExpressionSyntax,
-                         statement: StatementSyntax): WhileStatementSyntax {
+                          statement: StatementSyntax): WhileStatementSyntax {
         return null;
     }
 
@@ -7601,7 +7589,7 @@ class WithStatementSyntax extends StatementSyntax {
     }
 
     public static create1(condition: ExpressionSyntax,
-                         statement: StatementSyntax): WithStatementSyntax {
+                          statement: StatementSyntax): WithStatementSyntax {
         return null;
     }
 
@@ -7892,7 +7880,7 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     public static create1(type: TypeSyntax,
-                         expression: UnaryExpressionSyntax): CastExpressionSyntax {
+                          expression: UnaryExpressionSyntax): CastExpressionSyntax {
         return null;
     }
 
@@ -8131,7 +8119,7 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
     }
 
     public static create1(propertyName: ISyntaxToken,
-                         expression: ExpressionSyntax): SimplePropertyAssignmentSyntax {
+                          expression: ExpressionSyntax): SimplePropertyAssignmentSyntax {
         return null;
     }
 
@@ -8404,7 +8392,7 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
     }
 
     public static create1(propertyName: ISyntaxToken,
-                         parameterName: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
+                          parameterName: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
         return null;
     }
 
@@ -9139,7 +9127,7 @@ class LabeledStatement extends StatementSyntax {
     }
 
     public static create1(identifier: ISyntaxToken,
-                         statement: StatementSyntax): LabeledStatement {
+                          statement: StatementSyntax): LabeledStatement {
         return null;
     }
 
@@ -9256,7 +9244,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
     }
 
     public static create1(statement: StatementSyntax,
-                         condition: ExpressionSyntax): DoStatementSyntax {
+                          condition: ExpressionSyntax): DoStatementSyntax {
         return null;
     }
 

@@ -1944,6 +1944,9 @@ var SourceUnitSyntax = (function (_super) {
     SourceUnitSyntax.create = function create(endOfFileToken) {
         return new SourceUnitSyntax(SyntaxList.empty, endOfFileToken);
     }
+    SourceUnitSyntax.create1 = function create1() {
+        return null;
+    }
     SourceUnitSyntax.prototype.accept = function (visitor) {
         return visitor.visitSourceUnit(this);
     };
@@ -2039,6 +2042,9 @@ var ExternalModuleReferenceSyntax = (function (_super) {
         this._openParenToken = openParenToken;
         this._stringLiteral = stringLiteral;
         this._closeParenToken = closeParenToken;
+    }
+    ExternalModuleReferenceSyntax.create1 = function create1(stringLiteral) {
+        return null;
     }
     ExternalModuleReferenceSyntax.prototype.accept = function (visitor) {
         return visitor.visitExternalModuleReference(this);
@@ -2214,6 +2220,9 @@ var ImportDeclarationSyntax = (function (_super) {
         this._moduleReference = moduleReference;
         this._semicolonToken = semicolonToken;
     }
+    ImportDeclarationSyntax.create1 = function create1(identifier, moduleReference) {
+        return null;
+    }
     ImportDeclarationSyntax.prototype.accept = function (visitor) {
         return visitor.visitImportDeclaration(this);
     };
@@ -2365,6 +2374,9 @@ var ClassDeclarationSyntax = (function (_super) {
     }
     ClassDeclarationSyntax.create = function create(classKeyword, identifier, openBraceToken, closeBraceToken) {
         return new ClassDeclarationSyntax(null, null, classKeyword, identifier, null, null, openBraceToken, SyntaxList.empty, closeBraceToken);
+    }
+    ClassDeclarationSyntax.create1 = function create1(identifier) {
+        return null;
     }
     ClassDeclarationSyntax.prototype.accept = function (visitor) {
         return visitor.visitClassDeclaration(this);
@@ -2575,6 +2587,9 @@ var InterfaceDeclarationSyntax = (function (_super) {
     InterfaceDeclarationSyntax.create = function create(interfaceKeyword, identifier, body) {
         return new InterfaceDeclarationSyntax(null, interfaceKeyword, identifier, null, body);
     }
+    InterfaceDeclarationSyntax.create1 = function create1(identifier) {
+        return null;
+    }
     InterfaceDeclarationSyntax.prototype.accept = function (visitor) {
         return visitor.visitInterfaceDeclaration(this);
     };
@@ -2702,8 +2717,8 @@ var ExtendsClauseSyntax = (function (_super) {
         this._extendsKeyword = extendsKeyword;
         this._typeNames = typeNames;
     }
-    ExtendsClauseSyntax.create = function create(extendsKeyword) {
-        return new ExtendsClauseSyntax(extendsKeyword, SeparatedSyntaxList.empty);
+    ExtendsClauseSyntax.create1 = function create1(typeNames) {
+        return null;
     }
     ExtendsClauseSyntax.prototype.accept = function (visitor) {
         return visitor.visitExtendsClause(this);
@@ -2780,8 +2795,8 @@ var ImplementsClauseSyntax = (function (_super) {
         this._implementsKeyword = implementsKeyword;
         this._typeNames = typeNames;
     }
-    ImplementsClauseSyntax.create = function create(implementsKeyword) {
-        return new ImplementsClauseSyntax(implementsKeyword, SeparatedSyntaxList.empty);
+    ImplementsClauseSyntax.create1 = function create1(typeNames) {
+        return null;
     }
     ImplementsClauseSyntax.prototype.accept = function (visitor) {
         return visitor.visitImplementsClause(this);
@@ -2887,6 +2902,9 @@ var ModuleDeclarationSyntax = (function (_super) {
     }
     ModuleDeclarationSyntax.create = function create(moduleKeyword, openBraceToken, closeBraceToken) {
         return new ModuleDeclarationSyntax(null, null, moduleKeyword, null, null, openBraceToken, SyntaxList.empty, closeBraceToken);
+    }
+    ModuleDeclarationSyntax.create1 = function create1() {
+        return null;
     }
     ModuleDeclarationSyntax.prototype.accept = function (visitor) {
         return visitor.visitModuleDeclaration(this);
@@ -3099,6 +3117,9 @@ var FunctionDeclarationSyntax = (function (_super) {
     FunctionDeclarationSyntax.create = function create(functionKeyword, functionSignature) {
         return new FunctionDeclarationSyntax(null, null, functionKeyword, functionSignature, null, null);
     }
+    FunctionDeclarationSyntax.create1 = function create1(functionSignature) {
+        return null;
+    }
     FunctionDeclarationSyntax.prototype.accept = function (visitor) {
         return visitor.visitFunctionDeclaration(this);
     };
@@ -3273,6 +3294,9 @@ var VariableStatementSyntax = (function (_super) {
     VariableStatementSyntax.create = function create(variableDeclaration, semicolonToken) {
         return new VariableStatementSyntax(null, null, variableDeclaration, semicolonToken);
     }
+    VariableStatementSyntax.create1 = function create1(variableDeclaration) {
+        return null;
+    }
     VariableStatementSyntax.prototype.accept = function (visitor) {
         return visitor.visitVariableStatement(this);
     };
@@ -3413,8 +3437,8 @@ var VariableDeclarationSyntax = (function (_super) {
         this._varKeyword = varKeyword;
         this._variableDeclarators = variableDeclarators;
     }
-    VariableDeclarationSyntax.create = function create(varKeyword) {
-        return new VariableDeclarationSyntax(varKeyword, SeparatedSyntaxList.empty);
+    VariableDeclarationSyntax.create1 = function create1(variableDeclarators) {
+        return null;
     }
     VariableDeclarationSyntax.prototype.accept = function (visitor) {
         return visitor.visitVariableDeclaration(this);
@@ -3494,6 +3518,9 @@ var VariableDeclaratorSyntax = (function (_super) {
     }
     VariableDeclaratorSyntax.create = function create(identifier) {
         return new VariableDeclaratorSyntax(identifier, null, null);
+    }
+    VariableDeclaratorSyntax.create1 = function create1(identifier) {
+        return null;
     }
     VariableDeclaratorSyntax.prototype.accept = function (visitor) {
         return visitor.visitVariableDeclarator(this);
@@ -3595,6 +3622,9 @@ var EqualsValueClauseSyntax = (function (_super) {
         }
         this._equalsToken = equalsToken;
         this._value = value;
+    }
+    EqualsValueClauseSyntax.create1 = function create1(value) {
+        return null;
     }
     EqualsValueClauseSyntax.prototype.accept = function (visitor) {
         return visitor.visitEqualsValueClause(this);
@@ -3767,6 +3797,9 @@ var ThisExpressionSyntax = (function (_super) {
         }
         this._thisKeyword = thisKeyword;
     }
+    ThisExpressionSyntax.create1 = function create1() {
+        return null;
+    }
     ThisExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitThisExpression(this);
     };
@@ -3920,6 +3953,9 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
     ArrayLiteralExpressionSyntax.create = function create(openBracketToken, closeBracketToken) {
         return new ArrayLiteralExpressionSyntax(openBracketToken, SeparatedSyntaxList.empty, closeBracketToken);
     }
+    ArrayLiteralExpressionSyntax.create1 = function create1() {
+        return null;
+    }
     ArrayLiteralExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitArrayLiteralExpression(this);
     };
@@ -4050,6 +4086,9 @@ var ParenthesizedExpressionSyntax = (function (_super) {
         this._expression = expression;
         this._closeParenToken = closeParenToken;
     }
+    ParenthesizedExpressionSyntax.create1 = function create1(expression) {
+        return null;
+    }
     ParenthesizedExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitParenthesizedExpression(this);
     };
@@ -4164,6 +4203,9 @@ var SimpleArrowFunctionExpressionSyntax = (function (_super) {
         this._equalsGreaterThanToken = equalsGreaterThanToken;
         this._body = body;
     }
+    SimpleArrowFunctionExpressionSyntax.create1 = function create1(identifier, body) {
+        return null;
+    }
     SimpleArrowFunctionExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitSimpleArrowFunctionExpression(this);
     };
@@ -4258,6 +4300,9 @@ var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
         this._callSignature = callSignature;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
         this._body = body;
+    }
+    ParenthesizedArrowFunctionExpressionSyntax.create1 = function create1(body) {
+        return null;
     }
     ParenthesizedArrowFunctionExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitParenthesizedArrowFunctionExpression(this);
@@ -4429,6 +4474,9 @@ var QualifiedNameSyntax = (function (_super) {
         this._dotToken = dotToken;
         this._right = right;
     }
+    QualifiedNameSyntax.create1 = function create1(left, right) {
+        return null;
+    }
     QualifiedNameSyntax.prototype.accept = function (visitor) {
         return visitor.visitQualifiedName(this);
     };
@@ -4533,6 +4581,9 @@ var ConstructorTypeSyntax = (function (_super) {
         this._parameterList = parameterList;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
         this._type = type;
+    }
+    ConstructorTypeSyntax.create1 = function create1(type) {
+        return null;
     }
     ConstructorTypeSyntax.prototype.accept = function (visitor) {
         return visitor.visitConstructorType(this);
@@ -4645,6 +4696,9 @@ var FunctionTypeSyntax = (function (_super) {
         this._equalsGreaterThanToken = equalsGreaterThanToken;
         this._type = type;
     }
+    FunctionTypeSyntax.create1 = function create1(type) {
+        return null;
+    }
     FunctionTypeSyntax.prototype.accept = function (visitor) {
         return visitor.visitFunctionType(this);
     };
@@ -4743,6 +4797,9 @@ var ObjectTypeSyntax = (function (_super) {
     ObjectTypeSyntax.create = function create(openBraceToken, closeBraceToken) {
         return new ObjectTypeSyntax(openBraceToken, SeparatedSyntaxList.empty, closeBraceToken);
     }
+    ObjectTypeSyntax.create1 = function create1() {
+        return null;
+    }
     ObjectTypeSyntax.prototype.accept = function (visitor) {
         return visitor.visitObjectType(this);
     };
@@ -4837,6 +4894,9 @@ var ArrayTypeSyntax = (function (_super) {
         this._type = type;
         this._openBracketToken = openBracketToken;
         this._closeBracketToken = closeBracketToken;
+    }
+    ArrayTypeSyntax.create1 = function create1(type) {
+        return null;
     }
     ArrayTypeSyntax.prototype.accept = function (visitor) {
         return visitor.visitArrayType(this);
@@ -4995,6 +5055,9 @@ var TypeAnnotationSyntax = (function (_super) {
         this._colonToken = colonToken;
         this._type = type;
     }
+    TypeAnnotationSyntax.create1 = function create1(type) {
+        return null;
+    }
     TypeAnnotationSyntax.prototype.accept = function (visitor) {
         return visitor.visitTypeAnnotation(this);
     };
@@ -5076,6 +5139,9 @@ var BlockSyntax = (function (_super) {
     }
     BlockSyntax.create = function create(openBraceToken, closeBraceToken) {
         return new BlockSyntax(openBraceToken, SyntaxList.empty, closeBraceToken);
+    }
+    BlockSyntax.create1 = function create1() {
+        return null;
     }
     BlockSyntax.prototype.accept = function (visitor) {
         return visitor.visitBlock(this);
@@ -5189,6 +5255,9 @@ var ParameterSyntax = (function (_super) {
     }
     ParameterSyntax.create = function create(identifier) {
         return new ParameterSyntax(null, null, identifier, null, null, null);
+    }
+    ParameterSyntax.create1 = function create1(identifier) {
+        return null;
     }
     ParameterSyntax.prototype.accept = function (visitor) {
         return visitor.visitParameter(this);
@@ -5357,6 +5426,9 @@ var MemberAccessExpressionSyntax = (function (_super) {
         this._expression = expression;
         this._dotToken = dotToken;
         this._identifierName = identifierName;
+    }
+    MemberAccessExpressionSyntax.create1 = function create1(expression, identifierName) {
+        return null;
     }
     MemberAccessExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitMemberAccessExpression(this);
@@ -5548,6 +5620,9 @@ var ElementAccessExpressionSyntax = (function (_super) {
         this._argumentExpression = argumentExpression;
         this._closeBracketToken = closeBracketToken;
     }
+    ElementAccessExpressionSyntax.create1 = function create1(expression, argumentExpression) {
+        return null;
+    }
     ElementAccessExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitElementAccessExpression(this);
     };
@@ -5661,6 +5736,9 @@ var InvocationExpressionSyntax = (function (_super) {
         this._expression = expression;
         this._argumentList = argumentList;
     }
+    InvocationExpressionSyntax.create1 = function create1(expression) {
+        return null;
+    }
     InvocationExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitInvocationExpression(this);
     };
@@ -5748,6 +5826,9 @@ var ArgumentListSyntax = (function (_super) {
     }
     ArgumentListSyntax.create = function create(openParenToken, closeParenToken) {
         return new ArgumentListSyntax(openParenToken, SeparatedSyntaxList.empty, closeParenToken);
+    }
+    ArgumentListSyntax.create1 = function create1() {
+        return null;
     }
     ArgumentListSyntax.prototype.accept = function (visitor) {
         return visitor.visitArgumentList(this);
@@ -6010,6 +6091,9 @@ var ConditionalExpressionSyntax = (function (_super) {
         this._colonToken = colonToken;
         this._whenFalse = whenFalse;
     }
+    ConditionalExpressionSyntax.create1 = function create1(condition, whenTrue, whenFalse) {
+        return null;
+    }
     ConditionalExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitConditionalExpression(this);
     };
@@ -6159,6 +6243,9 @@ var ConstructSignatureSyntax = (function (_super) {
     ConstructSignatureSyntax.create = function create(newKeyword, parameterList) {
         return new ConstructSignatureSyntax(newKeyword, parameterList, null);
     }
+    ConstructSignatureSyntax.create1 = function create1() {
+        return null;
+    }
     ConstructSignatureSyntax.prototype.accept = function (visitor) {
         return visitor.visitConstructSignature(this);
     };
@@ -6261,6 +6348,9 @@ var FunctionSignatureSyntax = (function (_super) {
     }
     FunctionSignatureSyntax.create = function create(identifier, parameterList) {
         return new FunctionSignatureSyntax(identifier, null, parameterList, null);
+    }
+    FunctionSignatureSyntax.create1 = function create1(identifier) {
+        return null;
     }
     FunctionSignatureSyntax.prototype.accept = function (visitor) {
         return visitor.visitFunctionSignature(this);
@@ -6387,6 +6477,9 @@ var IndexSignatureSyntax = (function (_super) {
     IndexSignatureSyntax.create = function create(openBracketToken, parameter, closeBracketToken) {
         return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, null);
     }
+    IndexSignatureSyntax.create1 = function create1(parameter) {
+        return null;
+    }
     IndexSignatureSyntax.prototype.accept = function (visitor) {
         return visitor.visitIndexSignature(this);
     };
@@ -6502,6 +6595,9 @@ var PropertySignatureSyntax = (function (_super) {
     PropertySignatureSyntax.create = function create(identifier) {
         return new PropertySignatureSyntax(identifier, null, null);
     }
+    PropertySignatureSyntax.create1 = function create1(identifier) {
+        return null;
+    }
     PropertySignatureSyntax.prototype.accept = function (visitor) {
         return visitor.visitPropertySignature(this);
     };
@@ -6604,6 +6700,9 @@ var ParameterListSyntax = (function (_super) {
     ParameterListSyntax.create = function create(openParenToken, closeParenToken) {
         return new ParameterListSyntax(openParenToken, SeparatedSyntaxList.empty, closeParenToken);
     }
+    ParameterListSyntax.create1 = function create1() {
+        return null;
+    }
     ParameterListSyntax.prototype.accept = function (visitor) {
         return visitor.visitParameterList(this);
     };
@@ -6698,6 +6797,9 @@ var CallSignatureSyntax = (function (_super) {
     CallSignatureSyntax.create = function create(parameterList) {
         return new CallSignatureSyntax(parameterList, null);
     }
+    CallSignatureSyntax.create1 = function create1() {
+        return null;
+    }
     CallSignatureSyntax.prototype.accept = function (visitor) {
         return visitor.visitCallSignature(this);
     };
@@ -6780,6 +6882,9 @@ var ElseClauseSyntax = (function (_super) {
         }
         this._elseKeyword = elseKeyword;
         this._statement = statement;
+    }
+    ElseClauseSyntax.create1 = function create1(statement) {
+        return null;
     }
     ElseClauseSyntax.prototype.accept = function (visitor) {
         return visitor.visitElseClause(this);
@@ -6874,6 +6979,9 @@ var IfStatementSyntax = (function (_super) {
     }
     IfStatementSyntax.create = function create(ifKeyword, openParenToken, condition, closeParenToken, statement) {
         return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, null);
+    }
+    IfStatementSyntax.create1 = function create1(condition, statement) {
+        return null;
     }
     IfStatementSyntax.prototype.accept = function (visitor) {
         return visitor.visitIfStatement(this);
@@ -7025,6 +7133,9 @@ var ExpressionStatementSyntax = (function (_super) {
         this._expression = expression;
         this._semicolonToken = semicolonToken;
     }
+    ExpressionStatementSyntax.create1 = function create1(expression) {
+        return null;
+    }
     ExpressionStatementSyntax.prototype.accept = function (visitor) {
         return visitor.visitExpressionStatement(this);
     };
@@ -7122,6 +7233,9 @@ var ConstructorDeclarationSyntax = (function (_super) {
     }
     ConstructorDeclarationSyntax.create = function create(constructorKeyword, parameterList) {
         return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, null, null);
+    }
+    ConstructorDeclarationSyntax.create1 = function create1() {
+        return null;
     }
     ConstructorDeclarationSyntax.prototype.accept = function (visitor) {
         return visitor.visitConstructorDeclaration(this);
@@ -7267,6 +7381,9 @@ var MemberFunctionDeclarationSyntax = (function (_super) {
     }
     MemberFunctionDeclarationSyntax.create = function create(functionSignature) {
         return new MemberFunctionDeclarationSyntax(null, null, functionSignature, null, null);
+    }
+    MemberFunctionDeclarationSyntax.create1 = function create1(functionSignature) {
+        return null;
     }
     MemberFunctionDeclarationSyntax.prototype.accept = function (visitor) {
         return visitor.visitMemberFunctionDeclaration(this);
@@ -7447,6 +7564,9 @@ var GetMemberAccessorDeclarationSyntax = (function (_super) {
     }
     GetMemberAccessorDeclarationSyntax.create = function create(getKeyword, identifier, parameterList, block) {
         return new GetMemberAccessorDeclarationSyntax(null, null, getKeyword, identifier, parameterList, null, block);
+    }
+    GetMemberAccessorDeclarationSyntax.create1 = function create1(identifier) {
+        return null;
     }
     GetMemberAccessorDeclarationSyntax.prototype.accept = function (visitor) {
         return visitor.visitGetMemberAccessorDeclaration(this);
@@ -7632,6 +7752,9 @@ var SetMemberAccessorDeclarationSyntax = (function (_super) {
     SetMemberAccessorDeclarationSyntax.create = function create(setKeyword, identifier, parameterList, block) {
         return new SetMemberAccessorDeclarationSyntax(null, null, setKeyword, identifier, parameterList, block);
     }
+    SetMemberAccessorDeclarationSyntax.create1 = function create1(identifier) {
+        return null;
+    }
     SetMemberAccessorDeclarationSyntax.prototype.accept = function (visitor) {
         return visitor.visitSetMemberAccessorDeclaration(this);
     };
@@ -7790,6 +7913,9 @@ var MemberVariableDeclarationSyntax = (function (_super) {
     MemberVariableDeclarationSyntax.create = function create(variableDeclarator, semicolonToken) {
         return new MemberVariableDeclarationSyntax(null, null, variableDeclarator, semicolonToken);
     }
+    MemberVariableDeclarationSyntax.create1 = function create1(variableDeclarator) {
+        return null;
+    }
     MemberVariableDeclarationSyntax.prototype.accept = function (visitor) {
         return visitor.visitMemberVariableDeclaration(this);
     };
@@ -7905,6 +8031,9 @@ var ThrowStatementSyntax = (function (_super) {
         this._expression = expression;
         this._semicolonToken = semicolonToken;
     }
+    ThrowStatementSyntax.create1 = function create1(expression) {
+        return null;
+    }
     ThrowStatementSyntax.prototype.accept = function (visitor) {
         return visitor.visitThrowStatement(this);
     };
@@ -8002,6 +8131,9 @@ var ReturnStatementSyntax = (function (_super) {
     }
     ReturnStatementSyntax.create = function create(returnKeyword, semicolonToken) {
         return new ReturnStatementSyntax(returnKeyword, null, semicolonToken);
+    }
+    ReturnStatementSyntax.create1 = function create1() {
+        return null;
     }
     ReturnStatementSyntax.prototype.accept = function (visitor) {
         return visitor.visitReturnStatement(this);
@@ -8102,6 +8234,9 @@ var ObjectCreationExpressionSyntax = (function (_super) {
     }
     ObjectCreationExpressionSyntax.create = function create(newKeyword, expression) {
         return new ObjectCreationExpressionSyntax(newKeyword, expression, null);
+    }
+    ObjectCreationExpressionSyntax.create1 = function create1(expression) {
+        return null;
     }
     ObjectCreationExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitObjectCreationExpression(this);
@@ -8224,6 +8359,9 @@ var SwitchStatementSyntax = (function (_super) {
     }
     SwitchStatementSyntax.create = function create(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, closeBraceToken) {
         return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, SyntaxList.empty, closeBraceToken);
+    }
+    SwitchStatementSyntax.create1 = function create1(expression) {
+        return null;
     }
     SwitchStatementSyntax.prototype.accept = function (visitor) {
         return visitor.visitSwitchStatement(this);
@@ -8413,6 +8551,9 @@ var CaseSwitchClauseSyntax = (function (_super) {
     CaseSwitchClauseSyntax.create = function create(caseKeyword, expression, colonToken) {
         return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, SyntaxList.empty);
     }
+    CaseSwitchClauseSyntax.create1 = function create1(expression) {
+        return null;
+    }
     CaseSwitchClauseSyntax.prototype.accept = function (visitor) {
         return visitor.visitCaseSwitchClause(this);
     };
@@ -8533,6 +8674,9 @@ var DefaultSwitchClauseSyntax = (function (_super) {
     DefaultSwitchClauseSyntax.create = function create(defaultKeyword, colonToken) {
         return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, SyntaxList.empty);
     }
+    DefaultSwitchClauseSyntax.create1 = function create1() {
+        return null;
+    }
     DefaultSwitchClauseSyntax.prototype.accept = function (visitor) {
         return visitor.visitDefaultSwitchClause(this);
     };
@@ -8636,6 +8780,9 @@ var BreakStatementSyntax = (function (_super) {
     BreakStatementSyntax.create = function create(breakKeyword, semicolonToken) {
         return new BreakStatementSyntax(breakKeyword, null, semicolonToken);
     }
+    BreakStatementSyntax.create1 = function create1() {
+        return null;
+    }
     BreakStatementSyntax.prototype.accept = function (visitor) {
         return visitor.visitBreakStatement(this);
     };
@@ -8737,6 +8884,9 @@ var ContinueStatementSyntax = (function (_super) {
     }
     ContinueStatementSyntax.create = function create(continueKeyword, semicolonToken) {
         return new ContinueStatementSyntax(continueKeyword, null, semicolonToken);
+    }
+    ContinueStatementSyntax.create1 = function create1() {
+        return null;
     }
     ContinueStatementSyntax.prototype.accept = function (visitor) {
         return visitor.visitContinueStatement(this);
@@ -8897,6 +9047,9 @@ var ForStatementSyntax = (function (_super) {
     }
     ForStatementSyntax.create = function create(forKeyword, openParenToken, firstSemicolonToken, secondSemicolonToken, closeParenToken, statement) {
         return new ForStatementSyntax(forKeyword, openParenToken, null, null, firstSemicolonToken, null, secondSemicolonToken, null, closeParenToken, statement);
+    }
+    ForStatementSyntax.create1 = function create1(statement) {
+        return null;
     }
     ForStatementSyntax.prototype.accept = function (visitor) {
         return visitor.visitForStatement(this);
@@ -9145,6 +9298,9 @@ var ForInStatementSyntax = (function (_super) {
     ForInStatementSyntax.create = function create(forKeyword, openParenToken, inKeyword, expression, closeParenToken, statement) {
         return new ForInStatementSyntax(forKeyword, openParenToken, null, null, inKeyword, expression, closeParenToken, statement);
     }
+    ForInStatementSyntax.create1 = function create1(expression, statement) {
+        return null;
+    }
     ForInStatementSyntax.prototype.accept = function (visitor) {
         return visitor.visitForInStatement(this);
     };
@@ -9344,6 +9500,9 @@ var WhileStatementSyntax = (function (_super) {
         this._closeParenToken = closeParenToken;
         this._statement = statement;
     }
+    WhileStatementSyntax.create1 = function create1(condition, statement) {
+        return null;
+    }
     WhileStatementSyntax.prototype.accept = function (visitor) {
         return visitor.visitWhileStatement(this);
     };
@@ -9484,6 +9643,9 @@ var WithStatementSyntax = (function (_super) {
         this._condition = condition;
         this._closeParenToken = closeParenToken;
         this._statement = statement;
+    }
+    WithStatementSyntax.create1 = function create1(condition, statement) {
+        return null;
     }
     WithStatementSyntax.prototype.accept = function (visitor) {
         return visitor.visitWithStatement(this);
@@ -9635,6 +9797,9 @@ var EnumDeclarationSyntax = (function (_super) {
     EnumDeclarationSyntax.create = function create(enumKeyword, identifier, openBraceToken, closeBraceToken) {
         return new EnumDeclarationSyntax(null, enumKeyword, identifier, openBraceToken, SeparatedSyntaxList.empty, closeBraceToken);
     }
+    EnumDeclarationSyntax.create1 = function create1(identifier) {
+        return null;
+    }
     EnumDeclarationSyntax.prototype.accept = function (visitor) {
         return visitor.visitEnumDeclaration(this);
     };
@@ -9784,6 +9949,9 @@ var CastExpressionSyntax = (function (_super) {
         this._greaterThanToken = greaterThanToken;
         this._expression = expression;
     }
+    CastExpressionSyntax.create1 = function create1(type, expression) {
+        return null;
+    }
     CastExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitCastExpression(this);
     };
@@ -9897,6 +10065,9 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
     }
     ObjectLiteralExpressionSyntax.create = function create(openBraceToken, closeBraceToken) {
         return new ObjectLiteralExpressionSyntax(openBraceToken, SeparatedSyntaxList.empty, closeBraceToken);
+    }
+    ObjectLiteralExpressionSyntax.create1 = function create1() {
+        return null;
     }
     ObjectLiteralExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitObjectLiteralExpression(this);
@@ -10017,6 +10188,9 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
         this._propertyName = propertyName;
         this._colonToken = colonToken;
         this._expression = expression;
+    }
+    SimplePropertyAssignmentSyntax.create1 = function create1(propertyName, expression) {
+        return null;
     }
     SimplePropertyAssignmentSyntax.prototype.accept = function (visitor) {
         return visitor.visitSimplePropertyAssignment(this);
@@ -10145,6 +10319,9 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
         this._openParenToken = openParenToken;
         this._closeParenToken = closeParenToken;
         this._block = block;
+    }
+    GetAccessorPropertyAssignmentSyntax.create1 = function create1(propertyName) {
+        return null;
     }
     GetAccessorPropertyAssignmentSyntax.prototype.accept = function (visitor) {
         return visitor.visitGetAccessorPropertyAssignment(this);
@@ -10287,6 +10464,9 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
         this._parameterName = parameterName;
         this._closeParenToken = closeParenToken;
         this._block = block;
+    }
+    SetAccessorPropertyAssignmentSyntax.create1 = function create1(propertyName, parameterName) {
+        return null;
     }
     SetAccessorPropertyAssignmentSyntax.prototype.accept = function (visitor) {
         return visitor.visitSetAccessorPropertyAssignment(this);
@@ -10443,6 +10623,9 @@ var FunctionExpressionSyntax = (function (_super) {
     FunctionExpressionSyntax.create = function create(functionKeyword, callSignature, block) {
         return new FunctionExpressionSyntax(functionKeyword, null, callSignature, block);
     }
+    FunctionExpressionSyntax.create1 = function create1() {
+        return null;
+    }
     FunctionExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitFunctionExpression(this);
     };
@@ -10554,6 +10737,9 @@ var EmptyStatementSyntax = (function (_super) {
         }
         this._semicolonToken = semicolonToken;
     }
+    EmptyStatementSyntax.create1 = function create1() {
+        return null;
+    }
     EmptyStatementSyntax.prototype.accept = function (visitor) {
         return visitor.visitEmptyStatement(this);
     };
@@ -10608,6 +10794,9 @@ var SuperExpressionSyntax = (function (_super) {
             throw Errors.argument('superKeyword');
         }
         this._superKeyword = superKeyword;
+    }
+    SuperExpressionSyntax.create1 = function create1() {
+        return null;
     }
     SuperExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitSuperExpression(this);
@@ -10672,6 +10861,9 @@ var TryStatementSyntax = (function (_super) {
     }
     TryStatementSyntax.create = function create(tryKeyword, block) {
         return new TryStatementSyntax(tryKeyword, block, null, null);
+    }
+    TryStatementSyntax.create1 = function create1() {
+        return null;
     }
     TryStatementSyntax.prototype.accept = function (visitor) {
         return visitor.visitTryStatement(this);
@@ -10805,6 +10997,9 @@ var CatchClauseSyntax = (function (_super) {
         this._closeParenToken = closeParenToken;
         this._block = block;
     }
+    CatchClauseSyntax.create1 = function create1(identifier) {
+        return null;
+    }
     CatchClauseSyntax.prototype.accept = function (visitor) {
         return visitor.visitCatchClause(this);
     };
@@ -10931,6 +11126,9 @@ var FinallyClauseSyntax = (function (_super) {
         this._finallyKeyword = finallyKeyword;
         this._block = block;
     }
+    FinallyClauseSyntax.create1 = function create1() {
+        return null;
+    }
     FinallyClauseSyntax.prototype.accept = function (visitor) {
         return visitor.visitFinallyClause(this);
     };
@@ -11012,6 +11210,9 @@ var LabeledStatement = (function (_super) {
         this._identifier = identifier;
         this._colonToken = colonToken;
         this._statement = statement;
+    }
+    LabeledStatement.create1 = function create1(identifier, statement) {
+        return null;
     }
     LabeledStatement.prototype.accept = function (visitor) {
         return visitor.visitLabeledStatement(this);
@@ -11126,6 +11327,9 @@ var DoStatementSyntax = (function (_super) {
         this._condition = condition;
         this._closeParenToken = closeParenToken;
         this._semicolonToken = semicolonToken;
+    }
+    DoStatementSyntax.create1 = function create1(statement, condition) {
+        return null;
     }
     DoStatementSyntax.prototype.accept = function (visitor) {
         return visitor.visitDoStatement(this);
@@ -11288,6 +11492,9 @@ var TypeOfExpressionSyntax = (function (_super) {
         this._typeOfKeyword = typeOfKeyword;
         this._expression = expression;
     }
+    TypeOfExpressionSyntax.create1 = function create1(expression) {
+        return null;
+    }
     TypeOfExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitTypeOfExpression(this);
     };
@@ -11365,6 +11572,9 @@ var DeleteExpressionSyntax = (function (_super) {
         }
         this._deleteKeyword = deleteKeyword;
         this._expression = expression;
+    }
+    DeleteExpressionSyntax.create1 = function create1(expression) {
+        return null;
     }
     DeleteExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitDeleteExpression(this);
@@ -11444,6 +11654,9 @@ var VoidExpressionSyntax = (function (_super) {
         this._voidKeyword = voidKeyword;
         this._expression = expression;
     }
+    VoidExpressionSyntax.create1 = function create1(expression) {
+        return null;
+    }
     VoidExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitVoidExpression(this);
     };
@@ -11521,6 +11734,9 @@ var DebuggerStatementSyntax = (function (_super) {
         }
         this._debuggerKeyword = debuggerKeyword;
         this._semicolonToken = semicolonToken;
+    }
+    DebuggerStatementSyntax.create1 = function create1() {
+        return null;
     }
     DebuggerStatementSyntax.prototype.accept = function (visitor) {
         return visitor.visitDebuggerStatement(this);

@@ -22,6 +22,7 @@ interface IMemberDefinition {
     isToken?: bool;
     isList?: bool;
     isSeparatedList?: bool;
+    requiresAtLeastOneItem?: bool;
     isOptional?: bool;
     tokenKinds?: string[];
     isTypeScriptSpecific: bool;
@@ -113,7 +114,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         children: [
             <any>{ name: 'extendsKeyword', isToken: true },
-            <any>{ name: 'typeNames', isSeparatedList: true }
+            <any>{ name: 'typeNames', isSeparatedList: true, requiresAtLeastOneItem: true }
         ],
         isTypeScriptSpecific: true
     },
@@ -122,7 +123,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         children: [
             <any>{ name: 'implementsKeyword', isToken: true },
-            <any>{ name: 'typeNames', isSeparatedList: true }
+            <any>{ name: 'typeNames', isSeparatedList: true, requiresAtLeastOneItem: true }
         ],
         isTypeScriptSpecific: true
     },
@@ -186,7 +187,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         children: [
             <any>{ name: 'varKeyword', isToken: true },
-            <any>{ name: 'variableDeclarators', isSeparatedList: true }
+            <any>{ name: 'variableDeclarators', isSeparatedList: true, requiresAtLeastOneItem: true }
         ]
     },
     <any>{
@@ -1126,6 +1127,12 @@ function generateSwitchKindCheck(child: IMemberDefinition, tokenKinds: string[],
     return result;
 }
 
+function tokenKinds(child: IMemberDefinition): string[] {
+    return child.tokenKinds
+        ? child.tokenKinds
+        : [pascalCase(child.name)];
+}
+
 function generateKindCheck(child: IMemberDefinition): string {
     var indent = "";
     var result = "";
@@ -1136,15 +1143,13 @@ function generateKindCheck(child: IMemberDefinition): string {
         result += "        if (" + child.name + " !== null) {\r\n";
     }
 
-    var tokenKinds: string[] = child.tokenKinds
-        ? child.tokenKinds
-        : [pascalCase(child.name)];
+    var kinds = tokenKinds(child);
 
-    if (tokenKinds.length <= 2) {
-        result += generateIfKindCheck(child, tokenKinds, indent);
+    if (kinds.length <= 2) {
+        result += generateIfKindCheck(child, kinds, indent);
     }
     else {
-        result += generateSwitchKindCheck(child, tokenKinds, indent);
+        result += generateSwitchKindCheck(child, kinds, indent);
     }
 
     if (child.isOptional) {
@@ -1217,12 +1222,25 @@ function generateConstructor(definition: ITypeDefinition): string {
     return result;
 }
 
-function isMandatory(child: IMemberDefinition) {
-    return !child.isOptional && !child.isList && !child.isSeparatedList;
+function isOptional(child: IMemberDefinition) {
+    if (child.isOptional) {
+        return true;
+    }
+
+    if (child.isList && !child.requiresAtLeastOneItem) {
+        return true;
+    }
+
+    if (child.isSeparatedList && !child.requiresAtLeastOneItem) {
+        return true;
+    }
+
+    return false;
 }
 
-function generateFactoryMethod(definition: ITypeDefinition): string {
-    var mandatoryChildren = ArrayUtilities.where(definition.children, isMandatory);
+function generateFactory1Method(definition: ITypeDefinition): string {
+    var mandatoryChildren = ArrayUtilities.where(
+        definition.children, c => !isOptional(c));
     if (mandatoryChildren.length === definition.children.length) {
         return "";
     }
@@ -1250,7 +1268,7 @@ function generateFactoryMethod(definition: ITypeDefinition): string {
             result += ", ";
         }
 
-        if (isMandatory(child)) {
+        if (!isOptional(child)) {
             result += child.name;
         }
         else if (child.isList) {
@@ -1268,6 +1286,112 @@ function generateFactoryMethod(definition: ITypeDefinition): string {
     result += "    }\r\n";
 
     return result;
+}
+
+function isKeywordOrPunctuation(kind: string): bool {
+    if (StringUtilities.endsWith(kind, "Keyword")) {
+        return true;
+    }
+    
+    if (StringUtilities.endsWith(kind, "Token") && kind !== "IdentifierNameToken") {
+        return true;
+    }
+
+    return false;
+}
+
+function isDefaultConstructable(definition: ITypeDefinition): bool {
+    if (definition === null || definition.isAbstract) {
+        return false;
+    }
+
+    for (var i = 0; i < definition.children.length; i++) {
+        if (isMandatory(definition.children[i])) {
+            // If any child is mandatory, then the type is not default constructable.
+            return false;
+        }
+    }
+
+    // We can default construct this.
+    return true;
+}
+
+function isMandatory(child: IMemberDefinition): bool {
+    // If it's optional then it's not mandatory.
+    if (isOptional(child)) {
+        return false;
+    }
+
+    // Kinds are always mandatory.  As are non-optional lists.
+    if (child.type === "SyntaxKind" || child.isList || child.isSeparatedList) {
+        return true;
+    }
+
+    // We have a non optional node or token.  Tokens are mandatory if they're not keywords or
+    // punctuation.
+    if (child.isToken) {
+        var kinds = tokenKinds(child);
+        var isFixed = kinds.length === 1 && isKeywordOrPunctuation(kinds[0]);
+
+        return !isFixed;
+    }
+
+    // It's a node.  It's mandatory if we can't default construct it.
+    return !isDefaultConstructable(memberDefinitionType(child));
+}
+
+function generateFactory2Method(definition: ITypeDefinition): string {
+    var mandatoryChildren = ArrayUtilities.where(definition.children, isMandatory);
+    if (mandatoryChildren.length === definition.children.length) {
+        return "";
+    }
+
+    var result = "\r\n    public static create1("
+
+    for (var i = 0; i < mandatoryChildren.length; i++) {
+        var child = mandatoryChildren[i];
+
+        result += child.name + ": " + getType(child);
+
+        if (i < mandatoryChildren.length - 1) {
+            result += ",\r\n                          ";
+        }
+    }
+
+    result += "): " + definition.name + " {\r\n";
+
+    // result += "        return new " + definition.name + "(";
+    
+    //for (var i = 0; i < definition.children.length; i++) {
+    //    var child = definition.children[i];
+
+    //    if (i > 0) {
+    //        result += ", ";
+    //    }
+
+    //    if (isMandatory(child)) {
+    //        result += child.name;
+    //    }
+    //    else if (child.isList) {
+    //        result += "SyntaxList.empty";
+    //    }
+    //    else if (child.isSeparatedList) {
+    //        result += "SeparatedSyntaxList.empty";
+    //    }
+    //    else {
+    //        result += "null";
+    //    }
+    //}
+
+    //result += ");\r\n";
+    result += "        return null;\r\n";
+    result += "    }\r\n";
+
+    return result;
+}
+
+function generateFactoryMethod(definition: ITypeDefinition): string {
+    return generateFactory1Method(definition) + generateFactory2Method(definition);
 }
 
 function generateAcceptMethods(definition: ITypeDefinition): string {
@@ -1430,6 +1554,11 @@ function generateLastTokenMethod(definition: ITypeDefinition): string {
 
 function baseType(definition: ITypeDefinition) {
     return ArrayUtilities.firstOrDefault(definitions, d => d.name === definition.baseType);
+}
+
+function memberDefinitionType(child: IMemberDefinition) {
+    Debug.assert(child.type !== undefined);
+    return ArrayUtilities.firstOrDefault(definitions, d => d.name === child.type);
 }
 
 function derivesFrom(def1: ITypeDefinition, def2: ITypeDefinition): bool {
