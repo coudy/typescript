@@ -4,6 +4,7 @@
         "    return foo().bar()",
         "                .baz();",
         "});",
+        "",
         "var M;",
         "(function(M) {",
         "    (function(a) {",
@@ -278,9 +279,17 @@
                         "kind": "IdentifierNameToken",
                         "keywordKind": "VarKeyword",
                         "width": 3,
-                        "fullWidth": 4,
+                        "fullWidth": 6,
                         "text": "var",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingNewLineTrivia": true,
                         "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\r\n"
+                            }
+                        ],
                         "trailingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",

@@ -5,6 +5,7 @@
         "    }",
         "    return C;",
         "})();",
+        "",
         "var M;",
         "(function(M) {",
         "    var C = (function() {",
@@ -14,6 +15,7 @@
         "    })();",
         "    M.C = C;",
         "})(M||(M={}));",
+        "",
         "var M1;",
         "(function(M1) {",
         "    var M2;",
@@ -342,9 +344,17 @@
                         "kind": "IdentifierNameToken",
                         "keywordKind": "VarKeyword",
                         "width": 3,
-                        "fullWidth": 4,
+                        "fullWidth": 6,
                         "text": "var",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingNewLineTrivia": true,
                         "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\r\n"
+                            }
+                        ],
                         "trailingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
@@ -961,9 +971,17 @@
                         "kind": "IdentifierNameToken",
                         "keywordKind": "VarKeyword",
                         "width": 3,
-                        "fullWidth": 4,
+                        "fullWidth": 6,
                         "text": "var",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingNewLineTrivia": true,
                         "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\r\n"
+                            }
+                        ],
                         "trailingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",

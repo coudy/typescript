@@ -203,7 +203,8 @@ class Emitter extends SyntaxRewriter {
         
         // Then, for all the names left of that name, wrap what we've created in a larger module.
         for (var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
-            moduleElements = this.convertModuleDeclaration(names[nameIndex], moduleElements);
+            moduleElements = this.convertModuleDeclaration(
+                node, names[nameIndex], moduleElements, nameIndex === 0);
 
             if (nameIndex > 0) {
                 // We're popping out and generate each outer module.  As we do so, we have to
@@ -222,13 +223,21 @@ class Emitter extends SyntaxRewriter {
         return token.withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
     }
 
-    private convertModuleDeclaration(name: IdentifierNameSyntax, moduleElements: ModuleElementSyntax[]): ModuleElementSyntax[] {
+    private convertModuleDeclaration(moduleDeclaration: ModuleDeclarationSyntax,
+                                     name: IdentifierNameSyntax,
+                                     moduleElements: ModuleElementSyntax[],
+                                     outermost: bool): ModuleElementSyntax[] {
         var moduleIdentifier = this.withNoTrivia(name.identifier());
+
+        var moduleIndentation = this.indentationTriviaForStartOfToken(moduleDeclaration.firstToken());
+        var leadingTrivia = outermost
+            ? moduleDeclaration.leadingTrivia().toArray()
+            : moduleIndentation;
 
         // var M;
         var variableStatement = VariableStatementSyntax.create(
             new VariableDeclarationSyntax(
-                SyntaxToken.createElastic({ kind: SyntaxKind.VarKeyword, trailingTrivia: this.spaceList }),
+                SyntaxToken.createElastic({ leadingTrivia: leadingTrivia, kind: SyntaxKind.VarKeyword, trailingTrivia: this.spaceList }),
                 SeparatedSyntaxList.create(
                     [VariableDeclaratorSyntax.create(moduleIdentifier.clone())])),
             SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineList }));
@@ -245,11 +254,11 @@ class Emitter extends SyntaxRewriter {
             new BlockSyntax(
                 SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: this.newLineList  }),
                 SyntaxList.create(moduleElements),
-                SyntaxToken.createElastic({ kind: SyntaxKind.CloseBraceToken })));
+                SyntaxToken.createElastic({ leadingTrivia: moduleIndentation, kind: SyntaxKind.CloseBraceToken })));
 
         // (function(M) { ... })
         var parenthesizedFunctionExpression = new ParenthesizedExpressionSyntax(
-            SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
+            SyntaxToken.createElastic({ leadingTrivia: moduleIndentation, kind: SyntaxKind.OpenParenToken }),
             functionExpression,
             SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }));
         

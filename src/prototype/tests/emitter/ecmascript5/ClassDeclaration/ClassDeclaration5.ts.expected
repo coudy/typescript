@@ -10,6 +10,7 @@
         "    }",
         "    return C;",
         "})();",
+        "",
         "var A;",
         "(function(A) {",
         "    var B;",
@@ -1004,9 +1005,17 @@
                         "kind": "IdentifierNameToken",
                         "keywordKind": "VarKeyword",
                         "width": 3,
-                        "fullWidth": 4,
+                        "fullWidth": 6,
                         "text": "var",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingNewLineTrivia": true,
                         "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\r\n"
+                            }
+                        ],
                         "trailingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",

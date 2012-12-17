@@ -7,6 +7,7 @@
         "    _._map[_.A1 = 0] = \"A1\";",
         "    _._map[_.A2 = 1] = \"A2\";",
         "})(A||(A={}));",
+        "",
         "var M;",
         "(function(M) {",
         "    var N;",
@@ -729,9 +730,17 @@
                         "kind": "IdentifierNameToken",
                         "keywordKind": "VarKeyword",
                         "width": 3,
-                        "fullWidth": 4,
+                        "fullWidth": 6,
                         "text": "var",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingNewLineTrivia": true,
                         "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\r\n"
+                            }
+                        ],
                         "trailingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",

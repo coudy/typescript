@@ -19539,7 +19539,7 @@ var Emitter = (function (_super) {
             this.handleExportedModuleElement(parentModule, node.moduleElements().syntaxNodeAt(i), moduleElements);
         }
         for(var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
-            moduleElements = this.convertModuleDeclaration(names[nameIndex], moduleElements);
+            moduleElements = this.convertModuleDeclaration(node, names[nameIndex], moduleElements, nameIndex === 0);
             if(nameIndex > 0) {
                 moduleElements.push(this.createExportStatement(names[nameIndex - 1].identifier(), node, names[nameIndex].identifier()));
                 moduleElements = this.adjustListIndentation(moduleElements);
@@ -19550,9 +19550,12 @@ var Emitter = (function (_super) {
     Emitter.prototype.withNoTrivia = function (token) {
         return token.withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
     };
-    Emitter.prototype.convertModuleDeclaration = function (name, moduleElements) {
+    Emitter.prototype.convertModuleDeclaration = function (moduleDeclaration, name, moduleElements, outermost) {
         var moduleIdentifier = this.withNoTrivia(name.identifier());
+        var moduleIndentation = this.indentationTriviaForStartOfToken(moduleDeclaration.firstToken());
+        var leadingTrivia = outermost ? moduleDeclaration.leadingTrivia().toArray() : moduleIndentation;
         var variableStatement = VariableStatementSyntax.create(new VariableDeclarationSyntax(SyntaxToken.createElastic({
+            leadingTrivia: leadingTrivia,
             kind: 38 /* VarKeyword */ ,
             trailingTrivia: this.spaceList
         }), SeparatedSyntaxList.create([
@@ -19574,9 +19577,11 @@ var Emitter = (function (_super) {
             kind: 67 /* OpenBraceToken */ ,
             trailingTrivia: this.newLineList
         }), SyntaxList.create(moduleElements), SyntaxToken.createElastic({
+            leadingTrivia: moduleIndentation,
             kind: 68 /* CloseBraceToken */ 
         })));
         var parenthesizedFunctionExpression = new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
+            leadingTrivia: moduleIndentation,
             kind: 69 /* OpenParenToken */ 
         }), functionExpression, SyntaxToken.createElastic({
             kind: 70 /* CloseParenToken */ 
