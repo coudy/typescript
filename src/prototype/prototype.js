@@ -20639,14 +20639,9 @@ var Emitter = (function (_super) {
         ]))).withTrailingTrivia(this.newLineList);
         var functionExpression = FunctionExpressionSyntax.create(SyntaxToken.createElastic({
             kind: 25 /* FunctionKeyword */ 
-        }), CallSignatureSyntax.create(new ParameterListSyntax(SyntaxToken.createElastic({
-            kind: 69 /* OpenParenToken */ 
-        }), SeparatedSyntaxList.create([
+        }), CallSignatureSyntax.create(ParameterListSyntax.create1().withParameters(SeparatedSyntaxList.create([
             ParameterSyntax.create(moduleIdentifier.clone())
-        ]), SyntaxToken.createElastic({
-            kind: 70 /* CloseParenToken */ ,
-            trailingTrivia: this.spaceArray
-        }))), new BlockSyntax(SyntaxToken.createElastic({
+        ])).withTrailingTrivia(this.spaceList)), new BlockSyntax(SyntaxToken.createElastic({
             kind: 67 /* OpenBraceToken */ ,
             trailingTrivia: this.newLineArray
         }), SyntaxList.create(moduleElements), SyntaxToken.createElastic({

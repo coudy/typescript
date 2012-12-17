@@ -266,11 +266,8 @@ class Emitter extends SyntaxRewriter {
         var functionExpression = FunctionExpressionSyntax.create(
             SyntaxToken.createElastic({ kind: SyntaxKind.FunctionKeyword }),
             CallSignatureSyntax.create(
-                new ParameterListSyntax(
-                    SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
-                    SeparatedSyntaxList.create([
-                        ParameterSyntax.create(moduleIdentifier.clone())]),
-                    SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken, trailingTrivia: this.spaceArray  }))),
+                ParameterListSyntax.create1().withParameters(SeparatedSyntaxList.create([ParameterSyntax.create(moduleIdentifier.clone())]))
+                                             .withTrailingTrivia(this.spaceList)),
             new BlockSyntax(
                 SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: this.newLineArray  }),
                 SyntaxList.create(moduleElements),
