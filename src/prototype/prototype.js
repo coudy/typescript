@@ -20929,10 +20929,7 @@ var Emitter;
             if(!EmitterImpl.isSuperMemberAccessExpression(result)) {
                 return result;
             }
-            var receiver = new IdentifierNameSyntax(SyntaxToken.createIdentifier("_super", {
-                leadingTrivia: result.leadingTrivia().toArray()
-            }));
-            return MemberAccessExpressionSyntax.create1(MemberAccessExpressionSyntax.create1(receiver, new IdentifierNameSyntax(SyntaxToken.createIdentifier("prototype"))), result.identifierName());
+            return MemberAccessExpressionSyntax.create1(MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(SyntaxToken.createIdentifier("_super")), new IdentifierNameSyntax(SyntaxToken.createIdentifier("prototype"))), result.identifierName()).withLeadingTrivia(result.leadingTrivia());
         };
         EmitterImpl.prototype.visitVariableStatement = function (node) {
             var result = _super.prototype.visitVariableStatement.call(this, node);

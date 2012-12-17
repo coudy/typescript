@@ -1341,14 +1341,11 @@ module Emitter {
                 return result;
             }
 
-            var receiver: ExpressionSyntax = new IdentifierNameSyntax(
-                SyntaxToken.createIdentifier("_super", { leadingTrivia: result.leadingTrivia().toArray() }));
-
             return MemberAccessExpressionSyntax.create1(
                 MemberAccessExpressionSyntax.create1(
-                    receiver,
+                    new IdentifierNameSyntax(SyntaxToken.createIdentifier("_super")),
                     new IdentifierNameSyntax(SyntaxToken.createIdentifier("prototype"))),
-                result.identifierName());
+                result.identifierName()).withLeadingTrivia(result.leadingTrivia());
         }
 
         private visitVariableStatement(node: VariableStatementSyntax): VariableStatementSyntax {
