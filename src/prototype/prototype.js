@@ -20781,10 +20781,7 @@ var Emitter = (function (_super) {
             kind: 104 /* EqualsToken */ ,
             trailingTrivia: this.spaceArray
         }), parameter.equalsValueClause().value().accept(this).clone());
-        var assignmentStatement = new ExpressionStatementSyntax(assignment, SyntaxToken.createElastic({
-            kind: 75 /* SemicolonToken */ ,
-            trailingTrivia: this.spaceArray
-        }));
+        var assignmentStatement = ExpressionStatementSyntax.create1(assignment).withTrailingTrivia(this.spaceList);
         var block = new BlockSyntax(SyntaxToken.createElastic({
             kind: 67 /* OpenBraceToken */ ,
             trailingTrivia: this.spaceArray

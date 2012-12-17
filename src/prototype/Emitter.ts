@@ -513,9 +513,8 @@ class Emitter extends SyntaxRewriter {
             SyntaxToken.createElastic({ kind: SyntaxKind.EqualsToken, trailingTrivia: this.spaceArray }),
             <ExpressionSyntax>parameter.equalsValueClause().value().accept(this).clone());
         
-        var assignmentStatement = new ExpressionStatementSyntax(
-            assignment,
-            SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.spaceArray }));
+        var assignmentStatement = ExpressionStatementSyntax.create1(
+            assignment).withTrailingTrivia(this.spaceList);
 
         var block = new BlockSyntax(
             SyntaxToken.createElastic({ kind: SyntaxKind.OpenBraceToken, trailingTrivia: this.spaceArray }),
@@ -558,9 +557,9 @@ class Emitter extends SyntaxRewriter {
                 SyntaxList.create(statements)));
         }
 
-        return <FunctionDeclarationSyntax>rewritten.withExportKeyword(null)
-                                                   .withDeclareKeyword(null)
-                                                   .withLeadingTrivia(rewritten.leadingTrivia());
+        return rewritten.withExportKeyword(null)
+                        .withDeclareKeyword(null)
+                        .withLeadingTrivia(rewritten.leadingTrivia());
     }
 
     private visitParameter(node: ParameterSyntax): ParameterSyntax {
