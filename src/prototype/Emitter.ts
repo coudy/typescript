@@ -1222,15 +1222,12 @@ module Emitter {
 
             var identifier = this.withNoTrivia(node.identifier());
 
-            var variableStatement = VariableStatementSyntax.create(
-                new VariableDeclarationSyntax(
-                    SyntaxToken.create(SyntaxKind.VarKeyword, {
-                        leadingTrivia: node.leadingTrivia().toArray(),
-                        trailingTrivia: this.spaceArray
-                    }),
-                    SeparatedSyntaxList.create([VariableDeclaratorSyntax.create(identifier)])),
-                SyntaxToken.create(SyntaxKind.SemicolonToken, { trailingTrivia: this.newLineArray }));
-            result.push(variableStatement);
+            // var E;
+            result.push(VariableStatementSyntax.create1(
+                    new VariableDeclarationSyntax(
+                        SyntaxToken.create(SyntaxKind.VarKeyword, { trailingTrivia: this.spaceArray }),
+                        SeparatedSyntaxList.create([VariableDeclaratorSyntax.create(identifier)]))
+                ).withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(this.newLineList));
 
             var indentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
 

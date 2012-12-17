@@ -20856,15 +20856,11 @@ var Emitter;
         EmitterImpl.prototype.visitEnumDeclaration = function (node) {
             var result = [];
             var identifier = this.withNoTrivia(node.identifier());
-            var variableStatement = VariableStatementSyntax.create(new VariableDeclarationSyntax(SyntaxToken.create(38 /* VarKeyword */ , {
-                leadingTrivia: node.leadingTrivia().toArray(),
+            result.push(VariableStatementSyntax.create1(new VariableDeclarationSyntax(SyntaxToken.create(38 /* VarKeyword */ , {
                 trailingTrivia: this.spaceArray
             }), SeparatedSyntaxList.create([
                 VariableDeclaratorSyntax.create(identifier)
-            ])), SyntaxToken.create(75 /* SemicolonToken */ , {
-                trailingTrivia: this.newLineArray
-            }));
-            result.push(variableStatement);
+            ]))).withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(this.newLineList));
             var indentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
             var functionExpression = this.generateEnumFunctionExpression(node);
             var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(functionExpression).withLeadingTrivia(SyntaxTriviaList.create(indentationTrivia));
