@@ -764,8 +764,7 @@ module Emitter {
 
             receiver = functionDeclaration.staticKeyword() !== null
                 ? receiver
-                : MemberAccessExpressionSyntax.create1(
-                    receiver, Syntax.identifierName("prototype"));
+                : MemberAccessExpressionSyntax.create1(receiver, Syntax.identifierName("prototype"));
 
             receiver = MemberAccessExpressionSyntax.create1(
                 receiver,
@@ -969,7 +968,7 @@ module Emitter {
             if (node.extendsClause() !== null) {
                 var extendsParameters = [];
                 extendsParameters.push(new IdentifierNameSyntax(identifier));
-                extendsParameters.push(Syntax.token(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }));
+                extendsParameters.push(Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.spaceList));
                 extendsParameters.push(Syntax.identifierName("_super"));
 
                 var extendsStatement = ExpressionStatementSyntax.create1(
@@ -995,12 +994,12 @@ module Emitter {
             var classElementStatements = this.convertClassElements(node);
             statements.push.apply(statements, classElementStatements);
 
-            var returnIndentation = this.indentationTrivia(statementIndent);
+            var returnIndentation = this.indentationTriviaList(statementIndent);
 
             var returnStatement = new ReturnStatementSyntax(
-                Syntax.token(SyntaxKind.ReturnKeyword, { leadingTrivia: returnIndentation, trailingTrivia: this.spaceArray }),
+                Syntax.token(SyntaxKind.ReturnKeyword, { trailingTrivia: this.spaceArray }),
                 new IdentifierNameSyntax(identifier),
-                Syntax.token(SyntaxKind.SemicolonToken)).withTrailingTrivia(this.newLineList);
+                Syntax.token(SyntaxKind.SemicolonToken)).withLeadingTrivia(returnIndentation).withTrailingTrivia(this.newLineList);
 
             statements.push(returnStatement);
 
@@ -1013,8 +1012,7 @@ module Emitter {
 
             var callParameters = [];
             if (node.extendsClause() !== null) {
-                callParameters.push(ParameterSyntax.create(
-                    Syntax.identifier("_super")));
+                callParameters.push(ParameterSyntax.create(Syntax.identifier("_super")));
             }
 
             var callSignature = CallSignatureSyntax.create(

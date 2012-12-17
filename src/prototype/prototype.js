@@ -20778,9 +20778,7 @@ var Emitter;
             if(node.extendsClause() !== null) {
                 var extendsParameters = [];
                 extendsParameters.push(new IdentifierNameSyntax(identifier));
-                extendsParameters.push(Syntax.token(76 /* CommaToken */ , {
-                    trailingTrivia: this.spaceArray
-                }));
+                extendsParameters.push(Syntax.token(76 /* CommaToken */ ).withTrailingTrivia(this.spaceList));
                 extendsParameters.push(Syntax.identifierName("_super"));
                 var extendsStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(Syntax.identifierName("__extends"), ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create(extendsParameters)))).withTrailingTrivia(this.newLineList);
                 statements.push(this.changeIndentation(extendsStatement, true, statementIndent));
@@ -20794,11 +20792,10 @@ var Emitter;
             }
             var classElementStatements = this.convertClassElements(node);
             statements.push.apply(statements, classElementStatements);
-            var returnIndentation = this.indentationTrivia(statementIndent);
+            var returnIndentation = this.indentationTriviaList(statementIndent);
             var returnStatement = new ReturnStatementSyntax(Syntax.token(31 /* ReturnKeyword */ , {
-                leadingTrivia: returnIndentation,
                 trailingTrivia: this.spaceArray
-            }), new IdentifierNameSyntax(identifier), Syntax.token(75 /* SemicolonToken */ )).withTrailingTrivia(this.newLineList);
+            }), new IdentifierNameSyntax(identifier), Syntax.token(75 /* SemicolonToken */ )).withLeadingTrivia(returnIndentation).withTrailingTrivia(this.newLineList);
             statements.push(returnStatement);
             var classIndentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
             var block = new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ , {
