@@ -20379,11 +20379,10 @@ var Emitter;
         };
         EmitterImpl.prototype.visitSimpleArrowFunctionExpression = function (node) {
             var identifier = this.withNoTrivia(node.identifier());
-            var block = this.convertArrowFunctionBody(node);
-            return FunctionExpressionSyntax.create1().withCallSignature(CallSignatureSyntax.create(ParameterListSyntax.create1().withParameter(ParameterSyntax.create(identifier))).withTrailingTrivia(this.space)).withBlock(block).withLeadingTrivia(node.leadingTrivia());
+            return FunctionExpressionSyntax.create1().withCallSignature(CallSignatureSyntax.create(ParameterListSyntax.create1().withParameter(ParameterSyntax.create(identifier))).withTrailingTrivia(this.space)).withBlock(this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
         };
         EmitterImpl.prototype.visitParenthesizedArrowFunctionExpression = function (node) {
-            return FunctionExpressionSyntax.create(Syntax.token(25 /* FunctionKeyword */ ), CallSignatureSyntax.create(node.callSignature().parameterList().accept(this)), this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
+            return FunctionExpressionSyntax.create1().withCallSignature(CallSignatureSyntax.create(node.callSignature().parameterList().accept(this))).withBlock(this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
         };
         EmitterImpl.prototype.convertArrowFunctionBody = function (arrowFunction) {
             var rewrittenBody = this.visitNode(arrowFunction.body());

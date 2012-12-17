@@ -325,18 +325,15 @@ module Emitter {
         private visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): FunctionExpressionSyntax {
             var identifier = this.withNoTrivia(node.identifier());
 
-            var block = this.convertArrowFunctionBody(node);
-
             return FunctionExpressionSyntax.create1()
                 .withCallSignature(CallSignatureSyntax.create(ParameterListSyntax.create1().withParameter(ParameterSyntax.create(identifier))).withTrailingTrivia(this.space))
-                .withBlock(block).withLeadingTrivia(node.leadingTrivia());
+                .withBlock(this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
         }
 
         private visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): FunctionExpressionSyntax {
-            return FunctionExpressionSyntax.create(
-                Syntax.token(SyntaxKind.FunctionKeyword),
-                CallSignatureSyntax.create(node.callSignature().parameterList().accept(this)),
-                this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
+            return FunctionExpressionSyntax.create1()
+                .withCallSignature(CallSignatureSyntax.create(node.callSignature().parameterList().accept(this)))
+                .withBlock(this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
         }
 
         private convertArrowFunctionBody(arrowFunction: ArrowFunctionExpressionSyntax): BlockSyntax {
