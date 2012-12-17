@@ -59,6 +59,10 @@ module Emitter {
             return column === 0 ? null : [Indentation.indentationTrivia(column, this.options)];
         }
 
+        private indentationTriviaList(column: number): ISyntaxTriviaList {
+            return SyntaxTriviaList.create(this.indentationTrivia(column));
+        }
+
         private indentationTriviaForStartOfToken(token: ISyntaxToken): ISyntaxTrivia[] {
             var column = this.columnForStartOfToken(token);
             return this.indentationTrivia(column);
@@ -1121,31 +1125,29 @@ module Emitter {
             var statements: StatementSyntax[] = [];
 
             var initIndentationColumn = enumColumn + this.options.indentSpaces;
-            var initIndentationTrivia = this.indentationTrivia(initIndentationColumn);
+            var initIndentationTrivia = this.indentationTriviaList(initIndentationColumn);
 
             if (node.variableDeclarators().syntaxNodeCount() > 0) {
                 // var _ = E;
-                statements.push(new VariableStatementSyntax(null, null,
+                statements.push(VariableStatementSyntax.create1(
                     new VariableDeclarationSyntax(
-                        Syntax.token(SyntaxKind.VarKeyword, { leadingTrivia: initIndentationTrivia, trailingTrivia: this.spaceArray }),
+                        Syntax.token(SyntaxKind.VarKeyword, { trailingTrivia: this.spaceArray }),
                         SeparatedSyntaxList.create([new VariableDeclaratorSyntax(
                             Syntax.identifier("_", { trailingTrivia: this.spaceArray }),
                             null,
                             new EqualsValueClauseSyntax(
                                 Syntax.token(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
-                                new IdentifierNameSyntax(identifier)))])),
-                    Syntax.token(SyntaxKind.SemicolonToken, { trailingTrivia: this.newLineArray })));
+                                new IdentifierNameSyntax(identifier)))]))).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.newLineList));
 
                 // _._map = []
                 statements.push(ExpressionStatementSyntax.create1(
                     new BinaryExpressionSyntax(
                         SyntaxKind.AssignmentExpression,
-                        new MemberAccessExpressionSyntax(
-                            new IdentifierNameSyntax(Syntax.identifier("_", { leadingTrivia: initIndentationTrivia })),
-                            Syntax.token(SyntaxKind.DotToken),
-                            new IdentifierNameSyntax(Syntax.identifier("_map", { trailingTrivia: this.spaceArray }))),
+                        MemberAccessExpressionSyntax.create1(
+                            Syntax.identifierName("_"),
+                            Syntax.identifierName("_map").withTrailingTrivia(this.spaceList)),
                         Syntax.token(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
-                        ArrayLiteralExpressionSyntax.create1())).withTrailingTrivia(this.newLineList));
+                        ArrayLiteralExpressionSyntax.create1())).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.newLineList));
 
                 var assignDefaultValues = { value: true };
                 for (var i = 0, n = node.variableDeclarators().syntaxNodeCount(); i < n; i++) {
@@ -1166,9 +1168,8 @@ module Emitter {
                     // _._map[_.Foo = 1]
                     var elementAccessExpression = ElementAccessExpressionSyntax.create1(
                         MemberAccessExpressionSyntax.create1(
-                            new IdentifierNameSyntax(Syntax.identifier("_",  { leadingTrivia: initIndentationTrivia })),
-                            Syntax.identifierName("_map")),
-                        innerAssign).withTrailingTrivia(this.spaceList);
+                            Syntax.identifierName("_"), Syntax.identifierName("_map")),
+                        innerAssign).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.spaceList);;
 
                     //_._map[_.Foo = 1] = "Foo"
                     var outerAssign = new BinaryExpressionSyntax(
@@ -1193,10 +1194,9 @@ module Emitter {
                 Syntax.token(SyntaxKind.CloseBraceToken, { leadingTrivia: indentationTrivia }));
 
             var parameterList = ParameterListSyntax.create1().withParameter(ParameterSyntax.create1(identifier)).withTrailingTrivia(this.spaceList);
-            var functionExpression = FunctionExpressionSyntax.create1().withCallSignature(
-                CallSignatureSyntax.create(parameterList)).withBlock(block);
 
-            return functionExpression;
+            return FunctionExpressionSyntax.create1().withCallSignature(
+                CallSignatureSyntax.create(parameterList)).withBlock(block);
         }
 
         private visitEnumDeclaration(node: EnumDeclarationSyntax): StatementSyntax[] {
