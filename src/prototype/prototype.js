@@ -21041,21 +21041,17 @@ var Emitter = (function (_super) {
                 }
             }
         }
-        var receiver = new MemberAccessExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.createElastic({
+        var receiver = MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(SyntaxToken.createElastic({
             leadingTrivia: memberAccessor.leadingTrivia().toArray(),
             kind: 9 /* IdentifierNameToken */ ,
             text: "Object"
-        })), SyntaxToken.createElastic({
-            kind: 73 /* DotToken */ 
-        }), new IdentifierNameSyntax(SyntaxToken.createElastic({
+        })), new IdentifierNameSyntax(SyntaxToken.createElastic({
             kind: 9 /* IdentifierNameToken */ ,
             text: "defineProperty"
         })));
         var arguments = [];
         var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
-        arguments.push(new MemberAccessExpressionSyntax(new IdentifierNameSyntax(classIdentifier.clone()), SyntaxToken.createElastic({
-            kind: 73 /* DotToken */ 
-        }), new IdentifierNameSyntax(SyntaxToken.createElastic({
+        arguments.push(MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(classIdentifier.clone()), new IdentifierNameSyntax(SyntaxToken.createElastic({
             kind: 9 /* IdentifierNameToken */ ,
             text: "prototype"
         }))));

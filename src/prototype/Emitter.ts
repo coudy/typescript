@@ -823,11 +823,11 @@ class Emitter extends SyntaxRewriter {
 
         var parameterList = <ParameterListSyntax>memberAccessor.parameterList().accept(this);
         if (!parameterList.hasTrailingTrivia()) {
-            parameterList = <ParameterListSyntax>parameterList.withTrailingTrivia(SyntaxTriviaList.space);
+            parameterList = parameterList.withTrailingTrivia(SyntaxTriviaList.space);
         }
 
         var block = memberAccessor.block().accept(this);
-        block = <BlockSyntax>block.withTrailingTrivia(SyntaxTriviaList.empty);
+        block = block.withTrailingTrivia(SyntaxTriviaList.empty);
 
         return new SimplePropertyAssignmentSyntax(
             SyntaxToken.createElastic({ leadingTrivia: indentationTrivia, kind: SyntaxKind.IdentifierNameToken, text: propertyName }),
@@ -864,20 +864,18 @@ class Emitter extends SyntaxRewriter {
             }
         }
 
-        var receiver = new MemberAccessExpressionSyntax(
+        var receiver = MemberAccessExpressionSyntax.create1(
             new IdentifierNameSyntax(SyntaxToken.createElastic({ 
                 leadingTrivia: memberAccessor.leadingTrivia().toArray(),
                 kind: SyntaxKind.IdentifierNameToken,
                 text: "Object" })),
-            SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
             new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "defineProperty" })));
 
         var arguments = [];
 
         var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
-        arguments.push(new MemberAccessExpressionSyntax(
+        arguments.push(MemberAccessExpressionSyntax.create1(
             new IdentifierNameSyntax(classIdentifier.clone()),
-            SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
             new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "prototype" }))));
         arguments.push(SyntaxToken.createElastic({ kind: SyntaxKind.CommaToken, trailingTrivia: this.spaceArray }));
 
