@@ -390,14 +390,7 @@ module SyntaxToken {
         }
     }
 
-    //export function createElastic(token: IElasticToken): ISyntaxToken {
-    //    token.keywordKind = token.kind;
-    //    token.kind = SyntaxKind.IdentifierNameToken;
-
-    //    return createElastic(token);
-    //}
-
-    export function createElastic(token: IElasticToken): ISyntaxToken {
+    export function create(token: IElasticToken): ISyntaxToken {
         var text = token.text ? token.text : SyntaxFacts.getText(token.kind);
 
         var kind: SyntaxKind, keywordKind: SyntaxKind;

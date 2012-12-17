@@ -849,7 +849,6 @@ module SyntaxToken {
         }
     }
 
-
     function createFixedWidthToken(sourceText: IText, fullStart: number,
         kind: SyntaxKind,
         leadingTriviaInfo: number,
@@ -914,7 +913,7 @@ module SyntaxToken {
         }
     }
 
-    export function create(text: IText, fullStart: number,
+    export function createFromText(text: IText, fullStart: number,
         kind: SyntaxKind,
         leadingTriviaInfo: number,
         width: number,

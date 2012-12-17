@@ -2317,7 +2317,7 @@ function generateTokens(): string {
     result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ true, /*leading:*/ false, /*trailing:*/ true);
     result += "\r\n";
     result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ true, /*leading:*/ true, /*trailing:*/ true);
-    result += "\r\n\r\n";
+    result += "\r\n";
 
     result += 
 "    function createFixedWidthToken(sourceText: IText, fullStart: number,\r\n" +
@@ -2384,7 +2384,7 @@ function generateTokens(): string {
 "        }\r\n" +
 "    }\r\n" +
 "\r\n" +
-"    export function create(text: IText, fullStart: number,\r\n" +
+"    export function createFromText(text: IText, fullStart: number,\r\n" +
 "        kind: SyntaxKind,\r\n" +
 "        leadingTriviaInfo: number,\r\n" +
 "        width: number,\r\n" +

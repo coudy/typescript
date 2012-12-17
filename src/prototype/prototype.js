@@ -2062,11 +2062,11 @@ var ExternalModuleReferenceSyntax = (function (_super) {
         this._closeParenToken = closeParenToken;
     }
     ExternalModuleReferenceSyntax.create1 = function create1(stringLiteral) {
-        return new ExternalModuleReferenceSyntax(SyntaxToken.createElastic({
+        return new ExternalModuleReferenceSyntax(SyntaxToken.create({
             kind: 63 /* ModuleKeyword */ 
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 69 /* OpenParenToken */ 
-        }), stringLiteral, SyntaxToken.createElastic({
+        }), stringLiteral, SyntaxToken.create({
             kind: 70 /* CloseParenToken */ 
         }));
     }
@@ -2257,11 +2257,11 @@ var ImportDeclarationSyntax = (function (_super) {
         this._semicolonToken = semicolonToken;
     }
     ImportDeclarationSyntax.create1 = function create1(identifier, moduleReference) {
-        return new ImportDeclarationSyntax(SyntaxToken.createElastic({
+        return new ImportDeclarationSyntax(SyntaxToken.create({
             kind: 47 /* ImportKeyword */ 
-        }), identifier, SyntaxToken.createElastic({
+        }), identifier, SyntaxToken.create({
             kind: 104 /* EqualsToken */ 
-        }), moduleReference, SyntaxToken.createElastic({
+        }), moduleReference, SyntaxToken.create({
             kind: 75 /* SemicolonToken */ 
         }));
     }
@@ -2424,11 +2424,11 @@ var ClassDeclarationSyntax = (function (_super) {
         return new ClassDeclarationSyntax(null, null, classKeyword, identifier, null, null, openBraceToken, SyntaxList.empty, closeBraceToken);
     }
     ClassDeclarationSyntax.create1 = function create1(identifier) {
-        return new ClassDeclarationSyntax(null, null, SyntaxToken.createElastic({
+        return new ClassDeclarationSyntax(null, null, SyntaxToken.create({
             kind: 42 /* ClassKeyword */ 
-        }), identifier, null, null, SyntaxToken.createElastic({
+        }), identifier, null, null, SyntaxToken.create({
             kind: 67 /* OpenBraceToken */ 
-        }), SyntaxList.empty, SyntaxToken.createElastic({
+        }), SyntaxList.empty, SyntaxToken.create({
             kind: 68 /* CloseBraceToken */ 
         }));
     }
@@ -2648,7 +2648,7 @@ var InterfaceDeclarationSyntax = (function (_super) {
         return new InterfaceDeclarationSyntax(null, interfaceKeyword, identifier, null, body);
     }
     InterfaceDeclarationSyntax.create1 = function create1(identifier) {
-        return new InterfaceDeclarationSyntax(null, SyntaxToken.createElastic({
+        return new InterfaceDeclarationSyntax(null, SyntaxToken.create({
             kind: 50 /* InterfaceKeyword */ 
         }), identifier, null, ObjectTypeSyntax.create1());
     }
@@ -2786,7 +2786,7 @@ var ExtendsClauseSyntax = (function (_super) {
         this._typeNames = typeNames;
     }
     ExtendsClauseSyntax.create1 = function create1(typeNames) {
-        return new ExtendsClauseSyntax(SyntaxToken.createElastic({
+        return new ExtendsClauseSyntax(SyntaxToken.create({
             kind: 46 /* ExtendsKeyword */ 
         }), typeNames);
     }
@@ -2872,7 +2872,7 @@ var ImplementsClauseSyntax = (function (_super) {
         this._typeNames = typeNames;
     }
     ImplementsClauseSyntax.create1 = function create1(typeNames) {
-        return new ImplementsClauseSyntax(SyntaxToken.createElastic({
+        return new ImplementsClauseSyntax(SyntaxToken.create({
             kind: 49 /* ImplementsKeyword */ 
         }), typeNames);
     }
@@ -2988,11 +2988,11 @@ var ModuleDeclarationSyntax = (function (_super) {
         return new ModuleDeclarationSyntax(null, null, moduleKeyword, null, null, openBraceToken, SyntaxList.empty, closeBraceToken);
     }
     ModuleDeclarationSyntax.create1 = function create1() {
-        return new ModuleDeclarationSyntax(null, null, SyntaxToken.createElastic({
+        return new ModuleDeclarationSyntax(null, null, SyntaxToken.create({
             kind: 63 /* ModuleKeyword */ 
-        }), null, null, SyntaxToken.createElastic({
+        }), null, null, SyntaxToken.create({
             kind: 67 /* OpenBraceToken */ 
-        }), SyntaxList.empty, SyntaxToken.createElastic({
+        }), SyntaxList.empty, SyntaxToken.create({
             kind: 68 /* CloseBraceToken */ 
         }));
     }
@@ -3220,7 +3220,7 @@ var FunctionDeclarationSyntax = (function (_super) {
         return new FunctionDeclarationSyntax(null, null, functionKeyword, functionSignature, null, null);
     }
     FunctionDeclarationSyntax.create1 = function create1(functionSignature) {
-        return new FunctionDeclarationSyntax(null, null, SyntaxToken.createElastic({
+        return new FunctionDeclarationSyntax(null, null, SyntaxToken.create({
             kind: 25 /* FunctionKeyword */ 
         }), functionSignature, null, null);
     }
@@ -3405,7 +3405,7 @@ var VariableStatementSyntax = (function (_super) {
         return new VariableStatementSyntax(null, null, variableDeclaration, semicolonToken);
     }
     VariableStatementSyntax.create1 = function create1(variableDeclaration) {
-        return new VariableStatementSyntax(null, null, variableDeclaration, SyntaxToken.createElastic({
+        return new VariableStatementSyntax(null, null, variableDeclaration, SyntaxToken.create({
             kind: 75 /* SemicolonToken */ 
         }));
     }
@@ -3568,7 +3568,7 @@ var VariableDeclarationSyntax = (function (_super) {
         this._variableDeclarators = variableDeclarators;
     }
     VariableDeclarationSyntax.create1 = function create1(variableDeclarators) {
-        return new VariableDeclarationSyntax(SyntaxToken.createElastic({
+        return new VariableDeclarationSyntax(SyntaxToken.create({
             kind: 38 /* VarKeyword */ 
         }), variableDeclarators);
     }
@@ -3768,7 +3768,7 @@ var EqualsValueClauseSyntax = (function (_super) {
         this._value = value;
     }
     EqualsValueClauseSyntax.create1 = function create1(value) {
-        return new EqualsValueClauseSyntax(SyntaxToken.createElastic({
+        return new EqualsValueClauseSyntax(SyntaxToken.create({
             kind: 104 /* EqualsToken */ 
         }), value);
     }
@@ -3956,7 +3956,7 @@ var ThisExpressionSyntax = (function (_super) {
         this._thisKeyword = thisKeyword;
     }
     ThisExpressionSyntax.create1 = function create1() {
-        return new ThisExpressionSyntax(SyntaxToken.createElastic({
+        return new ThisExpressionSyntax(SyntaxToken.create({
             kind: 33 /* ThisKeyword */ 
         }));
     }
@@ -4126,9 +4126,9 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
         return new ArrayLiteralExpressionSyntax(openBracketToken, SeparatedSyntaxList.empty, closeBracketToken);
     }
     ArrayLiteralExpressionSyntax.create1 = function create1() {
-        return new ArrayLiteralExpressionSyntax(SyntaxToken.createElastic({
+        return new ArrayLiteralExpressionSyntax(SyntaxToken.create({
             kind: 71 /* OpenBracketToken */ 
-        }), SeparatedSyntaxList.empty, SyntaxToken.createElastic({
+        }), SeparatedSyntaxList.empty, SyntaxToken.create({
             kind: 72 /* CloseBracketToken */ 
         }));
     }
@@ -4275,9 +4275,9 @@ var ParenthesizedExpressionSyntax = (function (_super) {
         this._closeParenToken = closeParenToken;
     }
     ParenthesizedExpressionSyntax.create1 = function create1(expression) {
-        return new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
+        return new ParenthesizedExpressionSyntax(SyntaxToken.create({
             kind: 69 /* OpenParenToken */ 
-        }), expression, SyntaxToken.createElastic({
+        }), expression, SyntaxToken.create({
             kind: 70 /* CloseParenToken */ 
         }));
     }
@@ -4408,7 +4408,7 @@ var SimpleArrowFunctionExpressionSyntax = (function (_super) {
         this._body = body;
     }
     SimpleArrowFunctionExpressionSyntax.create1 = function create1(identifier, body) {
-        return new SimpleArrowFunctionExpressionSyntax(identifier, SyntaxToken.createElastic({
+        return new SimpleArrowFunctionExpressionSyntax(identifier, SyntaxToken.create({
             kind: 82 /* EqualsGreaterThanToken */ 
         }), body);
     }
@@ -4514,7 +4514,7 @@ var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
         this._body = body;
     }
     ParenthesizedArrowFunctionExpressionSyntax.create1 = function create1(body) {
-        return new ParenthesizedArrowFunctionExpressionSyntax(CallSignatureSyntax.create1(), SyntaxToken.createElastic({
+        return new ParenthesizedArrowFunctionExpressionSyntax(CallSignatureSyntax.create1(), SyntaxToken.create({
             kind: 82 /* EqualsGreaterThanToken */ 
         }), body);
     }
@@ -4713,7 +4713,7 @@ var QualifiedNameSyntax = (function (_super) {
         this._right = right;
     }
     QualifiedNameSyntax.create1 = function create1(left, right) {
-        return new QualifiedNameSyntax(left, SyntaxToken.createElastic({
+        return new QualifiedNameSyntax(left, SyntaxToken.create({
             kind: 73 /* DotToken */ 
         }), right);
     }
@@ -4829,9 +4829,9 @@ var ConstructorTypeSyntax = (function (_super) {
         this._type = type;
     }
     ConstructorTypeSyntax.create1 = function create1(type) {
-        return new ConstructorTypeSyntax(SyntaxToken.createElastic({
+        return new ConstructorTypeSyntax(SyntaxToken.create({
             kind: 29 /* NewKeyword */ 
-        }), ParameterListSyntax.create1(), SyntaxToken.createElastic({
+        }), ParameterListSyntax.create1(), SyntaxToken.create({
             kind: 82 /* EqualsGreaterThanToken */ 
         }), type);
     }
@@ -4953,7 +4953,7 @@ var FunctionTypeSyntax = (function (_super) {
         this._type = type;
     }
     FunctionTypeSyntax.create1 = function create1(type) {
-        return new FunctionTypeSyntax(ParameterListSyntax.create1(), SyntaxToken.createElastic({
+        return new FunctionTypeSyntax(ParameterListSyntax.create1(), SyntaxToken.create({
             kind: 82 /* EqualsGreaterThanToken */ 
         }), type);
     }
@@ -5062,9 +5062,9 @@ var ObjectTypeSyntax = (function (_super) {
         return new ObjectTypeSyntax(openBraceToken, SeparatedSyntaxList.empty, closeBraceToken);
     }
     ObjectTypeSyntax.create1 = function create1() {
-        return new ObjectTypeSyntax(SyntaxToken.createElastic({
+        return new ObjectTypeSyntax(SyntaxToken.create({
             kind: 67 /* OpenBraceToken */ 
-        }), SeparatedSyntaxList.empty, SyntaxToken.createElastic({
+        }), SeparatedSyntaxList.empty, SyntaxToken.create({
             kind: 68 /* CloseBraceToken */ 
         }));
     }
@@ -5170,9 +5170,9 @@ var ArrayTypeSyntax = (function (_super) {
         this._closeBracketToken = closeBracketToken;
     }
     ArrayTypeSyntax.create1 = function create1(type) {
-        return new ArrayTypeSyntax(type, SyntaxToken.createElastic({
+        return new ArrayTypeSyntax(type, SyntaxToken.create({
             kind: 71 /* OpenBracketToken */ 
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 72 /* CloseBracketToken */ 
         }));
     }
@@ -5346,7 +5346,7 @@ var TypeAnnotationSyntax = (function (_super) {
         this._type = type;
     }
     TypeAnnotationSyntax.create1 = function create1(type) {
-        return new TypeAnnotationSyntax(SyntaxToken.createElastic({
+        return new TypeAnnotationSyntax(SyntaxToken.create({
             kind: 103 /* ColonToken */ 
         }), type);
     }
@@ -5439,9 +5439,9 @@ var BlockSyntax = (function (_super) {
         return new BlockSyntax(openBraceToken, SyntaxList.empty, closeBraceToken);
     }
     BlockSyntax.create1 = function create1() {
-        return new BlockSyntax(SyntaxToken.createElastic({
+        return new BlockSyntax(SyntaxToken.create({
             kind: 67 /* OpenBraceToken */ 
-        }), SyntaxList.empty, SyntaxToken.createElastic({
+        }), SyntaxList.empty, SyntaxToken.create({
             kind: 68 /* CloseBraceToken */ 
         }));
     }
@@ -5742,7 +5742,7 @@ var MemberAccessExpressionSyntax = (function (_super) {
         this._identifierName = identifierName;
     }
     MemberAccessExpressionSyntax.create1 = function create1(expression, identifierName) {
-        return new MemberAccessExpressionSyntax(expression, SyntaxToken.createElastic({
+        return new MemberAccessExpressionSyntax(expression, SyntaxToken.create({
             kind: 73 /* DotToken */ 
         }), identifierName);
     }
@@ -5949,9 +5949,9 @@ var ElementAccessExpressionSyntax = (function (_super) {
         this._closeBracketToken = closeBracketToken;
     }
     ElementAccessExpressionSyntax.create1 = function create1(expression, argumentExpression) {
-        return new ElementAccessExpressionSyntax(expression, SyntaxToken.createElastic({
+        return new ElementAccessExpressionSyntax(expression, SyntaxToken.create({
             kind: 71 /* OpenBracketToken */ 
-        }), argumentExpression, SyntaxToken.createElastic({
+        }), argumentExpression, SyntaxToken.create({
             kind: 72 /* CloseBracketToken */ 
         }));
     }
@@ -6172,9 +6172,9 @@ var ArgumentListSyntax = (function (_super) {
         return new ArgumentListSyntax(openParenToken, SeparatedSyntaxList.empty, closeParenToken);
     }
     ArgumentListSyntax.create1 = function create1() {
-        return new ArgumentListSyntax(SyntaxToken.createElastic({
+        return new ArgumentListSyntax(SyntaxToken.create({
             kind: 69 /* OpenParenToken */ 
-        }), SeparatedSyntaxList.empty, SyntaxToken.createElastic({
+        }), SeparatedSyntaxList.empty, SyntaxToken.create({
             kind: 70 /* CloseParenToken */ 
         }));
     }
@@ -6452,9 +6452,9 @@ var ConditionalExpressionSyntax = (function (_super) {
         this._whenFalse = whenFalse;
     }
     ConditionalExpressionSyntax.create1 = function create1(condition, whenTrue, whenFalse) {
-        return new ConditionalExpressionSyntax(condition, SyntaxToken.createElastic({
+        return new ConditionalExpressionSyntax(condition, SyntaxToken.create({
             kind: 102 /* QuestionToken */ 
-        }), whenTrue, SyntaxToken.createElastic({
+        }), whenTrue, SyntaxToken.create({
             kind: 103 /* ColonToken */ 
         }), whenFalse);
     }
@@ -6620,7 +6620,7 @@ var ConstructSignatureSyntax = (function (_super) {
         return new ConstructSignatureSyntax(newKeyword, parameterList, null);
     }
     ConstructSignatureSyntax.create1 = function create1() {
-        return new ConstructSignatureSyntax(SyntaxToken.createElastic({
+        return new ConstructSignatureSyntax(SyntaxToken.create({
             kind: 29 /* NewKeyword */ 
         }), ParameterListSyntax.create1(), null);
     }
@@ -6868,9 +6868,9 @@ var IndexSignatureSyntax = (function (_super) {
         return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, null);
     }
     IndexSignatureSyntax.create1 = function create1(parameter) {
-        return new IndexSignatureSyntax(SyntaxToken.createElastic({
+        return new IndexSignatureSyntax(SyntaxToken.create({
             kind: 71 /* OpenBracketToken */ 
-        }), parameter, SyntaxToken.createElastic({
+        }), parameter, SyntaxToken.create({
             kind: 72 /* CloseBracketToken */ 
         }), null);
     }
@@ -7107,9 +7107,9 @@ var ParameterListSyntax = (function (_super) {
         return new ParameterListSyntax(openParenToken, SeparatedSyntaxList.empty, closeParenToken);
     }
     ParameterListSyntax.create1 = function create1() {
-        return new ParameterListSyntax(SyntaxToken.createElastic({
+        return new ParameterListSyntax(SyntaxToken.create({
             kind: 69 /* OpenParenToken */ 
-        }), SeparatedSyntaxList.empty, SyntaxToken.createElastic({
+        }), SeparatedSyntaxList.empty, SyntaxToken.create({
             kind: 70 /* CloseParenToken */ 
         }));
     }
@@ -7306,7 +7306,7 @@ var ElseClauseSyntax = (function (_super) {
         this._statement = statement;
     }
     ElseClauseSyntax.create1 = function create1(statement) {
-        return new ElseClauseSyntax(SyntaxToken.createElastic({
+        return new ElseClauseSyntax(SyntaxToken.create({
             kind: 21 /* ElseKeyword */ 
         }), statement);
     }
@@ -7411,11 +7411,11 @@ var IfStatementSyntax = (function (_super) {
         return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, null);
     }
     IfStatementSyntax.create1 = function create1(condition, statement) {
-        return new IfStatementSyntax(SyntaxToken.createElastic({
+        return new IfStatementSyntax(SyntaxToken.create({
             kind: 26 /* IfKeyword */ 
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 69 /* OpenParenToken */ 
-        }), condition, SyntaxToken.createElastic({
+        }), condition, SyntaxToken.create({
             kind: 70 /* CloseParenToken */ 
         }), statement, null);
     }
@@ -7576,7 +7576,7 @@ var ExpressionStatementSyntax = (function (_super) {
         this._semicolonToken = semicolonToken;
     }
     ExpressionStatementSyntax.create1 = function create1(expression) {
-        return new ExpressionStatementSyntax(expression, SyntaxToken.createElastic({
+        return new ExpressionStatementSyntax(expression, SyntaxToken.create({
             kind: 75 /* SemicolonToken */ 
         }));
     }
@@ -7691,7 +7691,7 @@ var ConstructorDeclarationSyntax = (function (_super) {
         return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, null, null);
     }
     ConstructorDeclarationSyntax.create1 = function create1() {
-        return new ConstructorDeclarationSyntax(SyntaxToken.createElastic({
+        return new ConstructorDeclarationSyntax(SyntaxToken.create({
             kind: 60 /* ConstructorKeyword */ 
         }), ParameterListSyntax.create1(), null, null);
     }
@@ -8048,7 +8048,7 @@ var GetMemberAccessorDeclarationSyntax = (function (_super) {
         return new GetMemberAccessorDeclarationSyntax(null, null, getKeyword, identifier, parameterList, null, block);
     }
     GetMemberAccessorDeclarationSyntax.create1 = function create1(identifier) {
-        return new GetMemberAccessorDeclarationSyntax(null, null, SyntaxToken.createElastic({
+        return new GetMemberAccessorDeclarationSyntax(null, null, SyntaxToken.create({
             kind: 62 /* GetKeyword */ 
         }), identifier, ParameterListSyntax.create1(), null, BlockSyntax.create1());
     }
@@ -8243,7 +8243,7 @@ var SetMemberAccessorDeclarationSyntax = (function (_super) {
         return new SetMemberAccessorDeclarationSyntax(null, null, setKeyword, identifier, parameterList, block);
     }
     SetMemberAccessorDeclarationSyntax.create1 = function create1(identifier) {
-        return new SetMemberAccessorDeclarationSyntax(null, null, SyntaxToken.createElastic({
+        return new SetMemberAccessorDeclarationSyntax(null, null, SyntaxToken.create({
             kind: 65 /* SetKeyword */ 
         }), identifier, ParameterListSyntax.create1(), BlockSyntax.create1());
     }
@@ -8412,7 +8412,7 @@ var MemberVariableDeclarationSyntax = (function (_super) {
         return new MemberVariableDeclarationSyntax(null, null, variableDeclarator, semicolonToken);
     }
     MemberVariableDeclarationSyntax.create1 = function create1(variableDeclarator) {
-        return new MemberVariableDeclarationSyntax(null, null, variableDeclarator, SyntaxToken.createElastic({
+        return new MemberVariableDeclarationSyntax(null, null, variableDeclarator, SyntaxToken.create({
             kind: 75 /* SemicolonToken */ 
         }));
     }
@@ -8538,9 +8538,9 @@ var ThrowStatementSyntax = (function (_super) {
         this._semicolonToken = semicolonToken;
     }
     ThrowStatementSyntax.create1 = function create1(expression) {
-        return new ThrowStatementSyntax(SyntaxToken.createElastic({
+        return new ThrowStatementSyntax(SyntaxToken.create({
             kind: 34 /* ThrowKeyword */ 
-        }), expression, SyntaxToken.createElastic({
+        }), expression, SyntaxToken.create({
             kind: 75 /* SemicolonToken */ 
         }));
     }
@@ -8649,9 +8649,9 @@ var ReturnStatementSyntax = (function (_super) {
         return new ReturnStatementSyntax(returnKeyword, null, semicolonToken);
     }
     ReturnStatementSyntax.create1 = function create1() {
-        return new ReturnStatementSyntax(SyntaxToken.createElastic({
+        return new ReturnStatementSyntax(SyntaxToken.create({
             kind: 31 /* ReturnKeyword */ 
-        }), null, SyntaxToken.createElastic({
+        }), null, SyntaxToken.create({
             kind: 75 /* SemicolonToken */ 
         }));
     }
@@ -8762,7 +8762,7 @@ var ObjectCreationExpressionSyntax = (function (_super) {
         return new ObjectCreationExpressionSyntax(newKeyword, expression, null);
     }
     ObjectCreationExpressionSyntax.create1 = function create1(expression) {
-        return new ObjectCreationExpressionSyntax(SyntaxToken.createElastic({
+        return new ObjectCreationExpressionSyntax(SyntaxToken.create({
             kind: 29 /* NewKeyword */ 
         }), expression, null);
     }
@@ -8895,15 +8895,15 @@ var SwitchStatementSyntax = (function (_super) {
         return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, SyntaxList.empty, closeBraceToken);
     }
     SwitchStatementSyntax.create1 = function create1(expression) {
-        return new SwitchStatementSyntax(SyntaxToken.createElastic({
+        return new SwitchStatementSyntax(SyntaxToken.create({
             kind: 32 /* SwitchKeyword */ 
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 69 /* OpenParenToken */ 
-        }), expression, SyntaxToken.createElastic({
+        }), expression, SyntaxToken.create({
             kind: 70 /* CloseParenToken */ 
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 67 /* OpenBraceToken */ 
-        }), SyntaxList.empty, SyntaxToken.createElastic({
+        }), SyntaxList.empty, SyntaxToken.create({
             kind: 68 /* CloseBraceToken */ 
         }));
     }
@@ -9108,9 +9108,9 @@ var CaseSwitchClauseSyntax = (function (_super) {
         return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, SyntaxList.empty);
     }
     CaseSwitchClauseSyntax.create1 = function create1(expression) {
-        return new CaseSwitchClauseSyntax(SyntaxToken.createElastic({
+        return new CaseSwitchClauseSyntax(SyntaxToken.create({
             kind: 14 /* CaseKeyword */ 
-        }), expression, SyntaxToken.createElastic({
+        }), expression, SyntaxToken.create({
             kind: 103 /* ColonToken */ 
         }), SyntaxList.empty);
     }
@@ -9241,9 +9241,9 @@ var DefaultSwitchClauseSyntax = (function (_super) {
         return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, SyntaxList.empty);
     }
     DefaultSwitchClauseSyntax.create1 = function create1() {
-        return new DefaultSwitchClauseSyntax(SyntaxToken.createElastic({
+        return new DefaultSwitchClauseSyntax(SyntaxToken.create({
             kind: 18 /* DefaultKeyword */ 
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 103 /* ColonToken */ 
         }), SyntaxList.empty);
     }
@@ -9357,9 +9357,9 @@ var BreakStatementSyntax = (function (_super) {
         return new BreakStatementSyntax(breakKeyword, null, semicolonToken);
     }
     BreakStatementSyntax.create1 = function create1() {
-        return new BreakStatementSyntax(SyntaxToken.createElastic({
+        return new BreakStatementSyntax(SyntaxToken.create({
             kind: 13 /* BreakKeyword */ 
-        }), null, SyntaxToken.createElastic({
+        }), null, SyntaxToken.create({
             kind: 75 /* SemicolonToken */ 
         }));
     }
@@ -9472,9 +9472,9 @@ var ContinueStatementSyntax = (function (_super) {
         return new ContinueStatementSyntax(continueKeyword, null, semicolonToken);
     }
     ContinueStatementSyntax.create1 = function create1() {
-        return new ContinueStatementSyntax(SyntaxToken.createElastic({
+        return new ContinueStatementSyntax(SyntaxToken.create({
             kind: 16 /* ContinueKeyword */ 
-        }), null, SyntaxToken.createElastic({
+        }), null, SyntaxToken.create({
             kind: 75 /* SemicolonToken */ 
         }));
     }
@@ -9657,15 +9657,15 @@ var ForStatementSyntax = (function (_super) {
         return new ForStatementSyntax(forKeyword, openParenToken, null, null, firstSemicolonToken, null, secondSemicolonToken, null, closeParenToken, statement);
     }
     ForStatementSyntax.create1 = function create1(statement) {
-        return new ForStatementSyntax(SyntaxToken.createElastic({
+        return new ForStatementSyntax(SyntaxToken.create({
             kind: 24 /* ForKeyword */ 
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 69 /* OpenParenToken */ 
-        }), null, null, SyntaxToken.createElastic({
+        }), null, null, SyntaxToken.create({
             kind: 75 /* SemicolonToken */ 
-        }), null, SyntaxToken.createElastic({
+        }), null, SyntaxToken.create({
             kind: 75 /* SemicolonToken */ 
-        }), null, SyntaxToken.createElastic({
+        }), null, SyntaxToken.create({
             kind: 70 /* CloseParenToken */ 
         }), statement);
     }
@@ -9923,13 +9923,13 @@ var ForInStatementSyntax = (function (_super) {
         return new ForInStatementSyntax(forKeyword, openParenToken, null, null, inKeyword, expression, closeParenToken, statement);
     }
     ForInStatementSyntax.create1 = function create1(expression, statement) {
-        return new ForInStatementSyntax(SyntaxToken.createElastic({
+        return new ForInStatementSyntax(SyntaxToken.create({
             kind: 24 /* ForKeyword */ 
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 69 /* OpenParenToken */ 
-        }), null, null, SyntaxToken.createElastic({
+        }), null, null, SyntaxToken.create({
             kind: 27 /* InKeyword */ 
-        }), expression, SyntaxToken.createElastic({
+        }), expression, SyntaxToken.create({
             kind: 70 /* CloseParenToken */ 
         }), statement);
     }
@@ -10139,11 +10139,11 @@ var WhileStatementSyntax = (function (_super) {
         this._statement = statement;
     }
     WhileStatementSyntax.create1 = function create1(condition, statement) {
-        return new WhileStatementSyntax(SyntaxToken.createElastic({
+        return new WhileStatementSyntax(SyntaxToken.create({
             kind: 40 /* WhileKeyword */ 
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 69 /* OpenParenToken */ 
-        }), condition, SyntaxToken.createElastic({
+        }), condition, SyntaxToken.create({
             kind: 70 /* CloseParenToken */ 
         }), statement);
     }
@@ -10295,11 +10295,11 @@ var WithStatementSyntax = (function (_super) {
         this._statement = statement;
     }
     WithStatementSyntax.create1 = function create1(condition, statement) {
-        return new WithStatementSyntax(SyntaxToken.createElastic({
+        return new WithStatementSyntax(SyntaxToken.create({
             kind: 41 /* WithKeyword */ 
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 69 /* OpenParenToken */ 
-        }), condition, SyntaxToken.createElastic({
+        }), condition, SyntaxToken.create({
             kind: 70 /* CloseParenToken */ 
         }), statement);
     }
@@ -10460,11 +10460,11 @@ var EnumDeclarationSyntax = (function (_super) {
         return new EnumDeclarationSyntax(null, enumKeyword, identifier, openBraceToken, SeparatedSyntaxList.empty, closeBraceToken);
     }
     EnumDeclarationSyntax.create1 = function create1(identifier) {
-        return new EnumDeclarationSyntax(null, SyntaxToken.createElastic({
+        return new EnumDeclarationSyntax(null, SyntaxToken.create({
             kind: 44 /* EnumKeyword */ 
-        }), identifier, SyntaxToken.createElastic({
+        }), identifier, SyntaxToken.create({
             kind: 67 /* OpenBraceToken */ 
-        }), SeparatedSyntaxList.empty, SyntaxToken.createElastic({
+        }), SeparatedSyntaxList.empty, SyntaxToken.create({
             kind: 68 /* CloseBraceToken */ 
         }));
     }
@@ -10624,9 +10624,9 @@ var CastExpressionSyntax = (function (_super) {
         this._expression = expression;
     }
     CastExpressionSyntax.create1 = function create1(type, expression) {
-        return new CastExpressionSyntax(SyntaxToken.createElastic({
+        return new CastExpressionSyntax(SyntaxToken.create({
             kind: 77 /* LessThanToken */ 
-        }), type, SyntaxToken.createElastic({
+        }), type, SyntaxToken.create({
             kind: 78 /* GreaterThanToken */ 
         }), expression);
     }
@@ -10751,9 +10751,9 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
         return new ObjectLiteralExpressionSyntax(openBraceToken, SeparatedSyntaxList.empty, closeBraceToken);
     }
     ObjectLiteralExpressionSyntax.create1 = function create1() {
-        return new ObjectLiteralExpressionSyntax(SyntaxToken.createElastic({
+        return new ObjectLiteralExpressionSyntax(SyntaxToken.create({
             kind: 67 /* OpenBraceToken */ 
-        }), SeparatedSyntaxList.empty, SyntaxToken.createElastic({
+        }), SeparatedSyntaxList.empty, SyntaxToken.create({
             kind: 68 /* CloseBraceToken */ 
         }));
     }
@@ -10890,7 +10890,7 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
         this._expression = expression;
     }
     SimplePropertyAssignmentSyntax.create1 = function create1(propertyName, expression) {
-        return new SimplePropertyAssignmentSyntax(propertyName, SyntaxToken.createElastic({
+        return new SimplePropertyAssignmentSyntax(propertyName, SyntaxToken.create({
             kind: 103 /* ColonToken */ 
         }), expression);
     }
@@ -11035,11 +11035,11 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
         this._block = block;
     }
     GetAccessorPropertyAssignmentSyntax.create1 = function create1(propertyName) {
-        return new GetAccessorPropertyAssignmentSyntax(SyntaxToken.createElastic({
+        return new GetAccessorPropertyAssignmentSyntax(SyntaxToken.create({
             kind: 62 /* GetKeyword */ 
-        }), propertyName, SyntaxToken.createElastic({
+        }), propertyName, SyntaxToken.create({
             kind: 69 /* OpenParenToken */ 
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 70 /* CloseParenToken */ 
         }), BlockSyntax.create1());
     }
@@ -11192,11 +11192,11 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
         this._block = block;
     }
     SetAccessorPropertyAssignmentSyntax.create1 = function create1(propertyName, parameterName) {
-        return new SetAccessorPropertyAssignmentSyntax(SyntaxToken.createElastic({
+        return new SetAccessorPropertyAssignmentSyntax(SyntaxToken.create({
             kind: 65 /* SetKeyword */ 
-        }), propertyName, SyntaxToken.createElastic({
+        }), propertyName, SyntaxToken.create({
             kind: 69 /* OpenParenToken */ 
-        }), parameterName, SyntaxToken.createElastic({
+        }), parameterName, SyntaxToken.create({
             kind: 70 /* CloseParenToken */ 
         }), BlockSyntax.create1());
     }
@@ -11362,7 +11362,7 @@ var FunctionExpressionSyntax = (function (_super) {
         return new FunctionExpressionSyntax(functionKeyword, null, callSignature, block);
     }
     FunctionExpressionSyntax.create1 = function create1() {
-        return new FunctionExpressionSyntax(SyntaxToken.createElastic({
+        return new FunctionExpressionSyntax(SyntaxToken.create({
             kind: 25 /* FunctionKeyword */ 
         }), null, CallSignatureSyntax.create1(), BlockSyntax.create1());
     }
@@ -11484,7 +11484,7 @@ var EmptyStatementSyntax = (function (_super) {
         this._semicolonToken = semicolonToken;
     }
     EmptyStatementSyntax.create1 = function create1() {
-        return new EmptyStatementSyntax(SyntaxToken.createElastic({
+        return new EmptyStatementSyntax(SyntaxToken.create({
             kind: 75 /* SemicolonToken */ 
         }));
     }
@@ -11550,7 +11550,7 @@ var SuperExpressionSyntax = (function (_super) {
         this._superKeyword = superKeyword;
     }
     SuperExpressionSyntax.create1 = function create1() {
-        return new SuperExpressionSyntax(SyntaxToken.createElastic({
+        return new SuperExpressionSyntax(SyntaxToken.create({
             kind: 48 /* SuperKeyword */ 
         }));
     }
@@ -11625,7 +11625,7 @@ var TryStatementSyntax = (function (_super) {
         return new TryStatementSyntax(tryKeyword, block, null, null);
     }
     TryStatementSyntax.create1 = function create1() {
-        return new TryStatementSyntax(SyntaxToken.createElastic({
+        return new TryStatementSyntax(SyntaxToken.create({
             kind: 36 /* TryKeyword */ 
         }), BlockSyntax.create1(), null, null);
     }
@@ -11768,11 +11768,11 @@ var CatchClauseSyntax = (function (_super) {
         this._block = block;
     }
     CatchClauseSyntax.create1 = function create1(identifier) {
-        return new CatchClauseSyntax(SyntaxToken.createElastic({
+        return new CatchClauseSyntax(SyntaxToken.create({
             kind: 15 /* CatchKeyword */ 
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 69 /* OpenParenToken */ 
-        }), identifier, SyntaxToken.createElastic({
+        }), identifier, SyntaxToken.create({
             kind: 70 /* CloseParenToken */ 
         }), BlockSyntax.create1());
     }
@@ -11909,7 +11909,7 @@ var FinallyClauseSyntax = (function (_super) {
         this._block = block;
     }
     FinallyClauseSyntax.create1 = function create1() {
-        return new FinallyClauseSyntax(SyntaxToken.createElastic({
+        return new FinallyClauseSyntax(SyntaxToken.create({
             kind: 23 /* FinallyKeyword */ 
         }), BlockSyntax.create1());
     }
@@ -12002,7 +12002,7 @@ var LabeledStatement = (function (_super) {
         this._statement = statement;
     }
     LabeledStatement.create1 = function create1(identifier, statement) {
-        return new LabeledStatement(identifier, SyntaxToken.createElastic({
+        return new LabeledStatement(identifier, SyntaxToken.create({
             kind: 103 /* ColonToken */ 
         }), statement);
     }
@@ -12127,15 +12127,15 @@ var DoStatementSyntax = (function (_super) {
         this._semicolonToken = semicolonToken;
     }
     DoStatementSyntax.create1 = function create1(statement, condition) {
-        return new DoStatementSyntax(SyntaxToken.createElastic({
+        return new DoStatementSyntax(SyntaxToken.create({
             kind: 20 /* DoKeyword */ 
-        }), statement, SyntaxToken.createElastic({
+        }), statement, SyntaxToken.create({
             kind: 40 /* WhileKeyword */ 
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 69 /* OpenParenToken */ 
-        }), condition, SyntaxToken.createElastic({
+        }), condition, SyntaxToken.create({
             kind: 70 /* CloseParenToken */ 
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 75 /* SemicolonToken */ 
         }));
     }
@@ -12307,7 +12307,7 @@ var TypeOfExpressionSyntax = (function (_super) {
         this._expression = expression;
     }
     TypeOfExpressionSyntax.create1 = function create1(expression) {
-        return new TypeOfExpressionSyntax(SyntaxToken.createElastic({
+        return new TypeOfExpressionSyntax(SyntaxToken.create({
             kind: 37 /* TypeOfKeyword */ 
         }), expression);
     }
@@ -12396,7 +12396,7 @@ var DeleteExpressionSyntax = (function (_super) {
         this._expression = expression;
     }
     DeleteExpressionSyntax.create1 = function create1(expression) {
-        return new DeleteExpressionSyntax(SyntaxToken.createElastic({
+        return new DeleteExpressionSyntax(SyntaxToken.create({
             kind: 19 /* DeleteKeyword */ 
         }), expression);
     }
@@ -12485,7 +12485,7 @@ var VoidExpressionSyntax = (function (_super) {
         this._expression = expression;
     }
     VoidExpressionSyntax.create1 = function create1(expression) {
-        return new VoidExpressionSyntax(SyntaxToken.createElastic({
+        return new VoidExpressionSyntax(SyntaxToken.create({
             kind: 39 /* VoidKeyword */ 
         }), expression);
     }
@@ -12574,9 +12574,9 @@ var DebuggerStatementSyntax = (function (_super) {
         this._semicolonToken = semicolonToken;
     }
     DebuggerStatementSyntax.create1 = function create1() {
-        return new DebuggerStatementSyntax(SyntaxToken.createElastic({
+        return new DebuggerStatementSyntax(SyntaxToken.create({
             kind: 17 /* DebuggerKeyword */ 
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 75 /* SemicolonToken */ 
         }));
     }
@@ -16303,7 +16303,7 @@ var SyntaxToken;
             }
         }
     }
-    function create(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo) {
+    function createFromText(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo) {
         if(SyntaxFacts.isAnyPunctuation(kind)) {
             return createFixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
         } else {
@@ -16314,7 +16314,7 @@ var SyntaxToken;
             }
         }
     }
-    SyntaxToken.create = create;
+    SyntaxToken.createFromText = createFromText;
     function getTriviaLength(value) {
         return value & 67108863 /* TriviaLengthMask */ ;
     }
@@ -18733,7 +18733,7 @@ var Scanner = (function (_super) {
         var leadingTriviaInfo = this.scanTriviaInfo(diagnostics, false);
         this.scanSyntaxToken(diagnostics, allowRegularExpression);
         var trailingTriviaInfo = this.scanTriviaInfo(diagnostics, true);
-        return SyntaxToken.create(this.text, fullStart, this.kind, leadingTriviaInfo, this.width, trailingTriviaInfo);
+        return SyntaxToken.createFromText(this.text, fullStart, this.kind, leadingTriviaInfo, this.width, trailingTriviaInfo);
     };
     Scanner.scanTrivia = function scanTrivia(text, start, length, isTrailing) {
         Debug.assert(length > 0);
@@ -20047,7 +20047,7 @@ var SyntaxToken;
         };
         return RealizedToken;
     })();    
-    function createElastic(token) {
+    function create(token) {
         var text = token.text ? token.text : SyntaxFacts.getText(token.kind);
         var kind, keywordKind;
         if(SyntaxFacts.isAnyKeyword(token.kind)) {
@@ -20059,7 +20059,7 @@ var SyntaxToken;
         }
         return new ElasticToken(kind, keywordKind, SyntaxTriviaList.create(token.leadingTrivia), text, SyntaxTriviaList.create(token.trailingTrivia));
     }
-    SyntaxToken.createElastic = createElastic;
+    SyntaxToken.create = create;
 })(SyntaxToken || (SyntaxToken = {}));
 var SyntaxInformationMap = (function (_super) {
     __extends(SyntaxInformationMap, _super);
@@ -20565,7 +20565,7 @@ var Emitter = (function (_super) {
         var moduleIdentifier = this.withNoTrivia(parentModule);
         identifier = this.withNoTrivia(identifier);
         var indentationTrivia = this.indentationTriviaForStartOfToken(moduleElement.firstToken());
-        return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(moduleIdentifier.withLeadingTrivia(SyntaxTriviaList.create(indentationTrivia))), new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))), SyntaxToken.createElastic({
+        return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(moduleIdentifier.withLeadingTrivia(SyntaxTriviaList.create(indentationTrivia))), new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))), SyntaxToken.create({
             kind: 104 /* EqualsToken */ ,
             trailingTrivia: this.spaceArray
         }), new IdentifierNameSyntax(identifier.clone()))).withTrailingTrivia(this.newLineList);
@@ -20630,35 +20630,35 @@ var Emitter = (function (_super) {
         var moduleIdentifier = this.withNoTrivia(name.identifier());
         var moduleIndentation = this.indentationTriviaForStartOfToken(moduleDeclaration.firstToken());
         var leadingTrivia = outermost ? moduleDeclaration.leadingTrivia().toArray() : moduleIndentation;
-        var variableStatement = VariableStatementSyntax.create1(new VariableDeclarationSyntax(SyntaxToken.createElastic({
+        var variableStatement = VariableStatementSyntax.create1(new VariableDeclarationSyntax(SyntaxToken.create({
             leadingTrivia: leadingTrivia,
             kind: 38 /* VarKeyword */ ,
             trailingTrivia: this.spaceArray
         }), SeparatedSyntaxList.create([
             VariableDeclaratorSyntax.create(moduleIdentifier.clone())
         ]))).withTrailingTrivia(this.newLineList);
-        var functionExpression = FunctionExpressionSyntax.create(SyntaxToken.createElastic({
+        var functionExpression = FunctionExpressionSyntax.create(SyntaxToken.create({
             kind: 25 /* FunctionKeyword */ 
         }), CallSignatureSyntax.create(ParameterListSyntax.create1().withParameters(SeparatedSyntaxList.create([
             ParameterSyntax.create(moduleIdentifier.clone())
-        ])).withTrailingTrivia(this.spaceList)), new BlockSyntax(SyntaxToken.createElastic({
+        ])).withTrailingTrivia(this.spaceList)), new BlockSyntax(SyntaxToken.create({
             kind: 67 /* OpenBraceToken */ ,
             trailingTrivia: this.newLineArray
-        }), SyntaxList.create(moduleElements), SyntaxToken.createElastic({
+        }), SyntaxList.create(moduleElements), SyntaxToken.create({
             leadingTrivia: moduleIndentation,
             kind: 68 /* CloseBraceToken */ 
         })));
         var parenthesizedFunctionExpression = ParenthesizedExpressionSyntax.create1(functionExpression).withLeadingTrivia(SyntaxTriviaList.create(moduleIndentation));
-        var logicalOrExpression = new BinaryExpressionSyntax(184 /* LogicalOrExpression */ , new IdentifierNameSyntax(moduleIdentifier.clone()), SyntaxToken.createElastic({
+        var logicalOrExpression = new BinaryExpressionSyntax(184 /* LogicalOrExpression */ , new IdentifierNameSyntax(moduleIdentifier.clone()), SyntaxToken.create({
             kind: 101 /* BarBarToken */ 
-        }), ParenthesizedExpressionSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new IdentifierNameSyntax(moduleIdentifier.clone()), SyntaxToken.createElastic({
+        }), ParenthesizedExpressionSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new IdentifierNameSyntax(moduleIdentifier.clone()), SyntaxToken.create({
             kind: 104 /* EqualsToken */ 
         }), ObjectLiteralExpressionSyntax.create1())));
-        var invocationExpression = new InvocationExpressionSyntax(parenthesizedFunctionExpression, new ArgumentListSyntax(SyntaxToken.createElastic({
+        var invocationExpression = new InvocationExpressionSyntax(parenthesizedFunctionExpression, new ArgumentListSyntax(SyntaxToken.create({
             kind: 69 /* OpenParenToken */ 
         }), SeparatedSyntaxList.create([
             logicalOrExpression
-        ]), SyntaxToken.createElastic({
+        ]), SyntaxToken.create({
             kind: 70 /* CloseParenToken */ 
         })));
         var expressionStatement = ExpressionStatementSyntax.create1(invocationExpression).withTrailingTrivia(this.newLineList);
@@ -20682,14 +20682,14 @@ var Emitter = (function (_super) {
     Emitter.prototype.visitSimpleArrowFunctionExpression = function (node) {
         var identifier = this.withNoTrivia(node.identifier());
         var block = this.convertArrowFunctionBody(node);
-        return FunctionExpressionSyntax.create(SyntaxToken.createElastic({
+        return FunctionExpressionSyntax.create(SyntaxToken.create({
             leadingTrivia: node.leadingTrivia().toArray(),
             kind: 25 /* FunctionKeyword */ 
-        }), CallSignatureSyntax.create(new ParameterListSyntax(SyntaxToken.createElastic({
+        }), CallSignatureSyntax.create(new ParameterListSyntax(SyntaxToken.create({
             kind: 69 /* OpenParenToken */ 
         }), SeparatedSyntaxList.create([
             ParameterSyntax.create(identifier)
-        ]), SyntaxToken.createElastic({
+        ]), SyntaxToken.create({
             kind: 70 /* CloseParenToken */ ,
             trailingTrivia: this.spaceArray
         }))), block);
@@ -20697,7 +20697,7 @@ var Emitter = (function (_super) {
     Emitter.prototype.visitParenthesizedArrowFunctionExpression = function (node) {
         var parameterList = node.callSignature().parameterList().accept(this);
         var block = this.convertArrowFunctionBody(node);
-        return FunctionExpressionSyntax.create(SyntaxToken.createElastic({
+        return FunctionExpressionSyntax.create(SyntaxToken.create({
             leadingTrivia: node.leadingTrivia().toArray(),
             kind: 25 /* FunctionKeyword */ 
         }), CallSignatureSyntax.create(parameterList), block);
@@ -20708,10 +20708,10 @@ var Emitter = (function (_super) {
             return rewrittenBody;
         }
         var arrowToken = arrowFunction.equalsGreaterThanToken();
-        var returnStatement = new ReturnStatementSyntax(SyntaxToken.createElastic({
+        var returnStatement = new ReturnStatementSyntax(SyntaxToken.create({
             kind: 31 /* ReturnKeyword */ ,
             trailingTrivia: arrowToken.trailingTrivia().toArray()
-        }), rewrittenBody, SyntaxToken.createElastic({
+        }), rewrittenBody, SyntaxToken.create({
             kind: 75 /* SemicolonToken */ ,
             trailingTrivia: this.newLineArray
         }));
@@ -20726,12 +20726,12 @@ var Emitter = (function (_super) {
         }
         returnStatement = this.changeIndentation(returnStatement, false, difference);
         returnStatement = this.changeIndentation(returnStatement, true, this.options.indentSpaces);
-        var block = new BlockSyntax(SyntaxToken.createElastic({
+        var block = new BlockSyntax(SyntaxToken.create({
             kind: 67 /* OpenBraceToken */ ,
             trailingTrivia: this.newLineArray
         }), SyntaxList.create([
             returnStatement
-        ]), SyntaxToken.createElastic({
+        ]), SyntaxToken.create({
             kind: 68 /* CloseBraceToken */ 
         }));
         block = this.changeIndentation(block, false, Indentation.columnForStartOfFirstTokenInLineContainingToken(arrowFunction.firstToken(), this.syntaxInformationMap, this.options));
@@ -20758,7 +20758,7 @@ var Emitter = (function (_super) {
     }
     Emitter.prototype.generatePropertyAssignmentStatement = function (parameter) {
         var identifier = this.withNoTrivia(parameter.identifier());
-        return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , MemberAccessExpressionSyntax.create1(ThisExpressionSyntax.create1(), new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))), SyntaxToken.createElastic({
+        return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , MemberAccessExpressionSyntax.create1(ThisExpressionSyntax.create1(), new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))), SyntaxToken.create({
             kind: 104 /* EqualsToken */ ,
             trailingTrivia: this.spaceArray
         }), new IdentifierNameSyntax(identifier.clone()))).withTrailingTrivia(this.newLineList);
@@ -20767,36 +20767,36 @@ var Emitter = (function (_super) {
         var space = SyntaxTriviaList.create(this.spaceArray);
         var name = parameter.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(space);
         var identifierName = new IdentifierNameSyntax(name);
-        var condition = new BinaryExpressionSyntax(191 /* EqualsExpression */ , new TypeOfExpressionSyntax(SyntaxToken.createElastic({
+        var condition = new BinaryExpressionSyntax(191 /* EqualsExpression */ , new TypeOfExpressionSyntax(SyntaxToken.create({
             kind: 37 /* TypeOfKeyword */ ,
             trailingTrivia: this.spaceArray
-        }), identifierName.clone()), SyntaxToken.createElastic({
+        }), identifierName.clone()), SyntaxToken.create({
             kind: 84 /* EqualsEqualsEqualsToken */ ,
             trailingTrivia: this.spaceArray
-        }), new LiteralExpressionSyntax(169 /* StringLiteralExpression */ , SyntaxToken.createElastic({
+        }), new LiteralExpressionSyntax(169 /* StringLiteralExpression */ , SyntaxToken.create({
             kind: 12 /* StringLiteral */ ,
             text: '"undefined"'
         })));
-        var assignment = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , identifierName.clone(), SyntaxToken.createElastic({
+        var assignment = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , identifierName.clone(), SyntaxToken.create({
             kind: 104 /* EqualsToken */ ,
             trailingTrivia: this.spaceArray
         }), parameter.equalsValueClause().value().accept(this).clone());
         var assignmentStatement = ExpressionStatementSyntax.create1(assignment).withTrailingTrivia(this.spaceList);
-        var block = new BlockSyntax(SyntaxToken.createElastic({
+        var block = new BlockSyntax(SyntaxToken.create({
             kind: 67 /* OpenBraceToken */ ,
             trailingTrivia: this.spaceArray
         }), SyntaxList.create([
             assignmentStatement
-        ]), SyntaxToken.createElastic({
+        ]), SyntaxToken.create({
             kind: 68 /* CloseBraceToken */ ,
             trailingTrivia: this.newLineArray
         }));
-        return new IfStatementSyntax(SyntaxToken.createElastic({
+        return new IfStatementSyntax(SyntaxToken.create({
             kind: 26 /* IfKeyword */ ,
             trailingTrivia: this.spaceArray
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 69 /* OpenParenToken */ 
-        }), condition, SyntaxToken.createElastic({
+        }), condition, SyntaxToken.create({
             kind: 70 /* CloseParenToken */ ,
             trailingTrivia: this.spaceArray
         }), block, null);
@@ -20843,7 +20843,7 @@ var Emitter = (function (_super) {
         var receiver = static ? new IdentifierNameSyntax(classIdentifier) : ThisExpressionSyntax.create1();
         receiver = receiver.withLeadingTrivia(memberDeclaration.leadingTrivia());
         receiver = MemberAccessExpressionSyntax.create1(receiver, new IdentifierNameSyntax(memberIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
-        return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , receiver, SyntaxToken.createElastic({
+        return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , receiver, SyntaxToken.create({
             kind: 104 /* EqualsToken */ ,
             trailingTrivia: this.spaceArray
         }), declarator.equalsValueClause().value().accept(this))).withTrailingTrivia(this.newLineList);
@@ -20867,38 +20867,38 @@ var Emitter = (function (_super) {
         var functionSignature = FunctionSignatureSyntax.create1(identifier.clone()).withTrailingTrivia(this.spaceList);
         var statements = [];
         if(classDeclaration.extendsClause() !== null) {
-            var superStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(SyntaxToken.createElastic({
+            var superStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(SyntaxToken.create({
                 kind: 9 /* IdentifierNameToken */ ,
                 text: "_super"
-            })), new IdentifierNameSyntax(SyntaxToken.createElastic({
+            })), new IdentifierNameSyntax(SyntaxToken.create({
                 kind: 9 /* IdentifierNameToken */ ,
                 text: "apply"
-            }))), new ArgumentListSyntax(SyntaxToken.createElastic({
+            }))), new ArgumentListSyntax(SyntaxToken.create({
                 kind: 69 /* OpenParenToken */ 
             }), SeparatedSyntaxList.create([
                 ThisExpressionSyntax.create1(), 
-                SyntaxToken.createElastic({
+                SyntaxToken.create({
                     kind: 76 /* CommaToken */ ,
                     trailingTrivia: this.spaceArray
                 }), 
-                new IdentifierNameSyntax(SyntaxToken.createElastic({
+                new IdentifierNameSyntax(SyntaxToken.create({
                     kind: 9 /* IdentifierNameToken */ ,
                     text: "arguments"
                 }))
-            ]), SyntaxToken.createElastic({
+            ]), SyntaxToken.create({
                 kind: 70 /* CloseParenToken */ 
             })))).withTrailingTrivia(this.newLineList);
             superStatement = this.changeIndentation(superStatement, true, this.options.indentSpaces);
             statements.push(superStatement);
         }
-        var block = new BlockSyntax(SyntaxToken.createElastic({
+        var block = new BlockSyntax(SyntaxToken.create({
             kind: 67 /* OpenBraceToken */ ,
             trailingTrivia: this.newLineArray
-        }), SyntaxList.create(statements), SyntaxToken.createElastic({
+        }), SyntaxList.create(statements), SyntaxToken.create({
             kind: 68 /* CloseBraceToken */ ,
             trailingTrivia: this.newLineArray
         }));
-        var functionDeclaration = new FunctionDeclarationSyntax(null, null, SyntaxToken.createElastic({
+        var functionDeclaration = new FunctionDeclarationSyntax(null, null, SyntaxToken.create({
             kind: 25 /* FunctionKeyword */ ,
             trailingTrivia: this.spaceArray
         }), functionSignature, block, null);
@@ -20955,7 +20955,7 @@ var Emitter = (function (_super) {
             normalStatements.unshift(expressionStatement);
         }
         block = block.withStatements(SyntaxList.create(normalStatements));
-        var functionDeclaration = new FunctionDeclarationSyntax(null, null, SyntaxToken.createElastic({
+        var functionDeclaration = new FunctionDeclarationSyntax(null, null, SyntaxToken.create({
             leadingTrivia: constructorDeclaration.leadingTrivia().toArray(),
             kind: 25 /* FunctionKeyword */ ,
             trailingTrivia: this.spaceArray
@@ -20970,7 +20970,7 @@ var Emitter = (function (_super) {
         var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
         var functionIdentifier = this.withNoTrivia(functionDeclaration.functionSignature().identifier());
         var receiver = new IdentifierNameSyntax(classIdentifier.withLeadingTrivia(functionDeclaration.leadingTrivia()));
-        receiver = functionDeclaration.staticKeyword() !== null ? receiver : MemberAccessExpressionSyntax.create1(receiver, new IdentifierNameSyntax(SyntaxToken.createElastic({
+        receiver = functionDeclaration.staticKeyword() !== null ? receiver : MemberAccessExpressionSyntax.create1(receiver, new IdentifierNameSyntax(SyntaxToken.create({
             kind: 9 /* IdentifierNameToken */ ,
             text: "prototype"
         })));
@@ -20994,10 +20994,10 @@ var Emitter = (function (_super) {
             callSignatureParameterList = callSignatureParameterList.withTrailingTrivia(SyntaxTriviaList.space);
         }
         var callSignature = CallSignatureSyntax.create(callSignatureParameterList);
-        var functionExpression = FunctionExpressionSyntax.create(SyntaxToken.createElastic({
+        var functionExpression = FunctionExpressionSyntax.create(SyntaxToken.create({
             kind: 25 /* FunctionKeyword */ 
         }), callSignature, block);
-        var assignmentExpression = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , receiver, SyntaxToken.createElastic({
+        var assignmentExpression = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , receiver, SyntaxToken.create({
             kind: 104 /* EqualsToken */ ,
             trailingTrivia: this.spaceArray
         }), functionExpression);
@@ -21012,14 +21012,14 @@ var Emitter = (function (_super) {
         }
         var block = memberAccessor.block().accept(this);
         block = block.withTrailingTrivia(SyntaxTriviaList.empty);
-        return new SimplePropertyAssignmentSyntax(SyntaxToken.createElastic({
+        return new SimplePropertyAssignmentSyntax(SyntaxToken.create({
             leadingTrivia: indentationTrivia,
             kind: 9 /* IdentifierNameToken */ ,
             text: propertyName
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 103 /* ColonToken */ ,
             trailingTrivia: this.spaceArray
-        }), FunctionExpressionSyntax.create(SyntaxToken.createElastic({
+        }), FunctionExpressionSyntax.create(SyntaxToken.create({
             kind: 25 /* FunctionKeyword */ 
         }), CallSignatureSyntax.create(parameterList), block));
     };
@@ -21041,29 +21041,29 @@ var Emitter = (function (_super) {
                 }
             }
         }
-        var receiver = MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(SyntaxToken.createElastic({
+        var receiver = MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(SyntaxToken.create({
             leadingTrivia: memberAccessor.leadingTrivia().toArray(),
             kind: 9 /* IdentifierNameToken */ ,
             text: "Object"
-        })), new IdentifierNameSyntax(SyntaxToken.createElastic({
+        })), new IdentifierNameSyntax(SyntaxToken.create({
             kind: 9 /* IdentifierNameToken */ ,
             text: "defineProperty"
         })));
         var arguments = [];
         var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
-        arguments.push(MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(classIdentifier.clone()), new IdentifierNameSyntax(SyntaxToken.createElastic({
+        arguments.push(MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(classIdentifier.clone()), new IdentifierNameSyntax(SyntaxToken.create({
             kind: 9 /* IdentifierNameToken */ ,
             text: "prototype"
         }))));
-        arguments.push(SyntaxToken.createElastic({
+        arguments.push(SyntaxToken.create({
             kind: 76 /* CommaToken */ ,
             trailingTrivia: this.spaceArray
         }));
-        arguments.push(new LiteralExpressionSyntax(169 /* StringLiteralExpression */ , SyntaxToken.createElastic({
+        arguments.push(new LiteralExpressionSyntax(169 /* StringLiteralExpression */ , SyntaxToken.create({
             kind: 12 /* StringLiteral */ ,
             text: '"' + memberAccessor.identifier().text() + '"'
         })));
-        arguments.push(SyntaxToken.createElastic({
+        arguments.push(SyntaxToken.create({
             kind: 76 /* CommaToken */ ,
             trailingTrivia: this.spaceArray
         }));
@@ -21072,7 +21072,7 @@ var Emitter = (function (_super) {
             var converted = this.convertMemberAccessor(accessors[i]);
             converted = this.changeIndentation(converted, true, this.options.indentSpaces);
             propertyAssignments.push(converted);
-            propertyAssignments.push(SyntaxToken.createElastic({
+            propertyAssignments.push(SyntaxToken.create({
                 kind: 76 /* CommaToken */ ,
                 trailingTrivia: this.newLineArray
             }));
@@ -21081,35 +21081,35 @@ var Emitter = (function (_super) {
         var accessorTrivia = this.indentationTrivia(accessorColumn);
         var propertyColumn = accessorColumn + this.options.indentSpaces;
         var propertyTrivia = this.indentationTrivia(propertyColumn);
-        propertyAssignments.push(new SimplePropertyAssignmentSyntax(SyntaxToken.createElastic({
+        propertyAssignments.push(new SimplePropertyAssignmentSyntax(SyntaxToken.create({
             leadingTrivia: propertyTrivia,
             kind: 9 /* IdentifierNameToken */ ,
             text: "enumerable"
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 103 /* ColonToken */ ,
             trailingTrivia: this.spaceArray
-        }), new LiteralExpressionSyntax(165 /* BooleanLiteralExpression */ , SyntaxToken.createElastic({
+        }), new LiteralExpressionSyntax(165 /* BooleanLiteralExpression */ , SyntaxToken.create({
             kind: 35 /* TrueKeyword */ 
         }))));
-        propertyAssignments.push(SyntaxToken.createElastic({
+        propertyAssignments.push(SyntaxToken.create({
             kind: 76 /* CommaToken */ ,
             trailingTrivia: this.newLineArray
         }));
-        propertyAssignments.push(new SimplePropertyAssignmentSyntax(SyntaxToken.createElastic({
+        propertyAssignments.push(new SimplePropertyAssignmentSyntax(SyntaxToken.create({
             leadingTrivia: propertyTrivia,
             kind: 9 /* IdentifierNameToken */ ,
             text: "configurable"
-        }), SyntaxToken.createElastic({
+        }), SyntaxToken.create({
             kind: 103 /* ColonToken */ ,
             trailingTrivia: this.spaceArray
-        }), new LiteralExpressionSyntax(165 /* BooleanLiteralExpression */ , SyntaxToken.createElastic({
+        }), new LiteralExpressionSyntax(165 /* BooleanLiteralExpression */ , SyntaxToken.create({
             kind: 35 /* TrueKeyword */ ,
             trailingTrivia: this.newLineArray
         }))));
-        var objectLiteral = new ObjectLiteralExpressionSyntax(SyntaxToken.createElastic({
+        var objectLiteral = new ObjectLiteralExpressionSyntax(SyntaxToken.create({
             kind: 67 /* OpenBraceToken */ ,
             trailingTrivia: this.newLineArray
-        }), SeparatedSyntaxList.create(propertyAssignments), SyntaxToken.createElastic({
+        }), SeparatedSyntaxList.create(propertyAssignments), SyntaxToken.create({
             leadingTrivia: accessorTrivia,
             kind: 68 /* CloseBraceToken */ 
         }));
@@ -21151,15 +21151,15 @@ var Emitter = (function (_super) {
         if(node.extendsClause() !== null) {
             var extendsParameters = [];
             extendsParameters.push(new IdentifierNameSyntax(identifier.clone()));
-            extendsParameters.push(SyntaxToken.createElastic({
+            extendsParameters.push(SyntaxToken.create({
                 kind: 76 /* CommaToken */ ,
                 trailingTrivia: this.spaceArray
             }));
-            extendsParameters.push(new IdentifierNameSyntax(SyntaxToken.createElastic({
+            extendsParameters.push(new IdentifierNameSyntax(SyntaxToken.create({
                 kind: 9 /* IdentifierNameToken */ ,
                 text: "_super"
             })));
-            var extendsStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.createElastic({
+            var extendsStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.create({
                 kind: 9 /* IdentifierNameToken */ ,
                 text: "__extends"
             })), ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create(extendsParameters)))).withTrailingTrivia(this.newLineList);
@@ -21175,32 +21175,32 @@ var Emitter = (function (_super) {
         var classElementStatements = this.convertClassElements(node);
         statements.push.apply(statements, classElementStatements);
         var returnIndentation = this.indentationTrivia(statementIndent);
-        var returnStatement = new ReturnStatementSyntax(SyntaxToken.createElastic({
+        var returnStatement = new ReturnStatementSyntax(SyntaxToken.create({
             leadingTrivia: returnIndentation,
             kind: 31 /* ReturnKeyword */ ,
             trailingTrivia: this.spaceArray
-        }), new IdentifierNameSyntax(identifier.clone()), SyntaxToken.createElastic({
+        }), new IdentifierNameSyntax(identifier.clone()), SyntaxToken.create({
             kind: 75 /* SemicolonToken */ ,
             trailingTrivia: this.newLineArray
         }));
         statements.push(returnStatement);
         var classIndentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
-        var block = new BlockSyntax(SyntaxToken.createElastic({
+        var block = new BlockSyntax(SyntaxToken.create({
             kind: 67 /* OpenBraceToken */ ,
             trailingTrivia: this.newLineArray
-        }), SyntaxList.create(statements), SyntaxToken.createElastic({
+        }), SyntaxList.create(statements), SyntaxToken.create({
             leadingTrivia: classIndentationTrivia,
             kind: 68 /* CloseBraceToken */ 
         }));
         var callParameters = [];
         if(node.extendsClause() !== null) {
-            callParameters.push(ParameterSyntax.create(SyntaxToken.createElastic({
+            callParameters.push(ParameterSyntax.create(SyntaxToken.create({
                 kind: 9 /* IdentifierNameToken */ ,
                 text: "_super"
             })));
         }
         var callSignature = CallSignatureSyntax.create(ParameterListSyntax.create1().withParameters(SeparatedSyntaxList.create(callParameters))).withTrailingTrivia(this.spaceList);
-        var functionExpression = FunctionExpressionSyntax.create(SyntaxToken.createElastic({
+        var functionExpression = FunctionExpressionSyntax.create(SyntaxToken.create({
             kind: 25 /* FunctionKeyword */ 
         }), callSignature, block);
         var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(functionExpression);
@@ -21209,11 +21209,11 @@ var Emitter = (function (_super) {
             invocationParameters.push(node.extendsClause().typeNames().syntaxNodeAt(0).withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty));
         }
         var invocationExpression = new InvocationExpressionSyntax(parenthesizedExpression, ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create(invocationParameters)));
-        var variableDeclarator = new VariableDeclaratorSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space), null, new EqualsValueClauseSyntax(SyntaxToken.createElastic({
+        var variableDeclarator = new VariableDeclaratorSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space), null, new EqualsValueClauseSyntax(SyntaxToken.create({
             kind: 104 /* EqualsToken */ ,
             trailingTrivia: this.spaceArray
         }), invocationExpression));
-        var variableDeclaration = new VariableDeclarationSyntax(SyntaxToken.createElastic({
+        var variableDeclaration = new VariableDeclarationSyntax(SyntaxToken.create({
             leadingTrivia: node.leadingTrivia().toArray(),
             kind: 38 /* VarKeyword */ ,
             trailingTrivia: this.spaceArray
@@ -21244,7 +21244,7 @@ var Emitter = (function (_super) {
             return variableDeclarator.equalsValueClause().value().withTrailingTrivia(SyntaxTriviaList.empty);
         }
         if(assignDefaultValues) {
-            return new LiteralExpressionSyntax(167 /* NumericLiteralExpression */ , SyntaxToken.createElastic({
+            return new LiteralExpressionSyntax(167 /* NumericLiteralExpression */ , SyntaxToken.create({
                 kind: 11 /* NumericLiteral */ ,
                 text: index.toString()
             }));
@@ -21253,10 +21253,10 @@ var Emitter = (function (_super) {
         var previousVariable = enumDeclaration.variableDeclarators().syntaxNodeAt(index - 1);
         var variableIdentifier = this.withNoTrivia(previousVariable.identifier());
         var receiver = MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(enumIdentifier.clone()), new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
-        return new BinaryExpressionSyntax(156 /* PlusExpression */ , receiver, SyntaxToken.createElastic({
+        return new BinaryExpressionSyntax(156 /* PlusExpression */ , receiver, SyntaxToken.create({
             kind: 86 /* PlusToken */ ,
             trailingTrivia: this.spaceArray
-        }), new LiteralExpressionSyntax(167 /* NumericLiteralExpression */ , SyntaxToken.createElastic({
+        }), new LiteralExpressionSyntax(167 /* NumericLiteralExpression */ , SyntaxToken.create({
             kind: 11 /* NumericLiteral */ ,
             text: "1"
         })));
@@ -21268,34 +21268,34 @@ var Emitter = (function (_super) {
         var initIndentationColumn = enumColumn + this.options.indentSpaces;
         var initIndentationTrivia = this.indentationTrivia(initIndentationColumn);
         if(node.variableDeclarators().syntaxNodeCount() > 0) {
-            statements.push(new VariableStatementSyntax(null, null, new VariableDeclarationSyntax(SyntaxToken.createElastic({
+            statements.push(new VariableStatementSyntax(null, null, new VariableDeclarationSyntax(SyntaxToken.create({
                 leadingTrivia: initIndentationTrivia,
                 kind: 38 /* VarKeyword */ ,
                 trailingTrivia: this.spaceArray
             }), SeparatedSyntaxList.create([
-                new VariableDeclaratorSyntax(SyntaxToken.createElastic({
+                new VariableDeclaratorSyntax(SyntaxToken.create({
                     kind: 9 /* IdentifierNameToken */ ,
                     text: "_",
                     trailingTrivia: this.spaceArray
-                }), null, new EqualsValueClauseSyntax(SyntaxToken.createElastic({
+                }), null, new EqualsValueClauseSyntax(SyntaxToken.create({
                     kind: 104 /* EqualsToken */ ,
                     trailingTrivia: this.spaceArray
                 }), new IdentifierNameSyntax(identifier.clone())))
-            ])), SyntaxToken.createElastic({
+            ])), SyntaxToken.create({
                 kind: 75 /* SemicolonToken */ ,
                 trailingTrivia: this.newLineArray
             })));
-            statements.push(ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new MemberAccessExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.createElastic({
+            statements.push(ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new MemberAccessExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.create({
                 leadingTrivia: initIndentationTrivia,
                 kind: 9 /* IdentifierNameToken */ ,
                 text: "_"
-            })), SyntaxToken.createElastic({
+            })), SyntaxToken.create({
                 kind: 73 /* DotToken */ 
-            }), new IdentifierNameSyntax(SyntaxToken.createElastic({
+            }), new IdentifierNameSyntax(SyntaxToken.create({
                 kind: 9 /* IdentifierNameToken */ ,
                 text: "_map",
                 trailingTrivia: this.spaceArray
-            }))), SyntaxToken.createElastic({
+            }))), SyntaxToken.create({
                 kind: 104 /* EqualsToken */ ,
                 trailingTrivia: this.spaceArray
             }), ArrayLiteralExpressionSyntax.create1())).withTrailingTrivia(this.newLineList));
@@ -21306,25 +21306,25 @@ var Emitter = (function (_super) {
                 var variableDeclarator = node.variableDeclarators().syntaxNodeAt(i);
                 var variableIdentifier = this.withNoTrivia(variableDeclarator.identifier());
                 assignDefaultValues.value = assignDefaultValues.value && variableDeclarator.equalsValueClause() === null;
-                var innerAssign = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(SyntaxToken.createElastic({
+                var innerAssign = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(SyntaxToken.create({
                     kind: 9 /* IdentifierNameToken */ ,
                     text: "_"
-                })), new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space))), SyntaxToken.createElastic({
+                })), new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space))), SyntaxToken.create({
                     kind: 104 /* EqualsToken */ ,
                     trailingTrivia: this.spaceArray
                 }), this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues.value, i));
-                var elementAccessExpression = ElementAccessExpressionSyntax.create1(MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(SyntaxToken.createElastic({
+                var elementAccessExpression = ElementAccessExpressionSyntax.create1(MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(SyntaxToken.create({
                     leadingTrivia: initIndentationTrivia,
                     kind: 9 /* IdentifierNameToken */ ,
                     text: "_"
-                })), new IdentifierNameSyntax(SyntaxToken.createElastic({
+                })), new IdentifierNameSyntax(SyntaxToken.create({
                     kind: 9 /* IdentifierNameToken */ ,
                     text: "_map"
                 }))), innerAssign).withTrailingTrivia(this.spaceList);
-                var outerAssign = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , elementAccessExpression, SyntaxToken.createElastic({
+                var outerAssign = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , elementAccessExpression, SyntaxToken.create({
                     kind: 104 /* EqualsToken */ ,
                     trailingTrivia: this.spaceArray
-                }), new LiteralExpressionSyntax(169 /* StringLiteralExpression */ , SyntaxToken.createElastic({
+                }), new LiteralExpressionSyntax(169 /* StringLiteralExpression */ , SyntaxToken.create({
                     kind: 12 /* StringLiteral */ ,
                     text: '"' + variableIdentifier.text() + '"'
                 })));
@@ -21333,20 +21333,20 @@ var Emitter = (function (_super) {
             }
         }
         var indentationTrivia = this.indentationTrivia(enumColumn);
-        var block = new BlockSyntax(SyntaxToken.createElastic({
+        var block = new BlockSyntax(SyntaxToken.create({
             kind: 67 /* OpenBraceToken */ ,
             trailingTrivia: this.newLineArray
-        }), SyntaxList.create(statements), SyntaxToken.createElastic({
+        }), SyntaxList.create(statements), SyntaxToken.create({
             leadingTrivia: indentationTrivia,
             kind: 68 /* CloseBraceToken */ 
         }));
-        var functionExpression = FunctionExpressionSyntax.create(SyntaxToken.createElastic({
+        var functionExpression = FunctionExpressionSyntax.create(SyntaxToken.create({
             kind: 25 /* FunctionKeyword */ 
-        }), CallSignatureSyntax.create(new ParameterListSyntax(SyntaxToken.createElastic({
+        }), CallSignatureSyntax.create(new ParameterListSyntax(SyntaxToken.create({
             kind: 69 /* OpenParenToken */ 
         }), SeparatedSyntaxList.create([
             new IdentifierNameSyntax(identifier.clone())
-        ]), SyntaxToken.createElastic({
+        ]), SyntaxToken.create({
             kind: 70 /* CloseParenToken */ ,
             trailingTrivia: this.spaceArray
         }))), block);
@@ -21355,13 +21355,13 @@ var Emitter = (function (_super) {
     Emitter.prototype.visitEnumDeclaration = function (node) {
         var result = [];
         var identifier = this.withNoTrivia(node.identifier());
-        var variableStatement = VariableStatementSyntax.create(new VariableDeclarationSyntax(SyntaxToken.createElastic({
+        var variableStatement = VariableStatementSyntax.create(new VariableDeclarationSyntax(SyntaxToken.create({
             leadingTrivia: node.leadingTrivia().toArray(),
             kind: 38 /* VarKeyword */ ,
             trailingTrivia: this.spaceArray
         }), SeparatedSyntaxList.create([
             VariableDeclaratorSyntax.create(identifier.clone())
-        ])), SyntaxToken.createElastic({
+        ])), SyntaxToken.create({
             kind: 75 /* SemicolonToken */ ,
             trailingTrivia: this.newLineArray
         }));
@@ -21369,9 +21369,9 @@ var Emitter = (function (_super) {
         var indentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
         var functionExpression = this.generateEnumFunctionExpression(node);
         var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(functionExpression).withLeadingTrivia(SyntaxTriviaList.create(indentationTrivia));
-        var logicalOrExpression = new BinaryExpressionSyntax(184 /* LogicalOrExpression */ , new IdentifierNameSyntax(identifier.clone()), SyntaxToken.createElastic({
+        var logicalOrExpression = new BinaryExpressionSyntax(184 /* LogicalOrExpression */ , new IdentifierNameSyntax(identifier.clone()), SyntaxToken.create({
             kind: 101 /* BarBarToken */ 
-        }), ParenthesizedExpressionSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new IdentifierNameSyntax(identifier.clone()), SyntaxToken.createElastic({
+        }), ParenthesizedExpressionSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , new IdentifierNameSyntax(identifier.clone()), SyntaxToken.create({
             kind: 104 /* EqualsToken */ 
         }), ObjectLiteralExpressionSyntax.create1())));
         var argumentList = ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create([
@@ -21396,17 +21396,17 @@ var Emitter = (function (_super) {
     }
     Emitter.prototype.convertSuperInvocationExpression = function (node) {
         var result = _super.prototype.visitInvocationExpression.call(this, node);
-        var expression = MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(SyntaxToken.createElastic({
+        var expression = MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(SyntaxToken.create({
             leadingTrivia: result.leadingTrivia().toArray(),
             kind: 9 /* IdentifierNameToken */ ,
             text: "_super"
-        })), new IdentifierNameSyntax(SyntaxToken.createElastic({
+        })), new IdentifierNameSyntax(SyntaxToken.create({
             kind: 9 /* IdentifierNameToken */ ,
             text: "call"
         })));
         var arguments = result.argumentList().arguments().toArray();
         if(arguments.length > 0) {
-            arguments.unshift(SyntaxToken.createElastic({
+            arguments.unshift(SyntaxToken.create({
                 kind: 76 /* CommaToken */ ,
                 trailingTrivia: this.spaceArray
             }));
@@ -21416,13 +21416,13 @@ var Emitter = (function (_super) {
     };
     Emitter.prototype.convertSuperMemberAccessInvocationExpression = function (node) {
         var result = _super.prototype.visitInvocationExpression.call(this, node);
-        var expression = MemberAccessExpressionSyntax.create1(result.expression(), new IdentifierNameSyntax(SyntaxToken.createElastic({
+        var expression = MemberAccessExpressionSyntax.create1(result.expression(), new IdentifierNameSyntax(SyntaxToken.create({
             kind: 9 /* IdentifierNameToken */ ,
             text: "call"
         })));
         var arguments = result.argumentList().arguments().toArray();
         if(arguments.length > 0) {
-            arguments.unshift(SyntaxToken.createElastic({
+            arguments.unshift(SyntaxToken.create({
                 kind: 76 /* CommaToken */ ,
                 trailingTrivia: this.spaceArray
             }));
@@ -21444,12 +21444,12 @@ var Emitter = (function (_super) {
         if(!Emitter.isSuperMemberAccessExpression(result)) {
             return result;
         }
-        var receiver = new IdentifierNameSyntax(SyntaxToken.createElastic({
+        var receiver = new IdentifierNameSyntax(SyntaxToken.create({
             leadingTrivia: result.leadingTrivia().toArray(),
             kind: 9 /* IdentifierNameToken */ ,
             text: "_super"
         }));
-        return MemberAccessExpressionSyntax.create1(MemberAccessExpressionSyntax.create1(receiver, new IdentifierNameSyntax(SyntaxToken.createElastic({
+        return MemberAccessExpressionSyntax.create1(MemberAccessExpressionSyntax.create1(receiver, new IdentifierNameSyntax(SyntaxToken.create({
             kind: 9 /* IdentifierNameToken */ ,
             text: "prototype"
         }))), result.identifierName());
