@@ -35,6 +35,12 @@ module Collections {
             this.addOrSet(key, value, /*throwOnExistingEntry:*/ true);
         }
 
+        public containsKey(key: any): bool {
+            var hashCode = this.computeHashCode(key);
+            var entry = this.findEntry(key, hashCode);
+            return entry !== null;
+        }
+
         public get (key: any): any {
             var hashCode = this.computeHashCode(key);
             var entry = this.findEntry(key, hashCode);
@@ -153,8 +159,8 @@ module Collections {
     }
 
     export function createHashTable(capacity: number = DefaultHashTableCapacity,
-                           hash: (k: any) => number = null,
-                           equals: (k1: any, k2: any) => bool = null): HashTable {
+                                    hash: (k: any) => number = null,
+                                    equals: (k1: any, k2: any) => bool = null): HashTable {
         return new HashTable(capacity, hash, equals);
     }
 }
