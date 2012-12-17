@@ -16,4 +16,6 @@ interface ISeparatedSyntaxList extends ISyntaxElement {
 
     firstToken(): ISyntaxToken;
     lastToken(): ISyntaxToken;
+
+    isTypeScriptSpecific(): bool;
 }

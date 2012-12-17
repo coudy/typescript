@@ -64,6 +64,10 @@ module SeparatedSyntaxList {
         public toSyntaxNodeArray(): SyntaxNode[] {
             return [];
         }
+
+        public isTypeScriptSpecific(): bool {
+            return false;
+        }
     }
 
     class SingletonSeparatedSyntaxList implements ISeparatedSyntaxList {
@@ -136,6 +140,10 @@ module SeparatedSyntaxList {
 
         public toSyntaxNodeArray(): SyntaxNode[] {
             return [this.item];
+        }
+
+        public isTypeScriptSpecific(): bool {
+            return this.item.isTypeScriptSpecific();
         }
     }
 
@@ -267,6 +275,16 @@ module SeparatedSyntaxList {
             }
 
             return result;
+        }
+
+        public isTypeScriptSpecific(): bool {
+            for (var i = 0, n = this.syntaxNodeCount(); i < n; i++) {
+                if (this.syntaxNodeAt(i).isTypeScriptSpecific()) {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 

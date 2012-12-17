@@ -1338,7 +1338,8 @@ var definitions = [
                 name: 'endOfFileToken',
                 isToken: true
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'ModuleElementSyntax',
@@ -1350,7 +1351,8 @@ var definitions = [
         name: 'ModuleReferenceSyntax',
         baseType: 'SyntaxNode',
         isAbstract: true,
-        children: []
+        children: [],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'ExternalModuleReferenceSyntax',
@@ -1372,7 +1374,8 @@ var definitions = [
                 name: 'closeParenToken',
                 isToken: true
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'ModuleNameModuleReferenceSyntax',
@@ -1382,7 +1385,8 @@ var definitions = [
                 name: 'moduleName',
                 type: 'NameSyntax'
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'ImportDeclarationSyntax',
@@ -1411,7 +1415,8 @@ var definitions = [
                 name: 'semicolonToken',
                 isToken: true
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'ClassDeclarationSyntax',
@@ -1460,7 +1465,8 @@ var definitions = [
                 name: 'closeBraceToken',
                 isToken: true
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'InterfaceDeclarationSyntax',
@@ -1491,7 +1497,8 @@ var definitions = [
                 name: 'body',
                 type: 'ObjectTypeSyntax'
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'ExtendsClauseSyntax',
@@ -1505,7 +1512,8 @@ var definitions = [
                 name: 'typeNames',
                 isSeparatedList: true
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'ImplementsClauseSyntax',
@@ -1519,7 +1527,8 @@ var definitions = [
                 name: 'typeNames',
                 isSeparatedList: true
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'ModuleDeclarationSyntax',
@@ -1561,7 +1570,8 @@ var definitions = [
                 name: 'closeBraceToken',
                 isToken: true
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'StatementSyntax',
@@ -1576,12 +1586,14 @@ var definitions = [
             {
                 name: 'exportKeyword',
                 isToken: true,
-                isOptional: true
+                isOptional: true,
+                isTypeScriptSpecific: true
             }, 
             {
                 name: 'declareKeyword',
                 isToken: true,
-                isOptional: true
+                isOptional: true,
+                isTypeScriptSpecific: true
             }, 
             {
                 name: 'functionKeyword',
@@ -1610,12 +1622,14 @@ var definitions = [
             {
                 name: 'exportKeyword',
                 isToken: true,
-                isOptional: true
+                isOptional: true,
+                isTypeScriptSpecific: true
             }, 
             {
                 name: 'declareKeyword',
                 isToken: true,
-                isOptional: true
+                isOptional: true,
+                isTypeScriptSpecific: true
             }, 
             {
                 name: 'variableDeclaration',
@@ -1667,7 +1681,8 @@ var definitions = [
             {
                 name: 'typeAnnotation',
                 type: 'TypeAnnotationSyntax',
-                isOptional: true
+                isOptional: true,
+                isTypeScriptSpecific: true
             }, 
             {
                 name: 'equalsValueClause',
@@ -1793,7 +1808,8 @@ var definitions = [
         name: 'ArrowFunctionExpressionSyntax',
         baseType: 'UnaryExpressionSyntax',
         isAbstract: true,
-        children: []
+        children: [],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'SimpleArrowFunctionExpressionSyntax',
@@ -1814,7 +1830,8 @@ var definitions = [
                 name: 'body',
                 type: 'SyntaxNode'
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'ParenthesizedArrowFunctionExpressionSyntax',
@@ -1832,7 +1849,8 @@ var definitions = [
                 name: 'body',
                 type: 'SyntaxNode'
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'TypeSyntax',
@@ -1897,7 +1915,8 @@ var definitions = [
                 name: 'type',
                 type: 'TypeSyntax'
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'FunctionTypeSyntax',
@@ -1915,7 +1934,8 @@ var definitions = [
                 name: 'type',
                 type: 'TypeSyntax'
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'ObjectTypeSyntax',
@@ -1933,7 +1953,8 @@ var definitions = [
                 name: 'closeBraceToken',
                 isToken: true
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'ArrayTypeSyntax',
@@ -1951,7 +1972,8 @@ var definitions = [
                 name: 'closeBracketToken',
                 isToken: true
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'PredefinedTypeSyntax',
@@ -1968,7 +1990,8 @@ var definitions = [
                     "VoidKeyword"
                 ]
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'TypeAnnotationSyntax',
@@ -1982,7 +2005,8 @@ var definitions = [
                 name: 'type',
                 type: 'TypeSyntax'
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'BlockSyntax',
@@ -2009,7 +2033,8 @@ var definitions = [
             {
                 name: 'dotDotDotToken',
                 isToken: true,
-                isOptional: true
+                isOptional: true,
+                isTypeScriptSpecific: true
             }, 
             {
                 name: 'publicOrPrivateKeyword',
@@ -2018,7 +2043,8 @@ var definitions = [
                 tokenKinds: [
                     "PublicKeyword", 
                     "PrivateKeyword"
-                ]
+                ],
+                isTypeScriptSpecific: true
             }, 
             {
                 name: 'identifier',
@@ -2030,17 +2056,20 @@ var definitions = [
             {
                 name: 'questionToken',
                 isToken: true,
-                isOptional: true
+                isOptional: true,
+                isTypeScriptSpecific: true
             }, 
             {
                 name: 'typeAnnotation',
                 type: 'TypeAnnotationSyntax',
-                isOptional: true
+                isOptional: true,
+                isTypeScriptSpecific: true
             }, 
             {
                 name: 'equalsValueClause',
                 type: 'EqualsValueClauseSyntax',
-                isOptional: true
+                isOptional: true,
+                isTypeScriptSpecific: true
             }
         ]
     }, 
@@ -2228,7 +2257,8 @@ var definitions = [
         name: 'TypeMemberSyntax',
         baseType: 'SyntaxNode',
         isAbstract: true,
-        children: []
+        children: [],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'ConstructSignatureSyntax',
@@ -2247,7 +2277,8 @@ var definitions = [
                 type: 'TypeAnnotationSyntax',
                 isOptional: true
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'FunctionSignatureSyntax',
@@ -2274,7 +2305,8 @@ var definitions = [
                 type: 'TypeAnnotationSyntax',
                 isOptional: true
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'IndexSignatureSyntax',
@@ -2297,7 +2329,8 @@ var definitions = [
                 type: 'TypeAnnotationSyntax',
                 isOptional: true
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'PropertySignatureSyntax',
@@ -2320,7 +2353,8 @@ var definitions = [
                 type: 'TypeAnnotationSyntax',
                 isOptional: true
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'ParameterListSyntax',
@@ -2351,7 +2385,8 @@ var definitions = [
             {
                 name: 'typeAnnotation',
                 type: 'TypeAnnotationSyntax',
-                isOptional: true
+                isOptional: true,
+                isTypeScriptSpecific: true
             }
         ]
     }, 
@@ -2418,7 +2453,8 @@ var definitions = [
         name: 'ClassElementSyntax',
         baseType: 'SyntaxNode',
         isAbstract: true,
-        children: []
+        children: [],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'ConstructorDeclarationSyntax',
@@ -2442,13 +2478,15 @@ var definitions = [
                 isToken: true,
                 isOptional: true
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'MemberDeclarationSyntax',
         baseType: 'ClassElementSyntax',
         isAbstract: true,
-        children: []
+        children: [],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'MemberFunctionDeclarationSyntax',
@@ -2482,13 +2520,15 @@ var definitions = [
                 isToken: true,
                 isOptional: true
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'MemberAccessorDeclarationSyntax',
         baseType: 'MemberDeclarationSyntax',
         isAbstract: true,
-        children: []
+        children: [],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'GetMemberAccessorDeclarationSyntax',
@@ -2532,7 +2572,8 @@ var definitions = [
                 name: 'block',
                 type: 'BlockSyntax'
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'SetMemberAccessorDeclarationSyntax',
@@ -2571,7 +2612,8 @@ var definitions = [
                 name: 'block',
                 type: 'BlockSyntax'
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'MemberVariableDeclarationSyntax',
@@ -2599,7 +2641,8 @@ var definitions = [
                 name: 'semicolonToken',
                 isToken: true
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'ThrowStatementSyntax',
@@ -2973,7 +3016,8 @@ var definitions = [
                 name: 'closeBraceToken',
                 isToken: true
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'CastExpressionSyntax',
@@ -2995,7 +3039,8 @@ var definitions = [
                 name: 'expression',
                 type: 'UnaryExpressionSyntax'
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'ObjectLiteralExpressionSyntax',
@@ -3159,7 +3204,8 @@ var definitions = [
                 name: 'superKeyword',
                 isToken: true
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'TryStatementSyntax',
@@ -3815,11 +3861,44 @@ function generateUpdateMethod(definition) {
     result += "    }\r\n";
     return result;
 }
-function generateCollectTextElements(definition) {
+function generateIsTypeScriptSpecificMethod(definition) {
+    var result = "\r\n    private isTypeScriptSpecific(): bool {\r\n";
+    if(definition.isTypeScriptSpecific) {
+        result += "        return true;\r\n";
+    } else {
+        var emittedCheck = false;
+        for(var i = 0; i < definition.children.length; i++) {
+            var child = definition.children[i];
+            if(child.type === "SyntaxKind") {
+                continue;
+            }
+            if(child.isTypeScriptSpecific) {
+                emittedCheck = true;
+                result += "        if (" + getPropertyAccess(child) + " !== null) { return true; }\r\n";
+                continue;
+            }
+            if(child.isToken) {
+                continue;
+            }
+            emittedCheck = true;
+            if(child.isOptional) {
+                result += "        if (" + getPropertyAccess(child) + " !== null && " + getPropertyAccess(child) + ".isTypeScriptSpecific()) { return true; }\r\n";
+            } else {
+                result += "        if (" + getPropertyAccess(child) + ".isTypeScriptSpecific()) { return true; }\r\n";
+            }
+        }
+        if(!emittedCheck) {
+            return "";
+        }
+    }
+    result += "    }\r\n";
+    return result;
+}
+function generateCollectTextElementsMethod(definition) {
     if(definition.isAbstract) {
         return "";
     }
-    var result = "\r\n    private collectTextElements(elements: string[]) {\r\n";
+    var result = "\r\n    private collectTextElements(elements: string[]): void {\r\n";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
         if(child.type === "SyntaxKind") {
@@ -3848,7 +3927,8 @@ function generateNode(definition) {
     result += generateAccessors(definition);
     result += generateUpdateMethod(definition);
     result += generateWithMethods(definition);
-    result += generateCollectTextElements(definition);
+    result += generateCollectTextElementsMethod(definition);
+    result += generateIsTypeScriptSpecificMethod(definition);
     result += "}";
     return result;
 }

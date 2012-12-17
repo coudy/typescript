@@ -94,4 +94,8 @@ class SyntaxNode implements ISyntaxElement {
     public hasTrailingTrivia(): bool {
         return this.lastToken().hasTrailingTrivia();
     }
+
+    public isTypeScriptSpecific(): bool {
+        return false;
+    }
 }

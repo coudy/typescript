@@ -55,6 +55,10 @@ module SyntaxList {
         public fullText(): string {
             return "";
         }
+
+        public isTypeScriptSpecific(): bool {
+            return false;
+        }
     }
 
     export var empty: ISyntaxList = new EmptySyntaxList();
@@ -113,6 +117,10 @@ module SyntaxList {
 
         public fullText(): string {
             return this._item.fullText();
+        }
+
+        public isTypeScriptSpecific(): bool {
+            return this._item.isTypeScriptSpecific();
         }
     }
 
@@ -200,6 +208,16 @@ module SyntaxList {
             }
 
             return width;
+        }
+
+        public isTypeScriptSpecific(): bool {
+            for (var i = 0, n = this.nodes.length; i < n; i++) {
+                if (this.nodes[i].isTypeScriptSpecific()) {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 
