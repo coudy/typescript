@@ -20389,18 +20389,10 @@ var Emitter;
             var block = this.convertArrowFunctionBody(node);
             return FunctionExpressionSyntax.create(SyntaxToken.create(25 /* FunctionKeyword */ , {
                 leadingTrivia: node.leadingTrivia().toArray()
-            }), CallSignatureSyntax.create(new ParameterListSyntax(SyntaxToken.create(69 /* OpenParenToken */ ), SeparatedSyntaxList.create([
-                ParameterSyntax.create(identifier)
-            ]), SyntaxToken.create(70 /* CloseParenToken */ , {
-                trailingTrivia: this.spaceArray
-            }))), block);
+            }), CallSignatureSyntax.create(ParameterListSyntax.create1().withParameter(ParameterSyntax.create(identifier))).withTrailingTrivia(this.spaceList), block);
         };
         EmitterImpl.prototype.visitParenthesizedArrowFunctionExpression = function (node) {
-            var parameterList = node.callSignature().parameterList().accept(this);
-            var block = this.convertArrowFunctionBody(node);
-            return FunctionExpressionSyntax.create(SyntaxToken.create(25 /* FunctionKeyword */ , {
-                leadingTrivia: node.leadingTrivia().toArray()
-            }), CallSignatureSyntax.create(parameterList), block);
+            return FunctionExpressionSyntax.create(SyntaxToken.create(25 /* FunctionKeyword */ ), CallSignatureSyntax.create(node.callSignature().parameterList().accept(this)), this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
         };
         EmitterImpl.prototype.convertArrowFunctionBody = function (arrowFunction) {
             var rewrittenBody = this.visitNode(arrowFunction.body());

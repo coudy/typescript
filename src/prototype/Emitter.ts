@@ -341,21 +341,15 @@ module Emitter {
             return FunctionExpressionSyntax.create(
                 SyntaxToken.create(SyntaxKind.FunctionKeyword, { leadingTrivia: node.leadingTrivia().toArray() }),
                 CallSignatureSyntax.create(
-                    new ParameterListSyntax(
-                        SyntaxToken.create(SyntaxKind.OpenParenToken),
-                        SeparatedSyntaxList.create([ParameterSyntax.create(identifier)]),
-                        SyntaxToken.create(SyntaxKind.CloseParenToken, { trailingTrivia: this.spaceArray }))),
+                    ParameterListSyntax.create1().withParameter(ParameterSyntax.create(identifier))).withTrailingTrivia(this.spaceList),
                 block);
         }
 
         private visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): FunctionExpressionSyntax {
-            var parameterList = <ParameterListSyntax>node.callSignature().parameterList().accept(this);
-            var block = this.convertArrowFunctionBody(node);
-
             return FunctionExpressionSyntax.create(
-                SyntaxToken.create(SyntaxKind.FunctionKeyword, { leadingTrivia: node.leadingTrivia().toArray() }),
-                CallSignatureSyntax.create(parameterList),
-                block);
+                SyntaxToken.create(SyntaxKind.FunctionKeyword),
+                CallSignatureSyntax.create(node.callSignature().parameterList().accept(this)),
+                this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
         }
 
         private convertArrowFunctionBody(arrowFunction: ArrowFunctionExpressionSyntax): BlockSyntax {
