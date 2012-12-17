@@ -126,19 +126,6 @@ module Syntax {
         }
     }
 
-    //export function valueText(token: ISyntaxToken): string {
-    //    // TODO: specialize on IdentifierName token with null value.  In that case we need to 
-    //    // process the escape codes and make a real value for this token.  Remember, don't do
-    //    // this for keywords.
-
-    //    var value = token.value();
-    //    return value === null
-    //        ? null
-    //        : typeof value === 'string'
-    //            ? value
-    //            : value.toString();
-    //}
-
     class EmptyToken implements ISyntaxToken {
         public tokenKind: SyntaxKind;
         private _keywordKind: SyntaxKind;
