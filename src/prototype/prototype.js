@@ -20867,20 +20867,16 @@ var Emitter = (function (_super) {
         var functionSignature = FunctionSignatureSyntax.create1(identifier.clone()).withTrailingTrivia(this.spaceList);
         var statements = [];
         if(classDeclaration.extendsClause() !== null) {
-            var superStatement = new ExpressionStatementSyntax(new InvocationExpressionSyntax(new MemberAccessExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.createElastic({
+            var superStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(SyntaxToken.createElastic({
                 kind: 9 /* IdentifierNameToken */ ,
                 text: "_super"
-            })), SyntaxToken.createElastic({
-                kind: 73 /* DotToken */ 
-            }), new IdentifierNameSyntax(SyntaxToken.createElastic({
+            })), new IdentifierNameSyntax(SyntaxToken.createElastic({
                 kind: 9 /* IdentifierNameToken */ ,
                 text: "apply"
             }))), new ArgumentListSyntax(SyntaxToken.createElastic({
                 kind: 69 /* OpenParenToken */ 
             }), SeparatedSyntaxList.create([
-                new ThisExpressionSyntax(SyntaxToken.createElastic({
-                    kind: 33 /* ThisKeyword */ 
-                })), 
+                ThisExpressionSyntax.create1(), 
                 SyntaxToken.createElastic({
                     kind: 76 /* CommaToken */ ,
                     trailingTrivia: this.spaceArray
@@ -20891,10 +20887,7 @@ var Emitter = (function (_super) {
                 }))
             ]), SyntaxToken.createElastic({
                 kind: 70 /* CloseParenToken */ 
-            }))), SyntaxToken.createElastic({
-                kind: 75 /* SemicolonToken */ ,
-                trailingTrivia: this.newLineArray
-            }));
+            })))).withTrailingTrivia(this.newLineList);
             superStatement = this.changeIndentation(superStatement, true, this.options.indentSpaces);
             statements.push(superStatement);
         }
@@ -20977,18 +20970,14 @@ var Emitter = (function (_super) {
         var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
         var functionIdentifier = this.withNoTrivia(functionDeclaration.functionSignature().identifier());
         var receiver = new IdentifierNameSyntax(classIdentifier.withLeadingTrivia(functionDeclaration.leadingTrivia()));
-        receiver = functionDeclaration.staticKeyword() !== null ? receiver : new MemberAccessExpressionSyntax(receiver, SyntaxToken.createElastic({
-            kind: 73 /* DotToken */ 
-        }), new IdentifierNameSyntax(SyntaxToken.createElastic({
+        receiver = functionDeclaration.staticKeyword() !== null ? receiver : MemberAccessExpressionSyntax.create1(receiver, new IdentifierNameSyntax(SyntaxToken.createElastic({
             kind: 9 /* IdentifierNameToken */ ,
             text: "prototype"
         })));
-        receiver = new MemberAccessExpressionSyntax(receiver, SyntaxToken.createElastic({
-            kind: 73 /* DotToken */ 
-        }), new IdentifierNameSyntax(functionIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
+        receiver = MemberAccessExpressionSyntax.create1(receiver, new IdentifierNameSyntax(functionIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
         var block = functionDeclaration.block().accept(this);
         var blockTrailingTrivia = block.trailingTrivia();
-        block = block.withCloseBraceToken(block.closeBraceToken().withTrailingTrivia(SyntaxTriviaList.empty));
+        block = block.withTrailingTrivia(SyntaxTriviaList.empty);
         var defaultParameters = Emitter.functionSignatureDefaultParameters(functionDeclaration.functionSignature());
         var defaultValueAssignments = ArrayUtilities.select(defaultParameters, function (p) {
             return _this.generateDefaultValueAssignmentStatement(p);

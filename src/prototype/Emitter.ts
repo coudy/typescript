@@ -636,20 +636,18 @@ class Emitter extends SyntaxRewriter {
 
         var statements: StatementSyntax[] = [];
         if (classDeclaration.extendsClause() !== null) {
-            var superStatement = new ExpressionStatementSyntax(
+            var superStatement = ExpressionStatementSyntax.create1(
                 new InvocationExpressionSyntax(
-                    new MemberAccessExpressionSyntax(
+                    MemberAccessExpressionSyntax.create1(
                         new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "_super" })),
-                        SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
                         new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "apply" }))),
                     new ArgumentListSyntax(
                         SyntaxToken.createElastic({ kind: SyntaxKind.OpenParenToken }),
                         SeparatedSyntaxList.create([
-                            new ThisExpressionSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.ThisKeyword })),
+                            ThisExpressionSyntax.create1(),
                             SyntaxToken.createElastic({ kind: SyntaxKind.CommaToken, trailingTrivia: this.spaceArray }),
                             new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "arguments" }))]),
-                        SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken }))),
-                SyntaxToken.createElastic({ kind: SyntaxKind.SemicolonToken, trailingTrivia: this.newLineArray }));
+                        SyntaxToken.createElastic({ kind: SyntaxKind.CloseParenToken })))).withTrailingTrivia(this.newLineList);
 
             superStatement = <ExpressionStatementSyntax>this.changeIndentation(
                 superStatement, /*indentFirstToken:*/ true, this.options.indentSpaces);
@@ -766,21 +764,18 @@ class Emitter extends SyntaxRewriter {
          
         receiver = functionDeclaration.staticKeyword() !== null
             ? receiver
-            : new MemberAccessExpressionSyntax(
+            : MemberAccessExpressionSyntax.create1(
                 receiver,
-                SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
                 new IdentifierNameSyntax(SyntaxToken.createElastic({ kind: SyntaxKind.IdentifierNameToken, text: "prototype" })));
 
-        receiver = new MemberAccessExpressionSyntax(
+        receiver = MemberAccessExpressionSyntax.create1(
             receiver,
-            SyntaxToken.createElastic({ kind: SyntaxKind.DotToken }),
             new IdentifierNameSyntax(functionIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
 
         var block = <BlockSyntax>functionDeclaration.block().accept(this);
         var blockTrailingTrivia = block.trailingTrivia();
 
-        block = block.withCloseBraceToken(
-            block.closeBraceToken().withTrailingTrivia(SyntaxTriviaList.empty));
+        block = block.withTrailingTrivia(SyntaxTriviaList.empty);
         
         var defaultParameters = Emitter.functionSignatureDefaultParameters(functionDeclaration.functionSignature());
         var defaultValueAssignments = <StatementSyntax[]>ArrayUtilities.select(defaultParameters,
