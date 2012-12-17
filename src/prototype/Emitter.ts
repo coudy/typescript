@@ -636,13 +636,13 @@ module Emitter {
                 var superStatement = ExpressionStatementSyntax.create1(
                         new InvocationExpressionSyntax(
                             MemberAccessExpressionSyntax.create1(
-                                new IdentifierNameSyntax(Syntax.identifier("_super")),
-                                new IdentifierNameSyntax(Syntax.identifier("apply"))),
+                                Syntax.identifierName("_super"),
+                                Syntax.identifierName("apply")),
                             ArgumentListSyntax.create1().withArguments(
                                 SeparatedSyntaxList.create([
                                     ThisExpressionSyntax.create1(),
                                     Syntax.token(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }),
-                                    new IdentifierNameSyntax(Syntax.identifier("arguments"))])))
+                                    Syntax.identifierName("arguments")])))
                     ).withTrailingTrivia(this.newLineList);
 
                 superStatement = <ExpressionStatementSyntax>this.changeIndentation(
@@ -761,8 +761,7 @@ module Emitter {
             receiver = functionDeclaration.staticKeyword() !== null
                 ? receiver
                 : MemberAccessExpressionSyntax.create1(
-                    receiver,
-                    new IdentifierNameSyntax(Syntax.identifier("prototype")));
+                    receiver, Syntax.identifierName("prototype"));
 
             receiver = MemberAccessExpressionSyntax.create1(
                 receiver,
@@ -861,15 +860,15 @@ module Emitter {
             }
 
             var receiver = MemberAccessExpressionSyntax.create1(
-                new IdentifierNameSyntax(Syntax.identifier("Object")),
-                new IdentifierNameSyntax(Syntax.identifier("defineProperty"))).withLeadingTrivia(memberAccessor.leadingTrivia());
+                Syntax.identifierName("Object"),
+                Syntax.identifierName("defineProperty")).withLeadingTrivia(memberAccessor.leadingTrivia());
 
             var arguments = [];
 
             var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
             arguments.push(MemberAccessExpressionSyntax.create1(
                 new IdentifierNameSyntax(classIdentifier),
-                new IdentifierNameSyntax(Syntax.identifier("prototype"))));
+                Syntax.identifierName("prototype")));
             arguments.push(Syntax.token(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }));
 
             arguments.push(new LiteralExpressionSyntax(
@@ -967,12 +966,11 @@ module Emitter {
                 var extendsParameters = [];
                 extendsParameters.push(new IdentifierNameSyntax(identifier));
                 extendsParameters.push(Syntax.token(SyntaxKind.CommaToken, { trailingTrivia: this.spaceArray }));
-                extendsParameters.push(new IdentifierNameSyntax(
-                    Syntax.identifier("_super")));
+                extendsParameters.push(Syntax.identifierName("_super"));
 
                 var extendsStatement = ExpressionStatementSyntax.create1(
                     new InvocationExpressionSyntax(
-                        new IdentifierNameSyntax(Syntax.identifier("__extends")),
+                        Syntax.identifierName("__extends"),
                         ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create(extendsParameters)))).withTrailingTrivia(this.newLineList);
 
                 statements.push(<StatementSyntax>this.changeIndentation(
@@ -1160,7 +1158,7 @@ module Emitter {
                     var innerAssign = new BinaryExpressionSyntax(
                         SyntaxKind.AssignmentExpression,
                         MemberAccessExpressionSyntax.create1(
-                            new IdentifierNameSyntax(Syntax.identifier("_")),
+                            Syntax.identifierName("_"),
                             new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space))),
                         Syntax.token(SyntaxKind.EqualsToken, { trailingTrivia: this.spaceArray }),
                         this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues.value, i))
@@ -1169,7 +1167,7 @@ module Emitter {
                     var elementAccessExpression = ElementAccessExpressionSyntax.create1(
                         MemberAccessExpressionSyntax.create1(
                             new IdentifierNameSyntax(Syntax.identifier("_",  { leadingTrivia: initIndentationTrivia })),
-                            new IdentifierNameSyntax(Syntax.identifier("_map"))),
+                            Syntax.identifierName("_map")),
                         innerAssign).withTrailingTrivia(this.spaceList);
 
                     //_._map[_.Foo = 1] = "Foo"
@@ -1274,7 +1272,7 @@ module Emitter {
 
             var expression = MemberAccessExpressionSyntax.create1(
                 new IdentifierNameSyntax(Syntax.identifier("_super", { leadingTrivia: result.leadingTrivia().toArray() })),
-                new IdentifierNameSyntax(Syntax.identifier("call")));
+                Syntax.identifierName("call"));
 
             var arguments = result.argumentList().arguments().toArray();
             if (arguments.length > 0) {
@@ -1292,8 +1290,7 @@ module Emitter {
             var result = <InvocationExpressionSyntax>super.visitInvocationExpression(node);
 
             var expression = MemberAccessExpressionSyntax.create1(
-                result.expression(),
-                new IdentifierNameSyntax(Syntax.identifier("call")));
+                result.expression(), Syntax.identifierName("call"));
 
             var arguments = result.argumentList().arguments().toArray();
             if (arguments.length > 0) {
@@ -1327,8 +1324,7 @@ module Emitter {
 
             return MemberAccessExpressionSyntax.create1(
                 MemberAccessExpressionSyntax.create1(
-                    new IdentifierNameSyntax(Syntax.identifier("_super")),
-                    new IdentifierNameSyntax(Syntax.identifier("prototype"))),
+                    Syntax.identifierName("_super"), Syntax.identifierName("prototype")),
                 result.identifierName()).withLeadingTrivia(result.leadingTrivia());
         }
 
