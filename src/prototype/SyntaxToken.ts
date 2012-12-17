@@ -276,9 +276,9 @@ module SyntaxToken {
         }
     }
 
-    export function create(kind: SyntaxKind, token: ITokenInfo = null): ISyntaxToken {
-        var text = (token !== null && token.text) ? token.text : SyntaxFacts.getText(kind);
-        var value = (token !== null && token.value) ? token.value : null;
+    export function create(kind: SyntaxKind, info: ITokenInfo = null): ISyntaxToken {
+        var text = (info !== null && info.text) ? info.text : SyntaxFacts.getText(kind);
+        var value = (info !== null && info.value) ? info.value : null;
         
         var keywordKind = SyntaxKind.None;
         if (SyntaxFacts.isAnyKeyword(kind)) {
@@ -289,10 +289,16 @@ module SyntaxToken {
         return new RealizedToken(
             kind,
             keywordKind,
-            SyntaxTriviaList.create(token === null ? null : token.leadingTrivia),
+            SyntaxTriviaList.create(info === null ? null : info.leadingTrivia),
             text,
             value,
-            SyntaxTriviaList.create(token === null ? null : token.trailingTrivia),
+            SyntaxTriviaList.create(info === null ? null : info.trailingTrivia),
             /*isMissing:*/ false);
+    }
+    
+    export function createIdentifier(text: string, info: ITokenInfo = null): ISyntaxToken {
+        info = info || {};
+        info.text = text;
+        return create(SyntaxKind.IdentifierNameToken, info);
     }
 }
