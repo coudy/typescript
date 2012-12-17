@@ -21159,17 +21159,10 @@ var Emitter = (function (_super) {
                 kind: 9 /* IdentifierNameToken */ ,
                 text: "_super"
             })));
-            var extendsStatement = new ExpressionStatementSyntax(new InvocationExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.createElastic({
+            var extendsStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(new IdentifierNameSyntax(SyntaxToken.createElastic({
                 kind: 9 /* IdentifierNameToken */ ,
                 text: "__extends"
-            })), new ArgumentListSyntax(SyntaxToken.createElastic({
-                kind: 69 /* OpenParenToken */ 
-            }), SeparatedSyntaxList.create(extendsParameters), SyntaxToken.createElastic({
-                kind: 70 /* CloseParenToken */ 
-            }))), SyntaxToken.createElastic({
-                kind: 75 /* SemicolonToken */ ,
-                trailingTrivia: this.newLineArray
-            }));
+            })), ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create(extendsParameters)))).withTrailingTrivia(this.newLineList);
             statements.push(this.changeIndentation(extendsStatement, true, statementIndent));
         }
         var constructorDeclaration = ArrayUtilities.firstOrDefault(node.classElements().toArray(), function (c) {
@@ -21206,29 +21199,16 @@ var Emitter = (function (_super) {
                 text: "_super"
             })));
         }
-        var callSignature = CallSignatureSyntax.create(new ParameterListSyntax(SyntaxToken.createElastic({
-            kind: 69 /* OpenParenToken */ 
-        }), SeparatedSyntaxList.create(callParameters), SyntaxToken.createElastic({
-            kind: 70 /* CloseParenToken */ ,
-            trailingTrivia: this.spaceArray
-        })));
+        var callSignature = CallSignatureSyntax.create(ParameterListSyntax.create1().withParameters(SeparatedSyntaxList.create(callParameters))).withTrailingTrivia(this.spaceList);
         var functionExpression = FunctionExpressionSyntax.create(SyntaxToken.createElastic({
             kind: 25 /* FunctionKeyword */ 
         }), callSignature, block);
-        var parenthesizedExpression = new ParenthesizedExpressionSyntax(SyntaxToken.createElastic({
-            kind: 69 /* OpenParenToken */ 
-        }), functionExpression, SyntaxToken.createElastic({
-            kind: 70 /* CloseParenToken */ 
-        }));
+        var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(functionExpression);
         var invocationParameters = [];
         if(node.extendsClause() !== null && node.extendsClause().typeNames().count() > 0) {
             invocationParameters.push(node.extendsClause().typeNames().syntaxNodeAt(0).withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty));
         }
-        var invocationExpression = new InvocationExpressionSyntax(parenthesizedExpression, new ArgumentListSyntax(SyntaxToken.createElastic({
-            kind: 69 /* OpenParenToken */ 
-        }), SeparatedSyntaxList.create(invocationParameters), SyntaxToken.createElastic({
-            kind: 70 /* CloseParenToken */ 
-        })));
+        var invocationExpression = new InvocationExpressionSyntax(parenthesizedExpression, ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create(invocationParameters)));
         var variableDeclarator = new VariableDeclaratorSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space), null, new EqualsValueClauseSyntax(SyntaxToken.createElastic({
             kind: 104 /* EqualsToken */ ,
             trailingTrivia: this.spaceArray
@@ -21240,11 +21220,7 @@ var Emitter = (function (_super) {
         }), SeparatedSyntaxList.create([
             variableDeclarator
         ]));
-        var variableStatement = VariableStatementSyntax.create(variableDeclaration, SyntaxToken.createElastic({
-            kind: 75 /* SemicolonToken */ ,
-            trailingTrivia: this.newLineArray
-        }));
-        return variableStatement;
+        return VariableStatementSyntax.create1(variableDeclaration).withTrailingTrivia(this.newLineList);
     };
     Emitter.prototype.visitVariableDeclarator = function (node) {
         var result = _super.prototype.visitVariableDeclarator.call(this, node);
