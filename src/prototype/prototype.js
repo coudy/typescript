@@ -23552,258 +23552,258 @@ var Environment = (function () {
         }
     }
 })();
-var LinebreakInfo = (function () {
-    function LinebreakInfo(startPosition, length) {
-        this.startPosition = startPosition;
-        this.length = length;
-    }
-    return LinebreakInfo;
-})();
-var TextLine = (function () {
-    function TextLine(text, body, lineBreakLength, lineNumber) {
-        this._text = null;
-        this._textSpan = null;
-        Contract.throwIfNull(text);
-        Contract.throwIfFalse(lineBreakLength >= 0);
-        Contract.requires(lineNumber >= 0);
-        this._text = text;
-        this._textSpan = body;
-        this._lineBreakLength = lineBreakLength;
-        this._lineNumber = lineNumber;
-    }
-    TextLine.prototype.start = function () {
-        return this._textSpan.start();
-    };
-    TextLine.prototype.end = function () {
-        return this._textSpan.end();
-    };
-    TextLine.prototype.endIncludingLineBreak = function () {
-        return this.end() + this._lineBreakLength;
-    };
-    TextLine.prototype.extent = function () {
-        return this._textSpan;
-    };
-    TextLine.prototype.extentIncludingLineBreak = function () {
-        return TextSpan.fromBounds(this.start(), this.endIncludingLineBreak());
-    };
-    TextLine.prototype.toString = function () {
-        return this._text.toString(this._textSpan);
-    };
-    TextLine.prototype.lineNumber = function () {
-        return this._lineNumber;
-    };
-    return TextLine;
-})();
-var TextBase = (function () {
-    function TextBase() {
-        this.lazyLineStarts = null;
-        this.linebreakInfo = new LinebreakInfo(0, 0);
-        this.lastLineFoundForPosition = null;
-    }
-    TextBase.prototype.length = function () {
-        throw Errors.abstract();
-    };
-    TextBase.prototype.charCodeAt = function (position) {
-        throw Errors.abstract();
-    };
-    TextBase.prototype.checkSubSpan = function (span) {
-        if(span.start() < 0 || span.start() > this.length() || span.end() > this.length()) {
-            throw Errors.argumentOutOfRange("span");
+var TextFactory;
+(function (TextFactory) {
+    var TextLine = (function () {
+        function TextLine(text, body, lineBreakLength, lineNumber) {
+            this._text = null;
+            this._textSpan = null;
+            Contract.throwIfNull(text);
+            Contract.throwIfFalse(lineBreakLength >= 0);
+            Contract.requires(lineNumber >= 0);
+            this._text = text;
+            this._textSpan = body;
+            this._lineBreakLength = lineBreakLength;
+            this._lineNumber = lineNumber;
         }
-    };
-    TextBase.prototype.toString = function (span) {
-        if (typeof span === "undefined") { span = null; }
-        throw Errors.abstract();
-    };
-    TextBase.prototype.subText = function (span) {
-        this.checkSubSpan(span);
-        return new SubText(this, span);
-    };
-    TextBase.prototype.substr = function (start, length, intern) {
-        throw Errors.abstract();
-    };
-    TextBase.prototype.copyTo = function (sourceIndex, destination, destinationIndex, count) {
-        throw Errors.abstract();
-    };
-    TextBase.prototype.lineCount = function () {
-        return this.lineStarts().length;
-    };
-    TextBase.prototype.lines = function () {
-        var lines = [];
-        var length = this.lineCount();
-        for(var i = 0; i < length; ++i) {
-            lines[i] = this.getLineFromLineNumber(i);
+        TextLine.prototype.start = function () {
+            return this._textSpan.start();
+        };
+        TextLine.prototype.end = function () {
+            return this._textSpan.end();
+        };
+        TextLine.prototype.endIncludingLineBreak = function () {
+            return this.end() + this._lineBreakLength;
+        };
+        TextLine.prototype.extent = function () {
+            return this._textSpan;
+        };
+        TextLine.prototype.extentIncludingLineBreak = function () {
+            return TextSpan.fromBounds(this.start(), this.endIncludingLineBreak());
+        };
+        TextLine.prototype.toString = function () {
+            return this._text.toString(this._textSpan);
+        };
+        TextLine.prototype.lineNumber = function () {
+            return this._lineNumber;
+        };
+        return TextLine;
+    })();    
+    var TextBase = (function () {
+        function TextBase() {
+            this.lazyLineStarts = null;
+            this.linebreakInfo = new LinebreakInfo(0, 0);
+            this.lastLineFoundForPosition = null;
         }
-        return lines;
-    };
-    TextBase.prototype.lineStarts = function () {
-        if(this.lazyLineStarts === null) {
-            this.lazyLineStarts = this.parseLineStarts();
-        }
-        return this.lazyLineStarts;
-    };
-    TextBase.prototype.getLineFromLineNumber = function (lineNumber) {
-        var lineStarts = this.lineStarts();
-        if(lineNumber < 0 || lineNumber >= lineStarts.length) {
-            throw Errors.argumentOutOfRange("lineNumber");
-        }
-        var first = lineStarts[lineNumber];
-        if(lineNumber === lineStarts.length - 1) {
-            return new TextLine(this, new TextSpan(first, this.length() - first), 0, lineNumber);
-        } else {
-            TextUtilities.getStartAndLengthOfLineBreakEndingAt(this, lineStarts[lineNumber + 1] - 1, this.linebreakInfo);
-            return new TextLine(this, new TextSpan(first, this.linebreakInfo.startPosition - first), this.linebreakInfo.length, lineNumber);
-        }
-    };
-    TextBase.prototype.getLineFromPosition = function (position) {
-        var lastFound = this.lastLineFoundForPosition;
-        if(lastFound !== null && lastFound.start() <= position && lastFound.endIncludingLineBreak() > position) {
-            return lastFound;
-        }
-        var lineNumber = this.getLineNumberFromPosition(position);
-        var result = this.getLineFromLineNumber(lineNumber);
-        this.lastLineFoundForPosition = result;
-        return result;
-    };
-    TextBase.prototype.getLineNumberFromPosition = function (position) {
-        if(position < 0 || position > this.length()) {
-            throw Errors.argumentOutOfRange("position");
-        }
-        if(position === this.length()) {
-            return this.lineCount() - 1;
-        }
-        var lineNumber = ArrayUtilities.binarySearch(this.lineStarts(), position);
-        if(lineNumber < 0) {
-            lineNumber = (~lineNumber) - 1;
-        }
-        return lineNumber;
-    };
-    TextBase.prototype.getLinePosition = function (position) {
-        if(position < 0 || position > this.length()) {
-            throw Errors.argumentOutOfRange("position");
-        }
-        var lineNumber = this.getLineNumberFromPosition(position);
-        return new LinePosition(lineNumber, position - this.lineStarts()[lineNumber]);
-    };
-    TextBase.prototype.parseLineStarts = function () {
-        var length = this.length();
-        if(0 === this.length()) {
-            var result = [];
-            result.push(0);
-            return result;
-        }
-        var position = 0;
-        var index = 0;
-        var arrayBuilder = [];
-        var lineNumber = 0;
-        while(index < length) {
-            var c = this.charCodeAt(index);
-            var lineBreakLength;
-            if(c > 13 /* carriageReturn */  && c <= 127) {
-                index++;
-                continue;
+        TextBase.prototype.length = function () {
+            throw Errors.abstract();
+        };
+        TextBase.prototype.charCodeAt = function (position) {
+            throw Errors.abstract();
+        };
+        TextBase.prototype.checkSubSpan = function (span) {
+            if(span.start() < 0 || span.start() > this.length() || span.end() > this.length()) {
+                throw Errors.argumentOutOfRange("span");
+            }
+        };
+        TextBase.prototype.toString = function (span) {
+            if (typeof span === "undefined") { span = null; }
+            throw Errors.abstract();
+        };
+        TextBase.prototype.subText = function (span) {
+            this.checkSubSpan(span);
+            return new SubText(this, span);
+        };
+        TextBase.prototype.substr = function (start, length, intern) {
+            throw Errors.abstract();
+        };
+        TextBase.prototype.copyTo = function (sourceIndex, destination, destinationIndex, count) {
+            throw Errors.abstract();
+        };
+        TextBase.prototype.lineCount = function () {
+            return this.lineStarts().length;
+        };
+        TextBase.prototype.lines = function () {
+            var lines = [];
+            var length = this.lineCount();
+            for(var i = 0; i < length; ++i) {
+                lines[i] = this.getLineFromLineNumber(i);
+            }
+            return lines;
+        };
+        TextBase.prototype.lineStarts = function () {
+            if(this.lazyLineStarts === null) {
+                this.lazyLineStarts = this.parseLineStarts();
+            }
+            return this.lazyLineStarts;
+        };
+        TextBase.prototype.getLineFromLineNumber = function (lineNumber) {
+            var lineStarts = this.lineStarts();
+            if(lineNumber < 0 || lineNumber >= lineStarts.length) {
+                throw Errors.argumentOutOfRange("lineNumber");
+            }
+            var first = lineStarts[lineNumber];
+            if(lineNumber === lineStarts.length - 1) {
+                return new TextLine(this, new TextSpan(first, this.length() - first), 0, lineNumber);
             } else {
-                if(c === 13 /* carriageReturn */  && index + 1 < length && this.charCodeAt(index + 1) === 10 /* lineFeed */ ) {
-                    lineBreakLength = 2;
+                TextUtilities.getStartAndLengthOfLineBreakEndingAt(this, lineStarts[lineNumber + 1] - 1, this.linebreakInfo);
+                return new TextLine(this, new TextSpan(first, this.linebreakInfo.startPosition - first), this.linebreakInfo.length, lineNumber);
+            }
+        };
+        TextBase.prototype.getLineFromPosition = function (position) {
+            var lastFound = this.lastLineFoundForPosition;
+            if(lastFound !== null && lastFound.start() <= position && lastFound.endIncludingLineBreak() > position) {
+                return lastFound;
+            }
+            var lineNumber = this.getLineNumberFromPosition(position);
+            var result = this.getLineFromLineNumber(lineNumber);
+            this.lastLineFoundForPosition = result;
+            return result;
+        };
+        TextBase.prototype.getLineNumberFromPosition = function (position) {
+            if(position < 0 || position > this.length()) {
+                throw Errors.argumentOutOfRange("position");
+            }
+            if(position === this.length()) {
+                return this.lineCount() - 1;
+            }
+            var lineNumber = ArrayUtilities.binarySearch(this.lineStarts(), position);
+            if(lineNumber < 0) {
+                lineNumber = (~lineNumber) - 1;
+            }
+            return lineNumber;
+        };
+        TextBase.prototype.getLinePosition = function (position) {
+            if(position < 0 || position > this.length()) {
+                throw Errors.argumentOutOfRange("position");
+            }
+            var lineNumber = this.getLineNumberFromPosition(position);
+            return new LinePosition(lineNumber, position - this.lineStarts()[lineNumber]);
+        };
+        TextBase.prototype.parseLineStarts = function () {
+            var length = this.length();
+            if(0 === this.length()) {
+                var result = [];
+                result.push(0);
+                return result;
+            }
+            var position = 0;
+            var index = 0;
+            var arrayBuilder = [];
+            var lineNumber = 0;
+            while(index < length) {
+                var c = this.charCodeAt(index);
+                var lineBreakLength;
+                if(c > 13 /* carriageReturn */  && c <= 127) {
+                    index++;
+                    continue;
                 } else {
-                    if(c === 10 /* lineFeed */ ) {
-                        lineBreakLength = 1;
+                    if(c === 13 /* carriageReturn */  && index + 1 < length && this.charCodeAt(index + 1) === 10 /* lineFeed */ ) {
+                        lineBreakLength = 2;
                     } else {
-                        lineBreakLength = TextUtilities.getLengthOfLineBreak(this, index);
+                        if(c === 10 /* lineFeed */ ) {
+                            lineBreakLength = 1;
+                        } else {
+                            lineBreakLength = TextUtilities.getLengthOfLineBreak(this, index);
+                        }
                     }
                 }
+                if(0 === lineBreakLength) {
+                    index++;
+                } else {
+                    arrayBuilder.push(position);
+                    index += lineBreakLength;
+                    position = index;
+                    lineNumber++;
+                }
             }
-            if(0 === lineBreakLength) {
-                index++;
-            } else {
-                arrayBuilder.push(position);
-                index += lineBreakLength;
-                position = index;
-                lineNumber++;
+            arrayBuilder.push(position);
+            return arrayBuilder;
+        };
+        return TextBase;
+    })();    
+    var SubText = (function (_super) {
+        __extends(SubText, _super);
+        function SubText(text, span) {
+                _super.call(this);
+            this.text = null;
+            this.span = null;
+            if(text === null) {
+                throw Errors.argumentNull("text");
             }
+            if(span.start() < 0 || span.start() >= text.length() || span.end() < 0 || span.end() > text.length()) {
+                throw Errors.argument("span");
+            }
+            this.text = text;
+            this.span = span;
         }
-        arrayBuilder.push(position);
-        return arrayBuilder;
-    };
-    return TextBase;
-})();
-var SubText = (function (_super) {
-    __extends(SubText, _super);
-    function SubText(text, span) {
-        _super.call(this);
-        this.text = null;
-        this.span = null;
-        if(text === null) {
-            throw Errors.argumentNull("text");
+        SubText.prototype.length = function () {
+            return this.span.length();
+        };
+        SubText.prototype.charCodeAt = function (position) {
+            if(position < 0 || position > this.length()) {
+                throw Errors.argumentOutOfRange("position");
+            }
+            return this.text.charCodeAt(this.span.start() + position);
+        };
+        SubText.prototype.subText = function (span) {
+            this.checkSubSpan(span);
+            return new SubText(this.text, this.getCompositeSpan(span.start(), span.length()));
+        };
+        SubText.prototype.copyTo = function (sourceIndex, destination, destinationIndex, count) {
+            var span = this.getCompositeSpan(sourceIndex, count);
+            this.text.copyTo(span.start(), destination, destinationIndex, span.length());
+        };
+        SubText.prototype.getCompositeSpan = function (start, length) {
+            var compositeStart = MathPrototype.min(this.text.length(), this.span.start() + start);
+            var compositeEnd = MathPrototype.min(this.text.length(), compositeStart + length);
+            return new TextSpan(compositeStart, compositeEnd - compositeStart);
+        };
+        return SubText;
+    })(TextBase);    
+    var StringText = (function (_super) {
+        __extends(StringText, _super);
+        function StringText(data) {
+                _super.call(this);
+            this.source = null;
+            if(data === null) {
+                throw Errors.argumentNull("data");
+            }
+            this.source = data;
         }
-        if(span.start() < 0 || span.start() >= text.length() || span.end() < 0 || span.end() > text.length()) {
-            throw Errors.argument("span");
-        }
-        this.text = text;
-        this.span = span;
+        StringText.prototype.length = function () {
+            return this.source.length;
+        };
+        StringText.prototype.charCodeAt = function (position) {
+            if(position < 0 || position >= this.source.length) {
+                throw Errors.argumentOutOfRange("position");
+            }
+            return this.source.charCodeAt(position);
+        };
+        StringText.prototype.substr = function (start, length, intern) {
+            return this.source.substr(start, length);
+        };
+        StringText.prototype.toString = function (span) {
+            if (typeof span === "undefined") { span = null; }
+            if(span === null) {
+                span = new TextSpan(0, this.length());
+            }
+            this.checkSubSpan(span);
+            if(span.start() === 0 && span.length() === this.length()) {
+                return this.source;
+            }
+            return this.source.substr(span.start(), span.length());
+        };
+        StringText.prototype.copyTo = function (sourceIndex, destination, destinationIndex, count) {
+            return StringUtilities.copyTo(this.source, sourceIndex, destination, destinationIndex, count);
+        };
+        return StringText;
+    })(TextBase);    
+    function create(value) {
+        return new StringText(value);
     }
-    SubText.prototype.length = function () {
-        return this.span.length();
-    };
-    SubText.prototype.charCodeAt = function (position) {
-        if(position < 0 || position > this.length()) {
-            throw Errors.argumentOutOfRange("position");
-        }
-        return this.text.charCodeAt(this.span.start() + position);
-    };
-    SubText.prototype.subText = function (span) {
-        this.checkSubSpan(span);
-        return new SubText(this.text, this.getCompositeSpan(span.start(), span.length()));
-    };
-    SubText.prototype.copyTo = function (sourceIndex, destination, destinationIndex, count) {
-        var span = this.getCompositeSpan(sourceIndex, count);
-        this.text.copyTo(span.start(), destination, destinationIndex, span.length());
-    };
-    SubText.prototype.getCompositeSpan = function (start, length) {
-        var compositeStart = MathPrototype.min(this.text.length(), this.span.start() + start);
-        var compositeEnd = MathPrototype.min(this.text.length(), compositeStart + length);
-        return new TextSpan(compositeStart, compositeEnd - compositeStart);
-    };
-    return SubText;
-})(TextBase);
-var StringText = (function (_super) {
-    __extends(StringText, _super);
-    function StringText(data) {
-        _super.call(this);
-        this.source = null;
-        if(data === null) {
-            throw Errors.argumentNull("data");
-        }
-        this.source = data;
-    }
-    StringText.prototype.length = function () {
-        return this.source.length;
-    };
-    StringText.prototype.charCodeAt = function (position) {
-        if(position < 0 || position >= this.source.length) {
-            throw Errors.argumentOutOfRange("position");
-        }
-        return this.source.charCodeAt(position);
-    };
-    StringText.prototype.substr = function (start, length, intern) {
-        return this.source.substr(start, length);
-    };
-    StringText.prototype.toString = function (span) {
-        if (typeof span === "undefined") { span = null; }
-        if(span === null) {
-            span = new TextSpan(0, this.length());
-        }
-        this.checkSubSpan(span);
-        if(span.start() === 0 && span.length() === this.length()) {
-            return this.source;
-        }
-        return this.source.substr(span.start(), span.length());
-    };
-    StringText.prototype.copyTo = function (sourceIndex, destination, destinationIndex, count) {
-        return StringUtilities.copyTo(this.source, sourceIndex, destination, destinationIndex, count);
-    };
-    return StringText;
-})(TextBase);
+    TextFactory.create = create;
+})(TextFactory || (TextFactory = {}));
 var negative262ExpectedResults = {
     'Sbp_12.5_A9_T3.js': false,
     'Sbp_12.6.1_A13_T3.js': false,
@@ -24276,6 +24276,13 @@ var negative262ExpectedResults = {
     '15.3.5-1gs.js': true,
     '15.3.5-2gs.js': true
 };
+var LinebreakInfo = (function () {
+    function LinebreakInfo(startPosition, length) {
+        this.startPosition = startPosition;
+        this.length = length;
+    }
+    return LinebreakInfo;
+})();
 var TextUtilities = (function () {
     function TextUtilities() { }
     TextUtilities.getStartAndLengthOfLineBreakEndingAt = function getStartAndLengthOfLineBreakEndingAt(text, index, info) {
@@ -25649,7 +25656,7 @@ var Program = (function () {
         var start, end;
         start = new Date().getTime();
         totalSize += contents.length;
-        var text = new StringText(contents);
+        var text = TextFactory.create(contents);
         var tree = Parser.parse(text, languageVersion, stringTable);
         var emitted = Emitter.emit(tree.sourceUnit());
         end = new Date().getTime();
@@ -25676,7 +25683,7 @@ var Program = (function () {
             end = new Date().getTime();
             totalTime += (end - start);
         } else {
-            var text = new StringText(contents);
+            var text = TextFactory.create(contents);
             var tree = Parser.parse(text, languageVersion, stringTable);
             end = new Date().getTime();
             totalTime += (end - start);
@@ -25691,7 +25698,7 @@ var Program = (function () {
         var contents = environment.readFile(filePath, true);
         var start, end;
         start = new Date().getTime();
-        var text = new StringText(contents);
+        var text = TextFactory.create(contents);
         var scanner = new Scanner(text, languageVersion, stringTable);
         var tokens = [];
         var textArray = [];
@@ -25714,7 +25721,7 @@ var Program = (function () {
         var contents = environment.readFile(filePath, true);
         var start, end;
         start = new Date().getTime();
-        var text = new StringText(contents);
+        var text = TextFactory.create(contents);
         var scanner = new Scanner(text, languageVersion, stringTable);
         var tokens = [];
         var textArray = [];
@@ -25773,7 +25780,7 @@ var Program = (function () {
                 var isNegative = contents.indexOf("@negative") >= 0;
                 testCount++;
                 try  {
-                    var stringText = new StringText(contents);
+                    var stringText = TextFactory.create(contents);
                     var tree = Parser.parse(stringText, 1 /* EcmaScript5 */ , stringTable);
                     if(isNegative) {
                         var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
@@ -25835,7 +25842,7 @@ var Program = (function () {
                 totalSize += contents.length;
                 testCount++;
                 try  {
-                    var stringText = new StringText(contents);
+                    var stringText = TextFactory.create(contents);
                     var tree = Parser.parse(stringText, 1 /* EcmaScript5 */ , stringTable);
                     if(canParseSuccessfully) {
                         if(tree.diagnostics() && tree.diagnostics().length > 0) {

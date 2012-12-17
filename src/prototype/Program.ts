@@ -2,7 +2,7 @@
 ///<reference path='Emitter.ts' />
 ///<reference path='Parser.ts' />
 ///<reference path='Environment.ts' />
-///<reference path='StringText.ts' />
+///<reference path='Text.ts' />
 ///<reference path='Test262.ts' />
 ///<reference path='TextUtilities.ts' />
 ///<reference path='Top1000.ts' />
@@ -131,7 +131,7 @@ class Program {
 
         totalSize += contents.length;
 
-        var text = new StringText(contents);
+        var text = TextFactory.create(contents);
 
         var tree = Parser.parse(text, languageVersion, stringTable);
         var emitted = Emitter.emit(<SourceUnitSyntax>tree.sourceUnit());
@@ -177,7 +177,7 @@ class Program {
             totalTime += (end - start);
         }
         else {
-            var text = new StringText(contents);
+            var text = TextFactory.create(contents);
             var tree = Parser.parse(text, languageVersion, stringTable);
 
             end = new Date().getTime();
@@ -198,7 +198,7 @@ class Program {
         var start: number, end: number;
         start = new Date().getTime();
 
-        var text = new StringText(contents);
+        var text = TextFactory.create(contents);
         var scanner = new Scanner(text, languageVersion, stringTable);
 
         var tokens: ISyntaxToken[] = [];
@@ -231,7 +231,7 @@ class Program {
         var start: number, end: number;
         start = new Date().getTime();
 
-        var text = new StringText(contents);
+        var text = TextFactory.create(contents);
         var scanner = new Scanner(text, languageVersion, stringTable);
 
         var tokens: ISyntaxToken[] = [];
@@ -303,7 +303,7 @@ class Program {
                 testCount++;
 
                 try {
-                    var stringText = new StringText(contents);
+                    var stringText = TextFactory.create(contents);
                     var tree = Parser.parse(stringText, LanguageVersion.EcmaScript5, stringTable);
 
                     if (isNegative) {
@@ -383,7 +383,7 @@ class Program {
                 testCount++;
 
                 try {
-                    var stringText = new StringText(contents);
+                    var stringText = TextFactory.create(contents);
                     var tree = Parser.parse(stringText, LanguageVersion.EcmaScript5, stringTable);
 
                     //environment.standardOut.WriteLine(filePath);
