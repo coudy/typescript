@@ -34,8 +34,7 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'moduleElements', isList: true },
             <any>{ name: 'endOfFileToken', isToken: true }
-        ],
-        isTypeScriptSpecific: true
+        ]
     },
     <any>{
         name: 'ModuleElementSyntax',
@@ -488,8 +487,7 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'questionToken', isToken: true, isOptional: true },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
             <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true }
-        ],
-        isTypeScriptSpecific: true
+        ]
     },
     <any>{
         name: 'IndexSignatureSyntax',
@@ -1670,7 +1668,6 @@ function generateIsTypeScriptSpecificMethod(definition: ITypeDefinition): string
         result += "        return true;\r\n";
     }
     else {
-        var emittedCheck = false;
         for (var i = 0; i < definition.children.length; i++) {
             var child = definition.children[i];
 
@@ -1679,7 +1676,6 @@ function generateIsTypeScriptSpecificMethod(definition: ITypeDefinition): string
             }
 
             if (child.isTypeScriptSpecific) {
-                emittedCheck = true;
                 result += "        if (" + getPropertyAccess(child) + " !== null) { return true; }\r\n";
                 continue;
             }
@@ -1688,7 +1684,6 @@ function generateIsTypeScriptSpecificMethod(definition: ITypeDefinition): string
                 continue;
             }
             
-            emittedCheck = true;
             if (child.isOptional) {
                 result += "        if (" + getPropertyAccess(child) + " !== null && " + getPropertyAccess(child) + ".isTypeScriptSpecific()) { return true; }\r\n";
             }
@@ -1697,9 +1692,7 @@ function generateIsTypeScriptSpecificMethod(definition: ITypeDefinition): string
             }
         }
 
-        if (!emittedCheck) {
-            return "";
-        }
+        result += "        return false;\r\n";
     }
 
     result += "    }\r\n";

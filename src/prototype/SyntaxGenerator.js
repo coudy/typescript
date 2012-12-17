@@ -1338,8 +1338,7 @@ var definitions = [
                 name: 'endOfFileToken',
                 isToken: true
             }
-        ],
-        isTypeScriptSpecific: true
+        ]
     }, 
     {
         name: 'ModuleElementSyntax',
@@ -2305,8 +2304,7 @@ var definitions = [
                 type: 'TypeAnnotationSyntax',
                 isOptional: true
             }
-        ],
-        isTypeScriptSpecific: true
+        ]
     }, 
     {
         name: 'IndexSignatureSyntax',
@@ -3866,30 +3864,25 @@ function generateIsTypeScriptSpecificMethod(definition) {
     if(definition.isTypeScriptSpecific) {
         result += "        return true;\r\n";
     } else {
-        var emittedCheck = false;
         for(var i = 0; i < definition.children.length; i++) {
             var child = definition.children[i];
             if(child.type === "SyntaxKind") {
                 continue;
             }
             if(child.isTypeScriptSpecific) {
-                emittedCheck = true;
                 result += "        if (" + getPropertyAccess(child) + " !== null) { return true; }\r\n";
                 continue;
             }
             if(child.isToken) {
                 continue;
             }
-            emittedCheck = true;
             if(child.isOptional) {
                 result += "        if (" + getPropertyAccess(child) + " !== null && " + getPropertyAccess(child) + ".isTypeScriptSpecific()) { return true; }\r\n";
             } else {
                 result += "        if (" + getPropertyAccess(child) + ".isTypeScriptSpecific()) { return true; }\r\n";
             }
         }
-        if(!emittedCheck) {
-            return "";
-        }
+        result += "        return false;\r\n";
     }
     result += "    }\r\n";
     return result;

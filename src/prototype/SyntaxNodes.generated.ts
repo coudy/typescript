@@ -78,13 +78,18 @@ class SourceUnitSyntax extends SyntaxNode {
     }
 
     private isTypeScriptSpecific(): bool {
-        return true;
+        if (this._moduleElements.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
 class ModuleElementSyntax extends SyntaxNode {
     constructor() {
         super();
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
     }
 }
 
@@ -1101,6 +1106,10 @@ class StatementSyntax extends ModuleElementSyntax {
     constructor() {
         super();
     }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
+    }
 }
 
 class FunctionDeclarationSyntax extends StatementSyntax {
@@ -1259,6 +1268,7 @@ class FunctionDeclarationSyntax extends StatementSyntax {
         if (this._declareKeyword !== null) { return true; }
         if (this._functionSignature.isTypeScriptSpecific()) { return true; }
         if (this._block !== null && this._block.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -1382,6 +1392,7 @@ class VariableStatementSyntax extends StatementSyntax {
         if (this._exportKeyword !== null) { return true; }
         if (this._declareKeyword !== null) { return true; }
         if (this._variableDeclaration.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -1389,11 +1400,19 @@ class ExpressionSyntax extends SyntaxNode {
     constructor() {
         super();
     }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
+    }
 }
 
 class UnaryExpressionSyntax extends ExpressionSyntax {
     constructor() {
         super();
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
     }
 }
 
@@ -1476,6 +1495,7 @@ class VariableDeclarationSyntax extends SyntaxNode {
 
     private isTypeScriptSpecific(): bool {
         if (this._variableDeclarators.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -1574,6 +1594,7 @@ class VariableDeclaratorSyntax extends SyntaxNode {
     private isTypeScriptSpecific(): bool {
         if (this._typeAnnotation !== null) { return true; }
         if (this._equalsValueClause !== null && this._equalsValueClause.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -1652,6 +1673,7 @@ class EqualsValueClauseSyntax extends SyntaxNode {
 
     private isTypeScriptSpecific(): bool {
         if (this._value.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -1749,6 +1771,7 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
 
     private isTypeScriptSpecific(): bool {
         if (this._operand.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -1806,6 +1829,10 @@ class ThisExpressionSyntax extends UnaryExpressionSyntax {
 
     private collectTextElements(elements: string[]): void {
         this._thisKeyword.collectTextElements(elements);
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
     }
 }
 
@@ -1889,6 +1916,10 @@ class LiteralExpressionSyntax extends UnaryExpressionSyntax {
 
     private collectTextElements(elements: string[]): void {
         this._literalToken.collectTextElements(elements);
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
     }
 }
 
@@ -1989,6 +2020,7 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
 
     private isTypeScriptSpecific(): bool {
         if (this._expressions.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -2024,6 +2056,10 @@ class OmittedExpressionSyntax extends ExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
     }
 }
 
@@ -2119,6 +2155,7 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
 
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -2334,11 +2371,19 @@ class TypeSyntax extends UnaryExpressionSyntax {
     constructor() {
         super();
     }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
+    }
 }
 
 class NameSyntax extends TypeSyntax {
     constructor() {
         super();
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
     }
 }
 
@@ -2396,6 +2441,10 @@ class IdentifierNameSyntax extends NameSyntax {
 
     private collectTextElements(elements: string[]): void {
         this._identifier.collectTextElements(elements);
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
     }
 }
 
@@ -2492,6 +2541,7 @@ class QualifiedNameSyntax extends NameSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._left.isTypeScriptSpecific()) { return true; }
         if (this._right.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -3142,6 +3192,7 @@ class BlockSyntax extends StatementSyntax {
 
     private isTypeScriptSpecific(): bool {
         if (this._statements.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -3300,6 +3351,7 @@ class ParameterSyntax extends SyntaxNode {
         if (this._questionToken !== null) { return true; }
         if (this._typeAnnotation !== null) { return true; }
         if (this._equalsValueClause !== null) { return true; }
+        return false;
     }
 }
 
@@ -3396,6 +3448,7 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
         if (this._identifierName.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -3483,6 +3536,7 @@ class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
 
     private isTypeScriptSpecific(): bool {
         if (this._operand.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -3596,6 +3650,7 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
         if (this._argumentExpression.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -3675,6 +3730,7 @@ class InvocationExpressionSyntax extends UnaryExpressionSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
         if (this._argumentList.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -3775,6 +3831,7 @@ class ArgumentListSyntax extends SyntaxNode {
 
     private isTypeScriptSpecific(): bool {
         if (this._arguments.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -3921,6 +3978,7 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._left.isTypeScriptSpecific()) { return true; }
         if (this._right.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -4052,6 +4110,7 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
         if (this._condition.isTypeScriptSpecific()) { return true; }
         if (this._whenTrue.isTypeScriptSpecific()) { return true; }
         if (this._whenFalse.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -4282,7 +4341,9 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
     }
 
     private isTypeScriptSpecific(): bool {
-        return true;
+        if (this._parameterList.isTypeScriptSpecific()) { return true; }
+        if (this._typeAnnotation !== null && this._typeAnnotation.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -4600,6 +4661,7 @@ class ParameterListSyntax extends SyntaxNode {
 
     private isTypeScriptSpecific(): bool {
         if (this._parameters.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -4682,6 +4744,7 @@ class CallSignatureSyntax extends TypeMemberSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._parameterList.isTypeScriptSpecific()) { return true; }
         if (this._typeAnnotation !== null) { return true; }
+        return false;
     }
 }
 
@@ -4760,6 +4823,7 @@ class ElseClauseSyntax extends SyntaxNode {
 
     private isTypeScriptSpecific(): bool {
         if (this._statement.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -4915,6 +4979,7 @@ class IfStatementSyntax extends StatementSyntax {
         if (this._condition.isTypeScriptSpecific()) { return true; }
         if (this._statement.isTypeScriptSpecific()) { return true; }
         if (this._elseClause !== null && this._elseClause.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -4993,6 +5058,7 @@ class ExpressionStatementSyntax extends StatementSyntax {
 
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -5853,6 +5919,7 @@ class ThrowStatementSyntax extends StatementSyntax {
 
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -5952,6 +6019,7 @@ class ReturnStatementSyntax extends StatementSyntax {
 
     private isTypeScriptSpecific(): bool {
         if (this._expression !== null && this._expression.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -6052,6 +6120,7 @@ class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
         if (this._argumentList !== null && this._argumentList.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -6225,6 +6294,7 @@ class SwitchStatementSyntax extends StatementSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
         if (this._caseClauses.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -6239,6 +6309,10 @@ class SwitchClauseSyntax extends SyntaxNode {
 
     public statements(): ISyntaxList {
         throw Errors.abstract();
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
     }
 }
 
@@ -6358,6 +6432,7 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
         if (this._statements.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -6458,6 +6533,7 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
 
     private isTypeScriptSpecific(): bool {
         if (this._statements.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -6557,6 +6633,10 @@ class BreakStatementSyntax extends StatementSyntax {
         if (this._identifier !== null) { this._identifier.collectTextElements(elements); }
         this._semicolonToken.collectTextElements(elements);
     }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
+    }
 }
 
 class ContinueStatementSyntax extends StatementSyntax {
@@ -6655,6 +6735,10 @@ class ContinueStatementSyntax extends StatementSyntax {
         if (this._identifier !== null) { this._identifier.collectTextElements(elements); }
         this._semicolonToken.collectTextElements(elements);
     }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
+    }
 }
 
 class IterationStatementSyntax extends StatementSyntax {
@@ -6672,6 +6756,10 @@ class IterationStatementSyntax extends StatementSyntax {
 
     public statement(): StatementSyntax {
         throw Errors.abstract();
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
     }
 }
 
@@ -6698,6 +6786,10 @@ class BaseForStatementSyntax extends IterationStatementSyntax {
 
     public statement(): StatementSyntax {
         throw Errors.abstract();
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
     }
 }
 
@@ -6921,6 +7013,7 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         if (this._condition !== null && this._condition.isTypeScriptSpecific()) { return true; }
         if (this._incrementor !== null && this._incrementor.isTypeScriptSpecific()) { return true; }
         if (this._statement.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -7111,6 +7204,7 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         if (this._left !== null && this._left.isTypeScriptSpecific()) { return true; }
         if (this._expression.isTypeScriptSpecific()) { return true; }
         if (this._statement.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -7241,6 +7335,7 @@ class WhileStatementSyntax extends IterationStatementSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._condition.isTypeScriptSpecific()) { return true; }
         if (this._statement.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -7371,6 +7466,7 @@ class WithStatementSyntax extends StatementSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._condition.isTypeScriptSpecific()) { return true; }
         if (this._statement.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -7738,6 +7834,7 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
 
     private isTypeScriptSpecific(): bool {
         if (this._propertyAssignments.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -7748,6 +7845,10 @@ class PropertyAssignmentSyntax extends SyntaxNode {
 
     public propertyName(): ISyntaxToken {
         throw Errors.abstract();
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
     }
 }
 
@@ -7850,6 +7951,7 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
 
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -7872,6 +7974,10 @@ class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
 
     public block(): BlockSyntax {
         throw Errors.abstract();
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
     }
 }
 
@@ -8001,6 +8107,7 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
 
     private isTypeScriptSpecific(): bool {
         if (this._block.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -8147,6 +8254,7 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
 
     private isTypeScriptSpecific(): bool {
         if (this._block.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -8268,6 +8376,7 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._callSignature.isTypeScriptSpecific()) { return true; }
         if (this._block.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -8325,6 +8434,10 @@ class EmptyStatementSyntax extends StatementSyntax {
 
     private collectTextElements(elements: string[]): void {
         this._semicolonToken.collectTextElements(elements);
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
     }
 }
 
@@ -8503,6 +8616,7 @@ class TryStatementSyntax extends StatementSyntax {
         if (this._block.isTypeScriptSpecific()) { return true; }
         if (this._catchClause !== null && this._catchClause.isTypeScriptSpecific()) { return true; }
         if (this._finallyClause !== null && this._finallyClause.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -8632,6 +8746,7 @@ class CatchClauseSyntax extends SyntaxNode {
 
     private isTypeScriptSpecific(): bool {
         if (this._block.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -8710,6 +8825,7 @@ class FinallyClauseSyntax extends SyntaxNode {
 
     private isTypeScriptSpecific(): bool {
         if (this._block.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -8805,6 +8921,7 @@ class LabeledStatement extends StatementSyntax {
 
     private isTypeScriptSpecific(): bool {
         if (this._statement.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -8969,6 +9086,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._statement.isTypeScriptSpecific()) { return true; }
         if (this._condition.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -9047,6 +9165,7 @@ class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
 
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -9125,6 +9244,7 @@ class DeleteExpressionSyntax extends UnaryExpressionSyntax {
 
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -9203,6 +9323,7 @@ class VoidExpressionSyntax extends UnaryExpressionSyntax {
 
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
+        return false;
     }
 }
 
@@ -9277,5 +9398,9 @@ class DebuggerStatementSyntax extends StatementSyntax {
     private collectTextElements(elements: string[]): void {
         this._debuggerKeyword.collectTextElements(elements);
         this._semicolonToken.collectTextElements(elements);
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return false;
     }
 }

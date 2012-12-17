@@ -26,10 +26,15 @@ class Emitter extends SyntaxRewriter {
     
     public static emit(input: SourceUnitSyntax, options: FormattingOptions = null): SourceUnitSyntax {
         SyntaxNodeInvariantsChecker.checkInvariants(input);
+        if (!input.isTypeScriptSpecific()) {
+            return input;
+        }
+
         var emitter = new Emitter(SyntaxInformationMap.create(input), options);
 
         var output = <SourceUnitSyntax>input.accept(emitter);
         SyntaxNodeInvariantsChecker.checkInvariants(output);
+        Debug.assert(!output.isTypeScriptSpecific());
 
         return output;
     }
