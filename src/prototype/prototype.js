@@ -20539,10 +20539,10 @@ var Emitter;
             for(var i = 0; i < instanceAssignments.length; i++) {
                 statements.push(instanceAssignments[i]);
             }
-            var block = new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), SyntaxList.create(statements), Syntax.token(68 /* CloseBraceToken */ )).withTrailingTrivia(this.newLine);
-            var functionDeclaration = new FunctionDeclarationSyntax(null, null, Syntax.token(25 /* FunctionKeyword */ ).withTrailingTrivia(this.space), functionSignature, block, null);
-            var classIndentation = this.columnForStartOfToken(classDeclaration.firstToken());
-            return this.changeIndentation(functionDeclaration, true, this.options.indentSpaces + classIndentation);
+            var indentationTrivia = this.indentationTriviaForStartOfToken(classDeclaration.firstToken());
+            var block = new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), SyntaxList.create(statements), Syntax.token(68 /* CloseBraceToken */ ).withLeadingTrivia(indentationTrivia)).withTrailingTrivia(this.newLine);
+            var functionDeclaration = new FunctionDeclarationSyntax(null, null, Syntax.token(25 /* FunctionKeyword */ ).withLeadingTrivia(indentationTrivia).withTrailingTrivia(this.space), functionSignature, block, null);
+            return this.changeIndentation(functionDeclaration, true, this.options.indentSpaces);
         };
         EmitterImpl.prototype.convertConstructorDeclaration = function (classDeclaration, constructorDeclaration) {
             var _this = this;
@@ -20570,9 +20570,7 @@ var Emitter;
             });
             var instanceAssignments = this.generatePropertyAssignments(classDeclaration, false);
             for(var i = instanceAssignments.length - 1; i >= 0; i--) {
-                var expressionStatement = instanceAssignments[i];
-                expressionStatement = this.changeIndentation(expressionStatement, true, this.options.indentSpaces);
-                normalStatements.unshift(expressionStatement);
+                normalStatements.unshift(this.changeIndentation(instanceAssignments[i], true, this.options.indentSpaces));
             }
             var parameterPropertyAssignments = ArrayUtilities.select(EmitterImpl.parameterListPropertyParameters(constructorDeclaration.parameterList()), function (p) {
                 return _this.generatePropertyAssignmentStatement(p);

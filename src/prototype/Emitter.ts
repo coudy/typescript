@@ -639,20 +639,21 @@ module Emitter {
                 statements.push(instanceAssignments[i]);
             }
 
+            // var classIndentation = this.columnForStartOfToken(classDeclaration.firstToken());
+            var indentationTrivia = this.indentationTriviaForStartOfToken(classDeclaration.firstToken());
+
             var block = new BlockSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
                 SyntaxList.create(statements),
-                Syntax.token(SyntaxKind.CloseBraceToken)).withTrailingTrivia(this.newLine);
+                Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(indentationTrivia)).withTrailingTrivia(this.newLine);
 
             var functionDeclaration = new FunctionDeclarationSyntax(null, null,
-                Syntax.token(SyntaxKind.FunctionKeyword).withTrailingTrivia(this.space),
+                Syntax.token(SyntaxKind.FunctionKeyword).withLeadingTrivia(indentationTrivia).withTrailingTrivia(this.space),
                 functionSignature,
                 block, null);
 
-            var classIndentation = this.columnForStartOfToken(classDeclaration.firstToken());
-
             return <FunctionDeclarationSyntax>this.changeIndentation(
-                functionDeclaration, /*indentFirstToken:*/ true, this.options.indentSpaces + classIndentation);
+                functionDeclaration, /*indentFirstToken:*/ true, this.options.indentSpaces);
         }
 
         private convertConstructorDeclaration(classDeclaration: ClassDeclarationSyntax,
@@ -690,10 +691,8 @@ module Emitter {
                 classDeclaration, /*static:*/ false);
 
             for (var i = instanceAssignments.length - 1; i >= 0; i--) {
-                var expressionStatement = instanceAssignments[i];
-                expressionStatement = <ExpressionStatementSyntax>this.changeIndentation(
-                    expressionStatement, /*changeFirstToken:*/ true, this.options.indentSpaces);
-                normalStatements.unshift(expressionStatement);
+                normalStatements.unshift(<ExpressionStatementSyntax>this.changeIndentation(
+                    instanceAssignments[i], /*changeFirstToken:*/ true, this.options.indentSpaces));
             }
 
             var parameterPropertyAssignments = <ExpressionStatementSyntax[]>ArrayUtilities.select(
