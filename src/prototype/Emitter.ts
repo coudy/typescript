@@ -606,27 +606,26 @@ module Emitter {
         }
 
         private createDefaultConstructorDeclaration(classDeclaration: ClassDeclarationSyntax): FunctionDeclarationSyntax {
-            var identifier = this.withNoTrivia(classDeclaration.identifier());
+            var functionSignature = FunctionSignatureSyntax.create1(this.withNoTrivia(classDeclaration.identifier()))
+                                                           .withTrailingTrivia(this.space);
 
-            var functionSignature = FunctionSignatureSyntax.create1(
-                identifier).withTrailingTrivia(this.space);
+            var classIndentationColumn = this.columnForStartOfToken(classDeclaration.firstToken());
 
             var statements: StatementSyntax[] = [];
             if (classDeclaration.extendsClause() !== null) {
-                var superStatement = ExpressionStatementSyntax.create1(
-                        new InvocationExpressionSyntax(
-                            MemberAccessExpressionSyntax.create1(
-                                Syntax.identifierName("_super"),
-                                Syntax.identifierName("apply")),
-                            ArgumentListSyntax.create1().withArguments(
-                                SeparatedSyntaxList.create([
-                                    ThisExpressionSyntax.create1(),
-                                    Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
-                                    Syntax.identifierName("arguments")])))
-                    ).withTrailingTrivia(this.newLine);
+                var superIndentationColumn = classIndentationColumn + this.options.indentSpaces;
+                var superIndentation = this.indentationTrivia(superIndentationColumn);
 
-                superStatement = <ExpressionStatementSyntax>this.changeIndentation(
-                    superStatement, /*indentFirstToken:*/ true, this.options.indentSpaces);
+                var superStatement = ExpressionStatementSyntax.create1(
+                    new InvocationExpressionSyntax(
+                        MemberAccessExpressionSyntax.create1(
+                            Syntax.identifierName("_super"), Syntax.identifierName("apply")),
+                        ArgumentListSyntax.create1().withArguments(
+                            SeparatedSyntaxList.create([
+                                ThisExpressionSyntax.create1(),
+                                Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
+                                Syntax.identifierName("arguments")])))).withLeadingTrivia(superIndentation).withTrailingTrivia(this.newLine);
+
                 statements.push(superStatement);
             }
 
@@ -634,14 +633,10 @@ module Emitter {
                 classDeclaration, /*static:*/ false);
 
             for (var i = 0; i < instanceAssignments.length; i++) {
-                //var expressionStatement = <StatementSyntax>this.changeIndentation(
-                //    instanceAssignments[i], /*changeFirstToken:*/ true, this.options.indentSpaces);
                 statements.push(instanceAssignments[i]);
             }
 
-            // var classIndentation = this.columnForStartOfToken(classDeclaration.firstToken());
-            var indentationTrivia = this.indentationTriviaForStartOfToken(classDeclaration.firstToken());
-
+            var indentationTrivia = this.indentationTrivia(classIndentationColumn);
             var block = new BlockSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
                 SyntaxList.create(statements),

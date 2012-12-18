@@ -20523,23 +20523,24 @@ var Emitter;
             return result;
         };
         EmitterImpl.prototype.createDefaultConstructorDeclaration = function (classDeclaration) {
-            var identifier = this.withNoTrivia(classDeclaration.identifier());
-            var functionSignature = FunctionSignatureSyntax.create1(identifier).withTrailingTrivia(this.space);
+            var functionSignature = FunctionSignatureSyntax.create1(this.withNoTrivia(classDeclaration.identifier())).withTrailingTrivia(this.space);
+            var classIndentationColumn = this.columnForStartOfToken(classDeclaration.firstToken());
             var statements = [];
             if(classDeclaration.extendsClause() !== null) {
+                var superIndentationColumn = classIndentationColumn + this.options.indentSpaces;
+                var superIndentation = this.indentationTrivia(superIndentationColumn);
                 var superStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_super"), Syntax.identifierName("apply")), ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create([
                     ThisExpressionSyntax.create1(), 
                     Syntax.token(76 /* CommaToken */ ).withTrailingTrivia(this.space), 
                     Syntax.identifierName("arguments")
-                ])))).withTrailingTrivia(this.newLine);
-                superStatement = this.changeIndentation(superStatement, true, this.options.indentSpaces);
+                ])))).withLeadingTrivia(superIndentation).withTrailingTrivia(this.newLine);
                 statements.push(superStatement);
             }
             var instanceAssignments = this.generatePropertyAssignments(classDeclaration, false);
             for(var i = 0; i < instanceAssignments.length; i++) {
                 statements.push(instanceAssignments[i]);
             }
-            var indentationTrivia = this.indentationTriviaForStartOfToken(classDeclaration.firstToken());
+            var indentationTrivia = this.indentationTrivia(classIndentationColumn);
             var block = new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), SyntaxList.create(statements), Syntax.token(68 /* CloseBraceToken */ ).withLeadingTrivia(indentationTrivia)).withTrailingTrivia(this.newLine);
             var functionDeclaration = new FunctionDeclarationSyntax(null, null, Syntax.token(25 /* FunctionKeyword */ ).withLeadingTrivia(indentationTrivia).withTrailingTrivia(this.space), functionSignature, block, null);
             return this.changeIndentation(functionDeclaration, true, this.options.indentSpaces);
