@@ -948,7 +948,7 @@ class ExtendsClauseSyntax extends SyntaxNode {
     }
 
     public withTypeName(typeName: NameSyntax): ExtendsClauseSyntax {
-        return this.withTypeNames(SeparatedSyntaxList.create([typeName]));
+        return this.withTypeNames(Syntax.separatedList([typeName]));
     }
 
     private collectTextElements(elements: string[]): void {
@@ -1044,7 +1044,7 @@ class ImplementsClauseSyntax extends SyntaxNode {
     }
 
     public withTypeName(typeName: NameSyntax): ImplementsClauseSyntax {
-        return this.withTypeNames(SeparatedSyntaxList.create([typeName]));
+        return this.withTypeNames(Syntax.separatedList([typeName]));
     }
 
     private collectTextElements(elements: string[]): void {
@@ -1727,7 +1727,7 @@ class VariableDeclarationSyntax extends SyntaxNode {
     }
 
     public withVariableDeclarator(variableDeclarator: VariableDeclaratorSyntax): VariableDeclarationSyntax {
-        return this.withVariableDeclarators(SeparatedSyntaxList.create([variableDeclarator]));
+        return this.withVariableDeclarators(Syntax.separatedList([variableDeclarator]));
     }
 
     private collectTextElements(elements: string[]): void {
@@ -2244,13 +2244,13 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
 
     public static create(openBracketToken: ISyntaxToken,
                          closeBracketToken: ISyntaxToken): ArrayLiteralExpressionSyntax {
-        return new ArrayLiteralExpressionSyntax(openBracketToken, SeparatedSyntaxList.empty, closeBracketToken);
+        return new ArrayLiteralExpressionSyntax(openBracketToken, Syntax.emptySeparatedList, closeBracketToken);
     }
 
     public static create1(): ArrayLiteralExpressionSyntax {
         return new ArrayLiteralExpressionSyntax(
             Syntax.token(SyntaxKind.OpenBracketToken),
-            SeparatedSyntaxList.empty,
+            Syntax.emptySeparatedList,
             Syntax.token(SyntaxKind.CloseBracketToken));
     }
 
@@ -2324,7 +2324,7 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     public withExpression(expression: ExpressionSyntax): ArrayLiteralExpressionSyntax {
-        return this.withExpressions(SeparatedSyntaxList.create([expression]));
+        return this.withExpressions(Syntax.separatedList([expression]));
     }
 
     public withCloseBracketToken(closeBracketToken: ISyntaxToken): ArrayLiteralExpressionSyntax {
@@ -3225,13 +3225,13 @@ class ObjectTypeSyntax extends TypeSyntax {
 
     public static create(openBraceToken: ISyntaxToken,
                          closeBraceToken: ISyntaxToken): ObjectTypeSyntax {
-        return new ObjectTypeSyntax(openBraceToken, SeparatedSyntaxList.empty, closeBraceToken);
+        return new ObjectTypeSyntax(openBraceToken, Syntax.emptySeparatedList, closeBraceToken);
     }
 
     public static create1(): ObjectTypeSyntax {
         return new ObjectTypeSyntax(
             Syntax.token(SyntaxKind.OpenBraceToken),
-            SeparatedSyntaxList.empty,
+            Syntax.emptySeparatedList,
             Syntax.token(SyntaxKind.CloseBraceToken));
     }
 
@@ -3305,7 +3305,7 @@ class ObjectTypeSyntax extends TypeSyntax {
     }
 
     public withTypeMember(typeMember: TypeMemberSyntax): ObjectTypeSyntax {
-        return this.withTypeMembers(SeparatedSyntaxList.create([typeMember]));
+        return this.withTypeMembers(Syntax.separatedList([typeMember]));
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): ObjectTypeSyntax {
@@ -4355,13 +4355,13 @@ class ArgumentListSyntax extends SyntaxNode {
 
     public static create(openParenToken: ISyntaxToken,
                          closeParenToken: ISyntaxToken): ArgumentListSyntax {
-        return new ArgumentListSyntax(openParenToken, SeparatedSyntaxList.empty, closeParenToken);
+        return new ArgumentListSyntax(openParenToken, Syntax.emptySeparatedList, closeParenToken);
     }
 
     public static create1(): ArgumentListSyntax {
         return new ArgumentListSyntax(
             Syntax.token(SyntaxKind.OpenParenToken),
-            SeparatedSyntaxList.empty,
+            Syntax.emptySeparatedList,
             Syntax.token(SyntaxKind.CloseParenToken));
     }
 
@@ -4435,7 +4435,7 @@ class ArgumentListSyntax extends SyntaxNode {
     }
 
     public withArgument(_argument: ExpressionSyntax): ArgumentListSyntax {
-        return this.withArguments(SeparatedSyntaxList.create([_argument]));
+        return this.withArguments(Syntax.separatedList([_argument]));
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): ArgumentListSyntax {
@@ -5301,13 +5301,13 @@ class ParameterListSyntax extends SyntaxNode {
 
     public static create(openParenToken: ISyntaxToken,
                          closeParenToken: ISyntaxToken): ParameterListSyntax {
-        return new ParameterListSyntax(openParenToken, SeparatedSyntaxList.empty, closeParenToken);
+        return new ParameterListSyntax(openParenToken, Syntax.emptySeparatedList, closeParenToken);
     }
 
     public static create1(): ParameterListSyntax {
         return new ParameterListSyntax(
             Syntax.token(SyntaxKind.OpenParenToken),
-            SeparatedSyntaxList.empty,
+            Syntax.emptySeparatedList,
             Syntax.token(SyntaxKind.CloseParenToken));
     }
 
@@ -5381,7 +5381,7 @@ class ParameterListSyntax extends SyntaxNode {
     }
 
     public withParameter(parameter: ParameterSyntax): ParameterListSyntax {
-        return this.withParameters(SeparatedSyntaxList.create([parameter]));
+        return this.withParameters(Syntax.separatedList([parameter]));
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): ParameterListSyntax {
@@ -8653,7 +8653,7 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
                          identifier: ISyntaxToken,
                          openBraceToken: ISyntaxToken,
                          closeBraceToken: ISyntaxToken): EnumDeclarationSyntax {
-        return new EnumDeclarationSyntax(null, enumKeyword, identifier, openBraceToken, SeparatedSyntaxList.empty, closeBraceToken);
+        return new EnumDeclarationSyntax(null, enumKeyword, identifier, openBraceToken, Syntax.emptySeparatedList, closeBraceToken);
     }
 
     public static create1(identifier: ISyntaxToken): EnumDeclarationSyntax {
@@ -8662,7 +8662,7 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
             Syntax.token(SyntaxKind.EnumKeyword),
             identifier,
             Syntax.token(SyntaxKind.OpenBraceToken),
-            SeparatedSyntaxList.empty,
+            Syntax.emptySeparatedList,
             Syntax.token(SyntaxKind.CloseBraceToken));
     }
 
@@ -8772,7 +8772,7 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
     }
 
     public withVariableDeclarator(variableDeclarator: VariableDeclaratorSyntax): EnumDeclarationSyntax {
-        return this.withVariableDeclarators(SeparatedSyntaxList.create([variableDeclarator]));
+        return this.withVariableDeclarators(Syntax.separatedList([variableDeclarator]));
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): EnumDeclarationSyntax {
@@ -8943,13 +8943,13 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
 
     public static create(openBraceToken: ISyntaxToken,
                          closeBraceToken: ISyntaxToken): ObjectLiteralExpressionSyntax {
-        return new ObjectLiteralExpressionSyntax(openBraceToken, SeparatedSyntaxList.empty, closeBraceToken);
+        return new ObjectLiteralExpressionSyntax(openBraceToken, Syntax.emptySeparatedList, closeBraceToken);
     }
 
     public static create1(): ObjectLiteralExpressionSyntax {
         return new ObjectLiteralExpressionSyntax(
             Syntax.token(SyntaxKind.OpenBraceToken),
-            SeparatedSyntaxList.empty,
+            Syntax.emptySeparatedList,
             Syntax.token(SyntaxKind.CloseBraceToken));
     }
 
@@ -9023,7 +9023,7 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     public withPropertyAssignment(propertyAssignment: PropertyAssignmentSyntax): ObjectLiteralExpressionSyntax {
-        return this.withPropertyAssignments(SeparatedSyntaxList.create([propertyAssignment]));
+        return this.withPropertyAssignments(Syntax.separatedList([propertyAssignment]));
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): ObjectLiteralExpressionSyntax {

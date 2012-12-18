@@ -2,8 +2,8 @@
 ///<reference path='ISeparatedSyntaxList.ts' />
 ///<reference path='SyntaxFacts.ts' />
 
-module SeparatedSyntaxList {
-    function collectTextElements(elements: string[], list: ISeparatedSyntaxList): void {
+module Syntax {
+    function collectSeparatedListTextElements(elements: string[], list: ISeparatedSyntaxList): void {
         for (var i = 0, n = list.count(); i < n; i++) {
             list.itemAt(i).collectTextElements(elements);
         }
@@ -38,7 +38,7 @@ module SeparatedSyntaxList {
         }
 
         public collectTextElements(elements: string[]): void {
-            return collectTextElements(elements, this);
+            return collectSeparatedListTextElements(elements, this);
         }
 
         public firstToken(): ISyntaxToken {
@@ -115,7 +115,7 @@ module SeparatedSyntaxList {
         }
 
         public collectTextElements(elements: string[]): void {
-            return collectTextElements(elements, this);
+            return collectSeparatedListTextElements(elements, this);
         }
 
         public firstToken(): ISyntaxToken {
@@ -204,7 +204,7 @@ module SeparatedSyntaxList {
         }
 
         public collectTextElements(elements: string[]): void {
-            return collectTextElements(elements, this);
+            return collectSeparatedListTextElements(elements, this);
         }
 
         public firstToken(): ISyntaxToken {
@@ -288,13 +288,13 @@ module SeparatedSyntaxList {
         }
     }
 
-    export function create(nodes: ISyntaxElement[]): ISeparatedSyntaxList {
-        return createAndValidate(nodes, false);
+    export function separatedList(nodes: ISyntaxElement[]): ISeparatedSyntaxList {
+        return separatedListAndValidate(nodes, false);
     }
 
-    export function createAndValidate(nodes: ISyntaxElement[], validate: bool): ISeparatedSyntaxList {
+    export function separatedListAndValidate(nodes: ISyntaxElement[], validate: bool): ISeparatedSyntaxList {
         if (nodes === undefined || nodes === null || nodes.length === 0) {
-            return empty;
+            return emptySeparatedList;
         }
 
         if (validate) {
@@ -317,6 +317,6 @@ module SeparatedSyntaxList {
 
         return new NormalSeparatedSyntaxList(nodes);
     }
-    
-    export var empty: ISeparatedSyntaxList = new EmptySeparatedSyntaxList();
+
+    export var emptySeparatedList: ISeparatedSyntaxList = new EmptySeparatedSyntaxList();
 }

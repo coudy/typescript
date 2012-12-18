@@ -50,7 +50,7 @@
         }
 
         Debug.assert(newItems === null || newItems.length === list.count());
-        return newItems === null ? list : SeparatedSyntaxList.create(newItems);
+        return newItems === null ? list : Syntax.separatedList(newItems);
     }
 
     public visitSourceUnit(node: SourceUnitSyntax): any {

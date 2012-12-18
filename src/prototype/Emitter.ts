@@ -248,7 +248,7 @@ module Emitter {
             // var M;
             var variableStatement = VariableStatementSyntax.create1(new VariableDeclarationSyntax(
                 Syntax.token(SyntaxKind.VarKeyword).withTrailingTrivia(this.space),
-                SeparatedSyntaxList.create(
+                Syntax.separatedList(
                     [VariableDeclaratorSyntax.create(moduleIdentifier)])))
                         .withLeadingTrivia(leadingTrivia).withTrailingTrivia(this.newLine);
 
@@ -551,7 +551,7 @@ module Emitter {
                             MemberAccessExpressionSyntax.create1(
                                 Syntax.identifierName("_super"), Syntax.identifierName("apply")),
                             ArgumentListSyntax.create1().withArguments(
-                                SeparatedSyntaxList.create([
+                                Syntax.separatedList([
                                     ThisExpressionSyntax.create1(),
                                     Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
                                     Syntax.identifierName("arguments")])))
@@ -767,13 +767,13 @@ module Emitter {
 
             arguments.push(new ObjectLiteralExpressionSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
-                SeparatedSyntaxList.create(propertyAssignments),
+                Syntax.separatedList(propertyAssignments),
                 Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(accessorTrivia)));
 
             return ExpressionStatementSyntax.create1(
                 new InvocationExpressionSyntax(
                     MemberAccessExpressionSyntax.create1(Syntax.identifierName("Object"), Syntax.identifierName("defineProperty")),
-                    ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create(arguments))))
+                    ArgumentListSyntax.create1().withArguments(Syntax.separatedList(arguments))))
                         .withLeadingTrivia(memberAccessor.leadingTrivia()).withTrailingTrivia(this.newLine);
         }
 
@@ -815,7 +815,7 @@ module Emitter {
                 statements.push(ExpressionStatementSyntax.create1(
                     new InvocationExpressionSyntax(
                         Syntax.identifierName("__extends"),
-                        ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create([
+                        ArgumentListSyntax.create1().withArguments(Syntax.separatedList([
                             <any>new IdentifierNameSyntax(identifier),
                             Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
                             Syntax.identifierName("_super")])))).withLeadingTrivia(statementIndentation).withTrailingTrivia(this.newLine));
@@ -853,7 +853,7 @@ module Emitter {
 
             var callSignature = CallSignatureSyntax.create(
                 ParameterListSyntax.create1().withParameters(
-                    SeparatedSyntaxList.create(callParameters))).withTrailingTrivia(this.space);
+                    Syntax.separatedList(callParameters))).withTrailingTrivia(this.space);
 
             var invocationParameters = [];
             if (node.extendsClause() !== null && node.extendsClause().typeNames().count() > 0) {
@@ -868,7 +868,7 @@ module Emitter {
                     .withCallSignature(callSignature)
                     .withBlock(block)),
                 ArgumentListSyntax.create1().withArguments(
-                    SeparatedSyntaxList.create(invocationParameters)));
+                    Syntax.separatedList(invocationParameters)));
 
             // C = (function(_super) { ... })(BaseType)
             var variableDeclarator = VariableDeclaratorSyntax.create(
@@ -880,7 +880,7 @@ module Emitter {
             // var C = (function(_super) { ... })(BaseType);
             return VariableStatementSyntax.create1(new VariableDeclarationSyntax(
                 Syntax.token(SyntaxKind.VarKeyword).withTrailingTrivia(this.space),
-                SeparatedSyntaxList.create([variableDeclarator])))
+                Syntax.separatedList([variableDeclarator])))
                     .withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(this.newLine);
         }
 
@@ -967,7 +967,7 @@ module Emitter {
                 statements.push(VariableStatementSyntax.create1(
                     new VariableDeclarationSyntax(
                         Syntax.token(SyntaxKind.VarKeyword).withTrailingTrivia(this.space),
-                        SeparatedSyntaxList.create([new VariableDeclaratorSyntax(
+                        Syntax.separatedList([new VariableDeclaratorSyntax(
                             Syntax.identifier("_").withTrailingTrivia(this.space), null,
                             new EqualsValueClauseSyntax(
                                 Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
@@ -1032,7 +1032,7 @@ module Emitter {
             // var E;
             var variableStatement = VariableStatementSyntax.create1(new VariableDeclarationSyntax(
                 Syntax.token(SyntaxKind.VarKeyword).withTrailingTrivia(this.space),
-                SeparatedSyntaxList.create([VariableDeclaratorSyntax.create(identifier)])))
+                Syntax.separatedList([VariableDeclaratorSyntax.create(identifier)])))
                     .withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(this.newLine);
 
             // (function(E) { E.e1 = ... })(E||(E={}));
@@ -1059,7 +1059,7 @@ module Emitter {
             arguments.unshift(ThisExpressionSyntax.create1());
 
             return result.withExpression(expression)
-                         .withArgumentList(result.argumentList().withArguments(SeparatedSyntaxList.create(arguments)))
+                         .withArgumentList(result.argumentList().withArguments(Syntax.separatedList(arguments)))
                          .withLeadingTrivia(result.leadingTrivia());
         }
 
@@ -1075,7 +1075,7 @@ module Emitter {
 
             var expression = MemberAccessExpressionSyntax.create1(result.expression(), Syntax.identifierName("call"));
             return result.withExpression(expression)
-                         .withArgumentList(result.argumentList().withArguments(SeparatedSyntaxList.create(arguments)));
+                         .withArgumentList(result.argumentList().withArguments(Syntax.separatedList(arguments)));
         }
 
         private visitInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {

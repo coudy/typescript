@@ -881,7 +881,7 @@ module Parser {
             var identifier = this.eatIdentifierToken();
 
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
-            var variableDeclarators: ISeparatedSyntaxList = SeparatedSyntaxList.empty;
+            var variableDeclarators: ISeparatedSyntaxList = Syntax.emptySeparatedList;
 
             if (!openBraceToken.isMissing()) {
                 variableDeclarators = this.parseSeparatedSyntaxList(ListParsingState.EnumDeclaration_VariableDeclarators);
@@ -1307,7 +1307,7 @@ module Parser {
         private parseObjectType(): ObjectTypeSyntax {
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
-            var typeMembers: ISeparatedSyntaxList = SeparatedSyntaxList.empty;
+            var typeMembers: ISeparatedSyntaxList = Syntax.emptySeparatedList;
             if (!openBraceToken.isMissing()) {
                 typeMembers = this.parseSeparatedSyntaxList(ListParsingState.ObjectType_TypeMembers);
             }
@@ -3091,7 +3091,7 @@ module Parser {
 
         private parseParameterList(): ParameterListSyntax {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
-            var parameters: ISeparatedSyntaxList = SeparatedSyntaxList.empty;
+            var parameters: ISeparatedSyntaxList = Syntax.emptySeparatedList;
 
             if (!openParenToken.isMissing()) {
                 parameters = this.parseSeparatedSyntaxList(ListParsingState.ParameterList_Parameters);
@@ -3480,7 +3480,7 @@ module Parser {
                 this.reportUnexpectedTokenDiagnostic(currentListType);
             }
 
-            return SeparatedSyntaxList.create(items);
+            return Syntax.separatedList(items);
         }
 
         private allowsTrailingSeparator(currentListType: ListParsingState): bool {

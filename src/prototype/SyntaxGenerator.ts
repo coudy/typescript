@@ -1276,7 +1276,7 @@ function generateFactory1Method(definition: ITypeDefinition): string {
             result += "SyntaxList.empty";
         }
         else if (child.isSeparatedList) {
-            result += "SeparatedSyntaxList.empty";
+            result += "Syntax.emptySeparatedList";
         }
         else {
             result += "null";
@@ -1379,7 +1379,7 @@ function generateFactory2Method(definition: ITypeDefinition): string {
             result += "\r\n            SyntaxList.empty";
         }
         else if (child.isSeparatedList) {
-            result += "\r\n            SeparatedSyntaxList.empty";
+            result += "\r\n            Syntax.emptySeparatedList";
         }
         else if (isOptional(child)) {
             result += "\r\n            null";
@@ -1665,7 +1665,7 @@ function generateWithMethod(definition: ITypeDefinition, child: IMemberDefinitio
                 result += "SyntaxList.create([" + argName + "])";
             }
             else {
-                result += "SeparatedSyntaxList.create([" + argName + "])";
+                result += "Syntax.separatedList([" + argName + "])";
             }
 
             result += ");\r\n";
@@ -1997,7 +1997,7 @@ function generateRewriter(): string {
 "        }\r\n" +
 "\r\n" +
 "        Debug.assert(newItems === null || newItems.length === list.count());\r\n" +
-"        return newItems === null ? list : SeparatedSyntaxList.create(newItems);\r\n" +
+"        return newItems === null ? list : Syntax.separatedList(newItems);\r\n" +
 "    }\r\n";
 
     for (var i = 0; i < definitions.length; i++) {
