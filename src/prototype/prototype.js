@@ -20743,7 +20743,7 @@ var Emitter;
                     var variableIdentifier = this.withNoTrivia(variableDeclarator.identifier());
                     assignDefaultValues.value = assignDefaultValues.value && variableDeclarator.equalsValueClause() === null;
                     var innerAssign = Syntax.assignmentExpression(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), new IdentifierNameSyntax(variableIdentifier)).withTrailingTrivia(Syntax.spaceTriviaList), Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues.value, i));
-                    var elementAccessExpression = ElementAccessExpressionSyntax.create1(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), Syntax.identifierName("_map")), innerAssign).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.space);
+                    var elementAccessExpression = ElementAccessExpressionSyntax.create1(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), Syntax.identifierName("_map")), innerAssign).withLeadingTrivia(initIndentationTrivia).withLeadingTrivia(variableDeclarator.leadingTrivia()).withTrailingTrivia(this.space);
                     ; ;
                     var outerAssign = Syntax.assignmentExpression(elementAccessExpression, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), Syntax.stringLiteralExpression('"' + variableIdentifier.text() + '"'));
                     var expressionStatement = ExpressionStatementSyntax.create1(outerAssign).withTrailingTrivia(this.newLine);
@@ -25997,7 +25997,7 @@ var Program = (function () {
         });
         environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, true, true);
+            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
     };
     Program.prototype.handleException = function (environment, filePath, e) {

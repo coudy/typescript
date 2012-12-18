@@ -33,10 +33,17 @@ var ParserExpressionPrecedence;
 (function(ParserExpressionPrecedence) {
     var _ = ParserExpressionPrecedence;
     _._map = [];
+    // Intuitively, commas have the lowest precedence.  "a || b, c" is "(a || b), c", not
+    // "a || (b, c)"
     _._map[_.CommaExpressionPrecedence = 1] = "CommaExpressionPrecedence";
+
     _._map[_.AssignmentExpressionPrecedence = 2] = "AssignmentExpressionPrecedence";
+
     _._map[_.ConditionalExpressionPrecedence = 3] = "ConditionalExpressionPrecedence";
+
+    // REVIEW: Should ArrowFunctions have higher, lower, or the same precedence as ternary?
     _._map[_.ArrowFunctionPrecedence = 4] = "ArrowFunctionPrecedence";
+
     _._map[_.LogicalOrExpressionPrecedence = 5] = "LogicalOrExpressionPrecedence";
     _._map[_.LogicalAndExpressionPrecedence = 6] = "LogicalAndExpressionPrecedence";
     _._map[_.BitwiseOrExpressionPrecedence = 7] = "BitwiseOrExpressionPrecedence";
@@ -47,6 +54,11 @@ var ParserExpressionPrecedence;
     _._map[_.ShiftExpressionPrecdence = 12] = "ShiftExpressionPrecdence";
     _._map[_.AdditiveExpressionPrecedence = 13] = "AdditiveExpressionPrecedence";
     _._map[_.MultiplicativeExpressionPrecedence = 14] = "MultiplicativeExpressionPrecedence";
+
+    // Intuitively, unary expressions have the highest precedence.  After all, if you have:
+    //   !foo || bar
+    //
+    // Then you have "(!foo) || bar", not "!(foo || bar)"
     _._map[_.UnaryExpressionPrecedence = 15] = "UnaryExpressionPrecedence";
 })(ParserExpressionPrecedence||(ParserExpressionPrecedence={}));
 
@@ -97,6 +109,7 @@ var ParserListParsingState;
     _._map[_.ObjectLiteralExpression_PropertyAssignments = 1 << 13] = "ObjectLiteralExpression_PropertyAssignments";
     _._map[_.ArrayLiteralExpression_AssignmentExpressions = 1 << 14] = "ArrayLiteralExpression_AssignmentExpressions";
     _._map[_.ParameterList_Parameters = 1 << 15] = "ParameterList_Parameters";
+
     _._map[_.FirstListParsingState = SourceUnit_ModuleElements] = "FirstListParsingState";
     _._map[_.LastListParsingState = ParameterList_Parameters] = "LastListParsingState";
 })(ParserListParsingState||(ParserListParsingState={}));
