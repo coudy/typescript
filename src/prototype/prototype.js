@@ -20311,10 +20311,8 @@ var Emitter;
             return name.kind() === 121 /* QualifiedName */  ? (name).right() : name;
         };
         EmitterImpl.prototype.exportModuleElement = function (moduleIdentifier, moduleElement, elementIdentifier) {
-            moduleIdentifier = this.withNoTrivia(moduleIdentifier);
             elementIdentifier = this.withNoTrivia(elementIdentifier);
-            var indentationTrivia = this.indentationTriviaForStartOfNode(moduleElement);
-            return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(moduleIdentifier.withLeadingTrivia(indentationTrivia)), new IdentifierNameSyntax(elementIdentifier.withTrailingTrivia(SyntaxTriviaList.space))), Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), new IdentifierNameSyntax(elementIdentifier))).withTrailingTrivia(this.newLine);
+            return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(this.withNoTrivia(moduleIdentifier)), new IdentifierNameSyntax(elementIdentifier.withTrailingTrivia(SyntaxTriviaList.space))), Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), new IdentifierNameSyntax(elementIdentifier))).withLeadingTrivia(this.indentationTriviaForStartOfNode(moduleElement)).withTrailingTrivia(this.newLine);
         };
         EmitterImpl.prototype.handleExportedModuleElement = function (parentModule, moduleElement, elements) {
             if(moduleElement.kind() === 140 /* VariableStatement */ ) {

@@ -153,20 +153,19 @@ module Emitter {
         private exportModuleElement(moduleIdentifier: ISyntaxToken,
                                     moduleElement: ModuleElementSyntax,
                                     elementIdentifier: ISyntaxToken): ExpressionStatementSyntax {
-            moduleIdentifier = this.withNoTrivia(moduleIdentifier);
             elementIdentifier = this.withNoTrivia(elementIdentifier);
-
-            var indentationTrivia = this.indentationTriviaForStartOfNode(moduleElement);
 
             // M1.e = e;
             return ExpressionStatementSyntax.create1(
                 new BinaryExpressionSyntax(
                     SyntaxKind.AssignmentExpression,
                     MemberAccessExpressionSyntax.create1(
-                        new IdentifierNameSyntax(moduleIdentifier.withLeadingTrivia(indentationTrivia)),
+                        new IdentifierNameSyntax(this.withNoTrivia(moduleIdentifier)),
                         new IdentifierNameSyntax(elementIdentifier.withTrailingTrivia(SyntaxTriviaList.space))),
                     Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
-                    new IdentifierNameSyntax(elementIdentifier))).withTrailingTrivia(this.newLine);
+                    new IdentifierNameSyntax(elementIdentifier)))
+                        .withLeadingTrivia(this.indentationTriviaForStartOfNode(moduleElement))
+                        .withTrailingTrivia(this.newLine);
         }
 
         private handleExportedModuleElement(parentModule: ISyntaxToken,
