@@ -516,17 +516,11 @@ module Emitter {
                 return null;
             }
 
-            var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
-            var memberIdentifier = this.withNoTrivia(declarator.identifier());
-
-            var receiver = static
-                ? <ExpressionSyntax>new IdentifierNameSyntax(classIdentifier)
-                : ThisExpressionSyntax.create1();
-
             // this.foo = expr;
-            receiver = MemberAccessExpressionSyntax.create1(
-                receiver,
-                new IdentifierNameSyntax(memberIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
+            var receiver = MemberAccessExpressionSyntax.create1(
+                static ? <ExpressionSyntax>new IdentifierNameSyntax(this.withNoTrivia(classDeclaration.identifier()))
+                       : ThisExpressionSyntax.create1(),
+                new IdentifierNameSyntax(this.withNoTrivia(declarator.identifier()))).withTrailingTrivia(SyntaxTriviaList.space);
 
             return ExpressionStatementSyntax.create1(
                 Syntax.assignmentExpression(

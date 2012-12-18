@@ -20500,10 +20500,7 @@ var Emitter;
             if(declarator.equalsValueClause() === null) {
                 return null;
             }
-            var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
-            var memberIdentifier = this.withNoTrivia(declarator.identifier());
-            var receiver = static ? new IdentifierNameSyntax(classIdentifier) : ThisExpressionSyntax.create1();
-            receiver = MemberAccessExpressionSyntax.create1(receiver, new IdentifierNameSyntax(memberIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
+            var receiver = MemberAccessExpressionSyntax.create1(static ? new IdentifierNameSyntax(this.withNoTrivia(classDeclaration.identifier())) : ThisExpressionSyntax.create1(), new IdentifierNameSyntax(this.withNoTrivia(declarator.identifier()))).withTrailingTrivia(SyntaxTriviaList.space);
             return ExpressionStatementSyntax.create1(Syntax.assignmentExpression(receiver, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), declarator.equalsValueClause().value().accept(this).withTrailingTrivia(SyntaxTriviaList.empty))).withLeadingTrivia(memberDeclaration.leadingTrivia()).withTrailingTrivia(this.newLine);
         };
         EmitterImpl.prototype.generatePropertyAssignments = function (classDeclaration, static) {
