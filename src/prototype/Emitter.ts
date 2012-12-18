@@ -541,7 +541,7 @@ module Emitter {
             var result: ExpressionStatementSyntax[] = [];
 
             // TODO: handle alignment here.
-            for (var i = classDeclaration.classElements().count() - 1; i >= 0; i--) {
+            for (var i = 0, n = classDeclaration.classElements().count(); i < n; i++) {
                 var classElement = classDeclaration.classElements().syntaxNodeAt(i);
 
                 if (classElement.kind() === SyntaxKind.MemberVariableDeclaration) {

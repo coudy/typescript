@@ -20508,7 +20508,7 @@ var Emitter;
         };
         EmitterImpl.prototype.generatePropertyAssignments = function (classDeclaration, static) {
             var result = [];
-            for(var i = classDeclaration.classElements().count() - 1; i >= 0; i--) {
+            for(var i = 0, n = classDeclaration.classElements().count(); i < n; i++) {
                 var classElement = classDeclaration.classElements().syntaxNodeAt(i);
                 if(classElement.kind() === 134 /* MemberVariableDeclaration */ ) {
                     var statement = this.generatePropertyAssignment(classDeclaration, static, classElement);

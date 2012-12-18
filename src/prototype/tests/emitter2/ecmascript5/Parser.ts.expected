@@ -228,39 +228,8 @@ var Parser = (function(_super) {
         if (typeof options === "undefined") { options = null; }
         _super.call(this, 32, null);
 
-        // Diagnostics created when parsing invalid code.  Any diagnosics created when speculative 
-        // parsing need to removed when rewinding.  To do this we store the count of diagnostics when 
-        // we start speculative parsing.  And if we rewind, we restore this to the same count that we 
-        // started at.
-        this.diagnostics = [];
-
-        // Tokens we've decided to skip because they couldn't fit into the current production.  Any
-        // tokens that are skipped when speculative parsing need to removed when rewinding.  To do this
-        // we store the count of skipped tokens when we start speculative parsing.  And if we rewind,
-        // we restore this to the same count that we started at.
-        this.skippedTokens = [];
-
-        // Whether or not we are in strict parsing mode.  All that changes in strict parsing mode is
-        // that some tokens that would be considered identifiers may be considered keywords.  When 
-        // rewinding, we need to store and restore this as the mode may have changed.
-        this.isInStrictMode = false;
-
-        // TODO: do we need to store/restore this when speculative parsing?  I don't think so.  The
-        // parsing logic already handles storing/restoring this and should work properly even if we're
-        // speculative parsing.
-        this.listParsingState = 0;
-
-        // The diagnostics we get while scanning.  Note: this never gets rewound when we do a normal
-        // rewind.  That's because rewinding doesn't affect the tokens created.  It only affects where
-        // in the token stream we're pointing at.  However, it will get modified if we we decide to
-        // reparse a / or /= as a regular expression.
-        this.tokenDiagnostics = [];
-
-        // The full start position of the current token the parser is pointing at.
-        this.currentTokenFullStart = 0;
-
-        // The previous token to the current token.  Set when we advance to the next token.
-        this.previousToken = null;
+        // Parsing options.
+        this.options = null;
 
         // Current state of the parser.  If we need to rewind we will store and reset these values as
         // appropriate.
@@ -270,8 +239,39 @@ var Parser = (function(_super) {
         // can be expensive.
         this._currentToken = null;
 
-        // Parsing options.
-        this.options = null;
+        // The previous token to the current token.  Set when we advance to the next token.
+        this.previousToken = null;
+
+        // The full start position of the current token the parser is pointing at.
+        this.currentTokenFullStart = 0;
+
+        // The diagnostics we get while scanning.  Note: this never gets rewound when we do a normal
+        // rewind.  That's because rewinding doesn't affect the tokens created.  It only affects where
+        // in the token stream we're pointing at.  However, it will get modified if we we decide to
+        // reparse a / or /= as a regular expression.
+        this.tokenDiagnostics = [];
+
+        // TODO: do we need to store/restore this when speculative parsing?  I don't think so.  The
+        // parsing logic already handles storing/restoring this and should work properly even if we're
+        // speculative parsing.
+        this.listParsingState = 0;
+
+        // Whether or not we are in strict parsing mode.  All that changes in strict parsing mode is
+        // that some tokens that would be considered identifiers may be considered keywords.  When 
+        // rewinding, we need to store and restore this as the mode may have changed.
+        this.isInStrictMode = false;
+
+        // Tokens we've decided to skip because they couldn't fit into the current production.  Any
+        // tokens that are skipped when speculative parsing need to removed when rewinding.  To do this
+        // we store the count of skipped tokens when we start speculative parsing.  And if we rewind,
+        // we restore this to the same count that we started at.
+        this.skippedTokens = [];
+
+        // Diagnostics created when parsing invalid code.  Any diagnosics created when speculative 
+        // parsing need to removed when rewinding.  To do this we store the count of diagnostics when 
+        // we start speculative parsing.  And if we rewind, we restore this to the same count that we 
+        // started at.
+        this.diagnostics = [];
 
         this.scanner = new Scanner(text, languageVersion, stringTable);
 
