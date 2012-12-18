@@ -20428,19 +20428,8 @@ var Emitter;
             return EmitterImpl.parameterListDefaultParameters(signature.parameterList());
         }
         EmitterImpl.parameterListDefaultParameters = function parameterListDefaultParameters(parameterList) {
-            return EmitterImpl.parametersDefaultParameters(parameterList.parameters());
-        }
-        EmitterImpl.parameterListPropertyParameters = function parameterListPropertyParameters(parameterList) {
-            return EmitterImpl.parametersPropertyParameters(parameterList.parameters());
-        }
-        EmitterImpl.parametersDefaultParameters = function parametersDefaultParameters(list) {
-            return ArrayUtilities.where(list.toSyntaxNodeArray(), function (p) {
+            return ArrayUtilities.where(parameterList.parameters().toSyntaxNodeArray(), function (p) {
                 return p.equalsValueClause() !== null;
-            });
-        }
-        EmitterImpl.parametersPropertyParameters = function parametersPropertyParameters(list) {
-            return ArrayUtilities.where(list.toSyntaxNodeArray(), function (p) {
-                return p.publicOrPrivateKeyword() !== null;
             });
         }
         EmitterImpl.prototype.generatePropertyAssignmentStatement = function (parameter) {
@@ -20560,7 +20549,9 @@ var Emitter;
             for(var i = instanceAssignments.length - 1; i >= 0; i--) {
                 normalStatements.unshift(this.changeIndentation(instanceAssignments[i], true, this.options.indentSpaces));
             }
-            var parameterPropertyAssignments = ArrayUtilities.select(EmitterImpl.parameterListPropertyParameters(constructorDeclaration.parameterList()), function (p) {
+            var parameterPropertyAssignments = ArrayUtilities.select(ArrayUtilities.where(constructorDeclaration.parameterList().parameters().toSyntaxNodeArray(), function (p) {
+                return p.publicOrPrivateKeyword() !== null;
+            }), function (p) {
                 return _this.generatePropertyAssignmentStatement(p);
             });
             for(var i = parameterPropertyAssignments.length - 1; i >= 0; i--) {

@@ -422,19 +422,7 @@ module Emitter {
         }
 
         private static parameterListDefaultParameters(parameterList: ParameterListSyntax): ParameterSyntax[] {
-            return EmitterImpl.parametersDefaultParameters(parameterList.parameters());
-        }
-
-        private static parameterListPropertyParameters(parameterList: ParameterListSyntax): ParameterSyntax[] {
-            return EmitterImpl.parametersPropertyParameters(parameterList.parameters());
-        }
-
-        private static parametersDefaultParameters(list: ISeparatedSyntaxList): ParameterSyntax[] {
-            return ArrayUtilities.where(list.toSyntaxNodeArray(), p => p.equalsValueClause() !== null);
-        }
-
-        private static parametersPropertyParameters(list: ISeparatedSyntaxList): ParameterSyntax[] {
-            return ArrayUtilities.where(list.toSyntaxNodeArray(), p => p.publicOrPrivateKeyword() !== null);
+            return ArrayUtilities.where(parameterList.parameters().toSyntaxNodeArray(), p => p.equalsValueClause() !== null);
         }
 
         private generatePropertyAssignmentStatement(parameter: ParameterSyntax): ExpressionStatementSyntax {
@@ -663,7 +651,7 @@ module Emitter {
             }
 
             var parameterPropertyAssignments = <ExpressionStatementSyntax[]>ArrayUtilities.select(
-                EmitterImpl.parameterListPropertyParameters(constructorDeclaration.parameterList()),
+                ArrayUtilities.where(constructorDeclaration.parameterList().parameters().toSyntaxNodeArray(), p => p.publicOrPrivateKeyword() !== null),
                 p => this.generatePropertyAssignmentStatement(p));
 
             for (var i = parameterPropertyAssignments.length - 1; i >= 0; i--) {
