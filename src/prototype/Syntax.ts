@@ -52,4 +52,8 @@ module Syntax {
         return node.kind() === SyntaxKind.InvocationExpression &&
             isSuperMemberAccessExpression((<InvocationExpressionSyntax>node).expression());
     }
+
+    export function assignmentExpression(left: ExpressionSyntax, token: ISyntaxToken, right: ExpressionSyntax): BinaryExpressionSyntax {
+        return new BinaryExpressionSyntax(SyntaxKind.AssignmentExpression, left, token, right);
+    }
 }

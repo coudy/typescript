@@ -234,7 +234,7 @@ module Emitter {
                 name,
                 Syntax.token(SyntaxKind.BarBarToken),
                 ParenthesizedExpressionSyntax.create1(
-                    new BinaryExpressionSyntax(SyntaxKind.AssignmentExpression,
+                    Syntax.assignmentExpression(
                         name,
                         Syntax.token(SyntaxKind.EqualsToken),
                         ObjectLiteralExpressionSyntax.create1())));
@@ -430,8 +430,7 @@ module Emitter {
 
             // this.foo = foo;
             return ExpressionStatementSyntax.create1(
-                new BinaryExpressionSyntax(
-                    SyntaxKind.AssignmentExpression,
+                Syntax.assignmentExpression(
                     MemberAccessExpressionSyntax.create1(
                         ThisExpressionSyntax.create1(),
                         new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))),
@@ -454,8 +453,7 @@ module Emitter {
 
             // foo = expr; 
             var assignmentStatement = ExpressionStatementSyntax.create1(
-                new BinaryExpressionSyntax(
-                    SyntaxKind.AssignmentExpression,
+                Syntax.assignmentExpression(
                     identifierName,
                     Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
                     parameter.equalsValueClause().value().accept(this))).withTrailingTrivia(this.space);
@@ -539,12 +537,11 @@ module Emitter {
                 new IdentifierNameSyntax(memberIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
 
             return ExpressionStatementSyntax.create1(
-                    new BinaryExpressionSyntax(
-                        SyntaxKind.AssignmentExpression,
-                        receiver,
-                        Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
-                        declarator.equalsValueClause().value().accept(this).withTrailingTrivia(SyntaxTriviaList.empty))
-                ).withLeadingTrivia(memberDeclaration.leadingTrivia()).withTrailingTrivia(this.newLine);
+                Syntax.assignmentExpression(
+                    receiver,
+                    Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
+                    declarator.equalsValueClause().value().accept(this).withTrailingTrivia(SyntaxTriviaList.empty)))
+                        .withLeadingTrivia(memberDeclaration.leadingTrivia()).withTrailingTrivia(this.newLine);
         }
 
         private generatePropertyAssignments(classDeclaration: ClassDeclarationSyntax,
@@ -731,8 +728,7 @@ module Emitter {
                 .withCallSignature(CallSignatureSyntax.create(callSignatureParameterList))
                 .withBlock(block);
 
-            var assignmentExpression = new BinaryExpressionSyntax(
-                SyntaxKind.AssignmentExpression,
+            var assignmentExpression = Syntax.assignmentExpression(
                 receiver,
                 Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
                 functionExpression);
@@ -1056,8 +1052,7 @@ module Emitter {
 
                 // _._map = []
                 statements.push(ExpressionStatementSyntax.create1(
-                    new BinaryExpressionSyntax(
-                        SyntaxKind.AssignmentExpression,
+                    Syntax.assignmentExpression(
                         MemberAccessExpressionSyntax.create1(
                             Syntax.identifierName("_"),
                             Syntax.identifierName("_map").withTrailingTrivia(this.space)),
@@ -1072,8 +1067,7 @@ module Emitter {
                     assignDefaultValues.value = assignDefaultValues.value && variableDeclarator.equalsValueClause() === null;
 
                     // _.Foo = 1
-                    var innerAssign = new BinaryExpressionSyntax(
-                        SyntaxKind.AssignmentExpression,
+                    var innerAssign = Syntax.assignmentExpression(
                         MemberAccessExpressionSyntax.create1(
                             Syntax.identifierName("_"),
                             new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space))),
@@ -1087,8 +1081,7 @@ module Emitter {
                         innerAssign).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.space);;
 
                     //_._map[_.Foo = 1] = "Foo"
-                    var outerAssign = new BinaryExpressionSyntax(
-                        SyntaxKind.AssignmentExpression,
+                    var outerAssign = Syntax.assignmentExpression(
                         elementAccessExpression,
                         Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
                         Syntax.stringLiteralExpression('"' + variableIdentifier.text() + '"'));
