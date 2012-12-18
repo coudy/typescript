@@ -20615,13 +20615,11 @@ var Emitter;
                 var assignment = this.changeIndentation(defaultValueAssignments[i], true, functionColumn + this.options.indentSpaces);
                 blockStatements.unshift(assignment);
             }
-            block = block.withStatements(SyntaxList.create(blockStatements));
             var callSignatureParameterList = functionDeclaration.functionSignature().parameterList().accept(this);
             if(!callSignatureParameterList.hasTrailingTrivia()) {
                 callSignatureParameterList = callSignatureParameterList.withTrailingTrivia(SyntaxTriviaList.space);
             }
-            var functionExpression = FunctionExpressionSyntax.create1().withCallSignature(CallSignatureSyntax.create(callSignatureParameterList)).withBlock(block);
-            var assignmentExpression = Syntax.assignmentExpression(receiver, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), functionExpression);
+            var assignmentExpression = Syntax.assignmentExpression(receiver, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), FunctionExpressionSyntax.create1().withCallSignature(CallSignatureSyntax.create(callSignatureParameterList)).withBlock(block.withStatements(SyntaxList.create(blockStatements))));
             return ExpressionStatementSyntax.create1(assignmentExpression).withTrailingTrivia(blockTrailingTrivia);
         };
         EmitterImpl.prototype.convertMemberAccessor = function (memberAccessor) {

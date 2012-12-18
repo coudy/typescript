@@ -717,21 +717,19 @@ module Emitter {
                 blockStatements.unshift(assignment);
             }
 
-            block = block.withStatements(SyntaxList.create(blockStatements));
-
             var callSignatureParameterList = <ParameterListSyntax>functionDeclaration.functionSignature().parameterList().accept(this);
             if (!callSignatureParameterList.hasTrailingTrivia()) {
                 callSignatureParameterList = <ParameterListSyntax>callSignatureParameterList.withTrailingTrivia(SyntaxTriviaList.space);
             }
 
-            var functionExpression = FunctionExpressionSyntax.create1()
-                .withCallSignature(CallSignatureSyntax.create(callSignatureParameterList))
-                .withBlock(block);
-
+            // C.prototype.f = function (p1, p2) { ...  }
             var assignmentExpression = Syntax.assignmentExpression(
                 receiver,
                 Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
-                functionExpression);
+                FunctionExpressionSyntax.create1()
+                    .withCallSignature(CallSignatureSyntax.create(callSignatureParameterList))
+                    .withBlock(block.withStatements(
+                        SyntaxList.create(blockStatements))));
 
             return ExpressionStatementSyntax.create1(assignmentExpression)
                                             .withTrailingTrivia(blockTrailingTrivia);
