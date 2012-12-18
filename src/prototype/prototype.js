@@ -20245,8 +20245,8 @@ var Emitter;
             ];
             return SyntaxTriviaList.create(triviaArray);
         };
-        EmitterImpl.prototype.indentationTriviaForStartOfToken = function (token) {
-            var column = this.columnForStartOfToken(token);
+        EmitterImpl.prototype.indentationTriviaForStartOfNode = function (node) {
+            var column = this.columnForStartOfToken(node.firstToken());
             return this.indentationTrivia(column);
         };
         EmitterImpl.prototype.adjustListIndentation = function (nodes) {
@@ -20313,7 +20313,7 @@ var Emitter;
         EmitterImpl.prototype.exportModuleElement = function (moduleIdentifier, moduleElement, elementIdentifier) {
             moduleIdentifier = this.withNoTrivia(moduleIdentifier);
             elementIdentifier = this.withNoTrivia(elementIdentifier);
-            var indentationTrivia = this.indentationTriviaForStartOfToken(moduleElement.firstToken());
+            var indentationTrivia = this.indentationTriviaForStartOfNode(moduleElement);
             return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(moduleIdentifier.withLeadingTrivia(indentationTrivia)), new IdentifierNameSyntax(elementIdentifier.withTrailingTrivia(SyntaxTriviaList.space))), Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), new IdentifierNameSyntax(elementIdentifier))).withTrailingTrivia(this.newLine);
         };
         EmitterImpl.prototype.handleExportedModuleElement = function (parentModule, moduleElement, elements) {
@@ -20378,7 +20378,7 @@ var Emitter;
         EmitterImpl.prototype.convertModuleDeclaration = function (moduleDeclaration, moduleName, moduleElements, outermost) {
             moduleName = moduleName.withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
             var moduleIdentifier = moduleName.identifier();
-            var moduleIndentation = this.indentationTriviaForStartOfToken(moduleDeclaration.firstToken());
+            var moduleIndentation = this.indentationTriviaForStartOfNode(moduleDeclaration);
             var leadingTrivia = outermost ? moduleDeclaration.leadingTrivia() : moduleIndentation;
             var variableStatement = VariableStatementSyntax.create1(new VariableDeclarationSyntax(Syntax.token(38 /* VarKeyword */ ).withTrailingTrivia(this.space), SeparatedSyntaxList.create([
                 VariableDeclaratorSyntax.create(moduleIdentifier)
@@ -20629,7 +20629,7 @@ var Emitter;
         };
         EmitterImpl.prototype.convertMemberAccessor = function (memberAccessor) {
             var propertyName = memberAccessor.kind() === 136 /* GetMemberAccessorDeclaration */  ? "get" : "set";
-            var indentationTrivia = this.indentationTriviaForStartOfToken(memberAccessor.firstToken());
+            var indentationTrivia = this.indentationTriviaForStartOfNode(memberAccessor);
             var parameterList = memberAccessor.parameterList().accept(this);
             if(!parameterList.hasTrailingTrivia()) {
                 parameterList = parameterList.withTrailingTrivia(SyntaxTriviaList.space);
@@ -20727,7 +20727,7 @@ var Emitter;
             }
             statements.push.apply(statements, this.convertClassElements(node));
             statements.push(new ReturnStatementSyntax(Syntax.token(31 /* ReturnKeyword */ ).withTrailingTrivia(this.space), new IdentifierNameSyntax(identifier), Syntax.token(75 /* SemicolonToken */ )).withLeadingTrivia(statementIndentation).withTrailingTrivia(this.newLine));
-            var classIndentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
+            var classIndentationTrivia = this.indentationTriviaForStartOfNode(node);
             var block = new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), SyntaxList.create(statements), Syntax.token(68 /* CloseBraceToken */ ).withLeadingTrivia(classIndentationTrivia));
             var callParameters = [];
             if(node.extendsClause() !== null) {
@@ -20821,7 +20821,7 @@ var Emitter;
                 VariableDeclaratorSyntax.create(identifier)
             ]))).withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(this.newLine);
             var expressionStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(ParenthesizedExpressionSyntax.create1(this.generateEnumFunctionExpression(node)), ArgumentListSyntax.create1().withArgument(this.initializedVariable(new IdentifierNameSyntax(identifier)))));
-            expressionStatement = expressionStatement.withLeadingTrivia(this.indentationTriviaForStartOfToken(node.firstToken())).withTrailingTrivia(this.newLine);
+            expressionStatement = expressionStatement.withLeadingTrivia(this.indentationTriviaForStartOfNode(node)).withTrailingTrivia(this.newLine);
             return [
                 variableStatement, 
                 expressionStatement
