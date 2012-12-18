@@ -895,9 +895,6 @@ module Emitter {
             var classElements = <ClassElementSyntax[]>classDeclaration.classElements().toArray();
             while (classElements.length > 0) {
                 var classElement = classElements.shift();
-                if (classElement.kind() === SyntaxKind.ConstructorDeclaration) {
-                    continue;
-                }
 
                 var converted: StatementSyntax = null;
                 if (classElement.kind() === SyntaxKind.MemberFunctionDeclaration) {
@@ -908,7 +905,6 @@ module Emitter {
                 }
                 else if (classElement.kind() === SyntaxKind.GetMemberAccessorDeclaration ||
                          classElement.kind() === SyntaxKind.SetMemberAccessorDeclaration) {
-                    // TODO: handle properties.
                     var converted = this.convertMemberAccessorDeclaration(classDeclaration, <MemberAccessorDeclarationSyntax>classElement, classElements);
                 }
 
@@ -952,8 +948,7 @@ module Emitter {
                 statements.push(constructorFunctionDeclaration)
             }
 
-            var classElementStatements = this.convertClassElements(node);
-            statements.push.apply(statements, classElementStatements);
+            statements.push.apply(statements, this.convertClassElements(node));
 
             // return C;
             statements.push(new ReturnStatementSyntax(

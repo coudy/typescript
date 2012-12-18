@@ -20687,9 +20687,6 @@ var Emitter;
             var classElements = classDeclaration.classElements().toArray();
             while(classElements.length > 0) {
                 var classElement = classElements.shift();
-                if(classElement.kind() === 135 /* ConstructorDeclaration */ ) {
-                    continue;
-                }
                 var converted = null;
                 if(classElement.kind() === 133 /* MemberFunctionDeclaration */ ) {
                     var converted = this.convertMemberFunctionDeclaration(classDeclaration, classElement);
@@ -20728,8 +20725,7 @@ var Emitter;
             if(constructorFunctionDeclaration !== null) {
                 statements.push(constructorFunctionDeclaration);
             }
-            var classElementStatements = this.convertClassElements(node);
-            statements.push.apply(statements, classElementStatements);
+            statements.push.apply(statements, this.convertClassElements(node));
             statements.push(new ReturnStatementSyntax(Syntax.token(31 /* ReturnKeyword */ ).withTrailingTrivia(this.space), new IdentifierNameSyntax(identifier), Syntax.token(75 /* SemicolonToken */ )).withLeadingTrivia(statementIndentation).withTrailingTrivia(this.newLine));
             var classIndentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
             var block = new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), SyntaxList.create(statements), Syntax.token(68 /* CloseBraceToken */ ).withLeadingTrivia(classIndentationTrivia));
