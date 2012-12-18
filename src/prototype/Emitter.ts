@@ -477,9 +477,8 @@ module Emitter {
         }
 
         private generateDefaultValueAssignmentStatement(parameter: ParameterSyntax): IfStatementSyntax {
-            var name = parameter.identifier().withLeadingTrivia(SyntaxTriviaList.empty)
-                                             .withTrailingTrivia(this.space);
-            var identifierName = new IdentifierNameSyntax(name);
+            var name = this.withNoTrivia(parameter.identifier());
+            var identifierName = new IdentifierNameSyntax(name).withTrailingTrivia(this.space);
 
             // typeof foo === 'undefined'
             var condition = new BinaryExpressionSyntax(
@@ -498,8 +497,7 @@ module Emitter {
                 parameter.equalsValueClause().value().accept(this));
 
             // foo = expr; 
-            var assignmentStatement = ExpressionStatementSyntax.create1(
-                assignment).withTrailingTrivia(this.space);
+            var assignmentStatement = ExpressionStatementSyntax.create1(assignment).withTrailingTrivia(this.space);
 
             var block = new BlockSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.space),
@@ -632,9 +630,8 @@ module Emitter {
                 statements.push(superStatement);
             }
 
-            var instanceAssignments = this.generatePropertyAssignments(
-                classDeclaration, /*static:*/ false);
-            statements.push.apply(statements, instanceAssignments);
+            statements.push.apply(statements, 
+                this.generatePropertyAssignments(classDeclaration, /*static:*/ false));
 
             var indentationTrivia = this.indentationTrivia(classIndentationColumn);
             var block = new BlockSyntax(

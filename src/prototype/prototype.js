@@ -20460,8 +20460,8 @@ var Emitter;
             return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , MemberAccessExpressionSyntax.create1(ThisExpressionSyntax.create1(), new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))), Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), new IdentifierNameSyntax(identifier))).withTrailingTrivia(this.newLine);
         };
         EmitterImpl.prototype.generateDefaultValueAssignmentStatement = function (parameter) {
-            var name = parameter.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(this.space);
-            var identifierName = new IdentifierNameSyntax(name);
+            var name = this.withNoTrivia(parameter.identifier());
+            var identifierName = new IdentifierNameSyntax(name).withTrailingTrivia(this.space);
             var condition = new BinaryExpressionSyntax(191 /* EqualsExpression */ , new TypeOfExpressionSyntax(Syntax.token(37 /* TypeOfKeyword */ ).withTrailingTrivia(this.space), identifierName), Syntax.token(84 /* EqualsEqualsEqualsToken */ ).withTrailingTrivia(this.space), Syntax.stringLiteralExpression('"undefined"'));
             var assignment = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , identifierName, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), parameter.equalsValueClause().value().accept(this));
             var assignmentStatement = ExpressionStatementSyntax.create1(assignment).withTrailingTrivia(this.space);
@@ -20538,8 +20538,7 @@ var Emitter;
                 ])))).withLeadingTrivia(superIndentation).withTrailingTrivia(this.newLine);
                 statements.push(superStatement);
             }
-            var instanceAssignments = this.generatePropertyAssignments(classDeclaration, false);
-            statements.push.apply(statements, instanceAssignments);
+            statements.push.apply(statements, this.generatePropertyAssignments(classDeclaration, false));
             var indentationTrivia = this.indentationTrivia(classIndentationColumn);
             var block = new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), SyntaxList.create(statements), Syntax.token(68 /* CloseBraceToken */ ).withLeadingTrivia(indentationTrivia)).withTrailingTrivia(this.newLine);
             var functionDeclaration = new FunctionDeclarationSyntax(null, null, Syntax.token(25 /* FunctionKeyword */ ).withLeadingTrivia(indentationTrivia).withTrailingTrivia(this.space), functionSignature, block, null);
