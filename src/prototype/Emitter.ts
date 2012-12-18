@@ -485,9 +485,7 @@ module Emitter {
                         Syntax.token(SyntaxKind.TypeOfKeyword).withTrailingTrivia(this.space),
                         identifierName),
                     Syntax.token(SyntaxKind.EqualsEqualsEqualsToken).withTrailingTrivia(this.space),
-                    new LiteralExpressionSyntax(
-                        SyntaxKind.StringLiteralExpression,
-                        Syntax.token(SyntaxKind.StringLiteral, { text: '"undefined"' })));
+                    Syntax.stringLiteralExpression('"undefined"'));
 
             // foo = expr
             var assignment = new BinaryExpressionSyntax(
@@ -844,9 +842,7 @@ module Emitter {
                 Syntax.identifierName("prototype")));
             arguments.push(Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space));
 
-            arguments.push(new LiteralExpressionSyntax(
-                SyntaxKind.StringLiteralExpression,
-                Syntax.token(SyntaxKind.StringLiteral, { text: '"' + memberAccessor.identifier().text() + '"' })));
+            arguments.push(Syntax.stringLiteralExpression('"' + memberAccessor.identifier().text() + '"'));
             arguments.push(Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space));
 
             var propertyAssignments = [];
@@ -1050,7 +1046,7 @@ module Emitter {
         }
 
         private visitCastExpression(node: CastExpressionSyntax): ExpressionSyntax {
-            var result = <CastExpressionSyntax>super.visitCastExpression(node);
+            var result: CastExpressionSyntax = super.visitCastExpression(node);
 
             var subExpression = result.expression();
             var totalTrivia = result.leadingTrivia().concat(subExpression.leadingTrivia());
@@ -1064,9 +1060,9 @@ module Emitter {
         }
 
         private generateEnumValueExpression(enumDeclaration: EnumDeclarationSyntax,
-            variableDeclarator: VariableDeclaratorSyntax,
-            assignDefaultValues: bool,
-            index: number): ExpressionSyntax {
+                                            variableDeclarator: VariableDeclaratorSyntax,
+                                            assignDefaultValues: bool,
+                                            index: number): ExpressionSyntax {
             if (variableDeclarator.equalsValueClause() !== null) {
                 // Use the value if one is provided.
                 return variableDeclarator.equalsValueClause().value()
@@ -1076,9 +1072,7 @@ module Emitter {
             // Didn't have a value.  Synthesize one if we're doing that, or use the previous item's value
             // (plus one).
             if (assignDefaultValues) {
-                return new LiteralExpressionSyntax(
-                    SyntaxKind.NumericLiteralExpression,
-                    Syntax.token(SyntaxKind.NumericLiteral, { text: index.toString() }));
+                return Syntax.numericLiteralExpression(index.toString());
             }
 
             // Add one to the previous value.
@@ -1094,9 +1088,7 @@ module Emitter {
                 SyntaxKind.PlusExpression,
                 receiver,
                 Syntax.token(SyntaxKind.PlusToken).withTrailingTrivia(this.space),
-                new LiteralExpressionSyntax(
-                    SyntaxKind.NumericLiteralExpression,
-                    Syntax.token(SyntaxKind.NumericLiteral, { text: "1" })));
+                Syntax.numericLiteralExpression("1"));
         }
 
         private generateEnumFunctionExpression(node: EnumDeclarationSyntax): FunctionExpressionSyntax {
@@ -1158,9 +1150,7 @@ module Emitter {
                         SyntaxKind.AssignmentExpression,
                         elementAccessExpression,
                         Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
-                        new LiteralExpressionSyntax(
-                            SyntaxKind.StringLiteralExpression,
-                            Syntax.token(SyntaxKind.StringLiteral, { text: '"' + variableIdentifier.text() + '"' })));
+                        Syntax.stringLiteralExpression('"' + variableIdentifier.text() + '"'));
 
                     var expressionStatement = ExpressionStatementSyntax.create1(
                         outerAssign).withTrailingTrivia(this.newLine);

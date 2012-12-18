@@ -20183,6 +20183,18 @@ var Syntax;
         return CallSignatureSyntax.create1().withParameterList(ParameterListSyntax.create1().withParameter(parameter));
     }
     Syntax.callSignature = callSignature;
+    function numericLiteralExpression(text) {
+        return new LiteralExpressionSyntax(167 /* NumericLiteralExpression */ , Syntax.token(11 /* NumericLiteral */ , {
+            text: text
+        }));
+    }
+    Syntax.numericLiteralExpression = numericLiteralExpression;
+    function stringLiteralExpression(text) {
+        return new LiteralExpressionSyntax(169 /* StringLiteralExpression */ , Syntax.token(12 /* StringLiteral */ , {
+            text: text
+        }));
+    }
+    Syntax.stringLiteralExpression = stringLiteralExpression;
 })(Syntax || (Syntax = {}));
 var Emitter;
 (function (Emitter) {
@@ -20440,9 +20452,7 @@ var Emitter;
         EmitterImpl.prototype.generateDefaultValueAssignmentStatement = function (parameter) {
             var name = parameter.identifier().withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(this.space);
             var identifierName = new IdentifierNameSyntax(name);
-            var condition = new BinaryExpressionSyntax(191 /* EqualsExpression */ , new TypeOfExpressionSyntax(Syntax.token(37 /* TypeOfKeyword */ ).withTrailingTrivia(this.space), identifierName), Syntax.token(84 /* EqualsEqualsEqualsToken */ ).withTrailingTrivia(this.space), new LiteralExpressionSyntax(169 /* StringLiteralExpression */ , Syntax.token(12 /* StringLiteral */ , {
-                text: '"undefined"'
-            })));
+            var condition = new BinaryExpressionSyntax(191 /* EqualsExpression */ , new TypeOfExpressionSyntax(Syntax.token(37 /* TypeOfKeyword */ ).withTrailingTrivia(this.space), identifierName), Syntax.token(84 /* EqualsEqualsEqualsToken */ ).withTrailingTrivia(this.space), Syntax.stringLiteralExpression('"undefined"'));
             var assignment = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , identifierName, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), parameter.equalsValueClause().value().accept(this));
             var assignmentStatement = ExpressionStatementSyntax.create1(assignment).withTrailingTrivia(this.space);
             var block = new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.space), SyntaxList.create([
@@ -20640,9 +20650,7 @@ var Emitter;
             var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
             arguments.push(MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(classIdentifier), Syntax.identifierName("prototype")));
             arguments.push(Syntax.token(76 /* CommaToken */ ).withTrailingTrivia(this.space));
-            arguments.push(new LiteralExpressionSyntax(169 /* StringLiteralExpression */ , Syntax.token(12 /* StringLiteral */ , {
-                text: '"' + memberAccessor.identifier().text() + '"'
-            })));
+            arguments.push(Syntax.stringLiteralExpression('"' + memberAccessor.identifier().text() + '"'));
             arguments.push(Syntax.token(76 /* CommaToken */ ).withTrailingTrivia(this.space));
             var propertyAssignments = [];
             for(var i = 0; i < accessors.length; i++) {
@@ -20764,17 +20772,13 @@ var Emitter;
                 return variableDeclarator.equalsValueClause().value().withTrailingTrivia(SyntaxTriviaList.empty);
             }
             if(assignDefaultValues) {
-                return new LiteralExpressionSyntax(167 /* NumericLiteralExpression */ , Syntax.token(11 /* NumericLiteral */ , {
-                    text: index.toString()
-                }));
+                return Syntax.numericLiteralExpression(index.toString());
             }
             var enumIdentifier = this.withNoTrivia(enumDeclaration.identifier());
             var previousVariable = enumDeclaration.variableDeclarators().syntaxNodeAt(index - 1);
             var variableIdentifier = this.withNoTrivia(previousVariable.identifier());
             var receiver = MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(enumIdentifier), new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
-            return new BinaryExpressionSyntax(156 /* PlusExpression */ , receiver, Syntax.token(86 /* PlusToken */ ).withTrailingTrivia(this.space), new LiteralExpressionSyntax(167 /* NumericLiteralExpression */ , Syntax.token(11 /* NumericLiteral */ , {
-                text: "1"
-            })));
+            return new BinaryExpressionSyntax(156 /* PlusExpression */ , receiver, Syntax.token(86 /* PlusToken */ ).withTrailingTrivia(this.space), Syntax.numericLiteralExpression("1"));
         };
         EmitterImpl.prototype.generateEnumFunctionExpression = function (node) {
             var identifier = this.withNoTrivia(node.identifier());
@@ -20797,9 +20801,7 @@ var Emitter;
                     var innerAssign = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space))), Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues.value, i));
                     var elementAccessExpression = ElementAccessExpressionSyntax.create1(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), Syntax.identifierName("_map")), innerAssign).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.space);
                     ; ;
-                    var outerAssign = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , elementAccessExpression, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), new LiteralExpressionSyntax(169 /* StringLiteralExpression */ , Syntax.token(12 /* StringLiteral */ , {
-                        text: '"' + variableIdentifier.text() + '"'
-                    })));
+                    var outerAssign = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , elementAccessExpression, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), Syntax.stringLiteralExpression('"' + variableIdentifier.text() + '"'));
                     var expressionStatement = ExpressionStatementSyntax.create1(outerAssign).withTrailingTrivia(this.newLine);
                     statements.push(expressionStatement);
                 }

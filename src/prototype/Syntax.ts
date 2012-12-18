@@ -8,4 +8,16 @@ module Syntax {
         return CallSignatureSyntax.create1().withParameterList(
             ParameterListSyntax.create1().withParameter(parameter));
     }
+
+    export function numericLiteralExpression(text: string): LiteralExpressionSyntax {
+        return new LiteralExpressionSyntax(
+            SyntaxKind.NumericLiteralExpression,
+            Syntax.token(SyntaxKind.NumericLiteral, { text: text }));
+    }
+
+    export function stringLiteralExpression(text: string): LiteralExpressionSyntax {
+        return new LiteralExpressionSyntax(
+            SyntaxKind.StringLiteralExpression,
+            Syntax.token(SyntaxKind.StringLiteral, { text: text }));
+    }
 }
