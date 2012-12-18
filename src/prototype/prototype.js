@@ -971,6 +971,42 @@ var SyntaxNode = (function () {
         }
         return this._data;
     };
+    SyntaxNode.prototype.findToken = function (position) {
+        var endOfFileToken = this.tryGetEndOfFileAt(position);
+        if(endOfFileToken !== null) {
+            return endOfFileToken;
+        }
+        if(position < 0 || position >= this.fullWidth()) {
+            throw Errors.argumentOutOfRange("position");
+        }
+        return this.findTokenInternal(position);
+    };
+    SyntaxNode.prototype.tryGetEndOfFileAt = function (position) {
+        if(this.kind() === 119 /* SourceUnit */  && position == this.fullWidth()) {
+            var sourceUnit = this;
+            return sourceUnit.endOfFileToken();
+        }
+        return null;
+    };
+    SyntaxNode.prototype.findTokenInternal = function (position) {
+        var currentNodeOrToken = this;
+        while(true) {
+            Debug.assert(currentNodeOrToken.kind() != 0 /* None */ );
+            Debug.assert(position >= 0 && position < currentNodeOrToken.fullWidth());
+            if(currentNodeOrToken.isToken()) {
+                var token = currentNodeOrToken;
+                Debug.assert(!token.isMissing());
+                Debug.assert(token.width() > 0 || token.kind() === 118 /* EndOfFileToken */ );
+                Debug.assert(token.fullWidth() > 0 || token.kind() === 118 /* EndOfFileToken */ );
+                return token;
+            }
+            var node = currentNodeOrToken;
+            currentNodeOrToken = node.childThatContainsPosition(position);
+        }
+    };
+    SyntaxNode.prototype.childThatContainsPosition = function (position) {
+        throw Errors.abstract();
+    };
     return SyntaxNode;
 })();
 var IntegerUtilities = (function () {

@@ -128,4 +128,68 @@ class SyntaxNode implements ISyntaxElement {
 
         return this._data;
     }
+
+    /// <summary>
+    /// Finds a token according to the following rules:
+    /// 1) If position matches the End of the node/s FullSpan and the node is SourceUnit,
+    ///    then the EOF token is returned. 
+    /// 
+    ///  2) If node.FullSpan.Contains(position) then the token that contains given position is
+    ///     returned.
+    /// 
+    ///  3) Otherwise an ArgumentOutOfRangeException is thrown
+    ///
+    /// Note: findToken will always return a non missing token with width greater than or equal to
+    /// 1 (except for EOF).  Empty tokens syntehsized by teh parser are never returned.
+    /// </summary>
+    public findToken(position: number): ISyntaxToken {
+        var endOfFileToken = this.tryGetEndOfFileAt(position);
+        if (endOfFileToken !== null) {
+            return endOfFileToken;
+        }
+
+        if (position < 0 || position >= this.fullWidth()) {
+            throw Errors.argumentOutOfRange("position");
+        }
+
+        return this.findTokenInternal(position);
+    }
+
+    private tryGetEndOfFileAt(position: number): ISyntaxToken {
+        if (this.kind() === SyntaxKind.SourceUnit && position == this.fullWidth()) {
+            var sourceUnit = <SourceUnitSyntax>this;
+            return sourceUnit.endOfFileToken();
+        }
+
+        return null;
+    }
+
+    private findTokenInternal(position: number): ISyntaxToken {
+        // While maintaining invariant   0 <= position < curNode.fullWidth()
+        // go down the tree until a token is found
+        var currentNodeOrToken: ISyntaxElement = this;
+
+        while (true) {
+            Debug.assert(currentNodeOrToken.kind() != SyntaxKind.None);
+            Debug.assert(position >= 0 && position < currentNodeOrToken.fullWidth());
+
+            if (currentNodeOrToken.isToken()) {
+                var token = <ISyntaxToken>currentNodeOrToken;
+                // Make sure we never return a bogus token.
+                Debug.assert(!token.isMissing());
+                Debug.assert(token.width() > 0 || token.kind() === SyntaxKind.EndOfFileToken);
+                Debug.assert(token.fullWidth() > 0 || token.kind() === SyntaxKind.EndOfFileToken);
+                return token;
+            }
+
+            var node = <SyntaxNode>currentNodeOrToken;
+
+                //find a child that includes the position
+            currentNodeOrToken = node.childThatContainsPosition(position);
+        }
+    }
+
+    private childThatContainsPosition(position: number): ISyntaxElement {
+        throw Errors.abstract();
+    }
 }
