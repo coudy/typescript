@@ -27,13 +27,13 @@ module Syntax {
             token.isMissing());
     }
 
-    export function collectTextElements(token: ISyntaxToken, elements: string[]): void {
+    export function collectTokenTextElements(token: ISyntaxToken, elements: string[]): void {
         token.leadingTrivia().collectTextElements(elements);
         elements.push(token.text());
         token.trailingTrivia().collectTextElements(elements);
     }
 
-    export function toJSON(token: ISyntaxToken) {
+    export function tokenToJSON(token: ISyntaxToken) {
         var result: any = {
             kind: (<any>SyntaxKind)._map[token.tokenKind]
         };
@@ -147,7 +147,7 @@ module Syntax {
         public isTriviaList(): bool { return false; }
         public kind() { return this.tokenKind; }
 
-        public toJSON(key) { return toJSON(this); }
+        public toJSON(key) { return tokenToJSON(this); }
         public keywordKind() { return this._keywordKind; }
         public fullWidth() { return 0; }
         public width() { return 0; }
@@ -166,7 +166,7 @@ module Syntax {
         public leadingTrivia(): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
         public trailingTrivia(): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
         public realize(): ISyntaxToken { return realize(this); }
-        public collectTextElements(elements: string[]): void { collectTextElements(this, elements); }
+        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             throw Errors.invalidOperation('Can not call on a non-realized token.');
@@ -212,7 +212,7 @@ module Syntax {
         }
 
         public kind(): SyntaxKind { return this.tokenKind; }
-        public toJSON(key) { return toJSON(this); }
+        public toJSON(key) { return tokenToJSON(this); }
 
         public isToken(): bool { return true; }
         public isNode(): bool { return false; }
@@ -246,7 +246,7 @@ module Syntax {
         public trailingTrivia(): ISyntaxTriviaList { return this._trailingTrivia; }
 
         public realize(): ISyntaxToken { return this; }
-        public collectTextElements(elements: string[]): void { collectTextElements(this, elements); }
+        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return new RealizedToken(

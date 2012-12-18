@@ -14906,13 +14906,13 @@ var Syntax;
             return SyntaxTriviaList.empty;
         };
         VariableWidthTokenWithNoTrivia.prototype.toJSON = function (key) {
-            return Syntax.toJSON(this);
+            return Syntax.tokenToJSON(this);
         };
         VariableWidthTokenWithNoTrivia.prototype.realize = function () {
             return Syntax.realize(this);
         };
         VariableWidthTokenWithNoTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTextElements(this, elements);
+            Syntax.collectTokenTextElements(this, elements);
         };
         VariableWidthTokenWithNoTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -15016,13 +15016,13 @@ var Syntax;
             return SyntaxTriviaList.empty;
         };
         VariableWidthTokenWithLeadingTrivia.prototype.toJSON = function (key) {
-            return Syntax.toJSON(this);
+            return Syntax.tokenToJSON(this);
         };
         VariableWidthTokenWithLeadingTrivia.prototype.realize = function () {
             return Syntax.realize(this);
         };
         VariableWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTextElements(this, elements);
+            Syntax.collectTokenTextElements(this, elements);
         };
         VariableWidthTokenWithLeadingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -15126,13 +15126,13 @@ var Syntax;
             return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaLength(this._trailingTriviaInfo), true);
         };
         VariableWidthTokenWithTrailingTrivia.prototype.toJSON = function (key) {
-            return Syntax.toJSON(this);
+            return Syntax.tokenToJSON(this);
         };
         VariableWidthTokenWithTrailingTrivia.prototype.realize = function () {
             return Syntax.realize(this);
         };
         VariableWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTextElements(this, elements);
+            Syntax.collectTokenTextElements(this, elements);
         };
         VariableWidthTokenWithTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -15237,13 +15237,13 @@ var Syntax;
             return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaLength(this._trailingTriviaInfo), true);
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.toJSON = function (key) {
-            return Syntax.toJSON(this);
+            return Syntax.tokenToJSON(this);
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.realize = function () {
             return Syntax.realize(this);
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTextElements(this, elements);
+            Syntax.collectTokenTextElements(this, elements);
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -15333,13 +15333,13 @@ var Syntax;
             return SyntaxTriviaList.empty;
         };
         FixedWidthTokenWithNoTrivia.prototype.toJSON = function (key) {
-            return Syntax.toJSON(this);
+            return Syntax.tokenToJSON(this);
         };
         FixedWidthTokenWithNoTrivia.prototype.realize = function () {
             return Syntax.realize(this);
         };
         FixedWidthTokenWithNoTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTextElements(this, elements);
+            Syntax.collectTokenTextElements(this, elements);
         };
         FixedWidthTokenWithNoTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -15438,13 +15438,13 @@ var Syntax;
             return SyntaxTriviaList.empty;
         };
         FixedWidthTokenWithLeadingTrivia.prototype.toJSON = function (key) {
-            return Syntax.toJSON(this);
+            return Syntax.tokenToJSON(this);
         };
         FixedWidthTokenWithLeadingTrivia.prototype.realize = function () {
             return Syntax.realize(this);
         };
         FixedWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTextElements(this, elements);
+            Syntax.collectTokenTextElements(this, elements);
         };
         FixedWidthTokenWithLeadingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -15543,13 +15543,13 @@ var Syntax;
             return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaLength(this._trailingTriviaInfo), true);
         };
         FixedWidthTokenWithTrailingTrivia.prototype.toJSON = function (key) {
-            return Syntax.toJSON(this);
+            return Syntax.tokenToJSON(this);
         };
         FixedWidthTokenWithTrailingTrivia.prototype.realize = function () {
             return Syntax.realize(this);
         };
         FixedWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTextElements(this, elements);
+            Syntax.collectTokenTextElements(this, elements);
         };
         FixedWidthTokenWithTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -15649,13 +15649,13 @@ var Syntax;
             return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaLength(this._trailingTriviaInfo), true);
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.toJSON = function (key) {
-            return Syntax.toJSON(this);
+            return Syntax.tokenToJSON(this);
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.realize = function () {
             return Syntax.realize(this);
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTextElements(this, elements);
+            Syntax.collectTokenTextElements(this, elements);
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -15746,13 +15746,13 @@ var Syntax;
             return SyntaxTriviaList.empty;
         };
         KeywordWithNoTrivia.prototype.toJSON = function (key) {
-            return Syntax.toJSON(this);
+            return Syntax.tokenToJSON(this);
         };
         KeywordWithNoTrivia.prototype.realize = function () {
             return Syntax.realize(this);
         };
         KeywordWithNoTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTextElements(this, elements);
+            Syntax.collectTokenTextElements(this, elements);
         };
         KeywordWithNoTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -15852,13 +15852,13 @@ var Syntax;
             return SyntaxTriviaList.empty;
         };
         KeywordWithLeadingTrivia.prototype.toJSON = function (key) {
-            return Syntax.toJSON(this);
+            return Syntax.tokenToJSON(this);
         };
         KeywordWithLeadingTrivia.prototype.realize = function () {
             return Syntax.realize(this);
         };
         KeywordWithLeadingTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTextElements(this, elements);
+            Syntax.collectTokenTextElements(this, elements);
         };
         KeywordWithLeadingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -15958,13 +15958,13 @@ var Syntax;
             return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaLength(this._trailingTriviaInfo), true);
         };
         KeywordWithTrailingTrivia.prototype.toJSON = function (key) {
-            return Syntax.toJSON(this);
+            return Syntax.tokenToJSON(this);
         };
         KeywordWithTrailingTrivia.prototype.realize = function () {
             return Syntax.realize(this);
         };
         KeywordWithTrailingTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTextElements(this, elements);
+            Syntax.collectTokenTextElements(this, elements);
         };
         KeywordWithTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -16065,13 +16065,13 @@ var Syntax;
             return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaLength(this._trailingTriviaInfo), true);
         };
         KeywordWithLeadingAndTrailingTrivia.prototype.toJSON = function (key) {
-            return Syntax.toJSON(this);
+            return Syntax.tokenToJSON(this);
         };
         KeywordWithLeadingAndTrailingTrivia.prototype.realize = function () {
             return Syntax.realize(this);
         };
         KeywordWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTextElements(this, elements);
+            Syntax.collectTokenTextElements(this, elements);
         };
         KeywordWithLeadingAndTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -19469,13 +19469,13 @@ var Syntax;
         return new RealizedToken(token.tokenKind, token.keywordKind(), token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia(), token.isMissing());
     }
     Syntax.realize = realize;
-    function collectTextElements(token, elements) {
+    function collectTokenTextElements(token, elements) {
         token.leadingTrivia().collectTextElements(elements);
         elements.push(token.text());
         token.trailingTrivia().collectTextElements(elements);
     }
-    Syntax.collectTextElements = collectTextElements;
-    function toJSON(token) {
+    Syntax.collectTokenTextElements = collectTokenTextElements;
+    function tokenToJSON(token) {
         var result = {
             kind: (SyntaxKind)._map[token.tokenKind]
         };
@@ -19521,7 +19521,7 @@ var Syntax;
         }
         return result;
     }
-    Syntax.toJSON = toJSON;
+    Syntax.tokenToJSON = tokenToJSON;
     function value(token) {
         if(token.tokenKind === 9 /* IdentifierNameToken */ ) {
             var text = token.text();
@@ -19582,7 +19582,7 @@ var Syntax;
             return this.tokenKind;
         };
         EmptyToken.prototype.toJSON = function (key) {
-            return toJSON(this);
+            return tokenToJSON(this);
         };
         EmptyToken.prototype.keywordKind = function () {
             return this._keywordKind;
@@ -19639,7 +19639,7 @@ var Syntax;
             return realize(this);
         };
         EmptyToken.prototype.collectTextElements = function (elements) {
-            collectTextElements(this, elements);
+            collectTokenTextElements(this, elements);
         };
         EmptyToken.prototype.withLeadingTrivia = function (leadingTrivia) {
             throw Errors.invalidOperation('Can not call on a non-realized token.');
@@ -19670,7 +19670,7 @@ var Syntax;
             return this.tokenKind;
         };
         RealizedToken.prototype.toJSON = function (key) {
-            return toJSON(this);
+            return tokenToJSON(this);
         };
         RealizedToken.prototype.isToken = function () {
             return true;
@@ -19745,7 +19745,7 @@ var Syntax;
             return this;
         };
         RealizedToken.prototype.collectTextElements = function (elements) {
-            collectTextElements(this, elements);
+            collectTokenTextElements(this, elements);
         };
         RealizedToken.prototype.withLeadingTrivia = function (leadingTrivia) {
             return new RealizedToken(this.tokenKind, this._keywordKind, leadingTrivia, this._text, this._value, this._trailingTrivia, this._isMissing);
