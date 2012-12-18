@@ -997,7 +997,7 @@ module Emitter {
                     // _._map[_.Foo = 1]
                     var elementAccessExpression = ElementAccessExpressionSyntax.create1(
                         MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), Syntax.identifierName("_map")),
-                        innerAssign).withLeadingTrivia(initIndentationTrivia).withLeadingTrivia(variableDeclarator.leadingTrivia()).withTrailingTrivia(this.space);;
+                        innerAssign).withLeadingTrivia(variableDeclarator.leadingTrivia()).withTrailingTrivia(this.space);;
 
                     //_._map[_.Foo = 1] = "Foo"
                     var outerAssign = Syntax.assignmentExpression(
