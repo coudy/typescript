@@ -20440,8 +20440,7 @@ var Emitter;
             var name = this.withNoTrivia(parameter.identifier());
             var identifierName = new IdentifierNameSyntax(name).withTrailingTrivia(this.space);
             var condition = new BinaryExpressionSyntax(191 /* EqualsExpression */ , new TypeOfExpressionSyntax(Syntax.token(37 /* TypeOfKeyword */ ).withTrailingTrivia(this.space), identifierName), Syntax.token(84 /* EqualsEqualsEqualsToken */ ).withTrailingTrivia(this.space), Syntax.stringLiteralExpression('"undefined"'));
-            var assignment = new BinaryExpressionSyntax(171 /* AssignmentExpression */ , identifierName, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), parameter.equalsValueClause().value().accept(this));
-            var assignmentStatement = ExpressionStatementSyntax.create1(assignment).withTrailingTrivia(this.space);
+            var assignmentStatement = ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , identifierName, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), parameter.equalsValueClause().value().accept(this))).withTrailingTrivia(this.space);
             var block = new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.space), SyntaxList.create([
                 assignmentStatement
             ]), Syntax.token(68 /* CloseBraceToken */ )).withTrailingTrivia(this.newLine);

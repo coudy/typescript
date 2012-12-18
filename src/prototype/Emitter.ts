@@ -452,15 +452,13 @@ module Emitter {
                     Syntax.token(SyntaxKind.EqualsEqualsEqualsToken).withTrailingTrivia(this.space),
                     Syntax.stringLiteralExpression('"undefined"'));
 
-            // foo = expr
-            var assignment = new BinaryExpressionSyntax(
-                SyntaxKind.AssignmentExpression,
-                identifierName,
-                Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
-                parameter.equalsValueClause().value().accept(this));
-
             // foo = expr; 
-            var assignmentStatement = ExpressionStatementSyntax.create1(assignment).withTrailingTrivia(this.space);
+            var assignmentStatement = ExpressionStatementSyntax.create1(
+                new BinaryExpressionSyntax(
+                    SyntaxKind.AssignmentExpression,
+                    identifierName,
+                    Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
+                    parameter.equalsValueClause().value().accept(this))).withTrailingTrivia(this.space);
 
             var block = new BlockSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.space),
