@@ -42,7 +42,18 @@ class SyntaxNode implements ISyntaxElement {
     }
 
     public toJSON(key) {
-        var result: any = { kind: (<any>SyntaxKind)._map[this.kind()] };
+        var result: any = { 
+            kind: (<any>SyntaxKind)._map[this.kind()],
+            fullWidth: this.fullWidth()
+        };
+
+        if (this.hasSkippedText()) {
+            result.hasSkippedText = true;
+        }
+
+        if (this.hasZeroWidthToken()) {
+            result.hasZeroWidthToken = true;
+        }
 
         for (var name in this) {
             if (name !== "_data") {

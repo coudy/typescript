@@ -905,8 +905,15 @@ var SyntaxNode = (function () {
     };
     SyntaxNode.prototype.toJSON = function (key) {
         var result = {
-            kind: (SyntaxKind)._map[this.kind()]
+            kind: (SyntaxKind)._map[this.kind()],
+            fullWidth: this.fullWidth()
         };
+        if(this.hasSkippedText()) {
+            result.hasSkippedText = true;
+        }
+        if(this.hasZeroWidthToken()) {
+            result.hasZeroWidthToken = true;
+        }
         for(var name in this) {
             if(name !== "_data") {
                 var value = this[name];
@@ -28130,7 +28137,7 @@ var Program = (function () {
         });
         environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, true, false);
+            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
     };
     Program.prototype.handleException = function (environment, filePath, e) {
@@ -28224,6 +28231,7 @@ var Program = (function () {
             var tree = Parser.parse(text, languageVersion, stringTable);
             end = new Date().getTime();
             totalTime += (end - start);
+            Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
             this.checkResult(filePath, tree, verify, generateBaseline, false);
         }
     };

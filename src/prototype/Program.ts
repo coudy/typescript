@@ -182,6 +182,8 @@ class Program {
             end = new Date().getTime();
             totalTime += (end - start);
 
+            Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
+            
             this.checkResult(filePath, tree, verify, generateBaseline, false);
         }
     }
