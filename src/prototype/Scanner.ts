@@ -264,7 +264,7 @@ class Scanner extends SlidingWindow {
         var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, /*intern:*/ false);
         this.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
 
-        return SyntaxTrivia.create(SyntaxKind.WhitespaceTrivia, text);
+        return Syntax.whitespace(text);
     }
     
     private scanSingleLineCommentTrivia(): ISyntaxTrivia {
@@ -274,7 +274,7 @@ class Scanner extends SlidingWindow {
         var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, /*intern:*/ false);
         this.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
 
-        return SyntaxTrivia.create(SyntaxKind.SingleLineCommentTrivia, text);
+        return Syntax.singleLineComment(text);
     }
 
     private scanSingleLineCommentTriviaLength(): number {
@@ -300,7 +300,7 @@ class Scanner extends SlidingWindow {
         var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, /*intern:*/ false);
         this.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
 
-        return SyntaxTrivia.create(SyntaxKind.MultiLineCommentTrivia, text);
+        return Syntax.multiLineComment(text);
     }
 
     private scanMultiLineCommentTriviaLength(diagnostics: SyntaxDiagnostic[]): number {
@@ -339,7 +339,7 @@ class Scanner extends SlidingWindow {
         var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, /*intern:*/ false);
         this.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
 
-        return SyntaxTrivia.create(SyntaxKind.NewLineTrivia, text);
+        return Syntax.trivia(SyntaxKind.NewLineTrivia, text);
     }
 
     private scanLineTerminatorSequenceLength(ch: number): number {

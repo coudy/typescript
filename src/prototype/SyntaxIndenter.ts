@@ -114,7 +114,7 @@ class SyntaxIndenter extends SyntaxRewriter {
         // whitespace goes to will be.  To do that we add the column it is at now to the column we
         // want to indent to.  We then compute the final tabs+whitespace string for that.
         var newIndentation = this.indentSegment(trivia.fullText());
-        result.push(SyntaxTrivia.createWhitespace(newIndentation));
+        result.push(Syntax.whitespace(newIndentation));
     }
 
     private indentSingleLineOrSkippedText(trivia: ISyntaxTrivia, indentThisTrivia: bool, result: ISyntaxTrivia[]): void {
@@ -136,14 +136,14 @@ class SyntaxIndenter extends SyntaxRewriter {
 
         // If the multiline comment spans multiple lines, we need to add the right indent amount to
         // each successive line segment as well.
-        var segments = SyntaxTrivia.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
+        var segments = Syntax.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
 
         for (var i = 1; i < segments.length; i++) {
             segments[i] = this.indentSegment(segments[i]);
         }
 
         var newText = segments.join("");
-        result.push(SyntaxTrivia.createMultiLineComment(newText));
+        result.push(Syntax.multiLineComment(newText));
     }
 
     public static indentNode(node: SyntaxNode, indentFirstToken: bool, indentAmount: number, options: FormattingOptions): SyntaxNode {

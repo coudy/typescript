@@ -3,8 +3,8 @@
 ///<reference path='ISyntaxTrivia.ts' />
 ///<reference path='StringUtilities.ts' />
 
-module SyntaxTrivia {
-    class SimpleSyntaxTrivia implements ISyntaxTrivia {
+module Syntax {
+    class SyntaxTrivia implements ISyntaxTrivia {
         private _kind: SyntaxKind;
         private _text: string;
 
@@ -45,32 +45,36 @@ module SyntaxTrivia {
         }
     }
 
-    export function create(kind: SyntaxKind, text: string): ISyntaxTrivia {
+    export function trivia(kind: SyntaxKind, text: string): ISyntaxTrivia {
         Debug.assert(kind === SyntaxKind.MultiLineCommentTrivia ||
                      kind === SyntaxKind.NewLineTrivia ||
                      kind === SyntaxKind.SingleLineCommentTrivia ||
                      kind === SyntaxKind.WhitespaceTrivia ||
                      kind === SyntaxKind.SkippedTextTrivia);
         // Debug.assert(text.length > 0);
-        return new SimpleSyntaxTrivia(kind, text);
+        return new SyntaxTrivia(kind, text);
     }
 
-    export function createSpaces(count: number): ISyntaxTrivia {
-        return create(SyntaxKind.WhitespaceTrivia, StringUtilities.repeat(" ", count));
+    export function spaces(count: number): ISyntaxTrivia {
+        return trivia(SyntaxKind.WhitespaceTrivia, StringUtilities.repeat(" ", count));
     }
 
-    export function createWhitespace(text: string): ISyntaxTrivia {
-        return create(SyntaxKind.WhitespaceTrivia, text);
+    export function whitespace(text: string): ISyntaxTrivia {
+        return trivia(SyntaxKind.WhitespaceTrivia, text);
     }
 
-    export function createMultiLineComment(text: string): ISyntaxTrivia {
-        return create(SyntaxKind.MultiLineCommentTrivia, text);
+    export function multiLineComment(text: string): ISyntaxTrivia {
+        return trivia(SyntaxKind.MultiLineCommentTrivia, text);
     }
 
-    export var space: ISyntaxTrivia = createSpaces(1);
-    export var lineFeed: ISyntaxTrivia = create(SyntaxKind.NewLineTrivia, "\n");
-    export var carriageReturn: ISyntaxTrivia = create(SyntaxKind.NewLineTrivia, "\r");
-    export var carriageReturnLineFeed: ISyntaxTrivia = create(SyntaxKind.NewLineTrivia, "\r\n");
+    export function singleLineComment(text: string): ISyntaxTrivia {
+        return trivia(SyntaxKind.SingleLineCommentTrivia, text);
+    }
+
+    export var spaceTrivia: ISyntaxTrivia = spaces(1);
+    export var lineFeedTrivia: ISyntaxTrivia = trivia(SyntaxKind.NewLineTrivia, "\n");
+    export var carriageReturnTrivia: ISyntaxTrivia = trivia(SyntaxKind.NewLineTrivia, "\r");
+    export var carriageReturnLineFeedTrivia: ISyntaxTrivia = trivia(SyntaxKind.NewLineTrivia, "\r\n");
 
     // Breaks a multiline trivia up into individual line components.  If the trivia doesn't span
     // any lines, then the result will be a single string with the entire text of the trivia. 

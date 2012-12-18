@@ -39,7 +39,7 @@ module Emitter {
 
             // TODO: use proper new line based on options.
             this.space = SyntaxTriviaList.space;
-            this.newLine = SyntaxTriviaList.create([SyntaxTrivia.carriageReturnLineFeed]);
+            this.newLine = SyntaxTriviaList.create([Syntax.carriageReturnLineFeedTrivia]);
         }
 
         private columnForStartOfToken(token: ISyntaxToken): number {

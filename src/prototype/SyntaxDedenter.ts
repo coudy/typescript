@@ -159,11 +159,11 @@ class SyntaxDedenter extends SyntaxRewriter {
 
     private dedentWhitespace(trivia: ISyntaxTrivia, hasFollowingNewLineTrivia): ISyntaxTrivia {
         var newIndentation = this.dedentSegment(trivia.fullText(), hasFollowingNewLineTrivia);
-        return SyntaxTrivia.createWhitespace(newIndentation);
+        return Syntax.whitespace(newIndentation);
     }
 
     private dedentMultiLineComment(trivia: ISyntaxTrivia): ISyntaxTrivia {
-        var segments = SyntaxTrivia.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
+        var segments = Syntax.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
         if (segments.length === 1) {
             // If there was only one segment, then this wasn't multiline.
             return trivia;
@@ -177,7 +177,7 @@ class SyntaxDedenter extends SyntaxRewriter {
         var result = segments.join("");
 
         // Create a new trivia token out of the indented lines.
-        return SyntaxTrivia.create(SyntaxKind.MultiLineCommentTrivia, result);
+        return Syntax.multiLineComment(result);
     }
 
     public static dedentNode(node: SyntaxNode, dedentFirstToken: bool, dedentAmount: number, minimumIndent: number, options: FormattingOptions): SyntaxNode {

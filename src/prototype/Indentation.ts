@@ -86,7 +86,7 @@ module Indentation {
             }
 
             if (trivia.kind() === SyntaxKind.MultiLineCommentTrivia) {
-                var lineSegments = SyntaxTrivia.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
+                var lineSegments = Syntax.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
                 leadingTextInReverse.push(ArrayUtilities.last(lineSegments));
 
                 if (lineSegments.length > 0) {
@@ -153,7 +153,7 @@ module Indentation {
     }
 
     export function indentationTrivia(column: number, options: FormattingOptions): ISyntaxTrivia {
-        return SyntaxTrivia.create(SyntaxKind.WhitespaceTrivia, this.indentationString(column, options));
+        return Syntax.whitespace(this.indentationString(column, options));
     }
 
     export function firstNonWhitespacePosition(value: string): number {

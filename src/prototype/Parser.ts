@@ -240,7 +240,7 @@ module Parser {
             this.addTriviaTo(skippedToken.leadingTrivia(), array);
 
             // now, add the text of the token as skipped text to the trivia array.
-            array.push(SyntaxTrivia.create(SyntaxKind.SkippedTextTrivia, skippedToken.text()));
+            array.push(Syntax.trivia(SyntaxKind.SkippedTextTrivia, skippedToken.text()));
 
             // Finally, add the trailing trivia of the skipped token to the trivia array.
             this.addTriviaTo(skippedToken.trailingTrivia(), array);

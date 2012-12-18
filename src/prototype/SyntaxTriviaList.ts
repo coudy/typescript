@@ -236,5 +236,5 @@ module SyntaxTriviaList {
     }
 
     export var empty: ISyntaxTriviaList = new EmptySyntaxTriviaList();
-    export var space: ISyntaxTriviaList = create([SyntaxTrivia.space]);
+    export var space: ISyntaxTriviaList = create([Syntax.spaceTrivia]);
 }

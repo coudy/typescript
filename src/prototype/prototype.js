@@ -16148,76 +16148,80 @@ var Syntax;
         return (value & 134217728 /* TriviaNewLineMask */ ) !== 0;
     }
 })(Syntax || (Syntax = {}));
-var SyntaxTrivia;
-(function (SyntaxTrivia) {
-    var SimpleSyntaxTrivia = (function () {
-        function SimpleSyntaxTrivia(kind, text) {
+var Syntax;
+(function (Syntax) {
+    var SyntaxTrivia = (function () {
+        function SyntaxTrivia(kind, text) {
             this._kind = kind;
             this._text = text;
         }
-        SimpleSyntaxTrivia.prototype.toJSON = function (key) {
+        SyntaxTrivia.prototype.toJSON = function (key) {
             var result = {
             };
             result.kind = (SyntaxKind)._map[this._kind];
             result.text = this._text;
             return result;
         };
-        SimpleSyntaxTrivia.prototype.isToken = function () {
+        SyntaxTrivia.prototype.isToken = function () {
             return false;
         };
-        SimpleSyntaxTrivia.prototype.isNode = function () {
+        SyntaxTrivia.prototype.isNode = function () {
             return false;
         };
-        SimpleSyntaxTrivia.prototype.isList = function () {
+        SyntaxTrivia.prototype.isList = function () {
             return false;
         };
-        SimpleSyntaxTrivia.prototype.isSeparatedList = function () {
+        SyntaxTrivia.prototype.isSeparatedList = function () {
             return false;
         };
-        SimpleSyntaxTrivia.prototype.isTrivia = function () {
+        SyntaxTrivia.prototype.isTrivia = function () {
             return true;
         };
-        SimpleSyntaxTrivia.prototype.isTriviaList = function () {
+        SyntaxTrivia.prototype.isTriviaList = function () {
             return false;
         };
-        SimpleSyntaxTrivia.prototype.isMissing = function () {
+        SyntaxTrivia.prototype.isMissing = function () {
             return false;
         };
-        SimpleSyntaxTrivia.prototype.kind = function () {
+        SyntaxTrivia.prototype.kind = function () {
             return this._kind;
         };
-        SimpleSyntaxTrivia.prototype.fullWidth = function () {
+        SyntaxTrivia.prototype.fullWidth = function () {
             return this._text.length;
         };
-        SimpleSyntaxTrivia.prototype.fullText = function () {
+        SyntaxTrivia.prototype.fullText = function () {
             return this._text;
         };
-        SimpleSyntaxTrivia.prototype.collectTextElements = function (elements) {
+        SyntaxTrivia.prototype.collectTextElements = function (elements) {
             elements.push(this.fullText());
         };
-        return SimpleSyntaxTrivia;
+        return SyntaxTrivia;
     })();    
-    function create(kind, text) {
+    function trivia(kind, text) {
         Debug.assert(kind === 6 /* MultiLineCommentTrivia */  || kind === 5 /* NewLineTrivia */  || kind === 7 /* SingleLineCommentTrivia */  || kind === 4 /* WhitespaceTrivia */  || kind === 8 /* SkippedTextTrivia */ );
-        return new SimpleSyntaxTrivia(kind, text);
+        return new SyntaxTrivia(kind, text);
     }
-    SyntaxTrivia.create = create;
-    function createSpaces(count) {
-        return create(4 /* WhitespaceTrivia */ , StringUtilities.repeat(" ", count));
+    Syntax.trivia = trivia;
+    function spaces(count) {
+        return trivia(4 /* WhitespaceTrivia */ , StringUtilities.repeat(" ", count));
     }
-    SyntaxTrivia.createSpaces = createSpaces;
-    function createWhitespace(text) {
-        return create(4 /* WhitespaceTrivia */ , text);
+    Syntax.spaces = spaces;
+    function whitespace(text) {
+        return trivia(4 /* WhitespaceTrivia */ , text);
     }
-    SyntaxTrivia.createWhitespace = createWhitespace;
-    function createMultiLineComment(text) {
-        return create(6 /* MultiLineCommentTrivia */ , text);
+    Syntax.whitespace = whitespace;
+    function multiLineComment(text) {
+        return trivia(6 /* MultiLineCommentTrivia */ , text);
     }
-    SyntaxTrivia.createMultiLineComment = createMultiLineComment;
-    SyntaxTrivia.space = createSpaces(1);
-    SyntaxTrivia.lineFeed = create(5 /* NewLineTrivia */ , "\n");
-    SyntaxTrivia.carriageReturn = create(5 /* NewLineTrivia */ , "\r");
-    SyntaxTrivia.carriageReturnLineFeed = create(5 /* NewLineTrivia */ , "\r\n");
+    Syntax.multiLineComment = multiLineComment;
+    function singleLineComment(text) {
+        return trivia(7 /* SingleLineCommentTrivia */ , text);
+    }
+    Syntax.singleLineComment = singleLineComment;
+    Syntax.spaceTrivia = spaces(1);
+    Syntax.lineFeedTrivia = trivia(5 /* NewLineTrivia */ , "\n");
+    Syntax.carriageReturnTrivia = trivia(5 /* NewLineTrivia */ , "\r");
+    Syntax.carriageReturnLineFeedTrivia = trivia(5 /* NewLineTrivia */ , "\r\n");
     function splitMultiLineCommentTriviaIntoMultipleLines(trivia) {
         Debug.assert(trivia.kind() === 6 /* MultiLineCommentTrivia */ );
         var result = [];
@@ -16246,8 +16250,8 @@ var SyntaxTrivia;
         result.push(triviaText.substring(currentIndex));
         return result;
     }
-    SyntaxTrivia.splitMultiLineCommentTriviaIntoMultipleLines = splitMultiLineCommentTriviaIntoMultipleLines;
-})(SyntaxTrivia || (SyntaxTrivia = {}));
+    Syntax.splitMultiLineCommentTriviaIntoMultipleLines = splitMultiLineCommentTriviaIntoMultipleLines;
+})(Syntax || (Syntax = {}));
 var SyntaxTriviaList;
 (function (SyntaxTriviaList) {
     function collectTextElements(elements, list) {
@@ -16491,7 +16495,7 @@ var SyntaxTriviaList;
     SyntaxTriviaList.create = create;
     SyntaxTriviaList.empty = new EmptySyntaxTriviaList();
     SyntaxTriviaList.space = create([
-        SyntaxTrivia.space
+        Syntax.spaceTrivia
     ]);
 })(SyntaxTriviaList || (SyntaxTriviaList = {}));
 var Unicode = (function () {
@@ -18699,14 +18703,14 @@ var Scanner = (function (_super) {
         }
         var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, false);
         this.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
-        return SyntaxTrivia.create(4 /* WhitespaceTrivia */ , text);
+        return Syntax.whitespace(text);
     };
     Scanner.prototype.scanSingleLineCommentTrivia = function () {
         var absoluteStartIndex = this.getAndPinAbsoluteIndex();
         var width = this.scanSingleLineCommentTriviaLength();
         var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, false);
         this.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
-        return SyntaxTrivia.create(7 /* SingleLineCommentTrivia */ , text);
+        return Syntax.singleLineComment(text);
     };
     Scanner.prototype.scanSingleLineCommentTriviaLength = function () {
         this.moveToNextItem();
@@ -18725,7 +18729,7 @@ var Scanner = (function (_super) {
         var width = this.scanMultiLineCommentTriviaLength(null);
         var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, false);
         this.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
-        return SyntaxTrivia.create(6 /* MultiLineCommentTrivia */ , text);
+        return Syntax.multiLineComment(text);
     };
     Scanner.prototype.scanMultiLineCommentTriviaLength = function (diagnostics) {
         this.moveToNextItem();
@@ -18754,7 +18758,7 @@ var Scanner = (function (_super) {
         var width = this.scanLineTerminatorSequenceLength(ch);
         var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, false);
         this.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
-        return SyntaxTrivia.create(5 /* NewLineTrivia */ , text);
+        return Syntax.trivia(5 /* NewLineTrivia */ , text);
     };
     Scanner.prototype.scanLineTerminatorSequenceLength = function (ch) {
         this.moveToNextItem();
@@ -19875,7 +19879,7 @@ var Indentation;
                 break;
             }
             if(trivia.kind() === 6 /* MultiLineCommentTrivia */ ) {
-                var lineSegments = SyntaxTrivia.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
+                var lineSegments = Syntax.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
                 leadingTextInReverse.push(ArrayUtilities.last(lineSegments));
                 if(lineSegments.length > 0) {
                     break;
@@ -19920,7 +19924,7 @@ var Indentation;
     }
     Indentation.indentationString = indentationString;
     function indentationTrivia(column, options) {
-        return SyntaxTrivia.create(4 /* WhitespaceTrivia */ , this.indentationString(column, options));
+        return Syntax.whitespace(this.indentationString(column, options));
     }
     Indentation.indentationTrivia = indentationTrivia;
     function firstNonWhitespacePosition(value) {
@@ -20024,10 +20028,10 @@ var SyntaxDedenter = (function (_super) {
     };
     SyntaxDedenter.prototype.dedentWhitespace = function (trivia, hasFollowingNewLineTrivia) {
         var newIndentation = this.dedentSegment(trivia.fullText(), hasFollowingNewLineTrivia);
-        return SyntaxTrivia.createWhitespace(newIndentation);
+        return Syntax.whitespace(newIndentation);
     };
     SyntaxDedenter.prototype.dedentMultiLineComment = function (trivia) {
-        var segments = SyntaxTrivia.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
+        var segments = Syntax.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
         if(segments.length === 1) {
             return trivia;
         }
@@ -20036,7 +20040,7 @@ var SyntaxDedenter = (function (_super) {
             segments[i] = this.dedentSegment(segment, false);
         }
         var result = segments.join("");
-        return SyntaxTrivia.create(6 /* MultiLineCommentTrivia */ , result);
+        return Syntax.multiLineComment(result);
     };
     SyntaxDedenter.dedentNode = function dedentNode(node, dedentFirstToken, dedentAmount, minimumIndent, options) {
         var dedenter = new SyntaxDedenter(dedentFirstToken, dedentAmount, minimumIndent, options);
@@ -20125,7 +20129,7 @@ var SyntaxIndenter = (function (_super) {
             return;
         }
         var newIndentation = this.indentSegment(trivia.fullText());
-        result.push(SyntaxTrivia.createWhitespace(newIndentation));
+        result.push(Syntax.whitespace(newIndentation));
     };
     SyntaxIndenter.prototype.indentSingleLineOrSkippedText = function (trivia, indentThisTrivia, result) {
         if(indentThisTrivia) {
@@ -20137,12 +20141,12 @@ var SyntaxIndenter = (function (_super) {
         if(indentThisTrivia) {
             result.push(this.indentationTrivia);
         }
-        var segments = SyntaxTrivia.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
+        var segments = Syntax.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
         for(var i = 1; i < segments.length; i++) {
             segments[i] = this.indentSegment(segments[i]);
         }
         var newText = segments.join("");
-        result.push(SyntaxTrivia.createMultiLineComment(newText));
+        result.push(Syntax.multiLineComment(newText));
     };
     SyntaxIndenter.indentNode = function indentNode(node, indentFirstToken, indentAmount, options) {
         var indenter = new SyntaxIndenter(indentFirstToken, indentAmount, options);
@@ -20250,7 +20254,7 @@ var Emitter;
             this.options = options || FormattingOptions.defaultOptions;
             this.space = SyntaxTriviaList.space;
             this.newLine = SyntaxTriviaList.create([
-                SyntaxTrivia.carriageReturnLineFeed
+                Syntax.carriageReturnLineFeedTrivia
             ]);
         }
         EmitterImpl.prototype.columnForStartOfToken = function (token) {
@@ -21027,7 +21031,7 @@ var Parser;
         SkippedTokensAdder.prototype.addSkippedTokenTo = function (skippedToken, array) {
             Debug.assert(skippedToken.text().length > 0);
             this.addTriviaTo(skippedToken.leadingTrivia(), array);
-            array.push(SyntaxTrivia.create(8 /* SkippedTextTrivia */ , skippedToken.text()));
+            array.push(Syntax.trivia(8 /* SkippedTextTrivia */ , skippedToken.text()));
             this.addTriviaTo(skippedToken.trailingTrivia(), array);
         };
         return SkippedTokensAdder;
