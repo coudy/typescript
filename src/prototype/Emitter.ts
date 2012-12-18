@@ -561,20 +561,17 @@ module Emitter {
 
             var statements: StatementSyntax[] = [];
             if (classDeclaration.extendsClause() !== null) {
-                var superIndentationColumn = classIndentationColumn + this.options.indentSpaces;
-                var superIndentation = this.indentationTrivia(superIndentationColumn);
-
-                var superStatement = ExpressionStatementSyntax.create1(
-                    new InvocationExpressionSyntax(
-                        MemberAccessExpressionSyntax.create1(
-                            Syntax.identifierName("_super"), Syntax.identifierName("apply")),
-                        ArgumentListSyntax.create1().withArguments(
-                            SeparatedSyntaxList.create([
-                                ThisExpressionSyntax.create1(),
-                                Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
-                                Syntax.identifierName("arguments")])))).withLeadingTrivia(superIndentation).withTrailingTrivia(this.newLine);
-
-                statements.push(superStatement);
+                statements.push(ExpressionStatementSyntax.create1(
+                        new InvocationExpressionSyntax(
+                            MemberAccessExpressionSyntax.create1(
+                                Syntax.identifierName("_super"), Syntax.identifierName("apply")),
+                            ArgumentListSyntax.create1().withArguments(
+                                SeparatedSyntaxList.create([
+                                    ThisExpressionSyntax.create1(),
+                                    Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
+                                    Syntax.identifierName("arguments")])))
+                    ).withLeadingTrivia(this.indentationTrivia(classIndentationColumn + this.options.indentSpaces))
+                     .withTrailingTrivia(this.newLine));
             }
 
             statements.push.apply(statements, this.generatePropertyAssignments(classDeclaration, /*static:*/ false));

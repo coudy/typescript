@@ -20523,14 +20523,11 @@ var Emitter;
             var classIndentationColumn = this.columnForStartOfToken(classDeclaration.firstToken());
             var statements = [];
             if(classDeclaration.extendsClause() !== null) {
-                var superIndentationColumn = classIndentationColumn + this.options.indentSpaces;
-                var superIndentation = this.indentationTrivia(superIndentationColumn);
-                var superStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_super"), Syntax.identifierName("apply")), ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create([
+                statements.push(ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_super"), Syntax.identifierName("apply")), ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create([
                     ThisExpressionSyntax.create1(), 
                     Syntax.token(76 /* CommaToken */ ).withTrailingTrivia(this.space), 
                     Syntax.identifierName("arguments")
-                ])))).withLeadingTrivia(superIndentation).withTrailingTrivia(this.newLine);
-                statements.push(superStatement);
+                ])))).withLeadingTrivia(this.indentationTrivia(classIndentationColumn + this.options.indentSpaces)).withTrailingTrivia(this.newLine));
             }
             statements.push.apply(statements, this.generatePropertyAssignments(classDeclaration, false));
             var indentationTrivia = this.indentationTrivia(classIndentationColumn);
