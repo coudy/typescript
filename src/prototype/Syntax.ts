@@ -9,6 +9,18 @@ module Syntax {
             ParameterListSyntax.create1().withParameter(parameter));
     }
 
+    export function trueExpression(): LiteralExpressionSyntax {
+        return new LiteralExpressionSyntax(
+            SyntaxKind.BooleanLiteralExpression,
+            Syntax.token(SyntaxKind.TrueKeyword));
+    }
+
+    export function falseExpression(): LiteralExpressionSyntax {
+        return new LiteralExpressionSyntax(
+            SyntaxKind.BooleanLiteralExpression,
+            Syntax.token(SyntaxKind.FalseKeyword));
+    }
+
     export function numericLiteralExpression(text: string): LiteralExpressionSyntax {
         return new LiteralExpressionSyntax(
             SyntaxKind.NumericLiteralExpression,

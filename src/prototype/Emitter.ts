@@ -864,19 +864,13 @@ module Emitter {
             propertyAssignments.push(new SimplePropertyAssignmentSyntax(
                 Syntax.identifier("enumerable"),
                 Syntax.token(SyntaxKind.ColonToken).withTrailingTrivia(this.space),
-                new LiteralExpressionSyntax(
-                    SyntaxKind.BooleanLiteralExpression,
-                    Syntax.token(SyntaxKind.TrueKeyword))).withLeadingTrivia(propertyTrivia));
-            propertyAssignments.push(
-                Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.newLine));
+                Syntax.trueExpression()).withLeadingTrivia(propertyTrivia));
+            propertyAssignments.push(Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.newLine));
 
             propertyAssignments.push(new SimplePropertyAssignmentSyntax(
-                    Syntax.identifier("configurable"),
-                    Syntax.token(SyntaxKind.ColonToken).withTrailingTrivia(this.space),
-                    new LiteralExpressionSyntax(
-                        SyntaxKind.BooleanLiteralExpression,
-                        Syntax.token(SyntaxKind.TrueKeyword))
-                ).withLeadingTrivia(propertyTrivia).withTrailingTrivia(this.newLine));
+                Syntax.identifier("configurable"),
+                Syntax.token(SyntaxKind.ColonToken).withTrailingTrivia(this.space),
+                Syntax.trueExpression()).withLeadingTrivia(propertyTrivia).withTrailingTrivia(this.newLine));
 
             var objectLiteral = new ObjectLiteralExpressionSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),

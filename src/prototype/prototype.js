@@ -20183,6 +20183,14 @@ var Syntax;
         return CallSignatureSyntax.create1().withParameterList(ParameterListSyntax.create1().withParameter(parameter));
     }
     Syntax.callSignature = callSignature;
+    function trueExpression() {
+        return new LiteralExpressionSyntax(165 /* BooleanLiteralExpression */ , Syntax.token(35 /* TrueKeyword */ ));
+    }
+    Syntax.trueExpression = trueExpression;
+    function falseExpression() {
+        return new LiteralExpressionSyntax(165 /* BooleanLiteralExpression */ , Syntax.token(22 /* FalseKeyword */ ));
+    }
+    Syntax.falseExpression = falseExpression;
     function numericLiteralExpression(text) {
         return new LiteralExpressionSyntax(167 /* NumericLiteralExpression */ , Syntax.token(11 /* NumericLiteral */ , {
             text: text
@@ -20663,9 +20671,9 @@ var Emitter;
             var accessorTrivia = this.indentationTrivia(accessorColumn);
             var propertyColumn = accessorColumn + this.options.indentSpaces;
             var propertyTrivia = this.indentationTrivia(propertyColumn);
-            propertyAssignments.push(new SimplePropertyAssignmentSyntax(Syntax.identifier("enumerable"), Syntax.token(103 /* ColonToken */ ).withTrailingTrivia(this.space), new LiteralExpressionSyntax(165 /* BooleanLiteralExpression */ , Syntax.token(35 /* TrueKeyword */ ))).withLeadingTrivia(propertyTrivia));
+            propertyAssignments.push(new SimplePropertyAssignmentSyntax(Syntax.identifier("enumerable"), Syntax.token(103 /* ColonToken */ ).withTrailingTrivia(this.space), Syntax.trueExpression()).withLeadingTrivia(propertyTrivia));
             propertyAssignments.push(Syntax.token(76 /* CommaToken */ ).withTrailingTrivia(this.newLine));
-            propertyAssignments.push(new SimplePropertyAssignmentSyntax(Syntax.identifier("configurable"), Syntax.token(103 /* ColonToken */ ).withTrailingTrivia(this.space), new LiteralExpressionSyntax(165 /* BooleanLiteralExpression */ , Syntax.token(35 /* TrueKeyword */ ))).withLeadingTrivia(propertyTrivia).withTrailingTrivia(this.newLine));
+            propertyAssignments.push(new SimplePropertyAssignmentSyntax(Syntax.identifier("configurable"), Syntax.token(103 /* ColonToken */ ).withTrailingTrivia(this.space), Syntax.trueExpression()).withLeadingTrivia(propertyTrivia).withTrailingTrivia(this.newLine));
             var objectLiteral = new ObjectLiteralExpressionSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), SeparatedSyntaxList.create(propertyAssignments), Syntax.token(68 /* CloseBraceToken */ ).withLeadingTrivia(accessorTrivia));
             arguments.push(objectLiteral);
             var argumentList = ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create(arguments));
