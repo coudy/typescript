@@ -1,54 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "ErrorToken",
-            "width": 1,
-            "fullWidth": 378,
-            "text": "\\",
-            "hasLeadingTrivia": true,
-            "hasLeadingCommentTrivia": true,
-            "hasLeadingNewLineTrivia": true,
-            "leadingTrivia": [
-                {
-                    "kind": "SingleLineCommentTrivia",
-                    "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
-                },
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                },
-                {
-                    "kind": "SingleLineCommentTrivia",
-                    "text": "// This code is governed by the BSD license found in the LICENSE file."
-                },
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                },
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                },
-                {
-                    "kind": "MultiLineCommentTrivia",
-                    "text": "/**\n * Punctuator cannot be expressed as a Unicode escape sequence consisting of six characters, namely \\u plus four hexadecimal digits\n *\n * @path ch07/7.7/S7.7_A2_T2.js\n * @description Try to use () as Unicode \\u00281\\u0029\n * @negative\n */"
-                },
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                },
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                }
-            ]
-        },
-        {
-            "kind": "ErrorToken",
-            "width": 1,
-            "text": "\\"
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 377,
@@ -93,7 +43,57 @@
                     "_identifier": {
                         "kind": "IdentifierNameToken",
                         "width": 6,
-                        "text": "u00281"
+                        "fullWidth": 385,
+                        "text": "u00281",
+                        "valueText": "u00281",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingCommentTrivia": true,
+                        "hasLeadingNewLineTrivia": true,
+                        "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// This code is governed by the BSD license found in the LICENSE file."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "MultiLineCommentTrivia",
+                                "text": "/**\n * Punctuator cannot be expressed as a Unicode escape sequence consisting of six characters, namely \\u plus four hexadecimal digits\n *\n * @path ch07/7.7/S7.7_A2_T2.js\n * @description Try to use () as Unicode \\u00281\\u0029\n * @negative\n */"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SkippedTextTrivia",
+                                "text": "\\"
+                            }
+                        ],
+                        "trailingTrivia": [
+                            {
+                                "kind": "SkippedTextTrivia",
+                                "text": "\\"
+                            }
+                        ]
                     }
                 },
                 "_semicolonToken": {

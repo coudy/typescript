@@ -1,12 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "IdentifierNameToken",
-            "keywordKind": "CatchKeyword",
-            "width": 5,
-            "text": "catch"
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 367,
@@ -170,7 +162,7 @@
                 "_closeBraceToken": {
                     "kind": "CloseBraceToken",
                     "width": 1,
-                    "fullWidth": 2,
+                    "fullWidth": 7,
                     "text": "}",
                     "hasTrailingTrivia": true,
                     "hasTrailingNewLineTrivia": true,
@@ -178,6 +170,10 @@
                         {
                             "kind": "NewLineTrivia",
                             "text": "\n"
+                        },
+                        {
+                            "kind": "SkippedTextTrivia",
+                            "text": "catch"
                         }
                     ]
                 }

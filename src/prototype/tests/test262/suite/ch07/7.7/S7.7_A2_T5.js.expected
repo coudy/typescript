@@ -1,11 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "ErrorToken",
-            "width": 1,
-            "text": "\\"
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 382,
@@ -129,7 +122,16 @@
                     "_identifier": {
                         "kind": "IdentifierNameToken",
                         "width": 4,
-                        "text": "this"
+                        "fullWidth": 5,
+                        "text": "this",
+                        "valueText": "this",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "SkippedTextTrivia",
+                                "text": "\\"
+                            }
+                        ]
                     }
                 },
                 "_semicolonToken": {

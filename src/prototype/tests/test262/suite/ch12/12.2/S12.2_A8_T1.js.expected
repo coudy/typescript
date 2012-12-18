@@ -1,19 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "PlusEqualsToken",
-            "width": 2,
-            "fullWidth": 3,
-            "text": "+=",
-            "hasTrailingTrivia": true,
-            "trailingTrivia": [
-                {
-                    "kind": "WhitespaceTrivia",
-                    "text": " "
-                }
-            ]
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 417,
@@ -112,11 +97,19 @@
                             "_identifier": {
                                 "kind": "IdentifierNameToken",
                                 "width": 1,
-                                "fullWidth": 2,
+                                "fullWidth": 5,
                                 "text": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    },
+                                    {
+                                        "kind": "SkippedTextTrivia",
+                                        "text": "+="
+                                    },
                                     {
                                         "kind": "WhitespaceTrivia",
                                         "text": " "

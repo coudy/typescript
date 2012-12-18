@@ -1,64 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "IdentifierNameToken",
-            "keywordKind": "CatchKeyword",
-            "width": 5,
-            "fullWidth": 367,
-            "text": "catch",
-            "hasLeadingTrivia": true,
-            "hasLeadingCommentTrivia": true,
-            "hasLeadingNewLineTrivia": true,
-            "leadingTrivia": [
-                {
-                    "kind": "SingleLineCommentTrivia",
-                    "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
-                },
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                },
-                {
-                    "kind": "SingleLineCommentTrivia",
-                    "text": "// This code is governed by the BSD license found in the LICENSE file."
-                },
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                },
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                },
-                {
-                    "kind": "MultiLineCommentTrivia",
-                    "text": "/**\n * TryStatement: \"try Block Catch\" or \"try Block Finally\" or \"try Block Catch Finally\"\n *\n * @path ch12/12.14/S12.14_A16_T9.js\n * @description Checking if execution of \"catch(){} finally{}\" fails\n * @negative\n */"
-                },
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                },
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                },
-                {
-                    "kind": "SingleLineCommentTrivia",
-                    "text": "// CHECK#1"
-                },
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                }
-            ]
-        },
-        {
-            "kind": "IdentifierNameToken",
-            "keywordKind": "FinallyKeyword",
-            "width": 7,
-            "text": "finally"
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 362,
@@ -99,7 +39,57 @@
                             "_openParenToken": {
                                 "kind": "OpenParenToken",
                                 "width": 1,
-                                "text": "("
+                                "fullWidth": 368,
+                                "text": "(",
+                                "hasLeadingTrivia": true,
+                                "hasLeadingCommentTrivia": true,
+                                "hasLeadingNewLineTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "SingleLineCommentTrivia",
+                                        "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                                    },
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\n"
+                                    },
+                                    {
+                                        "kind": "SingleLineCommentTrivia",
+                                        "text": "// This code is governed by the BSD license found in the LICENSE file."
+                                    },
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\n"
+                                    },
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\n"
+                                    },
+                                    {
+                                        "kind": "MultiLineCommentTrivia",
+                                        "text": "/**\n * TryStatement: \"try Block Catch\" or \"try Block Finally\" or \"try Block Catch Finally\"\n *\n * @path ch12/12.14/S12.14_A16_T9.js\n * @description Checking if execution of \"catch(){} finally{}\" fails\n * @negative\n */"
+                                    },
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\n"
+                                    },
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\n"
+                                    },
+                                    {
+                                        "kind": "SingleLineCommentTrivia",
+                                        "text": "// CHECK#1"
+                                    },
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\n"
+                                    },
+                                    {
+                                        "kind": "SkippedTextTrivia",
+                                        "text": "catch"
+                                    }
+                                ]
                             },
                             "_parameters": [],
                             "_closeParenToken": {
@@ -126,7 +116,7 @@
                         "_closeBraceToken": {
                             "kind": "CloseBraceToken",
                             "width": 1,
-                            "fullWidth": 2,
+                            "fullWidth": 9,
                             "text": "}",
                             "hasTrailingTrivia": true,
                             "hasTrailingNewLineTrivia": true,
@@ -134,6 +124,10 @@
                                 {
                                     "kind": "NewLineTrivia",
                                     "text": "\n"
+                                },
+                                {
+                                    "kind": "SkippedTextTrivia",
+                                    "text": "finally"
                                 }
                             ]
                         }

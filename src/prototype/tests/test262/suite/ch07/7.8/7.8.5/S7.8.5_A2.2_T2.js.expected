@@ -1,11 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "DotToken",
-            "width": 1,
-            "text": "."
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 280,
@@ -77,7 +70,15 @@
                     "_operatorToken": {
                         "kind": "SlashToken",
                         "width": 1,
-                        "text": "/"
+                        "fullWidth": 2,
+                        "text": "/",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "SkippedTextTrivia",
+                                "text": "."
+                            }
+                        ]
                     },
                     "_right": {
                         "kind": "IdentifierName",

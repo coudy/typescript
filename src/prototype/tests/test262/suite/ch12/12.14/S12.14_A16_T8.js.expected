@@ -1,12 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "IdentifierNameToken",
-            "keywordKind": "FinallyKeyword",
-            "width": 7,
-            "text": "finally"
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 442,
@@ -139,7 +131,7 @@
                         "_openBraceToken": {
                             "kind": "OpenBraceToken",
                             "width": 1,
-                            "fullWidth": 2,
+                            "fullWidth": 9,
                             "text": "{",
                             "hasTrailingTrivia": true,
                             "hasTrailingNewLineTrivia": true,
@@ -147,6 +139,10 @@
                                 {
                                     "kind": "NewLineTrivia",
                                     "text": "\n"
+                                },
+                                {
+                                    "kind": "SkippedTextTrivia",
+                                    "text": "finally"
                                 }
                             ]
                         },

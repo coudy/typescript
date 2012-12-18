@@ -1,11 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "CloseParenToken",
-            "width": 1,
-            "text": ")"
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 643,
@@ -245,7 +238,15 @@
                     "_operatorToken": {
                         "kind": "MinusMinusToken",
                         "width": 2,
-                        "text": "--"
+                        "fullWidth": 3,
+                        "text": "--",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "SkippedTextTrivia",
+                                "text": ")"
+                            }
+                        ]
                     }
                 },
                 "_semicolonToken": {

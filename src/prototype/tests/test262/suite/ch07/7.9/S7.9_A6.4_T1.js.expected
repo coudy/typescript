@@ -1,19 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "CloseParenToken",
-            "width": 1,
-            "fullWidth": 2,
-            "text": ")",
-            "hasTrailingTrivia": true,
-            "trailingTrivia": [
-                {
-                    "kind": "WhitespaceTrivia",
-                    "text": " "
-                }
-            ]
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 378,
@@ -142,7 +127,19 @@
                     "_semicolonToken": {
                         "kind": "SemicolonToken",
                         "width": 1,
-                        "text": ";"
+                        "fullWidth": 3,
+                        "text": ";",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "SkippedTextTrivia",
+                                "text": ")"
+                            },
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     }
                 }
             },

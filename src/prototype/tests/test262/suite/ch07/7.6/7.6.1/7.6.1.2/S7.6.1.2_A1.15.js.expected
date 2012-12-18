@@ -1,33 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "IdentifierNameToken",
-            "keywordKind": "ImplementsKeyword",
-            "width": 10,
-            "fullWidth": 11,
-            "text": "implements",
-            "hasTrailingTrivia": true,
-            "trailingTrivia": [
-                {
-                    "kind": "WhitespaceTrivia",
-                    "text": " "
-                }
-            ]
-        },
-        {
-            "kind": "EqualsToken",
-            "width": 1,
-            "fullWidth": 2,
-            "text": "=",
-            "hasTrailingTrivia": true,
-            "trailingTrivia": [
-                {
-                    "kind": "WhitespaceTrivia",
-                    "text": " "
-                }
-            ]
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 390,
@@ -128,7 +99,7 @@
                         "kind": "IdentifierNameToken",
                         "keywordKind": "VarKeyword",
                         "width": 3,
-                        "fullWidth": 5,
+                        "fullWidth": 18,
                         "text": "var",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLineTrivia": true,
@@ -140,6 +111,22 @@
                             }
                         ],
                         "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            },
+                            {
+                                "kind": "SkippedTextTrivia",
+                                "text": "implements"
+                            },
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            },
+                            {
+                                "kind": "SkippedTextTrivia",
+                                "text": "="
+                            },
                             {
                                 "kind": "WhitespaceTrivia",
                                 "text": " "

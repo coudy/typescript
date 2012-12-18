@@ -1,11 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "ErrorToken",
-            "width": 1,
-            "text": "\\"
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 276,
@@ -111,7 +104,16 @@
                         "_identifier": {
                             "kind": "IdentifierNameToken",
                             "width": 1,
-                            "text": "a"
+                            "fullWidth": 2,
+                            "text": "a",
+                            "valueText": "a",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "SkippedTextTrivia",
+                                    "text": "\\"
+                                }
+                            ]
                         }
                     }
                 },

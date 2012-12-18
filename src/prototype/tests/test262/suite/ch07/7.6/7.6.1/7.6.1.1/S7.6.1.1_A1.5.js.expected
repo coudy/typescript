@@ -1,70 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "IdentifierNameToken",
-            "keywordKind": "DefaultKeyword",
-            "width": 7,
-            "fullWidth": 327,
-            "text": "default",
-            "hasLeadingTrivia": true,
-            "hasLeadingCommentTrivia": true,
-            "hasLeadingNewLineTrivia": true,
-            "hasTrailingTrivia": true,
-            "leadingTrivia": [
-                {
-                    "kind": "SingleLineCommentTrivia",
-                    "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
-                },
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                },
-                {
-                    "kind": "SingleLineCommentTrivia",
-                    "text": "// This code is governed by the BSD license found in the LICENSE file."
-                },
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                },
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                },
-                {
-                    "kind": "MultiLineCommentTrivia",
-                    "text": "/**\n * The \"default\" token can not be used as identifier\n *\n * @path ch07/7.6/7.6.1/7.6.1.1/S7.6.1.1_A1.5.js\n * @description Checking if execution of \"default=1\" fails\n * @negative\n */"
-                },
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                },
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                }
-            ],
-            "trailingTrivia": [
-                {
-                    "kind": "WhitespaceTrivia",
-                    "text": " "
-                }
-            ]
-        },
-        {
-            "kind": "EqualsToken",
-            "width": 1,
-            "fullWidth": 2,
-            "text": "=",
-            "hasTrailingTrivia": true,
-            "trailingTrivia": [
-                {
-                    "kind": "WhitespaceTrivia",
-                    "text": " "
-                }
-            ]
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 319,
@@ -93,7 +27,61 @@
                     "_literalToken": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "fullWidth": 330,
+                        "text": "1",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingCommentTrivia": true,
+                        "hasLeadingNewLineTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// This code is governed by the BSD license found in the LICENSE file."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "MultiLineCommentTrivia",
+                                "text": "/**\n * The \"default\" token can not be used as identifier\n *\n * @path ch07/7.6/7.6.1/7.6.1.1/S7.6.1.1_A1.5.js\n * @description Checking if execution of \"default=1\" fails\n * @negative\n */"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SkippedTextTrivia",
+                                "text": "default"
+                            },
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            },
+                            {
+                                "kind": "SkippedTextTrivia",
+                                "text": "="
+                            },
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     }
                 },
                 "_semicolonToken": {

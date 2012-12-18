@@ -1,83 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "IdentifierNameToken",
-            "keywordKind": "CaseKeyword",
-            "width": 4,
-            "fullWidth": 9,
-            "text": "case",
-            "hasLeadingTrivia": true,
-            "hasTrailingTrivia": true,
-            "leadingTrivia": [
-                {
-                    "kind": "WhitespaceTrivia",
-                    "text": "    "
-                }
-            ],
-            "trailingTrivia": [
-                {
-                    "kind": "WhitespaceTrivia",
-                    "text": " "
-                }
-            ]
-        },
-        {
-            "kind": "ColonToken",
-            "width": 1,
-            "fullWidth": 2,
-            "text": ":",
-            "hasTrailingTrivia": true,
-            "hasTrailingNewLineTrivia": true,
-            "trailingTrivia": [
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                }
-            ]
-        },
-        {
-            "kind": "IdentifierNameToken",
-            "keywordKind": "DefaultKeyword",
-            "width": 7,
-            "fullWidth": 11,
-            "text": "default",
-            "hasLeadingTrivia": true,
-            "leadingTrivia": [
-                {
-                    "kind": "WhitespaceTrivia",
-                    "text": "    "
-                }
-            ]
-        },
-        {
-            "kind": "ColonToken",
-            "width": 1,
-            "fullWidth": 2,
-            "text": ":",
-            "hasTrailingTrivia": true,
-            "hasTrailingNewLineTrivia": true,
-            "trailingTrivia": [
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                }
-            ]
-        },
-        {
-            "kind": "CloseBraceToken",
-            "width": 1,
-            "fullWidth": 2,
-            "text": "}",
-            "hasTrailingTrivia": true,
-            "hasTrailingNewLineTrivia": true,
-            "trailingTrivia": [
-                {
-                    "kind": "NewLineTrivia",
-                    "text": "\n"
-                }
-            ]
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 377,
@@ -384,7 +305,7 @@
                                     }
                                 ]
                             },
-                            "_caseClauses": [],
+                            "_switchClauses": [],
                             "_closeBraceToken": {
                                 "kind": "CloseBraceToken",
                                 "width": 0,
@@ -437,7 +358,7 @@
                             "_semicolonToken": {
                                 "kind": "SemicolonToken",
                                 "width": 1,
-                                "fullWidth": 2,
+                                "fullWidth": 11,
                                 "text": ";",
                                 "hasTrailingTrivia": true,
                                 "hasTrailingNewLineTrivia": true,
@@ -445,6 +366,18 @@
                                     {
                                         "kind": "NewLineTrivia",
                                         "text": "\n"
+                                    },
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "    "
+                                    },
+                                    {
+                                        "kind": "SkippedTextTrivia",
+                                        "text": "case"
+                                    },
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
                                     }
                                 ]
                             }
@@ -456,7 +389,20 @@
                                 "_literalToken": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "fullWidth": 3,
+                                    "text": "0",
+                                    "hasTrailingTrivia": true,
+                                    "hasTrailingNewLineTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "SkippedTextTrivia",
+                                            "text": ":"
+                                        },
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "text": "\n"
+                                        }
+                                    ]
                                 }
                             },
                             "_semicolonToken": {
@@ -519,11 +465,27 @@
                             "_semicolonToken": {
                                 "kind": "SemicolonToken",
                                 "width": 1,
-                                "fullWidth": 2,
+                                "fullWidth": 15,
                                 "text": ";",
                                 "hasTrailingTrivia": true,
                                 "hasTrailingNewLineTrivia": true,
                                 "trailingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\n"
+                                    },
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "    "
+                                    },
+                                    {
+                                        "kind": "SkippedTextTrivia",
+                                        "text": "default"
+                                    },
+                                    {
+                                        "kind": "SkippedTextTrivia",
+                                        "text": ":"
+                                    },
                                     {
                                         "kind": "NewLineTrivia",
                                         "text": "\n"
@@ -695,11 +657,19 @@
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
                     "width": 1,
-                    "fullWidth": 2,
+                    "fullWidth": 4,
                     "text": ";",
                     "hasTrailingTrivia": true,
                     "hasTrailingNewLineTrivia": true,
                     "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "SkippedTextTrivia",
+                            "text": "}"
+                        },
                         {
                             "kind": "NewLineTrivia",
                             "text": "\n"

@@ -1,19 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "EqualsToken",
-            "width": 1,
-            "fullWidth": 2,
-            "text": "=",
-            "hasTrailingTrivia": true,
-            "trailingTrivia": [
-                {
-                    "kind": "WhitespaceTrivia",
-                    "text": " "
-                }
-            ]
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 321,
@@ -33,7 +18,7 @@
                     "kind": "IdentifierNameToken",
                     "keywordKind": "BreakKeyword",
                     "width": 5,
-                    "fullWidth": 321,
+                    "fullWidth": 323,
                     "text": "break",
                     "hasLeadingTrivia": true,
                     "hasLeadingCommentTrivia": true,
@@ -74,6 +59,14 @@
                         }
                     ],
                     "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "text": " "
+                        },
+                        {
+                            "kind": "SkippedTextTrivia",
+                            "text": "="
+                        },
                         {
                             "kind": "WhitespaceTrivia",
                             "text": " "

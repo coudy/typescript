@@ -1,11 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "ErrorToken",
-            "width": 1,
-            "text": "\\"
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 297,
@@ -55,11 +48,12 @@
                     "_operatorToken": {
                         "kind": "SlashToken",
                         "width": 1,
-                        "fullWidth": 298,
+                        "fullWidth": 299,
                         "text": "/",
                         "hasLeadingTrivia": true,
                         "hasLeadingCommentTrivia": true,
                         "hasLeadingNewLineTrivia": true,
+                        "hasTrailingTrivia": true,
                         "leadingTrivia": [
                             {
                                 "kind": "SingleLineCommentTrivia",
@@ -100,6 +94,12 @@
                             {
                                 "kind": "NewLineTrivia",
                                 "text": "\n"
+                            }
+                        ],
+                        "trailingTrivia": [
+                            {
+                                "kind": "SkippedTextTrivia",
+                                "text": "\\"
                             }
                         ]
                     },

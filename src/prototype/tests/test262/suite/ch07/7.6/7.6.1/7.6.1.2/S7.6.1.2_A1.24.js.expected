@@ -1,33 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "IdentifierNameToken",
-            "keywordKind": "PublicKeyword",
-            "width": 6,
-            "fullWidth": 7,
-            "text": "public",
-            "hasTrailingTrivia": true,
-            "trailingTrivia": [
-                {
-                    "kind": "WhitespaceTrivia",
-                    "text": " "
-                }
-            ]
-        },
-        {
-            "kind": "EqualsToken",
-            "width": 1,
-            "fullWidth": 2,
-            "text": "=",
-            "hasTrailingTrivia": true,
-            "trailingTrivia": [
-                {
-                    "kind": "WhitespaceTrivia",
-                    "text": " "
-                }
-            ]
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 381,
@@ -128,10 +99,26 @@
                         "kind": "IdentifierNameToken",
                         "keywordKind": "VarKeyword",
                         "width": 3,
-                        "fullWidth": 4,
+                        "fullWidth": 13,
                         "text": "var",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            },
+                            {
+                                "kind": "SkippedTextTrivia",
+                                "text": "public"
+                            },
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            },
+                            {
+                                "kind": "SkippedTextTrivia",
+                                "text": "="
+                            },
                             {
                                 "kind": "WhitespaceTrivia",
                                 "text": " "

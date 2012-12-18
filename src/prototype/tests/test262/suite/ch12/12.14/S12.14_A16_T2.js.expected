@@ -1,16 +1,25 @@
 {
-    "_skippedTokens": [
+    "_diagnostics": [
         {
-            "kind": "IdentifierNameToken",
-            "keywordKind": "CatchKeyword",
-            "width": 5,
-            "fullWidth": 368,
-            "text": "catch",
+            "_position": 362,
+            "_width": 5,
+            "_diagnosticCode": "Unexpected_token__0_expected",
+            "_arguments": [
+                "module, class, interface, enum, import or statement"
+            ]
+        }
+    ],
+    "_sourceUnit": {
+        "kind": "SourceUnit",
+        "_moduleElements": [],
+        "_endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "fullWidth": 369,
+            "text": "",
             "hasLeadingTrivia": true,
             "hasLeadingCommentTrivia": true,
             "hasLeadingNewLineTrivia": true,
-            "hasTrailingTrivia": true,
-            "hasTrailingNewLineTrivia": true,
             "leadingTrivia": [
                 {
                     "kind": "SingleLineCommentTrivia",
@@ -51,37 +60,15 @@
                 {
                     "kind": "NewLineTrivia",
                     "text": "\n"
-                }
-            ],
-            "trailingTrivia": [
+                },
+                {
+                    "kind": "SkippedTextTrivia",
+                    "text": "catch"
+                },
                 {
                     "kind": "NewLineTrivia",
                     "text": "\n"
-                }
-            ]
-        }
-    ],
-    "_diagnostics": [
-        {
-            "_position": 362,
-            "_width": 5,
-            "_diagnosticCode": "Unexpected_token__0_expected",
-            "_arguments": [
-                "module, class, interface, enum, import or statement"
-            ]
-        }
-    ],
-    "_sourceUnit": {
-        "kind": "SourceUnit",
-        "_moduleElements": [],
-        "_endOfFileToken": {
-            "kind": "EndOfFileToken",
-            "width": 0,
-            "fullWidth": 1,
-            "text": "",
-            "hasLeadingTrivia": true,
-            "hasLeadingNewLineTrivia": true,
-            "leadingTrivia": [
+                },
                 {
                     "kind": "NewLineTrivia",
                     "text": "\n"

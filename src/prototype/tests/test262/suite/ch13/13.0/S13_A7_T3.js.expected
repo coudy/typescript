@@ -1,21 +1,4 @@
 {
-    "_skippedTokens": [
-        {
-            "kind": "ErrorToken",
-            "width": 1,
-            "text": "\\"
-        },
-        {
-            "kind": "ErrorToken",
-            "width": 1,
-            "text": "\\"
-        },
-        {
-            "kind": "ErrorToken",
-            "width": 1,
-            "text": "\\"
-        }
-    ],
     "_diagnostics": [
         {
             "_position": 326,
@@ -150,7 +133,15 @@
                     "_openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
-                        "text": "{"
+                        "fullWidth": 2,
+                        "text": "{",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "SkippedTextTrivia",
+                                "text": "\\"
+                            }
+                        ]
                     },
                     "_statements": [
                         {
@@ -160,7 +151,16 @@
                                 "_identifier": {
                                     "kind": "IdentifierNameToken",
                                     "width": 1,
-                                    "text": "A"
+                                    "fullWidth": 2,
+                                    "text": "A",
+                                    "valueText": "A",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "SkippedTextTrivia",
+                                            "text": "\\"
+                                        }
+                                    ]
                                 }
                             },
                             "_semicolonToken": {
@@ -177,7 +177,16 @@
                                 "_identifier": {
                                     "kind": "IdentifierNameToken",
                                     "width": 1,
-                                    "text": "B"
+                                    "fullWidth": 2,
+                                    "text": "B",
+                                    "valueText": "B",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "SkippedTextTrivia",
+                                            "text": "\\"
+                                        }
+                                    ]
                                 }
                             },
                             "_semicolonToken": {
