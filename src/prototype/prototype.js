@@ -20590,7 +20590,7 @@ var Emitter;
                 normalStatements.unshift(expressionStatement);
             }
             block = block.withStatements(SyntaxList.create(normalStatements));
-            return new FunctionDeclarationSyntax(null, null, Syntax.token(25 /* FunctionKeyword */ ).withTrailingTrivia(this.space), functionSignature, block, null).withLeadingTrivia(constructorDeclaration.leadingTrivia());
+            return FunctionDeclarationSyntax.create(Syntax.token(25 /* FunctionKeyword */ ).withTrailingTrivia(this.space), functionSignature).withBlock(block).withLeadingTrivia(constructorDeclaration.leadingTrivia());
         };
         EmitterImpl.prototype.convertMemberFunctionDeclaration = function (classDeclaration, functionDeclaration) {
             var _this = this;

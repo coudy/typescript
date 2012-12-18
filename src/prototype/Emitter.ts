@@ -672,10 +672,10 @@ module Emitter {
 
             block = block.withStatements(SyntaxList.create(normalStatements));
 
-            return new FunctionDeclarationSyntax(null, null,
+            return FunctionDeclarationSyntax.create(
                 Syntax.token(SyntaxKind.FunctionKeyword).withTrailingTrivia(this.space),
-                functionSignature,
-                block, null).withLeadingTrivia(constructorDeclaration.leadingTrivia());
+                functionSignature)
+                    .withBlock(block).withLeadingTrivia(constructorDeclaration.leadingTrivia());
         }
 
         private convertMemberFunctionDeclaration(classDeclaration: ClassDeclarationSyntax,
