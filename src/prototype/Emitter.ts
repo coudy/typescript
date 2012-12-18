@@ -775,20 +775,14 @@ module Emitter {
                 }
             }
 
-            var receiver = MemberAccessExpressionSyntax.create1(
-                Syntax.identifierName("Object"),
-                Syntax.identifierName("defineProperty")).withLeadingTrivia(memberAccessor.leadingTrivia());
-
-            var arguments = [];
-
             var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
-            arguments.push(MemberAccessExpressionSyntax.create1(
-                new IdentifierNameSyntax(classIdentifier),
-                Syntax.identifierName("prototype")));
-            arguments.push(Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space));
 
-            arguments.push(Syntax.stringLiteralExpression('"' + memberAccessor.identifier().text() + '"'));
-            arguments.push(Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space));
+            var arguments = [
+                <any>MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(classIdentifier), Syntax.identifierName("prototype")),
+                Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
+                Syntax.stringLiteralExpression('"' + memberAccessor.identifier().text() + '"'),
+                Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space)
+            ];
 
             var propertyAssignments = [];
             for (var i = 0; i < accessors.length; i++) {
@@ -822,13 +816,11 @@ module Emitter {
 
             arguments.push(objectLiteral);
 
-            var argumentList = ArgumentListSyntax.create1().withArguments(
-                SeparatedSyntaxList.create(arguments));
-
-            var invocationExpression = new InvocationExpressionSyntax(receiver, argumentList);
-
-            return ExpressionStatementSyntax.create1(invocationExpression)
-                                            .withTrailingTrivia(this.newLine);
+            return ExpressionStatementSyntax.create1(
+                new InvocationExpressionSyntax(
+                    MemberAccessExpressionSyntax.create1(Syntax.identifierName("Object"), Syntax.identifierName("defineProperty")),
+                    ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create(arguments))))
+                        .withLeadingTrivia(memberAccessor.leadingTrivia()).withTrailingTrivia(this.newLine);
         }
 
         private convertClassElements(classDeclaration: ClassDeclarationSyntax): StatementSyntax[] {
@@ -868,15 +860,13 @@ module Emitter {
 
             if (node.extendsClause() !== null) {
                 // __extends(C, _super);
-                var extendsStatement = ExpressionStatementSyntax.create1(
+                statements.push(ExpressionStatementSyntax.create1(
                     new InvocationExpressionSyntax(
                         Syntax.identifierName("__extends"),
                         ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create([
                             <any>new IdentifierNameSyntax(identifier),
                             Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
-                            Syntax.identifierName("_super")])))).withLeadingTrivia(statementIndentation).withTrailingTrivia(this.newLine);
-
-                statements.push(extendsStatement);
+                            Syntax.identifierName("_super")])))).withLeadingTrivia(statementIndentation).withTrailingTrivia(this.newLine));
             }
 
             var constructorDeclaration: ConstructorDeclarationSyntax =
@@ -941,8 +931,7 @@ module Emitter {
                 Syntax.token(SyntaxKind.VarKeyword).withTrailingTrivia(this.space),
                 SeparatedSyntaxList.create([variableDeclarator])).withLeadingTrivia(node.leadingTrivia());
 
-            return VariableStatementSyntax.create1(variableDeclaration)
-                                          .withTrailingTrivia(this.newLine);
+            return VariableStatementSyntax.create1(variableDeclaration).withTrailingTrivia(this.newLine);
         }
 
         private visitVariableDeclarator(node: VariableDeclaratorSyntax): VariableDeclaratorSyntax {
@@ -951,8 +940,7 @@ module Emitter {
                 return result;
             }
 
-            var newTrailingTrivia = result.identifier().trailingTrivia().concat(
-                result.typeAnnotation().trailingTrivia());
+            var newTrailingTrivia = result.identifier().trailingTrivia().concat(result.typeAnnotation().trailingTrivia());
 
             return result.withTypeAnnotation(null)
                          .withIdentifier(result.identifier().withTrailingTrivia(newTrailingTrivia));
@@ -967,8 +955,7 @@ module Emitter {
             var newTrailingTrivia = result.parameterList().trailingTrivia().concat(
                 result.typeAnnotation().trailingTrivia());
 
-            return result.withTypeAnnotation(null)
-                         .withTrailingTrivia(newTrailingTrivia);
+            return result.withTypeAnnotation(null).withTrailingTrivia(newTrailingTrivia);
         }
 
         private visitCastExpression(node: CastExpressionSyntax): ExpressionSyntax {
@@ -991,8 +978,7 @@ module Emitter {
                                             index: number): ExpressionSyntax {
             if (variableDeclarator.equalsValueClause() !== null) {
                 // Use the value if one is provided.
-                return variableDeclarator.equalsValueClause().value()
-                                         .withTrailingTrivia(SyntaxTriviaList.empty);
+                return variableDeclarator.equalsValueClause().value().withTrailingTrivia(SyntaxTriviaList.empty);
             }
 
             // Didn't have a value.  Synthesize one if we're doing that, or use the previous item's value
@@ -1010,8 +996,7 @@ module Emitter {
                 new IdentifierNameSyntax(enumIdentifier),
                 new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
 
-            return new BinaryExpressionSyntax(
-                SyntaxKind.PlusExpression,
+            return new BinaryExpressionSyntax(SyntaxKind.PlusExpression,
                 receiver,
                 Syntax.token(SyntaxKind.PlusToken).withTrailingTrivia(this.space),
                 Syntax.numericLiteralExpression("1"));
@@ -1033,8 +1018,7 @@ module Emitter {
                     new VariableDeclarationSyntax(
                         Syntax.token(SyntaxKind.VarKeyword).withTrailingTrivia(this.space),
                         SeparatedSyntaxList.create([new VariableDeclaratorSyntax(
-                            Syntax.identifier("_").withTrailingTrivia(this.space),
-                            null,
+                            Syntax.identifier("_").withTrailingTrivia(this.space), null,
                             new EqualsValueClauseSyntax(
                                 Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
                                 new IdentifierNameSyntax(identifier)))]))).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.newLine));
@@ -1042,9 +1026,7 @@ module Emitter {
                 // _._map = []
                 statements.push(ExpressionStatementSyntax.create1(
                     Syntax.assignmentExpression(
-                        MemberAccessExpressionSyntax.create1(
-                            Syntax.identifierName("_"),
-                            Syntax.identifierName("_map").withTrailingTrivia(this.space)),
+                        MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), Syntax.identifierName("_map")).withTrailingTrivia(this.space),
                         Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
                         ArrayLiteralExpressionSyntax.create1())).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.newLine));
 
@@ -1058,15 +1040,13 @@ module Emitter {
                     // _.Foo = 1
                     var innerAssign = Syntax.assignmentExpression(
                         MemberAccessExpressionSyntax.create1(
-                            Syntax.identifierName("_"),
-                            new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space))),
+                            Syntax.identifierName("_"), new IdentifierNameSyntax(variableIdentifier)).withTrailingTrivia(SyntaxTriviaList.space),
                         Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
                         this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues.value, i))
 
                     // _._map[_.Foo = 1]
                     var elementAccessExpression = ElementAccessExpressionSyntax.create1(
-                        MemberAccessExpressionSyntax.create1(
-                            Syntax.identifierName("_"), Syntax.identifierName("_map")),
+                        MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), Syntax.identifierName("_map")),
                         innerAssign).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.space);;
 
                     //_._map[_.Foo = 1] = "Foo"
@@ -1119,8 +1099,7 @@ module Emitter {
         private convertSuperInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
             var result: InvocationExpressionSyntax = super.visitInvocationExpression(node);
 
-            var expression = MemberAccessExpressionSyntax.create1(
-                Syntax.identifierName("_super"), Syntax.identifierName("call"));
+            var expression = MemberAccessExpressionSyntax.create1(Syntax.identifierName("_super"), Syntax.identifierName("call"));
 
             var arguments = result.argumentList().arguments().toArray();
             if (arguments.length > 0) {
@@ -1144,8 +1123,7 @@ module Emitter {
 
             arguments.unshift(ThisExpressionSyntax.create1());
 
-            var expression = MemberAccessExpressionSyntax.create1(
-                result.expression(), Syntax.identifierName("call"));
+            var expression = MemberAccessExpressionSyntax.create1(result.expression(), Syntax.identifierName("call"));
             return result.withExpression(expression)
                          .withArgumentList(result.argumentList().withArguments(SeparatedSyntaxList.create(arguments)));
         }
@@ -1168,8 +1146,7 @@ module Emitter {
             }
 
             return MemberAccessExpressionSyntax.create1(
-                MemberAccessExpressionSyntax.create1(
-                    Syntax.identifierName("_super"), Syntax.identifierName("prototype")),
+                MemberAccessExpressionSyntax.create1(Syntax.identifierName("_super"), Syntax.identifierName("prototype")),
                 result.identifierName()).withLeadingTrivia(result.leadingTrivia());
         }
 
