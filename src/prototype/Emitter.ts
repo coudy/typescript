@@ -597,10 +597,10 @@ module Emitter {
                 SyntaxList.create(statements),
                 Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(indentationTrivia)).withTrailingTrivia(this.newLine);
 
-            var functionDeclaration = new FunctionDeclarationSyntax(null, null,
+            var functionDeclaration = FunctionDeclarationSyntax.create(
                 Syntax.token(SyntaxKind.FunctionKeyword).withLeadingTrivia(indentationTrivia).withTrailingTrivia(this.space),
-                functionSignature,
-                block, null);
+                functionSignature)
+                    .withBlock(block);
 
             return <FunctionDeclarationSyntax>this.changeIndentation(
                 functionDeclaration, /*indentFirstToken:*/ true, this.options.indentSpaces);
