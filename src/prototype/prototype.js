@@ -28130,7 +28130,7 @@ var Program = (function () {
         });
         environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
+            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, true, false);
         });
     };
     Program.prototype.handleException = function (environment, filePath, e) {
