@@ -20395,8 +20395,7 @@ var Emitter;
                 VariableDeclaratorSyntax.create(moduleIdentifier)
             ]))).withLeadingTrivia(leadingTrivia).withTrailingTrivia(this.newLine);
             var functionExpression = FunctionExpressionSyntax.create1().withCallSignature(Syntax.callSignature(ParameterSyntax.create(moduleIdentifier)).withTrailingTrivia(this.space)).withBlock(new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), SyntaxList.create(moduleElements), Syntax.token(68 /* CloseBraceToken */ ).withLeadingTrivia(moduleIndentation)));
-            var invocationExpression = new InvocationExpressionSyntax(ParenthesizedExpressionSyntax.create1(functionExpression), ArgumentListSyntax.create1().withArgument(this.initializedVariable(moduleName)));
-            var expressionStatement = ExpressionStatementSyntax.create1(invocationExpression).withLeadingTrivia(moduleIndentation).withTrailingTrivia(this.newLine);
+            var expressionStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(ParenthesizedExpressionSyntax.create1(functionExpression), ArgumentListSyntax.create1().withArgument(this.initializedVariable(moduleName)))).withLeadingTrivia(moduleIndentation).withTrailingTrivia(this.newLine);
             return [
                 variableStatement, 
                 expressionStatement

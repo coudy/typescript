@@ -224,7 +224,6 @@ module Emitter {
             return moduleElements;
         }
 
-
         private initializedVariable(name: IdentifierNameSyntax): BinaryExpressionSyntax {
             return new BinaryExpressionSyntax(SyntaxKind.LogicalOrExpression,
                 name,
@@ -261,15 +260,12 @@ module Emitter {
                     SyntaxList.create(moduleElements),
                     Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(moduleIndentation)));
 
-            // (function(M) { ... })(M||(M={}))
-            var invocationExpression = new InvocationExpressionSyntax(
-                ParenthesizedExpressionSyntax.create1(functionExpression),
-                ArgumentListSyntax.create1().withArgument(
-                    this.initializedVariable(moduleName)));
-
             // (function(M) { ... })(M||(M={}));
-            var expressionStatement = ExpressionStatementSyntax.create1(invocationExpression)
-                .withLeadingTrivia(moduleIndentation).withTrailingTrivia(this.newLine);
+            var expressionStatement = ExpressionStatementSyntax.create1(
+                new InvocationExpressionSyntax(
+                ParenthesizedExpressionSyntax.create1(functionExpression),
+                ArgumentListSyntax.create1().withArgument(this.initializedVariable(moduleName))))
+                    .withLeadingTrivia(moduleIndentation).withTrailingTrivia(this.newLine);
 
             return [variableStatement, expressionStatement];
         }
