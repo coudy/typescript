@@ -631,10 +631,7 @@ module Emitter {
 
             var instanceAssignments = this.generatePropertyAssignments(
                 classDeclaration, /*static:*/ false);
-
-            for (var i = 0; i < instanceAssignments.length; i++) {
-                statements.push(instanceAssignments[i]);
-            }
+            statements.push.apply(statements, instanceAssignments);
 
             var indentationTrivia = this.indentationTrivia(classIndentationColumn);
             var block = new BlockSyntax(

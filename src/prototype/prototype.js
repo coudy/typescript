@@ -20537,9 +20537,7 @@ var Emitter;
                 statements.push(superStatement);
             }
             var instanceAssignments = this.generatePropertyAssignments(classDeclaration, false);
-            for(var i = 0; i < instanceAssignments.length; i++) {
-                statements.push(instanceAssignments[i]);
-            }
+            statements.push.apply(statements, instanceAssignments);
             var indentationTrivia = this.indentationTrivia(classIndentationColumn);
             var block = new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), SyntaxList.create(statements), Syntax.token(68 /* CloseBraceToken */ ).withLeadingTrivia(indentationTrivia)).withTrailingTrivia(this.newLine);
             var functionDeclaration = new FunctionDeclarationSyntax(null, null, Syntax.token(25 /* FunctionKeyword */ ).withLeadingTrivia(indentationTrivia).withTrailingTrivia(this.space), functionSignature, block, null);
