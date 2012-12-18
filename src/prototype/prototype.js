@@ -20489,7 +20489,7 @@ var Emitter;
             var memberIdentifier = this.withNoTrivia(declarator.identifier());
             var receiver = static ? new IdentifierNameSyntax(classIdentifier) : ThisExpressionSyntax.create1();
             receiver = MemberAccessExpressionSyntax.create1(receiver, new IdentifierNameSyntax(memberIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
-            return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , receiver, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), declarator.equalsValueClause().value().accept(this))).withLeadingTrivia(memberDeclaration.leadingTrivia()).withTrailingTrivia(this.newLine);
+            return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , receiver, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), declarator.equalsValueClause().value().accept(this).withTrailingTrivia(SyntaxTriviaList.empty))).withLeadingTrivia(memberDeclaration.leadingTrivia()).withTrailingTrivia(this.newLine);
         };
         EmitterImpl.prototype.generatePropertyAssignments = function (classDeclaration, static) {
             var result = [];
@@ -20741,6 +20741,14 @@ var Emitter;
             }
             var newTrailingTrivia = result.identifier().trailingTrivia().concat(result.typeAnnotation().trailingTrivia());
             return result.withTypeAnnotation(null).withIdentifier(result.identifier().withTrailingTrivia(newTrailingTrivia));
+        };
+        EmitterImpl.prototype.visitCallSignature = function (node) {
+            var result = _super.prototype.visitCallSignature.call(this, node);
+            if(result.typeAnnotation() === null) {
+                return result;
+            }
+            var newTrailingTrivia = result.parameterList().trailingTrivia().concat(result.typeAnnotation().trailingTrivia());
+            return result.withTypeAnnotation(null).withTrailingTrivia(newTrailingTrivia);
         };
         EmitterImpl.prototype.visitCastExpression = function (node) {
             var result = _super.prototype.visitCastExpression.call(this, node);

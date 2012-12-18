@@ -583,7 +583,7 @@ module Emitter {
                         SyntaxKind.AssignmentExpression,
                         receiver,
                         Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
-                        declarator.equalsValueClause().value().accept(this))
+                        declarator.equalsValueClause().value().accept(this).withTrailingTrivia(SyntaxTriviaList.empty))
                 ).withLeadingTrivia(memberDeclaration.leadingTrivia()).withTrailingTrivia(this.newLine);
         }
 
@@ -1024,7 +1024,7 @@ module Emitter {
         }
 
         private visitVariableDeclarator(node: VariableDeclaratorSyntax): VariableDeclaratorSyntax {
-            var result = super.visitVariableDeclarator(node);
+            var result: VariableDeclaratorSyntax = super.visitVariableDeclarator(node);
             if (result.typeAnnotation() === null) {
                 return result;
             }
@@ -1034,6 +1034,19 @@ module Emitter {
 
             return result.withTypeAnnotation(null)
                          .withIdentifier(result.identifier().withTrailingTrivia(newTrailingTrivia));
+        }
+
+        private visitCallSignature(node: CallSignatureSyntax): CallSignatureSyntax {
+            var result: CallSignatureSyntax = super.visitCallSignature(node);
+            if (result.typeAnnotation() === null) {
+                return result;
+            }
+
+            var newTrailingTrivia = result.parameterList().trailingTrivia().concat(
+                result.typeAnnotation().trailingTrivia());
+
+            return result.withTypeAnnotation(null)
+                         .withTrailingTrivia(newTrailingTrivia);
         }
 
         private visitCastExpression(node: CastExpressionSyntax): ExpressionSyntax {

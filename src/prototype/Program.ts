@@ -9,7 +9,7 @@
 var stringTable = Collections.createStringTable();
 
 var specificFile = 
-    // "ExportDeclaration1";
+    // "TriviaPreservation2";
     undefined;
 
 class Program {
