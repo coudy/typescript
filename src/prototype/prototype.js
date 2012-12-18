@@ -1694,7 +1694,7 @@ var Syntax;
 })(Syntax || (Syntax = {}));
 var SyntaxList;
 (function (SyntaxList) {
-    function collectTextElements(elements, list) {
+    function collectSyntaxListTextElements(elements, list) {
         for(var i = 0, n = list.count(); i < n; i++) {
             list.syntaxNodeAt(i).collectTextElements(elements);
         }
@@ -1735,7 +1735,7 @@ var SyntaxList;
             throw Errors.argumentOutOfRange("index");
         };
         EmptySyntaxList.prototype.collectTextElements = function (elements) {
-            return collectTextElements(elements, this);
+            return collectSyntaxListTextElements(elements, this);
         };
         EmptySyntaxList.prototype.toArray = function () {
             return [];
@@ -1801,7 +1801,7 @@ var SyntaxList;
             return this._item;
         };
         SingletonSyntaxList.prototype.collectTextElements = function (elements) {
-            return collectTextElements(elements, this);
+            return collectSyntaxListTextElements(elements, this);
         };
         SingletonSyntaxList.prototype.toArray = function () {
             return [
@@ -1871,7 +1871,7 @@ var SyntaxList;
             return this.nodes[index];
         };
         NormalSyntaxList.prototype.collectTextElements = function (elements) {
-            return collectTextElements(elements, this);
+            return collectSyntaxListTextElements(elements, this);
         };
         NormalSyntaxList.prototype.toArray = function () {
             return this.nodes.slice(0);

@@ -1,7 +1,7 @@
 ///<reference path='ISyntaxList.ts' />
 
 module SyntaxList {
-    function collectTextElements(elements: string[], list: ISyntaxList): void {
+    function collectSyntaxListTextElements(elements: string[], list: ISyntaxList): void {
         for (var i = 0, n = list.count(); i < n; i++) {
             list.syntaxNodeAt(i).collectTextElements(elements);
         }
@@ -33,7 +33,7 @@ module SyntaxList {
         }
 
         public collectTextElements(elements: string[]): void {
-            return collectTextElements(elements, this);
+            return collectSyntaxListTextElements(elements, this);
         }
 
         public toArray(): SyntaxNode[] {
@@ -96,7 +96,7 @@ module SyntaxList {
         }
 
         public collectTextElements(elements: string[]): void {
-            return collectTextElements(elements, this);
+            return collectSyntaxListTextElements(elements, this);
         }
 
         public toArray(): SyntaxNode[] {
@@ -166,7 +166,7 @@ module SyntaxList {
         }
 
         public collectTextElements(elements: string[]): void {
-            return collectTextElements(elements, this);
+            return collectSyntaxListTextElements(elements, this);
         }
 
         public toArray(): SyntaxNode[] {
