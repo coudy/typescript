@@ -67,15 +67,21 @@ module Syntax {
         public hasZeroWidthToken(): bool {
             return false;
         }
+
+        public syntaxNodeThatContainsPosition(position: number): SyntaxNode {
+            // This should never have been called on this list.  It has a 0 width, so the client 
+            // should have skipped over this.
+            throw Errors.invalidOperation();
+        }
     }
 
     export var emptyList: ISyntaxList = new EmptySyntaxList();
 
     class SingletonSyntaxList implements ISyntaxList {
-        private _item: SyntaxNode;
+        private item: SyntaxNode;
 
         constructor(item: SyntaxNode) {
-            this._item = item;
+            this.item = item;
         }
         
         public isToken(): bool { return false; }
@@ -85,10 +91,10 @@ module Syntax {
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
         public kind(): SyntaxKind { return SyntaxKind.List; }
-        public isMissing(): bool { return this._item.isMissing(); }
+        public isMissing(): bool { return this.item.isMissing(); }
 
         public toJSON(key) {
-            return [this._item];
+            return [this.item];
         }
         
         public count() {
@@ -100,7 +106,7 @@ module Syntax {
                 throw Errors.argumentOutOfRange("index");
             }
 
-            return this._item;
+            return this.item;
         }
 
         public collectTextElements(elements: string[]): void {
@@ -108,35 +114,40 @@ module Syntax {
         }
 
         public toArray(): SyntaxNode[] {
-            return [this._item];
+            return [this.item];
         }
 
         public firstToken(): ISyntaxToken {
-            return this._item.firstToken();
+            return this.item.firstToken();
         }
 
         public lastToken(): ISyntaxToken {
-            return this._item.lastToken();
+            return this.item.lastToken();
         }
 
         public fullWidth(): number {
-            return this._item.fullWidth();
+            return this.item.fullWidth();
         }
 
         public fullText(): string {
-            return this._item.fullText();
+            return this.item.fullText();
         }
 
         public isTypeScriptSpecific(): bool {
-            return this._item.isTypeScriptSpecific();
+            return this.item.isTypeScriptSpecific();
         }
 
         public hasSkippedText(): bool {
-            return this._item.hasSkippedText();
+            return this.item.hasSkippedText();
         }
 
         public hasZeroWidthToken(): bool {
-            return this._item.hasZeroWidthToken();
+            return this.item.hasZeroWidthToken();
+        }
+
+        public syntaxNodeThatContainsPosition(position: number): SyntaxNode {
+            Debug.assert(position >= 0 && position < this.item.fullWidth());
+            return this.item;
         }
     }
 
@@ -261,6 +272,20 @@ module Syntax {
             }
 
             return this._data;
+        }
+
+        public syntaxNodeThatContainsPosition(position: number): SyntaxNode {
+            Debug.assert(position >= 0 && position < this.fullWidth());
+
+            for (var i = 0, n = this.nodes.length; i < n; i++) {
+                var node = this.nodes[i];
+
+                var childWidth = node.fullWidth();
+                if (position < childWidth) { return node; }
+                position -= childWidth;
+            }
+
+            throw Errors.invalidOperation();
         }
     }
 

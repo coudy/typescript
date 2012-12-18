@@ -76,6 +76,12 @@ module Syntax {
         public hasZeroWidthToken(): bool {
             return false;
         }
+
+        public syntaxElementThatContainsPosition(position: number): SyntaxNode {
+            // This should never have been called on this list.  It has a 0 width, so the client 
+            // should have skipped over this.
+            throw Errors.invalidOperation();
+        }
     }
 
     class SingletonSeparatedSyntaxList implements ISeparatedSyntaxList {
@@ -160,6 +166,11 @@ module Syntax {
 
         public hasZeroWidthToken(): bool {
             return this.item.hasZeroWidthToken();
+        }
+
+        public syntaxElementThatContainsPosition(position: number): SyntaxNode {
+            Debug.assert(position >= 0 && position < this.item.fullWidth());
+            return this.item;
         }
     }
 
@@ -311,22 +322,24 @@ module Syntax {
             var fullWidth = 0;
             var hasSkippedText = false;
             var hasZeroWidthToken = false;
+            
+            for (var i = 0, n = this.elements.length; i < n; i++) {
+                var element = this.elements[i];
+                
+                var childWidth = element.fullWidth();
+                fullWidth += childWidth;
 
-            for (var i = this.elements.length - 1; i >= 0; i--) {
                 if (i % 2 === 0) {
-                    var node = <SyntaxNode>this.elements[i];
+                    var node = <SyntaxNode>element;
 
-                    fullWidth += node.fullWidth();
                     hasSkippedText = hasSkippedText || node.hasSkippedText();
                     hasZeroWidthToken = hasZeroWidthToken || node.hasZeroWidthToken();
                 }
                 else {
-                    var token = <ISyntaxToken>this.elements[i];
+                    var token = <ISyntaxToken>element;
 
-                    var tokenWidth = token.fullWidth();
-                    fullWidth += tokenWidth;
                     hasSkippedText = hasSkippedText || token.hasSkippedText();
-                    hasZeroWidthToken = hasZeroWidthToken || (tokenWidth === 0);
+                    hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
                 }
             }
 
@@ -339,6 +352,18 @@ module Syntax {
             }
 
             return this._data;
+        }
+
+        public syntaxElementThatContainsPosition(position: number): ISyntaxElement {
+            for (var i = 0, n = this.elements.length; i < n; i++) {
+                var element = this.elements[i];
+
+                var childWidth = element.fullWidth();
+                if (position < childWidth) { return element; }
+                position -= childWidth;
+            }
+
+            throw Errors.invalidOperation();
         }
     }
 

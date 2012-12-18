@@ -4072,6 +4072,50 @@ function generateComputeDataMethod(definition) {
     result += "    }\r\n";
     return result;
 }
+function generateElementThatContainsPositionMethod(definition) {
+    if(definition.isAbstract) {
+        return "";
+    }
+    var result = "\r\n    private elementThatContainsPositionMethod(position: number): ISyntaxElement {\r\n";
+    if(definition.children.length > 0) {
+        result += "        Debug.assert(position >= 0 && position < this.fullWidth());\r\n";
+        result += "        var childWidth = 0;\r\n";
+    }
+    for(var i = 0; i < definition.children.length; i++) {
+        var child = definition.children[i];
+        if(child.type === "SyntaxKind") {
+            continue;
+        }
+        var indent = "";
+        if(child.isOptional) {
+            result += "\r\n        if (" + getPropertyAccess(child) + " !== null) {\r\n";
+            indent = "    ";
+        } else {
+            result += "\r\n";
+        }
+        result += indent + "        childWidth = " + getPropertyAccess(child) + ".fullWidth();\r\n";
+        result += indent + "        if (position < childWidth) { ";
+        if(child.isList) {
+            result += "return " + getPropertyAccess(child) + ".syntaxNodeThatContainsPosition(position); }\r\n";
+        } else {
+            if(child.isSeparatedList) {
+                result += "return " + getPropertyAccess(child) + ".syntaxElementThatContainsPosition(position); }\r\n";
+            } else {
+                result += "return " + getPropertyAccess(child) + "; }\r\n";
+            }
+        }
+        result += indent + "        position -= childWidth;\r\n";
+        if(child.isOptional) {
+            result += "        }\r\n";
+        }
+    }
+    if(definition.children.length > 0) {
+        result += "\r\n";
+    }
+    result += "        throw Errors.invalidOperation();\r\n";
+    result += "    }\r\n";
+    return result;
+}
 function generateCollectTextElementsMethod(definition) {
     if(definition.isAbstract) {
         return "";
@@ -4109,6 +4153,7 @@ function generateNode(definition) {
     result += generateCollectTextElementsMethod(definition);
     result += generateIsTypeScriptSpecificMethod(definition);
     result += generateComputeDataMethod(definition);
+    result += generateElementThatContainsPositionMethod(definition);
     result += "}";
     return result;
 }

@@ -185,11 +185,11 @@ class SyntaxNode implements ISyntaxElement {
             var node = <SyntaxNode>currentNodeOrToken;
 
                 //find a child that includes the position
-            currentNodeOrToken = node.childThatContainsPosition(position);
+            currentNodeOrToken = node.elementThatContainsPosition(position);
         }
     }
 
-    private childThatContainsPosition(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         throw Errors.abstract();
     }
 }

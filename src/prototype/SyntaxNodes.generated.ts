@@ -118,6 +118,21 @@ class SourceUnitSyntax extends SyntaxNode {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._moduleElements.fullWidth();
+        if (position < childWidth) { return this._moduleElements.syntaxNodeThatContainsPosition(position); }
+        position -= childWidth;
+
+        childWidth = this._endOfFileToken.fullWidth();
+        if (position < childWidth) { return this._endOfFileToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class ModuleElementSyntax extends SyntaxNode {
@@ -311,6 +326,29 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._moduleKeyword.fullWidth();
+        if (position < childWidth) { return this._moduleKeyword; }
+        position -= childWidth;
+
+        childWidth = this._openParenToken.fullWidth();
+        if (position < childWidth) { return this._openParenToken; }
+        position -= childWidth;
+
+        childWidth = this._stringLiteral.fullWidth();
+        if (position < childWidth) { return this._stringLiteral; }
+        position -= childWidth;
+
+        childWidth = this._closeParenToken.fullWidth();
+        if (position < childWidth) { return this._closeParenToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
@@ -393,6 +431,17 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         hasZeroWidthToken = hasZeroWidthToken || this._moduleName.hasZeroWidthToken();
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._moduleName.fullWidth();
+        if (position < childWidth) { return this._moduleName; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -574,6 +623,33 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._importKeyword.fullWidth();
+        if (position < childWidth) { return this._importKeyword; }
+        position -= childWidth;
+
+        childWidth = this._identifier.fullWidth();
+        if (position < childWidth) { return this._identifier; }
+        position -= childWidth;
+
+        childWidth = this._equalsToken.fullWidth();
+        if (position < childWidth) { return this._equalsToken; }
+        position -= childWidth;
+
+        childWidth = this._moduleReference.fullWidth();
+        if (position < childWidth) { return this._moduleReference; }
+        position -= childWidth;
+
+        childWidth = this._semicolonToken.fullWidth();
+        if (position < childWidth) { return this._semicolonToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -868,6 +944,57 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        if (this._exportKeyword !== null) {
+            childWidth = this._exportKeyword.fullWidth();
+            if (position < childWidth) { return this._exportKeyword; }
+            position -= childWidth;
+        }
+
+        if (this._declareKeyword !== null) {
+            childWidth = this._declareKeyword.fullWidth();
+            if (position < childWidth) { return this._declareKeyword; }
+            position -= childWidth;
+        }
+
+        childWidth = this._classKeyword.fullWidth();
+        if (position < childWidth) { return this._classKeyword; }
+        position -= childWidth;
+
+        childWidth = this._identifier.fullWidth();
+        if (position < childWidth) { return this._identifier; }
+        position -= childWidth;
+
+        if (this._extendsClause !== null) {
+            childWidth = this._extendsClause.fullWidth();
+            if (position < childWidth) { return this._extendsClause; }
+            position -= childWidth;
+        }
+
+        if (this._implementsClause !== null) {
+            childWidth = this._implementsClause.fullWidth();
+            if (position < childWidth) { return this._implementsClause; }
+            position -= childWidth;
+        }
+
+        childWidth = this._openBraceToken.fullWidth();
+        if (position < childWidth) { return this._openBraceToken; }
+        position -= childWidth;
+
+        childWidth = this._classElements.fullWidth();
+        if (position < childWidth) { return this._classElements.syntaxNodeThatContainsPosition(position); }
+        position -= childWidth;
+
+        childWidth = this._closeBraceToken.fullWidth();
+        if (position < childWidth) { return this._closeBraceToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class InterfaceDeclarationSyntax extends ModuleElementSyntax {
@@ -1059,6 +1186,37 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        if (this._exportKeyword !== null) {
+            childWidth = this._exportKeyword.fullWidth();
+            if (position < childWidth) { return this._exportKeyword; }
+            position -= childWidth;
+        }
+
+        childWidth = this._interfaceKeyword.fullWidth();
+        if (position < childWidth) { return this._interfaceKeyword; }
+        position -= childWidth;
+
+        childWidth = this._identifier.fullWidth();
+        if (position < childWidth) { return this._identifier; }
+        position -= childWidth;
+
+        if (this._extendsClause !== null) {
+            childWidth = this._extendsClause.fullWidth();
+            if (position < childWidth) { return this._extendsClause; }
+            position -= childWidth;
+        }
+
+        childWidth = this._body.fullWidth();
+        if (position < childWidth) { return this._body; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class ExtendsClauseSyntax extends SyntaxNode {
@@ -1174,6 +1332,21 @@ class ExtendsClauseSyntax extends SyntaxNode {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._extendsKeyword.fullWidth();
+        if (position < childWidth) { return this._extendsKeyword; }
+        position -= childWidth;
+
+        childWidth = this._typeNames.fullWidth();
+        if (position < childWidth) { return this._typeNames.syntaxElementThatContainsPosition(position); }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class ImplementsClauseSyntax extends SyntaxNode {
@@ -1288,6 +1461,21 @@ class ImplementsClauseSyntax extends SyntaxNode {
         hasZeroWidthToken = hasZeroWidthToken || this._typeNames.hasZeroWidthToken();
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._implementsKeyword.fullWidth();
+        if (position < childWidth) { return this._implementsKeyword; }
+        position -= childWidth;
+
+        childWidth = this._typeNames.fullWidth();
+        if (position < childWidth) { return this._typeNames.syntaxElementThatContainsPosition(position); }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -1561,6 +1749,53 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        if (this._exportKeyword !== null) {
+            childWidth = this._exportKeyword.fullWidth();
+            if (position < childWidth) { return this._exportKeyword; }
+            position -= childWidth;
+        }
+
+        if (this._declareKeyword !== null) {
+            childWidth = this._declareKeyword.fullWidth();
+            if (position < childWidth) { return this._declareKeyword; }
+            position -= childWidth;
+        }
+
+        childWidth = this._moduleKeyword.fullWidth();
+        if (position < childWidth) { return this._moduleKeyword; }
+        position -= childWidth;
+
+        if (this._moduleName !== null) {
+            childWidth = this._moduleName.fullWidth();
+            if (position < childWidth) { return this._moduleName; }
+            position -= childWidth;
+        }
+
+        if (this._stringLiteral !== null) {
+            childWidth = this._stringLiteral.fullWidth();
+            if (position < childWidth) { return this._stringLiteral; }
+            position -= childWidth;
+        }
+
+        childWidth = this._openBraceToken.fullWidth();
+        if (position < childWidth) { return this._openBraceToken; }
+        position -= childWidth;
+
+        childWidth = this._moduleElements.fullWidth();
+        if (position < childWidth) { return this._moduleElements.syntaxNodeThatContainsPosition(position); }
+        position -= childWidth;
+
+        childWidth = this._closeBraceToken.fullWidth();
+        if (position < childWidth) { return this._closeBraceToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class StatementSyntax extends ModuleElementSyntax {
@@ -1804,6 +2039,45 @@ class FunctionDeclarationSyntax extends StatementSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        if (this._exportKeyword !== null) {
+            childWidth = this._exportKeyword.fullWidth();
+            if (position < childWidth) { return this._exportKeyword; }
+            position -= childWidth;
+        }
+
+        if (this._declareKeyword !== null) {
+            childWidth = this._declareKeyword.fullWidth();
+            if (position < childWidth) { return this._declareKeyword; }
+            position -= childWidth;
+        }
+
+        childWidth = this._functionKeyword.fullWidth();
+        if (position < childWidth) { return this._functionKeyword; }
+        position -= childWidth;
+
+        childWidth = this._functionSignature.fullWidth();
+        if (position < childWidth) { return this._functionSignature; }
+        position -= childWidth;
+
+        if (this._block !== null) {
+            childWidth = this._block.fullWidth();
+            if (position < childWidth) { return this._block; }
+            position -= childWidth;
+        }
+
+        if (this._semicolonToken !== null) {
+            childWidth = this._semicolonToken.fullWidth();
+            if (position < childWidth) { return this._semicolonToken; }
+            position -= childWidth;
+        }
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class VariableStatementSyntax extends StatementSyntax {
@@ -1977,6 +2251,33 @@ class VariableStatementSyntax extends StatementSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        if (this._exportKeyword !== null) {
+            childWidth = this._exportKeyword.fullWidth();
+            if (position < childWidth) { return this._exportKeyword; }
+            position -= childWidth;
+        }
+
+        if (this._declareKeyword !== null) {
+            childWidth = this._declareKeyword.fullWidth();
+            if (position < childWidth) { return this._declareKeyword; }
+            position -= childWidth;
+        }
+
+        childWidth = this._variableDeclaration.fullWidth();
+        if (position < childWidth) { return this._variableDeclaration; }
+        position -= childWidth;
+
+        childWidth = this._semicolonToken.fullWidth();
+        if (position < childWidth) { return this._semicolonToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class ExpressionSyntax extends SyntaxNode {
@@ -2129,6 +2430,21 @@ class VariableDeclarationSyntax extends SyntaxNode {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._varKeyword.fullWidth();
+        if (position < childWidth) { return this._varKeyword; }
+        position -= childWidth;
+
+        childWidth = this._variableDeclarators.fullWidth();
+        if (position < childWidth) { return this._variableDeclarators.syntaxElementThatContainsPosition(position); }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class VariableDeclaratorSyntax extends SyntaxNode {
@@ -2271,6 +2587,29 @@ class VariableDeclaratorSyntax extends SyntaxNode {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._identifier.fullWidth();
+        if (position < childWidth) { return this._identifier; }
+        position -= childWidth;
+
+        if (this._typeAnnotation !== null) {
+            childWidth = this._typeAnnotation.fullWidth();
+            if (position < childWidth) { return this._typeAnnotation; }
+            position -= childWidth;
+        }
+
+        if (this._equalsValueClause !== null) {
+            childWidth = this._equalsValueClause.fullWidth();
+            if (position < childWidth) { return this._equalsValueClause; }
+            position -= childWidth;
+        }
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class EqualsValueClauseSyntax extends SyntaxNode {
@@ -2382,6 +2721,21 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         hasZeroWidthToken = hasZeroWidthToken || this._value.hasZeroWidthToken();
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._equalsToken.fullWidth();
+        if (position < childWidth) { return this._equalsToken; }
+        position -= childWidth;
+
+        childWidth = this._value.fullWidth();
+        if (position < childWidth) { return this._value; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -2508,6 +2862,21 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._operatorToken.fullWidth();
+        if (position < childWidth) { return this._operatorToken; }
+        position -= childWidth;
+
+        childWidth = this._operand.fullWidth();
+        if (position < childWidth) { return this._operand; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class ThisExpressionSyntax extends UnaryExpressionSyntax {
@@ -2595,6 +2964,17 @@ class ThisExpressionSyntax extends UnaryExpressionSyntax {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._thisKeyword.fullWidth();
+        if (position < childWidth) { return this._thisKeyword; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -2704,6 +3084,17 @@ class LiteralExpressionSyntax extends UnaryExpressionSyntax {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._literalToken.fullWidth();
+        if (position < childWidth) { return this._literalToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -2849,6 +3240,25 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._openBracketToken.fullWidth();
+        if (position < childWidth) { return this._openBracketToken; }
+        position -= childWidth;
+
+        childWidth = this._expressions.fullWidth();
+        if (position < childWidth) { return this._expressions.syntaxElementThatContainsPosition(position); }
+        position -= childWidth;
+
+        childWidth = this._closeBracketToken.fullWidth();
+        if (position < childWidth) { return this._closeBracketToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class OmittedExpressionSyntax extends ExpressionSyntax {
@@ -2904,6 +3314,10 @@ class OmittedExpressionSyntax extends ExpressionSyntax {
         var hasZeroWidthToken = true;
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        throw Errors.invalidOperation();
     }
 }
 
@@ -3039,6 +3453,25 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._openParenToken.fullWidth();
+        if (position < childWidth) { return this._openParenToken; }
+        position -= childWidth;
+
+        childWidth = this._expression.fullWidth();
+        if (position < childWidth) { return this._expression; }
+        position -= childWidth;
+
+        childWidth = this._closeParenToken.fullWidth();
+        if (position < childWidth) { return this._closeParenToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -3201,6 +3634,25 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._identifier.fullWidth();
+        if (position < childWidth) { return this._identifier; }
+        position -= childWidth;
+
+        childWidth = this._equalsGreaterThanToken.fullWidth();
+        if (position < childWidth) { return this._equalsGreaterThanToken; }
+        position -= childWidth;
+
+        childWidth = this._body.fullWidth();
+        if (position < childWidth) { return this._body; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax {
@@ -3335,6 +3787,25 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._callSignature.fullWidth();
+        if (position < childWidth) { return this._callSignature; }
+        position -= childWidth;
+
+        childWidth = this._equalsGreaterThanToken.fullWidth();
+        if (position < childWidth) { return this._equalsGreaterThanToken; }
+        position -= childWidth;
+
+        childWidth = this._body.fullWidth();
+        if (position < childWidth) { return this._body; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class TypeSyntax extends UnaryExpressionSyntax {
@@ -3453,6 +3924,17 @@ class IdentifierNameSyntax extends NameSyntax {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._identifier.fullWidth();
+        if (position < childWidth) { return this._identifier; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -3590,6 +4072,25 @@ class QualifiedNameSyntax extends NameSyntax {
         hasZeroWidthToken = hasZeroWidthToken || this._right.hasZeroWidthToken();
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._left.fullWidth();
+        if (position < childWidth) { return this._left; }
+        position -= childWidth;
+
+        childWidth = this._dotToken.fullWidth();
+        if (position < childWidth) { return this._dotToken; }
+        position -= childWidth;
+
+        childWidth = this._right.fullWidth();
+        if (position < childWidth) { return this._right; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -3748,6 +4249,29 @@ class ConstructorTypeSyntax extends TypeSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._newKeyword.fullWidth();
+        if (position < childWidth) { return this._newKeyword; }
+        position -= childWidth;
+
+        childWidth = this._parameterList.fullWidth();
+        if (position < childWidth) { return this._parameterList; }
+        position -= childWidth;
+
+        childWidth = this._equalsGreaterThanToken.fullWidth();
+        if (position < childWidth) { return this._equalsGreaterThanToken; }
+        position -= childWidth;
+
+        childWidth = this._type.fullWidth();
+        if (position < childWidth) { return this._type; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class FunctionTypeSyntax extends TypeSyntax {
@@ -3881,6 +4405,25 @@ class FunctionTypeSyntax extends TypeSyntax {
         hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._parameterList.fullWidth();
+        if (position < childWidth) { return this._parameterList; }
+        position -= childWidth;
+
+        childWidth = this._equalsGreaterThanToken.fullWidth();
+        if (position < childWidth) { return this._equalsGreaterThanToken; }
+        position -= childWidth;
+
+        childWidth = this._type.fullWidth();
+        if (position < childWidth) { return this._type; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -4025,6 +4568,25 @@ class ObjectTypeSyntax extends TypeSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._openBraceToken.fullWidth();
+        if (position < childWidth) { return this._openBraceToken; }
+        position -= childWidth;
+
+        childWidth = this._typeMembers.fullWidth();
+        if (position < childWidth) { return this._typeMembers.syntaxElementThatContainsPosition(position); }
+        position -= childWidth;
+
+        childWidth = this._closeBraceToken.fullWidth();
+        if (position < childWidth) { return this._closeBraceToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class ArrayTypeSyntax extends TypeSyntax {
@@ -4159,6 +4721,25 @@ class ArrayTypeSyntax extends TypeSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._type.fullWidth();
+        if (position < childWidth) { return this._type; }
+        position -= childWidth;
+
+        childWidth = this._openBracketToken.fullWidth();
+        if (position < childWidth) { return this._openBracketToken; }
+        position -= childWidth;
+
+        childWidth = this._closeBracketToken.fullWidth();
+        if (position < childWidth) { return this._closeBracketToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class PredefinedTypeSyntax extends TypeSyntax {
@@ -4250,6 +4831,17 @@ class PredefinedTypeSyntax extends TypeSyntax {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._keyword.fullWidth();
+        if (position < childWidth) { return this._keyword; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -4361,6 +4953,21 @@ class TypeAnnotationSyntax extends SyntaxNode {
         hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._colonToken.fullWidth();
+        if (position < childWidth) { return this._colonToken; }
+        position -= childWidth;
+
+        childWidth = this._type.fullWidth();
+        if (position < childWidth) { return this._type; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -4505,6 +5112,25 @@ class BlockSyntax extends StatementSyntax {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._openBraceToken.fullWidth();
+        if (position < childWidth) { return this._openBraceToken; }
+        position -= childWidth;
+
+        childWidth = this._statements.fullWidth();
+        if (position < childWidth) { return this._statements.syntaxNodeThatContainsPosition(position); }
+        position -= childWidth;
+
+        childWidth = this._closeBraceToken.fullWidth();
+        if (position < childWidth) { return this._closeBraceToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -4732,6 +5358,47 @@ class ParameterSyntax extends SyntaxNode {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        if (this._dotDotDotToken !== null) {
+            childWidth = this._dotDotDotToken.fullWidth();
+            if (position < childWidth) { return this._dotDotDotToken; }
+            position -= childWidth;
+        }
+
+        if (this._publicOrPrivateKeyword !== null) {
+            childWidth = this._publicOrPrivateKeyword.fullWidth();
+            if (position < childWidth) { return this._publicOrPrivateKeyword; }
+            position -= childWidth;
+        }
+
+        childWidth = this._identifier.fullWidth();
+        if (position < childWidth) { return this._identifier; }
+        position -= childWidth;
+
+        if (this._questionToken !== null) {
+            childWidth = this._questionToken.fullWidth();
+            if (position < childWidth) { return this._questionToken; }
+            position -= childWidth;
+        }
+
+        if (this._typeAnnotation !== null) {
+            childWidth = this._typeAnnotation.fullWidth();
+            if (position < childWidth) { return this._typeAnnotation; }
+            position -= childWidth;
+        }
+
+        if (this._equalsValueClause !== null) {
+            childWidth = this._equalsValueClause.fullWidth();
+            if (position < childWidth) { return this._equalsValueClause; }
+            position -= childWidth;
+        }
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
@@ -4869,6 +5536,25 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._expression.fullWidth();
+        if (position < childWidth) { return this._expression; }
+        position -= childWidth;
+
+        childWidth = this._dotToken.fullWidth();
+        if (position < childWidth) { return this._dotToken; }
+        position -= childWidth;
+
+        childWidth = this._identifierName.fullWidth();
+        if (position < childWidth) { return this._identifierName; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
@@ -4983,6 +5669,21 @@ class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._operand.fullWidth();
+        if (position < childWidth) { return this._operand; }
+        position -= childWidth;
+
+        childWidth = this._operatorToken.fullWidth();
+        if (position < childWidth) { return this._operatorToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -5144,6 +5845,29 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._expression.fullWidth();
+        if (position < childWidth) { return this._expression; }
+        position -= childWidth;
+
+        childWidth = this._openBracketToken.fullWidth();
+        if (position < childWidth) { return this._openBracketToken; }
+        position -= childWidth;
+
+        childWidth = this._argumentExpression.fullWidth();
+        if (position < childWidth) { return this._argumentExpression; }
+        position -= childWidth;
+
+        childWidth = this._closeBracketToken.fullWidth();
+        if (position < childWidth) { return this._closeBracketToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class InvocationExpressionSyntax extends UnaryExpressionSyntax {
@@ -5256,6 +5980,21 @@ class InvocationExpressionSyntax extends UnaryExpressionSyntax {
         hasZeroWidthToken = hasZeroWidthToken || this._argumentList.hasZeroWidthToken();
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._expression.fullWidth();
+        if (position < childWidth) { return this._expression; }
+        position -= childWidth;
+
+        childWidth = this._argumentList.fullWidth();
+        if (position < childWidth) { return this._argumentList; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -5400,6 +6139,25 @@ class ArgumentListSyntax extends SyntaxNode {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._openParenToken.fullWidth();
+        if (position < childWidth) { return this._openParenToken; }
+        position -= childWidth;
+
+        childWidth = this._arguments.fullWidth();
+        if (position < childWidth) { return this._arguments.syntaxElementThatContainsPosition(position); }
+        position -= childWidth;
+
+        childWidth = this._closeParenToken.fullWidth();
+        if (position < childWidth) { return this._closeParenToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -5579,6 +6337,25 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
         hasZeroWidthToken = hasZeroWidthToken || this._right.hasZeroWidthToken();
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._left.fullWidth();
+        if (position < childWidth) { return this._left; }
+        position -= childWidth;
+
+        childWidth = this._operatorToken.fullWidth();
+        if (position < childWidth) { return this._operatorToken; }
+        position -= childWidth;
+
+        childWidth = this._right.fullWidth();
+        if (position < childWidth) { return this._right; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -5765,6 +6542,33 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._condition.fullWidth();
+        if (position < childWidth) { return this._condition; }
+        position -= childWidth;
+
+        childWidth = this._questionToken.fullWidth();
+        if (position < childWidth) { return this._questionToken; }
+        position -= childWidth;
+
+        childWidth = this._whenTrue.fullWidth();
+        if (position < childWidth) { return this._whenTrue; }
+        position -= childWidth;
+
+        childWidth = this._colonToken.fullWidth();
+        if (position < childWidth) { return this._colonToken; }
+        position -= childWidth;
+
+        childWidth = this._whenFalse.fullWidth();
+        if (position < childWidth) { return this._whenFalse; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class TypeMemberSyntax extends SyntaxNode {
@@ -5926,6 +6730,27 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         }
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._newKeyword.fullWidth();
+        if (position < childWidth) { return this._newKeyword; }
+        position -= childWidth;
+
+        childWidth = this._parameterList.fullWidth();
+        if (position < childWidth) { return this._parameterList; }
+        position -= childWidth;
+
+        if (this._typeAnnotation !== null) {
+            childWidth = this._typeAnnotation.fullWidth();
+            if (position < childWidth) { return this._typeAnnotation; }
+            position -= childWidth;
+        }
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -6096,6 +6921,33 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._identifier.fullWidth();
+        if (position < childWidth) { return this._identifier; }
+        position -= childWidth;
+
+        if (this._questionToken !== null) {
+            childWidth = this._questionToken.fullWidth();
+            if (position < childWidth) { return this._questionToken; }
+            position -= childWidth;
+        }
+
+        childWidth = this._parameterList.fullWidth();
+        if (position < childWidth) { return this._parameterList; }
+        position -= childWidth;
+
+        if (this._typeAnnotation !== null) {
+            childWidth = this._typeAnnotation.fullWidth();
+            if (position < childWidth) { return this._typeAnnotation; }
+            position -= childWidth;
+        }
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class IndexSignatureSyntax extends TypeMemberSyntax {
@@ -6260,6 +7112,31 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._openBracketToken.fullWidth();
+        if (position < childWidth) { return this._openBracketToken; }
+        position -= childWidth;
+
+        childWidth = this._parameter.fullWidth();
+        if (position < childWidth) { return this._parameter; }
+        position -= childWidth;
+
+        childWidth = this._closeBracketToken.fullWidth();
+        if (position < childWidth) { return this._closeBracketToken; }
+        position -= childWidth;
+
+        if (this._typeAnnotation !== null) {
+            childWidth = this._typeAnnotation.fullWidth();
+            if (position < childWidth) { return this._typeAnnotation; }
+            position -= childWidth;
+        }
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class PropertySignatureSyntax extends TypeMemberSyntax {
@@ -6402,6 +7279,29 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         }
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._identifier.fullWidth();
+        if (position < childWidth) { return this._identifier; }
+        position -= childWidth;
+
+        if (this._questionToken !== null) {
+            childWidth = this._questionToken.fullWidth();
+            if (position < childWidth) { return this._questionToken; }
+            position -= childWidth;
+        }
+
+        if (this._typeAnnotation !== null) {
+            childWidth = this._typeAnnotation.fullWidth();
+            if (position < childWidth) { return this._typeAnnotation; }
+            position -= childWidth;
+        }
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -6547,6 +7447,25 @@ class ParameterListSyntax extends SyntaxNode {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._openParenToken.fullWidth();
+        if (position < childWidth) { return this._openParenToken; }
+        position -= childWidth;
+
+        childWidth = this._parameters.fullWidth();
+        if (position < childWidth) { return this._parameters.syntaxElementThatContainsPosition(position); }
+        position -= childWidth;
+
+        childWidth = this._closeParenToken.fullWidth();
+        if (position < childWidth) { return this._closeParenToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class CallSignatureSyntax extends TypeMemberSyntax {
@@ -6665,6 +7584,23 @@ class CallSignatureSyntax extends TypeMemberSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._parameterList.fullWidth();
+        if (position < childWidth) { return this._parameterList; }
+        position -= childWidth;
+
+        if (this._typeAnnotation !== null) {
+            childWidth = this._typeAnnotation.fullWidth();
+            if (position < childWidth) { return this._typeAnnotation; }
+            position -= childWidth;
+        }
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class ElseClauseSyntax extends SyntaxNode {
@@ -6776,6 +7712,21 @@ class ElseClauseSyntax extends SyntaxNode {
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._elseKeyword.fullWidth();
+        if (position < childWidth) { return this._elseKeyword; }
+        position -= childWidth;
+
+        childWidth = this._statement.fullWidth();
+        if (position < childWidth) { return this._statement; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -6993,6 +7944,39 @@ class IfStatementSyntax extends StatementSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._ifKeyword.fullWidth();
+        if (position < childWidth) { return this._ifKeyword; }
+        position -= childWidth;
+
+        childWidth = this._openParenToken.fullWidth();
+        if (position < childWidth) { return this._openParenToken; }
+        position -= childWidth;
+
+        childWidth = this._condition.fullWidth();
+        if (position < childWidth) { return this._condition; }
+        position -= childWidth;
+
+        childWidth = this._closeParenToken.fullWidth();
+        if (position < childWidth) { return this._closeParenToken; }
+        position -= childWidth;
+
+        childWidth = this._statement.fullWidth();
+        if (position < childWidth) { return this._statement; }
+        position -= childWidth;
+
+        if (this._elseClause !== null) {
+            childWidth = this._elseClause.fullWidth();
+            if (position < childWidth) { return this._elseClause; }
+            position -= childWidth;
+        }
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class ExpressionStatementSyntax extends StatementSyntax {
@@ -7104,6 +8088,21 @@ class ExpressionStatementSyntax extends StatementSyntax {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._expression.fullWidth();
+        if (position < childWidth) { return this._expression; }
+        position -= childWidth;
+
+        childWidth = this._semicolonToken.fullWidth();
+        if (position < childWidth) { return this._semicolonToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -7289,6 +8288,33 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
         }
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._constructorKeyword.fullWidth();
+        if (position < childWidth) { return this._constructorKeyword; }
+        position -= childWidth;
+
+        childWidth = this._parameterList.fullWidth();
+        if (position < childWidth) { return this._parameterList; }
+        position -= childWidth;
+
+        if (this._block !== null) {
+            childWidth = this._block.fullWidth();
+            if (position < childWidth) { return this._block; }
+            position -= childWidth;
+        }
+
+        if (this._semicolonToken !== null) {
+            childWidth = this._semicolonToken.fullWidth();
+            if (position < childWidth) { return this._semicolonToken; }
+            position -= childWidth;
+        }
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -7512,6 +8538,41 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
         }
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        if (this._publicOrPrivateKeyword !== null) {
+            childWidth = this._publicOrPrivateKeyword.fullWidth();
+            if (position < childWidth) { return this._publicOrPrivateKeyword; }
+            position -= childWidth;
+        }
+
+        if (this._staticKeyword !== null) {
+            childWidth = this._staticKeyword.fullWidth();
+            if (position < childWidth) { return this._staticKeyword; }
+            position -= childWidth;
+        }
+
+        childWidth = this._functionSignature.fullWidth();
+        if (position < childWidth) { return this._functionSignature; }
+        position -= childWidth;
+
+        if (this._block !== null) {
+            childWidth = this._block.fullWidth();
+            if (position < childWidth) { return this._block; }
+            position -= childWidth;
+        }
+
+        if (this._semicolonToken !== null) {
+            childWidth = this._semicolonToken.fullWidth();
+            if (position < childWidth) { return this._semicolonToken; }
+            position -= childWidth;
+        }
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -7793,6 +8854,47 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        if (this._publicOrPrivateKeyword !== null) {
+            childWidth = this._publicOrPrivateKeyword.fullWidth();
+            if (position < childWidth) { return this._publicOrPrivateKeyword; }
+            position -= childWidth;
+        }
+
+        if (this._staticKeyword !== null) {
+            childWidth = this._staticKeyword.fullWidth();
+            if (position < childWidth) { return this._staticKeyword; }
+            position -= childWidth;
+        }
+
+        childWidth = this._getKeyword.fullWidth();
+        if (position < childWidth) { return this._getKeyword; }
+        position -= childWidth;
+
+        childWidth = this._identifier.fullWidth();
+        if (position < childWidth) { return this._identifier; }
+        position -= childWidth;
+
+        childWidth = this._parameterList.fullWidth();
+        if (position < childWidth) { return this._parameterList; }
+        position -= childWidth;
+
+        if (this._typeAnnotation !== null) {
+            childWidth = this._typeAnnotation.fullWidth();
+            if (position < childWidth) { return this._typeAnnotation; }
+            position -= childWidth;
+        }
+
+        childWidth = this._block.fullWidth();
+        if (position < childWidth) { return this._block; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax {
@@ -8011,6 +9113,41 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        if (this._publicOrPrivateKeyword !== null) {
+            childWidth = this._publicOrPrivateKeyword.fullWidth();
+            if (position < childWidth) { return this._publicOrPrivateKeyword; }
+            position -= childWidth;
+        }
+
+        if (this._staticKeyword !== null) {
+            childWidth = this._staticKeyword.fullWidth();
+            if (position < childWidth) { return this._staticKeyword; }
+            position -= childWidth;
+        }
+
+        childWidth = this._setKeyword.fullWidth();
+        if (position < childWidth) { return this._setKeyword; }
+        position -= childWidth;
+
+        childWidth = this._identifier.fullWidth();
+        if (position < childWidth) { return this._identifier; }
+        position -= childWidth;
+
+        childWidth = this._parameterList.fullWidth();
+        if (position < childWidth) { return this._parameterList; }
+        position -= childWidth;
+
+        childWidth = this._block.fullWidth();
+        if (position < childWidth) { return this._block; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
@@ -8181,6 +9318,33 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        if (this._publicOrPrivateKeyword !== null) {
+            childWidth = this._publicOrPrivateKeyword.fullWidth();
+            if (position < childWidth) { return this._publicOrPrivateKeyword; }
+            position -= childWidth;
+        }
+
+        if (this._staticKeyword !== null) {
+            childWidth = this._staticKeyword.fullWidth();
+            if (position < childWidth) { return this._staticKeyword; }
+            position -= childWidth;
+        }
+
+        childWidth = this._variableDeclarator.fullWidth();
+        if (position < childWidth) { return this._variableDeclarator; }
+        position -= childWidth;
+
+        childWidth = this._semicolonToken.fullWidth();
+        if (position < childWidth) { return this._semicolonToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class ThrowStatementSyntax extends StatementSyntax {
@@ -8315,6 +9479,25 @@ class ThrowStatementSyntax extends StatementSyntax {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._throwKeyword.fullWidth();
+        if (position < childWidth) { return this._throwKeyword; }
+        position -= childWidth;
+
+        childWidth = this._expression.fullWidth();
+        if (position < childWidth) { return this._expression; }
+        position -= childWidth;
+
+        childWidth = this._semicolonToken.fullWidth();
+        if (position < childWidth) { return this._semicolonToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -8457,6 +9640,27 @@ class ReturnStatementSyntax extends StatementSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._returnKeyword.fullWidth();
+        if (position < childWidth) { return this._returnKeyword; }
+        position -= childWidth;
+
+        if (this._expression !== null) {
+            childWidth = this._expression.fullWidth();
+            if (position < childWidth) { return this._expression; }
+            position -= childWidth;
+        }
+
+        childWidth = this._semicolonToken.fullWidth();
+        if (position < childWidth) { return this._semicolonToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
@@ -8598,6 +9802,27 @@ class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
         }
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._newKeyword.fullWidth();
+        if (position < childWidth) { return this._newKeyword; }
+        position -= childWidth;
+
+        childWidth = this._expression.fullWidth();
+        if (position < childWidth) { return this._expression; }
+        position -= childWidth;
+
+        if (this._argumentList !== null) {
+            childWidth = this._argumentList.fullWidth();
+            if (position < childWidth) { return this._argumentList; }
+            position -= childWidth;
+        }
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -8840,6 +10065,41 @@ class SwitchStatementSyntax extends StatementSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._switchKeyword.fullWidth();
+        if (position < childWidth) { return this._switchKeyword; }
+        position -= childWidth;
+
+        childWidth = this._openParenToken.fullWidth();
+        if (position < childWidth) { return this._openParenToken; }
+        position -= childWidth;
+
+        childWidth = this._expression.fullWidth();
+        if (position < childWidth) { return this._expression; }
+        position -= childWidth;
+
+        childWidth = this._closeParenToken.fullWidth();
+        if (position < childWidth) { return this._closeParenToken; }
+        position -= childWidth;
+
+        childWidth = this._openBraceToken.fullWidth();
+        if (position < childWidth) { return this._openBraceToken; }
+        position -= childWidth;
+
+        childWidth = this._switchClauses.fullWidth();
+        if (position < childWidth) { return this._switchClauses.syntaxNodeThatContainsPosition(position); }
+        position -= childWidth;
+
+        childWidth = this._closeBraceToken.fullWidth();
+        if (position < childWidth) { return this._closeBraceToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class SwitchClauseSyntax extends SyntaxNode {
@@ -9035,6 +10295,29 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._caseKeyword.fullWidth();
+        if (position < childWidth) { return this._caseKeyword; }
+        position -= childWidth;
+
+        childWidth = this._expression.fullWidth();
+        if (position < childWidth) { return this._expression; }
+        position -= childWidth;
+
+        childWidth = this._colonToken.fullWidth();
+        if (position < childWidth) { return this._colonToken; }
+        position -= childWidth;
+
+        childWidth = this._statements.fullWidth();
+        if (position < childWidth) { return this._statements.syntaxNodeThatContainsPosition(position); }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
@@ -9179,6 +10462,25 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._defaultKeyword.fullWidth();
+        if (position < childWidth) { return this._defaultKeyword; }
+        position -= childWidth;
+
+        childWidth = this._colonToken.fullWidth();
+        if (position < childWidth) { return this._colonToken; }
+        position -= childWidth;
+
+        childWidth = this._statements.fullWidth();
+        if (position < childWidth) { return this._statements.syntaxNodeThatContainsPosition(position); }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class BreakStatementSyntax extends StatementSyntax {
@@ -9322,6 +10624,27 @@ class BreakStatementSyntax extends StatementSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._breakKeyword.fullWidth();
+        if (position < childWidth) { return this._breakKeyword; }
+        position -= childWidth;
+
+        if (this._identifier !== null) {
+            childWidth = this._identifier.fullWidth();
+            if (position < childWidth) { return this._identifier; }
+            position -= childWidth;
+        }
+
+        childWidth = this._semicolonToken.fullWidth();
+        if (position < childWidth) { return this._semicolonToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class ContinueStatementSyntax extends StatementSyntax {
@@ -9464,6 +10787,27 @@ class ContinueStatementSyntax extends StatementSyntax {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._continueKeyword.fullWidth();
+        if (position < childWidth) { return this._continueKeyword; }
+        position -= childWidth;
+
+        if (this._identifier !== null) {
+            childWidth = this._identifier.fullWidth();
+            if (position < childWidth) { return this._identifier; }
+            position -= childWidth;
+        }
+
+        childWidth = this._semicolonToken.fullWidth();
+        if (position < childWidth) { return this._semicolonToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -9846,6 +11190,61 @@ class ForStatementSyntax extends BaseForStatementSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._forKeyword.fullWidth();
+        if (position < childWidth) { return this._forKeyword; }
+        position -= childWidth;
+
+        childWidth = this._openParenToken.fullWidth();
+        if (position < childWidth) { return this._openParenToken; }
+        position -= childWidth;
+
+        if (this._variableDeclaration !== null) {
+            childWidth = this._variableDeclaration.fullWidth();
+            if (position < childWidth) { return this._variableDeclaration; }
+            position -= childWidth;
+        }
+
+        if (this._initializer !== null) {
+            childWidth = this._initializer.fullWidth();
+            if (position < childWidth) { return this._initializer; }
+            position -= childWidth;
+        }
+
+        childWidth = this._firstSemicolonToken.fullWidth();
+        if (position < childWidth) { return this._firstSemicolonToken; }
+        position -= childWidth;
+
+        if (this._condition !== null) {
+            childWidth = this._condition.fullWidth();
+            if (position < childWidth) { return this._condition; }
+            position -= childWidth;
+        }
+
+        childWidth = this._secondSemicolonToken.fullWidth();
+        if (position < childWidth) { return this._secondSemicolonToken; }
+        position -= childWidth;
+
+        if (this._incrementor !== null) {
+            childWidth = this._incrementor.fullWidth();
+            if (position < childWidth) { return this._incrementor; }
+            position -= childWidth;
+        }
+
+        childWidth = this._closeParenToken.fullWidth();
+        if (position < childWidth) { return this._closeParenToken; }
+        position -= childWidth;
+
+        childWidth = this._statement.fullWidth();
+        if (position < childWidth) { return this._statement; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class ForInStatementSyntax extends BaseForStatementSyntax {
@@ -10111,6 +11510,49 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._forKeyword.fullWidth();
+        if (position < childWidth) { return this._forKeyword; }
+        position -= childWidth;
+
+        childWidth = this._openParenToken.fullWidth();
+        if (position < childWidth) { return this._openParenToken; }
+        position -= childWidth;
+
+        if (this._variableDeclaration !== null) {
+            childWidth = this._variableDeclaration.fullWidth();
+            if (position < childWidth) { return this._variableDeclaration; }
+            position -= childWidth;
+        }
+
+        if (this._left !== null) {
+            childWidth = this._left.fullWidth();
+            if (position < childWidth) { return this._left; }
+            position -= childWidth;
+        }
+
+        childWidth = this._inKeyword.fullWidth();
+        if (position < childWidth) { return this._inKeyword; }
+        position -= childWidth;
+
+        childWidth = this._expression.fullWidth();
+        if (position < childWidth) { return this._expression; }
+        position -= childWidth;
+
+        childWidth = this._closeParenToken.fullWidth();
+        if (position < childWidth) { return this._closeParenToken; }
+        position -= childWidth;
+
+        childWidth = this._statement.fullWidth();
+        if (position < childWidth) { return this._statement; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class WhileStatementSyntax extends IterationStatementSyntax {
@@ -10294,6 +11736,33 @@ class WhileStatementSyntax extends IterationStatementSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._whileKeyword.fullWidth();
+        if (position < childWidth) { return this._whileKeyword; }
+        position -= childWidth;
+
+        childWidth = this._openParenToken.fullWidth();
+        if (position < childWidth) { return this._openParenToken; }
+        position -= childWidth;
+
+        childWidth = this._condition.fullWidth();
+        if (position < childWidth) { return this._condition; }
+        position -= childWidth;
+
+        childWidth = this._closeParenToken.fullWidth();
+        if (position < childWidth) { return this._closeParenToken; }
+        position -= childWidth;
+
+        childWidth = this._statement.fullWidth();
+        if (position < childWidth) { return this._statement; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class WithStatementSyntax extends StatementSyntax {
@@ -10476,6 +11945,33 @@ class WithStatementSyntax extends StatementSyntax {
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._withKeyword.fullWidth();
+        if (position < childWidth) { return this._withKeyword; }
+        position -= childWidth;
+
+        childWidth = this._openParenToken.fullWidth();
+        if (position < childWidth) { return this._openParenToken; }
+        position -= childWidth;
+
+        childWidth = this._condition.fullWidth();
+        if (position < childWidth) { return this._condition; }
+        position -= childWidth;
+
+        childWidth = this._closeParenToken.fullWidth();
+        if (position < childWidth) { return this._closeParenToken; }
+        position -= childWidth;
+
+        childWidth = this._statement.fullWidth();
+        if (position < childWidth) { return this._statement; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -10695,6 +12191,39 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        if (this._exportKeyword !== null) {
+            childWidth = this._exportKeyword.fullWidth();
+            if (position < childWidth) { return this._exportKeyword; }
+            position -= childWidth;
+        }
+
+        childWidth = this._enumKeyword.fullWidth();
+        if (position < childWidth) { return this._enumKeyword; }
+        position -= childWidth;
+
+        childWidth = this._identifier.fullWidth();
+        if (position < childWidth) { return this._identifier; }
+        position -= childWidth;
+
+        childWidth = this._openBraceToken.fullWidth();
+        if (position < childWidth) { return this._openBraceToken; }
+        position -= childWidth;
+
+        childWidth = this._variableDeclarators.fullWidth();
+        if (position < childWidth) { return this._variableDeclarators.syntaxElementThatContainsPosition(position); }
+        position -= childWidth;
+
+        childWidth = this._closeBraceToken.fullWidth();
+        if (position < childWidth) { return this._closeBraceToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class CastExpressionSyntax extends UnaryExpressionSyntax {
@@ -10853,6 +12382,29 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._lessThanToken.fullWidth();
+        if (position < childWidth) { return this._lessThanToken; }
+        position -= childWidth;
+
+        childWidth = this._type.fullWidth();
+        if (position < childWidth) { return this._type; }
+        position -= childWidth;
+
+        childWidth = this._greaterThanToken.fullWidth();
+        if (position < childWidth) { return this._greaterThanToken; }
+        position -= childWidth;
+
+        childWidth = this._expression.fullWidth();
+        if (position < childWidth) { return this._expression; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
@@ -10996,6 +12548,25 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._openBraceToken.fullWidth();
+        if (position < childWidth) { return this._openBraceToken; }
+        position -= childWidth;
+
+        childWidth = this._propertyAssignments.fullWidth();
+        if (position < childWidth) { return this._propertyAssignments.syntaxElementThatContainsPosition(position); }
+        position -= childWidth;
+
+        childWidth = this._closeBraceToken.fullWidth();
+        if (position < childWidth) { return this._closeBraceToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -11161,6 +12732,25 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._propertyName.fullWidth();
+        if (position < childWidth) { return this._propertyName; }
+        position -= childWidth;
+
+        childWidth = this._colonToken.fullWidth();
+        if (position < childWidth) { return this._colonToken; }
+        position -= childWidth;
+
+        childWidth = this._expression.fullWidth();
+        if (position < childWidth) { return this._expression; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -11377,6 +12967,33 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._getKeyword.fullWidth();
+        if (position < childWidth) { return this._getKeyword; }
+        position -= childWidth;
+
+        childWidth = this._propertyName.fullWidth();
+        if (position < childWidth) { return this._propertyName; }
+        position -= childWidth;
+
+        childWidth = this._openParenToken.fullWidth();
+        if (position < childWidth) { return this._openParenToken; }
+        position -= childWidth;
+
+        childWidth = this._closeParenToken.fullWidth();
+        if (position < childWidth) { return this._closeParenToken; }
+        position -= childWidth;
+
+        childWidth = this._block.fullWidth();
+        if (position < childWidth) { return this._block; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSyntax {
@@ -11582,6 +13199,37 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._setKeyword.fullWidth();
+        if (position < childWidth) { return this._setKeyword; }
+        position -= childWidth;
+
+        childWidth = this._propertyName.fullWidth();
+        if (position < childWidth) { return this._propertyName; }
+        position -= childWidth;
+
+        childWidth = this._openParenToken.fullWidth();
+        if (position < childWidth) { return this._openParenToken; }
+        position -= childWidth;
+
+        childWidth = this._parameterName.fullWidth();
+        if (position < childWidth) { return this._parameterName; }
+        position -= childWidth;
+
+        childWidth = this._closeParenToken.fullWidth();
+        if (position < childWidth) { return this._closeParenToken; }
+        position -= childWidth;
+
+        childWidth = this._block.fullWidth();
+        if (position < childWidth) { return this._block; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class FunctionExpressionSyntax extends UnaryExpressionSyntax {
@@ -11751,6 +13399,31 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._functionKeyword.fullWidth();
+        if (position < childWidth) { return this._functionKeyword; }
+        position -= childWidth;
+
+        if (this._identifier !== null) {
+            childWidth = this._identifier.fullWidth();
+            if (position < childWidth) { return this._identifier; }
+            position -= childWidth;
+        }
+
+        childWidth = this._callSignature.fullWidth();
+        if (position < childWidth) { return this._callSignature; }
+        position -= childWidth;
+
+        childWidth = this._block.fullWidth();
+        if (position < childWidth) { return this._block; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class EmptyStatementSyntax extends StatementSyntax {
@@ -11839,6 +13512,17 @@ class EmptyStatementSyntax extends StatementSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._semicolonToken.fullWidth();
+        if (position < childWidth) { return this._semicolonToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class SuperExpressionSyntax extends UnaryExpressionSyntax {
@@ -11926,6 +13610,17 @@ class SuperExpressionSyntax extends UnaryExpressionSyntax {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._superKeyword.fullWidth();
+        if (position < childWidth) { return this._superKeyword; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -12093,6 +13788,33 @@ class TryStatementSyntax extends StatementSyntax {
         }
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._tryKeyword.fullWidth();
+        if (position < childWidth) { return this._tryKeyword; }
+        position -= childWidth;
+
+        childWidth = this._block.fullWidth();
+        if (position < childWidth) { return this._block; }
+        position -= childWidth;
+
+        if (this._catchClause !== null) {
+            childWidth = this._catchClause.fullWidth();
+            if (position < childWidth) { return this._catchClause; }
+            position -= childWidth;
+        }
+
+        if (this._finallyClause !== null) {
+            childWidth = this._finallyClause.fullWidth();
+            if (position < childWidth) { return this._finallyClause; }
+            position -= childWidth;
+        }
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -12275,6 +13997,33 @@ class CatchClauseSyntax extends SyntaxNode {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._catchKeyword.fullWidth();
+        if (position < childWidth) { return this._catchKeyword; }
+        position -= childWidth;
+
+        childWidth = this._openParenToken.fullWidth();
+        if (position < childWidth) { return this._openParenToken; }
+        position -= childWidth;
+
+        childWidth = this._identifier.fullWidth();
+        if (position < childWidth) { return this._identifier; }
+        position -= childWidth;
+
+        childWidth = this._closeParenToken.fullWidth();
+        if (position < childWidth) { return this._closeParenToken; }
+        position -= childWidth;
+
+        childWidth = this._block.fullWidth();
+        if (position < childWidth) { return this._block; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class FinallyClauseSyntax extends SyntaxNode {
@@ -12386,6 +14135,21 @@ class FinallyClauseSyntax extends SyntaxNode {
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._finallyKeyword.fullWidth();
+        if (position < childWidth) { return this._finallyKeyword; }
+        position -= childWidth;
+
+        childWidth = this._block.fullWidth();
+        if (position < childWidth) { return this._block; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -12522,6 +14286,25 @@ class LabeledStatement extends StatementSyntax {
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._identifier.fullWidth();
+        if (position < childWidth) { return this._identifier; }
+        position -= childWidth;
+
+        childWidth = this._colonToken.fullWidth();
+        if (position < childWidth) { return this._colonToken; }
+        position -= childWidth;
+
+        childWidth = this._statement.fullWidth();
+        if (position < childWidth) { return this._statement; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -12752,6 +14535,41 @@ class DoStatementSyntax extends IterationStatementSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._doKeyword.fullWidth();
+        if (position < childWidth) { return this._doKeyword; }
+        position -= childWidth;
+
+        childWidth = this._statement.fullWidth();
+        if (position < childWidth) { return this._statement; }
+        position -= childWidth;
+
+        childWidth = this._whileKeyword.fullWidth();
+        if (position < childWidth) { return this._whileKeyword; }
+        position -= childWidth;
+
+        childWidth = this._openParenToken.fullWidth();
+        if (position < childWidth) { return this._openParenToken; }
+        position -= childWidth;
+
+        childWidth = this._condition.fullWidth();
+        if (position < childWidth) { return this._condition; }
+        position -= childWidth;
+
+        childWidth = this._closeParenToken.fullWidth();
+        if (position < childWidth) { return this._closeParenToken; }
+        position -= childWidth;
+
+        childWidth = this._semicolonToken.fullWidth();
+        if (position < childWidth) { return this._semicolonToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
@@ -12863,6 +14681,21 @@ class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._typeOfKeyword.fullWidth();
+        if (position < childWidth) { return this._typeOfKeyword; }
+        position -= childWidth;
+
+        childWidth = this._expression.fullWidth();
+        if (position < childWidth) { return this._expression; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }
 
@@ -12976,6 +14809,21 @@ class DeleteExpressionSyntax extends UnaryExpressionSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._deleteKeyword.fullWidth();
+        if (position < childWidth) { return this._deleteKeyword; }
+        position -= childWidth;
+
+        childWidth = this._expression.fullWidth();
+        if (position < childWidth) { return this._expression; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class VoidExpressionSyntax extends UnaryExpressionSyntax {
@@ -13088,6 +14936,21 @@ class VoidExpressionSyntax extends UnaryExpressionSyntax {
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._voidKeyword.fullWidth();
+        if (position < childWidth) { return this._voidKeyword; }
+        position -= childWidth;
+
+        childWidth = this._expression.fullWidth();
+        if (position < childWidth) { return this._expression; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
+    }
 }
 
 class DebuggerStatementSyntax extends StatementSyntax {
@@ -13198,5 +15061,20 @@ class DebuggerStatementSyntax extends StatementSyntax {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+    }
+
+    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._debuggerKeyword.fullWidth();
+        if (position < childWidth) { return this._debuggerKeyword; }
+        position -= childWidth;
+
+        childWidth = this._semicolonToken.fullWidth();
+        if (position < childWidth) { return this._semicolonToken; }
+        position -= childWidth;
+
+        throw Errors.invalidOperation();
     }
 }

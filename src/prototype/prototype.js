@@ -1001,10 +1001,10 @@ var SyntaxNode = (function () {
                 return token;
             }
             var node = currentNodeOrToken;
-            currentNodeOrToken = node.childThatContainsPosition(position);
+            currentNodeOrToken = node.elementThatContainsPosition(position);
         }
     };
-    SyntaxNode.prototype.childThatContainsPosition = function (position) {
+    SyntaxNode.prototype.elementThatContainsPosition = function (position) {
         throw Errors.abstract();
     };
     return SyntaxNode;
@@ -1494,6 +1494,9 @@ var Syntax;
         EmptySeparatedSyntaxList.prototype.hasZeroWidthToken = function () {
             return false;
         };
+        EmptySeparatedSyntaxList.prototype.syntaxElementThatContainsPosition = function (position) {
+            throw Errors.invalidOperation();
+        };
         return EmptySeparatedSyntaxList;
     })();    
     var SingletonSeparatedSyntaxList = (function () {
@@ -1586,6 +1589,10 @@ var Syntax;
         };
         SingletonSeparatedSyntaxList.prototype.hasZeroWidthToken = function () {
             return this.item.hasZeroWidthToken();
+        };
+        SingletonSeparatedSyntaxList.prototype.syntaxElementThatContainsPosition = function (position) {
+            Debug.assert(position >= 0 && position < this.item.fullWidth());
+            return this.item;
         };
         return SingletonSeparatedSyntaxList;
     })();    
@@ -1730,18 +1737,18 @@ var Syntax;
             var fullWidth = 0;
             var hasSkippedText = false;
             var hasZeroWidthToken = false;
-            for(var i = this.elements.length - 1; i >= 0; i--) {
+            for(var i = 0, n = this.elements.length; i < n; i++) {
+                var element = this.elements[i];
+                var childWidth = element.fullWidth();
+                fullWidth += childWidth;
                 if(i % 2 === 0) {
-                    var node = this.elements[i];
-                    fullWidth += node.fullWidth();
+                    var node = element;
                     hasSkippedText = hasSkippedText || node.hasSkippedText();
                     hasZeroWidthToken = hasZeroWidthToken || node.hasZeroWidthToken();
                 } else {
-                    var token = this.elements[i];
-                    var tokenWidth = token.fullWidth();
-                    fullWidth += tokenWidth;
+                    var token = element;
                     hasSkippedText = hasSkippedText || token.hasSkippedText();
-                    hasZeroWidthToken = hasZeroWidthToken || (tokenWidth === 0);
+                    hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
                 }
             }
             return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
@@ -1751,6 +1758,17 @@ var Syntax;
                 this._data = this.computeData();
             }
             return this._data;
+        };
+        NormalSeparatedSyntaxList.prototype.syntaxElementThatContainsPosition = function (position) {
+            for(var i = 0, n = this.elements.length; i < n; i++) {
+                var element = this.elements[i];
+                var childWidth = element.fullWidth();
+                if(position < childWidth) {
+                    return element;
+                }
+                position -= childWidth;
+            }
+            throw Errors.invalidOperation();
         };
         return NormalSeparatedSyntaxList;
     })();    
@@ -1850,12 +1868,15 @@ var Syntax;
         EmptySyntaxList.prototype.hasZeroWidthToken = function () {
             return false;
         };
+        EmptySyntaxList.prototype.syntaxNodeThatContainsPosition = function (position) {
+            throw Errors.invalidOperation();
+        };
         return EmptySyntaxList;
     })();    
     Syntax.emptyList = new EmptySyntaxList();
     var SingletonSyntaxList = (function () {
         function SingletonSyntaxList(item) {
-            this._item = item;
+            this.item = item;
         }
         SingletonSyntaxList.prototype.isToken = function () {
             return false;
@@ -1879,11 +1900,11 @@ var Syntax;
             return 1 /* List */ ;
         };
         SingletonSyntaxList.prototype.isMissing = function () {
-            return this._item.isMissing();
+            return this.item.isMissing();
         };
         SingletonSyntaxList.prototype.toJSON = function (key) {
             return [
-                this._item
+                this.item
             ];
         };
         SingletonSyntaxList.prototype.count = function () {
@@ -1893,36 +1914,40 @@ var Syntax;
             if(index !== 0) {
                 throw Errors.argumentOutOfRange("index");
             }
-            return this._item;
+            return this.item;
         };
         SingletonSyntaxList.prototype.collectTextElements = function (elements) {
             return collectSyntaxListTextElements(elements, this);
         };
         SingletonSyntaxList.prototype.toArray = function () {
             return [
-                this._item
+                this.item
             ];
         };
         SingletonSyntaxList.prototype.firstToken = function () {
-            return this._item.firstToken();
+            return this.item.firstToken();
         };
         SingletonSyntaxList.prototype.lastToken = function () {
-            return this._item.lastToken();
+            return this.item.lastToken();
         };
         SingletonSyntaxList.prototype.fullWidth = function () {
-            return this._item.fullWidth();
+            return this.item.fullWidth();
         };
         SingletonSyntaxList.prototype.fullText = function () {
-            return this._item.fullText();
+            return this.item.fullText();
         };
         SingletonSyntaxList.prototype.isTypeScriptSpecific = function () {
-            return this._item.isTypeScriptSpecific();
+            return this.item.isTypeScriptSpecific();
         };
         SingletonSyntaxList.prototype.hasSkippedText = function () {
-            return this._item.hasSkippedText();
+            return this.item.hasSkippedText();
         };
         SingletonSyntaxList.prototype.hasZeroWidthToken = function () {
-            return this._item.hasZeroWidthToken();
+            return this.item.hasZeroWidthToken();
+        };
+        SingletonSyntaxList.prototype.syntaxNodeThatContainsPosition = function (position) {
+            Debug.assert(position >= 0 && position < this.item.fullWidth());
+            return this.item;
         };
         return SingletonSyntaxList;
     })();    
@@ -2036,6 +2061,18 @@ var Syntax;
             }
             return this._data;
         };
+        NormalSyntaxList.prototype.syntaxNodeThatContainsPosition = function (position) {
+            Debug.assert(position >= 0 && position < this.fullWidth());
+            for(var i = 0, n = this.nodes.length; i < n; i++) {
+                var node = this.nodes[i];
+                var childWidth = node.fullWidth();
+                if(position < childWidth) {
+                    return node;
+                }
+                position -= childWidth;
+            }
+            throw Errors.invalidOperation();
+        };
         return NormalSyntaxList;
     })();    
     function list(nodes) {
@@ -2147,6 +2184,21 @@ var SourceUnitSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._endOfFileToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    SourceUnitSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._moduleElements.fullWidth();
+        if(position < childWidth) {
+            return this._moduleElements.syntaxNodeThatContainsPosition(position);
+        }
+        position -= childWidth;
+        childWidth = this._endOfFileToken.fullWidth();
+        if(position < childWidth) {
+            return this._endOfFileToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return SourceUnitSyntax;
 })(SyntaxNode);
@@ -2327,6 +2379,31 @@ var ExternalModuleReferenceSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    ExternalModuleReferenceSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._moduleKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._moduleKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._openParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._openParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._stringLiteral.fullWidth();
+        if(position < childWidth) {
+            return this._stringLiteral;
+        }
+        position -= childWidth;
+        childWidth = this._closeParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeParenToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return ExternalModuleReferenceSyntax;
 })(ModuleReferenceSyntax);
 var ModuleNameModuleReferenceSyntax = (function (_super) {
@@ -2398,6 +2475,16 @@ var ModuleNameModuleReferenceSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._moduleName.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._moduleName.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    ModuleNameModuleReferenceSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._moduleName.fullWidth();
+        if(position < childWidth) {
+            return this._moduleName;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return ModuleNameModuleReferenceSyntax;
 })(ModuleReferenceSyntax);
@@ -2569,6 +2656,36 @@ var ImportDeclarationSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    ImportDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._importKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._importKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._identifier.fullWidth();
+        if(position < childWidth) {
+            return this._identifier;
+        }
+        position -= childWidth;
+        childWidth = this._equalsToken.fullWidth();
+        if(position < childWidth) {
+            return this._equalsToken;
+        }
+        position -= childWidth;
+        childWidth = this._moduleReference.fullWidth();
+        if(position < childWidth) {
+            return this._moduleReference;
+        }
+        position -= childWidth;
+        childWidth = this._semicolonToken.fullWidth();
+        if(position < childWidth) {
+            return this._semicolonToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return ImportDeclarationSyntax;
 })(ModuleElementSyntax);
@@ -2859,6 +2976,64 @@ var ClassDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    ClassDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        if(this._exportKeyword !== null) {
+            childWidth = this._exportKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._exportKeyword;
+            }
+            position -= childWidth;
+        }
+        if(this._declareKeyword !== null) {
+            childWidth = this._declareKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._declareKeyword;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._classKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._classKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._identifier.fullWidth();
+        if(position < childWidth) {
+            return this._identifier;
+        }
+        position -= childWidth;
+        if(this._extendsClause !== null) {
+            childWidth = this._extendsClause.fullWidth();
+            if(position < childWidth) {
+                return this._extendsClause;
+            }
+            position -= childWidth;
+        }
+        if(this._implementsClause !== null) {
+            childWidth = this._implementsClause.fullWidth();
+            if(position < childWidth) {
+                return this._implementsClause;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._openBraceToken.fullWidth();
+        if(position < childWidth) {
+            return this._openBraceToken;
+        }
+        position -= childWidth;
+        childWidth = this._classElements.fullWidth();
+        if(position < childWidth) {
+            return this._classElements.syntaxNodeThatContainsPosition(position);
+        }
+        position -= childWidth;
+        childWidth = this._closeBraceToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeBraceToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return ClassDeclarationSyntax;
 })(ModuleElementSyntax);
 var InterfaceDeclarationSyntax = (function (_super) {
@@ -3040,6 +3215,40 @@ var InterfaceDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._body.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    InterfaceDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        if(this._exportKeyword !== null) {
+            childWidth = this._exportKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._exportKeyword;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._interfaceKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._interfaceKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._identifier.fullWidth();
+        if(position < childWidth) {
+            return this._identifier;
+        }
+        position -= childWidth;
+        if(this._extendsClause !== null) {
+            childWidth = this._extendsClause.fullWidth();
+            if(position < childWidth) {
+                return this._extendsClause;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._body.fullWidth();
+        if(position < childWidth) {
+            return this._body;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return InterfaceDeclarationSyntax;
 })(ModuleElementSyntax);
 var ExtendsClauseSyntax = (function (_super) {
@@ -3144,6 +3353,21 @@ var ExtendsClauseSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._typeNames.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    ExtendsClauseSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._extendsKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._extendsKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._typeNames.fullWidth();
+        if(position < childWidth) {
+            return this._typeNames.syntaxElementThatContainsPosition(position);
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return ExtendsClauseSyntax;
 })(SyntaxNode);
 var ImplementsClauseSyntax = (function (_super) {
@@ -3247,6 +3471,21 @@ var ImplementsClauseSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._typeNames.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._typeNames.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    ImplementsClauseSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._implementsKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._implementsKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._typeNames.fullWidth();
+        if(position < childWidth) {
+            return this._typeNames.syntaxElementThatContainsPosition(position);
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return ImplementsClauseSyntax;
 })(SyntaxNode);
@@ -3518,6 +3757,59 @@ var ModuleDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    ModuleDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        if(this._exportKeyword !== null) {
+            childWidth = this._exportKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._exportKeyword;
+            }
+            position -= childWidth;
+        }
+        if(this._declareKeyword !== null) {
+            childWidth = this._declareKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._declareKeyword;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._moduleKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._moduleKeyword;
+        }
+        position -= childWidth;
+        if(this._moduleName !== null) {
+            childWidth = this._moduleName.fullWidth();
+            if(position < childWidth) {
+                return this._moduleName;
+            }
+            position -= childWidth;
+        }
+        if(this._stringLiteral !== null) {
+            childWidth = this._stringLiteral.fullWidth();
+            if(position < childWidth) {
+                return this._stringLiteral;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._openBraceToken.fullWidth();
+        if(position < childWidth) {
+            return this._openBraceToken;
+        }
+        position -= childWidth;
+        childWidth = this._moduleElements.fullWidth();
+        if(position < childWidth) {
+            return this._moduleElements.syntaxNodeThatContainsPosition(position);
+        }
+        position -= childWidth;
+        childWidth = this._closeBraceToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeBraceToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return ModuleDeclarationSyntax;
 })(ModuleElementSyntax);
 var StatementSyntax = (function (_super) {
@@ -3763,6 +4055,49 @@ var FunctionDeclarationSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    FunctionDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        if(this._exportKeyword !== null) {
+            childWidth = this._exportKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._exportKeyword;
+            }
+            position -= childWidth;
+        }
+        if(this._declareKeyword !== null) {
+            childWidth = this._declareKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._declareKeyword;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._functionKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._functionKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._functionSignature.fullWidth();
+        if(position < childWidth) {
+            return this._functionSignature;
+        }
+        position -= childWidth;
+        if(this._block !== null) {
+            childWidth = this._block.fullWidth();
+            if(position < childWidth) {
+                return this._block;
+            }
+            position -= childWidth;
+        }
+        if(this._semicolonToken !== null) {
+            childWidth = this._semicolonToken.fullWidth();
+            if(position < childWidth) {
+                return this._semicolonToken;
+            }
+            position -= childWidth;
+        }
+        throw Errors.invalidOperation();
+    };
     return FunctionDeclarationSyntax;
 })(StatementSyntax);
 var VariableStatementSyntax = (function (_super) {
@@ -3934,6 +4269,35 @@ var VariableStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    VariableStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        if(this._exportKeyword !== null) {
+            childWidth = this._exportKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._exportKeyword;
+            }
+            position -= childWidth;
+        }
+        if(this._declareKeyword !== null) {
+            childWidth = this._declareKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._declareKeyword;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._variableDeclaration.fullWidth();
+        if(position < childWidth) {
+            return this._variableDeclaration;
+        }
+        position -= childWidth;
+        childWidth = this._semicolonToken.fullWidth();
+        if(position < childWidth) {
+            return this._semicolonToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return VariableStatementSyntax;
 })(StatementSyntax);
 var ExpressionSyntax = (function (_super) {
@@ -4073,6 +4437,21 @@ var VariableDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._variableDeclarators.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    VariableDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._varKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._varKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._variableDeclarators.fullWidth();
+        if(position < childWidth) {
+            return this._variableDeclarators.syntaxElementThatContainsPosition(position);
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return VariableDeclarationSyntax;
 })(SyntaxNode);
 var VariableDeclaratorSyntax = (function (_super) {
@@ -4207,6 +4586,30 @@ var VariableDeclaratorSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    VariableDeclaratorSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._identifier.fullWidth();
+        if(position < childWidth) {
+            return this._identifier;
+        }
+        position -= childWidth;
+        if(this._typeAnnotation !== null) {
+            childWidth = this._typeAnnotation.fullWidth();
+            if(position < childWidth) {
+                return this._typeAnnotation;
+            }
+            position -= childWidth;
+        }
+        if(this._equalsValueClause !== null) {
+            childWidth = this._equalsValueClause.fullWidth();
+            if(position < childWidth) {
+                return this._equalsValueClause;
+            }
+            position -= childWidth;
+        }
+        throw Errors.invalidOperation();
+    };
     return VariableDeclaratorSyntax;
 })(SyntaxNode);
 var EqualsValueClauseSyntax = (function (_super) {
@@ -4308,6 +4711,21 @@ var EqualsValueClauseSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._value.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._value.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    EqualsValueClauseSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._equalsToken.fullWidth();
+        if(position < childWidth) {
+            return this._equalsToken;
+        }
+        position -= childWidth;
+        childWidth = this._value.fullWidth();
+        if(position < childWidth) {
+            return this._value;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return EqualsValueClauseSyntax;
 })(SyntaxNode);
@@ -4427,6 +4845,21 @@ var PrefixUnaryExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._operand.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    PrefixUnaryExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._operatorToken.fullWidth();
+        if(position < childWidth) {
+            return this._operatorToken;
+        }
+        position -= childWidth;
+        childWidth = this._operand.fullWidth();
+        if(position < childWidth) {
+            return this._operand;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return PrefixUnaryExpressionSyntax;
 })(UnaryExpressionSyntax);
 var ThisExpressionSyntax = (function (_super) {
@@ -4501,6 +4934,16 @@ var ThisExpressionSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._thisKeyword.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    ThisExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._thisKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._thisKeyword;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return ThisExpressionSyntax;
 })(UnaryExpressionSyntax);
@@ -4605,6 +5048,16 @@ var LiteralExpressionSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._literalToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    LiteralExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._literalToken.fullWidth();
+        if(position < childWidth) {
+            return this._literalToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return LiteralExpressionSyntax;
 })(UnaryExpressionSyntax);
@@ -4740,6 +5193,26 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    ArrayLiteralExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._openBracketToken.fullWidth();
+        if(position < childWidth) {
+            return this._openBracketToken;
+        }
+        position -= childWidth;
+        childWidth = this._expressions.fullWidth();
+        if(position < childWidth) {
+            return this._expressions.syntaxElementThatContainsPosition(position);
+        }
+        position -= childWidth;
+        childWidth = this._closeBracketToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeBracketToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return ArrayLiteralExpressionSyntax;
 })(UnaryExpressionSyntax);
 var OmittedExpressionSyntax = (function (_super) {
@@ -4784,6 +5257,9 @@ var OmittedExpressionSyntax = (function (_super) {
         var hasSkippedText = false;
         var hasZeroWidthToken = true;
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    OmittedExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        throw Errors.invalidOperation();
     };
     return OmittedExpressionSyntax;
 })(ExpressionSyntax);
@@ -4910,6 +5386,26 @@ var ParenthesizedExpressionSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    ParenthesizedExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._openParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._openParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._expression.fullWidth();
+        if(position < childWidth) {
+            return this._expression;
+        }
+        position -= childWidth;
+        childWidth = this._closeParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeParenToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return ParenthesizedExpressionSyntax;
 })(UnaryExpressionSyntax);
@@ -5056,6 +5552,26 @@ var SimpleArrowFunctionExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._body.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    SimpleArrowFunctionExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._identifier.fullWidth();
+        if(position < childWidth) {
+            return this._identifier;
+        }
+        position -= childWidth;
+        childWidth = this._equalsGreaterThanToken.fullWidth();
+        if(position < childWidth) {
+            return this._equalsGreaterThanToken;
+        }
+        position -= childWidth;
+        childWidth = this._body.fullWidth();
+        if(position < childWidth) {
+            return this._body;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return SimpleArrowFunctionExpressionSyntax;
 })(ArrowFunctionExpressionSyntax);
 var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
@@ -5179,6 +5695,26 @@ var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._body.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    ParenthesizedArrowFunctionExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._callSignature.fullWidth();
+        if(position < childWidth) {
+            return this._callSignature;
+        }
+        position -= childWidth;
+        childWidth = this._equalsGreaterThanToken.fullWidth();
+        if(position < childWidth) {
+            return this._equalsGreaterThanToken;
+        }
+        position -= childWidth;
+        childWidth = this._body.fullWidth();
+        if(position < childWidth) {
+            return this._body;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return ParenthesizedArrowFunctionExpressionSyntax;
 })(ArrowFunctionExpressionSyntax);
 var TypeSyntax = (function (_super) {
@@ -5282,6 +5818,16 @@ var IdentifierNameSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    IdentifierNameSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._identifier.fullWidth();
+        if(position < childWidth) {
+            return this._identifier;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return IdentifierNameSyntax;
 })(NameSyntax);
@@ -5411,6 +5957,26 @@ var QualifiedNameSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._right.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._right.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    QualifiedNameSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._left.fullWidth();
+        if(position < childWidth) {
+            return this._left;
+        }
+        position -= childWidth;
+        childWidth = this._dotToken.fullWidth();
+        if(position < childWidth) {
+            return this._dotToken;
+        }
+        position -= childWidth;
+        childWidth = this._right.fullWidth();
+        if(position < childWidth) {
+            return this._right;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return QualifiedNameSyntax;
 })(NameSyntax);
@@ -5559,6 +6125,31 @@ var ConstructorTypeSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    ConstructorTypeSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._newKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._newKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._parameterList.fullWidth();
+        if(position < childWidth) {
+            return this._parameterList;
+        }
+        position -= childWidth;
+        childWidth = this._equalsGreaterThanToken.fullWidth();
+        if(position < childWidth) {
+            return this._equalsGreaterThanToken;
+        }
+        position -= childWidth;
+        childWidth = this._type.fullWidth();
+        if(position < childWidth) {
+            return this._type;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return ConstructorTypeSyntax;
 })(TypeSyntax);
 var FunctionTypeSyntax = (function (_super) {
@@ -5681,6 +6272,26 @@ var FunctionTypeSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._type.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    FunctionTypeSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._parameterList.fullWidth();
+        if(position < childWidth) {
+            return this._parameterList;
+        }
+        position -= childWidth;
+        childWidth = this._equalsGreaterThanToken.fullWidth();
+        if(position < childWidth) {
+            return this._equalsGreaterThanToken;
+        }
+        position -= childWidth;
+        childWidth = this._type.fullWidth();
+        if(position < childWidth) {
+            return this._type;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return FunctionTypeSyntax;
 })(TypeSyntax);
@@ -5813,6 +6424,26 @@ var ObjectTypeSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    ObjectTypeSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._openBraceToken.fullWidth();
+        if(position < childWidth) {
+            return this._openBraceToken;
+        }
+        position -= childWidth;
+        childWidth = this._typeMembers.fullWidth();
+        if(position < childWidth) {
+            return this._typeMembers.syntaxElementThatContainsPosition(position);
+        }
+        position -= childWidth;
+        childWidth = this._closeBraceToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeBraceToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return ObjectTypeSyntax;
 })(TypeSyntax);
 var ArrayTypeSyntax = (function (_super) {
@@ -5936,6 +6567,26 @@ var ArrayTypeSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    ArrayTypeSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._type.fullWidth();
+        if(position < childWidth) {
+            return this._type;
+        }
+        position -= childWidth;
+        childWidth = this._openBracketToken.fullWidth();
+        if(position < childWidth) {
+            return this._openBracketToken;
+        }
+        position -= childWidth;
+        childWidth = this._closeBracketToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeBracketToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return ArrayTypeSyntax;
 })(TypeSyntax);
 var PredefinedTypeSyntax = (function (_super) {
@@ -6018,6 +6669,16 @@ var PredefinedTypeSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._keyword.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    PredefinedTypeSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._keyword.fullWidth();
+        if(position < childWidth) {
+            return this._keyword;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return PredefinedTypeSyntax;
 })(TypeSyntax);
@@ -6117,6 +6778,21 @@ var TypeAnnotationSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._type.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    TypeAnnotationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._colonToken.fullWidth();
+        if(position < childWidth) {
+            return this._colonToken;
+        }
+        position -= childWidth;
+        childWidth = this._type.fullWidth();
+        if(position < childWidth) {
+            return this._type;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return TypeAnnotationSyntax;
 })(SyntaxNode);
@@ -6251,6 +6927,26 @@ var BlockSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    BlockSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._openBraceToken.fullWidth();
+        if(position < childWidth) {
+            return this._openBraceToken;
+        }
+        position -= childWidth;
+        childWidth = this._statements.fullWidth();
+        if(position < childWidth) {
+            return this._statements.syntaxNodeThatContainsPosition(position);
+        }
+        position -= childWidth;
+        childWidth = this._closeBraceToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeBraceToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return BlockSyntax;
 })(StatementSyntax);
@@ -6485,6 +7181,51 @@ var ParameterSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    ParameterSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        if(this._dotDotDotToken !== null) {
+            childWidth = this._dotDotDotToken.fullWidth();
+            if(position < childWidth) {
+                return this._dotDotDotToken;
+            }
+            position -= childWidth;
+        }
+        if(this._publicOrPrivateKeyword !== null) {
+            childWidth = this._publicOrPrivateKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._publicOrPrivateKeyword;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._identifier.fullWidth();
+        if(position < childWidth) {
+            return this._identifier;
+        }
+        position -= childWidth;
+        if(this._questionToken !== null) {
+            childWidth = this._questionToken.fullWidth();
+            if(position < childWidth) {
+                return this._questionToken;
+            }
+            position -= childWidth;
+        }
+        if(this._typeAnnotation !== null) {
+            childWidth = this._typeAnnotation.fullWidth();
+            if(position < childWidth) {
+                return this._typeAnnotation;
+            }
+            position -= childWidth;
+        }
+        if(this._equalsValueClause !== null) {
+            childWidth = this._equalsValueClause.fullWidth();
+            if(position < childWidth) {
+                return this._equalsValueClause;
+            }
+            position -= childWidth;
+        }
+        throw Errors.invalidOperation();
+    };
     return ParameterSyntax;
 })(SyntaxNode);
 var MemberAccessExpressionSyntax = (function (_super) {
@@ -6614,6 +7355,26 @@ var MemberAccessExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._identifierName.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    MemberAccessExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._expression.fullWidth();
+        if(position < childWidth) {
+            return this._expression;
+        }
+        position -= childWidth;
+        childWidth = this._dotToken.fullWidth();
+        if(position < childWidth) {
+            return this._dotToken;
+        }
+        position -= childWidth;
+        childWidth = this._identifierName.fullWidth();
+        if(position < childWidth) {
+            return this._identifierName;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return MemberAccessExpressionSyntax;
 })(UnaryExpressionSyntax);
 var PostfixUnaryExpressionSyntax = (function (_super) {
@@ -6719,6 +7480,21 @@ var PostfixUnaryExpressionSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._operatorToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    PostfixUnaryExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._operand.fullWidth();
+        if(position < childWidth) {
+            return this._operand;
+        }
+        position -= childWidth;
+        childWidth = this._operatorToken.fullWidth();
+        if(position < childWidth) {
+            return this._operatorToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return PostfixUnaryExpressionSyntax;
 })(UnaryExpressionSyntax);
@@ -6873,6 +7649,31 @@ var ElementAccessExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    ElementAccessExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._expression.fullWidth();
+        if(position < childWidth) {
+            return this._expression;
+        }
+        position -= childWidth;
+        childWidth = this._openBracketToken.fullWidth();
+        if(position < childWidth) {
+            return this._openBracketToken;
+        }
+        position -= childWidth;
+        childWidth = this._argumentExpression.fullWidth();
+        if(position < childWidth) {
+            return this._argumentExpression;
+        }
+        position -= childWidth;
+        childWidth = this._closeBracketToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeBracketToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return ElementAccessExpressionSyntax;
 })(UnaryExpressionSyntax);
 var InvocationExpressionSyntax = (function (_super) {
@@ -6977,6 +7778,21 @@ var InvocationExpressionSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._argumentList.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._argumentList.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    InvocationExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._expression.fullWidth();
+        if(position < childWidth) {
+            return this._expression;
+        }
+        position -= childWidth;
+        childWidth = this._argumentList.fullWidth();
+        if(position < childWidth) {
+            return this._argumentList;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return InvocationExpressionSyntax;
 })(UnaryExpressionSyntax);
@@ -7111,6 +7927,26 @@ var ArgumentListSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    ArgumentListSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._openParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._openParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._arguments.fullWidth();
+        if(position < childWidth) {
+            return this._arguments.syntaxElementThatContainsPosition(position);
+        }
+        position -= childWidth;
+        childWidth = this._closeParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeParenToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return ArgumentListSyntax;
 })(SyntaxNode);
@@ -7292,6 +8128,26 @@ var BinaryExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._right.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    BinaryExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._left.fullWidth();
+        if(position < childWidth) {
+            return this._left;
+        }
+        position -= childWidth;
+        childWidth = this._operatorToken.fullWidth();
+        if(position < childWidth) {
+            return this._operatorToken;
+        }
+        position -= childWidth;
+        childWidth = this._right.fullWidth();
+        if(position < childWidth) {
+            return this._right;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return BinaryExpressionSyntax;
 })(ExpressionSyntax);
 var ConditionalExpressionSyntax = (function (_super) {
@@ -7472,6 +8328,36 @@ var ConditionalExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._whenFalse.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    ConditionalExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._condition.fullWidth();
+        if(position < childWidth) {
+            return this._condition;
+        }
+        position -= childWidth;
+        childWidth = this._questionToken.fullWidth();
+        if(position < childWidth) {
+            return this._questionToken;
+        }
+        position -= childWidth;
+        childWidth = this._whenTrue.fullWidth();
+        if(position < childWidth) {
+            return this._whenTrue;
+        }
+        position -= childWidth;
+        childWidth = this._colonToken.fullWidth();
+        if(position < childWidth) {
+            return this._colonToken;
+        }
+        position -= childWidth;
+        childWidth = this._whenFalse.fullWidth();
+        if(position < childWidth) {
+            return this._whenFalse;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return ConditionalExpressionSyntax;
 })(ExpressionSyntax);
 var TypeMemberSyntax = (function (_super) {
@@ -7617,6 +8503,28 @@ var ConstructSignatureSyntax = (function (_super) {
             hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    ConstructSignatureSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._newKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._newKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._parameterList.fullWidth();
+        if(position < childWidth) {
+            return this._parameterList;
+        }
+        position -= childWidth;
+        if(this._typeAnnotation !== null) {
+            childWidth = this._typeAnnotation.fullWidth();
+            if(position < childWidth) {
+                return this._typeAnnotation;
+            }
+            position -= childWidth;
+        }
+        throw Errors.invalidOperation();
     };
     return ConstructSignatureSyntax;
 })(TypeMemberSyntax);
@@ -7781,6 +8689,35 @@ var FunctionSignatureSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    FunctionSignatureSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._identifier.fullWidth();
+        if(position < childWidth) {
+            return this._identifier;
+        }
+        position -= childWidth;
+        if(this._questionToken !== null) {
+            childWidth = this._questionToken.fullWidth();
+            if(position < childWidth) {
+                return this._questionToken;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._parameterList.fullWidth();
+        if(position < childWidth) {
+            return this._parameterList;
+        }
+        position -= childWidth;
+        if(this._typeAnnotation !== null) {
+            childWidth = this._typeAnnotation.fullWidth();
+            if(position < childWidth) {
+                return this._typeAnnotation;
+            }
+            position -= childWidth;
+        }
+        throw Errors.invalidOperation();
+    };
     return FunctionSignatureSyntax;
 })(TypeMemberSyntax);
 var IndexSignatureSyntax = (function (_super) {
@@ -7932,6 +8869,33 @@ var IndexSignatureSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    IndexSignatureSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._openBracketToken.fullWidth();
+        if(position < childWidth) {
+            return this._openBracketToken;
+        }
+        position -= childWidth;
+        childWidth = this._parameter.fullWidth();
+        if(position < childWidth) {
+            return this._parameter;
+        }
+        position -= childWidth;
+        childWidth = this._closeBracketToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeBracketToken;
+        }
+        position -= childWidth;
+        if(this._typeAnnotation !== null) {
+            childWidth = this._typeAnnotation.fullWidth();
+            if(position < childWidth) {
+                return this._typeAnnotation;
+            }
+            position -= childWidth;
+        }
+        throw Errors.invalidOperation();
+    };
     return IndexSignatureSyntax;
 })(TypeMemberSyntax);
 var PropertySignatureSyntax = (function (_super) {
@@ -8064,6 +9028,30 @@ var PropertySignatureSyntax = (function (_super) {
             hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    PropertySignatureSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._identifier.fullWidth();
+        if(position < childWidth) {
+            return this._identifier;
+        }
+        position -= childWidth;
+        if(this._questionToken !== null) {
+            childWidth = this._questionToken.fullWidth();
+            if(position < childWidth) {
+                return this._questionToken;
+            }
+            position -= childWidth;
+        }
+        if(this._typeAnnotation !== null) {
+            childWidth = this._typeAnnotation.fullWidth();
+            if(position < childWidth) {
+                return this._typeAnnotation;
+            }
+            position -= childWidth;
+        }
+        throw Errors.invalidOperation();
     };
     return PropertySignatureSyntax;
 })(TypeMemberSyntax);
@@ -8199,6 +9187,26 @@ var ParameterListSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    ParameterListSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._openParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._openParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._parameters.fullWidth();
+        if(position < childWidth) {
+            return this._parameters.syntaxElementThatContainsPosition(position);
+        }
+        position -= childWidth;
+        childWidth = this._closeParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeParenToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return ParameterListSyntax;
 })(SyntaxNode);
 var CallSignatureSyntax = (function (_super) {
@@ -8308,6 +9316,23 @@ var CallSignatureSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    CallSignatureSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._parameterList.fullWidth();
+        if(position < childWidth) {
+            return this._parameterList;
+        }
+        position -= childWidth;
+        if(this._typeAnnotation !== null) {
+            childWidth = this._typeAnnotation.fullWidth();
+            if(position < childWidth) {
+                return this._typeAnnotation;
+            }
+            position -= childWidth;
+        }
+        throw Errors.invalidOperation();
+    };
     return CallSignatureSyntax;
 })(TypeMemberSyntax);
 var ElseClauseSyntax = (function (_super) {
@@ -8409,6 +9434,21 @@ var ElseClauseSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    ElseClauseSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._elseKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._elseKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._statement.fullWidth();
+        if(position < childWidth) {
+            return this._statement;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return ElseClauseSyntax;
 })(SyntaxNode);
@@ -8618,6 +9658,43 @@ var IfStatementSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    IfStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._ifKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._ifKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._openParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._openParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._condition.fullWidth();
+        if(position < childWidth) {
+            return this._condition;
+        }
+        position -= childWidth;
+        childWidth = this._closeParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._statement.fullWidth();
+        if(position < childWidth) {
+            return this._statement;
+        }
+        position -= childWidth;
+        if(this._elseClause !== null) {
+            childWidth = this._elseClause.fullWidth();
+            if(position < childWidth) {
+                return this._elseClause;
+            }
+            position -= childWidth;
+        }
+        throw Errors.invalidOperation();
+    };
     return IfStatementSyntax;
 })(StatementSyntax);
 var ExpressionStatementSyntax = (function (_super) {
@@ -8719,6 +9796,21 @@ var ExpressionStatementSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    ExpressionStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._expression.fullWidth();
+        if(position < childWidth) {
+            return this._expression;
+        }
+        position -= childWidth;
+        childWidth = this._semicolonToken.fullWidth();
+        if(position < childWidth) {
+            return this._semicolonToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return ExpressionStatementSyntax;
 })(StatementSyntax);
@@ -8892,6 +9984,35 @@ var ConstructorDeclarationSyntax = (function (_super) {
             hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    ConstructorDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._constructorKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._constructorKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._parameterList.fullWidth();
+        if(position < childWidth) {
+            return this._parameterList;
+        }
+        position -= childWidth;
+        if(this._block !== null) {
+            childWidth = this._block.fullWidth();
+            if(position < childWidth) {
+                return this._block;
+            }
+            position -= childWidth;
+        }
+        if(this._semicolonToken !== null) {
+            childWidth = this._semicolonToken.fullWidth();
+            if(position < childWidth) {
+                return this._semicolonToken;
+            }
+            position -= childWidth;
+        }
+        throw Errors.invalidOperation();
     };
     return ConstructorDeclarationSyntax;
 })(ClassElementSyntax);
@@ -9107,6 +10228,44 @@ var MemberFunctionDeclarationSyntax = (function (_super) {
             hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    MemberFunctionDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        if(this._publicOrPrivateKeyword !== null) {
+            childWidth = this._publicOrPrivateKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._publicOrPrivateKeyword;
+            }
+            position -= childWidth;
+        }
+        if(this._staticKeyword !== null) {
+            childWidth = this._staticKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._staticKeyword;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._functionSignature.fullWidth();
+        if(position < childWidth) {
+            return this._functionSignature;
+        }
+        position -= childWidth;
+        if(this._block !== null) {
+            childWidth = this._block.fullWidth();
+            if(position < childWidth) {
+                return this._block;
+            }
+            position -= childWidth;
+        }
+        if(this._semicolonToken !== null) {
+            childWidth = this._semicolonToken.fullWidth();
+            if(position < childWidth) {
+                return this._semicolonToken;
+            }
+            position -= childWidth;
+        }
+        throw Errors.invalidOperation();
     };
     return MemberFunctionDeclarationSyntax;
 })(MemberDeclarationSyntax);
@@ -9374,6 +10533,52 @@ var GetMemberAccessorDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    GetMemberAccessorDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        if(this._publicOrPrivateKeyword !== null) {
+            childWidth = this._publicOrPrivateKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._publicOrPrivateKeyword;
+            }
+            position -= childWidth;
+        }
+        if(this._staticKeyword !== null) {
+            childWidth = this._staticKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._staticKeyword;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._getKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._getKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._identifier.fullWidth();
+        if(position < childWidth) {
+            return this._identifier;
+        }
+        position -= childWidth;
+        childWidth = this._parameterList.fullWidth();
+        if(position < childWidth) {
+            return this._parameterList;
+        }
+        position -= childWidth;
+        if(this._typeAnnotation !== null) {
+            childWidth = this._typeAnnotation.fullWidth();
+            if(position < childWidth) {
+                return this._typeAnnotation;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._block.fullWidth();
+        if(position < childWidth) {
+            return this._block;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return GetMemberAccessorDeclarationSyntax;
 })(MemberAccessorDeclarationSyntax);
 var SetMemberAccessorDeclarationSyntax = (function (_super) {
@@ -9584,6 +10789,45 @@ var SetMemberAccessorDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    SetMemberAccessorDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        if(this._publicOrPrivateKeyword !== null) {
+            childWidth = this._publicOrPrivateKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._publicOrPrivateKeyword;
+            }
+            position -= childWidth;
+        }
+        if(this._staticKeyword !== null) {
+            childWidth = this._staticKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._staticKeyword;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._setKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._setKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._identifier.fullWidth();
+        if(position < childWidth) {
+            return this._identifier;
+        }
+        position -= childWidth;
+        childWidth = this._parameterList.fullWidth();
+        if(position < childWidth) {
+            return this._parameterList;
+        }
+        position -= childWidth;
+        childWidth = this._block.fullWidth();
+        if(position < childWidth) {
+            return this._block;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return SetMemberAccessorDeclarationSyntax;
 })(MemberAccessorDeclarationSyntax);
 var MemberVariableDeclarationSyntax = (function (_super) {
@@ -9746,6 +10990,35 @@ var MemberVariableDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    MemberVariableDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        if(this._publicOrPrivateKeyword !== null) {
+            childWidth = this._publicOrPrivateKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._publicOrPrivateKeyword;
+            }
+            position -= childWidth;
+        }
+        if(this._staticKeyword !== null) {
+            childWidth = this._staticKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._staticKeyword;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._variableDeclarator.fullWidth();
+        if(position < childWidth) {
+            return this._variableDeclarator;
+        }
+        position -= childWidth;
+        childWidth = this._semicolonToken.fullWidth();
+        if(position < childWidth) {
+            return this._semicolonToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return MemberVariableDeclarationSyntax;
 })(MemberDeclarationSyntax);
 var ThrowStatementSyntax = (function (_super) {
@@ -9871,6 +11144,26 @@ var ThrowStatementSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    ThrowStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._throwKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._throwKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._expression.fullWidth();
+        if(position < childWidth) {
+            return this._expression;
+        }
+        position -= childWidth;
+        childWidth = this._semicolonToken.fullWidth();
+        if(position < childWidth) {
+            return this._semicolonToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return ThrowStatementSyntax;
 })(StatementSyntax);
@@ -10001,6 +11294,28 @@ var ReturnStatementSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    ReturnStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._returnKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._returnKeyword;
+        }
+        position -= childWidth;
+        if(this._expression !== null) {
+            childWidth = this._expression.fullWidth();
+            if(position < childWidth) {
+                return this._expression;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._semicolonToken.fullWidth();
+        if(position < childWidth) {
+            return this._semicolonToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return ReturnStatementSyntax;
 })(StatementSyntax);
@@ -10134,6 +11449,28 @@ var ObjectCreationExpressionSyntax = (function (_super) {
             hasZeroWidthToken = hasZeroWidthToken || this._argumentList.hasZeroWidthToken();
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    ObjectCreationExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._newKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._newKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._expression.fullWidth();
+        if(position < childWidth) {
+            return this._expression;
+        }
+        position -= childWidth;
+        if(this._argumentList !== null) {
+            childWidth = this._argumentList.fullWidth();
+            if(position < childWidth) {
+                return this._argumentList;
+            }
+            position -= childWidth;
+        }
+        throw Errors.invalidOperation();
     };
     return ObjectCreationExpressionSyntax;
 })(UnaryExpressionSyntax);
@@ -10368,6 +11705,46 @@ var SwitchStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    SwitchStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._switchKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._switchKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._openParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._openParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._expression.fullWidth();
+        if(position < childWidth) {
+            return this._expression;
+        }
+        position -= childWidth;
+        childWidth = this._closeParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._openBraceToken.fullWidth();
+        if(position < childWidth) {
+            return this._openBraceToken;
+        }
+        position -= childWidth;
+        childWidth = this._switchClauses.fullWidth();
+        if(position < childWidth) {
+            return this._switchClauses.syntaxNodeThatContainsPosition(position);
+        }
+        position -= childWidth;
+        childWidth = this._closeBraceToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeBraceToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return SwitchStatementSyntax;
 })(StatementSyntax);
 var SwitchClauseSyntax = (function (_super) {
@@ -10551,6 +11928,31 @@ var CaseSwitchClauseSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._statements.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    CaseSwitchClauseSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._caseKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._caseKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._expression.fullWidth();
+        if(position < childWidth) {
+            return this._expression;
+        }
+        position -= childWidth;
+        childWidth = this._colonToken.fullWidth();
+        if(position < childWidth) {
+            return this._colonToken;
+        }
+        position -= childWidth;
+        childWidth = this._statements.fullWidth();
+        if(position < childWidth) {
+            return this._statements.syntaxNodeThatContainsPosition(position);
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return CaseSwitchClauseSyntax;
 })(SwitchClauseSyntax);
 var DefaultSwitchClauseSyntax = (function (_super) {
@@ -10685,6 +12087,26 @@ var DefaultSwitchClauseSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._statements.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    DefaultSwitchClauseSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._defaultKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._defaultKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._colonToken.fullWidth();
+        if(position < childWidth) {
+            return this._colonToken;
+        }
+        position -= childWidth;
+        childWidth = this._statements.fullWidth();
+        if(position < childWidth) {
+            return this._statements.syntaxNodeThatContainsPosition(position);
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return DefaultSwitchClauseSyntax;
 })(SwitchClauseSyntax);
 var BreakStatementSyntax = (function (_super) {
@@ -10817,6 +12239,28 @@ var BreakStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    BreakStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._breakKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._breakKeyword;
+        }
+        position -= childWidth;
+        if(this._identifier !== null) {
+            childWidth = this._identifier.fullWidth();
+            if(position < childWidth) {
+                return this._identifier;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._semicolonToken.fullWidth();
+        if(position < childWidth) {
+            return this._semicolonToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return BreakStatementSyntax;
 })(StatementSyntax);
 var ContinueStatementSyntax = (function (_super) {
@@ -10948,6 +12392,28 @@ var ContinueStatementSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    ContinueStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._continueKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._continueKeyword;
+        }
+        position -= childWidth;
+        if(this._identifier !== null) {
+            childWidth = this._identifier.fullWidth();
+            if(position < childWidth) {
+                return this._identifier;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._semicolonToken.fullWidth();
+        if(position < childWidth) {
+            return this._semicolonToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return ContinueStatementSyntax;
 })(StatementSyntax);
@@ -11318,6 +12784,69 @@ var ForStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    ForStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._forKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._forKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._openParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._openParenToken;
+        }
+        position -= childWidth;
+        if(this._variableDeclaration !== null) {
+            childWidth = this._variableDeclaration.fullWidth();
+            if(position < childWidth) {
+                return this._variableDeclaration;
+            }
+            position -= childWidth;
+        }
+        if(this._initializer !== null) {
+            childWidth = this._initializer.fullWidth();
+            if(position < childWidth) {
+                return this._initializer;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._firstSemicolonToken.fullWidth();
+        if(position < childWidth) {
+            return this._firstSemicolonToken;
+        }
+        position -= childWidth;
+        if(this._condition !== null) {
+            childWidth = this._condition.fullWidth();
+            if(position < childWidth) {
+                return this._condition;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._secondSemicolonToken.fullWidth();
+        if(position < childWidth) {
+            return this._secondSemicolonToken;
+        }
+        position -= childWidth;
+        if(this._incrementor !== null) {
+            childWidth = this._incrementor.fullWidth();
+            if(position < childWidth) {
+                return this._incrementor;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._closeParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._statement.fullWidth();
+        if(position < childWidth) {
+            return this._statement;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return ForStatementSyntax;
 })(BaseForStatementSyntax);
 var ForInStatementSyntax = (function (_super) {
@@ -11578,6 +13107,55 @@ var ForInStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    ForInStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._forKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._forKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._openParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._openParenToken;
+        }
+        position -= childWidth;
+        if(this._variableDeclaration !== null) {
+            childWidth = this._variableDeclaration.fullWidth();
+            if(position < childWidth) {
+                return this._variableDeclaration;
+            }
+            position -= childWidth;
+        }
+        if(this._left !== null) {
+            childWidth = this._left.fullWidth();
+            if(position < childWidth) {
+                return this._left;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._inKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._inKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._expression.fullWidth();
+        if(position < childWidth) {
+            return this._expression;
+        }
+        position -= childWidth;
+        childWidth = this._closeParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._statement.fullWidth();
+        if(position < childWidth) {
+            return this._statement;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return ForInStatementSyntax;
 })(BaseForStatementSyntax);
 var WhileStatementSyntax = (function (_super) {
@@ -11755,6 +13333,36 @@ var WhileStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    WhileStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._whileKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._whileKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._openParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._openParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._condition.fullWidth();
+        if(position < childWidth) {
+            return this._condition;
+        }
+        position -= childWidth;
+        childWidth = this._closeParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._statement.fullWidth();
+        if(position < childWidth) {
+            return this._statement;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return WhileStatementSyntax;
 })(IterationStatementSyntax);
 var WithStatementSyntax = (function (_super) {
@@ -11931,6 +13539,36 @@ var WithStatementSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    WithStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._withKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._withKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._openParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._openParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._condition.fullWidth();
+        if(position < childWidth) {
+            return this._condition;
+        }
+        position -= childWidth;
+        childWidth = this._closeParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._statement.fullWidth();
+        if(position < childWidth) {
+            return this._statement;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return WithStatementSyntax;
 })(StatementSyntax);
@@ -12141,6 +13779,43 @@ var EnumDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    EnumDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        if(this._exportKeyword !== null) {
+            childWidth = this._exportKeyword.fullWidth();
+            if(position < childWidth) {
+                return this._exportKeyword;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._enumKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._enumKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._identifier.fullWidth();
+        if(position < childWidth) {
+            return this._identifier;
+        }
+        position -= childWidth;
+        childWidth = this._openBraceToken.fullWidth();
+        if(position < childWidth) {
+            return this._openBraceToken;
+        }
+        position -= childWidth;
+        childWidth = this._variableDeclarators.fullWidth();
+        if(position < childWidth) {
+            return this._variableDeclarators.syntaxElementThatContainsPosition(position);
+        }
+        position -= childWidth;
+        childWidth = this._closeBraceToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeBraceToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return EnumDeclarationSyntax;
 })(ModuleElementSyntax);
 var CastExpressionSyntax = (function (_super) {
@@ -12288,6 +13963,31 @@ var CastExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    CastExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._lessThanToken.fullWidth();
+        if(position < childWidth) {
+            return this._lessThanToken;
+        }
+        position -= childWidth;
+        childWidth = this._type.fullWidth();
+        if(position < childWidth) {
+            return this._type;
+        }
+        position -= childWidth;
+        childWidth = this._greaterThanToken.fullWidth();
+        if(position < childWidth) {
+            return this._greaterThanToken;
+        }
+        position -= childWidth;
+        childWidth = this._expression.fullWidth();
+        if(position < childWidth) {
+            return this._expression;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return CastExpressionSyntax;
 })(UnaryExpressionSyntax);
 var ObjectLiteralExpressionSyntax = (function (_super) {
@@ -12421,6 +14121,26 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    ObjectLiteralExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._openBraceToken.fullWidth();
+        if(position < childWidth) {
+            return this._openBraceToken;
+        }
+        position -= childWidth;
+        childWidth = this._propertyAssignments.fullWidth();
+        if(position < childWidth) {
+            return this._propertyAssignments.syntaxElementThatContainsPosition(position);
+        }
+        position -= childWidth;
+        childWidth = this._closeBraceToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeBraceToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return ObjectLiteralExpressionSyntax;
 })(UnaryExpressionSyntax);
@@ -12575,6 +14295,26 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    SimplePropertyAssignmentSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._propertyName.fullWidth();
+        if(position < childWidth) {
+            return this._propertyName;
+        }
+        position -= childWidth;
+        childWidth = this._colonToken.fullWidth();
+        if(position < childWidth) {
+            return this._colonToken;
+        }
+        position -= childWidth;
+        childWidth = this._expression.fullWidth();
+        if(position < childWidth) {
+            return this._expression;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return SimplePropertyAssignmentSyntax;
 })(PropertyAssignmentSyntax);
@@ -12778,6 +14518,36 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    GetAccessorPropertyAssignmentSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._getKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._getKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._propertyName.fullWidth();
+        if(position < childWidth) {
+            return this._propertyName;
+        }
+        position -= childWidth;
+        childWidth = this._openParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._openParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._closeParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._block.fullWidth();
+        if(position < childWidth) {
+            return this._block;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return GetAccessorPropertyAssignmentSyntax;
 })(AccessorPropertyAssignmentSyntax);
 var SetAccessorPropertyAssignmentSyntax = (function (_super) {
@@ -12976,6 +14746,41 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    SetAccessorPropertyAssignmentSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._setKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._setKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._propertyName.fullWidth();
+        if(position < childWidth) {
+            return this._propertyName;
+        }
+        position -= childWidth;
+        childWidth = this._openParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._openParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._parameterName.fullWidth();
+        if(position < childWidth) {
+            return this._parameterName;
+        }
+        position -= childWidth;
+        childWidth = this._closeParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._block.fullWidth();
+        if(position < childWidth) {
+            return this._block;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return SetAccessorPropertyAssignmentSyntax;
 })(AccessorPropertyAssignmentSyntax);
 var FunctionExpressionSyntax = (function (_super) {
@@ -13138,6 +14943,33 @@ var FunctionExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    FunctionExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._functionKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._functionKeyword;
+        }
+        position -= childWidth;
+        if(this._identifier !== null) {
+            childWidth = this._identifier.fullWidth();
+            if(position < childWidth) {
+                return this._identifier;
+            }
+            position -= childWidth;
+        }
+        childWidth = this._callSignature.fullWidth();
+        if(position < childWidth) {
+            return this._callSignature;
+        }
+        position -= childWidth;
+        childWidth = this._block.fullWidth();
+        if(position < childWidth) {
+            return this._block;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return FunctionExpressionSyntax;
 })(UnaryExpressionSyntax);
 var EmptyStatementSyntax = (function (_super) {
@@ -13213,6 +15045,16 @@ var EmptyStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    EmptyStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._semicolonToken.fullWidth();
+        if(position < childWidth) {
+            return this._semicolonToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return EmptyStatementSyntax;
 })(StatementSyntax);
 var SuperExpressionSyntax = (function (_super) {
@@ -13287,6 +15129,16 @@ var SuperExpressionSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._superKeyword.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    SuperExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._superKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._superKeyword;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return SuperExpressionSyntax;
 })(UnaryExpressionSyntax);
@@ -13448,6 +15300,35 @@ var TryStatementSyntax = (function (_super) {
             hasZeroWidthToken = hasZeroWidthToken || this._finallyClause.hasZeroWidthToken();
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    TryStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._tryKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._tryKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._block.fullWidth();
+        if(position < childWidth) {
+            return this._block;
+        }
+        position -= childWidth;
+        if(this._catchClause !== null) {
+            childWidth = this._catchClause.fullWidth();
+            if(position < childWidth) {
+                return this._catchClause;
+            }
+            position -= childWidth;
+        }
+        if(this._finallyClause !== null) {
+            childWidth = this._finallyClause.fullWidth();
+            if(position < childWidth) {
+                return this._finallyClause;
+            }
+            position -= childWidth;
+        }
+        throw Errors.invalidOperation();
     };
     return TryStatementSyntax;
 })(StatementSyntax);
@@ -13623,6 +15504,36 @@ var CatchClauseSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    CatchClauseSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._catchKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._catchKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._openParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._openParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._identifier.fullWidth();
+        if(position < childWidth) {
+            return this._identifier;
+        }
+        position -= childWidth;
+        childWidth = this._closeParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._block.fullWidth();
+        if(position < childWidth) {
+            return this._block;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return CatchClauseSyntax;
 })(SyntaxNode);
 var FinallyClauseSyntax = (function (_super) {
@@ -13724,6 +15635,21 @@ var FinallyClauseSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._block.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    FinallyClauseSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._finallyKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._finallyKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._block.fullWidth();
+        if(position < childWidth) {
+            return this._block;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return FinallyClauseSyntax;
 })(SyntaxNode);
@@ -13850,6 +15776,26 @@ var LabeledStatement = (function (_super) {
         hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    LabeledStatement.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._identifier.fullWidth();
+        if(position < childWidth) {
+            return this._identifier;
+        }
+        position -= childWidth;
+        childWidth = this._colonToken.fullWidth();
+        if(position < childWidth) {
+            return this._colonToken;
+        }
+        position -= childWidth;
+        childWidth = this._statement.fullWidth();
+        if(position < childWidth) {
+            return this._statement;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return LabeledStatement;
 })(StatementSyntax);
@@ -14076,6 +16022,46 @@ var DoStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    DoStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._doKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._doKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._statement.fullWidth();
+        if(position < childWidth) {
+            return this._statement;
+        }
+        position -= childWidth;
+        childWidth = this._whileKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._whileKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._openParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._openParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._condition.fullWidth();
+        if(position < childWidth) {
+            return this._condition;
+        }
+        position -= childWidth;
+        childWidth = this._closeParenToken.fullWidth();
+        if(position < childWidth) {
+            return this._closeParenToken;
+        }
+        position -= childWidth;
+        childWidth = this._semicolonToken.fullWidth();
+        if(position < childWidth) {
+            return this._semicolonToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return DoStatementSyntax;
 })(IterationStatementSyntax);
 var TypeOfExpressionSyntax = (function (_super) {
@@ -14177,6 +16163,21 @@ var TypeOfExpressionSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    TypeOfExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._typeOfKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._typeOfKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._expression.fullWidth();
+        if(position < childWidth) {
+            return this._expression;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return TypeOfExpressionSyntax;
 })(UnaryExpressionSyntax);
@@ -14280,6 +16281,21 @@ var DeleteExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    DeleteExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._deleteKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._deleteKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._expression.fullWidth();
+        if(position < childWidth) {
+            return this._expression;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return DeleteExpressionSyntax;
 })(UnaryExpressionSyntax);
 var VoidExpressionSyntax = (function (_super) {
@@ -14382,6 +16398,21 @@ var VoidExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
+    VoidExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._voidKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._voidKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._expression.fullWidth();
+        if(position < childWidth) {
+            return this._expression;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
+    };
     return VoidExpressionSyntax;
 })(UnaryExpressionSyntax);
 var DebuggerStatementSyntax = (function (_super) {
@@ -14480,6 +16511,21 @@ var DebuggerStatementSyntax = (function (_super) {
         hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
+    };
+    DebuggerStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+        childWidth = this._debuggerKeyword.fullWidth();
+        if(position < childWidth) {
+            return this._debuggerKeyword;
+        }
+        position -= childWidth;
+        childWidth = this._semicolonToken.fullWidth();
+        if(position < childWidth) {
+            return this._semicolonToken;
+        }
+        position -= childWidth;
+        throw Errors.invalidOperation();
     };
     return DebuggerStatementSyntax;
 })(StatementSyntax);
