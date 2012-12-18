@@ -170,42 +170,37 @@ module Emitter {
         }
 
         private handleExportedModuleElement(parentModule: ISyntaxToken,
-                                            moduleElement: ModuleElementSyntax,
-                                            elements: ModuleElementSyntax[]): void {
-            switch (moduleElement.kind()) {
-                case SyntaxKind.VariableStatement:
-                    var variableStatement = <VariableStatementSyntax>moduleElement;
-                    if (variableStatement.exportKeyword() !== null) {
-                        var declarators = variableStatement.variableDeclaration().variableDeclarators();
-                        for (var i = 0, n = declarators.syntaxNodeCount(); i < n; i++) {
-                            var declarator = <VariableDeclaratorSyntax>declarators.syntaxNodeAt(i);
-                            elements.push(this.exportModuleElement(parentModule, moduleElement, declarator.identifier()));
-                        }
+            moduleElement: ModuleElementSyntax,
+            elements: ModuleElementSyntax[]): void {
+            if (moduleElement.kind() === SyntaxKind.VariableStatement) {
+                var variableStatement = <VariableStatementSyntax>moduleElement;
+                if (variableStatement.exportKeyword() !== null) {
+                    var declarators = variableStatement.variableDeclaration().variableDeclarators();
+                    for (var i = 0, n = declarators.syntaxNodeCount(); i < n; i++) {
+                        var declarator = <VariableDeclaratorSyntax>declarators.syntaxNodeAt(i);
+                        elements.push(this.exportModuleElement(parentModule, moduleElement, declarator.identifier()));
                     }
-                    return;
-
-                case SyntaxKind.FunctionDeclaration:
-                    var functionDeclaration = <FunctionDeclarationSyntax>moduleElement;
-                    if (functionDeclaration.exportKeyword() !== null) {
-                        elements.push(this.exportModuleElement(
-                            parentModule, moduleElement, functionDeclaration.functionSignature().identifier()));
-                    }
-                    return;
-
-                case SyntaxKind.ClassDeclaration:
-                    var classDeclaration = <ClassDeclarationSyntax>moduleElement;
-                    if (classDeclaration.exportKeyword() !== null) {
-                        elements.push(this.exportModuleElement(parentModule, moduleElement, classDeclaration.identifier()));
-                    }
-                    return;
-
-                case SyntaxKind.ModuleDeclaration:
-                    var childModule = <ModuleDeclarationSyntax>moduleElement;
-                    if (childModule.exportKeyword() !== null) {
-                        elements.push(this.exportModuleElement(
-                            parentModule, moduleElement, this.leftmostName(childModule.moduleName()).identifier()));
-                    }
-                    return;
+                }
+            }
+            else if (moduleElement.kind() === SyntaxKind.FunctionDeclaration) {
+                var functionDeclaration = <FunctionDeclarationSyntax>moduleElement;
+                if (functionDeclaration.exportKeyword() !== null) {
+                    elements.push(this.exportModuleElement(
+                        parentModule, moduleElement, functionDeclaration.functionSignature().identifier()));
+                }
+            }
+            else if (moduleElement.kind() === SyntaxKind.ClassDeclaration) {
+                var classDeclaration = <ClassDeclarationSyntax>moduleElement;
+                if (classDeclaration.exportKeyword() !== null) {
+                    elements.push(this.exportModuleElement(parentModule, moduleElement, classDeclaration.identifier()));
+                }
+            }
+            else if (moduleElement.kind() === SyntaxKind.ModuleDeclaration) {
+                var childModule = <ModuleDeclarationSyntax>moduleElement;
+                if (childModule.exportKeyword() !== null) {
+                    elements.push(this.exportModuleElement(
+                        parentModule, moduleElement, this.leftmostName(childModule.moduleName()).identifier()));
+                }
             }
         }
 
@@ -271,12 +266,11 @@ module Emitter {
                 : moduleIndentation;
 
             // var M;
-            var variableStatement = VariableStatementSyntax.create1(
-                    new VariableDeclarationSyntax(
-                        Syntax.token(SyntaxKind.VarKeyword).withTrailingTrivia(this.space),
-                        SeparatedSyntaxList.create(
-                            [VariableDeclaratorSyntax.create(moduleIdentifier)]))
-                ).withLeadingTrivia(leadingTrivia).withTrailingTrivia(this.newLine);
+            var variableStatement = VariableStatementSyntax.create1(new VariableDeclarationSyntax(
+                Syntax.token(SyntaxKind.VarKeyword).withTrailingTrivia(this.space),
+                SeparatedSyntaxList.create(
+                [VariableDeclaratorSyntax.create(moduleIdentifier)])))
+                    .withLeadingTrivia(leadingTrivia).withTrailingTrivia(this.newLine);
 
             // function(M) { ... }
             var functionExpression = FunctionExpressionSyntax.create1()
