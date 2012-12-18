@@ -925,21 +925,20 @@ module Emitter {
 
             var statements: StatementSyntax[] = [];
 
-            var statementIndent = this.options.indentSpaces + this.columnForStartOfToken(node.firstToken());
+            var statementColumn = this.options.indentSpaces + this.columnForStartOfToken(node.firstToken());
+            var statementIndentation = this.indentationTrivia(statementColumn);
 
             if (node.extendsClause() !== null) {
-                var extendsParameters = [];
-                extendsParameters.push(new IdentifierNameSyntax(identifier));
-                extendsParameters.push(Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space));
-                extendsParameters.push(Syntax.identifierName("_super"));
-
+                // __extends(C, _super);
                 var extendsStatement = ExpressionStatementSyntax.create1(
                     new InvocationExpressionSyntax(
                         Syntax.identifierName("__extends"),
-                        ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create(extendsParameters)))).withTrailingTrivia(this.newLine);
+                        ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create([
+                            <any>new IdentifierNameSyntax(identifier),
+                            Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
+                            Syntax.identifierName("_super")])))).withLeadingTrivia(statementIndentation).withTrailingTrivia(this.newLine);
 
-                statements.push(<StatementSyntax>this.changeIndentation(
-                    extendsStatement, /*indentFirstToken:*/ true, statementIndent));
+                statements.push(extendsStatement);
             }
 
             var constructorDeclaration: ConstructorDeclarationSyntax =
@@ -956,14 +955,12 @@ module Emitter {
             var classElementStatements = this.convertClassElements(node);
             statements.push.apply(statements, classElementStatements);
 
-            var returnIndentation = this.indentationTrivia(statementIndent);
-
-            var returnStatement = new ReturnStatementSyntax(
+            // return C;
+            statements.push(new ReturnStatementSyntax(
                 Syntax.token(SyntaxKind.ReturnKeyword).withTrailingTrivia(this.space),
                 new IdentifierNameSyntax(identifier),
-                Syntax.token(SyntaxKind.SemicolonToken)).withLeadingTrivia(returnIndentation).withTrailingTrivia(this.newLine);
-
-            statements.push(returnStatement);
+                Syntax.token(SyntaxKind.SemicolonToken))
+                    .withLeadingTrivia(statementIndentation).withTrailingTrivia(this.newLine));
 
             var classIndentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
 
@@ -981,12 +978,9 @@ module Emitter {
                 ParameterListSyntax.create1().withParameters(
                     SeparatedSyntaxList.create(callParameters))).withTrailingTrivia(this.space);
 
-            var functionExpression = FunctionExpressionSyntax.create(
-                Syntax.token(SyntaxKind.FunctionKeyword),
-                callSignature,
-                block);
-
-            var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(functionExpression);
+            var functionExpression = FunctionExpressionSyntax.create1()
+                .withCallSignature(callSignature)
+                .withBlock(block);
 
             var invocationParameters = [];
             if (node.extendsClause() !== null && node.extendsClause().typeNames().count() > 0) {
@@ -996,7 +990,7 @@ module Emitter {
             }
 
             var invocationExpression = new InvocationExpressionSyntax(
-                parenthesizedExpression,
+                ParenthesizedExpressionSyntax.create1(functionExpression),
                 ArgumentListSyntax.create1().withArguments(
                     SeparatedSyntaxList.create(invocationParameters)));
 
@@ -1162,8 +1156,9 @@ module Emitter {
 
             var parameterList = ParameterListSyntax.create1().withParameter(ParameterSyntax.create1(identifier)).withTrailingTrivia(this.space);
 
-            return FunctionExpressionSyntax.create1().withCallSignature(
-                CallSignatureSyntax.create(parameterList)).withBlock(block);
+            return FunctionExpressionSyntax.create1()
+                .withCallSignature(CallSignatureSyntax.create(parameterList))
+                .withBlock(block);
         }
 
         private visitEnumDeclaration(node: EnumDeclarationSyntax): StatementSyntax[] {
@@ -1171,20 +1166,16 @@ module Emitter {
 
             // Copy existing leading trivia of the enum declaration to this node.
             // var E;
-            var variableStatement = VariableStatementSyntax.create1(
-                    new VariableDeclarationSyntax(
-                        Syntax.token(SyntaxKind.VarKeyword).withTrailingTrivia(this.space),
-                        SeparatedSyntaxList.create([VariableDeclaratorSyntax.create(identifier)]))
-                ).withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(this.newLine);
-
-            // (function(E) { E.e1 = ... })
-            var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(
-                this.generateEnumFunctionExpression(node));
+            var variableStatement = VariableStatementSyntax.create1(new VariableDeclarationSyntax(
+                Syntax.token(SyntaxKind.VarKeyword).withTrailingTrivia(this.space),
+                SeparatedSyntaxList.create([VariableDeclaratorSyntax.create(identifier)])))
+                    .withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(this.newLine);
 
             // (function(E) { E.e1 = ... })(E||(E={}));
             var expressionStatement = ExpressionStatementSyntax.create1(
                 new InvocationExpressionSyntax(
-                    parenthesizedExpression,
+                    ParenthesizedExpressionSyntax.create1(
+                        this.generateEnumFunctionExpression(node)),
                     ArgumentListSyntax.create1().withArgument(
                         this.initializedVariable(new IdentifierNameSyntax(identifier)))));
 

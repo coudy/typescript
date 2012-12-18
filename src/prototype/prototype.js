@@ -20711,14 +20711,15 @@ var Emitter;
         EmitterImpl.prototype.visitClassDeclaration = function (node) {
             var identifier = this.withNoTrivia(node.identifier());
             var statements = [];
-            var statementIndent = this.options.indentSpaces + this.columnForStartOfToken(node.firstToken());
+            var statementColumn = this.options.indentSpaces + this.columnForStartOfToken(node.firstToken());
+            var statementIndentation = this.indentationTrivia(statementColumn);
             if(node.extendsClause() !== null) {
-                var extendsParameters = [];
-                extendsParameters.push(new IdentifierNameSyntax(identifier));
-                extendsParameters.push(Syntax.token(76 /* CommaToken */ ).withTrailingTrivia(this.space));
-                extendsParameters.push(Syntax.identifierName("_super"));
-                var extendsStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(Syntax.identifierName("__extends"), ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create(extendsParameters)))).withTrailingTrivia(this.newLine);
-                statements.push(this.changeIndentation(extendsStatement, true, statementIndent));
+                var extendsStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(Syntax.identifierName("__extends"), ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create([
+                    new IdentifierNameSyntax(identifier), 
+                    Syntax.token(76 /* CommaToken */ ).withTrailingTrivia(this.space), 
+                    Syntax.identifierName("_super")
+                ])))).withLeadingTrivia(statementIndentation).withTrailingTrivia(this.newLine);
+                statements.push(extendsStatement);
             }
             var constructorDeclaration = ArrayUtilities.firstOrDefault(node.classElements().toArray(), function (c) {
                 return c.kind() === 135 /* ConstructorDeclaration */ ;
@@ -20729,9 +20730,7 @@ var Emitter;
             }
             var classElementStatements = this.convertClassElements(node);
             statements.push.apply(statements, classElementStatements);
-            var returnIndentation = this.indentationTrivia(statementIndent);
-            var returnStatement = new ReturnStatementSyntax(Syntax.token(31 /* ReturnKeyword */ ).withTrailingTrivia(this.space), new IdentifierNameSyntax(identifier), Syntax.token(75 /* SemicolonToken */ )).withLeadingTrivia(returnIndentation).withTrailingTrivia(this.newLine);
-            statements.push(returnStatement);
+            statements.push(new ReturnStatementSyntax(Syntax.token(31 /* ReturnKeyword */ ).withTrailingTrivia(this.space), new IdentifierNameSyntax(identifier), Syntax.token(75 /* SemicolonToken */ )).withLeadingTrivia(statementIndentation).withTrailingTrivia(this.newLine));
             var classIndentationTrivia = this.indentationTriviaForStartOfToken(node.firstToken());
             var block = new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), SyntaxList.create(statements), Syntax.token(68 /* CloseBraceToken */ ).withLeadingTrivia(classIndentationTrivia));
             var callParameters = [];
@@ -20739,13 +20738,12 @@ var Emitter;
                 callParameters.push(ParameterSyntax.create(Syntax.identifier("_super")));
             }
             var callSignature = CallSignatureSyntax.create(ParameterListSyntax.create1().withParameters(SeparatedSyntaxList.create(callParameters))).withTrailingTrivia(this.space);
-            var functionExpression = FunctionExpressionSyntax.create(Syntax.token(25 /* FunctionKeyword */ ), callSignature, block);
-            var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(functionExpression);
+            var functionExpression = FunctionExpressionSyntax.create1().withCallSignature(callSignature).withBlock(block);
             var invocationParameters = [];
             if(node.extendsClause() !== null && node.extendsClause().typeNames().count() > 0) {
                 invocationParameters.push(node.extendsClause().typeNames().syntaxNodeAt(0).withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty));
             }
-            var invocationExpression = new InvocationExpressionSyntax(parenthesizedExpression, ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create(invocationParameters)));
+            var invocationExpression = new InvocationExpressionSyntax(ParenthesizedExpressionSyntax.create1(functionExpression), ArgumentListSyntax.create1().withArguments(SeparatedSyntaxList.create(invocationParameters)));
             var variableDeclarator = VariableDeclaratorSyntax.create(identifier.withTrailingTrivia(SyntaxTriviaList.space)).withEqualsValueClause(new EqualsValueClauseSyntax(Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), invocationExpression));
             var variableDeclaration = new VariableDeclarationSyntax(Syntax.token(38 /* VarKeyword */ ).withTrailingTrivia(this.space), SeparatedSyntaxList.create([
                 variableDeclarator
@@ -20826,8 +20824,7 @@ var Emitter;
             var variableStatement = VariableStatementSyntax.create1(new VariableDeclarationSyntax(Syntax.token(38 /* VarKeyword */ ).withTrailingTrivia(this.space), SeparatedSyntaxList.create([
                 VariableDeclaratorSyntax.create(identifier)
             ]))).withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(this.newLine);
-            var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(this.generateEnumFunctionExpression(node));
-            var expressionStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(parenthesizedExpression, ArgumentListSyntax.create1().withArgument(this.initializedVariable(new IdentifierNameSyntax(identifier)))));
+            var expressionStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(ParenthesizedExpressionSyntax.create1(this.generateEnumFunctionExpression(node)), ArgumentListSyntax.create1().withArgument(this.initializedVariable(new IdentifierNameSyntax(identifier)))));
             expressionStatement = expressionStatement.withLeadingTrivia(this.indentationTriviaForStartOfToken(node.firstToken())).withTrailingTrivia(this.newLine);
             return [
                 variableStatement, 
