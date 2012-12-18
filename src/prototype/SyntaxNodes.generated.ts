@@ -20,12 +20,12 @@ class SourceUnitSyntax extends SyntaxNode {
     }
 
     public static create(endOfFileToken: ISyntaxToken): SourceUnitSyntax {
-        return new SourceUnitSyntax(SyntaxList.empty, endOfFileToken);
+        return new SourceUnitSyntax(Syntax.emptyList, endOfFileToken);
     }
 
     public static create1(endOfFileToken: ISyntaxToken): SourceUnitSyntax {
         return new SourceUnitSyntax(
-            SyntaxList.empty,
+            Syntax.emptyList,
             endOfFileToken);
     }
 
@@ -83,7 +83,7 @@ class SourceUnitSyntax extends SyntaxNode {
     }
 
     public withModuleElement(moduleElement: ModuleElementSyntax): SourceUnitSyntax {
-        return this.withModuleElements(SyntaxList.create([moduleElement]));
+        return this.withModuleElements(Syntax.list([moduleElement]));
     }
 
     public withEndOfFileToken(endOfFileToken: ISyntaxToken): SourceUnitSyntax {
@@ -530,7 +530,7 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
                          identifier: ISyntaxToken,
                          openBraceToken: ISyntaxToken,
                          closeBraceToken: ISyntaxToken): ClassDeclarationSyntax {
-        return new ClassDeclarationSyntax(null, null, classKeyword, identifier, null, null, openBraceToken, SyntaxList.empty, closeBraceToken);
+        return new ClassDeclarationSyntax(null, null, classKeyword, identifier, null, null, openBraceToken, Syntax.emptyList, closeBraceToken);
     }
 
     public static create1(identifier: ISyntaxToken): ClassDeclarationSyntax {
@@ -542,7 +542,7 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
             null,
             null,
             Syntax.token(SyntaxKind.OpenBraceToken),
-            SyntaxList.empty,
+            Syntax.emptyList,
             Syntax.token(SyntaxKind.CloseBraceToken));
     }
 
@@ -688,7 +688,7 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
     }
 
     public withClassElement(classElement: ClassElementSyntax): ClassDeclarationSyntax {
-        return this.withClassElements(SyntaxList.create([classElement]));
+        return this.withClassElements(Syntax.list([classElement]));
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): ClassDeclarationSyntax {
@@ -1104,7 +1104,7 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
     public static create(moduleKeyword: ISyntaxToken,
                          openBraceToken: ISyntaxToken,
                          closeBraceToken: ISyntaxToken): ModuleDeclarationSyntax {
-        return new ModuleDeclarationSyntax(null, null, moduleKeyword, null, null, openBraceToken, SyntaxList.empty, closeBraceToken);
+        return new ModuleDeclarationSyntax(null, null, moduleKeyword, null, null, openBraceToken, Syntax.emptyList, closeBraceToken);
     }
 
     public static create1(): ModuleDeclarationSyntax {
@@ -1115,7 +1115,7 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
             null,
             null,
             Syntax.token(SyntaxKind.OpenBraceToken),
-            SyntaxList.empty,
+            Syntax.emptyList,
             Syntax.token(SyntaxKind.CloseBraceToken));
     }
 
@@ -1249,7 +1249,7 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
     }
 
     public withModuleElement(moduleElement: ModuleElementSyntax): ModuleDeclarationSyntax {
-        return this.withModuleElements(SyntaxList.create([moduleElement]));
+        return this.withModuleElements(Syntax.list([moduleElement]));
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): ModuleDeclarationSyntax {
@@ -3624,13 +3624,13 @@ class BlockSyntax extends StatementSyntax {
 
     public static create(openBraceToken: ISyntaxToken,
                          closeBraceToken: ISyntaxToken): BlockSyntax {
-        return new BlockSyntax(openBraceToken, SyntaxList.empty, closeBraceToken);
+        return new BlockSyntax(openBraceToken, Syntax.emptyList, closeBraceToken);
     }
 
     public static create1(): BlockSyntax {
         return new BlockSyntax(
             Syntax.token(SyntaxKind.OpenBraceToken),
-            SyntaxList.empty,
+            Syntax.emptyList,
             Syntax.token(SyntaxKind.CloseBraceToken));
     }
 
@@ -3704,7 +3704,7 @@ class BlockSyntax extends StatementSyntax {
     }
 
     public withStatement(statement: StatementSyntax): BlockSyntax {
-        return this.withStatements(SyntaxList.create([statement]));
+        return this.withStatements(Syntax.list([statement]));
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): BlockSyntax {
@@ -7116,7 +7116,7 @@ class SwitchStatementSyntax extends StatementSyntax {
                          closeParenToken: ISyntaxToken,
                          openBraceToken: ISyntaxToken,
                          closeBraceToken: ISyntaxToken): SwitchStatementSyntax {
-        return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, SyntaxList.empty, closeBraceToken);
+        return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, Syntax.emptyList, closeBraceToken);
     }
 
     public static create1(expression: ExpressionSyntax): SwitchStatementSyntax {
@@ -7126,7 +7126,7 @@ class SwitchStatementSyntax extends StatementSyntax {
             expression,
             Syntax.token(SyntaxKind.CloseParenToken),
             Syntax.token(SyntaxKind.OpenBraceToken),
-            SyntaxList.empty,
+            Syntax.emptyList,
             Syntax.token(SyntaxKind.CloseBraceToken));
     }
 
@@ -7248,7 +7248,7 @@ class SwitchStatementSyntax extends StatementSyntax {
     }
 
     public withSwitchClause(switchClause: SwitchClauseSyntax): SwitchStatementSyntax {
-        return this.withSwitchClauses(SyntaxList.create([switchClause]));
+        return this.withSwitchClauses(Syntax.list([switchClause]));
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): SwitchStatementSyntax {
@@ -7324,7 +7324,7 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
     public static create(caseKeyword: ISyntaxToken,
                          expression: ExpressionSyntax,
                          colonToken: ISyntaxToken): CaseSwitchClauseSyntax {
-        return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, SyntaxList.empty);
+        return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, Syntax.emptyList);
     }
 
     public static create1(expression: ExpressionSyntax): CaseSwitchClauseSyntax {
@@ -7332,7 +7332,7 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
             Syntax.token(SyntaxKind.CaseKeyword),
             expression,
             Syntax.token(SyntaxKind.ColonToken),
-            SyntaxList.empty);
+            Syntax.emptyList);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -7421,7 +7421,7 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
     }
 
     public withStatement(statement: StatementSyntax): CaseSwitchClauseSyntax {
-        return this.withStatements(SyntaxList.create([statement]));
+        return this.withStatements(Syntax.list([statement]));
     }
 
     private collectTextElements(elements: string[]): void {
@@ -7459,14 +7459,14 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
 
     public static create(defaultKeyword: ISyntaxToken,
                          colonToken: ISyntaxToken): DefaultSwitchClauseSyntax {
-        return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, SyntaxList.empty);
+        return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, Syntax.emptyList);
     }
 
     public static create1(): DefaultSwitchClauseSyntax {
         return new DefaultSwitchClauseSyntax(
             Syntax.token(SyntaxKind.DefaultKeyword),
             Syntax.token(SyntaxKind.ColonToken),
-            SyntaxList.empty);
+            Syntax.emptyList);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -7543,7 +7543,7 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
     }
 
     public withStatement(statement: StatementSyntax): DefaultSwitchClauseSyntax {
-        return this.withStatements(SyntaxList.create([statement]));
+        return this.withStatements(Syntax.list([statement]));
     }
 
     private collectTextElements(elements: string[]): void {

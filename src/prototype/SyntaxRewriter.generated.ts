@@ -27,7 +27,7 @@
         }
 
         Debug.assert(newItems === null || newItems.length === list.count());
-        return newItems === null ? list : SyntaxList.create(newItems);
+        return newItems === null ? list : Syntax.list(newItems);
     }
 
     public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {

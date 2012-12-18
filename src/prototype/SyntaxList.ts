@@ -1,6 +1,6 @@
 ///<reference path='ISyntaxList.ts' />
 
-module SyntaxList {
+module Syntax {
     function collectSyntaxListTextElements(elements: string[], list: ISyntaxList): void {
         for (var i = 0, n = list.count(); i < n; i++) {
             list.syntaxNodeAt(i).collectTextElements(elements);
@@ -61,7 +61,7 @@ module SyntaxList {
         }
     }
 
-    export var empty: ISyntaxList = new EmptySyntaxList();
+    export var emptyList: ISyntaxList = new EmptySyntaxList();
 
     class SingletonSyntaxList implements ISyntaxList {
         private _item: SyntaxNode;
@@ -221,9 +221,9 @@ module SyntaxList {
         }
     }
 
-    export function create(nodes: SyntaxNode[]): ISyntaxList {
+    export function list(nodes: SyntaxNode[]): ISyntaxList {
         if (nodes === undefined || nodes === null || nodes.length === 0) {
-            return empty;
+            return emptyList;
         }
 
         if (nodes.length === 1) {

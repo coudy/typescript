@@ -1273,7 +1273,7 @@ function generateFactory1Method(definition: ITypeDefinition): string {
             result += child.name;
         }
         else if (child.isList) {
-            result += "SyntaxList.empty";
+            result += "Syntax.emptyList";
         }
         else if (child.isSeparatedList) {
             result += "Syntax.emptySeparatedList";
@@ -1376,7 +1376,7 @@ function generateFactory2Method(definition: ITypeDefinition): string {
             result += "\r\n            " + child.name;
         }
         else if (child.isList) {
-            result += "\r\n            SyntaxList.empty";
+            result += "\r\n            Syntax.emptyList";
         }
         else if (child.isSeparatedList) {
             result += "\r\n            Syntax.emptySeparatedList";
@@ -1662,7 +1662,7 @@ function generateWithMethod(definition: ITypeDefinition, child: IMemberDefinitio
             result += "        return this.with" + pascalCase(child.name) + "("
 
             if (child.isList) {
-                result += "SyntaxList.create([" + argName + "])";
+                result += "Syntax.list([" + argName + "])";
             }
             else {
                 result += "Syntax.separatedList([" + argName + "])";
@@ -1974,7 +1974,7 @@ function generateRewriter(): string {
 "        }\r\n" +
 "\r\n" +
 "        Debug.assert(newItems === null || newItems.length === list.count());\r\n" +
-"        return newItems === null ? list : SyntaxList.create(newItems);\r\n" +
+"        return newItems === null ? list : Syntax.list(newItems);\r\n" +
 "    }\r\n" +
 "\r\n" +
 "    public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n" +

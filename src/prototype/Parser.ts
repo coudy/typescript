@@ -931,7 +931,7 @@ module Parser {
             }
 
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
-            var classElements: ISyntaxList = SyntaxList.empty;
+            var classElements: ISyntaxList = Syntax.emptyList;
 
             if (!openBraceToken.isMissing()) {
                 classElements = this.parseSyntaxList(ListParsingState.ClassDeclaration_ClassElements);
@@ -1263,7 +1263,7 @@ module Parser {
 
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
-            var moduleElements: ISyntaxList = SyntaxList.empty;
+            var moduleElements: ISyntaxList = Syntax.emptyList;
             if (!openBraceToken.isMissing()) {
                 moduleElements = this.parseSyntaxList(ListParsingState.ModuleDeclaration_ModuleElements);
             }
@@ -1871,7 +1871,7 @@ module Parser {
 
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
-            var switchClauses: ISyntaxList = SyntaxList.empty;
+            var switchClauses: ISyntaxList = Syntax.emptyList;
             if (!openBraceToken.isMissing()) {
                 switchClauses = this.parseSyntaxList(ListParsingState.SwitchStatement_SwitchClauses);
             }
@@ -3069,7 +3069,7 @@ module Parser {
         private parseBlock(): BlockSyntax {
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
-            var statements: ISyntaxList = SyntaxList.empty;
+            var statements: ISyntaxList = Syntax.emptyList;
 
             if (!openBraceToken.isMissing()) {
                 var savedIsInStrictMode = this.isInStrictMode;
@@ -3380,7 +3380,7 @@ module Parser {
                 // Continue parsing the list.
             }
 
-            return SyntaxList.create(items);
+            return Syntax.list(items);
         }
 
         private parseSeparatedSyntaxListWorker(currentListType: ListParsingState): ISeparatedSyntaxList {

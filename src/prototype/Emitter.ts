@@ -82,7 +82,7 @@ module Emitter {
         }
 
         private visitSourceUnit(node: SourceUnitSyntax): SourceUnitSyntax {
-            return node.withModuleElements(SyntaxList.create(
+            return node.withModuleElements(Syntax.list(
                 this.convertModuleElements(node.moduleElements())));
         }
 
@@ -257,7 +257,7 @@ module Emitter {
                 .withCallSignature(Syntax.callSignature(ParameterSyntax.create(moduleIdentifier)).withTrailingTrivia(this.space))
                 .withBlock(new BlockSyntax(
                     Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
-                    SyntaxList.create(moduleElements),
+                    Syntax.list(moduleElements),
                     Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(moduleIndentation)));
 
             // (function(M) { ... })(M||(M={}));
@@ -381,7 +381,7 @@ module Emitter {
             // Now wrap the return statement in a block.
             var block = new BlockSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
-                SyntaxList.create([returnStatement]),
+                Syntax.list([returnStatement]),
                 Syntax.token(SyntaxKind.CloseBraceToken));
 
             // Note: if we started with something like:
@@ -451,7 +451,7 @@ module Emitter {
 
             var block = new BlockSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.space),
-                SyntaxList.create([assignmentStatement]),
+                Syntax.list([assignmentStatement]),
                 Syntax.token(SyntaxKind.CloseBraceToken)).withTrailingTrivia(this.newLine);
 
             // if (typeof foo === 'undefined') { foo = expr; }
@@ -483,7 +483,7 @@ module Emitter {
                 statements.push.apply(statements, rewritten.block().statements().toArray());
 
                 rewritten = rewritten.withBlock(rewritten.block().withStatements(
-                    SyntaxList.create(statements)));
+                    Syntax.list(statements)));
             }
 
             return rewritten.withExportKeyword(null)
@@ -568,7 +568,7 @@ module Emitter {
                 FunctionSignatureSyntax.create1(this.withNoTrivia(classDeclaration.identifier())).withTrailingTrivia(this.space))
                     .withBlock(new BlockSyntax(
                         Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
-                        SyntaxList.create(statements),
+                        Syntax.list(statements),
                         Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(indentationTrivia))).withTrailingTrivia(this.newLine);
 
             return <FunctionDeclarationSyntax>this.changeIndentation(
@@ -636,7 +636,7 @@ module Emitter {
             return FunctionDeclarationSyntax.create(
                 Syntax.token(SyntaxKind.FunctionKeyword).withTrailingTrivia(this.space),
                 functionSignature)
-                    .withBlock(block.withStatements(SyntaxList.create(normalStatements))).withLeadingTrivia(constructorDeclaration.leadingTrivia());
+                    .withBlock(block.withStatements(Syntax.list(normalStatements))).withLeadingTrivia(constructorDeclaration.leadingTrivia());
         }
 
         private convertMemberFunctionDeclaration(classDeclaration: ClassDeclarationSyntax,
@@ -688,7 +688,7 @@ module Emitter {
                 FunctionExpressionSyntax.create1()
                     .withCallSignature(CallSignatureSyntax.create(callSignatureParameterList))
                     .withBlock(block.withStatements(
-                        SyntaxList.create(blockStatements))))).withTrailingTrivia(blockTrailingTrivia);
+                        Syntax.list(blockStatements))))).withTrailingTrivia(blockTrailingTrivia);
         }
 
         private convertMemberAccessor(memberAccessor: MemberAccessorDeclarationSyntax): PropertyAssignmentSyntax {
@@ -843,7 +843,7 @@ module Emitter {
 
             var block = new BlockSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
-                SyntaxList.create(statements),
+                Syntax.list(statements),
                 Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(this.indentationTriviaForStartOfNode(node)));
 
             var callParameters = [];
@@ -1014,7 +1014,7 @@ module Emitter {
 
             var block = new BlockSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
-                SyntaxList.create(statements),
+                Syntax.list(statements),
                 Syntax.token(SyntaxKind.CloseBraceToken)
                     .withLeadingTrivia(this.indentationTrivia(enumColumn)));
 
