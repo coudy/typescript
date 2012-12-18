@@ -58,13 +58,13 @@ module Syntax {
         public hasLeadingCommentTrivia(): bool { return false; }
         public hasLeadingNewLineTrivia(): bool { return false; }
         public leadingTriviaWidth(): number { return 0; }
-        public leadingTrivia(): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+        public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public hasTrailingTrivia(): bool { return false; }
         public hasTrailingCommentTrivia(): bool { return false; }
         public hasTrailingNewLineTrivia(): bool { return false; }
         public trailingTriviaWidth(): number { return 0; }
-        public trailingTrivia(): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+        public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
@@ -143,7 +143,7 @@ module Syntax {
         public hasTrailingCommentTrivia(): bool { return false; }
         public hasTrailingNewLineTrivia(): bool { return false; }
         public trailingTriviaWidth(): number { return 0; }
-        public trailingTrivia(): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+        public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
@@ -216,7 +216,7 @@ module Syntax {
         public hasLeadingCommentTrivia(): bool { return false; }
         public hasLeadingNewLineTrivia(): bool { return false; }
         public leadingTriviaWidth(): number { return 0; }
-        public leadingTrivia(): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+        public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public hasTrailingTrivia(): bool { return true; }
         public hasTrailingCommentTrivia(): bool { return hasTriviaComment(this._trailingTriviaInfo); }
@@ -352,13 +352,13 @@ module Syntax {
         public hasLeadingCommentTrivia(): bool { return false; }
         public hasLeadingNewLineTrivia(): bool { return false; }
         public leadingTriviaWidth(): number { return 0; }
-        public leadingTrivia(): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+        public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public hasTrailingTrivia(): bool { return false; }
         public hasTrailingCommentTrivia(): bool { return false; }
         public hasTrailingNewLineTrivia(): bool { return false; }
         public trailingTriviaWidth(): number { return 0; }
-        public trailingTrivia(): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+        public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
@@ -424,7 +424,7 @@ module Syntax {
         public hasTrailingCommentTrivia(): bool { return false; }
         public hasTrailingNewLineTrivia(): bool { return false; }
         public trailingTriviaWidth(): number { return 0; }
-        public trailingTrivia(): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+        public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
@@ -484,7 +484,7 @@ module Syntax {
         public hasLeadingCommentTrivia(): bool { return false; }
         public hasLeadingNewLineTrivia(): bool { return false; }
         public leadingTriviaWidth(): number { return 0; }
-        public leadingTrivia(): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+        public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public hasTrailingTrivia(): bool { return true; }
         public hasTrailingCommentTrivia(): bool { return hasTriviaComment(this._trailingTriviaInfo); }
@@ -609,13 +609,13 @@ module Syntax {
         public hasLeadingCommentTrivia(): bool { return false; }
         public hasLeadingNewLineTrivia(): bool { return false; }
         public leadingTriviaWidth(): number { return 0; }
-        public leadingTrivia(): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+        public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public hasTrailingTrivia(): bool { return false; }
         public hasTrailingCommentTrivia(): bool { return false; }
         public hasTrailingNewLineTrivia(): bool { return false; }
         public trailingTriviaWidth(): number { return 0; }
-        public trailingTrivia(): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+        public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
@@ -683,7 +683,7 @@ module Syntax {
         public hasTrailingCommentTrivia(): bool { return false; }
         public hasTrailingNewLineTrivia(): bool { return false; }
         public trailingTriviaWidth(): number { return 0; }
-        public trailingTrivia(): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+        public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
@@ -745,7 +745,7 @@ module Syntax {
         public hasLeadingCommentTrivia(): bool { return false; }
         public hasLeadingNewLineTrivia(): bool { return false; }
         public leadingTriviaWidth(): number { return 0; }
-        public leadingTrivia(): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+        public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public hasTrailingTrivia(): bool { return true; }
         public hasTrailingCommentTrivia(): bool { return hasTriviaComment(this._trailingTriviaInfo); }

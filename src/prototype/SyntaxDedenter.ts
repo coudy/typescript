@@ -106,7 +106,7 @@ class SyntaxDedenter extends SyntaxRewriter {
             return triviaList;
         }
 
-        return SyntaxTriviaList.create(result);
+        return Syntax.triviaList(result);
     }
 
     private dedentSegment(segment: string, hasFollowingNewLineTrivia: bool): string {

@@ -14888,7 +14888,7 @@ var Syntax;
             return 0;
         };
         VariableWidthTokenWithNoTrivia.prototype.leadingTrivia = function () {
-            return SyntaxTriviaList.empty;
+            return Syntax.emptyTriviaList;
         };
         VariableWidthTokenWithNoTrivia.prototype.hasTrailingTrivia = function () {
             return false;
@@ -14903,7 +14903,7 @@ var Syntax;
             return 0;
         };
         VariableWidthTokenWithNoTrivia.prototype.trailingTrivia = function () {
-            return SyntaxTriviaList.empty;
+            return Syntax.emptyTriviaList;
         };
         VariableWidthTokenWithNoTrivia.prototype.toJSON = function (key) {
             return Syntax.tokenToJSON(this);
@@ -15013,7 +15013,7 @@ var Syntax;
             return 0;
         };
         VariableWidthTokenWithLeadingTrivia.prototype.trailingTrivia = function () {
-            return SyntaxTriviaList.empty;
+            return Syntax.emptyTriviaList;
         };
         VariableWidthTokenWithLeadingTrivia.prototype.toJSON = function (key) {
             return Syntax.tokenToJSON(this);
@@ -15108,7 +15108,7 @@ var Syntax;
             return 0;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.leadingTrivia = function () {
-            return SyntaxTriviaList.empty;
+            return Syntax.emptyTriviaList;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.hasTrailingTrivia = function () {
             return true;
@@ -15315,7 +15315,7 @@ var Syntax;
             return 0;
         };
         FixedWidthTokenWithNoTrivia.prototype.leadingTrivia = function () {
-            return SyntaxTriviaList.empty;
+            return Syntax.emptyTriviaList;
         };
         FixedWidthTokenWithNoTrivia.prototype.hasTrailingTrivia = function () {
             return false;
@@ -15330,7 +15330,7 @@ var Syntax;
             return 0;
         };
         FixedWidthTokenWithNoTrivia.prototype.trailingTrivia = function () {
-            return SyntaxTriviaList.empty;
+            return Syntax.emptyTriviaList;
         };
         FixedWidthTokenWithNoTrivia.prototype.toJSON = function (key) {
             return Syntax.tokenToJSON(this);
@@ -15435,7 +15435,7 @@ var Syntax;
             return 0;
         };
         FixedWidthTokenWithLeadingTrivia.prototype.trailingTrivia = function () {
-            return SyntaxTriviaList.empty;
+            return Syntax.emptyTriviaList;
         };
         FixedWidthTokenWithLeadingTrivia.prototype.toJSON = function (key) {
             return Syntax.tokenToJSON(this);
@@ -15525,7 +15525,7 @@ var Syntax;
             return 0;
         };
         FixedWidthTokenWithTrailingTrivia.prototype.leadingTrivia = function () {
-            return SyntaxTriviaList.empty;
+            return Syntax.emptyTriviaList;
         };
         FixedWidthTokenWithTrailingTrivia.prototype.hasTrailingTrivia = function () {
             return true;
@@ -15728,7 +15728,7 @@ var Syntax;
             return 0;
         };
         KeywordWithNoTrivia.prototype.leadingTrivia = function () {
-            return SyntaxTriviaList.empty;
+            return Syntax.emptyTriviaList;
         };
         KeywordWithNoTrivia.prototype.hasTrailingTrivia = function () {
             return false;
@@ -15743,7 +15743,7 @@ var Syntax;
             return 0;
         };
         KeywordWithNoTrivia.prototype.trailingTrivia = function () {
-            return SyntaxTriviaList.empty;
+            return Syntax.emptyTriviaList;
         };
         KeywordWithNoTrivia.prototype.toJSON = function (key) {
             return Syntax.tokenToJSON(this);
@@ -15849,7 +15849,7 @@ var Syntax;
             return 0;
         };
         KeywordWithLeadingTrivia.prototype.trailingTrivia = function () {
-            return SyntaxTriviaList.empty;
+            return Syntax.emptyTriviaList;
         };
         KeywordWithLeadingTrivia.prototype.toJSON = function (key) {
             return Syntax.tokenToJSON(this);
@@ -15940,7 +15940,7 @@ var Syntax;
             return 0;
         };
         KeywordWithTrailingTrivia.prototype.leadingTrivia = function () {
-            return SyntaxTriviaList.empty;
+            return Syntax.emptyTriviaList;
         };
         KeywordWithTrailingTrivia.prototype.hasTrailingTrivia = function () {
             return true;
@@ -16252,14 +16252,72 @@ var Syntax;
     }
     Syntax.splitMultiLineCommentTriviaIntoMultipleLines = splitMultiLineCommentTriviaIntoMultipleLines;
 })(Syntax || (Syntax = {}));
-var SyntaxTriviaList;
-(function (SyntaxTriviaList) {
-    function collectTextElements(elements, list) {
+var Syntax;
+(function (Syntax) {
+    function collectSyntaxTriviaListTextElements(elements, list) {
         for(var i = 0, n = list.count(); i < n; i++) {
             list.syntaxTriviaAt(i).collectTextElements(elements);
         }
     }
-    function concat(list1, list2) {
+    Syntax.emptyTriviaList = {
+        kind: function () {
+            return 3 /* TriviaList */ ;
+        },
+        isToken: function () {
+            return false;
+        },
+        isNode: function () {
+            return false;
+        },
+        isList: function () {
+            return false;
+        },
+        isSeparatedList: function () {
+            return false;
+        },
+        isTriviaList: function () {
+            return true;
+        },
+        isTrivia: function () {
+            return false;
+        },
+        isMissing: function () {
+            return true;
+        },
+        count: function () {
+            return 0;
+        },
+        syntaxTriviaAt: function (index) {
+            throw Errors.argumentOutOfRange("index");
+        },
+        last: function () {
+            throw Errors.argumentOutOfRange("index");
+        },
+        fullWidth: function () {
+            return 0;
+        },
+        fullText: function () {
+            return "";
+        },
+        hasComment: function () {
+            return false;
+        },
+        hasNewLine: function () {
+            return false;
+        },
+        toJSON: function (key) {
+            return [];
+        },
+        collectTextElements: function (elements) {
+        },
+        toArray: function () {
+            return [];
+        },
+        concat: function (trivia) {
+            return trivia;
+        }
+    };
+    function concatTrivia(list1, list2) {
         if(list1.count() === 0) {
             return list2;
         }
@@ -16268,69 +16326,8 @@ var SyntaxTriviaList;
         }
         var trivia = list1.toArray();
         trivia.push.apply(trivia, list2.toArray());
-        return create(trivia);
+        return triviaList(trivia);
     }
-    var EmptySyntaxTriviaList = (function () {
-        function EmptySyntaxTriviaList() { }
-        EmptySyntaxTriviaList.prototype.kind = function () {
-            return 3 /* TriviaList */ ;
-        };
-        EmptySyntaxTriviaList.prototype.isToken = function () {
-            return false;
-        };
-        EmptySyntaxTriviaList.prototype.isNode = function () {
-            return false;
-        };
-        EmptySyntaxTriviaList.prototype.isList = function () {
-            return false;
-        };
-        EmptySyntaxTriviaList.prototype.isSeparatedList = function () {
-            return false;
-        };
-        EmptySyntaxTriviaList.prototype.isTriviaList = function () {
-            return true;
-        };
-        EmptySyntaxTriviaList.prototype.isTrivia = function () {
-            return false;
-        };
-        EmptySyntaxTriviaList.prototype.isMissing = function () {
-            return true;
-        };
-        EmptySyntaxTriviaList.prototype.count = function () {
-            return 0;
-        };
-        EmptySyntaxTriviaList.prototype.syntaxTriviaAt = function (index) {
-            throw Errors.argumentOutOfRange("index");
-        };
-        EmptySyntaxTriviaList.prototype.last = function () {
-            throw Errors.argumentOutOfRange("index");
-        };
-        EmptySyntaxTriviaList.prototype.fullWidth = function () {
-            return 0;
-        };
-        EmptySyntaxTriviaList.prototype.fullText = function () {
-            return "";
-        };
-        EmptySyntaxTriviaList.prototype.hasComment = function () {
-            return false;
-        };
-        EmptySyntaxTriviaList.prototype.hasNewLine = function () {
-            return false;
-        };
-        EmptySyntaxTriviaList.prototype.toJSON = function (key) {
-            return [];
-        };
-        EmptySyntaxTriviaList.prototype.collectTextElements = function (elements) {
-            collectTextElements(elements, this);
-        };
-        EmptySyntaxTriviaList.prototype.toArray = function () {
-            return [];
-        };
-        EmptySyntaxTriviaList.prototype.concat = function (trivia) {
-            return concat(this, trivia);
-        };
-        return EmptySyntaxTriviaList;
-    })();    
     function isComment(trivia) {
         return trivia.kind() === 6 /* MultiLineCommentTrivia */  || trivia.kind() === 7 /* SingleLineCommentTrivia */ ;
     }
@@ -16392,7 +16389,7 @@ var SyntaxTriviaList;
             ];
         };
         SingletonSyntaxTriviaList.prototype.collectTextElements = function (elements) {
-            collectTextElements(elements, this);
+            collectSyntaxTriviaListTextElements(elements, this);
         };
         SingletonSyntaxTriviaList.prototype.toArray = function () {
             return [
@@ -16400,7 +16397,7 @@ var SyntaxTriviaList;
             ];
         };
         SingletonSyntaxTriviaList.prototype.concat = function (trivia) {
-            return concat(this, trivia);
+            return concatTrivia(this, trivia);
         };
         return SingletonSyntaxTriviaList;
     })();    
@@ -16473,31 +16470,30 @@ var SyntaxTriviaList;
             return this.trivia;
         };
         NormalSyntaxTriviaList.prototype.collectTextElements = function (elements) {
-            collectTextElements(elements, this);
+            collectSyntaxTriviaListTextElements(elements, this);
         };
         NormalSyntaxTriviaList.prototype.toArray = function () {
             return this.trivia.slice(0);
         };
         NormalSyntaxTriviaList.prototype.concat = function (trivia) {
-            return concat(this, trivia);
+            return concatTrivia(this, trivia);
         };
         return NormalSyntaxTriviaList;
     })();    
-    function create(trivia) {
+    function triviaList(trivia) {
         if(trivia === undefined || trivia === null || trivia.length === 0) {
-            return SyntaxTriviaList.empty;
+            return Syntax.emptyTriviaList;
         }
         if(trivia.length === 1) {
             return new SingletonSyntaxTriviaList(trivia[0]);
         }
         return new NormalSyntaxTriviaList(trivia);
     }
-    SyntaxTriviaList.create = create;
-    SyntaxTriviaList.empty = new EmptySyntaxTriviaList();
-    SyntaxTriviaList.space = create([
+    Syntax.triviaList = triviaList;
+    Syntax.spaceTriviaList = triviaList([
         Syntax.spaceTrivia
     ]);
-})(SyntaxTriviaList || (SyntaxTriviaList = {}));
+})(Syntax || (Syntax = {}));
 var Unicode = (function () {
     function Unicode() { }
     Unicode.unicodeES3IdentifierStart = [
@@ -18614,7 +18610,7 @@ var Scanner = (function (_super) {
                 }
             }
             Debug.assert(trivia.length > 0);
-            return SyntaxTriviaList.create(trivia);
+            return Syntax.triviaList(trivia);
         }
     };
     Scanner.prototype.scanTriviaInfo = function (diagnostics, isTrailing) {
@@ -19634,10 +19630,10 @@ var Syntax;
             return 0;
         };
         EmptyToken.prototype.leadingTrivia = function () {
-            return SyntaxTriviaList.empty;
+            return Syntax.emptyTriviaList;
         };
         EmptyToken.prototype.trailingTrivia = function () {
-            return SyntaxTriviaList.empty;
+            return Syntax.emptyTriviaList;
         };
         EmptyToken.prototype.realize = function () {
             return realize(this);
@@ -19768,7 +19764,7 @@ var Syntax;
             keywordKind = kind;
             kind = 9 /* IdentifierNameToken */ ;
         }
-        return new RealizedToken(kind, keywordKind, SyntaxTriviaList.create(info === null ? null : info.leadingTrivia), text, value, SyntaxTriviaList.create(info === null ? null : info.trailingTrivia), false);
+        return new RealizedToken(kind, keywordKind, Syntax.triviaList(info === null ? null : info.leadingTrivia), text, value, Syntax.triviaList(info === null ? null : info.trailingTrivia), false);
     }
     Syntax.token = token;
     function identifier(text, info) {
@@ -20002,7 +19998,7 @@ var SyntaxDedenter = (function (_super) {
         if(this.isAborted()) {
             return triviaList;
         }
-        return SyntaxTriviaList.create(result);
+        return Syntax.triviaList(result);
     };
     SyntaxDedenter.prototype.dedentSegment = function (segment, hasFollowingNewLineTrivia) {
         var firstNonWhitespacePosition = Indentation.firstNonWhitespacePosition(segment);
@@ -20111,7 +20107,7 @@ var SyntaxIndenter = (function (_super) {
         if(indentNextTrivia) {
             result.push(this.indentationTrivia);
         }
-        return SyntaxTriviaList.create(result);
+        return Syntax.triviaList(result);
     };
     SyntaxIndenter.prototype.indentSegment = function (segment) {
         var firstNonWhitespacePosition = Indentation.firstNonWhitespacePosition(segment);
@@ -20252,8 +20248,8 @@ var Emitter;
                 _super.call(this);
             this.syntaxInformationMap = syntaxInformationMap;
             this.options = options || FormattingOptions.defaultOptions;
-            this.space = SyntaxTriviaList.space;
-            this.newLine = SyntaxTriviaList.create([
+            this.space = Syntax.spaceTriviaList;
+            this.newLine = Syntax.triviaList([
                 Syntax.carriageReturnLineFeedTrivia
             ]);
         }
@@ -20267,7 +20263,7 @@ var Emitter;
             var triviaArray = column === 0 ? null : [
                 Indentation.indentationTrivia(column, this.options)
             ];
-            return SyntaxTriviaList.create(triviaArray);
+            return Syntax.triviaList(triviaArray);
         };
         EmitterImpl.prototype.indentationTriviaForStartOfNode = function (node) {
             var column = this.columnForStartOfToken(node.firstToken());
@@ -20285,7 +20281,7 @@ var Emitter;
             }
         };
         EmitterImpl.prototype.withNoTrivia = function (token) {
-            return token.withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+            return token.withLeadingTrivia(Syntax.emptyTriviaList).withTrailingTrivia(Syntax.emptyTriviaList);
         };
         EmitterImpl.prototype.visitSourceUnit = function (node) {
             return node.withModuleElements(Syntax.list(this.convertModuleElements(node.moduleElements())));
@@ -20333,7 +20329,7 @@ var Emitter;
         };
         EmitterImpl.prototype.exportModuleElement = function (moduleIdentifier, moduleElement, elementIdentifier) {
             elementIdentifier = this.withNoTrivia(elementIdentifier);
-            return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(this.withNoTrivia(moduleIdentifier)), new IdentifierNameSyntax(elementIdentifier.withTrailingTrivia(SyntaxTriviaList.space))), Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), new IdentifierNameSyntax(elementIdentifier))).withLeadingTrivia(this.indentationTriviaForStartOfNode(moduleElement)).withTrailingTrivia(this.newLine);
+            return ExpressionStatementSyntax.create1(new BinaryExpressionSyntax(171 /* AssignmentExpression */ , MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(this.withNoTrivia(moduleIdentifier)), new IdentifierNameSyntax(elementIdentifier.withTrailingTrivia(Syntax.spaceTriviaList))), Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), new IdentifierNameSyntax(elementIdentifier))).withLeadingTrivia(this.indentationTriviaForStartOfNode(moduleElement)).withTrailingTrivia(this.newLine);
         };
         EmitterImpl.prototype.handleExportedModuleElement = function (parentModule, moduleElement, elements) {
             if(moduleElement.kind() === 140 /* VariableStatement */ ) {
@@ -20391,7 +20387,7 @@ var Emitter;
             return new BinaryExpressionSyntax(184 /* LogicalOrExpression */ , name, Syntax.token(101 /* BarBarToken */ ), ParenthesizedExpressionSyntax.create1(Syntax.assignmentExpression(name, Syntax.token(104 /* EqualsToken */ ), ObjectLiteralExpressionSyntax.create1())));
         };
         EmitterImpl.prototype.convertModuleDeclaration = function (moduleDeclaration, moduleName, moduleElements, outermost) {
-            moduleName = moduleName.withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+            moduleName = moduleName.withLeadingTrivia(Syntax.emptyTriviaList).withTrailingTrivia(Syntax.emptyTriviaList);
             var moduleIdentifier = moduleName.identifier();
             var moduleIndentation = this.indentationTriviaForStartOfNode(moduleDeclaration);
             var leadingTrivia = outermost ? moduleDeclaration.leadingTrivia() : moduleIndentation;
@@ -20410,7 +20406,7 @@ var Emitter;
             if(rewritten.expression().kind() === 220 /* FunctionExpression */ ) {
                 var functionExpression = rewritten.expression();
                 if(functionExpression.identifier() === null) {
-                    var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(functionExpression.withLeadingTrivia(SyntaxTriviaList.empty)).withLeadingTrivia(functionExpression.leadingTrivia());
+                    var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(functionExpression.withLeadingTrivia(Syntax.emptyTriviaList)).withLeadingTrivia(functionExpression.leadingTrivia());
                     return rewritten.withExpression(parenthesizedExpression);
                 }
             }
@@ -20457,7 +20453,7 @@ var Emitter;
         }
         EmitterImpl.prototype.generatePropertyAssignmentStatement = function (parameter) {
             var identifier = this.withNoTrivia(parameter.identifier());
-            return ExpressionStatementSyntax.create1(Syntax.assignmentExpression(MemberAccessExpressionSyntax.create1(ThisExpressionSyntax.create1(), new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))), Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), new IdentifierNameSyntax(identifier))).withTrailingTrivia(this.newLine);
+            return ExpressionStatementSyntax.create1(Syntax.assignmentExpression(MemberAccessExpressionSyntax.create1(ThisExpressionSyntax.create1(), new IdentifierNameSyntax(identifier.withTrailingTrivia(Syntax.spaceTriviaList))), Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), new IdentifierNameSyntax(identifier))).withTrailingTrivia(this.newLine);
         };
         EmitterImpl.prototype.generateDefaultValueAssignmentStatement = function (parameter) {
             var identifierName = new IdentifierNameSyntax(this.withNoTrivia(parameter.identifier())).withTrailingTrivia(this.space);
@@ -20497,8 +20493,8 @@ var Emitter;
             if(static !== isStatic || declarator.equalsValueClause() === null) {
                 return null;
             }
-            var receiver = MemberAccessExpressionSyntax.create1(static ? new IdentifierNameSyntax(this.withNoTrivia(classDeclaration.identifier())) : ThisExpressionSyntax.create1(), new IdentifierNameSyntax(this.withNoTrivia(declarator.identifier()))).withTrailingTrivia(SyntaxTriviaList.space);
-            return ExpressionStatementSyntax.create1(Syntax.assignmentExpression(receiver, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), declarator.equalsValueClause().value().accept(this).withTrailingTrivia(SyntaxTriviaList.empty))).withLeadingTrivia(memberDeclaration.leadingTrivia()).withTrailingTrivia(this.newLine);
+            var receiver = MemberAccessExpressionSyntax.create1(static ? new IdentifierNameSyntax(this.withNoTrivia(classDeclaration.identifier())) : ThisExpressionSyntax.create1(), new IdentifierNameSyntax(this.withNoTrivia(declarator.identifier()))).withTrailingTrivia(Syntax.spaceTriviaList);
+            return ExpressionStatementSyntax.create1(Syntax.assignmentExpression(receiver, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), declarator.equalsValueClause().value().accept(this).withTrailingTrivia(Syntax.emptyTriviaList))).withLeadingTrivia(memberDeclaration.leadingTrivia()).withTrailingTrivia(this.newLine);
         };
         EmitterImpl.prototype.generatePropertyAssignments = function (classDeclaration, static) {
             var result = [];
@@ -20582,10 +20578,10 @@ var Emitter;
             var functionIdentifier = this.withNoTrivia(functionDeclaration.functionSignature().identifier());
             var receiver = new IdentifierNameSyntax(classIdentifier.withLeadingTrivia(functionDeclaration.leadingTrivia()));
             receiver = functionDeclaration.staticKeyword() !== null ? receiver : MemberAccessExpressionSyntax.create1(receiver, Syntax.identifierName("prototype"));
-            receiver = MemberAccessExpressionSyntax.create1(receiver, new IdentifierNameSyntax(functionIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
+            receiver = MemberAccessExpressionSyntax.create1(receiver, new IdentifierNameSyntax(functionIdentifier.withTrailingTrivia(Syntax.spaceTriviaList)));
             var block = functionDeclaration.block().accept(this);
             var blockTrailingTrivia = block.trailingTrivia();
-            block = block.withTrailingTrivia(SyntaxTriviaList.empty);
+            block = block.withTrailingTrivia(Syntax.emptyTriviaList);
             var defaultValueAssignments = ArrayUtilities.select(EmitterImpl.functionSignatureDefaultParameters(functionDeclaration.functionSignature()), function (p) {
                 return _this.generateDefaultValueAssignmentStatement(p);
             });
@@ -20596,7 +20592,7 @@ var Emitter;
             }
             var callSignatureParameterList = functionDeclaration.functionSignature().parameterList().accept(this);
             if(!callSignatureParameterList.hasTrailingTrivia()) {
-                callSignatureParameterList = callSignatureParameterList.withTrailingTrivia(SyntaxTriviaList.space);
+                callSignatureParameterList = callSignatureParameterList.withTrailingTrivia(Syntax.spaceTriviaList);
             }
             return ExpressionStatementSyntax.create1(Syntax.assignmentExpression(receiver, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), FunctionExpressionSyntax.create1().withCallSignature(CallSignatureSyntax.create(callSignatureParameterList)).withBlock(block.withStatements(Syntax.list(blockStatements))))).withTrailingTrivia(blockTrailingTrivia);
         };
@@ -20604,9 +20600,9 @@ var Emitter;
             var propertyName = memberAccessor.kind() === 136 /* GetMemberAccessorDeclaration */  ? "get" : "set";
             var parameterList = memberAccessor.parameterList().accept(this);
             if(!parameterList.hasTrailingTrivia()) {
-                parameterList = parameterList.withTrailingTrivia(SyntaxTriviaList.space);
+                parameterList = parameterList.withTrailingTrivia(Syntax.spaceTriviaList);
             }
-            return new SimplePropertyAssignmentSyntax(Syntax.identifier(propertyName), Syntax.token(103 /* ColonToken */ ).withTrailingTrivia(this.space), FunctionExpressionSyntax.create(Syntax.token(25 /* FunctionKeyword */ ), CallSignatureSyntax.create(parameterList), memberAccessor.block().accept(this).withTrailingTrivia(SyntaxTriviaList.empty))).withLeadingTrivia(this.indentationTriviaForStartOfNode(memberAccessor));
+            return new SimplePropertyAssignmentSyntax(Syntax.identifier(propertyName), Syntax.token(103 /* ColonToken */ ).withTrailingTrivia(this.space), FunctionExpressionSyntax.create(Syntax.token(25 /* FunctionKeyword */ ), CallSignatureSyntax.create(parameterList), memberAccessor.block().accept(this).withTrailingTrivia(Syntax.emptyTriviaList))).withLeadingTrivia(this.indentationTriviaForStartOfNode(memberAccessor));
         };
         EmitterImpl.prototype.convertMemberAccessorDeclaration = function (classDeclaration, memberAccessor, classElements) {
             var name = memberAccessor.identifier().value();
@@ -20696,10 +20692,10 @@ var Emitter;
             var callSignature = CallSignatureSyntax.create(ParameterListSyntax.create1().withParameters(Syntax.separatedList(callParameters))).withTrailingTrivia(this.space);
             var invocationParameters = [];
             if(node.extendsClause() !== null && node.extendsClause().typeNames().count() > 0) {
-                invocationParameters.push(node.extendsClause().typeNames().syntaxNodeAt(0).withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty));
+                invocationParameters.push(node.extendsClause().typeNames().syntaxNodeAt(0).withLeadingTrivia(Syntax.emptyTriviaList).withTrailingTrivia(Syntax.emptyTriviaList));
             }
             var invocationExpression = new InvocationExpressionSyntax(ParenthesizedExpressionSyntax.create1(FunctionExpressionSyntax.create1().withCallSignature(callSignature).withBlock(block)), ArgumentListSyntax.create1().withArguments(Syntax.separatedList(invocationParameters)));
-            var variableDeclarator = VariableDeclaratorSyntax.create(identifier.withTrailingTrivia(SyntaxTriviaList.space)).withEqualsValueClause(new EqualsValueClauseSyntax(Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), invocationExpression));
+            var variableDeclarator = VariableDeclaratorSyntax.create(identifier.withTrailingTrivia(Syntax.spaceTriviaList)).withEqualsValueClause(new EqualsValueClauseSyntax(Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), invocationExpression));
             return VariableStatementSyntax.create1(new VariableDeclarationSyntax(Syntax.token(38 /* VarKeyword */ ).withTrailingTrivia(this.space), Syntax.separatedList([
                 variableDeclarator
             ]))).withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(this.newLine);
@@ -20731,7 +20727,7 @@ var Emitter;
         };
         EmitterImpl.prototype.generateEnumValueExpression = function (enumDeclaration, variableDeclarator, assignDefaultValues, index) {
             if(variableDeclarator.equalsValueClause() !== null) {
-                return variableDeclarator.equalsValueClause().value().withTrailingTrivia(SyntaxTriviaList.empty);
+                return variableDeclarator.equalsValueClause().value().withTrailingTrivia(Syntax.emptyTriviaList);
             }
             if(assignDefaultValues) {
                 return Syntax.numericLiteralExpression(index.toString());
@@ -20739,7 +20735,7 @@ var Emitter;
             var enumIdentifier = this.withNoTrivia(enumDeclaration.identifier());
             var previousVariable = enumDeclaration.variableDeclarators().syntaxNodeAt(index - 1);
             var variableIdentifier = this.withNoTrivia(previousVariable.identifier());
-            var receiver = MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(enumIdentifier), new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
+            var receiver = MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(enumIdentifier), new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(Syntax.spaceTriviaList)));
             return new BinaryExpressionSyntax(156 /* PlusExpression */ , receiver, Syntax.token(86 /* PlusToken */ ).withTrailingTrivia(this.space), Syntax.numericLiteralExpression("1"));
         };
         EmitterImpl.prototype.generateEnumFunctionExpression = function (node) {
@@ -20760,7 +20756,7 @@ var Emitter;
                     var variableDeclarator = node.variableDeclarators().syntaxNodeAt(i);
                     var variableIdentifier = this.withNoTrivia(variableDeclarator.identifier());
                     assignDefaultValues.value = assignDefaultValues.value && variableDeclarator.equalsValueClause() === null;
-                    var innerAssign = Syntax.assignmentExpression(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), new IdentifierNameSyntax(variableIdentifier)).withTrailingTrivia(SyntaxTriviaList.space), Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues.value, i));
+                    var innerAssign = Syntax.assignmentExpression(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), new IdentifierNameSyntax(variableIdentifier)).withTrailingTrivia(Syntax.spaceTriviaList), Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues.value, i));
                     var elementAccessExpression = ElementAccessExpressionSyntax.create1(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), Syntax.identifierName("_map")), innerAssign).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.space);
                     ; ;
                     var outerAssign = Syntax.assignmentExpression(elementAccessExpression, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), Syntax.stringLiteralExpression('"' + variableIdentifier.text() + '"'));
@@ -21016,10 +21012,10 @@ var Parser;
             }
             var result = token;
             if(leadingTrivia !== null) {
-                result = result.withLeadingTrivia(SyntaxTriviaList.create(leadingTrivia));
+                result = result.withLeadingTrivia(Syntax.triviaList(leadingTrivia));
             }
             if(trailingTrivia !== null) {
-                result = result.withTrailingTrivia(SyntaxTriviaList.create(trailingTrivia));
+                result = result.withTrailingTrivia(Syntax.triviaList(trailingTrivia));
             }
             return result;
         };

@@ -159,7 +159,7 @@ class Scanner extends SlidingWindow {
             }
 
             Debug.assert(trivia.length > 0);
-            return SyntaxTriviaList.create(trivia);
+            return Syntax.triviaList(trivia);
         }
     }
 

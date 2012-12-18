@@ -217,11 +217,11 @@ module Parser {
             var result = token;
 
             if (leadingTrivia !== null) {
-                result = result.withLeadingTrivia(SyntaxTriviaList.create(leadingTrivia));
+                result = result.withLeadingTrivia(Syntax.triviaList(leadingTrivia));
             }
 
             if (trailingTrivia !== null) {
-                result = result.withTrailingTrivia(SyntaxTriviaList.create(trailingTrivia));
+                result = result.withTrailingTrivia(Syntax.triviaList(trailingTrivia));
             }
 
             return result;

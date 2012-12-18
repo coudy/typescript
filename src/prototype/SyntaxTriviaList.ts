@@ -3,14 +3,49 @@
 ///<reference path='ISyntaxTriviaList.ts' />
 ///<reference path='SyntaxTrivia.ts' />
 
-module SyntaxTriviaList {
-    function collectTextElements(elements: string[], list: ISyntaxTriviaList): void {
+module Syntax {
+    function collectSyntaxTriviaListTextElements(elements: string[], list: ISyntaxTriviaList): void {
         for (var i = 0, n = list.count(); i < n; i++) {
             list.syntaxTriviaAt(i).collectTextElements(elements);
         }
     }
 
-    function concat(list1: ISyntaxTriviaList, list2: ISyntaxTriviaList): ISyntaxTriviaList {
+    export var emptyTriviaList: ISyntaxTriviaList = {
+        kind: (): SyntaxKind => SyntaxKind.TriviaList,
+        isToken: (): bool => false,
+        isNode: (): bool => false,
+        isList: (): bool => false,
+        isSeparatedList: (): bool => false,
+        isTriviaList: (): bool => true,
+        isTrivia: (): bool => false,
+        isMissing: (): bool => true,
+
+        count: (): number => 0,
+
+        syntaxTriviaAt: (index: number): ISyntaxTrivia => {
+            throw Errors.argumentOutOfRange("index");
+        },
+
+        last: (): ISyntaxTrivia => {
+            throw Errors.argumentOutOfRange("index");
+        },
+
+        fullWidth: (): number => 0,
+        fullText: (): string => "",
+
+        hasComment: (): bool => false,
+        hasNewLine: (): bool => false,
+
+        toJSON: (key) => [],
+
+        collectTextElements: (elements: string[]): void => { },
+
+        toArray: (): ISyntaxTrivia[] => [],
+
+        concat: (trivia: ISyntaxTriviaList): ISyntaxTriviaList => trivia,
+    };
+
+    function concatTrivia(list1: ISyntaxTriviaList, list2: ISyntaxTriviaList): ISyntaxTriviaList {
         if (list1.count() === 0) {
             return list2;
         }
@@ -22,60 +57,7 @@ module SyntaxTriviaList {
         var trivia = list1.toArray();
         trivia.push.apply(trivia, list2.toArray());
 
-        return create(trivia);
-    }
-
-    class EmptySyntaxTriviaList implements ISyntaxTriviaList {
-        public kind(): SyntaxKind { return SyntaxKind.TriviaList; }
-        public isToken(): bool { return false; }
-        public isNode(): bool { return false; }
-        public isList(): bool { return false; }
-        public isSeparatedList(): bool { return false; }
-        public isTriviaList(): bool { return true; }
-        public isTrivia(): bool { return false; }
-        public isMissing(): bool { return true; }
-
-        public count(): number {
-            return 0;
-        }
-
-        public syntaxTriviaAt(index: number): ISyntaxTrivia {
-            throw Errors.argumentOutOfRange("index");
-        }
-
-        public last(): ISyntaxTrivia {
-            throw Errors.argumentOutOfRange("index");
-        }
-
-        public fullWidth(): number {
-            return 0;
-        }
-
-        public fullText(): string {
-            return "";
-        }
-
-        public hasComment(): bool {
-            return false;
-        }
-
-        public hasNewLine(): bool {
-            return false;
-        }
-
-        public toJSON(key) {
-            return [];
-        }
-
-        public collectTextElements(elements: string[]): void { collectTextElements(elements, this); }
-
-        public toArray(): ISyntaxTrivia[] {
-            return [];
-        }
-
-        public concat(trivia: ISyntaxTriviaList): ISyntaxTriviaList {
-            return concat(this, trivia);
-        }
+        return triviaList(trivia);
     }
 
     function isComment(trivia: ISyntaxTrivia): bool {
@@ -134,14 +116,14 @@ module SyntaxTriviaList {
             return [this.item];
         }
 
-        public collectTextElements(elements: string[]): void { collectTextElements(elements, this); }
+        public collectTextElements(elements: string[]): void { collectSyntaxTriviaListTextElements(elements, this); }
 
         public toArray(): ISyntaxTrivia[] {
             return [this.item];
         }
 
         public concat(trivia: ISyntaxTriviaList): ISyntaxTriviaList {
-            return concat(this, trivia);
+            return concatTrivia(this, trivia);
         }
     }
 
@@ -212,20 +194,20 @@ module SyntaxTriviaList {
             return this.trivia;
         }
 
-        public collectTextElements(elements: string[]): void { collectTextElements(elements, this); }
+        public collectTextElements(elements: string[]): void { collectSyntaxTriviaListTextElements(elements, this); }
 
         public toArray(): ISyntaxTrivia[] {
             return this.trivia.slice(0);
         }
 
         public concat(trivia: ISyntaxTriviaList): ISyntaxTriviaList {
-            return concat(this, trivia);
+            return concatTrivia(this, trivia);
         }
     }
 
-    export function create(trivia: ISyntaxTrivia[]): ISyntaxTriviaList {
+    export function triviaList(trivia: ISyntaxTrivia[]): ISyntaxTriviaList {
         if (trivia === undefined || trivia === null || trivia.length === 0) {
-            return SyntaxTriviaList.empty;
+            return Syntax.emptyTriviaList;
         }
 
         if (trivia.length === 1) {
@@ -235,6 +217,5 @@ module SyntaxTriviaList {
         return new NormalSyntaxTriviaList(trivia);
     }
 
-    export var empty: ISyntaxTriviaList = new EmptySyntaxTriviaList();
-    export var space: ISyntaxTriviaList = create([Syntax.spaceTrivia]);
+    export var spaceTriviaList: ISyntaxTriviaList = triviaList([Syntax.spaceTrivia]);
 }

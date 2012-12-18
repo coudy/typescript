@@ -74,7 +74,7 @@ class SyntaxIndenter extends SyntaxRewriter {
             result.push(this.indentationTrivia);
         }
 
-        return SyntaxTriviaList.create(result);
+        return Syntax.triviaList(result);
     }
 
     private indentSegment(segment: string): string {

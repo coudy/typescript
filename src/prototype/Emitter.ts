@@ -38,8 +38,8 @@ module Emitter {
             this.options = options || FormattingOptions.defaultOptions;
 
             // TODO: use proper new line based on options.
-            this.space = SyntaxTriviaList.space;
-            this.newLine = SyntaxTriviaList.create([Syntax.carriageReturnLineFeedTrivia]);
+            this.space = Syntax.spaceTriviaList;
+            this.newLine = Syntax.triviaList([Syntax.carriageReturnLineFeedTrivia]);
         }
 
         private columnForStartOfToken(token: ISyntaxToken): number {
@@ -52,7 +52,7 @@ module Emitter {
 
         private indentationTrivia(column: number): ISyntaxTriviaList {
             var triviaArray = column === 0 ? null : [Indentation.indentationTrivia(column, this.options)];
-            return SyntaxTriviaList.create(triviaArray);
+            return Syntax.triviaList(triviaArray);
         }
 
         private indentationTriviaForStartOfNode(node: SyntaxNode): ISyntaxTriviaList {
@@ -78,7 +78,7 @@ module Emitter {
         }
 
         private withNoTrivia(token: ISyntaxToken): ISyntaxToken {
-            return token.withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+            return token.withLeadingTrivia(Syntax.emptyTriviaList).withTrailingTrivia(Syntax.emptyTriviaList);
         }
 
         private visitSourceUnit(node: SourceUnitSyntax): SourceUnitSyntax {
@@ -149,7 +149,7 @@ module Emitter {
                     SyntaxKind.AssignmentExpression,
                     MemberAccessExpressionSyntax.create1(
                         new IdentifierNameSyntax(this.withNoTrivia(moduleIdentifier)),
-                        new IdentifierNameSyntax(elementIdentifier.withTrailingTrivia(SyntaxTriviaList.space))),
+                        new IdentifierNameSyntax(elementIdentifier.withTrailingTrivia(Syntax.spaceTriviaList))),
                     Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
                     new IdentifierNameSyntax(elementIdentifier)))
                         .withLeadingTrivia(this.indentationTriviaForStartOfNode(moduleElement))
@@ -239,7 +239,7 @@ module Emitter {
                                          moduleName: IdentifierNameSyntax,
                                          moduleElements: ModuleElementSyntax[],
                                          outermost: bool): ModuleElementSyntax[] {
-            moduleName = moduleName.withLeadingTrivia(SyntaxTriviaList.empty).withTrailingTrivia(SyntaxTriviaList.empty);
+            moduleName = moduleName.withLeadingTrivia(Syntax.emptyTriviaList).withTrailingTrivia(Syntax.emptyTriviaList);
             var moduleIdentifier = moduleName.identifier();
 
             var moduleIndentation = this.indentationTriviaForStartOfNode(moduleDeclaration);
@@ -286,7 +286,7 @@ module Emitter {
 
                     // Now, wrap the function expression in parens to make it legal in javascript.
                     var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(
-                        functionExpression.withLeadingTrivia(SyntaxTriviaList.empty)).withLeadingTrivia(functionExpression.leadingTrivia());
+                        functionExpression.withLeadingTrivia(Syntax.emptyTriviaList)).withLeadingTrivia(functionExpression.leadingTrivia());
 
                     return rewritten.withExpression(parenthesizedExpression);
                 }
@@ -425,7 +425,7 @@ module Emitter {
                 Syntax.assignmentExpression(
                     MemberAccessExpressionSyntax.create1(
                         ThisExpressionSyntax.create1(),
-                        new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))),
+                        new IdentifierNameSyntax(identifier.withTrailingTrivia(Syntax.spaceTriviaList))),
                     Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
                     new IdentifierNameSyntax(identifier))).withTrailingTrivia(this.newLine);
         }
@@ -511,13 +511,13 @@ module Emitter {
             var receiver = MemberAccessExpressionSyntax.create1(
                 static ? <ExpressionSyntax>new IdentifierNameSyntax(this.withNoTrivia(classDeclaration.identifier()))
                        : ThisExpressionSyntax.create1(),
-                new IdentifierNameSyntax(this.withNoTrivia(declarator.identifier()))).withTrailingTrivia(SyntaxTriviaList.space);
+                new IdentifierNameSyntax(this.withNoTrivia(declarator.identifier()))).withTrailingTrivia(Syntax.spaceTriviaList);
 
             return ExpressionStatementSyntax.create1(
                 Syntax.assignmentExpression(
                     receiver,
                     Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
-                    declarator.equalsValueClause().value().accept(this).withTrailingTrivia(SyntaxTriviaList.empty)))
+                    declarator.equalsValueClause().value().accept(this).withTrailingTrivia(Syntax.emptyTriviaList)))
                         .withLeadingTrivia(memberDeclaration.leadingTrivia()).withTrailingTrivia(this.newLine);
         }
 
@@ -657,12 +657,12 @@ module Emitter {
 
             receiver = MemberAccessExpressionSyntax.create1(
                 receiver,
-                new IdentifierNameSyntax(functionIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
+                new IdentifierNameSyntax(functionIdentifier.withTrailingTrivia(Syntax.spaceTriviaList)));
 
             var block: BlockSyntax = functionDeclaration.block().accept(this);
             var blockTrailingTrivia = block.trailingTrivia();
 
-            block = block.withTrailingTrivia(SyntaxTriviaList.empty);
+            block = block.withTrailingTrivia(Syntax.emptyTriviaList);
 
             var defaultValueAssignments = <StatementSyntax[]>ArrayUtilities.select(
                 EmitterImpl.functionSignatureDefaultParameters(functionDeclaration.functionSignature()),
@@ -678,7 +678,7 @@ module Emitter {
 
             var callSignatureParameterList = <ParameterListSyntax>functionDeclaration.functionSignature().parameterList().accept(this);
             if (!callSignatureParameterList.hasTrailingTrivia()) {
-                callSignatureParameterList = <ParameterListSyntax>callSignatureParameterList.withTrailingTrivia(SyntaxTriviaList.space);
+                callSignatureParameterList = <ParameterListSyntax>callSignatureParameterList.withTrailingTrivia(Syntax.spaceTriviaList);
             }
 
             // C.prototype.f = function (p1, p2) { ...  };
@@ -697,7 +697,7 @@ module Emitter {
 
             var parameterList = <ParameterListSyntax>memberAccessor.parameterList().accept(this);
             if (!parameterList.hasTrailingTrivia()) {
-                parameterList = parameterList.withTrailingTrivia(SyntaxTriviaList.space);
+                parameterList = parameterList.withTrailingTrivia(Syntax.spaceTriviaList);
             }
 
             return new SimplePropertyAssignmentSyntax(
@@ -706,7 +706,7 @@ module Emitter {
                 FunctionExpressionSyntax.create(
                     Syntax.token(SyntaxKind.FunctionKeyword),
                     CallSignatureSyntax.create(parameterList),
-                    memberAccessor.block().accept(this).withTrailingTrivia(SyntaxTriviaList.empty)))
+                    memberAccessor.block().accept(this).withTrailingTrivia(Syntax.emptyTriviaList)))
                         .withLeadingTrivia(this.indentationTriviaForStartOfNode(memberAccessor));
         }
 
@@ -858,8 +858,8 @@ module Emitter {
             var invocationParameters = [];
             if (node.extendsClause() !== null && node.extendsClause().typeNames().count() > 0) {
                 invocationParameters.push(node.extendsClause().typeNames().syntaxNodeAt(0)
-                    .withLeadingTrivia(SyntaxTriviaList.empty)
-                    .withTrailingTrivia(SyntaxTriviaList.empty));
+                    .withLeadingTrivia(Syntax.emptyTriviaList)
+                    .withTrailingTrivia(Syntax.emptyTriviaList));
             }
 
             // (function(_super) { ... })(BaseType)
@@ -872,7 +872,7 @@ module Emitter {
 
             // C = (function(_super) { ... })(BaseType)
             var variableDeclarator = VariableDeclaratorSyntax.create(
-                identifier.withTrailingTrivia(SyntaxTriviaList.space)).withEqualsValueClause(
+                identifier.withTrailingTrivia(Syntax.spaceTriviaList)).withEqualsValueClause(
                     new EqualsValueClauseSyntax(
                         Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
                         invocationExpression));
@@ -928,7 +928,7 @@ module Emitter {
                                             index: number): ExpressionSyntax {
             if (variableDeclarator.equalsValueClause() !== null) {
                 // Use the value if one is provided.
-                return variableDeclarator.equalsValueClause().value().withTrailingTrivia(SyntaxTriviaList.empty);
+                return variableDeclarator.equalsValueClause().value().withTrailingTrivia(Syntax.emptyTriviaList);
             }
 
             // Didn't have a value.  Synthesize one if we're doing that, or use the previous item's value
@@ -944,7 +944,7 @@ module Emitter {
 
             var receiver = MemberAccessExpressionSyntax.create1(
                 new IdentifierNameSyntax(enumIdentifier),
-                new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
+                new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(Syntax.spaceTriviaList)));
 
             return new BinaryExpressionSyntax(SyntaxKind.PlusExpression,
                 receiver,
@@ -990,7 +990,7 @@ module Emitter {
                     // _.Foo = 1
                     var innerAssign = Syntax.assignmentExpression(
                         MemberAccessExpressionSyntax.create1(
-                            Syntax.identifierName("_"), new IdentifierNameSyntax(variableIdentifier)).withTrailingTrivia(SyntaxTriviaList.space),
+                            Syntax.identifierName("_"), new IdentifierNameSyntax(variableIdentifier)).withTrailingTrivia(Syntax.spaceTriviaList),
                         Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
                         this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues.value, i))
 

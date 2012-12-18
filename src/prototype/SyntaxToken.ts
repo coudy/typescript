@@ -163,8 +163,8 @@ module Syntax {
         public hasTrailingCommentTrivia() { return false; }
         public hasTrailingNewLineTrivia() { return false; }
         public trailingTriviaWidth() { return 0; }
-        public leadingTrivia(): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
-        public trailingTrivia(): ISyntaxTriviaList { return SyntaxTriviaList.empty; }
+        public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
+        public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
         public realize(): ISyntaxToken { return realize(this); }
         public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -276,10 +276,10 @@ module Syntax {
         return new RealizedToken(
             kind,
             keywordKind,
-            SyntaxTriviaList.create(info === null ? null : info.leadingTrivia),
+            Syntax.triviaList(info === null ? null : info.leadingTrivia),
             text,
             value,
-            SyntaxTriviaList.create(info === null ? null : info.trailingTrivia),
+            Syntax.triviaList(info === null ? null : info.trailingTrivia),
             /*isMissing:*/ false);
     }
     

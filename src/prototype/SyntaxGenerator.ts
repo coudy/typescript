@@ -2282,7 +2282,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
     result += "        public leadingTriviaWidth(): number { return " + (leading ? "getTriviaLength(this._leadingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public leadingTrivia(): ISyntaxTriviaList { return " + (leading
         ? "Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaLength(this._leadingTriviaInfo), /*isTrailing:*/ false)"
-        : "SyntaxTriviaList.empty") + "; }\r\n\r\n";
+        : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
 
     result += "        public hasTrailingTrivia(): bool { return " + (trailing ? "true" : "false") + "; }\r\n";
     result += "        public hasTrailingCommentTrivia(): bool { return " + (trailing ? "hasTriviaComment(this._trailingTriviaInfo)" : "false") + "; }\r\n";
@@ -2290,7 +2290,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
     result += "        public trailingTriviaWidth(): number { return " + (trailing ? "getTriviaLength(this._trailingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public trailingTrivia(): ISyntaxTriviaList { return " + (trailing
         ? "Scanner.scanTrivia(this._sourceText, this.end(), getTriviaLength(this._trailingTriviaInfo), /*isTrailing:*/ true)"
-        : "SyntaxTriviaList.empty") + "; }\r\n\r\n";
+        : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
 
     result += 
 "        public toJSON(key) { return tokenToJSON(this); }\r\n" +
