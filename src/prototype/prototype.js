@@ -20348,12 +20348,12 @@ var Emitter;
             }
         };
         EmitterImpl.prototype.visitModuleDeclaration = function (node) {
-            var names = EmitterImpl.splitModuleName(node.moduleName());
             var moduleElements = this.convertModuleElements(node.moduleElements());
             var parentModule = this.rightmostName(node.moduleName()).identifier();
             for(var i = 0, n = node.moduleElements().count(); i < n; i++) {
                 this.handleExportedModuleElement(parentModule, node.moduleElements().syntaxNodeAt(i), moduleElements);
             }
+            var names = EmitterImpl.splitModuleName(node.moduleName());
             for(var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
                 moduleElements = this.convertModuleDeclaration(node, names[nameIndex], moduleElements, nameIndex === 0);
                 if(nameIndex > 0) {
@@ -20384,15 +20384,14 @@ var Emitter;
         };
         EmitterImpl.prototype.visitExpressionStatement = function (node) {
             var rewritten = _super.prototype.visitExpressionStatement.call(this, node);
-            if(rewritten.expression().kind() !== 220 /* FunctionExpression */ ) {
-                return rewritten;
+            if(rewritten.expression().kind() === 220 /* FunctionExpression */ ) {
+                var functionExpression = rewritten.expression();
+                if(functionExpression.identifier() === null) {
+                    var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(functionExpression.withLeadingTrivia(SyntaxTriviaList.empty)).withLeadingTrivia(functionExpression.leadingTrivia());
+                    return rewritten.withExpression(parenthesizedExpression);
+                }
             }
-            var functionExpression = rewritten.expression();
-            if(functionExpression.identifier() !== null) {
-                return rewritten;
-            }
-            var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(functionExpression.withLeadingTrivia(SyntaxTriviaList.empty)).withLeadingTrivia(functionExpression.leadingTrivia());
-            return rewritten.withExpression(parenthesizedExpression);
+            return rewritten;
         };
         EmitterImpl.prototype.visitSimpleArrowFunctionExpression = function (node) {
             return FunctionExpressionSyntax.create1().withCallSignature(Syntax.callSignature(ParameterSyntax.create(this.withNoTrivia(node.identifier()))).withTrailingTrivia(this.space)).withBlock(this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());

@@ -197,12 +197,6 @@ module Emitter {
         }
 
         private visitModuleDeclaration(node: ModuleDeclarationSyntax): ModuleElementSyntax[] {
-            // Break up the dotted name into pieces.
-            var names = EmitterImpl.splitModuleName(node.moduleName());
-
-            // Start with the rightmost piece.  This will be the one that actually contains the 
-            // members declared in the module.
-
             // Recurse downwards and get the rewritten children.
             var moduleElements = this.convertModuleElements(node.moduleElements());
 
@@ -212,6 +206,9 @@ module Emitter {
                 this.handleExportedModuleElement(
                     parentModule, <ModuleElementSyntax>node.moduleElements().syntaxNodeAt(i), moduleElements);
             }
+
+            // Break up the dotted name into pieces.
+            var names = EmitterImpl.splitModuleName(node.moduleName());
 
             // Then, for all the names left of that name, wrap what we've created in a larger module.
             for (var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
@@ -233,13 +230,11 @@ module Emitter {
 
 
         private initializedVariable(name: IdentifierNameSyntax): BinaryExpressionSyntax {
-            return new BinaryExpressionSyntax(
-                SyntaxKind.LogicalOrExpression,
+            return new BinaryExpressionSyntax(SyntaxKind.LogicalOrExpression,
                 name,
                 Syntax.token(SyntaxKind.BarBarToken),
                 ParenthesizedExpressionSyntax.create1(
-                    new BinaryExpressionSyntax(
-                        SyntaxKind.AssignmentExpression,
+                    new BinaryExpressionSyntax(SyntaxKind.AssignmentExpression,
                         name,
                         Syntax.token(SyntaxKind.EqualsToken),
                         ObjectLiteralExpressionSyntax.create1())));
@@ -253,16 +248,14 @@ module Emitter {
             var moduleIdentifier = moduleName.identifier();
 
             var moduleIndentation = this.indentationTriviaForStartOfNode(moduleDeclaration);
-            var leadingTrivia = outermost
-                ? moduleDeclaration.leadingTrivia()
-                : moduleIndentation;
+            var leadingTrivia = outermost ? moduleDeclaration.leadingTrivia() : moduleIndentation;
 
             // var M;
             var variableStatement = VariableStatementSyntax.create1(new VariableDeclarationSyntax(
                 Syntax.token(SyntaxKind.VarKeyword).withTrailingTrivia(this.space),
                 SeparatedSyntaxList.create(
-                [VariableDeclaratorSyntax.create(moduleIdentifier)])))
-                    .withLeadingTrivia(leadingTrivia).withTrailingTrivia(this.newLine);
+                    [VariableDeclaratorSyntax.create(moduleIdentifier)])))
+                        .withLeadingTrivia(leadingTrivia).withTrailingTrivia(this.newLine);
 
             // function(M) { ... }
             var functionExpression = FunctionExpressionSyntax.create1()
@@ -290,25 +283,24 @@ module Emitter {
             var rewritten: ExpressionStatementSyntax = super.visitExpressionStatement(node);
 
             // convert: function() { ... };  to (function() { ... });
-            if (rewritten.expression().kind() !== SyntaxKind.FunctionExpression) {
-                // Wasn't a function expression
-                return rewritten;
+            if (rewritten.expression().kind() === SyntaxKind.FunctionExpression) {
+                // Wasn a function expression
+                var functionExpression = <FunctionExpressionSyntax>rewritten.expression();
+                if (functionExpression.identifier() === null) {
+                    // Was anonymous.
+
+                    // Remove the leading trivia from the function keyword.  We'll put it on the open paren 
+                    // token instead.
+
+                    // Now, wrap the function expression in parens to make it legal in javascript.
+                    var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(
+                        functionExpression.withLeadingTrivia(SyntaxTriviaList.empty)).withLeadingTrivia(functionExpression.leadingTrivia());
+
+                    return rewritten.withExpression(parenthesizedExpression);
+                }
             }
 
-            var functionExpression = <FunctionExpressionSyntax>rewritten.expression();
-            if (functionExpression.identifier() !== null) {
-                // Wasn't anonymous.
-                return rewritten;
-            }
-
-            // Remove the leading trivia from the function keyword.  We'll put it on the open paren 
-            // token instead.
-
-            // Now, wrap the function expression in parens to make it legal in javascript.
-            var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(
-                functionExpression.withLeadingTrivia(SyntaxTriviaList.empty)).withLeadingTrivia(functionExpression.leadingTrivia());
-
-            return rewritten.withExpression(parenthesizedExpression);
+            return rewritten;
         }
 
         private visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): FunctionExpressionSyntax {
