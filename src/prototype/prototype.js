@@ -20584,12 +20584,9 @@ var Emitter;
                 return _this.generateDefaultValueAssignmentStatement(p);
             });
             for(var i = defaultValueAssignments.length - 1; i >= 0; i--) {
-                var expressionStatement = defaultValueAssignments[i];
-                expressionStatement = this.changeIndentation(expressionStatement, true, this.options.indentSpaces + constructorIndentationColumn);
-                normalStatements.unshift(expressionStatement);
+                normalStatements.unshift(this.changeIndentation(defaultValueAssignments[i], true, this.options.indentSpaces + constructorIndentationColumn));
             }
-            block = block.withStatements(SyntaxList.create(normalStatements));
-            return FunctionDeclarationSyntax.create(Syntax.token(25 /* FunctionKeyword */ ).withTrailingTrivia(this.space), functionSignature).withBlock(block).withLeadingTrivia(constructorDeclaration.leadingTrivia());
+            return FunctionDeclarationSyntax.create(Syntax.token(25 /* FunctionKeyword */ ).withTrailingTrivia(this.space), functionSignature).withBlock(block.withStatements(SyntaxList.create(normalStatements))).withLeadingTrivia(constructorDeclaration.leadingTrivia());
         };
         EmitterImpl.prototype.convertMemberFunctionDeclaration = function (classDeclaration, functionDeclaration) {
             var _this = this;
@@ -20604,15 +20601,13 @@ var Emitter;
             var block = functionDeclaration.block().accept(this);
             var blockTrailingTrivia = block.trailingTrivia();
             block = block.withTrailingTrivia(SyntaxTriviaList.empty);
-            var defaultParameters = EmitterImpl.functionSignatureDefaultParameters(functionDeclaration.functionSignature());
-            var defaultValueAssignments = ArrayUtilities.select(defaultParameters, function (p) {
+            var defaultValueAssignments = ArrayUtilities.select(EmitterImpl.functionSignatureDefaultParameters(functionDeclaration.functionSignature()), function (p) {
                 return _this.generateDefaultValueAssignmentStatement(p);
             });
             var functionColumn = this.columnForStartOfToken(functionDeclaration.firstToken());
             var blockStatements = block.statements().toArray();
             for(var i = defaultValueAssignments.length - 1; i >= 0; i--) {
-                var assignment = this.changeIndentation(defaultValueAssignments[i], true, functionColumn + this.options.indentSpaces);
-                blockStatements.unshift(assignment);
+                blockStatements.unshift(this.changeIndentation(defaultValueAssignments[i], true, functionColumn + this.options.indentSpaces));
             }
             var callSignatureParameterList = functionDeclaration.functionSignature().parameterList().accept(this);
             if(!callSignatureParameterList.hasTrailingTrivia()) {

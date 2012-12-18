@@ -655,18 +655,15 @@ module Emitter {
                 p => this.generateDefaultValueAssignmentStatement(p));
 
             for (var i = defaultValueAssignments.length - 1; i >= 0; i--) {
-                var expressionStatement = defaultValueAssignments[i];
-                expressionStatement = <ExpressionStatementSyntax>this.changeIndentation(
-                    expressionStatement, /*changeFirstToken:*/ true, this.options.indentSpaces + constructorIndentationColumn);
-                normalStatements.unshift(expressionStatement);
+                normalStatements.unshift(<StatementSyntax>this.changeIndentation(
+                    defaultValueAssignments[i], /*changeFirstToken:*/ true, this.options.indentSpaces + constructorIndentationColumn));
             }
 
-            block = block.withStatements(SyntaxList.create(normalStatements));
-
+            // function C(...) { ... }
             return FunctionDeclarationSyntax.create(
                 Syntax.token(SyntaxKind.FunctionKeyword).withTrailingTrivia(this.space),
                 functionSignature)
-                    .withBlock(block).withLeadingTrivia(constructorDeclaration.leadingTrivia());
+                    .withBlock(block.withStatements(SyntaxList.create(normalStatements))).withLeadingTrivia(constructorDeclaration.leadingTrivia());
         }
 
         private convertMemberFunctionDeclaration(classDeclaration: ClassDeclarationSyntax,
@@ -689,23 +686,21 @@ module Emitter {
                 receiver,
                 new IdentifierNameSyntax(functionIdentifier.withTrailingTrivia(SyntaxTriviaList.space)));
 
-            var block = <BlockSyntax>functionDeclaration.block().accept(this);
+            var block: BlockSyntax = functionDeclaration.block().accept(this);
             var blockTrailingTrivia = block.trailingTrivia();
 
             block = block.withTrailingTrivia(SyntaxTriviaList.empty);
 
-            var defaultParameters = EmitterImpl.functionSignatureDefaultParameters(functionDeclaration.functionSignature());
-            var defaultValueAssignments = <StatementSyntax[]>ArrayUtilities.select(defaultParameters,
+            var defaultValueAssignments = <StatementSyntax[]>ArrayUtilities.select(
+                EmitterImpl.functionSignatureDefaultParameters(functionDeclaration.functionSignature()),
                 p => this.generateDefaultValueAssignmentStatement(p));
 
             var functionColumn = this.columnForStartOfToken(functionDeclaration.firstToken());
 
             var blockStatements = block.statements().toArray();
             for (var i = defaultValueAssignments.length - 1; i >= 0; i--) {
-                var assignment = <StatementSyntax>this.changeIndentation(
-                    defaultValueAssignments[i], /*changeFirstToken:*/ true, functionColumn + this.options.indentSpaces);
-
-                blockStatements.unshift(assignment);
+                blockStatements.unshift(this.changeIndentation(
+                    defaultValueAssignments[i], /*changeFirstToken:*/ true, functionColumn + this.options.indentSpaces));
             }
 
             var callSignatureParameterList = <ParameterListSyntax>functionDeclaration.functionSignature().parameterList().accept(this);
