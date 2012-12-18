@@ -634,9 +634,9 @@ module Emitter {
             var allStatements = block.statements().toArray();
 
             var normalStatements: StatementSyntax[] = ArrayUtilities.select(ArrayUtilities.where(allStatements,
-                s => !EmitterImpl.isSuperInvocationExpressionStatement(s)), s => s.accept(this));
+                s => !Syntax.isSuperInvocationExpressionStatement(s)), s => s.accept(this));
             var superStatements: StatementSyntax[] = ArrayUtilities.select(ArrayUtilities.where(allStatements,
-                s => EmitterImpl.isSuperInvocationExpressionStatement(s)), s => s.accept(this));
+                s => Syntax.isSuperInvocationExpressionStatement(s)), s => s.accept(this));
 
             // TODO: handle alignment here.
             var instanceAssignments = this.generatePropertyAssignments(
@@ -1137,26 +1137,6 @@ module Emitter {
             return [variableStatement, expressionStatement];
         }
 
-        private static isSuperInvocationExpressionStatement(node: SyntaxNode): bool {
-            return node.kind() === SyntaxKind.ExpressionStatement &&
-                EmitterImpl.isSuperInvocationExpression((<ExpressionStatementSyntax>node).expression());
-        }
-
-        private static isSuperInvocationExpression(node: SyntaxNode): bool {
-            return node.kind() === SyntaxKind.InvocationExpression &&
-                (<InvocationExpressionSyntax>node).expression().kind() === SyntaxKind.SuperExpression;
-        }
-
-        private static isSuperMemberAccessExpression(node: ExpressionSyntax): bool {
-            return node.kind() === SyntaxKind.MemberAccessExpression &&
-                (<MemberAccessExpressionSyntax>node).expression().kind() === SyntaxKind.SuperExpression;
-        }
-
-        private static isSuperMemberAccessInvocationExpression(node: SyntaxNode): bool {
-            return node.kind() === SyntaxKind.InvocationExpression &&
-                EmitterImpl.isSuperMemberAccessExpression((<InvocationExpressionSyntax>node).expression());
-        }
-
         private convertSuperInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
             var result: InvocationExpressionSyntax = super.visitInvocationExpression(node);
 
@@ -1192,10 +1172,10 @@ module Emitter {
         }
 
         private visitInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
-            if (EmitterImpl.isSuperInvocationExpression(node)) {
+            if (Syntax.isSuperInvocationExpression(node)) {
                 return this.convertSuperInvocationExpression(node);
             }
-            else if (EmitterImpl.isSuperMemberAccessInvocationExpression(node)) {
+            else if (Syntax.isSuperMemberAccessInvocationExpression(node)) {
                 return this.convertSuperMemberAccessInvocationExpression(node);
             }
 
@@ -1204,7 +1184,7 @@ module Emitter {
 
         private visitMemberAccessExpression(node: MemberAccessExpressionSyntax): MemberAccessExpressionSyntax {
             var result: MemberAccessExpressionSyntax = super.visitMemberAccessExpression(node);
-            if (!EmitterImpl.isSuperMemberAccessExpression(result)) {
+            if (!Syntax.isSuperMemberAccessExpression(result)) {
                 return result;
             }
 

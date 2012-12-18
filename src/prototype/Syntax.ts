@@ -32,4 +32,24 @@ module Syntax {
             SyntaxKind.StringLiteralExpression,
             Syntax.token(SyntaxKind.StringLiteral, { text: text }));
     }
+
+    export function isSuperInvocationExpression(node: SyntaxNode): bool {
+        return node.kind() === SyntaxKind.InvocationExpression &&
+            (<InvocationExpressionSyntax>node).expression().kind() === SyntaxKind.SuperExpression;
+    }
+
+    export function isSuperInvocationExpressionStatement(node: SyntaxNode): bool {
+        return node.kind() === SyntaxKind.ExpressionStatement &&
+            isSuperInvocationExpression((<ExpressionStatementSyntax>node).expression());
+    }
+
+    export function isSuperMemberAccessExpression(node: ExpressionSyntax): bool {
+        return node.kind() === SyntaxKind.MemberAccessExpression &&
+            (<MemberAccessExpressionSyntax>node).expression().kind() === SyntaxKind.SuperExpression;
+    }
+
+    export function isSuperMemberAccessInvocationExpression(node: SyntaxNode): bool {
+        return node.kind() === SyntaxKind.InvocationExpression &&
+            isSuperMemberAccessExpression((<InvocationExpressionSyntax>node).expression());
+    }
 }
