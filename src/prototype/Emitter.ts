@@ -507,12 +507,8 @@ module Emitter {
                                            static: bool,
                                            memberDeclaration: MemberVariableDeclarationSyntax): ExpressionStatementSyntax {
             var isStatic = memberDeclaration.staticKeyword() !== null;
-            if (static !== isStatic) {
-                return null;
-            }
-
             var declarator = memberDeclaration.variableDeclarator();
-            if (declarator.equalsValueClause() === null) {
+            if (static !== isStatic || declarator.equalsValueClause() === null) {
                 return null;
             }
 

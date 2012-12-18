@@ -20493,11 +20493,8 @@ var Emitter;
         };
         EmitterImpl.prototype.generatePropertyAssignment = function (classDeclaration, static, memberDeclaration) {
             var isStatic = memberDeclaration.staticKeyword() !== null;
-            if(static !== isStatic) {
-                return null;
-            }
             var declarator = memberDeclaration.variableDeclarator();
-            if(declarator.equalsValueClause() === null) {
+            if(static !== isStatic || declarator.equalsValueClause() === null) {
                 return null;
             }
             var receiver = MemberAccessExpressionSyntax.create1(static ? new IdentifierNameSyntax(this.withNoTrivia(classDeclaration.identifier())) : ThisExpressionSyntax.create1(), new IdentifierNameSyntax(this.withNoTrivia(declarator.identifier()))).withTrailingTrivia(SyntaxTriviaList.space);
