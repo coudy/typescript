@@ -2293,9 +2293,9 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         : "SyntaxTriviaList.empty") + "; }\r\n\r\n";
 
     result += 
-"        public toJSON(key) { return toJSON(this); }\r\n" +
+"        public toJSON(key) { return tokenToJSON(this); }\r\n" +
 "        public realize(): ISyntaxToken { return realize(this); }\r\n" +
-"        public collectTextElements(elements: string[]): void { collectTextElements(this, elements); }\r\n\r\n";
+"        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
 
     result += 
 "        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" +
