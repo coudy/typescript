@@ -21592,25 +21592,25 @@ var Syntax;
             result.hasLeadingTrivia = true;
         }
         if(token.hasLeadingComment()) {
-            result.hasLeadingCommentTrivia = true;
+            result.hasLeadingComment = true;
         }
         if(token.hasLeadingNewLine()) {
-            result.hasLeadingNewLineTrivia = true;
+            result.hasLeadingNewLine = true;
         }
         if(token.hasLeadingSkippedText()) {
-            result.hasLeadingSkippedTextTrivia = true;
+            result.hasLeadingSkippedText = true;
         }
         if(token.hasTrailingTrivia()) {
             result.hasTrailingTrivia = true;
         }
         if(token.hasTrailingComment()) {
-            result.hasTrailingCommentTrivia = true;
+            result.hasTrailingComment = true;
         }
         if(token.hasTrailingNewLine()) {
-            result.hasTrailingNewLineTrivia = true;
+            result.hasTrailingNewLine = true;
         }
         if(token.hasTrailingSkippedText()) {
-            result.hasTrailingSkippedTextTrivia = true;
+            result.hasTrailingSkippedText = true;
         }
         var trivia = token.leadingTrivia();
         if(trivia.count() > 0) {
