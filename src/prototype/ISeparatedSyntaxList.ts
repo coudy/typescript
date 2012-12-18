@@ -18,4 +18,7 @@ interface ISeparatedSyntaxList extends ISyntaxElement {
     lastToken(): ISyntaxToken;
 
     isTypeScriptSpecific(): bool;
+
+    hasSkippedText(): bool;
+    hasZeroWidthToken(): bool;
 }

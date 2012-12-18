@@ -25,7 +25,7 @@ class SyntaxIndenter extends SyntaxRewriter {
             result = token.withLeadingTrivia(this.indentTriviaList(token.leadingTrivia()));
         }
 
-        this.lastTriviaWasNewLine = token.hasTrailingNewLineTrivia();
+        this.lastTriviaWasNewLine = token.hasTrailingNewLine();
         return result;
     }
 

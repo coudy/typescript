@@ -301,7 +301,7 @@ var Environment = (function () {
                 var buffer = _fs.readFileSync(file);
                 switch(buffer[0]) {
                     case 254: {
-                        if(buffer[1] == 255) {
+                        if(buffer[1] === 255) {
                             var i = 0;
                             while((i + 1) < buffer.length) {
                                 var temp = buffer[i];
@@ -315,14 +315,14 @@ var Environment = (function () {
 
                     }
                     case 255: {
-                        if(buffer[1] == 254) {
+                        if(buffer[1] === 254) {
                             return buffer.toString("ucs2", 2);
                         }
                         break;
 
                     }
                     case 239: {
-                        if(buffer[1] == 187) {
+                        if(buffer[1] === 187) {
                             return buffer.toString("utf8", 3);
                         }
 
@@ -4035,6 +4035,43 @@ function generateIsTypeScriptSpecificMethod(definition) {
     result += "    }\r\n";
     return result;
 }
+function generateComputeDataMethod(definition) {
+    if(definition.isAbstract) {
+        return "";
+    }
+    var result = "\r\n    private computeData(): number {\r\n";
+    result += "        var fullWidth = 0;\r\n";
+    result += "        var childWidth = 0;\r\n";
+    result += "        var hasSkippedText = false;\r\n";
+    result += "        var hasZeroWidthToken = " + (definition.children.length === 0) + ";\r\n";
+    for(var i = 0; i < definition.children.length; i++) {
+        var child = definition.children[i];
+        if(child.type === "SyntaxKind") {
+            continue;
+        }
+        var indent = "";
+        if(child.isOptional) {
+            result += "\r\n        if (" + getPropertyAccess(child) + " !== null) {\r\n";
+            indent = "    ";
+        } else {
+            result += "\r\n";
+        }
+        result += indent + "        childWidth = " + getPropertyAccess(child) + ".fullWidth();\r\n";
+        result += indent + "        fullWidth += childWidth;\r\n";
+        result += indent + "        hasSkippedText = hasSkippedText || " + getPropertyAccess(child) + ".hasSkippedText();\r\n";
+        if(child.isToken) {
+            result += indent + "        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);\r\n";
+        } else {
+            result += indent + "        hasZeroWidthToken = hasZeroWidthToken || " + getPropertyAccess(child) + ".hasZeroWidthToken();\r\n";
+        }
+        if(child.isOptional) {
+            result += "        }\r\n";
+        }
+    }
+    result += "\r\n        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);\r\n";
+    result += "    }\r\n";
+    return result;
+}
 function generateCollectTextElementsMethod(definition) {
     if(definition.isAbstract) {
         return "";
@@ -4071,6 +4108,7 @@ function generateNode(definition) {
     result += generateWithMethods(definition);
     result += generateCollectTextElementsMethod(definition);
     result += generateIsTypeScriptSpecificMethod(definition);
+    result += generateComputeDataMethod(definition);
     result += "}";
     return result;
 }
@@ -4299,17 +4337,18 @@ function generateToken(isPunctuation, isKeyword, leading, trailing) {
         }
     }
     result += "        public hasLeadingTrivia(): bool { return " + (leading ? "true" : "false") + "; }\r\n";
-    result += "        public hasLeadingCommentTrivia(): bool { return " + (leading ? "hasTriviaComment(this._leadingTriviaInfo)" : "false") + "; }\r\n";
-    result += "        public hasLeadingNewLineTrivia(): bool { return " + (leading ? "hasTriviaNewLine(this._leadingTriviaInfo)" : "false") + "; }\r\n";
-    result += "        public hasLeadingSkippedTextTrivia(): bool { return false; }\r\n";
+    result += "        public hasLeadingComment(): bool { return " + (leading ? "hasTriviaComment(this._leadingTriviaInfo)" : "false") + "; }\r\n";
+    result += "        public hasLeadingNewLine(): bool { return " + (leading ? "hasTriviaNewLine(this._leadingTriviaInfo)" : "false") + "; }\r\n";
+    result += "        public hasLeadingSkippedText(): bool { return false; }\r\n";
     result += "        public leadingTriviaWidth(): number { return " + (leading ? "getTriviaWidth(this._leadingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public leadingTrivia(): ISyntaxTriviaList { return " + (leading ? "Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), /*isTrailing:*/ false)" : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
     result += "        public hasTrailingTrivia(): bool { return " + (trailing ? "true" : "false") + "; }\r\n";
-    result += "        public hasTrailingCommentTrivia(): bool { return " + (trailing ? "hasTriviaComment(this._trailingTriviaInfo)" : "false") + "; }\r\n";
-    result += "        public hasTrailingNewLineTrivia(): bool { return " + (trailing ? "hasTriviaNewLine(this._trailingTriviaInfo)" : "false") + "; }\r\n";
-    result += "        public hasTrailingSkippedTextTrivia(): bool { return false; }\r\n";
+    result += "        public hasTrailingComment(): bool { return " + (trailing ? "hasTriviaComment(this._trailingTriviaInfo)" : "false") + "; }\r\n";
+    result += "        public hasTrailingNewLine(): bool { return " + (trailing ? "hasTriviaNewLine(this._trailingTriviaInfo)" : "false") + "; }\r\n";
+    result += "        public hasTrailingSkippedText(): bool { return false; }\r\n";
     result += "        public trailingTriviaWidth(): number { return " + (trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public trailingTrivia(): ISyntaxTriviaList { return " + (trailing ? "Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true)" : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
+    result += "        public hasSkippedText(): bool { return false; }\r\n";
     result += "        public toJSON(key) { return tokenToJSON(this); }\r\n" + "        public realize(): ISyntaxToken { return realize(this); }\r\n" + "        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
     result += "        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" + "            return this.realize().withLeadingTrivia(leadingTrivia);\r\n" + "        }\r\n" + "\r\n" + "        public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" + "            return this.realize().withTrailingTrivia(trailingTrivia);\r\n" + "        }\r\n";
     result += "    }\r\n";

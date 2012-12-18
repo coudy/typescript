@@ -1,0 +1,244 @@
+{
+    "_diagnostics": [
+        {
+            "_position": 67,
+            "_width": 3,
+            "_diagnosticCode": "Identifier_expected"
+        }
+    ],
+    "_sourceUnit": {
+        "kind": "SourceUnit",
+        "_moduleElements": [
+            {
+                "kind": "ClassDeclaration",
+                "_classKeyword": {
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "ClassKeyword",
+                    "width": 5,
+                    "fullWidth": 6,
+                    "text": "class",
+                    "hasTrailingTriviaTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "text": " "
+                        }
+                    ]
+                },
+                "_identifier": {
+                    "kind": "IdentifierNameToken",
+                    "width": 4,
+                    "fullWidth": 5,
+                    "text": "Foo3",
+                    "valueText": "Foo3",
+                    "hasTrailingTriviaTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "text": " "
+                        }
+                    ]
+                },
+                "_openBraceToken": {
+                    "kind": "OpenBraceToken",
+                    "width": 1,
+                    "fullWidth": 3,
+                    "text": "{",
+                    "hasTrailingTriviaTrivia": true,
+                    "hasTrailingNewLineTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        }
+                    ]
+                },
+                "_classElements": [
+                    {
+                        "kind": "ConstructorDeclaration",
+                        "_constructorKeyword": {
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ConstructorKeyword",
+                            "width": 11,
+                            "fullWidth": 45,
+                            "text": "constructor",
+                            "hasLeadingTrivia": true,
+                            "hasLeadingCommentTrivia": true,
+                            "hasLeadingNewLineTrivia": true,
+                            "hasTrailingTriviaTrivia": true,
+                            "leadingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": "  "
+                                },
+                                {
+                                    "kind": "SingleLineCommentTrivia",
+                                    "text": "// Doesn't work, but should"
+                                },
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "text": "\r\n"
+                                },
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": "  "
+                                }
+                            ],
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
+                        },
+                        "_parameterList": {
+                            "kind": "ParameterList",
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
+                                "width": 1,
+                                "text": "("
+                            },
+                            "_parameters": [
+                                {
+                                    "kind": "Parameter",
+                                    "_publicOrPrivateKeyword": {
+                                        "kind": "IdentifierNameToken",
+                                        "keywordKind": "PublicKeyword",
+                                        "width": 6,
+                                        "fullWidth": 7,
+                                        "text": "public",
+                                        "hasTrailingTriviaTrivia": true,
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": " "
+                                            }
+                                        ]
+                                    },
+                                    "_identifier": {
+                                        "kind": "IdentifierNameToken",
+                                        "width": 0,
+                                        "isMissing": true,
+                                        "text": ""
+                                    }
+                                },
+                                {
+                                    "kind": "CommaToken",
+                                    "width": 0,
+                                    "isMissing": true,
+                                    "text": ""
+                                },
+                                {
+                                    "kind": "Parameter",
+                                    "_dotDotDotToken": {
+                                        "kind": "DotDotDotToken",
+                                        "width": 3,
+                                        "text": "..."
+                                    },
+                                    "_identifier": {
+                                        "kind": "IdentifierNameToken",
+                                        "width": 4,
+                                        "text": "args",
+                                        "valueText": "args"
+                                    },
+                                    "_typeAnnotation": {
+                                        "kind": "TypeAnnotation",
+                                        "_colonToken": {
+                                            "kind": "ColonToken",
+                                            "width": 1,
+                                            "fullWidth": 2,
+                                            "text": ":",
+                                            "hasTrailingTriviaTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
+                                                }
+                                            ]
+                                        },
+                                        "_type": {
+                                            "kind": "ArrayType",
+                                            "_type": {
+                                                "kind": "PredefinedType",
+                                                "_keyword": {
+                                                    "kind": "IdentifierNameToken",
+                                                    "keywordKind": "StringKeyword",
+                                                    "width": 6,
+                                                    "text": "string"
+                                                }
+                                            },
+                                            "_openBracketToken": {
+                                                "kind": "OpenBracketToken",
+                                                "width": 1,
+                                                "text": "["
+                                            },
+                                            "_closeBracketToken": {
+                                                "kind": "CloseBracketToken",
+                                                "width": 1,
+                                                "text": "]"
+                                            }
+                                        }
+                                    }
+                                }
+                            ],
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ")",
+                                "hasTrailingTriviaTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        },
+                        "_block": {
+                            "kind": "Block",
+                            "_openBraceToken": {
+                                "kind": "OpenBraceToken",
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": "{",
+                                "hasTrailingTriviaTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            },
+                            "_statements": [],
+                            "_closeBraceToken": {
+                                "kind": "CloseBraceToken",
+                                "width": 1,
+                                "fullWidth": 3,
+                                "text": "}",
+                                "hasTrailingTriviaTrivia": true,
+                                "hasTrailingNewLineTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\r\n"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                "_closeBraceToken": {
+                    "kind": "CloseBraceToken",
+                    "width": 1,
+                    "text": "}"
+                }
+            }
+        ],
+        "_endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "text": ""
+        }
+    }
+}

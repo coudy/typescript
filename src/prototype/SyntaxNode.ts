@@ -6,6 +6,8 @@
 ///<reference path='SyntaxTokenReplacer.ts' />
 
 class SyntaxNode implements ISyntaxElement {
+    private _data: number = -1;
+
     public isToken(): bool { return false; }
     public isNode(): bool{ return true; }
     public isList(): bool{ return false; }
@@ -43,9 +45,11 @@ class SyntaxNode implements ISyntaxElement {
         var result: any = { kind: (<any>SyntaxKind)._map[this.kind()] };
 
         for (var name in this) {
-            var value = this[name];
-            if (value && typeof value === 'object') {
-                result[name] = value;
+            if (name !== "_data") {
+                var value = this[name];
+                if (value && typeof value === 'object') {
+                    result[name] = value;
+                }
             }
         }
 
@@ -70,10 +74,6 @@ class SyntaxNode implements ISyntaxElement {
         return elements.join("");
     }
 
-    public fullWidth(): number {
-        throw Errors.abstract();
-    }
-
     public replaceToken(token1: ISyntaxToken, token2: ISyntaxToken): SyntaxNode {
         return this.accept(new SyntaxTokenReplacer(token1, token2));
     }
@@ -94,7 +94,27 @@ class SyntaxNode implements ISyntaxElement {
         return false;
     }
 
-    //public containsSkippedText() {
-    //    return this.get
-    //}
+    public hasSkippedText(): bool {
+        return (this.data() & Constants.NodeSkippedTextMask) !== 0;
+    }
+
+    public hasZeroWidthToken(): bool {
+        return (this.data() & Constants.NodeZeroWidthTokenMask) !== 0;
+    }
+
+    public fullWidth(): number {
+        return this.data() & Constants.NodeFullWidthMask;
+    }
+
+    private computeData(): number {
+        throw Errors.abstract();
+    }
+    
+    private data(): number {
+        if (this._data === -1) {
+            this._data = this.computeData();
+        }
+
+        return this._data;
+    }
 }

@@ -337,7 +337,7 @@ module Emitter {
             // token (return) ends.  The difference (in this case '2') is our offset.
 
             var difference = 0;
-            if (arrowToken.hasTrailingNewLineTrivia()) {
+            if (arrowToken.hasTrailingNewLine()) {
                 // The expression is on the next line.  i.e. 
                 //
                 //      foo =>

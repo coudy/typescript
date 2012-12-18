@@ -59,6 +59,14 @@ module Syntax {
         public isTypeScriptSpecific(): bool {
             return false;
         }
+
+        public hasSkippedText(): bool {
+            return false;
+        }
+
+        public hasZeroWidthToken(): bool {
+            return false;
+        }
     }
 
     export var emptyList: ISyntaxList = new EmptySyntaxList();
@@ -122,10 +130,19 @@ module Syntax {
         public isTypeScriptSpecific(): bool {
             return this._item.isTypeScriptSpecific();
         }
+
+        public hasSkippedText(): bool {
+            return this._item.hasSkippedText();
+        }
+
+        public hasZeroWidthToken(): bool {
+            return this._item.hasZeroWidthToken();
+        }
     }
 
     class NormalSyntaxList implements ISyntaxList {
         private nodes: SyntaxNode[];
+        private _data: number = -1;
 
         constructor(nodes: SyntaxNode[]) {
             this.nodes = nodes;
@@ -201,15 +218,6 @@ module Syntax {
             return elements.join("");
         }
 
-        public fullWidth(): number {
-            var width = 0
-            for (var i = 0, n = this.nodes.length; i < n; i++) {
-                width += this.nodes[i].fullWidth();
-            }
-
-            return width;
-        }
-
         public isTypeScriptSpecific(): bool {
             for (var i = 0, n = this.nodes.length; i < n; i++) {
                 if (this.nodes[i].isTypeScriptSpecific()) {
@@ -218,6 +226,41 @@ module Syntax {
             }
 
             return false;
+        }
+
+        public hasSkippedText(): bool {
+            return (this.data() & Constants.NodeSkippedTextMask) !== 0;
+        }
+
+        public hasZeroWidthToken(): bool {
+            return (this.data() & Constants.NodeZeroWidthTokenMask) !== 0;
+        }
+
+        public fullWidth(): number {
+            return this.data() & Constants.NodeFullWidthMask;
+        }
+
+        private computeData(): number {
+            var fullWidth = 0;
+            var hasSkippedText = false;
+            var hasZeroWidthToken = false;
+
+            for (var i = 0, n = this.nodes.length; i < n; i++) {
+                var node = this.nodes[i];
+                fullWidth += node.fullWidth();
+                hasSkippedText = hasSkippedText || node.hasSkippedText();
+                hasZeroWidthToken = hasZeroWidthToken || node.hasZeroWidthToken();
+            }
+
+            return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        }
+    
+        private data(): number {
+            if (this._data === -1) {
+                this._data = this.computeData();
+            }
+
+            return this._data;
         }
     }
 

@@ -7,18 +7,18 @@ module Syntax {
         var hash = 0;
 
         hash = Hash.combine(token.leadingTriviaWidth(), hash);
-        hash = Hash.combine(token.hasLeadingCommentTrivia() ? 1 : 0, hash);
-        hash = Hash.combine(token.hasLeadingNewLineTrivia() ? 1 : 0, hash);
-        hash = Hash.combine(token.hasLeadingSkippedTextTrivia() ? 1 : 0, hash);
+        hash = Hash.combine(token.hasLeadingComment() ? 1 : 0, hash);
+        hash = Hash.combine(token.hasLeadingNewLine() ? 1 : 0, hash);
+        hash = Hash.combine(token.hasLeadingSkippedText() ? 1 : 0, hash);
 
         hash = Hash.combine(token.kind(), hash);
         hash = Hash.combine(token.keywordKind(), hash);
         hash = Hash.combine(Hash.computeSimple31BitStringHashCode(token.text()), hash);
 
         hash = Hash.combine(token.trailingTriviaWidth(), hash);
-        hash = Hash.combine(token.hasTrailingCommentTrivia() ? 1 : 0, hash);
-        hash = Hash.combine(token.hasTrailingNewLineTrivia() ? 1 : 0, hash);
-        hash = Hash.combine(token.hasTrailingSkippedTextTrivia() ? 1 : 0, hash);
+        hash = Hash.combine(token.hasTrailingComment() ? 1 : 0, hash);
+        hash = Hash.combine(token.hasTrailingNewLine() ? 1 : 0, hash);
+        hash = Hash.combine(token.hasTrailingSkippedText() ? 1 : 0, hash);
 
         return hash;
     }
@@ -63,15 +63,15 @@ module Syntax {
             result.hasLeadingTrivia = true;
         }
 
-        if (token.hasLeadingCommentTrivia()) {
+        if (token.hasLeadingComment()) {
             result.hasLeadingCommentTrivia = true;
         }
 
-        if (token.hasLeadingNewLineTrivia()) {
+        if (token.hasLeadingNewLine()) {
             result.hasLeadingNewLineTrivia = true;
         }
 
-        if (token.hasLeadingSkippedTextTrivia()) {
+        if (token.hasLeadingSkippedText()) {
             result.hasLeadingSkippedTextTrivia = true;
         }
 
@@ -79,15 +79,15 @@ module Syntax {
             result.hasTrailingTrivia = true;
         }
 
-        if (token.hasTrailingCommentTrivia()) {
+        if (token.hasTrailingComment()) {
             result.hasTrailingCommentTrivia = true;
         }
 
-        if (token.hasTrailingNewLineTrivia()) {
+        if (token.hasTrailingNewLine()) {
             result.hasTrailingNewLineTrivia = true;
         }
 
-        if (token.hasTrailingSkippedTextTrivia()) {
+        if (token.hasTrailingSkippedText()) {
             result.hasTrailingSkippedTextTrivia = true;
         }
 
@@ -165,15 +165,18 @@ module Syntax {
         public text() { return ""; }
         public fullText(): string { return ""; }
         public value() { return null; }
+
         public hasLeadingTrivia() { return false; }
-        public hasLeadingCommentTrivia() { return false; }
-        public hasLeadingNewLineTrivia() { return false; }
-        public hasLeadingSkippedTextTrivia() { return false; }
+        public hasLeadingComment() { return false; }
+        public hasLeadingNewLine() { return false; }
+        public hasLeadingSkippedText() { return false; }
         public leadingTriviaWidth() { return 0; }
         public hasTrailingTrivia() { return false; }
-        public hasTrailingCommentTrivia() { return false; }
-        public hasTrailingNewLineTrivia() { return false; }
-        public hasTrailingSkippedTextTrivia() { return false; }
+        public hasTrailingComment() { return false; }
+        public hasTrailingNewLine() { return false; }
+        public hasTrailingSkippedText() { return false; }
+        public hasSkippedText() { return false; }
+
         public trailingTriviaWidth() { return 0; }
         public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
         public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
@@ -245,16 +248,18 @@ module Syntax {
         public value(): any { return this._value; }
 
         public hasLeadingTrivia(): bool { return this._leadingTrivia.count() > 0; }
-        public hasLeadingCommentTrivia(): bool { return this._leadingTrivia.hasComment(); }
-        public hasLeadingNewLineTrivia(): bool { return this._leadingTrivia.hasNewLine(); }
-        public hasLeadingSkippedTextTrivia(): bool { return this._leadingTrivia.hasSkippedText(); }
+        public hasLeadingComment(): bool { return this._leadingTrivia.hasComment(); }
+        public hasLeadingNewLine(): bool { return this._leadingTrivia.hasNewLine(); }
+        public hasLeadingSkippedText(): bool { return this._leadingTrivia.hasSkippedText(); }
         public leadingTriviaWidth(): number { return this._leadingTrivia.fullWidth(); }
 
         public hasTrailingTrivia(): bool { return this._trailingTrivia.count() > 0; }
-        public hasTrailingCommentTrivia(): bool { return this._trailingTrivia.hasComment(); }
-        public hasTrailingNewLineTrivia(): bool { return this._trailingTrivia.hasNewLine(); }
-        public hasTrailingSkippedTextTrivia(): bool { return this._trailingTrivia.hasSkippedText(); }
+        public hasTrailingComment(): bool { return this._trailingTrivia.hasComment(); }
+        public hasTrailingNewLine(): bool { return this._trailingTrivia.hasNewLine(); }
+        public hasTrailingSkippedText(): bool { return this._trailingTrivia.hasSkippedText(); }
         public trailingTriviaWidth(): number { return this._trailingTrivia.fullWidth(); }
+
+        public hasSkippedText(): bool { return this.hasLeadingSkippedText() || this.hasTrailingSkippedText(); }
 
         public leadingTrivia(): ISyntaxTriviaList { return this._leadingTrivia; }
         public trailingTrivia(): ISyntaxTriviaList { return this._trailingTrivia; }

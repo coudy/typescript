@@ -1771,69 +1771,6 @@ function generateUpdateMethod(definition: ITypeDefinition): string {
     return result;
 }
 
-//function generateRealizeMethod(definition: ITypeDefinition): string {
-//    if (definition.isAbstract) {
-//        return "";
-//    }
-
-//    var result = "";
-
-//    result += "\r\n";
-
-//    result += "    public update("
-
-//    for (var i = 0; i < definition.children.length; i++) {
-//        var child: IMemberDefinition = definition.children[i];
-
-//        result += getSafeName(child) + ": " + getType(child);
-
-//        if (i < definition.children.length - 1) {
-//            result += ",\r\n                  ";
-//        }
-//    }
-
-//    result += ") {\r\n";
-
-//    if (definition.children.length === 0) {
-//        result += "        return this;\r\n";
-//    }
-//    else {
-//        result += "        if (";
-
-//        for (var i = 0; i < definition.children.length; i++) {
-//            var child: IMemberDefinition = definition.children[i];
-
-//            if (i !== 0) {
-//                result += " && ";
-//            }
-
-//            result += getPropertyAccess(child) + " === " + getSafeName(child);
-//        }
-
-//        result += ") {\r\n";
-//        result += "            return this;\r\n";
-//        result += "        }\r\n\r\n";
-
-//        result += "        return new " + definition.name + "(";
-
-//        for (var i = 0; i < definition.children.length; i++) {
-//            var child: IMemberDefinition = definition.children[i];
-
-//            if (i !== 0) {
-//                result += ", ";
-//            }
-
-//            result += getSafeName(child);
-//        }
-
-//        result += ");\r\n";
-//    }
-
-//    result += "    }\r\n";
-
-//    return result;
-//}
-
 function generateIsTypeScriptSpecificMethod(definition: ITypeDefinition): string {
     var result = "\r\n    private isTypeScriptSpecific(): bool {\r\n";
 
@@ -1868,6 +1805,59 @@ function generateIsTypeScriptSpecificMethod(definition: ITypeDefinition): string
         result += "        return false;\r\n";
     }
 
+    result += "    }\r\n";
+
+    return result;
+}
+
+function generateComputeDataMethod(definition: ITypeDefinition): string {
+    if (definition.isAbstract) {
+        return "";
+    }
+
+    var result = "\r\n    private computeData(): number {\r\n";
+    result += "        var fullWidth = 0;\r\n";
+    result += "        var childWidth = 0;\r\n";
+    result += "        var hasSkippedText = false;\r\n";
+
+    // If we have no children (like an OmmittedExpressionSyntax), we automatically have a zero 
+    // width token.
+    result += "        var hasZeroWidthToken = " + (definition.children.length === 0) + ";\r\n";
+
+    for (var i = 0; i < definition.children.length; i++) {
+        var child = definition.children[i];
+
+        if (child.type === "SyntaxKind") {
+            continue;
+        }
+
+        var indent = "";
+        if (child.isOptional) {
+            result += "\r\n        if (" + getPropertyAccess(child) + " !== null) {\r\n";
+            indent = "    ";
+        }
+        else {
+            result += "\r\n";
+        }
+
+        result += indent + "        childWidth = " + getPropertyAccess(child) + ".fullWidth();\r\n";
+        result += indent + "        fullWidth += childWidth;\r\n";
+
+        result += indent + "        hasSkippedText = hasSkippedText || " + getPropertyAccess(child) + ".hasSkippedText();\r\n";
+
+        if (child.isToken) {
+            result += indent + "        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);\r\n";
+        }
+        else {
+            result += indent + "        hasZeroWidthToken = hasZeroWidthToken || " + getPropertyAccess(child) + ".hasZeroWidthToken();\r\n";
+        }
+
+        if (child.isOptional) {
+            result += "        }\r\n";
+        }
+    }
+
+    result += "\r\n        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);\r\n";
     result += "    }\r\n";
 
     return result;
@@ -1918,6 +1908,7 @@ function generateNode(definition: ITypeDefinition): string {
     result += generateWithMethods(definition);
     result += generateCollectTextElementsMethod(definition);
     result += generateIsTypeScriptSpecificMethod(definition);
+    result += generateComputeDataMethod(definition);
 
     result += "}";
 
@@ -2277,22 +2268,23 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
     }
 
     result += "        public hasLeadingTrivia(): bool { return " + (leading ? "true" : "false") + "; }\r\n";
-    result += "        public hasLeadingCommentTrivia(): bool { return " + (leading ? "hasTriviaComment(this._leadingTriviaInfo)" : "false") + "; }\r\n";
-    result += "        public hasLeadingNewLineTrivia(): bool { return " + (leading ? "hasTriviaNewLine(this._leadingTriviaInfo)" : "false") + "; }\r\n";
-    result += "        public hasLeadingSkippedTextTrivia(): bool { return false; }\r\n";
+    result += "        public hasLeadingComment(): bool { return " + (leading ? "hasTriviaComment(this._leadingTriviaInfo)" : "false") + "; }\r\n";
+    result += "        public hasLeadingNewLine(): bool { return " + (leading ? "hasTriviaNewLine(this._leadingTriviaInfo)" : "false") + "; }\r\n";
+    result += "        public hasLeadingSkippedText(): bool { return false; }\r\n";
     result += "        public leadingTriviaWidth(): number { return " + (leading ? "getTriviaWidth(this._leadingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public leadingTrivia(): ISyntaxTriviaList { return " + (leading
         ? "Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), /*isTrailing:*/ false)"
         : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
 
     result += "        public hasTrailingTrivia(): bool { return " + (trailing ? "true" : "false") + "; }\r\n";
-    result += "        public hasTrailingCommentTrivia(): bool { return " + (trailing ? "hasTriviaComment(this._trailingTriviaInfo)" : "false") + "; }\r\n";
-    result += "        public hasTrailingNewLineTrivia(): bool { return " + (trailing ? "hasTriviaNewLine(this._trailingTriviaInfo)" : "false") + "; }\r\n";
-    result += "        public hasTrailingSkippedTextTrivia(): bool { return false; }\r\n";
+    result += "        public hasTrailingComment(): bool { return " + (trailing ? "hasTriviaComment(this._trailingTriviaInfo)" : "false") + "; }\r\n";
+    result += "        public hasTrailingNewLine(): bool { return " + (trailing ? "hasTriviaNewLine(this._trailingTriviaInfo)" : "false") + "; }\r\n";
+    result += "        public hasTrailingSkippedText(): bool { return false; }\r\n";
     result += "        public trailingTriviaWidth(): number { return " + (trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public trailingTrivia(): ISyntaxTriviaList { return " + (trailing
         ? "Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true)"
         : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
+    result += "        public hasSkippedText(): bool { return false; }\r\n";
 
     result += 
 "        public toJSON(key) { return tokenToJSON(this); }\r\n" +

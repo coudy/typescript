@@ -68,6 +68,14 @@ module Syntax {
         public isTypeScriptSpecific(): bool {
             return false;
         }
+
+        public hasSkippedText(): bool {
+            return false;
+        }
+
+        public hasZeroWidthToken(): bool {
+            return false;
+        }
     }
 
     class SingletonSeparatedSyntaxList implements ISeparatedSyntaxList {
@@ -145,10 +153,19 @@ module Syntax {
         public isTypeScriptSpecific(): bool {
             return this.item.isTypeScriptSpecific();
         }
+
+        public hasSkippedText(): bool {
+            return this.item.hasSkippedText();
+        }
+
+        public hasZeroWidthToken(): bool {
+            return this.item.hasZeroWidthToken();
+        }
     }
 
     class NormalSeparatedSyntaxList implements ISeparatedSyntaxList {
         private elements: ISyntaxElement[];
+        private _data: number = -1;
 
         constructor(elements: ISyntaxElement[]) {
             this.elements = elements;
@@ -249,15 +266,6 @@ module Syntax {
             return null;
         }
 
-        public fullWidth(): number {
-            var width = 0
-            for (var i = 0, n = this.elements.length; i < n; i++) {
-                width += this.elements[i].fullWidth();
-            }
-
-            return width;
-        }
-
         public fullText(): string {
             var elements: string[] = [];
             this.collectTextElements(elements);
@@ -285,6 +293,52 @@ module Syntax {
             }
 
             return false;
+        }
+
+        public hasSkippedText(): bool {
+            return (this.data() & Constants.NodeSkippedTextMask) !== 0;
+        }
+
+        public hasZeroWidthToken(): bool {
+            return (this.data() & Constants.NodeZeroWidthTokenMask) !== 0;
+        }
+
+        public fullWidth(): number {
+            return this.data() & Constants.NodeFullWidthMask;
+        }
+
+        private computeData(): number {
+            var fullWidth = 0;
+            var hasSkippedText = false;
+            var hasZeroWidthToken = false;
+
+            for (var i = this.elements.length - 1; i >= 0; i--) {
+                if (i % 2 === 0) {
+                    var node = <SyntaxNode>this.elements[i];
+
+                    fullWidth += node.fullWidth();
+                    hasSkippedText = hasSkippedText || node.hasSkippedText();
+                    hasZeroWidthToken = hasZeroWidthToken || node.hasZeroWidthToken();
+                }
+                else {
+                    var token = <ISyntaxToken>this.elements[i];
+
+                    var tokenWidth = token.fullWidth();
+                    fullWidth += tokenWidth;
+                    hasSkippedText = hasSkippedText || token.hasSkippedText();
+                    hasZeroWidthToken = hasZeroWidthToken || (tokenWidth === 0);
+                }
+            }
+
+            return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        }
+    
+        private data(): number {
+            if (this._data === -1) {
+                this._data = this.computeData();
+            }
+
+            return this._data;
         }
     }
 

@@ -77,6 +77,6 @@ class SyntaxInformationMap extends SyntaxWalker {
     }
 
     private isFirstTokenInLineWorker(information: ITokenInformation): bool {
-        return information.previousToken === null || information.previousToken.hasTrailingNewLineTrivia();
+        return information.previousToken === null || information.previousToken.hasTrailingNewLine();
     }
 }

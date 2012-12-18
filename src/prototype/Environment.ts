@@ -173,7 +173,7 @@ var Environment = (function () {
                 var buffer = _fs.readFileSync(file);
                 switch (buffer[0]) {
                     case 0xFE:
-                        if (buffer[1] == 0xFF) {
+                        if (buffer[1] === 0xFF) {
                             // utf16-be. Reading the buffer as big endian is not supported, so convert it to 
                             // Little Endian first
                             var i = 0;
@@ -187,13 +187,13 @@ var Environment = (function () {
                         }
                         break;
                     case 0xFF:
-                        if (buffer[1] == 0xFE) {
+                        if (buffer[1] === 0xFE) {
                             // utf16-le 
                             return buffer.toString("ucs2", 2);
                         }
                         break;
                     case 0xEF:
-                        if (buffer[1] == 0xBB) {
+                        if (buffer[1] === 0xBB) {
                             // utf-8
                             return buffer.toString("utf8", 3);
                         }

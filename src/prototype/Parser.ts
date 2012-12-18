@@ -421,7 +421,7 @@ module Parser {
             }
 
             // It is also allowed if there is a newline between the last token seen and the next one.
-            if (this.previousToken !== null && this.previousToken.hasTrailingNewLineTrivia()) {
+            if (this.previousToken !== null && this.previousToken.hasTrailingNewLine()) {
                 return true;
             }
 
@@ -2355,7 +2355,7 @@ module Parser {
                     case SyntaxKind.MinusMinusToken:
                         // Because of automatic semicolon insertion, we should only consume the ++ or -- 
                         // if it is on the same line as the previous token.
-                        if (this.previousToken !== null && this.previousToken.hasTrailingNewLineTrivia()) {
+                        if (this.previousToken !== null && this.previousToken.hasTrailingNewLine()) {
                             return expression;
                         }
 

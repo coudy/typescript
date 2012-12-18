@@ -39,7 +39,7 @@ class SyntaxDedenter extends SyntaxRewriter {
             return token;
         }
 
-        this.lastTriviaWasNewLine = token.hasTrailingNewLineTrivia();
+        this.lastTriviaWasNewLine = token.hasTrailingNewLine();
         return result;
     }
 

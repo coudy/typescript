@@ -10,4 +10,7 @@ interface ISyntaxList extends ISyntaxElement {
     lastToken(): ISyntaxToken;
 
     isTypeScriptSpecific(): bool;
+
+    hasSkippedText(): bool;
+    hasZeroWidthToken(): bool;
 }
