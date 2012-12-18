@@ -124,6 +124,17 @@ for (var i = 0 /*var*/, j = 0 /*and*/; i < 10 /*condition*/; i++) {
 // class
 var X = (function() {
     function X() {
+        // z
+        this.z = {
+            // z.a BUG? z.a after : but also different ordering of the two comments for a vs b
+            a: 1, // and BUG?
+            /* z.b */
+            b: "" // also BUG?
+            };
+        // y
+        this.y = "";
+
+        this.x = 1;
     }
     // public
     X.prototype.x1 = function(/*x*/x/*x2*/,/*y*/y/*y2*/) {
@@ -140,6 +151,10 @@ var X = (function() {
 // class
 var X2 = (function() {
     function X2() {
+        // y
+        this.y = "";
+        // x
+        this.x = 1;
     }
     return X2;
 })();
@@ -147,6 +162,10 @@ var X2 = (function() {
 // class
 var X3 = (function() {
     function X3() {
+        /* y */
+        this.y = new X(/*hm*/);
+        // x
+        this.x = {};
     }
     // public
     X3.prototype.foo = function() {
@@ -338,6 +357,10 @@ var M1;
     // class
     var X2 = (function() {
         function X2() {
+                // y
+                this.y = "";
+                // x
+                this.x = 1;
         }
         return X2;
     })();
@@ -345,6 +368,10 @@ var M1;
     // class
     var X3 = (function() {
         function X3() {
+                /* y */
+                this.y = new X(/*hm*/);
+                // x
+                this.x = { /* hello */ };
         }
         // public
         X3.prototype.foo = function() {

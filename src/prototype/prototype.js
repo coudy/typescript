@@ -20535,6 +20535,10 @@ var Emitter;
                 superStatement = this.changeIndentation(superStatement, true, this.options.indentSpaces);
                 statements.push(superStatement);
             }
+            var instanceAssignments = this.generatePropertyAssignments(classDeclaration, false);
+            for(var i = 0; i < instanceAssignments.length; i++) {
+                statements.push(instanceAssignments[i]);
+            }
             var block = new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), SyntaxList.create(statements), Syntax.token(68 /* CloseBraceToken */ )).withTrailingTrivia(this.newLine);
             var functionDeclaration = new FunctionDeclarationSyntax(null, null, Syntax.token(25 /* FunctionKeyword */ ).withTrailingTrivia(this.space), functionSignature, block, null);
             var classIndentation = this.columnForStartOfToken(classDeclaration.firstToken());
@@ -20669,8 +20673,7 @@ var Emitter;
             }
             var accessorColumn = this.columnForStartOfToken(memberAccessor.firstToken());
             var accessorTrivia = this.indentationTrivia(accessorColumn);
-            var propertyColumn = accessorColumn + this.options.indentSpaces;
-            var propertyTrivia = this.indentationTrivia(propertyColumn);
+            var propertyTrivia = this.indentationTrivia(accessorColumn + this.options.indentSpaces);
             propertyAssignments.push(new SimplePropertyAssignmentSyntax(Syntax.identifier("enumerable"), Syntax.token(103 /* ColonToken */ ).withTrailingTrivia(this.space), Syntax.trueExpression()).withLeadingTrivia(propertyTrivia));
             propertyAssignments.push(Syntax.token(76 /* CommaToken */ ).withTrailingTrivia(this.newLine));
             propertyAssignments.push(new SimplePropertyAssignmentSyntax(Syntax.identifier("configurable"), Syntax.token(103 /* ColonToken */ ).withTrailingTrivia(this.space), Syntax.trueExpression()).withLeadingTrivia(propertyTrivia).withTrailingTrivia(this.newLine));

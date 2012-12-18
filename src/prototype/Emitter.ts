@@ -630,6 +630,15 @@ module Emitter {
                 statements.push(superStatement);
             }
 
+            var instanceAssignments = this.generatePropertyAssignments(
+                classDeclaration, /*static:*/ false);
+
+            for (var i = 0; i < instanceAssignments.length; i++) {
+                //var expressionStatement = <StatementSyntax>this.changeIndentation(
+                //    instanceAssignments[i], /*changeFirstToken:*/ true, this.options.indentSpaces);
+                statements.push(instanceAssignments[i]);
+            }
+
             var block = new BlockSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
                 SyntaxList.create(statements),
@@ -857,9 +866,7 @@ module Emitter {
 
             var accessorColumn = this.columnForStartOfToken(memberAccessor.firstToken());
             var accessorTrivia = this.indentationTrivia(accessorColumn);
-
-            var propertyColumn = accessorColumn + this.options.indentSpaces;
-            var propertyTrivia = this.indentationTrivia(propertyColumn);
+            var propertyTrivia = this.indentationTrivia(accessorColumn + this.options.indentSpaces);
 
             propertyAssignments.push(new SimplePropertyAssignmentSyntax(
                 Syntax.identifier("enumerable"),
