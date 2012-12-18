@@ -1100,11 +1100,11 @@ module Emitter {
                 }
             }
 
-            var indentationTrivia = this.indentationTrivia(enumColumn);
             var block = new BlockSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
                 SyntaxList.create(statements),
-                Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(indentationTrivia));
+                Syntax.token(SyntaxKind.CloseBraceToken)
+                    .withLeadingTrivia(this.indentationTrivia(enumColumn)));
 
             var parameterList = ParameterListSyntax.create1().withParameter(ParameterSyntax.create1(identifier)).withTrailingTrivia(this.space);
 
