@@ -119,7 +119,7 @@ class SourceUnitSyntax extends SyntaxNode {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -327,7 +327,7 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -433,7 +433,7 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -625,7 +625,7 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -945,7 +945,7 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -1187,7 +1187,7 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -1333,7 +1333,7 @@ class ExtendsClauseSyntax extends SyntaxNode {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -1463,7 +1463,7 @@ class ImplementsClauseSyntax extends SyntaxNode {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -1750,7 +1750,7 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -2040,7 +2040,7 @@ class FunctionDeclarationSyntax extends StatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -2252,7 +2252,7 @@ class VariableStatementSyntax extends StatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -2431,7 +2431,7 @@ class VariableDeclarationSyntax extends SyntaxNode {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -2588,7 +2588,7 @@ class VariableDeclaratorSyntax extends SyntaxNode {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -2723,7 +2723,7 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -2863,7 +2863,7 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -2966,7 +2966,7 @@ class ThisExpressionSyntax extends UnaryExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -3086,7 +3086,7 @@ class LiteralExpressionSyntax extends UnaryExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -3241,7 +3241,7 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -3316,7 +3316,7 @@ class OmittedExpressionSyntax extends ExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         throw Errors.invalidOperation();
     }
 }
@@ -3455,7 +3455,7 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -3635,7 +3635,7 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -3788,7 +3788,7 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -3926,7 +3926,7 @@ class IdentifierNameSyntax extends NameSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -4074,7 +4074,7 @@ class QualifiedNameSyntax extends NameSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -4250,7 +4250,7 @@ class ConstructorTypeSyntax extends TypeSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -4407,7 +4407,7 @@ class FunctionTypeSyntax extends TypeSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -4569,7 +4569,7 @@ class ObjectTypeSyntax extends TypeSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -4722,7 +4722,7 @@ class ArrayTypeSyntax extends TypeSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -4833,7 +4833,7 @@ class PredefinedTypeSyntax extends TypeSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -4955,7 +4955,7 @@ class TypeAnnotationSyntax extends SyntaxNode {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -5114,7 +5114,7 @@ class BlockSyntax extends StatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -5359,7 +5359,7 @@ class ParameterSyntax extends SyntaxNode {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -5537,7 +5537,7 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -5671,7 +5671,7 @@ class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -5846,7 +5846,7 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -5982,7 +5982,7 @@ class InvocationExpressionSyntax extends UnaryExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -6141,7 +6141,7 @@ class ArgumentListSyntax extends SyntaxNode {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -6339,7 +6339,7 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -6543,7 +6543,7 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -6732,7 +6732,7 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -6922,7 +6922,7 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -7113,7 +7113,7 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -7281,7 +7281,7 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -7448,7 +7448,7 @@ class ParameterListSyntax extends SyntaxNode {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -7585,7 +7585,7 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -7714,7 +7714,7 @@ class ElseClauseSyntax extends SyntaxNode {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -7945,7 +7945,7 @@ class IfStatementSyntax extends StatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -8090,7 +8090,7 @@ class ExpressionStatementSyntax extends StatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -8290,7 +8290,7 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -8540,7 +8540,7 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -8855,7 +8855,7 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -9114,7 +9114,7 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -9319,7 +9319,7 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -9481,7 +9481,7 @@ class ThrowStatementSyntax extends StatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -9641,7 +9641,7 @@ class ReturnStatementSyntax extends StatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -9804,7 +9804,7 @@ class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -10066,7 +10066,7 @@ class SwitchStatementSyntax extends StatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -10296,7 +10296,7 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -10463,7 +10463,7 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -10625,7 +10625,7 @@ class BreakStatementSyntax extends StatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -10789,7 +10789,7 @@ class ContinueStatementSyntax extends StatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -11191,7 +11191,7 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -11511,7 +11511,7 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -11737,7 +11737,7 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -11947,7 +11947,7 @@ class WithStatementSyntax extends StatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -12192,7 +12192,7 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -12383,7 +12383,7 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -12550,7 +12550,7 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -12734,7 +12734,7 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -12968,7 +12968,7 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -13200,7 +13200,7 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -13400,7 +13400,7 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -13513,7 +13513,7 @@ class EmptyStatementSyntax extends StatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -13612,7 +13612,7 @@ class SuperExpressionSyntax extends UnaryExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -13790,7 +13790,7 @@ class TryStatementSyntax extends StatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -13998,7 +13998,7 @@ class CatchClauseSyntax extends SyntaxNode {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -14137,7 +14137,7 @@ class FinallyClauseSyntax extends SyntaxNode {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -14288,7 +14288,7 @@ class LabeledStatement extends StatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -14536,7 +14536,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -14683,7 +14683,7 @@ class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -14810,7 +14810,7 @@ class DeleteExpressionSyntax extends UnaryExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -14937,7 +14937,7 @@ class VoidExpressionSyntax extends UnaryExpressionSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
@@ -15063,7 +15063,7 @@ class DebuggerStatementSyntax extends StatementSyntax {
         return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
     }
 
-    private elementThatContainsPositionMethod(position: number): ISyntaxElement {
+    private elementThatContainsPosition(position: number): ISyntaxElement {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 

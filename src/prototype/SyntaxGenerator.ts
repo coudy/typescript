@@ -1868,7 +1868,7 @@ function generateElementThatContainsPositionMethod(definition: ITypeDefinition):
         return "";
     }
 
-    var result = "\r\n    private elementThatContainsPositionMethod(position: number): ISyntaxElement {\r\n";
+    var result = "\r\n    private elementThatContainsPosition(position: number): ISyntaxElement {\r\n";
 
     if (definition.children.length > 0) {
         result += "        Debug.assert(position >= 0 && position < this.fullWidth());\r\n";

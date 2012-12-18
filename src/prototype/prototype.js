@@ -2185,7 +2185,7 @@ var SourceUnitSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    SourceUnitSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    SourceUnitSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._moduleElements.fullWidth();
@@ -2379,7 +2379,7 @@ var ExternalModuleReferenceSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ExternalModuleReferenceSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ExternalModuleReferenceSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._moduleKeyword.fullWidth();
@@ -2476,7 +2476,7 @@ var ModuleNameModuleReferenceSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._moduleName.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ModuleNameModuleReferenceSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ModuleNameModuleReferenceSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._moduleName.fullWidth();
@@ -2657,7 +2657,7 @@ var ImportDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ImportDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ImportDeclarationSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._importKeyword.fullWidth();
@@ -2976,7 +2976,7 @@ var ClassDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ClassDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ClassDeclarationSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._exportKeyword !== null) {
@@ -3215,7 +3215,7 @@ var InterfaceDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._body.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    InterfaceDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    InterfaceDeclarationSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._exportKeyword !== null) {
@@ -3353,7 +3353,7 @@ var ExtendsClauseSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._typeNames.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ExtendsClauseSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ExtendsClauseSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._extendsKeyword.fullWidth();
@@ -3472,7 +3472,7 @@ var ImplementsClauseSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._typeNames.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ImplementsClauseSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ImplementsClauseSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._implementsKeyword.fullWidth();
@@ -3757,7 +3757,7 @@ var ModuleDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ModuleDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ModuleDeclarationSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._exportKeyword !== null) {
@@ -4055,7 +4055,7 @@ var FunctionDeclarationSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    FunctionDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    FunctionDeclarationSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._exportKeyword !== null) {
@@ -4269,7 +4269,7 @@ var VariableStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    VariableStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    VariableStatementSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._exportKeyword !== null) {
@@ -4437,7 +4437,7 @@ var VariableDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._variableDeclarators.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    VariableDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    VariableDeclarationSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._varKeyword.fullWidth();
@@ -4586,7 +4586,7 @@ var VariableDeclaratorSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    VariableDeclaratorSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    VariableDeclaratorSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._identifier.fullWidth();
@@ -4712,7 +4712,7 @@ var EqualsValueClauseSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._value.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    EqualsValueClauseSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    EqualsValueClauseSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._equalsToken.fullWidth();
@@ -4845,7 +4845,7 @@ var PrefixUnaryExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._operand.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    PrefixUnaryExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    PrefixUnaryExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._operatorToken.fullWidth();
@@ -4935,7 +4935,7 @@ var ThisExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ThisExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ThisExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._thisKeyword.fullWidth();
@@ -5049,7 +5049,7 @@ var LiteralExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    LiteralExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    LiteralExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._literalToken.fullWidth();
@@ -5193,7 +5193,7 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ArrayLiteralExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ArrayLiteralExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._openBracketToken.fullWidth();
@@ -5258,7 +5258,7 @@ var OmittedExpressionSyntax = (function (_super) {
         var hasZeroWidthToken = true;
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    OmittedExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    OmittedExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         throw Errors.invalidOperation();
     };
     return OmittedExpressionSyntax;
@@ -5387,7 +5387,7 @@ var ParenthesizedExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ParenthesizedExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ParenthesizedExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._openParenToken.fullWidth();
@@ -5552,7 +5552,7 @@ var SimpleArrowFunctionExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._body.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    SimpleArrowFunctionExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    SimpleArrowFunctionExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._identifier.fullWidth();
@@ -5695,7 +5695,7 @@ var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._body.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ParenthesizedArrowFunctionExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ParenthesizedArrowFunctionExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._callSignature.fullWidth();
@@ -5819,7 +5819,7 @@ var IdentifierNameSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    IdentifierNameSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    IdentifierNameSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._identifier.fullWidth();
@@ -5958,7 +5958,7 @@ var QualifiedNameSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._right.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    QualifiedNameSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    QualifiedNameSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._left.fullWidth();
@@ -6125,7 +6125,7 @@ var ConstructorTypeSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ConstructorTypeSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ConstructorTypeSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._newKeyword.fullWidth();
@@ -6273,7 +6273,7 @@ var FunctionTypeSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    FunctionTypeSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    FunctionTypeSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._parameterList.fullWidth();
@@ -6424,7 +6424,7 @@ var ObjectTypeSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ObjectTypeSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ObjectTypeSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._openBraceToken.fullWidth();
@@ -6567,7 +6567,7 @@ var ArrayTypeSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ArrayTypeSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ArrayTypeSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._type.fullWidth();
@@ -6670,7 +6670,7 @@ var PredefinedTypeSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    PredefinedTypeSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    PredefinedTypeSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._keyword.fullWidth();
@@ -6779,7 +6779,7 @@ var TypeAnnotationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    TypeAnnotationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    TypeAnnotationSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._colonToken.fullWidth();
@@ -6928,7 +6928,7 @@ var BlockSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    BlockSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    BlockSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._openBraceToken.fullWidth();
@@ -7181,7 +7181,7 @@ var ParameterSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ParameterSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ParameterSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._dotDotDotToken !== null) {
@@ -7355,7 +7355,7 @@ var MemberAccessExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._identifierName.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    MemberAccessExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    MemberAccessExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._expression.fullWidth();
@@ -7481,7 +7481,7 @@ var PostfixUnaryExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    PostfixUnaryExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    PostfixUnaryExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._operand.fullWidth();
@@ -7649,7 +7649,7 @@ var ElementAccessExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ElementAccessExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ElementAccessExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._expression.fullWidth();
@@ -7779,7 +7779,7 @@ var InvocationExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._argumentList.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    InvocationExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    InvocationExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._expression.fullWidth();
@@ -7928,7 +7928,7 @@ var ArgumentListSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ArgumentListSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ArgumentListSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._openParenToken.fullWidth();
@@ -8128,7 +8128,7 @@ var BinaryExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._right.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    BinaryExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    BinaryExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._left.fullWidth();
@@ -8328,7 +8328,7 @@ var ConditionalExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._whenFalse.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ConditionalExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ConditionalExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._condition.fullWidth();
@@ -8504,7 +8504,7 @@ var ConstructSignatureSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ConstructSignatureSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ConstructSignatureSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._newKeyword.fullWidth();
@@ -8689,7 +8689,7 @@ var FunctionSignatureSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    FunctionSignatureSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    FunctionSignatureSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._identifier.fullWidth();
@@ -8869,7 +8869,7 @@ var IndexSignatureSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    IndexSignatureSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    IndexSignatureSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._openBracketToken.fullWidth();
@@ -9029,7 +9029,7 @@ var PropertySignatureSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    PropertySignatureSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    PropertySignatureSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._identifier.fullWidth();
@@ -9187,7 +9187,7 @@ var ParameterListSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ParameterListSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ParameterListSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._openParenToken.fullWidth();
@@ -9316,7 +9316,7 @@ var CallSignatureSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    CallSignatureSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    CallSignatureSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._parameterList.fullWidth();
@@ -9435,7 +9435,7 @@ var ElseClauseSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ElseClauseSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ElseClauseSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._elseKeyword.fullWidth();
@@ -9658,7 +9658,7 @@ var IfStatementSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    IfStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    IfStatementSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._ifKeyword.fullWidth();
@@ -9797,7 +9797,7 @@ var ExpressionStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ExpressionStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ExpressionStatementSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._expression.fullWidth();
@@ -9985,7 +9985,7 @@ var ConstructorDeclarationSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ConstructorDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ConstructorDeclarationSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._constructorKeyword.fullWidth();
@@ -10229,7 +10229,7 @@ var MemberFunctionDeclarationSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    MemberFunctionDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    MemberFunctionDeclarationSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._publicOrPrivateKeyword !== null) {
@@ -10533,7 +10533,7 @@ var GetMemberAccessorDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    GetMemberAccessorDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    GetMemberAccessorDeclarationSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._publicOrPrivateKeyword !== null) {
@@ -10789,7 +10789,7 @@ var SetMemberAccessorDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    SetMemberAccessorDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    SetMemberAccessorDeclarationSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._publicOrPrivateKeyword !== null) {
@@ -10990,7 +10990,7 @@ var MemberVariableDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    MemberVariableDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    MemberVariableDeclarationSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._publicOrPrivateKeyword !== null) {
@@ -11145,7 +11145,7 @@ var ThrowStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ThrowStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ThrowStatementSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._throwKeyword.fullWidth();
@@ -11295,7 +11295,7 @@ var ReturnStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ReturnStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ReturnStatementSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._returnKeyword.fullWidth();
@@ -11450,7 +11450,7 @@ var ObjectCreationExpressionSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ObjectCreationExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ObjectCreationExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._newKeyword.fullWidth();
@@ -11705,7 +11705,7 @@ var SwitchStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    SwitchStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    SwitchStatementSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._switchKeyword.fullWidth();
@@ -11928,7 +11928,7 @@ var CaseSwitchClauseSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._statements.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    CaseSwitchClauseSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    CaseSwitchClauseSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._caseKeyword.fullWidth();
@@ -12087,7 +12087,7 @@ var DefaultSwitchClauseSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._statements.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    DefaultSwitchClauseSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    DefaultSwitchClauseSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._defaultKeyword.fullWidth();
@@ -12239,7 +12239,7 @@ var BreakStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    BreakStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    BreakStatementSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._breakKeyword.fullWidth();
@@ -12393,7 +12393,7 @@ var ContinueStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ContinueStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ContinueStatementSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._continueKeyword.fullWidth();
@@ -12784,7 +12784,7 @@ var ForStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ForStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ForStatementSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._forKeyword.fullWidth();
@@ -13107,7 +13107,7 @@ var ForInStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ForInStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ForInStatementSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._forKeyword.fullWidth();
@@ -13333,7 +13333,7 @@ var WhileStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    WhileStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    WhileStatementSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._whileKeyword.fullWidth();
@@ -13540,7 +13540,7 @@ var WithStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    WithStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    WithStatementSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._withKeyword.fullWidth();
@@ -13779,7 +13779,7 @@ var EnumDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    EnumDeclarationSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    EnumDeclarationSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._exportKeyword !== null) {
@@ -13963,7 +13963,7 @@ var CastExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    CastExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    CastExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._lessThanToken.fullWidth();
@@ -14122,7 +14122,7 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    ObjectLiteralExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    ObjectLiteralExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._openBraceToken.fullWidth();
@@ -14296,7 +14296,7 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    SimplePropertyAssignmentSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    SimplePropertyAssignmentSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._propertyName.fullWidth();
@@ -14518,7 +14518,7 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    GetAccessorPropertyAssignmentSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    GetAccessorPropertyAssignmentSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._getKeyword.fullWidth();
@@ -14746,7 +14746,7 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    SetAccessorPropertyAssignmentSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    SetAccessorPropertyAssignmentSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._setKeyword.fullWidth();
@@ -14943,7 +14943,7 @@ var FunctionExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    FunctionExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    FunctionExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._functionKeyword.fullWidth();
@@ -15045,7 +15045,7 @@ var EmptyStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    EmptyStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    EmptyStatementSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._semicolonToken.fullWidth();
@@ -15130,7 +15130,7 @@ var SuperExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    SuperExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    SuperExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._superKeyword.fullWidth();
@@ -15301,7 +15301,7 @@ var TryStatementSyntax = (function (_super) {
         }
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    TryStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    TryStatementSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._tryKeyword.fullWidth();
@@ -15504,7 +15504,7 @@ var CatchClauseSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    CatchClauseSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    CatchClauseSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._catchKeyword.fullWidth();
@@ -15636,7 +15636,7 @@ var FinallyClauseSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    FinallyClauseSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    FinallyClauseSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._finallyKeyword.fullWidth();
@@ -15777,7 +15777,7 @@ var LabeledStatement = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    LabeledStatement.prototype.elementThatContainsPositionMethod = function (position) {
+    LabeledStatement.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._identifier.fullWidth();
@@ -16022,7 +16022,7 @@ var DoStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    DoStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    DoStatementSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._doKeyword.fullWidth();
@@ -16164,7 +16164,7 @@ var TypeOfExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    TypeOfExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    TypeOfExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._typeOfKeyword.fullWidth();
@@ -16281,7 +16281,7 @@ var DeleteExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    DeleteExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    DeleteExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._deleteKeyword.fullWidth();
@@ -16398,7 +16398,7 @@ var VoidExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    VoidExpressionSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    VoidExpressionSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._voidKeyword.fullWidth();
@@ -16512,7 +16512,7 @@ var DebuggerStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return fullWidth | (hasSkippedText ? 1073741824 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 536870912 /* NodeZeroWidthTokenMask */  : 0);
     };
-    DebuggerStatementSyntax.prototype.elementThatContainsPositionMethod = function (position) {
+    DebuggerStatementSyntax.prototype.elementThatContainsPosition = function (position) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._debuggerKeyword.fullWidth();
@@ -30193,6 +30193,10 @@ var Program = (function () {
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {
         var _this = this;
         environment.standardOut.WriteLine("");
+        environment.standardOut.WriteLine("Testing findToken.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
+            return _this.runFindToken(environment, filePath, 1 /* EcmaScript5 */ , verify, false);
+        });
         environment.standardOut.WriteLine("Testing trivia.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\trivia\\ecmascript5", function (filePath) {
             return _this.runTrivia(environment, filePath, 1 /* EcmaScript5 */ , verify, false);
@@ -30317,8 +30321,40 @@ var Program = (function () {
             this.checkResult(filePath, tree, verify, generateBaseline, false);
         }
     };
+    Program.prototype.runFindToken = function (environment, filePath, languageVersion, verify, generateBaseline) {
+        if(!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
+            return;
+        }
+        if(filePath.indexOf("RealSource") >= 0) {
+            return;
+        }
+        var contents = environment.readFile(filePath, true);
+        var start, end;
+        start = new Date().getTime();
+        totalSize += contents.length;
+        var text = TextFactory.create(contents);
+        var tree = Parser.parse(text, languageVersion, stringTable);
+        var sourceUnit = tree.sourceUnit();
+        end = new Date().getTime();
+        totalTime += (end - start);
+        Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
+        var result = {
+        };
+        for(var i = 0; i <= contents.length; i++) {
+            var token = sourceUnit.findToken(i);
+            Debug.assert(token.isToken());
+            if(i === contents.length) {
+                Debug.assert(token.kind() === 118 /* EndOfFileToken */ );
+            } else {
+                Debug.assert(!token.isMissing());
+                Debug.assert(token.width() > 0 || token.kind() === 118 /* EndOfFileToken */ );
+                Debug.assert(token.fullWidth() > 0);
+            }
+            result[i] = token;
+        }
+        this.checkResult(filePath, result, verify, generateBaseline, false);
+    };
     Program.prototype.runTrivia = function (environment, filePath, languageVersion, verify, generateBaseline) {
-        if (typeof generateBaseline === "undefined") { generateBaseline = false; }
         if(!StringUtilities.endsWith(filePath, ".ts")) {
             return;
         }

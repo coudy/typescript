@@ -16,6 +16,10 @@ class Program {
     runAllTests(environment: IEnvironment, useTypeScript: bool, verify: bool): void {
         environment.standardOut.WriteLine("");
             
+        environment.standardOut.WriteLine("Testing findToken.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5",
+            filePath => this.runFindToken(environment, filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false));
+            
         environment.standardOut.WriteLine("Testing trivia.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\trivia\\ecmascript5",
             filePath => this.runTrivia(environment, filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false));
@@ -188,8 +192,56 @@ class Program {
         }
     }
 
+    runFindToken(environment: IEnvironment, filePath: string,
+        languageVersion: LanguageVersion, verify: bool, generateBaseline: bool): void {
+        if (!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
+            return;
+        }
+
+        if (filePath.indexOf("RealSource") >= 0) {
+            return;
+        }
+
+        var contents = environment.readFile(filePath, /*useUTF8:*/ true);
+        // environment.standardOut.WriteLine(filePath);
+
+        var start: number, end: number;
+        start = new Date().getTime();
+
+        totalSize += contents.length;
+
+        var text = TextFactory.create(contents);
+        var tree = Parser.parse(text, languageVersion, stringTable);
+        var sourceUnit = tree.sourceUnit();
+
+        end = new Date().getTime();
+        totalTime += (end - start);
+
+        Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
+
+        var result = {};
+
+        for (var i = 0; i <= contents.length; i++) {
+            var token = sourceUnit.findToken(i);
+
+            Debug.assert(token.isToken());
+            if (i === contents.length) {
+                Debug.assert(token.kind() === SyntaxKind.EndOfFileToken);
+            }
+            else {
+                Debug.assert(!token.isMissing());
+                Debug.assert(token.width() > 0 || token.kind() === SyntaxKind.EndOfFileToken);
+                Debug.assert(token.fullWidth() > 0);
+            }
+
+            result[i] = token;
+        }
+        
+        this.checkResult(filePath, result, verify, generateBaseline, /*justText:*/ false);
+    }
+
     runTrivia(environment: IEnvironment, filePath: string,
-              languageVersion: LanguageVersion, verify: bool, generateBaseline = false): void {
+              languageVersion: LanguageVersion, verify: bool, generateBaseline: bool): void {
         if (!StringUtilities.endsWith(filePath, ".ts")) {
             return;
         }
