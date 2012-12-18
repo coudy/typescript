@@ -93,4 +93,8 @@ class SyntaxNode implements ISyntaxElement {
     public isTypeScriptSpecific(): bool {
         return false;
     }
+
+    //public containsSkippedText() {
+    //    return this.get
+    //}
 }

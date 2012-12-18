@@ -15,11 +15,13 @@ interface ISyntaxToken extends ISyntaxElement {
     hasLeadingTrivia(): bool;
     hasLeadingCommentTrivia(): bool;
     hasLeadingNewLineTrivia(): bool;
+    hasLeadingSkippedTextTrivia(): bool;
     leadingTriviaWidth(): number;
 
     hasTrailingTrivia(): bool;
     hasTrailingCommentTrivia(): bool;
     hasTrailingNewLineTrivia(): bool;
+    hasTrailingSkippedTextTrivia(): bool;
     trailingTriviaWidth(): number;
 
     leadingTrivia(): ISyntaxTriviaList;

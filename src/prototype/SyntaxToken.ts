@@ -7,16 +7,18 @@ module Syntax {
         var hash = 0;
 
         hash = Hash.combine(token.leadingTriviaWidth(), hash);
-        hash = Hash.combine(token.hasLeadingCommentTrivia ? 1 : 0, hash);
-        hash = Hash.combine(token.hasLeadingNewLineTrivia ? 1 : 0, hash);
+        hash = Hash.combine(token.hasLeadingCommentTrivia() ? 1 : 0, hash);
+        hash = Hash.combine(token.hasLeadingNewLineTrivia() ? 1 : 0, hash);
+        hash = Hash.combine(token.hasLeadingSkippedTextTrivia() ? 1 : 0, hash);
 
         hash = Hash.combine(token.kind(), hash);
         hash = Hash.combine(token.keywordKind(), hash);
         hash = Hash.combine(Hash.computeSimple31BitStringHashCode(token.text()), hash);
 
         hash = Hash.combine(token.trailingTriviaWidth(), hash);
-        hash = Hash.combine(token.hasTrailingCommentTrivia ? 1 : 0, hash);
-        hash = Hash.combine(token.hasTrailingNewLineTrivia ? 1 : 0, hash);
+        hash = Hash.combine(token.hasTrailingCommentTrivia() ? 1 : 0, hash);
+        hash = Hash.combine(token.hasTrailingNewLineTrivia() ? 1 : 0, hash);
+        hash = Hash.combine(token.hasTrailingSkippedTextTrivia() ? 1 : 0, hash);
 
         return hash;
     }
@@ -69,6 +71,10 @@ module Syntax {
             result.hasLeadingNewLineTrivia = true;
         }
 
+        if (token.hasLeadingSkippedTextTrivia()) {
+            result.hasLeadingSkippedTextTrivia = true;
+        }
+
         if (token.hasTrailingTrivia()) {
             result.hasTrailingTrivia = true;
         }
@@ -79,6 +85,10 @@ module Syntax {
 
         if (token.hasTrailingNewLineTrivia()) {
             result.hasTrailingNewLineTrivia = true;
+        }
+
+        if (token.hasTrailingSkippedTextTrivia()) {
+            result.hasTrailingSkippedTextTrivia = true;
         }
 
         var trivia = token.leadingTrivia();
@@ -158,10 +168,12 @@ module Syntax {
         public hasLeadingTrivia() { return false; }
         public hasLeadingCommentTrivia() { return false; }
         public hasLeadingNewLineTrivia() { return false; }
+        public hasLeadingSkippedTextTrivia() { return false; }
         public leadingTriviaWidth() { return 0; }
         public hasTrailingTrivia() { return false; }
         public hasTrailingCommentTrivia() { return false; }
         public hasTrailingNewLineTrivia() { return false; }
+        public hasTrailingSkippedTextTrivia() { return false; }
         public trailingTriviaWidth() { return 0; }
         public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
         public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
@@ -235,11 +247,13 @@ module Syntax {
         public hasLeadingTrivia(): bool { return this._leadingTrivia.count() > 0; }
         public hasLeadingCommentTrivia(): bool { return this._leadingTrivia.hasComment(); }
         public hasLeadingNewLineTrivia(): bool { return this._leadingTrivia.hasNewLine(); }
+        public hasLeadingSkippedTextTrivia(): bool { return this._leadingTrivia.hasSkippedText(); }
         public leadingTriviaWidth(): number { return this._leadingTrivia.fullWidth(); }
 
         public hasTrailingTrivia(): bool { return this._trailingTrivia.count() > 0; }
         public hasTrailingCommentTrivia(): bool { return this._trailingTrivia.hasComment(); }
         public hasTrailingNewLineTrivia(): bool { return this._trailingTrivia.hasNewLine(); }
+        public hasTrailingSkippedTextTrivia(): bool { return this._trailingTrivia.hasSkippedText(); }
         public trailingTriviaWidth(): number { return this._trailingTrivia.fullWidth(); }
 
         public leadingTrivia(): ISyntaxTriviaList { return this._leadingTrivia; }

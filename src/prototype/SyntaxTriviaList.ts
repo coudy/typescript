@@ -35,6 +35,7 @@ module Syntax {
 
         hasComment: (): bool => false,
         hasNewLine: (): bool => false,
+        hasSkippedText: (): bool => false,
 
         toJSON: (key) => [],
 
@@ -112,6 +113,10 @@ module Syntax {
             return this.item.kind() === SyntaxKind.NewLineTrivia;
         }
 
+        public hasSkippedText(): bool {
+            return this.item.kind() === SyntaxKind.SkippedTextTrivia;
+        }
+
         public toJSON(key) {
             return [this.item];
         }
@@ -183,11 +188,33 @@ module Syntax {
         }
 
         public hasComment(): bool {
-            return ArrayUtilities.any(this.trivia, isComment);
+            for (var i = 0; i < this.trivia.length; i++) {
+                if (isComment(this.trivia[i])) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public hasNewLine(): bool {
-            return ArrayUtilities.any(this.trivia, t => t.kind() === SyntaxKind.NewLineTrivia);
+            for (var i = 0; i < this.trivia.length; i++) {
+                if (this.trivia[i].kind() === SyntaxKind.NewLineTrivia) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public hasSkippedText(): bool {
+            for (var i = 0; i < this.trivia.length; i++) {
+                if (this.trivia[i].kind() === SyntaxKind.SkippedTextTrivia) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public toJSON(key) {

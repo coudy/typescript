@@ -7,6 +7,7 @@ interface ISyntaxTriviaList extends ISyntaxElement {
 
     hasComment(): bool;
     hasNewLine(): bool;
+    hasSkippedText(): bool;
 
     last(): ISyntaxTrivia;
     toArray(): ISyntaxTrivia[];

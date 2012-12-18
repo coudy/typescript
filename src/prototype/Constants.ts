@@ -12,5 +12,9 @@ enum Constants {
     // to be stored in something larger.  So be careful about using them.
     TriviaNewLineMask = 0x08000000, //  0000 1000 0000 0000 0000 0000 0000 0000
     TriviaCommentMask = 0x04000000, //  0000 0100 0000 0000 0000 0000 0000 0000
-    TriviaLengthMask =  0x03FFFFFF, //  0000 0011 1111 1111 1111 1111 1111 1111
+    TriviaWidthMask =   0x03FFFFFF, //  0000 0011 1111 1111 1111 1111 1111 1111
+
+    NodeSkippedTextMask =    0x40000000, // 0100 0000 0000 0000 0000 0000 0000 0000
+    NodeZeroWidthTokenMask = 0x20000000, // 0010 0000 0000 0000 0000 0000 0000 0000
+
 }

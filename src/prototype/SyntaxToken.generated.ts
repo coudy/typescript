@@ -57,12 +57,14 @@ module Syntax {
         public hasLeadingTrivia(): bool { return false; }
         public hasLeadingCommentTrivia(): bool { return false; }
         public hasLeadingNewLineTrivia(): bool { return false; }
+        public hasLeadingSkippedTextTrivia(): bool { return false; }
         public leadingTriviaWidth(): number { return 0; }
         public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public hasTrailingTrivia(): bool { return false; }
         public hasTrailingCommentTrivia(): bool { return false; }
         public hasTrailingNewLineTrivia(): bool { return false; }
+        public hasTrailingSkippedTextTrivia(): bool { return false; }
         public trailingTriviaWidth(): number { return 0; }
         public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
@@ -115,8 +117,8 @@ module Syntax {
         public kind(): SyntaxKind { return this.tokenKind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
 
-        public fullWidth(): number { return getTriviaLength(this._leadingTriviaInfo) + this.width(); }
-        private start(): number { return this._fullStart + getTriviaLength(this._leadingTriviaInfo); }
+        public fullWidth(): number { return getTriviaWidth(this._leadingTriviaInfo) + this.width(); }
+        private start(): number { return this._fullStart + getTriviaWidth(this._leadingTriviaInfo); }
         private end(): number { return this.start() + this.width(); }
 
         public width(): number { return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length; }
@@ -136,12 +138,14 @@ module Syntax {
         public hasLeadingTrivia(): bool { return true; }
         public hasLeadingCommentTrivia(): bool { return hasTriviaComment(this._leadingTriviaInfo); }
         public hasLeadingNewLineTrivia(): bool { return hasTriviaNewLine(this._leadingTriviaInfo); }
-        public leadingTriviaWidth(): number { return getTriviaLength(this._leadingTriviaInfo); }
-        public leadingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaLength(this._leadingTriviaInfo), /*isTrailing:*/ false); }
+        public hasLeadingSkippedTextTrivia(): bool { return false; }
+        public leadingTriviaWidth(): number { return getTriviaWidth(this._leadingTriviaInfo); }
+        public leadingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), /*isTrailing:*/ false); }
 
         public hasTrailingTrivia(): bool { return false; }
         public hasTrailingCommentTrivia(): bool { return false; }
         public hasTrailingNewLineTrivia(): bool { return false; }
+        public hasTrailingSkippedTextTrivia(): bool { return false; }
         public trailingTriviaWidth(): number { return 0; }
         public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
@@ -194,7 +198,7 @@ module Syntax {
         public kind(): SyntaxKind { return this.tokenKind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
 
-        public fullWidth(): number { return this.width() + getTriviaLength(this._trailingTriviaInfo); }
+        public fullWidth(): number { return this.width() + getTriviaWidth(this._trailingTriviaInfo); }
         private start(): number { return this._fullStart; }
         private end(): number { return this.start() + this.width(); }
 
@@ -215,14 +219,16 @@ module Syntax {
         public hasLeadingTrivia(): bool { return false; }
         public hasLeadingCommentTrivia(): bool { return false; }
         public hasLeadingNewLineTrivia(): bool { return false; }
+        public hasLeadingSkippedTextTrivia(): bool { return false; }
         public leadingTriviaWidth(): number { return 0; }
         public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public hasTrailingTrivia(): bool { return true; }
         public hasTrailingCommentTrivia(): bool { return hasTriviaComment(this._trailingTriviaInfo); }
         public hasTrailingNewLineTrivia(): bool { return hasTriviaNewLine(this._trailingTriviaInfo); }
-        public trailingTriviaWidth(): number { return getTriviaLength(this._trailingTriviaInfo); }
-        public trailingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaLength(this._trailingTriviaInfo), /*isTrailing:*/ true); }
+        public hasTrailingSkippedTextTrivia(): bool { return false; }
+        public trailingTriviaWidth(): number { return getTriviaWidth(this._trailingTriviaInfo); }
+        public trailingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true); }
 
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
@@ -276,8 +282,8 @@ module Syntax {
         public kind(): SyntaxKind { return this.tokenKind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
 
-        public fullWidth(): number { return getTriviaLength(this._leadingTriviaInfo) + this.width() + getTriviaLength(this._trailingTriviaInfo); }
-        private start(): number { return this._fullStart + getTriviaLength(this._leadingTriviaInfo); }
+        public fullWidth(): number { return getTriviaWidth(this._leadingTriviaInfo) + this.width() + getTriviaWidth(this._trailingTriviaInfo); }
+        private start(): number { return this._fullStart + getTriviaWidth(this._leadingTriviaInfo); }
         private end(): number { return this.start() + this.width(); }
 
         public width(): number { return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length; }
@@ -297,14 +303,16 @@ module Syntax {
         public hasLeadingTrivia(): bool { return true; }
         public hasLeadingCommentTrivia(): bool { return hasTriviaComment(this._leadingTriviaInfo); }
         public hasLeadingNewLineTrivia(): bool { return hasTriviaNewLine(this._leadingTriviaInfo); }
-        public leadingTriviaWidth(): number { return getTriviaLength(this._leadingTriviaInfo); }
-        public leadingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaLength(this._leadingTriviaInfo), /*isTrailing:*/ false); }
+        public hasLeadingSkippedTextTrivia(): bool { return false; }
+        public leadingTriviaWidth(): number { return getTriviaWidth(this._leadingTriviaInfo); }
+        public leadingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), /*isTrailing:*/ false); }
 
         public hasTrailingTrivia(): bool { return true; }
         public hasTrailingCommentTrivia(): bool { return hasTriviaComment(this._trailingTriviaInfo); }
         public hasTrailingNewLineTrivia(): bool { return hasTriviaNewLine(this._trailingTriviaInfo); }
-        public trailingTriviaWidth(): number { return getTriviaLength(this._trailingTriviaInfo); }
-        public trailingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaLength(this._trailingTriviaInfo), /*isTrailing:*/ true); }
+        public hasTrailingSkippedTextTrivia(): bool { return false; }
+        public trailingTriviaWidth(): number { return getTriviaWidth(this._trailingTriviaInfo); }
+        public trailingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true); }
 
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
@@ -351,12 +359,14 @@ module Syntax {
         public hasLeadingTrivia(): bool { return false; }
         public hasLeadingCommentTrivia(): bool { return false; }
         public hasLeadingNewLineTrivia(): bool { return false; }
+        public hasLeadingSkippedTextTrivia(): bool { return false; }
         public leadingTriviaWidth(): number { return 0; }
         public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public hasTrailingTrivia(): bool { return false; }
         public hasTrailingCommentTrivia(): bool { return false; }
         public hasTrailingNewLineTrivia(): bool { return false; }
+        public hasTrailingSkippedTextTrivia(): bool { return false; }
         public trailingTriviaWidth(): number { return 0; }
         public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
@@ -405,8 +415,8 @@ module Syntax {
         public kind(): SyntaxKind { return this.tokenKind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
 
-        public fullWidth(): number { return getTriviaLength(this._leadingTriviaInfo) + this.width(); }
-        private start(): number { return this._fullStart + getTriviaLength(this._leadingTriviaInfo); }
+        public fullWidth(): number { return getTriviaWidth(this._leadingTriviaInfo) + this.width(); }
+        private start(): number { return this._fullStart + getTriviaWidth(this._leadingTriviaInfo); }
         private end(): number { return this.start() + this.width(); }
 
         public width(): number { return this.text().length; }
@@ -417,12 +427,14 @@ module Syntax {
         public hasLeadingTrivia(): bool { return true; }
         public hasLeadingCommentTrivia(): bool { return hasTriviaComment(this._leadingTriviaInfo); }
         public hasLeadingNewLineTrivia(): bool { return hasTriviaNewLine(this._leadingTriviaInfo); }
-        public leadingTriviaWidth(): number { return getTriviaLength(this._leadingTriviaInfo); }
-        public leadingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaLength(this._leadingTriviaInfo), /*isTrailing:*/ false); }
+        public hasLeadingSkippedTextTrivia(): bool { return false; }
+        public leadingTriviaWidth(): number { return getTriviaWidth(this._leadingTriviaInfo); }
+        public leadingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), /*isTrailing:*/ false); }
 
         public hasTrailingTrivia(): bool { return false; }
         public hasTrailingCommentTrivia(): bool { return false; }
         public hasTrailingNewLineTrivia(): bool { return false; }
+        public hasTrailingSkippedTextTrivia(): bool { return false; }
         public trailingTriviaWidth(): number { return 0; }
         public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
@@ -471,7 +483,7 @@ module Syntax {
         public kind(): SyntaxKind { return this.tokenKind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
 
-        public fullWidth(): number { return this.width() + getTriviaLength(this._trailingTriviaInfo); }
+        public fullWidth(): number { return this.width() + getTriviaWidth(this._trailingTriviaInfo); }
         private start(): number { return this._fullStart; }
         private end(): number { return this.start() + this.width(); }
 
@@ -483,14 +495,16 @@ module Syntax {
         public hasLeadingTrivia(): bool { return false; }
         public hasLeadingCommentTrivia(): bool { return false; }
         public hasLeadingNewLineTrivia(): bool { return false; }
+        public hasLeadingSkippedTextTrivia(): bool { return false; }
         public leadingTriviaWidth(): number { return 0; }
         public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public hasTrailingTrivia(): bool { return true; }
         public hasTrailingCommentTrivia(): bool { return hasTriviaComment(this._trailingTriviaInfo); }
         public hasTrailingNewLineTrivia(): bool { return hasTriviaNewLine(this._trailingTriviaInfo); }
-        public trailingTriviaWidth(): number { return getTriviaLength(this._trailingTriviaInfo); }
-        public trailingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaLength(this._trailingTriviaInfo), /*isTrailing:*/ true); }
+        public hasTrailingSkippedTextTrivia(): bool { return false; }
+        public trailingTriviaWidth(): number { return getTriviaWidth(this._trailingTriviaInfo); }
+        public trailingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true); }
 
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
@@ -540,8 +554,8 @@ module Syntax {
         public kind(): SyntaxKind { return this.tokenKind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
 
-        public fullWidth(): number { return getTriviaLength(this._leadingTriviaInfo) + this.width() + getTriviaLength(this._trailingTriviaInfo); }
-        private start(): number { return this._fullStart + getTriviaLength(this._leadingTriviaInfo); }
+        public fullWidth(): number { return getTriviaWidth(this._leadingTriviaInfo) + this.width() + getTriviaWidth(this._trailingTriviaInfo); }
+        private start(): number { return this._fullStart + getTriviaWidth(this._leadingTriviaInfo); }
         private end(): number { return this.start() + this.width(); }
 
         public width(): number { return this.text().length; }
@@ -552,14 +566,16 @@ module Syntax {
         public hasLeadingTrivia(): bool { return true; }
         public hasLeadingCommentTrivia(): bool { return hasTriviaComment(this._leadingTriviaInfo); }
         public hasLeadingNewLineTrivia(): bool { return hasTriviaNewLine(this._leadingTriviaInfo); }
-        public leadingTriviaWidth(): number { return getTriviaLength(this._leadingTriviaInfo); }
-        public leadingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaLength(this._leadingTriviaInfo), /*isTrailing:*/ false); }
+        public hasLeadingSkippedTextTrivia(): bool { return false; }
+        public leadingTriviaWidth(): number { return getTriviaWidth(this._leadingTriviaInfo); }
+        public leadingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), /*isTrailing:*/ false); }
 
         public hasTrailingTrivia(): bool { return true; }
         public hasTrailingCommentTrivia(): bool { return hasTriviaComment(this._trailingTriviaInfo); }
         public hasTrailingNewLineTrivia(): bool { return hasTriviaNewLine(this._trailingTriviaInfo); }
-        public trailingTriviaWidth(): number { return getTriviaLength(this._trailingTriviaInfo); }
-        public trailingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaLength(this._trailingTriviaInfo), /*isTrailing:*/ true); }
+        public hasTrailingSkippedTextTrivia(): bool { return false; }
+        public trailingTriviaWidth(): number { return getTriviaWidth(this._trailingTriviaInfo); }
+        public trailingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true); }
 
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
@@ -608,12 +624,14 @@ module Syntax {
         public hasLeadingTrivia(): bool { return false; }
         public hasLeadingCommentTrivia(): bool { return false; }
         public hasLeadingNewLineTrivia(): bool { return false; }
+        public hasLeadingSkippedTextTrivia(): bool { return false; }
         public leadingTriviaWidth(): number { return 0; }
         public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public hasTrailingTrivia(): bool { return false; }
         public hasTrailingCommentTrivia(): bool { return false; }
         public hasTrailingNewLineTrivia(): bool { return false; }
+        public hasTrailingSkippedTextTrivia(): bool { return false; }
         public trailingTriviaWidth(): number { return 0; }
         public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
@@ -664,8 +682,8 @@ module Syntax {
         public kind(): SyntaxKind { return SyntaxKind.IdentifierNameToken; }
         public keywordKind(): SyntaxKind { return this._keywordKind; }
 
-        public fullWidth(): number { return getTriviaLength(this._leadingTriviaInfo) + this.width(); }
-        private start(): number { return this._fullStart + getTriviaLength(this._leadingTriviaInfo); }
+        public fullWidth(): number { return getTriviaWidth(this._leadingTriviaInfo) + this.width(); }
+        private start(): number { return this._fullStart + getTriviaWidth(this._leadingTriviaInfo); }
         private end(): number { return this.start() + this.width(); }
 
         public width(): number { return this.text().length; }
@@ -676,12 +694,14 @@ module Syntax {
         public hasLeadingTrivia(): bool { return true; }
         public hasLeadingCommentTrivia(): bool { return hasTriviaComment(this._leadingTriviaInfo); }
         public hasLeadingNewLineTrivia(): bool { return hasTriviaNewLine(this._leadingTriviaInfo); }
-        public leadingTriviaWidth(): number { return getTriviaLength(this._leadingTriviaInfo); }
-        public leadingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaLength(this._leadingTriviaInfo), /*isTrailing:*/ false); }
+        public hasLeadingSkippedTextTrivia(): bool { return false; }
+        public leadingTriviaWidth(): number { return getTriviaWidth(this._leadingTriviaInfo); }
+        public leadingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), /*isTrailing:*/ false); }
 
         public hasTrailingTrivia(): bool { return false; }
         public hasTrailingCommentTrivia(): bool { return false; }
         public hasTrailingNewLineTrivia(): bool { return false; }
+        public hasTrailingSkippedTextTrivia(): bool { return false; }
         public trailingTriviaWidth(): number { return 0; }
         public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
@@ -732,7 +752,7 @@ module Syntax {
         public kind(): SyntaxKind { return SyntaxKind.IdentifierNameToken; }
         public keywordKind(): SyntaxKind { return this._keywordKind; }
 
-        public fullWidth(): number { return this.width() + getTriviaLength(this._trailingTriviaInfo); }
+        public fullWidth(): number { return this.width() + getTriviaWidth(this._trailingTriviaInfo); }
         private start(): number { return this._fullStart; }
         private end(): number { return this.start() + this.width(); }
 
@@ -744,14 +764,16 @@ module Syntax {
         public hasLeadingTrivia(): bool { return false; }
         public hasLeadingCommentTrivia(): bool { return false; }
         public hasLeadingNewLineTrivia(): bool { return false; }
+        public hasLeadingSkippedTextTrivia(): bool { return false; }
         public leadingTriviaWidth(): number { return 0; }
         public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public hasTrailingTrivia(): bool { return true; }
         public hasTrailingCommentTrivia(): bool { return hasTriviaComment(this._trailingTriviaInfo); }
         public hasTrailingNewLineTrivia(): bool { return hasTriviaNewLine(this._trailingTriviaInfo); }
-        public trailingTriviaWidth(): number { return getTriviaLength(this._trailingTriviaInfo); }
-        public trailingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaLength(this._trailingTriviaInfo), /*isTrailing:*/ true); }
+        public hasTrailingSkippedTextTrivia(): bool { return false; }
+        public trailingTriviaWidth(): number { return getTriviaWidth(this._trailingTriviaInfo); }
+        public trailingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true); }
 
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
@@ -803,8 +825,8 @@ module Syntax {
         public kind(): SyntaxKind { return SyntaxKind.IdentifierNameToken; }
         public keywordKind(): SyntaxKind { return this._keywordKind; }
 
-        public fullWidth(): number { return getTriviaLength(this._leadingTriviaInfo) + this.width() + getTriviaLength(this._trailingTriviaInfo); }
-        private start(): number { return this._fullStart + getTriviaLength(this._leadingTriviaInfo); }
+        public fullWidth(): number { return getTriviaWidth(this._leadingTriviaInfo) + this.width() + getTriviaWidth(this._trailingTriviaInfo); }
+        private start(): number { return this._fullStart + getTriviaWidth(this._leadingTriviaInfo); }
         private end(): number { return this.start() + this.width(); }
 
         public width(): number { return this.text().length; }
@@ -815,14 +837,16 @@ module Syntax {
         public hasLeadingTrivia(): bool { return true; }
         public hasLeadingCommentTrivia(): bool { return hasTriviaComment(this._leadingTriviaInfo); }
         public hasLeadingNewLineTrivia(): bool { return hasTriviaNewLine(this._leadingTriviaInfo); }
-        public leadingTriviaWidth(): number { return getTriviaLength(this._leadingTriviaInfo); }
-        public leadingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaLength(this._leadingTriviaInfo), /*isTrailing:*/ false); }
+        public hasLeadingSkippedTextTrivia(): bool { return false; }
+        public leadingTriviaWidth(): number { return getTriviaWidth(this._leadingTriviaInfo); }
+        public leadingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), /*isTrailing:*/ false); }
 
         public hasTrailingTrivia(): bool { return true; }
         public hasTrailingCommentTrivia(): bool { return hasTriviaComment(this._trailingTriviaInfo); }
         public hasTrailingNewLineTrivia(): bool { return hasTriviaNewLine(this._trailingTriviaInfo); }
-        public trailingTriviaWidth(): number { return getTriviaLength(this._trailingTriviaInfo); }
-        public trailingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaLength(this._trailingTriviaInfo), /*isTrailing:*/ true); }
+        public hasTrailingSkippedTextTrivia(): bool { return false; }
+        public trailingTriviaWidth(): number { return getTriviaWidth(this._trailingTriviaInfo); }
+        public trailingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true); }
 
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
@@ -917,8 +941,8 @@ module Syntax {
         }
     }
 
-    function getTriviaLength(value: number) {
-        return value & Constants.TriviaLengthMask;
+    function getTriviaWidth(value: number) {
+        return value & Constants.TriviaWidthMask;
     }
 
     function hasTriviaComment(value: number): bool {

@@ -2205,17 +2205,17 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "        public keywordKind(): SyntaxKind { return SyntaxKind.None; }\r\n\r\n";
     }
 
-    var leadingTriviaLength = leading ? "getTriviaLength(this._leadingTriviaInfo)" : "0";
-    var trailingTriviaLength = trailing ? "getTriviaLength(this._trailingTriviaInfo)" : "0";
+    var leadingTriviaWidth = leading ? "getTriviaWidth(this._leadingTriviaInfo)" : "0";
+    var trailingTriviaWidth = trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0";
 
     if (leading && trailing) {
-        result += "        public fullWidth(): number { return " + leadingTriviaLength + " + this.width() + " + trailingTriviaLength + "; }\r\n";
+        result += "        public fullWidth(): number { return " + leadingTriviaWidth + " + this.width() + " + trailingTriviaWidth + "; }\r\n";
     }
     else if (leading) {
-        result += "        public fullWidth(): number { return " + leadingTriviaLength + " + this.width(); }\r\n";
+        result += "        public fullWidth(): number { return " + leadingTriviaWidth + " + this.width(); }\r\n";
     }
     else if (trailing) {
-        result += "        public fullWidth(): number { return this.width() + " + trailingTriviaLength + "; }\r\n";
+        result += "        public fullWidth(): number { return this.width() + " + trailingTriviaWidth + "; }\r\n";
     }
     else {
         result += "        public fullWidth(): number { return this.width(); }\r\n";
@@ -2223,7 +2223,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
 
     if (needsSourcetext) {
         if (leading) {
-            result += "        private start(): number { return this._fullStart + " + leadingTriviaLength + "; }\r\n";
+            result += "        private start(): number { return this._fullStart + " + leadingTriviaWidth + "; }\r\n";
         }
         else {
             result += "        private start(): number { return this._fullStart; }\r\n";
@@ -2279,17 +2279,19 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
     result += "        public hasLeadingTrivia(): bool { return " + (leading ? "true" : "false") + "; }\r\n";
     result += "        public hasLeadingCommentTrivia(): bool { return " + (leading ? "hasTriviaComment(this._leadingTriviaInfo)" : "false") + "; }\r\n";
     result += "        public hasLeadingNewLineTrivia(): bool { return " + (leading ? "hasTriviaNewLine(this._leadingTriviaInfo)" : "false") + "; }\r\n";
-    result += "        public leadingTriviaWidth(): number { return " + (leading ? "getTriviaLength(this._leadingTriviaInfo)" : "0") + "; }\r\n";
+    result += "        public hasLeadingSkippedTextTrivia(): bool { return false; }\r\n";
+    result += "        public leadingTriviaWidth(): number { return " + (leading ? "getTriviaWidth(this._leadingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public leadingTrivia(): ISyntaxTriviaList { return " + (leading
-        ? "Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaLength(this._leadingTriviaInfo), /*isTrailing:*/ false)"
+        ? "Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), /*isTrailing:*/ false)"
         : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
 
     result += "        public hasTrailingTrivia(): bool { return " + (trailing ? "true" : "false") + "; }\r\n";
     result += "        public hasTrailingCommentTrivia(): bool { return " + (trailing ? "hasTriviaComment(this._trailingTriviaInfo)" : "false") + "; }\r\n";
     result += "        public hasTrailingNewLineTrivia(): bool { return " + (trailing ? "hasTriviaNewLine(this._trailingTriviaInfo)" : "false") + "; }\r\n";
-    result += "        public trailingTriviaWidth(): number { return " + (trailing ? "getTriviaLength(this._trailingTriviaInfo)" : "0") + "; }\r\n";
+    result += "        public hasTrailingSkippedTextTrivia(): bool { return false; }\r\n";
+    result += "        public trailingTriviaWidth(): number { return " + (trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public trailingTrivia(): ISyntaxTriviaList { return " + (trailing
-        ? "Scanner.scanTrivia(this._sourceText, this.end(), getTriviaLength(this._trailingTriviaInfo), /*isTrailing:*/ true)"
+        ? "Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true)"
         : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
 
     result += 
@@ -2429,8 +2431,8 @@ function generateTokens(): string {
 "    }\r\n\r\n"
 
     result += 
-"    function getTriviaLength(value: number) {\r\n" +
-"        return value & Constants.TriviaLengthMask;\r\n" +
+"    function getTriviaWidth(value: number) {\r\n" +
+"        return value & Constants.TriviaWidthMask;\r\n" +
 "    }\r\n" +
 "\r\n" +
 "    function hasTriviaComment(value: number): bool {\r\n" +
