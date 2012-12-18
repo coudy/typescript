@@ -841,17 +841,6 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var SyntaxNodeCloner = (function (_super) {
-    __extends(SyntaxNodeCloner, _super);
-    function SyntaxNodeCloner() {
-        _super.apply(this, arguments);
-
-    }
-    SyntaxNodeCloner.prototype.visitToken = function (token) {
-        return token.clone();
-    };
-    return SyntaxNodeCloner;
-})(SyntaxRewriter);
 var SyntaxRealizer = (function (_super) {
     __extends(SyntaxRealizer, _super);
     function SyntaxRealizer() {
@@ -940,9 +929,6 @@ var SyntaxNode = (function () {
     };
     SyntaxNode.prototype.fullWidth = function () {
         throw Errors.abstract();
-    };
-    SyntaxNode.prototype.clone = function () {
-        return this.accept(new SyntaxNodeCloner());
     };
     SyntaxNode.prototype.replaceToken = function (token1, token2) {
         return this.accept(new SyntaxTokenReplacer(token1, token2));

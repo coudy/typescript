@@ -2,7 +2,6 @@
 ///<reference path='ISyntaxElement.ts' />
 ///<reference path='ISyntaxToken.ts' />
 ///<reference path='ISyntaxVisitor.ts' />
-///<reference path='SyntaxNodeCloner.ts' />
 ///<reference path='SyntaxRealizer.ts' />
 ///<reference path='SyntaxTokenReplacer.ts' />
 
@@ -73,10 +72,6 @@ class SyntaxNode implements ISyntaxElement {
 
     public fullWidth(): number {
         throw Errors.abstract();
-    }
-
-    public clone(): SyntaxNode {
-        return this.accept(new SyntaxNodeCloner());
     }
 
     public replaceToken(token1: ISyntaxToken, token2: ISyntaxToken): SyntaxNode {
