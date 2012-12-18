@@ -20813,8 +20813,7 @@ var Emitter;
             var variableStatement = VariableStatementSyntax.create1(new VariableDeclarationSyntax(Syntax.token(38 /* VarKeyword */ ).withTrailingTrivia(this.space), SeparatedSyntaxList.create([
                 VariableDeclaratorSyntax.create(identifier)
             ]))).withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(this.newLine);
-            var expressionStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(ParenthesizedExpressionSyntax.create1(this.generateEnumFunctionExpression(node)), ArgumentListSyntax.create1().withArgument(this.initializedVariable(new IdentifierNameSyntax(identifier)))));
-            expressionStatement = expressionStatement.withLeadingTrivia(this.indentationTriviaForStartOfNode(node)).withTrailingTrivia(this.newLine);
+            var expressionStatement = ExpressionStatementSyntax.create1(new InvocationExpressionSyntax(ParenthesizedExpressionSyntax.create1(this.generateEnumFunctionExpression(node)), ArgumentListSyntax.create1().withArgument(this.initializedVariable(new IdentifierNameSyntax(identifier))))).withLeadingTrivia(this.indentationTriviaForStartOfNode(node)).withTrailingTrivia(this.newLine);
             return [
                 variableStatement, 
                 expressionStatement

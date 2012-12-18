@@ -1126,13 +1126,10 @@ module Emitter {
             // (function(E) { E.e1 = ... })(E||(E={}));
             var expressionStatement = ExpressionStatementSyntax.create1(
                 new InvocationExpressionSyntax(
-                    ParenthesizedExpressionSyntax.create1(
-                        this.generateEnumFunctionExpression(node)),
-                    ArgumentListSyntax.create1().withArgument(
-                        this.initializedVariable(new IdentifierNameSyntax(identifier)))));
-
-            expressionStatement = expressionStatement.withLeadingTrivia(this.indentationTriviaForStartOfNode(node))
-                                                     .withTrailingTrivia(this.newLine);
+                    ParenthesizedExpressionSyntax.create1(this.generateEnumFunctionExpression(node)),
+                    ArgumentListSyntax.create1().withArgument(this.initializedVariable(new IdentifierNameSyntax(identifier)))))
+                        .withLeadingTrivia(this.indentationTriviaForStartOfNode(node))
+                        .withTrailingTrivia(this.newLine);
 
             return [variableStatement, expressionStatement];
         }
