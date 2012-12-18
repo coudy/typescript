@@ -326,10 +326,8 @@ module Emitter {
         }
 
         private visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): FunctionExpressionSyntax {
-            var identifier = this.withNoTrivia(node.identifier());
-
             return FunctionExpressionSyntax.create1()
-                .withCallSignature(Syntax.callSignature(ParameterSyntax.create(identifier)).withTrailingTrivia(this.space))
+                .withCallSignature(Syntax.callSignature(ParameterSyntax.create(this.withNoTrivia(node.identifier()))).withTrailingTrivia(this.space))
                 .withBlock(this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
         }
 
@@ -436,10 +434,9 @@ module Emitter {
             // parent structure.  Note: we don't wan to adjust the leading brace as that's going to go
             // after the function sigature.
 
-            block = <BlockSyntax>this.changeIndentation(block, /*indentFirstToken:*/ false,
+            return <BlockSyntax>this.changeIndentation(block, /*indentFirstToken:*/ false,
                 Indentation.columnForStartOfFirstTokenInLineContainingToken(
                     arrowFunction.firstToken(), this.syntaxInformationMap, this.options));
-            return block;
         }
 
         private static functionSignatureDefaultParameters(signature: FunctionSignatureSyntax): ParameterSyntax[] {

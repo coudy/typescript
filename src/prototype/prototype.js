@@ -20404,8 +20404,7 @@ var Emitter;
             return rewritten.withExpression(parenthesizedExpression);
         };
         EmitterImpl.prototype.visitSimpleArrowFunctionExpression = function (node) {
-            var identifier = this.withNoTrivia(node.identifier());
-            return FunctionExpressionSyntax.create1().withCallSignature(Syntax.callSignature(ParameterSyntax.create(identifier)).withTrailingTrivia(this.space)).withBlock(this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
+            return FunctionExpressionSyntax.create1().withCallSignature(Syntax.callSignature(ParameterSyntax.create(this.withNoTrivia(node.identifier()))).withTrailingTrivia(this.space)).withBlock(this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
         };
         EmitterImpl.prototype.visitParenthesizedArrowFunctionExpression = function (node) {
             return FunctionExpressionSyntax.create1().withCallSignature(CallSignatureSyntax.create(node.callSignature().parameterList().accept(this))).withBlock(this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
@@ -20433,8 +20432,7 @@ var Emitter;
             var block = new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), SyntaxList.create([
                 returnStatement
             ]), Syntax.token(68 /* CloseBraceToken */ ));
-            block = this.changeIndentation(block, false, Indentation.columnForStartOfFirstTokenInLineContainingToken(arrowFunction.firstToken(), this.syntaxInformationMap, this.options));
-            return block;
+            return this.changeIndentation(block, false, Indentation.columnForStartOfFirstTokenInLineContainingToken(arrowFunction.firstToken(), this.syntaxInformationMap, this.options));
         };
         EmitterImpl.functionSignatureDefaultParameters = function functionSignatureDefaultParameters(signature) {
             return EmitterImpl.parameterListDefaultParameters(signature.parameterList());
