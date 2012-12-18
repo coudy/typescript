@@ -20522,7 +20522,7 @@ var Emitter;
         };
         EmitterImpl.prototype.convertConstructorDeclaration = function (classDeclaration, constructorDeclaration) {
             var _this = this;
-            if(constructorDeclaration === null || constructorDeclaration.block() === null) {
+            if(constructorDeclaration.block() === null) {
                 return null;
             }
             var identifier = this.withNoTrivia(classDeclaration.identifier());

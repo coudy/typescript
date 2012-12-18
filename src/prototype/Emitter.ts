@@ -610,9 +610,8 @@ module Emitter {
         }
 
         private convertConstructorDeclaration(classDeclaration: ClassDeclarationSyntax,
-            constructorDeclaration: ConstructorDeclarationSyntax): FunctionDeclarationSyntax {
-            if (constructorDeclaration === null ||
-                constructorDeclaration.block() === null) {
+                                              constructorDeclaration: ConstructorDeclarationSyntax): FunctionDeclarationSyntax {
+            if (constructorDeclaration.block() === null) {
                 return null;
             }
 
