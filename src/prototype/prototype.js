@@ -20456,8 +20456,7 @@ var Emitter;
             return ExpressionStatementSyntax.create1(Syntax.assignmentExpression(MemberAccessExpressionSyntax.create1(ThisExpressionSyntax.create1(), new IdentifierNameSyntax(identifier.withTrailingTrivia(SyntaxTriviaList.space))), Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), new IdentifierNameSyntax(identifier))).withTrailingTrivia(this.newLine);
         };
         EmitterImpl.prototype.generateDefaultValueAssignmentStatement = function (parameter) {
-            var name = this.withNoTrivia(parameter.identifier());
-            var identifierName = new IdentifierNameSyntax(name).withTrailingTrivia(this.space);
+            var identifierName = new IdentifierNameSyntax(this.withNoTrivia(parameter.identifier())).withTrailingTrivia(this.space);
             var condition = new BinaryExpressionSyntax(191 /* EqualsExpression */ , new TypeOfExpressionSyntax(Syntax.token(37 /* TypeOfKeyword */ ).withTrailingTrivia(this.space), identifierName), Syntax.token(84 /* EqualsEqualsEqualsToken */ ).withTrailingTrivia(this.space), Syntax.stringLiteralExpression('"undefined"'));
             var assignmentStatement = ExpressionStatementSyntax.create1(Syntax.assignmentExpression(identifierName, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), parameter.equalsValueClause().value().accept(this))).withTrailingTrivia(this.space);
             var block = new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.space), SyntaxList.create([
@@ -20476,13 +20475,10 @@ var Emitter;
                 var defaultValueAssignmentStatements = ArrayUtilities.select(parametersWithDefaults, function (p) {
                     return _this.generateDefaultValueAssignmentStatement(p);
                 });
-                var functionDeclarationStartColumn = this.columnForStartOfToken(node.firstToken());
-                var desiredColumn = functionDeclarationStartColumn + this.options.indentSpaces;
-                defaultValueAssignmentStatements = ArrayUtilities.select(defaultValueAssignmentStatements, function (s) {
-                    return _this.changeIndentation(s, true, desiredColumn);
+                var statementColumn = this.columnForStartOfToken(node.firstToken()) + this.options.indentSpaces;
+                var statements = ArrayUtilities.select(defaultValueAssignmentStatements, function (s) {
+                    return _this.changeIndentation(s, true, statementColumn);
                 });
-                var statements = [];
-                statements.push.apply(statements, defaultValueAssignmentStatements);
                 statements.push.apply(statements, rewritten.block().statements().toArray());
                 rewritten = rewritten.withBlock(rewritten.block().withStatements(SyntaxList.create(statements)));
             }

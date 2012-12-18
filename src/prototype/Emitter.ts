@@ -431,8 +431,7 @@ module Emitter {
         }
 
         private generateDefaultValueAssignmentStatement(parameter: ParameterSyntax): IfStatementSyntax {
-            var name = this.withNoTrivia(parameter.identifier());
-            var identifierName = new IdentifierNameSyntax(name).withTrailingTrivia(this.space);
+            var identifierName = new IdentifierNameSyntax(this.withNoTrivia(parameter.identifier())).withTrailingTrivia(this.space);
 
             // typeof foo === 'undefined'
             var condition = new BinaryExpressionSyntax(
@@ -477,14 +476,10 @@ module Emitter {
                 var defaultValueAssignmentStatements = ArrayUtilities.select(
                     parametersWithDefaults, p => this.generateDefaultValueAssignmentStatement(p));
 
-                var functionDeclarationStartColumn = this.columnForStartOfToken(node.firstToken());
-                var desiredColumn = functionDeclarationStartColumn + this.options.indentSpaces;
+                var statementColumn = this.columnForStartOfToken(node.firstToken()) + this.options.indentSpaces;
+                var statements = <StatementSyntax[]>ArrayUtilities.select(defaultValueAssignmentStatements,
+                    s => this.changeIndentation(s, /*indentFirstToken:*/ true, statementColumn));
 
-                defaultValueAssignmentStatements = ArrayUtilities.select(defaultValueAssignmentStatements,
-                    s => this.changeIndentation(s, /*indentFirstToken:*/ true, desiredColumn));
-
-                var statements: StatementSyntax[] = [];
-                statements.push.apply(statements, defaultValueAssignmentStatements);
                 statements.push.apply(statements, rewritten.block().statements().toArray());
 
                 rewritten = rewritten.withBlock(rewritten.block().withStatements(
