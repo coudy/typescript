@@ -713,32 +713,24 @@ module Emitter {
                 callSignatureParameterList = <ParameterListSyntax>callSignatureParameterList.withTrailingTrivia(SyntaxTriviaList.space);
             }
 
-            // C.prototype.f = function (p1, p2) { ...  }
-            var assignmentExpression = Syntax.assignmentExpression(
+            // C.prototype.f = function (p1, p2) { ...  };
+            return ExpressionStatementSyntax.create1(Syntax.assignmentExpression(
                 receiver,
                 Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
                 FunctionExpressionSyntax.create1()
                     .withCallSignature(CallSignatureSyntax.create(callSignatureParameterList))
                     .withBlock(block.withStatements(
-                        SyntaxList.create(blockStatements))));
-
-            return ExpressionStatementSyntax.create1(assignmentExpression)
-                                            .withTrailingTrivia(blockTrailingTrivia);
+                        SyntaxList.create(blockStatements))))).withTrailingTrivia(blockTrailingTrivia);
         }
 
         private convertMemberAccessor(memberAccessor: MemberAccessorDeclarationSyntax): PropertyAssignmentSyntax {
             var propertyName = memberAccessor.kind() === SyntaxKind.GetMemberAccessorDeclaration
                 ? "get" : "set";
 
-            var indentationTrivia = this.indentationTriviaForStartOfNode(memberAccessor);
-
             var parameterList = <ParameterListSyntax>memberAccessor.parameterList().accept(this);
             if (!parameterList.hasTrailingTrivia()) {
                 parameterList = parameterList.withTrailingTrivia(SyntaxTriviaList.space);
             }
-
-            var block = memberAccessor.block().accept(this);
-            block = block.withTrailingTrivia(SyntaxTriviaList.empty);
 
             return new SimplePropertyAssignmentSyntax(
                 Syntax.identifier(propertyName),
@@ -746,7 +738,8 @@ module Emitter {
                 FunctionExpressionSyntax.create(
                     Syntax.token(SyntaxKind.FunctionKeyword),
                     CallSignatureSyntax.create(parameterList),
-                    block)).withLeadingTrivia(indentationTrivia);
+                    memberAccessor.block().accept(this).withTrailingTrivia(SyntaxTriviaList.empty)))
+                        .withLeadingTrivia(this.indentationTriviaForStartOfNode(memberAccessor));
         }
 
         private convertMemberAccessorDeclaration(classDeclaration: ClassDeclarationSyntax,

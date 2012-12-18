@@ -20618,19 +20618,15 @@ var Emitter;
             if(!callSignatureParameterList.hasTrailingTrivia()) {
                 callSignatureParameterList = callSignatureParameterList.withTrailingTrivia(SyntaxTriviaList.space);
             }
-            var assignmentExpression = Syntax.assignmentExpression(receiver, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), FunctionExpressionSyntax.create1().withCallSignature(CallSignatureSyntax.create(callSignatureParameterList)).withBlock(block.withStatements(SyntaxList.create(blockStatements))));
-            return ExpressionStatementSyntax.create1(assignmentExpression).withTrailingTrivia(blockTrailingTrivia);
+            return ExpressionStatementSyntax.create1(Syntax.assignmentExpression(receiver, Syntax.token(104 /* EqualsToken */ ).withTrailingTrivia(this.space), FunctionExpressionSyntax.create1().withCallSignature(CallSignatureSyntax.create(callSignatureParameterList)).withBlock(block.withStatements(SyntaxList.create(blockStatements))))).withTrailingTrivia(blockTrailingTrivia);
         };
         EmitterImpl.prototype.convertMemberAccessor = function (memberAccessor) {
             var propertyName = memberAccessor.kind() === 136 /* GetMemberAccessorDeclaration */  ? "get" : "set";
-            var indentationTrivia = this.indentationTriviaForStartOfNode(memberAccessor);
             var parameterList = memberAccessor.parameterList().accept(this);
             if(!parameterList.hasTrailingTrivia()) {
                 parameterList = parameterList.withTrailingTrivia(SyntaxTriviaList.space);
             }
-            var block = memberAccessor.block().accept(this);
-            block = block.withTrailingTrivia(SyntaxTriviaList.empty);
-            return new SimplePropertyAssignmentSyntax(Syntax.identifier(propertyName), Syntax.token(103 /* ColonToken */ ).withTrailingTrivia(this.space), FunctionExpressionSyntax.create(Syntax.token(25 /* FunctionKeyword */ ), CallSignatureSyntax.create(parameterList), block)).withLeadingTrivia(indentationTrivia);
+            return new SimplePropertyAssignmentSyntax(Syntax.identifier(propertyName), Syntax.token(103 /* ColonToken */ ).withTrailingTrivia(this.space), FunctionExpressionSyntax.create(Syntax.token(25 /* FunctionKeyword */ ), CallSignatureSyntax.create(parameterList), memberAccessor.block().accept(this).withTrailingTrivia(SyntaxTriviaList.empty))).withLeadingTrivia(this.indentationTriviaForStartOfNode(memberAccessor));
         };
         EmitterImpl.prototype.convertMemberAccessorDeclaration = function (classDeclaration, memberAccessor, classElements) {
             var name = memberAccessor.identifier().value();
