@@ -557,9 +557,6 @@ module Emitter {
         }
 
         private createDefaultConstructorDeclaration(classDeclaration: ClassDeclarationSyntax): FunctionDeclarationSyntax {
-            var functionSignature = FunctionSignatureSyntax.create1(this.withNoTrivia(classDeclaration.identifier()))
-                                                           .withTrailingTrivia(this.space);
-
             var classIndentationColumn = this.columnForStartOfToken(classDeclaration.firstToken());
 
             var statements: StatementSyntax[] = [];
@@ -583,15 +580,14 @@ module Emitter {
             statements.push.apply(statements, this.generatePropertyAssignments(classDeclaration, /*static:*/ false));
 
             var indentationTrivia = this.indentationTrivia(classIndentationColumn);
-            var block = new BlockSyntax(
-                Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
-                SyntaxList.create(statements),
-                Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(indentationTrivia)).withTrailingTrivia(this.newLine);
 
             var functionDeclaration = FunctionDeclarationSyntax.create(
                 Syntax.token(SyntaxKind.FunctionKeyword).withLeadingTrivia(indentationTrivia).withTrailingTrivia(this.space),
-                functionSignature)
-                    .withBlock(block);
+                FunctionSignatureSyntax.create1(this.withNoTrivia(classDeclaration.identifier())).withTrailingTrivia(this.space))
+                    .withBlock(new BlockSyntax(
+                        Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
+                        SyntaxList.create(statements),
+                        Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(indentationTrivia))).withTrailingTrivia(this.newLine);
 
             return <FunctionDeclarationSyntax>this.changeIndentation(
                 functionDeclaration, /*indentFirstToken:*/ true, this.options.indentSpaces);

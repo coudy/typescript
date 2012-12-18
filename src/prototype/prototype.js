@@ -20520,7 +20520,6 @@ var Emitter;
             return result;
         };
         EmitterImpl.prototype.createDefaultConstructorDeclaration = function (classDeclaration) {
-            var functionSignature = FunctionSignatureSyntax.create1(this.withNoTrivia(classDeclaration.identifier())).withTrailingTrivia(this.space);
             var classIndentationColumn = this.columnForStartOfToken(classDeclaration.firstToken());
             var statements = [];
             if(classDeclaration.extendsClause() !== null) {
@@ -20535,8 +20534,7 @@ var Emitter;
             }
             statements.push.apply(statements, this.generatePropertyAssignments(classDeclaration, false));
             var indentationTrivia = this.indentationTrivia(classIndentationColumn);
-            var block = new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), SyntaxList.create(statements), Syntax.token(68 /* CloseBraceToken */ ).withLeadingTrivia(indentationTrivia)).withTrailingTrivia(this.newLine);
-            var functionDeclaration = FunctionDeclarationSyntax.create(Syntax.token(25 /* FunctionKeyword */ ).withLeadingTrivia(indentationTrivia).withTrailingTrivia(this.space), functionSignature).withBlock(block);
+            var functionDeclaration = FunctionDeclarationSyntax.create(Syntax.token(25 /* FunctionKeyword */ ).withLeadingTrivia(indentationTrivia).withTrailingTrivia(this.space), FunctionSignatureSyntax.create1(this.withNoTrivia(classDeclaration.identifier())).withTrailingTrivia(this.space)).withBlock(new BlockSyntax(Syntax.token(67 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), SyntaxList.create(statements), Syntax.token(68 /* CloseBraceToken */ ).withLeadingTrivia(indentationTrivia))).withTrailingTrivia(this.newLine);
             return this.changeIndentation(functionDeclaration, true, this.options.indentSpaces);
         };
         EmitterImpl.prototype.convertConstructorDeclaration = function (classDeclaration, constructorDeclaration) {
