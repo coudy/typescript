@@ -20269,9 +20269,6 @@ var Emitter;
             var column = this.columnForStartOfToken(node.firstToken());
             return this.indentationTrivia(column);
         };
-        EmitterImpl.prototype.adjustListIndentation = function (nodes) {
-            return SyntaxIndenter.indentNodes(nodes, true, this.options.indentSpaces, this.options);
-        };
         EmitterImpl.prototype.changeIndentation = function (node, changeFirstToken, indentAmount) {
             if(indentAmount === 0) {
                 return node;
@@ -20368,6 +20365,7 @@ var Emitter;
             }
         };
         EmitterImpl.prototype.visitModuleDeclaration = function (node) {
+            var _this = this;
             var moduleElements = this.convertModuleElements(node.moduleElements());
             var parentModule = this.rightmostName(node.moduleName()).identifier();
             for(var i = 0, n = node.moduleElements().count(); i < n; i++) {
@@ -20378,7 +20376,9 @@ var Emitter;
                 moduleElements = this.convertModuleDeclaration(node, names[nameIndex], moduleElements, nameIndex === 0);
                 if(nameIndex > 0) {
                     moduleElements.push(this.exportModuleElement(names[nameIndex - 1].identifier(), node, names[nameIndex].identifier()));
-                    moduleElements = this.adjustListIndentation(moduleElements);
+                    moduleElements = ArrayUtilities.select(moduleElements, function (e) {
+                        return _this.changeIndentation(e, true, _this.options.indentSpaces);
+                    });
                 }
             }
             return moduleElements;

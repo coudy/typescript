@@ -60,11 +60,6 @@ module Emitter {
             return this.indentationTrivia(column);
         }
 
-        private adjustListIndentation(nodes: SyntaxNode[]): SyntaxNode[] {
-            // TODO: determine if we should actually indent the first token or not.
-            return SyntaxIndenter.indentNodes(nodes, /*indentFirstToken:*/ true, this.options.indentSpaces, this.options);
-        }
-
         private changeIndentation(node: SyntaxNode, changeFirstToken: bool, indentAmount: number): SyntaxNode {
             if (indentAmount === 0) {
                 return node;
@@ -221,7 +216,8 @@ module Emitter {
                     moduleElements.push(this.exportModuleElement(
                         names[nameIndex - 1].identifier(), node, names[nameIndex].identifier()));
 
-                    moduleElements = <ModuleElementSyntax[]>this.adjustListIndentation(moduleElements);
+                    moduleElements = <ModuleElementSyntax[]>ArrayUtilities.select(moduleElements,
+                        e => this.changeIndentation(e, /*indentFirstToken:*/ true, this.options.indentSpaces));
                 }
             }
 
@@ -588,8 +584,7 @@ module Emitter {
                 statements.push(superStatement);
             }
 
-            statements.push.apply(statements, 
-                this.generatePropertyAssignments(classDeclaration, /*static:*/ false));
+            statements.push.apply(statements, this.generatePropertyAssignments(classDeclaration, /*static:*/ false));
 
             var indentationTrivia = this.indentationTrivia(classIndentationColumn);
             var block = new BlockSyntax(
