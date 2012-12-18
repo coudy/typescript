@@ -752,10 +752,6 @@ module Emitter {
         private convertMemberAccessorDeclaration(classDeclaration: ClassDeclarationSyntax,
                                                  memberAccessor: MemberAccessorDeclarationSyntax,
                                                  classElements: ClassElementSyntax[]): StatementSyntax {
-            if (memberAccessor.block() === null) {
-                return null;
-            }
-
             var name = <string>memberAccessor.identifier().value();
 
             // Find all the accessors with that name.
@@ -775,10 +771,9 @@ module Emitter {
                 }
             }
 
-            var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
-
             var arguments = [
-                <any>MemberAccessExpressionSyntax.create1(new IdentifierNameSyntax(classIdentifier), Syntax.identifierName("prototype")),
+                <any>MemberAccessExpressionSyntax.create1(
+                    new IdentifierNameSyntax(this.withNoTrivia(classDeclaration.identifier())), Syntax.identifierName("prototype")),
                 Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
                 Syntax.stringLiteralExpression('"' + memberAccessor.identifier().text() + '"'),
                 Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space)
@@ -809,12 +804,10 @@ module Emitter {
                 Syntax.token(SyntaxKind.ColonToken).withTrailingTrivia(this.space),
                 Syntax.trueExpression()).withLeadingTrivia(propertyTrivia).withTrailingTrivia(this.newLine));
 
-            var objectLiteral = new ObjectLiteralExpressionSyntax(
+            arguments.push(new ObjectLiteralExpressionSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
                 SeparatedSyntaxList.create(propertyAssignments),
-                Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(accessorTrivia));
-
-            arguments.push(objectLiteral);
+                Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(accessorTrivia)));
 
             return ExpressionStatementSyntax.create1(
                 new InvocationExpressionSyntax(
@@ -854,9 +847,7 @@ module Emitter {
             var identifier = this.withNoTrivia(node.identifier());
 
             var statements: StatementSyntax[] = [];
-
-            var statementColumn = this.options.indentSpaces + this.columnForStartOfToken(node.firstToken());
-            var statementIndentation = this.indentationTrivia(statementColumn);
+            var statementIndentation = this.indentationTrivia( this.options.indentSpaces + this.columnForStartOfToken(node.firstToken()));
 
             if (node.extendsClause() !== null) {
                 // __extends(C, _super);
@@ -889,12 +880,10 @@ module Emitter {
                 Syntax.token(SyntaxKind.SemicolonToken))
                     .withLeadingTrivia(statementIndentation).withTrailingTrivia(this.newLine));
 
-            var classIndentationTrivia = this.indentationTriviaForStartOfNode(node);
-
             var block = new BlockSyntax(
                 Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
                 SyntaxList.create(statements),
-                Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(classIndentationTrivia));
+                Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(this.indentationTriviaForStartOfNode(node)));
 
             var callParameters = [];
             if (node.extendsClause() !== null) {
@@ -905,10 +894,6 @@ module Emitter {
                 ParameterListSyntax.create1().withParameters(
                     SeparatedSyntaxList.create(callParameters))).withTrailingTrivia(this.space);
 
-            var functionExpression = FunctionExpressionSyntax.create1()
-                .withCallSignature(callSignature)
-                .withBlock(block);
-
             var invocationParameters = [];
             if (node.extendsClause() !== null && node.extendsClause().typeNames().count() > 0) {
                 invocationParameters.push(node.extendsClause().typeNames().syntaxNodeAt(0)
@@ -916,22 +901,26 @@ module Emitter {
                     .withTrailingTrivia(SyntaxTriviaList.empty));
             }
 
+            // (function(_super) { ... })(BaseType)
             var invocationExpression = new InvocationExpressionSyntax(
-                ParenthesizedExpressionSyntax.create1(functionExpression),
+                ParenthesizedExpressionSyntax.create1(FunctionExpressionSyntax.create1()
+                    .withCallSignature(callSignature)
+                    .withBlock(block)),
                 ArgumentListSyntax.create1().withArguments(
                     SeparatedSyntaxList.create(invocationParameters)));
 
+            // C = (function(_super) { ... })(BaseType)
             var variableDeclarator = VariableDeclaratorSyntax.create(
                 identifier.withTrailingTrivia(SyntaxTriviaList.space)).withEqualsValueClause(
                     new EqualsValueClauseSyntax(
                         Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
                         invocationExpression));
-
-            var variableDeclaration = new VariableDeclarationSyntax(
+            
+            // var C = (function(_super) { ... })(BaseType);
+            return VariableStatementSyntax.create1(new VariableDeclarationSyntax(
                 Syntax.token(SyntaxKind.VarKeyword).withTrailingTrivia(this.space),
-                SeparatedSyntaxList.create([variableDeclarator])).withLeadingTrivia(node.leadingTrivia());
-
-            return VariableStatementSyntax.create1(variableDeclaration).withTrailingTrivia(this.newLine);
+                SeparatedSyntaxList.create([variableDeclarator])))
+                    .withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(this.newLine);
         }
 
         private visitVariableDeclarator(node: VariableDeclaratorSyntax): VariableDeclaratorSyntax {
