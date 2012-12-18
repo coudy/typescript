@@ -20558,11 +20558,6 @@ var Emitter;
             }), function (s) {
                 return s.accept(_this);
             });
-            var superStatements = ArrayUtilities.select(ArrayUtilities.where(allStatements, function (s) {
-                return Syntax.isSuperInvocationExpressionStatement(s);
-            }), function (s) {
-                return s.accept(_this);
-            });
             var instanceAssignments = this.generatePropertyAssignments(classDeclaration, false);
             for(var i = instanceAssignments.length - 1; i >= 0; i--) {
                 normalStatements.unshift(this.changeIndentation(instanceAssignments[i], true, this.options.indentSpaces));
@@ -20573,13 +20568,14 @@ var Emitter;
                 return _this.generatePropertyAssignmentStatement(p);
             });
             for(var i = parameterPropertyAssignments.length - 1; i >= 0; i--) {
-                var expressionStatement = parameterPropertyAssignments[i];
-                expressionStatement = this.changeIndentation(expressionStatement, true, this.options.indentSpaces + constructorIndentationColumn);
-                normalStatements.unshift(expressionStatement);
+                normalStatements.unshift(this.changeIndentation(parameterPropertyAssignments[i], true, this.options.indentSpaces + constructorIndentationColumn));
             }
-            for(var i = superStatements.length - 1; i >= 0; i--) {
-                normalStatements.unshift(superStatements[i]);
-            }
+            var superStatements = ArrayUtilities.select(ArrayUtilities.where(allStatements, function (s) {
+                return Syntax.isSuperInvocationExpressionStatement(s);
+            }), function (s) {
+                return s.accept(_this);
+            });
+            normalStatements.unshift.apply(normalStatements, superStatements);
             var defaultValueAssignments = ArrayUtilities.select(EmitterImpl.parameterListDefaultParameters(constructorDeclaration.parameterList()), function (p) {
                 return _this.generateDefaultValueAssignmentStatement(p);
             });

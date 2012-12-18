@@ -623,12 +623,8 @@ module Emitter {
 
             var normalStatements: StatementSyntax[] = ArrayUtilities.select(ArrayUtilities.where(allStatements,
                 s => !Syntax.isSuperInvocationExpressionStatement(s)), s => s.accept(this));
-            var superStatements: StatementSyntax[] = ArrayUtilities.select(ArrayUtilities.where(allStatements,
-                s => Syntax.isSuperInvocationExpressionStatement(s)), s => s.accept(this));
 
-            // TODO: handle alignment here.
-            var instanceAssignments = this.generatePropertyAssignments(
-                classDeclaration, /*static:*/ false);
+            var instanceAssignments = this.generatePropertyAssignments(classDeclaration, /*static:*/ false);
 
             for (var i = instanceAssignments.length - 1; i >= 0; i--) {
                 normalStatements.unshift(<ExpressionStatementSyntax>this.changeIndentation(
@@ -640,15 +636,14 @@ module Emitter {
                 p => this.generatePropertyAssignmentStatement(p));
 
             for (var i = parameterPropertyAssignments.length - 1; i >= 0; i--) {
-                var expressionStatement = parameterPropertyAssignments[i];
-                expressionStatement = <ExpressionStatementSyntax>this.changeIndentation(
-                    expressionStatement, /*changeFirstToken:*/ true, this.options.indentSpaces + constructorIndentationColumn);
-                normalStatements.unshift(expressionStatement);
+                normalStatements.unshift(<StatementSyntax>this.changeIndentation(
+                    parameterPropertyAssignments[i], /*changeFirstToken:*/ true, this.options.indentSpaces + constructorIndentationColumn));
             }
 
-            for (var i = superStatements.length - 1; i >= 0; i--) {
-                normalStatements.unshift(superStatements[i]);
-            }
+            var superStatements: StatementSyntax[] = ArrayUtilities.select(ArrayUtilities.where(allStatements,
+                s => Syntax.isSuperInvocationExpressionStatement(s)), s => s.accept(this));
+
+            normalStatements.unshift.apply(normalStatements, superStatements);
 
             var defaultValueAssignments = <ExpressionStatementSyntax[]>ArrayUtilities.select(
                 EmitterImpl.parameterListDefaultParameters(constructorDeclaration.parameterList()),
