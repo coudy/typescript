@@ -244,6 +244,20 @@ module Emitter {
             return moduleElements;
         }
 
+
+        private initializedVariable(name: IdentifierNameSyntax): BinaryExpressionSyntax {
+            return new BinaryExpressionSyntax(
+                SyntaxKind.LogicalOrExpression,
+                name,
+                Syntax.token(SyntaxKind.BarBarToken),
+                ParenthesizedExpressionSyntax.create1(
+                    new BinaryExpressionSyntax(
+                        SyntaxKind.AssignmentExpression,
+                        name,
+                        Syntax.token(SyntaxKind.EqualsToken),
+                        ObjectLiteralExpressionSyntax.create1())));
+        }
+
         private convertModuleDeclaration(moduleDeclaration: ModuleDeclarationSyntax,
                                          moduleName: IdentifierNameSyntax,
                                          moduleElements: ModuleElementSyntax[],
@@ -272,22 +286,11 @@ module Emitter {
                     SyntaxList.create(moduleElements),
                     Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(moduleIndentation)));
 
-            // M||(M={})
-            var logicalOrExpression = new BinaryExpressionSyntax(
-                SyntaxKind.LogicalOrExpression,
-                moduleName,
-                Syntax.token(SyntaxKind.BarBarToken),
-                ParenthesizedExpressionSyntax.create1(
-                    new BinaryExpressionSyntax(
-                        SyntaxKind.AssignmentExpression,
-                        moduleName,
-                        Syntax.token(SyntaxKind.EqualsToken),
-                        ObjectLiteralExpressionSyntax.create1())));
-
             // (function(M) { ... })(M||(M={}))
             var invocationExpression = new InvocationExpressionSyntax(
                 ParenthesizedExpressionSyntax.create1(functionExpression),
-                ArgumentListSyntax.create1().withArgument(logicalOrExpression));
+                ArgumentListSyntax.create1().withArgument(
+                    this.initializedVariable(moduleName)));
 
             // (function(M) { ... })(M||(M={}));
             var expressionStatement = ExpressionStatementSyntax.create1(invocationExpression)
@@ -1164,47 +1167,31 @@ module Emitter {
         }
 
         private visitEnumDeclaration(node: EnumDeclarationSyntax): StatementSyntax[] {
-            var result: StatementSyntax[] = [];
-
             var identifier = this.withNoTrivia(node.identifier());
 
             // Copy existing leading trivia of the enum declaration to this node.
             // var E;
-            result.push(VariableStatementSyntax.create1(
+            var variableStatement = VariableStatementSyntax.create1(
                     new VariableDeclarationSyntax(
                         Syntax.token(SyntaxKind.VarKeyword).withTrailingTrivia(this.space),
                         SeparatedSyntaxList.create([VariableDeclaratorSyntax.create(identifier)]))
-                ).withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(this.newLine));
+                ).withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(this.newLine);
 
             // (function(E) { E.e1 = ... })
             var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(
                 this.generateEnumFunctionExpression(node));
 
-            // E||(E={})
-            var logicalOrExpression = new BinaryExpressionSyntax(
-                SyntaxKind.LogicalOrExpression,
-                new IdentifierNameSyntax(identifier),
-                Syntax.token(SyntaxKind.BarBarToken),
-                ParenthesizedExpressionSyntax.create1(
-                    new BinaryExpressionSyntax(
-                        SyntaxKind.AssignmentExpression,
-                        new IdentifierNameSyntax(identifier),
-                        Syntax.token(SyntaxKind.EqualsToken),
-                        ObjectLiteralExpressionSyntax.create1())));
-
-            // (function(E) { E.e1 = ... })(E||(E={}))
-            var invocationExpression = new InvocationExpressionSyntax(
-                parenthesizedExpression,
-                ArgumentListSyntax.create1().withArguments(
-                    SeparatedSyntaxList.create([logicalOrExpression])));
-            
             // (function(E) { E.e1 = ... })(E||(E={}));
-            var expressionStatement = ExpressionStatementSyntax.create1(invocationExpression);
+            var expressionStatement = ExpressionStatementSyntax.create1(
+                new InvocationExpressionSyntax(
+                    parenthesizedExpression,
+                    ArgumentListSyntax.create1().withArgument(
+                        this.initializedVariable(new IdentifierNameSyntax(identifier)))));
 
-            result.push(expressionStatement.withLeadingTrivia(this.indentationTriviaForStartOfToken(node.firstToken()))
-                                           .withTrailingTrivia(this.newLine));
+            expressionStatement = expressionStatement.withLeadingTrivia(this.indentationTriviaForStartOfToken(node.firstToken()))
+                                                     .withTrailingTrivia(this.newLine);
 
-            return result;
+            return [variableStatement, expressionStatement];
         }
 
         private static isSuperInvocationExpressionStatement(node: SyntaxNode): bool {
@@ -1241,8 +1228,7 @@ module Emitter {
             arguments.unshift(ThisExpressionSyntax.create1());
 
             return result.withExpression(expression)
-                         .withArgumentList(result.argumentList().withArguments(
-                             SeparatedSyntaxList.create(arguments)))
+                         .withArgumentList(result.argumentList().withArguments(SeparatedSyntaxList.create(arguments)))
                          .withLeadingTrivia(result.leadingTrivia());
         }
 
@@ -1259,8 +1245,7 @@ module Emitter {
             var expression = MemberAccessExpressionSyntax.create1(
                 result.expression(), Syntax.identifierName("call"));
             return result.withExpression(expression)
-                         .withArgumentList(result.argumentList().withArguments(
-                             SeparatedSyntaxList.create(arguments)));
+                         .withArgumentList(result.argumentList().withArguments(SeparatedSyntaxList.create(arguments)));
         }
 
         private visitInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
