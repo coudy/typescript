@@ -3,12 +3,6 @@
 ///<reference path='SyntaxFacts.ts' />
 
 module Syntax {
-    function collectSeparatedListTextElements(elements: string[], list: ISeparatedSyntaxList): void {
-        for (var i = 0, n = list.count(); i < n; i++) {
-            list.itemAt(i).collectTextElements(elements);
-        }
-    }
-
     class EmptySeparatedSyntaxList implements ISeparatedSyntaxList {
         public isToken(): bool { return false; }
         public isNode(): bool { return false; }
@@ -37,8 +31,7 @@ module Syntax {
             throw Errors.argumentOutOfRange("index");
         }
 
-        public collectTextElements(elements: string[]): void {
-            return collectSeparatedListTextElements(elements, this);
+        private collectTextElements(elements: string[]): void {
         }
 
         public firstToken(): ISyntaxToken {
@@ -128,8 +121,8 @@ module Syntax {
             throw Errors.argumentOutOfRange("index");
         }
 
-        public collectTextElements(elements: string[]): void {
-            return collectSeparatedListTextElements(elements, this);
+        private collectTextElements(elements: string[]): void {
+            (<any>this.item).collectTextElements(elements);
         }
 
         public firstToken(): ISyntaxToken {
@@ -229,10 +222,6 @@ module Syntax {
             }
 
             return <ISyntaxToken>this.elements[value];
-        }
-
-        public collectTextElements(elements: string[]): void {
-            return collectSeparatedListTextElements(elements, this);
         }
 
         public firstToken(): ISyntaxToken {
@@ -364,6 +353,13 @@ module Syntax {
             }
 
             throw Errors.invalidOperation();
+        }
+
+        private collectTextElements(elements: string[]): void {
+            for (var i = 0, n = this.elements.length; i < n; i++) {
+                var element: any = this.elements[i];
+                element.collectTextElements(elements);
+            }
         }
     }
 

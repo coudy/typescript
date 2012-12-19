@@ -75,13 +75,9 @@ class SyntaxNode implements ISyntaxElement {
         return this.accept(new SyntaxRealizer());
     }
 
-    public collectTextElements(elements: string[]): void {
-        throw Errors.abstract();
-    }
-
     public fullText(): string {
         var elements: string[] = [];
-        this.collectTextElements(elements);
+        (<any>this).collectTextElements(elements);
         return elements.join("");
     }
 
@@ -165,31 +161,6 @@ class SyntaxNode implements ISyntaxElement {
     }
 
     private findTokenInternal(position: number): ISyntaxToken {
-        // While maintaining invariant   0 <= position < curNode.fullWidth()
-        // go down the tree until a token is found
-        var currentNodeOrToken: ISyntaxElement = this;
-
-        while (true) {
-            Debug.assert(currentNodeOrToken.kind() != SyntaxKind.None);
-            Debug.assert(position >= 0 && position < currentNodeOrToken.fullWidth());
-
-            if (currentNodeOrToken.isToken()) {
-                var token = <ISyntaxToken>currentNodeOrToken;
-                // Make sure we never return a bogus token.
-                Debug.assert(!token.isMissing());
-                Debug.assert(token.width() > 0 || token.kind() === SyntaxKind.EndOfFileToken);
-                Debug.assert(token.fullWidth() > 0 || token.kind() === SyntaxKind.EndOfFileToken);
-                return token;
-            }
-
-            var node = <SyntaxNode>currentNodeOrToken;
-
-                //find a child that includes the position
-            currentNodeOrToken = node.elementThatContainsPosition(position);
-        }
-    }
-
-    private elementThatContainsPosition(position: number): ISyntaxElement {
         throw Errors.abstract();
     }
 }

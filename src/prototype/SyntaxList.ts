@@ -1,12 +1,6 @@
 ///<reference path='ISyntaxList.ts' />
 
 module Syntax {
-    function collectSyntaxListTextElements(elements: string[], list: ISyntaxList): void {
-        for (var i = 0, n = list.count(); i < n; i++) {
-            list.syntaxNodeAt(i).collectTextElements(elements);
-        }
-    }
-
     class EmptySyntaxList implements ISyntaxList {
         public isToken(): bool { return false; }
         public isNode(): bool{ return false; }
@@ -32,8 +26,7 @@ module Syntax {
             throw Errors.argumentOutOfRange("index");
         }
 
-        public collectTextElements(elements: string[]): void {
-            return collectSyntaxListTextElements(elements, this);
+        private collectTextElements(elements: string[]): void {
         }
 
         public toArray(): SyntaxNode[] {
@@ -109,8 +102,8 @@ module Syntax {
             return this.item;
         }
 
-        public collectTextElements(elements: string[]): void {
-            return collectSyntaxListTextElements(elements, this);
+        private collectTextElements(elements: string[]): void {
+            (<any>this.item).collectTextElements(elements, this);
         }
 
         public toArray(): SyntaxNode[] {
@@ -193,8 +186,11 @@ module Syntax {
             return this.nodes[index];
         }
 
-        public collectTextElements(elements: string[]): void {
-            return collectSyntaxListTextElements(elements, this);
+        private collectTextElements(elements: string[]): void {
+            for (var i = 0, n = this.nodes.length; i < n; i++) {
+                var element: any = this.nodes[i];
+                element.collectTextElements(elements);
+            }
         }
 
         public toArray(): SyntaxNode[] {

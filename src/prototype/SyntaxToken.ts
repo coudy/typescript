@@ -29,11 +29,11 @@ module Syntax {
             token.isMissing());
     }
 
-    export function collectTokenTextElements(token: ISyntaxToken, elements: string[]): void {
-        token.leadingTrivia().collectTextElements(elements);
-        elements.push(token.text());
-        token.trailingTrivia().collectTextElements(elements);
-    }
+    //export function collectTokenTextElements(token: ISyntaxToken, elements: string[]): void {
+    //    token.leadingTrivia().collectTextElements(elements);
+    //    elements.push(token.text());
+    //    token.trailingTrivia().collectTextElements(elements);
+    //}
 
     export function tokenToJSON(token: ISyntaxToken) {
         var result: any = {
@@ -181,7 +181,7 @@ module Syntax {
         public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
         public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
         public realize(): ISyntaxToken { return realize(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             throw Errors.invalidOperation('Can not call on a non-realized token.');
@@ -265,7 +265,11 @@ module Syntax {
         public trailingTrivia(): ISyntaxTriviaList { return this._trailingTrivia; }
 
         public realize(): ISyntaxToken { return this; }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void {
+            (<any>this.leadingTrivia()).collectTextElements(elements);
+            elements.push(this.text());
+            (<any>this.trailingTrivia()).collectTextElements(elements);
+        }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return new RealizedToken(

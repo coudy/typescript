@@ -91,8 +91,8 @@ class SourceUnitSyntax extends SyntaxNode {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._moduleElements.collectTextElements(elements);
-        this._endOfFileToken.collectTextElements(elements);
+        (<any>this._moduleElements).collectTextElements(elements);
+        (<any>this._endOfFileToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -288,10 +288,10 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._moduleKeyword.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        this._stringLiteral.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
+        (<any>this._moduleKeyword).collectTextElements(elements);
+        (<any>this._openParenToken).collectTextElements(elements);
+        (<any>this._stringLiteral).collectTextElements(elements);
+        (<any>this._closeParenToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -412,7 +412,7 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._moduleName.collectTextElements(elements);
+        (<any>this._moduleName).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -580,11 +580,11 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._importKeyword.collectTextElements(elements);
-        this._identifier.collectTextElements(elements);
-        this._equalsToken.collectTextElements(elements);
-        this._moduleReference.collectTextElements(elements);
-        this._semicolonToken.collectTextElements(elements);
+        (<any>this._importKeyword).collectTextElements(elements);
+        (<any>this._identifier).collectTextElements(elements);
+        (<any>this._equalsToken).collectTextElements(elements);
+        (<any>this._moduleReference).collectTextElements(elements);
+        (<any>this._semicolonToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -868,15 +868,15 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(elements); }
-        if (this._declareKeyword !== null) { this._declareKeyword.collectTextElements(elements); }
-        this._classKeyword.collectTextElements(elements);
-        this._identifier.collectTextElements(elements);
-        if (this._extendsClause !== null) { this._extendsClause.collectTextElements(elements); }
-        if (this._implementsClause !== null) { this._implementsClause.collectTextElements(elements); }
-        this._openBraceToken.collectTextElements(elements);
-        this._classElements.collectTextElements(elements);
-        this._closeBraceToken.collectTextElements(elements);
+        if (this._exportKeyword !== null) { (<any>this._exportKeyword).collectTextElements(elements); }
+        if (this._declareKeyword !== null) { (<any>this._declareKeyword).collectTextElements(elements); }
+        (<any>this._classKeyword).collectTextElements(elements);
+        (<any>this._identifier).collectTextElements(elements);
+        if (this._extendsClause !== null) { (<any>this._extendsClause).collectTextElements(elements); }
+        if (this._implementsClause !== null) { (<any>this._implementsClause).collectTextElements(elements); }
+        (<any>this._openBraceToken).collectTextElements(elements);
+        (<any>this._classElements).collectTextElements(elements);
+        (<any>this._closeBraceToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -1138,11 +1138,11 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(elements); }
-        this._interfaceKeyword.collectTextElements(elements);
-        this._identifier.collectTextElements(elements);
-        if (this._extendsClause !== null) { this._extendsClause.collectTextElements(elements); }
-        this._body.collectTextElements(elements);
+        if (this._exportKeyword !== null) { (<any>this._exportKeyword).collectTextElements(elements); }
+        (<any>this._interfaceKeyword).collectTextElements(elements);
+        (<any>this._identifier).collectTextElements(elements);
+        if (this._extendsClause !== null) { (<any>this._extendsClause).collectTextElements(elements); }
+        (<any>this._body).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -1306,8 +1306,8 @@ class ExtendsClauseSyntax extends SyntaxNode {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._extendsKeyword.collectTextElements(elements);
-        this._typeNames.collectTextElements(elements);
+        (<any>this._extendsKeyword).collectTextElements(elements);
+        (<any>this._typeNames).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -1436,8 +1436,8 @@ class ImplementsClauseSyntax extends SyntaxNode {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._implementsKeyword.collectTextElements(elements);
-        this._typeNames.collectTextElements(elements);
+        (<any>this._implementsKeyword).collectTextElements(elements);
+        (<any>this._typeNames).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -1679,14 +1679,14 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(elements); }
-        if (this._declareKeyword !== null) { this._declareKeyword.collectTextElements(elements); }
-        this._moduleKeyword.collectTextElements(elements);
-        if (this._moduleName !== null) { this._moduleName.collectTextElements(elements); }
-        if (this._stringLiteral !== null) { this._stringLiteral.collectTextElements(elements); }
-        this._openBraceToken.collectTextElements(elements);
-        this._moduleElements.collectTextElements(elements);
-        this._closeBraceToken.collectTextElements(elements);
+        if (this._exportKeyword !== null) { (<any>this._exportKeyword).collectTextElements(elements); }
+        if (this._declareKeyword !== null) { (<any>this._declareKeyword).collectTextElements(elements); }
+        (<any>this._moduleKeyword).collectTextElements(elements);
+        if (this._moduleName !== null) { (<any>this._moduleName).collectTextElements(elements); }
+        if (this._stringLiteral !== null) { (<any>this._stringLiteral).collectTextElements(elements); }
+        (<any>this._openBraceToken).collectTextElements(elements);
+        (<any>this._moduleElements).collectTextElements(elements);
+        (<any>this._closeBraceToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -1977,12 +1977,12 @@ class FunctionDeclarationSyntax extends StatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(elements); }
-        if (this._declareKeyword !== null) { this._declareKeyword.collectTextElements(elements); }
-        this._functionKeyword.collectTextElements(elements);
-        this._functionSignature.collectTextElements(elements);
-        if (this._block !== null) { this._block.collectTextElements(elements); }
-        if (this._semicolonToken !== null) { this._semicolonToken.collectTextElements(elements); }
+        if (this._exportKeyword !== null) { (<any>this._exportKeyword).collectTextElements(elements); }
+        if (this._declareKeyword !== null) { (<any>this._declareKeyword).collectTextElements(elements); }
+        (<any>this._functionKeyword).collectTextElements(elements);
+        (<any>this._functionSignature).collectTextElements(elements);
+        if (this._block !== null) { (<any>this._block).collectTextElements(elements); }
+        if (this._semicolonToken !== null) { (<any>this._semicolonToken).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2206,10 +2206,10 @@ class VariableStatementSyntax extends StatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(elements); }
-        if (this._declareKeyword !== null) { this._declareKeyword.collectTextElements(elements); }
-        this._variableDeclaration.collectTextElements(elements);
-        this._semicolonToken.collectTextElements(elements);
+        if (this._exportKeyword !== null) { (<any>this._exportKeyword).collectTextElements(elements); }
+        if (this._declareKeyword !== null) { (<any>this._declareKeyword).collectTextElements(elements); }
+        (<any>this._variableDeclaration).collectTextElements(elements);
+        (<any>this._semicolonToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2403,8 +2403,8 @@ class VariableDeclarationSyntax extends SyntaxNode {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._varKeyword.collectTextElements(elements);
-        this._variableDeclarators.collectTextElements(elements);
+        (<any>this._varKeyword).collectTextElements(elements);
+        (<any>this._variableDeclarators).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2549,9 +2549,9 @@ class VariableDeclaratorSyntax extends SyntaxNode {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._identifier.collectTextElements(elements);
-        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(elements); }
-        if (this._equalsValueClause !== null) { this._equalsValueClause.collectTextElements(elements); }
+        (<any>this._identifier).collectTextElements(elements);
+        if (this._typeAnnotation !== null) { (<any>this._typeAnnotation).collectTextElements(elements); }
+        if (this._equalsValueClause !== null) { (<any>this._equalsValueClause).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2695,8 +2695,8 @@ class EqualsValueClauseSyntax extends SyntaxNode {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._equalsToken.collectTextElements(elements);
-        this._value.collectTextElements(elements);
+        (<any>this._equalsToken).collectTextElements(elements);
+        (<any>this._value).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2835,8 +2835,8 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._operatorToken.collectTextElements(elements);
-        this._operand.collectTextElements(elements);
+        (<any>this._operatorToken).collectTextElements(elements);
+        (<any>this._operand).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2945,7 +2945,7 @@ class ThisExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._thisKeyword.collectTextElements(elements);
+        (<any>this._thisKeyword).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -3065,7 +3065,7 @@ class LiteralExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._literalToken.collectTextElements(elements);
+        (<any>this._literalToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -3207,9 +3207,9 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._openBracketToken.collectTextElements(elements);
-        this._expressions.collectTextElements(elements);
-        this._closeBracketToken.collectTextElements(elements);
+        (<any>this._openBracketToken).collectTextElements(elements);
+        (<any>this._expressions).collectTextElements(elements);
+        (<any>this._closeBracketToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -3421,9 +3421,9 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._openParenToken.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
+        (<any>this._openParenToken).collectTextElements(elements);
+        (<any>this._expression).collectTextElements(elements);
+        (<any>this._closeParenToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -3602,9 +3602,9 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
     }
 
     private collectTextElements(elements: string[]): void {
-        this._identifier.collectTextElements(elements);
-        this._equalsGreaterThanToken.collectTextElements(elements);
-        this._body.collectTextElements(elements);
+        (<any>this._identifier).collectTextElements(elements);
+        (<any>this._equalsGreaterThanToken).collectTextElements(elements);
+        (<any>this._body).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -3755,9 +3755,9 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
     }
 
     private collectTextElements(elements: string[]): void {
-        this._callSignature.collectTextElements(elements);
-        this._equalsGreaterThanToken.collectTextElements(elements);
-        this._body.collectTextElements(elements);
+        (<any>this._callSignature).collectTextElements(elements);
+        (<any>this._equalsGreaterThanToken).collectTextElements(elements);
+        (<any>this._body).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -3905,7 +3905,7 @@ class IdentifierNameSyntax extends NameSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._identifier.collectTextElements(elements);
+        (<any>this._identifier).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -4039,9 +4039,9 @@ class QualifiedNameSyntax extends NameSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._left.collectTextElements(elements);
-        this._dotToken.collectTextElements(elements);
-        this._right.collectTextElements(elements);
+        (<any>this._left).collectTextElements(elements);
+        (<any>this._dotToken).collectTextElements(elements);
+        (<any>this._right).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -4211,10 +4211,10 @@ class ConstructorTypeSyntax extends TypeSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._newKeyword.collectTextElements(elements);
-        this._parameterList.collectTextElements(elements);
-        this._equalsGreaterThanToken.collectTextElements(elements);
-        this._type.collectTextElements(elements);
+        (<any>this._newKeyword).collectTextElements(elements);
+        (<any>this._parameterList).collectTextElements(elements);
+        (<any>this._equalsGreaterThanToken).collectTextElements(elements);
+        (<any>this._type).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -4374,9 +4374,9 @@ class FunctionTypeSyntax extends TypeSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._parameterList.collectTextElements(elements);
-        this._equalsGreaterThanToken.collectTextElements(elements);
-        this._type.collectTextElements(elements);
+        (<any>this._parameterList).collectTextElements(elements);
+        (<any>this._equalsGreaterThanToken).collectTextElements(elements);
+        (<any>this._type).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -4536,9 +4536,9 @@ class ObjectTypeSyntax extends TypeSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._openBraceToken.collectTextElements(elements);
-        this._typeMembers.collectTextElements(elements);
-        this._closeBraceToken.collectTextElements(elements);
+        (<any>this._openBraceToken).collectTextElements(elements);
+        (<any>this._typeMembers).collectTextElements(elements);
+        (<any>this._closeBraceToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -4689,9 +4689,9 @@ class ArrayTypeSyntax extends TypeSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._type.collectTextElements(elements);
-        this._openBracketToken.collectTextElements(elements);
-        this._closeBracketToken.collectTextElements(elements);
+        (<any>this._type).collectTextElements(elements);
+        (<any>this._openBracketToken).collectTextElements(elements);
+        (<any>this._closeBracketToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -4812,7 +4812,7 @@ class PredefinedTypeSyntax extends TypeSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._keyword.collectTextElements(elements);
+        (<any>this._keyword).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -4928,8 +4928,8 @@ class TypeAnnotationSyntax extends SyntaxNode {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._colonToken.collectTextElements(elements);
-        this._type.collectTextElements(elements);
+        (<any>this._colonToken).collectTextElements(elements);
+        (<any>this._type).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -5080,9 +5080,9 @@ class BlockSyntax extends StatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._openBraceToken.collectTextElements(elements);
-        this._statements.collectTextElements(elements);
-        this._closeBraceToken.collectTextElements(elements);
+        (<any>this._openBraceToken).collectTextElements(elements);
+        (<any>this._statements).collectTextElements(elements);
+        (<any>this._closeBraceToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -5293,12 +5293,12 @@ class ParameterSyntax extends SyntaxNode {
     }
 
     private collectTextElements(elements: string[]): void {
-        if (this._dotDotDotToken !== null) { this._dotDotDotToken.collectTextElements(elements); }
-        if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(elements); }
-        this._identifier.collectTextElements(elements);
-        if (this._questionToken !== null) { this._questionToken.collectTextElements(elements); }
-        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(elements); }
-        if (this._equalsValueClause !== null) { this._equalsValueClause.collectTextElements(elements); }
+        if (this._dotDotDotToken !== null) { (<any>this._dotDotDotToken).collectTextElements(elements); }
+        if (this._publicOrPrivateKeyword !== null) { (<any>this._publicOrPrivateKeyword).collectTextElements(elements); }
+        (<any>this._identifier).collectTextElements(elements);
+        if (this._questionToken !== null) { (<any>this._questionToken).collectTextElements(elements); }
+        if (this._typeAnnotation !== null) { (<any>this._typeAnnotation).collectTextElements(elements); }
+        if (this._equalsValueClause !== null) { (<any>this._equalsValueClause).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -5502,9 +5502,9 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._expression.collectTextElements(elements);
-        this._dotToken.collectTextElements(elements);
-        this._identifierName.collectTextElements(elements);
+        (<any>this._expression).collectTextElements(elements);
+        (<any>this._dotToken).collectTextElements(elements);
+        (<any>this._identifierName).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -5643,8 +5643,8 @@ class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._operand.collectTextElements(elements);
-        this._operatorToken.collectTextElements(elements);
+        (<any>this._operand).collectTextElements(elements);
+        (<any>this._operatorToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -5805,10 +5805,10 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._expression.collectTextElements(elements);
-        this._openBracketToken.collectTextElements(elements);
-        this._argumentExpression.collectTextElements(elements);
-        this._closeBracketToken.collectTextElements(elements);
+        (<any>this._expression).collectTextElements(elements);
+        (<any>this._openBracketToken).collectTextElements(elements);
+        (<any>this._argumentExpression).collectTextElements(elements);
+        (<any>this._closeBracketToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -5953,8 +5953,8 @@ class InvocationExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._expression.collectTextElements(elements);
-        this._argumentList.collectTextElements(elements);
+        (<any>this._expression).collectTextElements(elements);
+        (<any>this._argumentList).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -6107,9 +6107,9 @@ class ArgumentListSyntax extends SyntaxNode {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._openParenToken.collectTextElements(elements);
-        this._arguments.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
+        (<any>this._openParenToken).collectTextElements(elements);
+        (<any>this._arguments).collectTextElements(elements);
+        (<any>this._closeParenToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -6304,9 +6304,9 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._left.collectTextElements(elements);
-        this._operatorToken.collectTextElements(elements);
-        this._right.collectTextElements(elements);
+        (<any>this._left).collectTextElements(elements);
+        (<any>this._operatorToken).collectTextElements(elements);
+        (<any>this._right).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -6495,11 +6495,11 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._condition.collectTextElements(elements);
-        this._questionToken.collectTextElements(elements);
-        this._whenTrue.collectTextElements(elements);
-        this._colonToken.collectTextElements(elements);
-        this._whenFalse.collectTextElements(elements);
+        (<any>this._condition).collectTextElements(elements);
+        (<any>this._questionToken).collectTextElements(elements);
+        (<any>this._whenTrue).collectTextElements(elements);
+        (<any>this._colonToken).collectTextElements(elements);
+        (<any>this._whenFalse).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -6697,9 +6697,9 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._newKeyword.collectTextElements(elements);
-        this._parameterList.collectTextElements(elements);
-        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(elements); }
+        (<any>this._newKeyword).collectTextElements(elements);
+        (<any>this._parameterList).collectTextElements(elements);
+        if (this._typeAnnotation !== null) { (<any>this._typeAnnotation).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -6877,10 +6877,10 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._identifier.collectTextElements(elements);
-        if (this._questionToken !== null) { this._questionToken.collectTextElements(elements); }
-        this._parameterList.collectTextElements(elements);
-        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(elements); }
+        (<any>this._identifier).collectTextElements(elements);
+        if (this._questionToken !== null) { (<any>this._questionToken).collectTextElements(elements); }
+        (<any>this._parameterList).collectTextElements(elements);
+        if (this._typeAnnotation !== null) { (<any>this._typeAnnotation).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -7072,10 +7072,10 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._openBracketToken.collectTextElements(elements);
-        this._parameter.collectTextElements(elements);
-        this._closeBracketToken.collectTextElements(elements);
-        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(elements); }
+        (<any>this._openBracketToken).collectTextElements(elements);
+        (<any>this._parameter).collectTextElements(elements);
+        (<any>this._closeBracketToken).collectTextElements(elements);
+        if (this._typeAnnotation !== null) { (<any>this._typeAnnotation).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -7244,9 +7244,9 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._identifier.collectTextElements(elements);
-        if (this._questionToken !== null) { this._questionToken.collectTextElements(elements); }
-        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(elements); }
+        (<any>this._identifier).collectTextElements(elements);
+        if (this._questionToken !== null) { (<any>this._questionToken).collectTextElements(elements); }
+        if (this._typeAnnotation !== null) { (<any>this._typeAnnotation).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -7414,9 +7414,9 @@ class ParameterListSyntax extends SyntaxNode {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._openParenToken.collectTextElements(elements);
-        this._parameters.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
+        (<any>this._openParenToken).collectTextElements(elements);
+        (<any>this._parameters).collectTextElements(elements);
+        (<any>this._closeParenToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -7554,8 +7554,8 @@ class CallSignatureSyntax extends TypeMemberSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._parameterList.collectTextElements(elements);
-        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(elements); }
+        (<any>this._parameterList).collectTextElements(elements);
+        if (this._typeAnnotation !== null) { (<any>this._typeAnnotation).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -7686,8 +7686,8 @@ class ElseClauseSyntax extends SyntaxNode {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._elseKeyword.collectTextElements(elements);
-        this._statement.collectTextElements(elements);
+        (<any>this._elseKeyword).collectTextElements(elements);
+        (<any>this._statement).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -7889,12 +7889,12 @@ class IfStatementSyntax extends StatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._ifKeyword.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        this._condition.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
-        this._statement.collectTextElements(elements);
-        if (this._elseClause !== null) { this._elseClause.collectTextElements(elements); }
+        (<any>this._ifKeyword).collectTextElements(elements);
+        (<any>this._openParenToken).collectTextElements(elements);
+        (<any>this._condition).collectTextElements(elements);
+        (<any>this._closeParenToken).collectTextElements(elements);
+        (<any>this._statement).collectTextElements(elements);
+        if (this._elseClause !== null) { (<any>this._elseClause).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -8062,8 +8062,8 @@ class ExpressionStatementSyntax extends StatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._expression.collectTextElements(elements);
-        this._semicolonToken.collectTextElements(elements);
+        (<any>this._expression).collectTextElements(elements);
+        (<any>this._semicolonToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -8247,10 +8247,10 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._constructorKeyword.collectTextElements(elements);
-        this._parameterList.collectTextElements(elements);
-        if (this._block !== null) { this._block.collectTextElements(elements); }
-        if (this._semicolonToken !== null) { this._semicolonToken.collectTextElements(elements); }
+        (<any>this._constructorKeyword).collectTextElements(elements);
+        (<any>this._parameterList).collectTextElements(elements);
+        if (this._block !== null) { (<any>this._block).collectTextElements(elements); }
+        if (this._semicolonToken !== null) { (<any>this._semicolonToken).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -8487,11 +8487,11 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(elements); }
-        if (this._staticKeyword !== null) { this._staticKeyword.collectTextElements(elements); }
-        this._functionSignature.collectTextElements(elements);
-        if (this._block !== null) { this._block.collectTextElements(elements); }
-        if (this._semicolonToken !== null) { this._semicolonToken.collectTextElements(elements); }
+        if (this._publicOrPrivateKeyword !== null) { (<any>this._publicOrPrivateKeyword).collectTextElements(elements); }
+        if (this._staticKeyword !== null) { (<any>this._staticKeyword).collectTextElements(elements); }
+        (<any>this._functionSignature).collectTextElements(elements);
+        if (this._block !== null) { (<any>this._block).collectTextElements(elements); }
+        if (this._semicolonToken !== null) { (<any>this._semicolonToken).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -8792,13 +8792,13 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
     }
 
     private collectTextElements(elements: string[]): void {
-        if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(elements); }
-        if (this._staticKeyword !== null) { this._staticKeyword.collectTextElements(elements); }
-        this._getKeyword.collectTextElements(elements);
-        this._identifier.collectTextElements(elements);
-        this._parameterList.collectTextElements(elements);
-        if (this._typeAnnotation !== null) { this._typeAnnotation.collectTextElements(elements); }
-        this._block.collectTextElements(elements);
+        if (this._publicOrPrivateKeyword !== null) { (<any>this._publicOrPrivateKeyword).collectTextElements(elements); }
+        if (this._staticKeyword !== null) { (<any>this._staticKeyword).collectTextElements(elements); }
+        (<any>this._getKeyword).collectTextElements(elements);
+        (<any>this._identifier).collectTextElements(elements);
+        (<any>this._parameterList).collectTextElements(elements);
+        if (this._typeAnnotation !== null) { (<any>this._typeAnnotation).collectTextElements(elements); }
+        (<any>this._block).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -9059,12 +9059,12 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
     }
 
     private collectTextElements(elements: string[]): void {
-        if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(elements); }
-        if (this._staticKeyword !== null) { this._staticKeyword.collectTextElements(elements); }
-        this._setKeyword.collectTextElements(elements);
-        this._identifier.collectTextElements(elements);
-        this._parameterList.collectTextElements(elements);
-        this._block.collectTextElements(elements);
+        if (this._publicOrPrivateKeyword !== null) { (<any>this._publicOrPrivateKeyword).collectTextElements(elements); }
+        if (this._staticKeyword !== null) { (<any>this._staticKeyword).collectTextElements(elements); }
+        (<any>this._setKeyword).collectTextElements(elements);
+        (<any>this._identifier).collectTextElements(elements);
+        (<any>this._parameterList).collectTextElements(elements);
+        (<any>this._block).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -9276,10 +9276,10 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        if (this._publicOrPrivateKeyword !== null) { this._publicOrPrivateKeyword.collectTextElements(elements); }
-        if (this._staticKeyword !== null) { this._staticKeyword.collectTextElements(elements); }
-        this._variableDeclarator.collectTextElements(elements);
-        this._semicolonToken.collectTextElements(elements);
+        if (this._publicOrPrivateKeyword !== null) { (<any>this._publicOrPrivateKeyword).collectTextElements(elements); }
+        if (this._staticKeyword !== null) { (<any>this._staticKeyword).collectTextElements(elements); }
+        (<any>this._variableDeclarator).collectTextElements(elements);
+        (<any>this._semicolonToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -9447,9 +9447,9 @@ class ThrowStatementSyntax extends StatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._throwKeyword.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
-        this._semicolonToken.collectTextElements(elements);
+        (<any>this._throwKeyword).collectTextElements(elements);
+        (<any>this._expression).collectTextElements(elements);
+        (<any>this._semicolonToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -9605,9 +9605,9 @@ class ReturnStatementSyntax extends StatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._returnKeyword.collectTextElements(elements);
-        if (this._expression !== null) { this._expression.collectTextElements(elements); }
-        this._semicolonToken.collectTextElements(elements);
+        (<any>this._returnKeyword).collectTextElements(elements);
+        if (this._expression !== null) { (<any>this._expression).collectTextElements(elements); }
+        (<any>this._semicolonToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -9767,9 +9767,9 @@ class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._newKeyword.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
-        if (this._argumentList !== null) { this._argumentList.collectTextElements(elements); }
+        (<any>this._newKeyword).collectTextElements(elements);
+        (<any>this._expression).collectTextElements(elements);
+        if (this._argumentList !== null) { (<any>this._argumentList).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -10007,13 +10007,13 @@ class SwitchStatementSyntax extends StatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._switchKeyword.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
-        this._openBraceToken.collectTextElements(elements);
-        this._switchClauses.collectTextElements(elements);
-        this._closeBraceToken.collectTextElements(elements);
+        (<any>this._switchKeyword).collectTextElements(elements);
+        (<any>this._openParenToken).collectTextElements(elements);
+        (<any>this._expression).collectTextElements(elements);
+        (<any>this._closeParenToken).collectTextElements(elements);
+        (<any>this._openBraceToken).collectTextElements(elements);
+        (<any>this._switchClauses).collectTextElements(elements);
+        (<any>this._closeBraceToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -10255,10 +10255,10 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._caseKeyword.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
-        this._colonToken.collectTextElements(elements);
-        this._statements.collectTextElements(elements);
+        (<any>this._caseKeyword).collectTextElements(elements);
+        (<any>this._expression).collectTextElements(elements);
+        (<any>this._colonToken).collectTextElements(elements);
+        (<any>this._statements).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -10429,9 +10429,9 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._defaultKeyword.collectTextElements(elements);
-        this._colonToken.collectTextElements(elements);
-        this._statements.collectTextElements(elements);
+        (<any>this._defaultKeyword).collectTextElements(elements);
+        (<any>this._colonToken).collectTextElements(elements);
+        (<any>this._statements).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -10590,9 +10590,9 @@ class BreakStatementSyntax extends StatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._breakKeyword.collectTextElements(elements);
-        if (this._identifier !== null) { this._identifier.collectTextElements(elements); }
-        this._semicolonToken.collectTextElements(elements);
+        (<any>this._breakKeyword).collectTextElements(elements);
+        if (this._identifier !== null) { (<any>this._identifier).collectTextElements(elements); }
+        (<any>this._semicolonToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -10754,9 +10754,9 @@ class ContinueStatementSyntax extends StatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._continueKeyword.collectTextElements(elements);
-        if (this._identifier !== null) { this._identifier.collectTextElements(elements); }
-        this._semicolonToken.collectTextElements(elements);
+        (<any>this._continueKeyword).collectTextElements(elements);
+        if (this._identifier !== null) { (<any>this._identifier).collectTextElements(elements); }
+        (<any>this._semicolonToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -11103,16 +11103,16 @@ class ForStatementSyntax extends BaseForStatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._forKeyword.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        if (this._variableDeclaration !== null) { this._variableDeclaration.collectTextElements(elements); }
-        if (this._initializer !== null) { this._initializer.collectTextElements(elements); }
-        this._firstSemicolonToken.collectTextElements(elements);
-        if (this._condition !== null) { this._condition.collectTextElements(elements); }
-        this._secondSemicolonToken.collectTextElements(elements);
-        if (this._incrementor !== null) { this._incrementor.collectTextElements(elements); }
-        this._closeParenToken.collectTextElements(elements);
-        this._statement.collectTextElements(elements);
+        (<any>this._forKeyword).collectTextElements(elements);
+        (<any>this._openParenToken).collectTextElements(elements);
+        if (this._variableDeclaration !== null) { (<any>this._variableDeclaration).collectTextElements(elements); }
+        if (this._initializer !== null) { (<any>this._initializer).collectTextElements(elements); }
+        (<any>this._firstSemicolonToken).collectTextElements(elements);
+        if (this._condition !== null) { (<any>this._condition).collectTextElements(elements); }
+        (<any>this._secondSemicolonToken).collectTextElements(elements);
+        if (this._incrementor !== null) { (<any>this._incrementor).collectTextElements(elements); }
+        (<any>this._closeParenToken).collectTextElements(elements);
+        (<any>this._statement).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -11440,14 +11440,14 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._forKeyword.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        if (this._variableDeclaration !== null) { this._variableDeclaration.collectTextElements(elements); }
-        if (this._left !== null) { this._left.collectTextElements(elements); }
-        this._inKeyword.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
-        this._statement.collectTextElements(elements);
+        (<any>this._forKeyword).collectTextElements(elements);
+        (<any>this._openParenToken).collectTextElements(elements);
+        if (this._variableDeclaration !== null) { (<any>this._variableDeclaration).collectTextElements(elements); }
+        if (this._left !== null) { (<any>this._left).collectTextElements(elements); }
+        (<any>this._inKeyword).collectTextElements(elements);
+        (<any>this._expression).collectTextElements(elements);
+        (<any>this._closeParenToken).collectTextElements(elements);
+        (<any>this._statement).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -11690,11 +11690,11 @@ class WhileStatementSyntax extends IterationStatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._whileKeyword.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        this._condition.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
-        this._statement.collectTextElements(elements);
+        (<any>this._whileKeyword).collectTextElements(elements);
+        (<any>this._openParenToken).collectTextElements(elements);
+        (<any>this._condition).collectTextElements(elements);
+        (<any>this._closeParenToken).collectTextElements(elements);
+        (<any>this._statement).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -11900,11 +11900,11 @@ class WithStatementSyntax extends StatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._withKeyword.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        this._condition.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
-        this._statement.collectTextElements(elements);
+        (<any>this._withKeyword).collectTextElements(elements);
+        (<any>this._openParenToken).collectTextElements(elements);
+        (<any>this._condition).collectTextElements(elements);
+        (<any>this._closeParenToken).collectTextElements(elements);
+        (<any>this._statement).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -12139,12 +12139,12 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        if (this._exportKeyword !== null) { this._exportKeyword.collectTextElements(elements); }
-        this._enumKeyword.collectTextElements(elements);
-        this._identifier.collectTextElements(elements);
-        this._openBraceToken.collectTextElements(elements);
-        this._variableDeclarators.collectTextElements(elements);
-        this._closeBraceToken.collectTextElements(elements);
+        if (this._exportKeyword !== null) { (<any>this._exportKeyword).collectTextElements(elements); }
+        (<any>this._enumKeyword).collectTextElements(elements);
+        (<any>this._identifier).collectTextElements(elements);
+        (<any>this._openBraceToken).collectTextElements(elements);
+        (<any>this._variableDeclarators).collectTextElements(elements);
+        (<any>this._closeBraceToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -12344,10 +12344,10 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._lessThanToken.collectTextElements(elements);
-        this._type.collectTextElements(elements);
-        this._greaterThanToken.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
+        (<any>this._lessThanToken).collectTextElements(elements);
+        (<any>this._type).collectTextElements(elements);
+        (<any>this._greaterThanToken).collectTextElements(elements);
+        (<any>this._expression).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -12516,9 +12516,9 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._openBraceToken.collectTextElements(elements);
-        this._propertyAssignments.collectTextElements(elements);
-        this._closeBraceToken.collectTextElements(elements);
+        (<any>this._openBraceToken).collectTextElements(elements);
+        (<any>this._propertyAssignments).collectTextElements(elements);
+        (<any>this._closeBraceToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -12700,9 +12700,9 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._propertyName.collectTextElements(elements);
-        this._colonToken.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
+        (<any>this._propertyName).collectTextElements(elements);
+        (<any>this._colonToken).collectTextElements(elements);
+        (<any>this._expression).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -12922,11 +12922,11 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
     }
 
     private collectTextElements(elements: string[]): void {
-        this._getKeyword.collectTextElements(elements);
-        this._propertyName.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
-        this._block.collectTextElements(elements);
+        (<any>this._getKeyword).collectTextElements(elements);
+        (<any>this._propertyName).collectTextElements(elements);
+        (<any>this._openParenToken).collectTextElements(elements);
+        (<any>this._closeParenToken).collectTextElements(elements);
+        (<any>this._block).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -13148,12 +13148,12 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
     }
 
     private collectTextElements(elements: string[]): void {
-        this._setKeyword.collectTextElements(elements);
-        this._propertyName.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        this._parameterName.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
-        this._block.collectTextElements(elements);
+        (<any>this._setKeyword).collectTextElements(elements);
+        (<any>this._propertyName).collectTextElements(elements);
+        (<any>this._openParenToken).collectTextElements(elements);
+        (<any>this._parameterName).collectTextElements(elements);
+        (<any>this._closeParenToken).collectTextElements(elements);
+        (<any>this._block).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -13357,10 +13357,10 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._functionKeyword.collectTextElements(elements);
-        if (this._identifier !== null) { this._identifier.collectTextElements(elements); }
-        this._callSignature.collectTextElements(elements);
-        this._block.collectTextElements(elements);
+        (<any>this._functionKeyword).collectTextElements(elements);
+        if (this._identifier !== null) { (<any>this._identifier).collectTextElements(elements); }
+        (<any>this._callSignature).collectTextElements(elements);
+        (<any>this._block).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -13492,7 +13492,7 @@ class EmptyStatementSyntax extends StatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._semicolonToken.collectTextElements(elements);
+        (<any>this._semicolonToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -13591,7 +13591,7 @@ class SuperExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._superKeyword.collectTextElements(elements);
+        (<any>this._superKeyword).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -13744,10 +13744,10 @@ class TryStatementSyntax extends StatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._tryKeyword.collectTextElements(elements);
-        this._block.collectTextElements(elements);
-        if (this._catchClause !== null) { this._catchClause.collectTextElements(elements); }
-        if (this._finallyClause !== null) { this._finallyClause.collectTextElements(elements); }
+        (<any>this._tryKeyword).collectTextElements(elements);
+        (<any>this._block).collectTextElements(elements);
+        if (this._catchClause !== null) { (<any>this._catchClause).collectTextElements(elements); }
+        if (this._finallyClause !== null) { (<any>this._finallyClause).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -13952,11 +13952,11 @@ class CatchClauseSyntax extends SyntaxNode {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._catchKeyword.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        this._identifier.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
-        this._block.collectTextElements(elements);
+        (<any>this._catchKeyword).collectTextElements(elements);
+        (<any>this._openParenToken).collectTextElements(elements);
+        (<any>this._identifier).collectTextElements(elements);
+        (<any>this._closeParenToken).collectTextElements(elements);
+        (<any>this._block).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -14109,8 +14109,8 @@ class FinallyClauseSyntax extends SyntaxNode {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._finallyKeyword.collectTextElements(elements);
-        this._block.collectTextElements(elements);
+        (<any>this._finallyKeyword).collectTextElements(elements);
+        (<any>this._block).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -14254,9 +14254,9 @@ class LabeledStatement extends StatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._identifier.collectTextElements(elements);
-        this._colonToken.collectTextElements(elements);
-        this._statement.collectTextElements(elements);
+        (<any>this._identifier).collectTextElements(elements);
+        (<any>this._colonToken).collectTextElements(elements);
+        (<any>this._statement).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -14477,13 +14477,13 @@ class DoStatementSyntax extends IterationStatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._doKeyword.collectTextElements(elements);
-        this._statement.collectTextElements(elements);
-        this._whileKeyword.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        this._condition.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
-        this._semicolonToken.collectTextElements(elements);
+        (<any>this._doKeyword).collectTextElements(elements);
+        (<any>this._statement).collectTextElements(elements);
+        (<any>this._whileKeyword).collectTextElements(elements);
+        (<any>this._openParenToken).collectTextElements(elements);
+        (<any>this._condition).collectTextElements(elements);
+        (<any>this._closeParenToken).collectTextElements(elements);
+        (<any>this._semicolonToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -14655,8 +14655,8 @@ class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._typeOfKeyword.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
+        (<any>this._typeOfKeyword).collectTextElements(elements);
+        (<any>this._expression).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -14782,8 +14782,8 @@ class DeleteExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._deleteKeyword.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
+        (<any>this._deleteKeyword).collectTextElements(elements);
+        (<any>this._expression).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -14909,8 +14909,8 @@ class VoidExpressionSyntax extends UnaryExpressionSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._voidKeyword.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
+        (<any>this._voidKeyword).collectTextElements(elements);
+        (<any>this._expression).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -15036,8 +15036,8 @@ class DebuggerStatementSyntax extends StatementSyntax {
     }
 
     private collectTextElements(elements: string[]): void {
-        this._debuggerKeyword.collectTextElements(elements);
-        this._semicolonToken.collectTextElements(elements);
+        (<any>this._debuggerKeyword).collectTextElements(elements);
+        (<any>this._semicolonToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {

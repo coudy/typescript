@@ -930,12 +930,9 @@ var SyntaxNode = (function () {
     SyntaxNode.prototype.realize = function () {
         return this.accept(new SyntaxRealizer());
     };
-    SyntaxNode.prototype.collectTextElements = function (elements) {
-        throw Errors.abstract();
-    };
     SyntaxNode.prototype.fullText = function () {
         var elements = [];
-        this.collectTextElements(elements);
+        (this).collectTextElements(elements);
         return elements.join("");
     };
     SyntaxNode.prototype.replaceToken = function (token1, token2) {
@@ -989,22 +986,6 @@ var SyntaxNode = (function () {
         return null;
     };
     SyntaxNode.prototype.findTokenInternal = function (position) {
-        var currentNodeOrToken = this;
-        while(true) {
-            Debug.assert(currentNodeOrToken.kind() != 0 /* None */ );
-            Debug.assert(position >= 0 && position < currentNodeOrToken.fullWidth());
-            if(currentNodeOrToken.isToken()) {
-                var token = currentNodeOrToken;
-                Debug.assert(!token.isMissing());
-                Debug.assert(token.width() > 0 || token.kind() === 118 /* EndOfFileToken */ );
-                Debug.assert(token.fullWidth() > 0 || token.kind() === 118 /* EndOfFileToken */ );
-                return token;
-            }
-            var node = currentNodeOrToken;
-            currentNodeOrToken = node.elementThatContainsPosition(position);
-        }
-    };
-    SyntaxNode.prototype.elementThatContainsPosition = function (position) {
         throw Errors.abstract();
     };
     return SyntaxNode;
@@ -1412,11 +1393,6 @@ var SyntaxFacts = (function () {
 })();
 var Syntax;
 (function (Syntax) {
-    function collectSeparatedListTextElements(elements, list) {
-        for(var i = 0, n = list.count(); i < n; i++) {
-            list.itemAt(i).collectTextElements(elements);
-        }
-    }
     var EmptySeparatedSyntaxList = (function () {
         function EmptySeparatedSyntaxList() { }
         EmptySeparatedSyntaxList.prototype.isToken = function () {
@@ -1465,7 +1441,6 @@ var Syntax;
             throw Errors.argumentOutOfRange("index");
         };
         EmptySeparatedSyntaxList.prototype.collectTextElements = function (elements) {
-            return collectSeparatedListTextElements(elements, this);
         };
         EmptySeparatedSyntaxList.prototype.firstToken = function () {
             return null;
@@ -1557,7 +1532,7 @@ var Syntax;
             throw Errors.argumentOutOfRange("index");
         };
         SingletonSeparatedSyntaxList.prototype.collectTextElements = function (elements) {
-            return collectSeparatedListTextElements(elements, this);
+            (this.item).collectTextElements(elements);
         };
         SingletonSeparatedSyntaxList.prototype.firstToken = function () {
             return this.item.firstToken();
@@ -1661,9 +1636,6 @@ var Syntax;
                 throw Errors.argumentOutOfRange("index");
             }
             return this.elements[value];
-        };
-        NormalSeparatedSyntaxList.prototype.collectTextElements = function (elements) {
-            return collectSeparatedListTextElements(elements, this);
         };
         NormalSeparatedSyntaxList.prototype.firstToken = function () {
             var token;
@@ -1770,6 +1742,12 @@ var Syntax;
             }
             throw Errors.invalidOperation();
         };
+        NormalSeparatedSyntaxList.prototype.collectTextElements = function (elements) {
+            for(var i = 0, n = this.elements.length; i < n; i++) {
+                var element = this.elements[i];
+                element.collectTextElements(elements);
+            }
+        };
         return NormalSeparatedSyntaxList;
     })();    
     function separatedList(nodes) {
@@ -1801,11 +1779,6 @@ var Syntax;
 })(Syntax || (Syntax = {}));
 var Syntax;
 (function (Syntax) {
-    function collectSyntaxListTextElements(elements, list) {
-        for(var i = 0, n = list.count(); i < n; i++) {
-            list.syntaxNodeAt(i).collectTextElements(elements);
-        }
-    }
     var EmptySyntaxList = (function () {
         function EmptySyntaxList() { }
         EmptySyntaxList.prototype.isToken = function () {
@@ -1842,7 +1815,6 @@ var Syntax;
             throw Errors.argumentOutOfRange("index");
         };
         EmptySyntaxList.prototype.collectTextElements = function (elements) {
-            return collectSyntaxListTextElements(elements, this);
         };
         EmptySyntaxList.prototype.toArray = function () {
             return [];
@@ -1917,7 +1889,7 @@ var Syntax;
             return this.item;
         };
         SingletonSyntaxList.prototype.collectTextElements = function (elements) {
-            return collectSyntaxListTextElements(elements, this);
+            (this.item).collectTextElements(elements, this);
         };
         SingletonSyntaxList.prototype.toArray = function () {
             return [
@@ -1998,7 +1970,10 @@ var Syntax;
             return this.nodes[index];
         };
         NormalSyntaxList.prototype.collectTextElements = function (elements) {
-            return collectSyntaxListTextElements(elements, this);
+            for(var i = 0, n = this.nodes.length; i < n; i++) {
+                var element = this.nodes[i];
+                element.collectTextElements(elements);
+            }
         };
         NormalSyntaxList.prototype.toArray = function () {
             return this.nodes.slice(0);
@@ -2161,8 +2136,8 @@ var SourceUnitSyntax = (function (_super) {
         return this.update(this._moduleElements, endOfFileToken);
     };
     SourceUnitSyntax.prototype.collectTextElements = function (elements) {
-        this._moduleElements.collectTextElements(elements);
-        this._endOfFileToken.collectTextElements(elements);
+        (this._moduleElements).collectTextElements(elements);
+        (this._endOfFileToken).collectTextElements(elements);
     };
     SourceUnitSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._moduleElements.isTypeScriptSpecific()) {
@@ -2348,10 +2323,10 @@ var ExternalModuleReferenceSyntax = (function (_super) {
         return this.update(this._moduleKeyword, this._openParenToken, this._stringLiteral, closeParenToken);
     };
     ExternalModuleReferenceSyntax.prototype.collectTextElements = function (elements) {
-        this._moduleKeyword.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        this._stringLiteral.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
+        (this._moduleKeyword).collectTextElements(elements);
+        (this._openParenToken).collectTextElements(elements);
+        (this._stringLiteral).collectTextElements(elements);
+        (this._closeParenToken).collectTextElements(elements);
     };
     ExternalModuleReferenceSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -2460,7 +2435,7 @@ var ModuleNameModuleReferenceSyntax = (function (_super) {
         return this.update(moduleName);
     };
     ModuleNameModuleReferenceSyntax.prototype.collectTextElements = function (elements) {
-        this._moduleName.collectTextElements(elements);
+        (this._moduleName).collectTextElements(elements);
     };
     ModuleNameModuleReferenceSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -2621,11 +2596,11 @@ var ImportDeclarationSyntax = (function (_super) {
         return this.update(this._importKeyword, this._identifier, this._equalsToken, this._moduleReference, semicolonToken);
     };
     ImportDeclarationSyntax.prototype.collectTextElements = function (elements) {
-        this._importKeyword.collectTextElements(elements);
-        this._identifier.collectTextElements(elements);
-        this._equalsToken.collectTextElements(elements);
-        this._moduleReference.collectTextElements(elements);
-        this._semicolonToken.collectTextElements(elements);
+        (this._importKeyword).collectTextElements(elements);
+        (this._identifier).collectTextElements(elements);
+        (this._equalsToken).collectTextElements(elements);
+        (this._moduleReference).collectTextElements(elements);
+        (this._semicolonToken).collectTextElements(elements);
     };
     ImportDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -2905,22 +2880,22 @@ var ClassDeclarationSyntax = (function (_super) {
     };
     ClassDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._exportKeyword !== null) {
-            this._exportKeyword.collectTextElements(elements);
+            (this._exportKeyword).collectTextElements(elements);
         }
         if(this._declareKeyword !== null) {
-            this._declareKeyword.collectTextElements(elements);
+            (this._declareKeyword).collectTextElements(elements);
         }
-        this._classKeyword.collectTextElements(elements);
-        this._identifier.collectTextElements(elements);
+        (this._classKeyword).collectTextElements(elements);
+        (this._identifier).collectTextElements(elements);
         if(this._extendsClause !== null) {
-            this._extendsClause.collectTextElements(elements);
+            (this._extendsClause).collectTextElements(elements);
         }
         if(this._implementsClause !== null) {
-            this._implementsClause.collectTextElements(elements);
+            (this._implementsClause).collectTextElements(elements);
         }
-        this._openBraceToken.collectTextElements(elements);
-        this._classElements.collectTextElements(elements);
-        this._closeBraceToken.collectTextElements(elements);
+        (this._openBraceToken).collectTextElements(elements);
+        (this._classElements).collectTextElements(elements);
+        (this._closeBraceToken).collectTextElements(elements);
     };
     ClassDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -3172,14 +3147,14 @@ var InterfaceDeclarationSyntax = (function (_super) {
     };
     InterfaceDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._exportKeyword !== null) {
-            this._exportKeyword.collectTextElements(elements);
+            (this._exportKeyword).collectTextElements(elements);
         }
-        this._interfaceKeyword.collectTextElements(elements);
-        this._identifier.collectTextElements(elements);
+        (this._interfaceKeyword).collectTextElements(elements);
+        (this._identifier).collectTextElements(elements);
         if(this._extendsClause !== null) {
-            this._extendsClause.collectTextElements(elements);
+            (this._extendsClause).collectTextElements(elements);
         }
-        this._body.collectTextElements(elements);
+        (this._body).collectTextElements(elements);
     };
     InterfaceDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -3332,8 +3307,8 @@ var ExtendsClauseSyntax = (function (_super) {
         ]));
     };
     ExtendsClauseSyntax.prototype.collectTextElements = function (elements) {
-        this._extendsKeyword.collectTextElements(elements);
-        this._typeNames.collectTextElements(elements);
+        (this._extendsKeyword).collectTextElements(elements);
+        (this._typeNames).collectTextElements(elements);
     };
     ExtendsClauseSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -3451,8 +3426,8 @@ var ImplementsClauseSyntax = (function (_super) {
         ]));
     };
     ImplementsClauseSyntax.prototype.collectTextElements = function (elements) {
-        this._implementsKeyword.collectTextElements(elements);
-        this._typeNames.collectTextElements(elements);
+        (this._implementsKeyword).collectTextElements(elements);
+        (this._typeNames).collectTextElements(elements);
     };
     ImplementsClauseSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -3691,21 +3666,21 @@ var ModuleDeclarationSyntax = (function (_super) {
     };
     ModuleDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._exportKeyword !== null) {
-            this._exportKeyword.collectTextElements(elements);
+            (this._exportKeyword).collectTextElements(elements);
         }
         if(this._declareKeyword !== null) {
-            this._declareKeyword.collectTextElements(elements);
+            (this._declareKeyword).collectTextElements(elements);
         }
-        this._moduleKeyword.collectTextElements(elements);
+        (this._moduleKeyword).collectTextElements(elements);
         if(this._moduleName !== null) {
-            this._moduleName.collectTextElements(elements);
+            (this._moduleName).collectTextElements(elements);
         }
         if(this._stringLiteral !== null) {
-            this._stringLiteral.collectTextElements(elements);
+            (this._stringLiteral).collectTextElements(elements);
         }
-        this._openBraceToken.collectTextElements(elements);
-        this._moduleElements.collectTextElements(elements);
-        this._closeBraceToken.collectTextElements(elements);
+        (this._openBraceToken).collectTextElements(elements);
+        (this._moduleElements).collectTextElements(elements);
+        (this._closeBraceToken).collectTextElements(elements);
     };
     ModuleDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -3987,18 +3962,18 @@ var FunctionDeclarationSyntax = (function (_super) {
     };
     FunctionDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._exportKeyword !== null) {
-            this._exportKeyword.collectTextElements(elements);
+            (this._exportKeyword).collectTextElements(elements);
         }
         if(this._declareKeyword !== null) {
-            this._declareKeyword.collectTextElements(elements);
+            (this._declareKeyword).collectTextElements(elements);
         }
-        this._functionKeyword.collectTextElements(elements);
-        this._functionSignature.collectTextElements(elements);
+        (this._functionKeyword).collectTextElements(elements);
+        (this._functionSignature).collectTextElements(elements);
         if(this._block !== null) {
-            this._block.collectTextElements(elements);
+            (this._block).collectTextElements(elements);
         }
         if(this._semicolonToken !== null) {
-            this._semicolonToken.collectTextElements(elements);
+            (this._semicolonToken).collectTextElements(elements);
         }
     };
     FunctionDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
@@ -4222,13 +4197,13 @@ var VariableStatementSyntax = (function (_super) {
     };
     VariableStatementSyntax.prototype.collectTextElements = function (elements) {
         if(this._exportKeyword !== null) {
-            this._exportKeyword.collectTextElements(elements);
+            (this._exportKeyword).collectTextElements(elements);
         }
         if(this._declareKeyword !== null) {
-            this._declareKeyword.collectTextElements(elements);
+            (this._declareKeyword).collectTextElements(elements);
         }
-        this._variableDeclaration.collectTextElements(elements);
-        this._semicolonToken.collectTextElements(elements);
+        (this._variableDeclaration).collectTextElements(elements);
+        (this._semicolonToken).collectTextElements(elements);
     };
     VariableStatementSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._exportKeyword !== null) {
@@ -4413,8 +4388,8 @@ var VariableDeclarationSyntax = (function (_super) {
         ]));
     };
     VariableDeclarationSyntax.prototype.collectTextElements = function (elements) {
-        this._varKeyword.collectTextElements(elements);
-        this._variableDeclarators.collectTextElements(elements);
+        (this._varKeyword).collectTextElements(elements);
+        (this._variableDeclarators).collectTextElements(elements);
     };
     VariableDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._variableDeclarators.isTypeScriptSpecific()) {
@@ -4546,12 +4521,12 @@ var VariableDeclaratorSyntax = (function (_super) {
         return this.update(this._identifier, this._typeAnnotation, equalsValueClause);
     };
     VariableDeclaratorSyntax.prototype.collectTextElements = function (elements) {
-        this._identifier.collectTextElements(elements);
+        (this._identifier).collectTextElements(elements);
         if(this._typeAnnotation !== null) {
-            this._typeAnnotation.collectTextElements(elements);
+            (this._typeAnnotation).collectTextElements(elements);
         }
         if(this._equalsValueClause !== null) {
-            this._equalsValueClause.collectTextElements(elements);
+            (this._equalsValueClause).collectTextElements(elements);
         }
     };
     VariableDeclaratorSyntax.prototype.isTypeScriptSpecific = function () {
@@ -4688,8 +4663,8 @@ var EqualsValueClauseSyntax = (function (_super) {
         return this.update(this._equalsToken, value);
     };
     EqualsValueClauseSyntax.prototype.collectTextElements = function (elements) {
-        this._equalsToken.collectTextElements(elements);
-        this._value.collectTextElements(elements);
+        (this._equalsToken).collectTextElements(elements);
+        (this._value).collectTextElements(elements);
     };
     EqualsValueClauseSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._value.isTypeScriptSpecific()) {
@@ -4821,8 +4796,8 @@ var PrefixUnaryExpressionSyntax = (function (_super) {
         return this.update(this._kind, this._operatorToken, operand);
     };
     PrefixUnaryExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._operatorToken.collectTextElements(elements);
-        this._operand.collectTextElements(elements);
+        (this._operatorToken).collectTextElements(elements);
+        (this._operand).collectTextElements(elements);
     };
     PrefixUnaryExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._operand.isTypeScriptSpecific()) {
@@ -4919,7 +4894,7 @@ var ThisExpressionSyntax = (function (_super) {
         return this.update(thisKeyword);
     };
     ThisExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._thisKeyword.collectTextElements(elements);
+        (this._thisKeyword).collectTextElements(elements);
     };
     ThisExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         return false;
@@ -5033,7 +5008,7 @@ var LiteralExpressionSyntax = (function (_super) {
         return this.update(this._kind, literalToken);
     };
     LiteralExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._literalToken.collectTextElements(elements);
+        (this._literalToken).collectTextElements(elements);
     };
     LiteralExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         return false;
@@ -5164,9 +5139,9 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
         return this.update(this._openBracketToken, this._expressions, closeBracketToken);
     };
     ArrayLiteralExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._openBracketToken.collectTextElements(elements);
-        this._expressions.collectTextElements(elements);
-        this._closeBracketToken.collectTextElements(elements);
+        (this._openBracketToken).collectTextElements(elements);
+        (this._expressions).collectTextElements(elements);
+        (this._closeBracketToken).collectTextElements(elements);
     };
     ArrayLiteralExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._expressions.isTypeScriptSpecific()) {
@@ -5358,9 +5333,9 @@ var ParenthesizedExpressionSyntax = (function (_super) {
         return this.update(this._openParenToken, this._expression, closeParenToken);
     };
     ParenthesizedExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._openParenToken.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
+        (this._openParenToken).collectTextElements(elements);
+        (this._expression).collectTextElements(elements);
+        (this._closeParenToken).collectTextElements(elements);
     };
     ParenthesizedExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._expression.isTypeScriptSpecific()) {
@@ -5526,9 +5501,9 @@ var SimpleArrowFunctionExpressionSyntax = (function (_super) {
         return this.update(this._identifier, this._equalsGreaterThanToken, body);
     };
     SimpleArrowFunctionExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._identifier.collectTextElements(elements);
-        this._equalsGreaterThanToken.collectTextElements(elements);
-        this._body.collectTextElements(elements);
+        (this._identifier).collectTextElements(elements);
+        (this._equalsGreaterThanToken).collectTextElements(elements);
+        (this._body).collectTextElements(elements);
     };
     SimpleArrowFunctionExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -5669,9 +5644,9 @@ var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
         return this.update(this._callSignature, this._equalsGreaterThanToken, body);
     };
     ParenthesizedArrowFunctionExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._callSignature.collectTextElements(elements);
-        this._equalsGreaterThanToken.collectTextElements(elements);
-        this._body.collectTextElements(elements);
+        (this._callSignature).collectTextElements(elements);
+        (this._equalsGreaterThanToken).collectTextElements(elements);
+        (this._body).collectTextElements(elements);
     };
     ParenthesizedArrowFunctionExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -5803,7 +5778,7 @@ var IdentifierNameSyntax = (function (_super) {
         return this.update(identifier);
     };
     IdentifierNameSyntax.prototype.collectTextElements = function (elements) {
-        this._identifier.collectTextElements(elements);
+        (this._identifier).collectTextElements(elements);
     };
     IdentifierNameSyntax.prototype.isTypeScriptSpecific = function () {
         return false;
@@ -5926,9 +5901,9 @@ var QualifiedNameSyntax = (function (_super) {
         return this.update(this._left, this._dotToken, right);
     };
     QualifiedNameSyntax.prototype.collectTextElements = function (elements) {
-        this._left.collectTextElements(elements);
-        this._dotToken.collectTextElements(elements);
-        this._right.collectTextElements(elements);
+        (this._left).collectTextElements(elements);
+        (this._dotToken).collectTextElements(elements);
+        (this._right).collectTextElements(elements);
     };
     QualifiedNameSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._left.isTypeScriptSpecific()) {
@@ -6094,10 +6069,10 @@ var ConstructorTypeSyntax = (function (_super) {
         return this.update(this._newKeyword, this._parameterList, this._equalsGreaterThanToken, type);
     };
     ConstructorTypeSyntax.prototype.collectTextElements = function (elements) {
-        this._newKeyword.collectTextElements(elements);
-        this._parameterList.collectTextElements(elements);
-        this._equalsGreaterThanToken.collectTextElements(elements);
-        this._type.collectTextElements(elements);
+        (this._newKeyword).collectTextElements(elements);
+        (this._parameterList).collectTextElements(elements);
+        (this._equalsGreaterThanToken).collectTextElements(elements);
+        (this._type).collectTextElements(elements);
     };
     ConstructorTypeSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -6247,9 +6222,9 @@ var FunctionTypeSyntax = (function (_super) {
         return this.update(this._parameterList, this._equalsGreaterThanToken, type);
     };
     FunctionTypeSyntax.prototype.collectTextElements = function (elements) {
-        this._parameterList.collectTextElements(elements);
-        this._equalsGreaterThanToken.collectTextElements(elements);
-        this._type.collectTextElements(elements);
+        (this._parameterList).collectTextElements(elements);
+        (this._equalsGreaterThanToken).collectTextElements(elements);
+        (this._type).collectTextElements(elements);
     };
     FunctionTypeSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -6398,9 +6373,9 @@ var ObjectTypeSyntax = (function (_super) {
         return this.update(this._openBraceToken, this._typeMembers, closeBraceToken);
     };
     ObjectTypeSyntax.prototype.collectTextElements = function (elements) {
-        this._openBraceToken.collectTextElements(elements);
-        this._typeMembers.collectTextElements(elements);
-        this._closeBraceToken.collectTextElements(elements);
+        (this._openBraceToken).collectTextElements(elements);
+        (this._typeMembers).collectTextElements(elements);
+        (this._closeBraceToken).collectTextElements(elements);
     };
     ObjectTypeSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -6541,9 +6516,9 @@ var ArrayTypeSyntax = (function (_super) {
         return this.update(this._type, this._openBracketToken, closeBracketToken);
     };
     ArrayTypeSyntax.prototype.collectTextElements = function (elements) {
-        this._type.collectTextElements(elements);
-        this._openBracketToken.collectTextElements(elements);
-        this._closeBracketToken.collectTextElements(elements);
+        (this._type).collectTextElements(elements);
+        (this._openBracketToken).collectTextElements(elements);
+        (this._closeBracketToken).collectTextElements(elements);
     };
     ArrayTypeSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -6654,7 +6629,7 @@ var PredefinedTypeSyntax = (function (_super) {
         return this.update(keyword);
     };
     PredefinedTypeSyntax.prototype.collectTextElements = function (elements) {
-        this._keyword.collectTextElements(elements);
+        (this._keyword).collectTextElements(elements);
     };
     PredefinedTypeSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -6758,8 +6733,8 @@ var TypeAnnotationSyntax = (function (_super) {
         return this.update(this._colonToken, type);
     };
     TypeAnnotationSyntax.prototype.collectTextElements = function (elements) {
-        this._colonToken.collectTextElements(elements);
-        this._type.collectTextElements(elements);
+        (this._colonToken).collectTextElements(elements);
+        (this._type).collectTextElements(elements);
     };
     TypeAnnotationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -6899,9 +6874,9 @@ var BlockSyntax = (function (_super) {
         return this.update(this._openBraceToken, this._statements, closeBraceToken);
     };
     BlockSyntax.prototype.collectTextElements = function (elements) {
-        this._openBraceToken.collectTextElements(elements);
-        this._statements.collectTextElements(elements);
-        this._closeBraceToken.collectTextElements(elements);
+        (this._openBraceToken).collectTextElements(elements);
+        (this._statements).collectTextElements(elements);
+        (this._closeBraceToken).collectTextElements(elements);
     };
     BlockSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._statements.isTypeScriptSpecific()) {
@@ -7106,20 +7081,20 @@ var ParameterSyntax = (function (_super) {
     };
     ParameterSyntax.prototype.collectTextElements = function (elements) {
         if(this._dotDotDotToken !== null) {
-            this._dotDotDotToken.collectTextElements(elements);
+            (this._dotDotDotToken).collectTextElements(elements);
         }
         if(this._publicOrPrivateKeyword !== null) {
-            this._publicOrPrivateKeyword.collectTextElements(elements);
+            (this._publicOrPrivateKeyword).collectTextElements(elements);
         }
-        this._identifier.collectTextElements(elements);
+        (this._identifier).collectTextElements(elements);
         if(this._questionToken !== null) {
-            this._questionToken.collectTextElements(elements);
+            (this._questionToken).collectTextElements(elements);
         }
         if(this._typeAnnotation !== null) {
-            this._typeAnnotation.collectTextElements(elements);
+            (this._typeAnnotation).collectTextElements(elements);
         }
         if(this._equalsValueClause !== null) {
-            this._equalsValueClause.collectTextElements(elements);
+            (this._equalsValueClause).collectTextElements(elements);
         }
     };
     ParameterSyntax.prototype.isTypeScriptSpecific = function () {
@@ -7323,9 +7298,9 @@ var MemberAccessExpressionSyntax = (function (_super) {
         return this.update(this._expression, this._dotToken, identifierName);
     };
     MemberAccessExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._expression.collectTextElements(elements);
-        this._dotToken.collectTextElements(elements);
-        this._identifierName.collectTextElements(elements);
+        (this._expression).collectTextElements(elements);
+        (this._dotToken).collectTextElements(elements);
+        (this._identifierName).collectTextElements(elements);
     };
     MemberAccessExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._expression.isTypeScriptSpecific()) {
@@ -7457,8 +7432,8 @@ var PostfixUnaryExpressionSyntax = (function (_super) {
         return this.update(this._kind, this._operand, operatorToken);
     };
     PostfixUnaryExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._operand.collectTextElements(elements);
-        this._operatorToken.collectTextElements(elements);
+        (this._operand).collectTextElements(elements);
+        (this._operatorToken).collectTextElements(elements);
     };
     PostfixUnaryExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._operand.isTypeScriptSpecific()) {
@@ -7612,10 +7587,10 @@ var ElementAccessExpressionSyntax = (function (_super) {
         return this.update(this._expression, this._openBracketToken, this._argumentExpression, closeBracketToken);
     };
     ElementAccessExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._expression.collectTextElements(elements);
-        this._openBracketToken.collectTextElements(elements);
-        this._argumentExpression.collectTextElements(elements);
-        this._closeBracketToken.collectTextElements(elements);
+        (this._expression).collectTextElements(elements);
+        (this._openBracketToken).collectTextElements(elements);
+        (this._argumentExpression).collectTextElements(elements);
+        (this._closeBracketToken).collectTextElements(elements);
     };
     ElementAccessExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._expression.isTypeScriptSpecific()) {
@@ -7752,8 +7727,8 @@ var InvocationExpressionSyntax = (function (_super) {
         return this.update(this._expression, argumentList);
     };
     InvocationExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._expression.collectTextElements(elements);
-        this._argumentList.collectTextElements(elements);
+        (this._expression).collectTextElements(elements);
+        (this._argumentList).collectTextElements(elements);
     };
     InvocationExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._expression.isTypeScriptSpecific()) {
@@ -7899,9 +7874,9 @@ var ArgumentListSyntax = (function (_super) {
         return this.update(this._openParenToken, this._arguments, closeParenToken);
     };
     ArgumentListSyntax.prototype.collectTextElements = function (elements) {
-        this._openParenToken.collectTextElements(elements);
-        this._arguments.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
+        (this._openParenToken).collectTextElements(elements);
+        (this._arguments).collectTextElements(elements);
+        (this._closeParenToken).collectTextElements(elements);
     };
     ArgumentListSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._arguments.isTypeScriptSpecific()) {
@@ -8096,9 +8071,9 @@ var BinaryExpressionSyntax = (function (_super) {
         return this.update(this._kind, this._left, this._operatorToken, right);
     };
     BinaryExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._left.collectTextElements(elements);
-        this._operatorToken.collectTextElements(elements);
-        this._right.collectTextElements(elements);
+        (this._left).collectTextElements(elements);
+        (this._operatorToken).collectTextElements(elements);
+        (this._right).collectTextElements(elements);
     };
     BinaryExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._left.isTypeScriptSpecific()) {
@@ -8283,11 +8258,11 @@ var ConditionalExpressionSyntax = (function (_super) {
         return this.update(this._condition, this._questionToken, this._whenTrue, this._colonToken, whenFalse);
     };
     ConditionalExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._condition.collectTextElements(elements);
-        this._questionToken.collectTextElements(elements);
-        this._whenTrue.collectTextElements(elements);
-        this._colonToken.collectTextElements(elements);
-        this._whenFalse.collectTextElements(elements);
+        (this._condition).collectTextElements(elements);
+        (this._questionToken).collectTextElements(elements);
+        (this._whenTrue).collectTextElements(elements);
+        (this._colonToken).collectTextElements(elements);
+        (this._whenFalse).collectTextElements(elements);
     };
     ConditionalExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._condition.isTypeScriptSpecific()) {
@@ -8474,10 +8449,10 @@ var ConstructSignatureSyntax = (function (_super) {
         return this.update(this._newKeyword, this._parameterList, typeAnnotation);
     };
     ConstructSignatureSyntax.prototype.collectTextElements = function (elements) {
-        this._newKeyword.collectTextElements(elements);
-        this._parameterList.collectTextElements(elements);
+        (this._newKeyword).collectTextElements(elements);
+        (this._parameterList).collectTextElements(elements);
         if(this._typeAnnotation !== null) {
-            this._typeAnnotation.collectTextElements(elements);
+            (this._typeAnnotation).collectTextElements(elements);
         }
     };
     ConstructSignatureSyntax.prototype.isTypeScriptSpecific = function () {
@@ -8644,13 +8619,13 @@ var FunctionSignatureSyntax = (function (_super) {
         return this.update(this._identifier, this._questionToken, this._parameterList, typeAnnotation);
     };
     FunctionSignatureSyntax.prototype.collectTextElements = function (elements) {
-        this._identifier.collectTextElements(elements);
+        (this._identifier).collectTextElements(elements);
         if(this._questionToken !== null) {
-            this._questionToken.collectTextElements(elements);
+            (this._questionToken).collectTextElements(elements);
         }
-        this._parameterList.collectTextElements(elements);
+        (this._parameterList).collectTextElements(elements);
         if(this._typeAnnotation !== null) {
-            this._typeAnnotation.collectTextElements(elements);
+            (this._typeAnnotation).collectTextElements(elements);
         }
     };
     FunctionSignatureSyntax.prototype.isTypeScriptSpecific = function () {
@@ -8834,11 +8809,11 @@ var IndexSignatureSyntax = (function (_super) {
         return this.update(this._openBracketToken, this._parameter, this._closeBracketToken, typeAnnotation);
     };
     IndexSignatureSyntax.prototype.collectTextElements = function (elements) {
-        this._openBracketToken.collectTextElements(elements);
-        this._parameter.collectTextElements(elements);
-        this._closeBracketToken.collectTextElements(elements);
+        (this._openBracketToken).collectTextElements(elements);
+        (this._parameter).collectTextElements(elements);
+        (this._closeBracketToken).collectTextElements(elements);
         if(this._typeAnnotation !== null) {
-            this._typeAnnotation.collectTextElements(elements);
+            (this._typeAnnotation).collectTextElements(elements);
         }
     };
     IndexSignatureSyntax.prototype.isTypeScriptSpecific = function () {
@@ -8995,12 +8970,12 @@ var PropertySignatureSyntax = (function (_super) {
         return this.update(this._identifier, this._questionToken, typeAnnotation);
     };
     PropertySignatureSyntax.prototype.collectTextElements = function (elements) {
-        this._identifier.collectTextElements(elements);
+        (this._identifier).collectTextElements(elements);
         if(this._questionToken !== null) {
-            this._questionToken.collectTextElements(elements);
+            (this._questionToken).collectTextElements(elements);
         }
         if(this._typeAnnotation !== null) {
-            this._typeAnnotation.collectTextElements(elements);
+            (this._typeAnnotation).collectTextElements(elements);
         }
     };
     PropertySignatureSyntax.prototype.isTypeScriptSpecific = function () {
@@ -9158,9 +9133,9 @@ var ParameterListSyntax = (function (_super) {
         return this.update(this._openParenToken, this._parameters, closeParenToken);
     };
     ParameterListSyntax.prototype.collectTextElements = function (elements) {
-        this._openParenToken.collectTextElements(elements);
-        this._parameters.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
+        (this._openParenToken).collectTextElements(elements);
+        (this._parameters).collectTextElements(elements);
+        (this._closeParenToken).collectTextElements(elements);
     };
     ParameterListSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._parameters.isTypeScriptSpecific()) {
@@ -9285,9 +9260,9 @@ var CallSignatureSyntax = (function (_super) {
         return this.update(this._parameterList, typeAnnotation);
     };
     CallSignatureSyntax.prototype.collectTextElements = function (elements) {
-        this._parameterList.collectTextElements(elements);
+        (this._parameterList).collectTextElements(elements);
         if(this._typeAnnotation !== null) {
-            this._typeAnnotation.collectTextElements(elements);
+            (this._typeAnnotation).collectTextElements(elements);
         }
     };
     CallSignatureSyntax.prototype.isTypeScriptSpecific = function () {
@@ -9411,8 +9386,8 @@ var ElseClauseSyntax = (function (_super) {
         return this.update(this._elseKeyword, statement);
     };
     ElseClauseSyntax.prototype.collectTextElements = function (elements) {
-        this._elseKeyword.collectTextElements(elements);
-        this._statement.collectTextElements(elements);
+        (this._elseKeyword).collectTextElements(elements);
+        (this._statement).collectTextElements(elements);
     };
     ElseClauseSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._statement.isTypeScriptSpecific()) {
@@ -9604,13 +9579,13 @@ var IfStatementSyntax = (function (_super) {
         return this.update(this._ifKeyword, this._openParenToken, this._condition, this._closeParenToken, this._statement, elseClause);
     };
     IfStatementSyntax.prototype.collectTextElements = function (elements) {
-        this._ifKeyword.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        this._condition.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
-        this._statement.collectTextElements(elements);
+        (this._ifKeyword).collectTextElements(elements);
+        (this._openParenToken).collectTextElements(elements);
+        (this._condition).collectTextElements(elements);
+        (this._closeParenToken).collectTextElements(elements);
+        (this._statement).collectTextElements(elements);
         if(this._elseClause !== null) {
-            this._elseClause.collectTextElements(elements);
+            (this._elseClause).collectTextElements(elements);
         }
     };
     IfStatementSyntax.prototype.isTypeScriptSpecific = function () {
@@ -9773,8 +9748,8 @@ var ExpressionStatementSyntax = (function (_super) {
         return this.update(this._expression, semicolonToken);
     };
     ExpressionStatementSyntax.prototype.collectTextElements = function (elements) {
-        this._expression.collectTextElements(elements);
-        this._semicolonToken.collectTextElements(elements);
+        (this._expression).collectTextElements(elements);
+        (this._semicolonToken).collectTextElements(elements);
     };
     ExpressionStatementSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._expression.isTypeScriptSpecific()) {
@@ -9946,13 +9921,13 @@ var ConstructorDeclarationSyntax = (function (_super) {
         return this.update(this._constructorKeyword, this._parameterList, this._block, semicolonToken);
     };
     ConstructorDeclarationSyntax.prototype.collectTextElements = function (elements) {
-        this._constructorKeyword.collectTextElements(elements);
-        this._parameterList.collectTextElements(elements);
+        (this._constructorKeyword).collectTextElements(elements);
+        (this._parameterList).collectTextElements(elements);
         if(this._block !== null) {
-            this._block.collectTextElements(elements);
+            (this._block).collectTextElements(elements);
         }
         if(this._semicolonToken !== null) {
-            this._semicolonToken.collectTextElements(elements);
+            (this._semicolonToken).collectTextElements(elements);
         }
     };
     ConstructorDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
@@ -10178,17 +10153,17 @@ var MemberFunctionDeclarationSyntax = (function (_super) {
     };
     MemberFunctionDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._publicOrPrivateKeyword !== null) {
-            this._publicOrPrivateKeyword.collectTextElements(elements);
+            (this._publicOrPrivateKeyword).collectTextElements(elements);
         }
         if(this._staticKeyword !== null) {
-            this._staticKeyword.collectTextElements(elements);
+            (this._staticKeyword).collectTextElements(elements);
         }
-        this._functionSignature.collectTextElements(elements);
+        (this._functionSignature).collectTextElements(elements);
         if(this._block !== null) {
-            this._block.collectTextElements(elements);
+            (this._block).collectTextElements(elements);
         }
         if(this._semicolonToken !== null) {
-            this._semicolonToken.collectTextElements(elements);
+            (this._semicolonToken).collectTextElements(elements);
         }
     };
     MemberFunctionDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
@@ -10476,18 +10451,18 @@ var GetMemberAccessorDeclarationSyntax = (function (_super) {
     };
     GetMemberAccessorDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._publicOrPrivateKeyword !== null) {
-            this._publicOrPrivateKeyword.collectTextElements(elements);
+            (this._publicOrPrivateKeyword).collectTextElements(elements);
         }
         if(this._staticKeyword !== null) {
-            this._staticKeyword.collectTextElements(elements);
+            (this._staticKeyword).collectTextElements(elements);
         }
-        this._getKeyword.collectTextElements(elements);
-        this._identifier.collectTextElements(elements);
-        this._parameterList.collectTextElements(elements);
+        (this._getKeyword).collectTextElements(elements);
+        (this._identifier).collectTextElements(elements);
+        (this._parameterList).collectTextElements(elements);
         if(this._typeAnnotation !== null) {
-            this._typeAnnotation.collectTextElements(elements);
+            (this._typeAnnotation).collectTextElements(elements);
         }
-        this._block.collectTextElements(elements);
+        (this._block).collectTextElements(elements);
     };
     GetMemberAccessorDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -10741,15 +10716,15 @@ var SetMemberAccessorDeclarationSyntax = (function (_super) {
     };
     SetMemberAccessorDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._publicOrPrivateKeyword !== null) {
-            this._publicOrPrivateKeyword.collectTextElements(elements);
+            (this._publicOrPrivateKeyword).collectTextElements(elements);
         }
         if(this._staticKeyword !== null) {
-            this._staticKeyword.collectTextElements(elements);
+            (this._staticKeyword).collectTextElements(elements);
         }
-        this._setKeyword.collectTextElements(elements);
-        this._identifier.collectTextElements(elements);
-        this._parameterList.collectTextElements(elements);
-        this._block.collectTextElements(elements);
+        (this._setKeyword).collectTextElements(elements);
+        (this._identifier).collectTextElements(elements);
+        (this._parameterList).collectTextElements(elements);
+        (this._block).collectTextElements(elements);
     };
     SetMemberAccessorDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -10952,13 +10927,13 @@ var MemberVariableDeclarationSyntax = (function (_super) {
     };
     MemberVariableDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._publicOrPrivateKeyword !== null) {
-            this._publicOrPrivateKeyword.collectTextElements(elements);
+            (this._publicOrPrivateKeyword).collectTextElements(elements);
         }
         if(this._staticKeyword !== null) {
-            this._staticKeyword.collectTextElements(elements);
+            (this._staticKeyword).collectTextElements(elements);
         }
-        this._variableDeclarator.collectTextElements(elements);
-        this._semicolonToken.collectTextElements(elements);
+        (this._variableDeclarator).collectTextElements(elements);
+        (this._semicolonToken).collectTextElements(elements);
     };
     MemberVariableDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -11116,9 +11091,9 @@ var ThrowStatementSyntax = (function (_super) {
         return this.update(this._throwKeyword, this._expression, semicolonToken);
     };
     ThrowStatementSyntax.prototype.collectTextElements = function (elements) {
-        this._throwKeyword.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
-        this._semicolonToken.collectTextElements(elements);
+        (this._throwKeyword).collectTextElements(elements);
+        (this._expression).collectTextElements(elements);
+        (this._semicolonToken).collectTextElements(elements);
     };
     ThrowStatementSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._expression.isTypeScriptSpecific()) {
@@ -11262,11 +11237,11 @@ var ReturnStatementSyntax = (function (_super) {
         return this.update(this._returnKeyword, this._expression, semicolonToken);
     };
     ReturnStatementSyntax.prototype.collectTextElements = function (elements) {
-        this._returnKeyword.collectTextElements(elements);
+        (this._returnKeyword).collectTextElements(elements);
         if(this._expression !== null) {
-            this._expression.collectTextElements(elements);
+            (this._expression).collectTextElements(elements);
         }
-        this._semicolonToken.collectTextElements(elements);
+        (this._semicolonToken).collectTextElements(elements);
     };
     ReturnStatementSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._expression !== null && this._expression.isTypeScriptSpecific()) {
@@ -11414,10 +11389,10 @@ var ObjectCreationExpressionSyntax = (function (_super) {
         return this.update(this._newKeyword, this._expression, argumentList);
     };
     ObjectCreationExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._newKeyword.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
+        (this._newKeyword).collectTextElements(elements);
+        (this._expression).collectTextElements(elements);
         if(this._argumentList !== null) {
-            this._argumentList.collectTextElements(elements);
+            (this._argumentList).collectTextElements(elements);
         }
     };
     ObjectCreationExpressionSyntax.prototype.isTypeScriptSpecific = function () {
@@ -11653,13 +11628,13 @@ var SwitchStatementSyntax = (function (_super) {
         return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._switchClauses, closeBraceToken);
     };
     SwitchStatementSyntax.prototype.collectTextElements = function (elements) {
-        this._switchKeyword.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
-        this._openBraceToken.collectTextElements(elements);
-        this._switchClauses.collectTextElements(elements);
-        this._closeBraceToken.collectTextElements(elements);
+        (this._switchKeyword).collectTextElements(elements);
+        (this._openParenToken).collectTextElements(elements);
+        (this._expression).collectTextElements(elements);
+        (this._closeParenToken).collectTextElements(elements);
+        (this._openBraceToken).collectTextElements(elements);
+        (this._switchClauses).collectTextElements(elements);
+        (this._closeBraceToken).collectTextElements(elements);
     };
     SwitchStatementSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._expression.isTypeScriptSpecific()) {
@@ -11891,10 +11866,10 @@ var CaseSwitchClauseSyntax = (function (_super) {
         ]));
     };
     CaseSwitchClauseSyntax.prototype.collectTextElements = function (elements) {
-        this._caseKeyword.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
-        this._colonToken.collectTextElements(elements);
-        this._statements.collectTextElements(elements);
+        (this._caseKeyword).collectTextElements(elements);
+        (this._expression).collectTextElements(elements);
+        (this._colonToken).collectTextElements(elements);
+        (this._statements).collectTextElements(elements);
     };
     CaseSwitchClauseSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._expression.isTypeScriptSpecific()) {
@@ -12058,9 +12033,9 @@ var DefaultSwitchClauseSyntax = (function (_super) {
         ]));
     };
     DefaultSwitchClauseSyntax.prototype.collectTextElements = function (elements) {
-        this._defaultKeyword.collectTextElements(elements);
-        this._colonToken.collectTextElements(elements);
-        this._statements.collectTextElements(elements);
+        (this._defaultKeyword).collectTextElements(elements);
+        (this._colonToken).collectTextElements(elements);
+        (this._statements).collectTextElements(elements);
     };
     DefaultSwitchClauseSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._statements.isTypeScriptSpecific()) {
@@ -12209,11 +12184,11 @@ var BreakStatementSyntax = (function (_super) {
         return this.update(this._breakKeyword, this._identifier, semicolonToken);
     };
     BreakStatementSyntax.prototype.collectTextElements = function (elements) {
-        this._breakKeyword.collectTextElements(elements);
+        (this._breakKeyword).collectTextElements(elements);
         if(this._identifier !== null) {
-            this._identifier.collectTextElements(elements);
+            (this._identifier).collectTextElements(elements);
         }
-        this._semicolonToken.collectTextElements(elements);
+        (this._semicolonToken).collectTextElements(elements);
     };
     BreakStatementSyntax.prototype.isTypeScriptSpecific = function () {
         return false;
@@ -12363,11 +12338,11 @@ var ContinueStatementSyntax = (function (_super) {
         return this.update(this._continueKeyword, this._identifier, semicolonToken);
     };
     ContinueStatementSyntax.prototype.collectTextElements = function (elements) {
-        this._continueKeyword.collectTextElements(elements);
+        (this._continueKeyword).collectTextElements(elements);
         if(this._identifier !== null) {
-            this._identifier.collectTextElements(elements);
+            (this._identifier).collectTextElements(elements);
         }
-        this._semicolonToken.collectTextElements(elements);
+        (this._semicolonToken).collectTextElements(elements);
     };
     ContinueStatementSyntax.prototype.isTypeScriptSpecific = function () {
         return false;
@@ -12692,24 +12667,24 @@ var ForStatementSyntax = (function (_super) {
         return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, statement);
     };
     ForStatementSyntax.prototype.collectTextElements = function (elements) {
-        this._forKeyword.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
+        (this._forKeyword).collectTextElements(elements);
+        (this._openParenToken).collectTextElements(elements);
         if(this._variableDeclaration !== null) {
-            this._variableDeclaration.collectTextElements(elements);
+            (this._variableDeclaration).collectTextElements(elements);
         }
         if(this._initializer !== null) {
-            this._initializer.collectTextElements(elements);
+            (this._initializer).collectTextElements(elements);
         }
-        this._firstSemicolonToken.collectTextElements(elements);
+        (this._firstSemicolonToken).collectTextElements(elements);
         if(this._condition !== null) {
-            this._condition.collectTextElements(elements);
+            (this._condition).collectTextElements(elements);
         }
-        this._secondSemicolonToken.collectTextElements(elements);
+        (this._secondSemicolonToken).collectTextElements(elements);
         if(this._incrementor !== null) {
-            this._incrementor.collectTextElements(elements);
+            (this._incrementor).collectTextElements(elements);
         }
-        this._closeParenToken.collectTextElements(elements);
-        this._statement.collectTextElements(elements);
+        (this._closeParenToken).collectTextElements(elements);
+        (this._statement).collectTextElements(elements);
     };
     ForStatementSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._variableDeclaration !== null && this._variableDeclaration.isTypeScriptSpecific()) {
@@ -13036,18 +13011,18 @@ var ForInStatementSyntax = (function (_super) {
         return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._left, this._inKeyword, this._expression, this._closeParenToken, statement);
     };
     ForInStatementSyntax.prototype.collectTextElements = function (elements) {
-        this._forKeyword.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
+        (this._forKeyword).collectTextElements(elements);
+        (this._openParenToken).collectTextElements(elements);
         if(this._variableDeclaration !== null) {
-            this._variableDeclaration.collectTextElements(elements);
+            (this._variableDeclaration).collectTextElements(elements);
         }
         if(this._left !== null) {
-            this._left.collectTextElements(elements);
+            (this._left).collectTextElements(elements);
         }
-        this._inKeyword.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
-        this._statement.collectTextElements(elements);
+        (this._inKeyword).collectTextElements(elements);
+        (this._expression).collectTextElements(elements);
+        (this._closeParenToken).collectTextElements(elements);
+        (this._statement).collectTextElements(elements);
     };
     ForInStatementSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._variableDeclaration !== null && this._variableDeclaration.isTypeScriptSpecific()) {
@@ -13291,11 +13266,11 @@ var WhileStatementSyntax = (function (_super) {
         return this.update(this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, statement);
     };
     WhileStatementSyntax.prototype.collectTextElements = function (elements) {
-        this._whileKeyword.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        this._condition.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
-        this._statement.collectTextElements(elements);
+        (this._whileKeyword).collectTextElements(elements);
+        (this._openParenToken).collectTextElements(elements);
+        (this._condition).collectTextElements(elements);
+        (this._closeParenToken).collectTextElements(elements);
+        (this._statement).collectTextElements(elements);
     };
     WhileStatementSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._condition.isTypeScriptSpecific()) {
@@ -13498,11 +13473,11 @@ var WithStatementSyntax = (function (_super) {
         return this.update(this._withKeyword, this._openParenToken, this._condition, this._closeParenToken, statement);
     };
     WithStatementSyntax.prototype.collectTextElements = function (elements) {
-        this._withKeyword.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        this._condition.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
-        this._statement.collectTextElements(elements);
+        (this._withKeyword).collectTextElements(elements);
+        (this._openParenToken).collectTextElements(elements);
+        (this._condition).collectTextElements(elements);
+        (this._closeParenToken).collectTextElements(elements);
+        (this._statement).collectTextElements(elements);
     };
     WithStatementSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._condition.isTypeScriptSpecific()) {
@@ -13735,13 +13710,13 @@ var EnumDeclarationSyntax = (function (_super) {
     };
     EnumDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._exportKeyword !== null) {
-            this._exportKeyword.collectTextElements(elements);
+            (this._exportKeyword).collectTextElements(elements);
         }
-        this._enumKeyword.collectTextElements(elements);
-        this._identifier.collectTextElements(elements);
-        this._openBraceToken.collectTextElements(elements);
-        this._variableDeclarators.collectTextElements(elements);
-        this._closeBraceToken.collectTextElements(elements);
+        (this._enumKeyword).collectTextElements(elements);
+        (this._identifier).collectTextElements(elements);
+        (this._openBraceToken).collectTextElements(elements);
+        (this._variableDeclarators).collectTextElements(elements);
+        (this._closeBraceToken).collectTextElements(elements);
     };
     EnumDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -13932,10 +13907,10 @@ var CastExpressionSyntax = (function (_super) {
         return this.update(this._lessThanToken, this._type, this._greaterThanToken, expression);
     };
     CastExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._lessThanToken.collectTextElements(elements);
-        this._type.collectTextElements(elements);
-        this._greaterThanToken.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
+        (this._lessThanToken).collectTextElements(elements);
+        (this._type).collectTextElements(elements);
+        (this._greaterThanToken).collectTextElements(elements);
+        (this._expression).collectTextElements(elements);
     };
     CastExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -14093,9 +14068,9 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
         return this.update(this._openBraceToken, this._propertyAssignments, closeBraceToken);
     };
     ObjectLiteralExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._openBraceToken.collectTextElements(elements);
-        this._propertyAssignments.collectTextElements(elements);
-        this._closeBraceToken.collectTextElements(elements);
+        (this._openBraceToken).collectTextElements(elements);
+        (this._propertyAssignments).collectTextElements(elements);
+        (this._closeBraceToken).collectTextElements(elements);
     };
     ObjectLiteralExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._propertyAssignments.isTypeScriptSpecific()) {
@@ -14267,9 +14242,9 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
         return this.update(this._propertyName, this._colonToken, expression);
     };
     SimplePropertyAssignmentSyntax.prototype.collectTextElements = function (elements) {
-        this._propertyName.collectTextElements(elements);
-        this._colonToken.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
+        (this._propertyName).collectTextElements(elements);
+        (this._colonToken).collectTextElements(elements);
+        (this._expression).collectTextElements(elements);
     };
     SimplePropertyAssignmentSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._expression.isTypeScriptSpecific()) {
@@ -14479,11 +14454,11 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
         return this.update(this._getKeyword, this._propertyName, this._openParenToken, this._closeParenToken, block);
     };
     GetAccessorPropertyAssignmentSyntax.prototype.collectTextElements = function (elements) {
-        this._getKeyword.collectTextElements(elements);
-        this._propertyName.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
-        this._block.collectTextElements(elements);
+        (this._getKeyword).collectTextElements(elements);
+        (this._propertyName).collectTextElements(elements);
+        (this._openParenToken).collectTextElements(elements);
+        (this._closeParenToken).collectTextElements(elements);
+        (this._block).collectTextElements(elements);
     };
     GetAccessorPropertyAssignmentSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._block.isTypeScriptSpecific()) {
@@ -14702,12 +14677,12 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
         return this.update(this._setKeyword, this._propertyName, this._openParenToken, this._parameterName, this._closeParenToken, block);
     };
     SetAccessorPropertyAssignmentSyntax.prototype.collectTextElements = function (elements) {
-        this._setKeyword.collectTextElements(elements);
-        this._propertyName.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        this._parameterName.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
-        this._block.collectTextElements(elements);
+        (this._setKeyword).collectTextElements(elements);
+        (this._propertyName).collectTextElements(elements);
+        (this._openParenToken).collectTextElements(elements);
+        (this._parameterName).collectTextElements(elements);
+        (this._closeParenToken).collectTextElements(elements);
+        (this._block).collectTextElements(elements);
     };
     SetAccessorPropertyAssignmentSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._block.isTypeScriptSpecific()) {
@@ -14902,12 +14877,12 @@ var FunctionExpressionSyntax = (function (_super) {
         return this.update(this._functionKeyword, this._identifier, this._callSignature, block);
     };
     FunctionExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._functionKeyword.collectTextElements(elements);
+        (this._functionKeyword).collectTextElements(elements);
         if(this._identifier !== null) {
-            this._identifier.collectTextElements(elements);
+            (this._identifier).collectTextElements(elements);
         }
-        this._callSignature.collectTextElements(elements);
-        this._block.collectTextElements(elements);
+        (this._callSignature).collectTextElements(elements);
+        (this._block).collectTextElements(elements);
     };
     FunctionExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._callSignature.isTypeScriptSpecific()) {
@@ -15029,7 +15004,7 @@ var EmptyStatementSyntax = (function (_super) {
         return this.update(semicolonToken);
     };
     EmptyStatementSyntax.prototype.collectTextElements = function (elements) {
-        this._semicolonToken.collectTextElements(elements);
+        (this._semicolonToken).collectTextElements(elements);
     };
     EmptyStatementSyntax.prototype.isTypeScriptSpecific = function () {
         return false;
@@ -15114,7 +15089,7 @@ var SuperExpressionSyntax = (function (_super) {
         return this.update(superKeyword);
     };
     SuperExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._superKeyword.collectTextElements(elements);
+        (this._superKeyword).collectTextElements(elements);
     };
     SuperExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -15253,13 +15228,13 @@ var TryStatementSyntax = (function (_super) {
         return this.update(this._tryKeyword, this._block, this._catchClause, finallyClause);
     };
     TryStatementSyntax.prototype.collectTextElements = function (elements) {
-        this._tryKeyword.collectTextElements(elements);
-        this._block.collectTextElements(elements);
+        (this._tryKeyword).collectTextElements(elements);
+        (this._block).collectTextElements(elements);
         if(this._catchClause !== null) {
-            this._catchClause.collectTextElements(elements);
+            (this._catchClause).collectTextElements(elements);
         }
         if(this._finallyClause !== null) {
-            this._finallyClause.collectTextElements(elements);
+            (this._finallyClause).collectTextElements(elements);
         }
     };
     TryStatementSyntax.prototype.isTypeScriptSpecific = function () {
@@ -15465,11 +15440,11 @@ var CatchClauseSyntax = (function (_super) {
         return this.update(this._catchKeyword, this._openParenToken, this._identifier, this._closeParenToken, block);
     };
     CatchClauseSyntax.prototype.collectTextElements = function (elements) {
-        this._catchKeyword.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        this._identifier.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
-        this._block.collectTextElements(elements);
+        (this._catchKeyword).collectTextElements(elements);
+        (this._openParenToken).collectTextElements(elements);
+        (this._identifier).collectTextElements(elements);
+        (this._closeParenToken).collectTextElements(elements);
+        (this._block).collectTextElements(elements);
     };
     CatchClauseSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._block.isTypeScriptSpecific()) {
@@ -15612,8 +15587,8 @@ var FinallyClauseSyntax = (function (_super) {
         return this.update(this._finallyKeyword, block);
     };
     FinallyClauseSyntax.prototype.collectTextElements = function (elements) {
-        this._finallyKeyword.collectTextElements(elements);
-        this._block.collectTextElements(elements);
+        (this._finallyKeyword).collectTextElements(elements);
+        (this._block).collectTextElements(elements);
     };
     FinallyClauseSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._block.isTypeScriptSpecific()) {
@@ -15748,9 +15723,9 @@ var LabeledStatement = (function (_super) {
         return this.update(this._identifier, this._colonToken, statement);
     };
     LabeledStatement.prototype.collectTextElements = function (elements) {
-        this._identifier.collectTextElements(elements);
-        this._colonToken.collectTextElements(elements);
-        this._statement.collectTextElements(elements);
+        (this._identifier).collectTextElements(elements);
+        (this._colonToken).collectTextElements(elements);
+        (this._statement).collectTextElements(elements);
     };
     LabeledStatement.prototype.isTypeScriptSpecific = function () {
         if(this._statement.isTypeScriptSpecific()) {
@@ -15970,13 +15945,13 @@ var DoStatementSyntax = (function (_super) {
         return this.update(this._doKeyword, this._statement, this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, semicolonToken);
     };
     DoStatementSyntax.prototype.collectTextElements = function (elements) {
-        this._doKeyword.collectTextElements(elements);
-        this._statement.collectTextElements(elements);
-        this._whileKeyword.collectTextElements(elements);
-        this._openParenToken.collectTextElements(elements);
-        this._condition.collectTextElements(elements);
-        this._closeParenToken.collectTextElements(elements);
-        this._semicolonToken.collectTextElements(elements);
+        (this._doKeyword).collectTextElements(elements);
+        (this._statement).collectTextElements(elements);
+        (this._whileKeyword).collectTextElements(elements);
+        (this._openParenToken).collectTextElements(elements);
+        (this._condition).collectTextElements(elements);
+        (this._closeParenToken).collectTextElements(elements);
+        (this._semicolonToken).collectTextElements(elements);
     };
     DoStatementSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._statement.isTypeScriptSpecific()) {
@@ -16140,8 +16115,8 @@ var TypeOfExpressionSyntax = (function (_super) {
         return this.update(this._typeOfKeyword, expression);
     };
     TypeOfExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._typeOfKeyword.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
+        (this._typeOfKeyword).collectTextElements(elements);
+        (this._expression).collectTextElements(elements);
     };
     TypeOfExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._expression.isTypeScriptSpecific()) {
@@ -16257,8 +16232,8 @@ var DeleteExpressionSyntax = (function (_super) {
         return this.update(this._deleteKeyword, expression);
     };
     DeleteExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._deleteKeyword.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
+        (this._deleteKeyword).collectTextElements(elements);
+        (this._expression).collectTextElements(elements);
     };
     DeleteExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._expression.isTypeScriptSpecific()) {
@@ -16374,8 +16349,8 @@ var VoidExpressionSyntax = (function (_super) {
         return this.update(this._voidKeyword, expression);
     };
     VoidExpressionSyntax.prototype.collectTextElements = function (elements) {
-        this._voidKeyword.collectTextElements(elements);
-        this._expression.collectTextElements(elements);
+        (this._voidKeyword).collectTextElements(elements);
+        (this._expression).collectTextElements(elements);
     };
     VoidExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._expression.isTypeScriptSpecific()) {
@@ -16491,8 +16466,8 @@ var DebuggerStatementSyntax = (function (_super) {
         return this.update(this._debuggerKeyword, semicolonToken);
     };
     DebuggerStatementSyntax.prototype.collectTextElements = function (elements) {
-        this._debuggerKeyword.collectTextElements(elements);
-        this._semicolonToken.collectTextElements(elements);
+        (this._debuggerKeyword).collectTextElements(elements);
+        (this._semicolonToken).collectTextElements(elements);
     };
     DebuggerStatementSyntax.prototype.isTypeScriptSpecific = function () {
         return false;
@@ -18973,7 +18948,7 @@ var Syntax;
             return Syntax.realize(this);
         };
         VariableWidthTokenWithNoTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTokenTextElements(this, elements);
+            collectTokenTextElements(this, elements);
         };
         VariableWidthTokenWithNoTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -19092,7 +19067,7 @@ var Syntax;
             return Syntax.realize(this);
         };
         VariableWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTokenTextElements(this, elements);
+            collectTokenTextElements(this, elements);
         };
         VariableWidthTokenWithLeadingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -19211,7 +19186,7 @@ var Syntax;
             return Syntax.realize(this);
         };
         VariableWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTokenTextElements(this, elements);
+            collectTokenTextElements(this, elements);
         };
         VariableWidthTokenWithTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -19331,7 +19306,7 @@ var Syntax;
             return Syntax.realize(this);
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTokenTextElements(this, elements);
+            collectTokenTextElements(this, elements);
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -19436,7 +19411,7 @@ var Syntax;
             return Syntax.realize(this);
         };
         FixedWidthTokenWithNoTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTokenTextElements(this, elements);
+            collectTokenTextElements(this, elements);
         };
         FixedWidthTokenWithNoTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -19550,7 +19525,7 @@ var Syntax;
             return Syntax.realize(this);
         };
         FixedWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTokenTextElements(this, elements);
+            collectTokenTextElements(this, elements);
         };
         FixedWidthTokenWithLeadingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -19664,7 +19639,7 @@ var Syntax;
             return Syntax.realize(this);
         };
         FixedWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTokenTextElements(this, elements);
+            collectTokenTextElements(this, elements);
         };
         FixedWidthTokenWithTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -19779,7 +19754,7 @@ var Syntax;
             return Syntax.realize(this);
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTokenTextElements(this, elements);
+            collectTokenTextElements(this, elements);
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -19885,7 +19860,7 @@ var Syntax;
             return Syntax.realize(this);
         };
         KeywordWithNoTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTokenTextElements(this, elements);
+            collectTokenTextElements(this, elements);
         };
         KeywordWithNoTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -20000,7 +19975,7 @@ var Syntax;
             return Syntax.realize(this);
         };
         KeywordWithLeadingTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTokenTextElements(this, elements);
+            collectTokenTextElements(this, elements);
         };
         KeywordWithLeadingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -20115,7 +20090,7 @@ var Syntax;
             return Syntax.realize(this);
         };
         KeywordWithTrailingTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTokenTextElements(this, elements);
+            collectTokenTextElements(this, elements);
         };
         KeywordWithTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -20231,7 +20206,7 @@ var Syntax;
             return Syntax.realize(this);
         };
         KeywordWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
-            Syntax.collectTokenTextElements(this, elements);
+            collectTokenTextElements(this, elements);
         };
         KeywordWithLeadingAndTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -20241,6 +20216,11 @@ var Syntax;
         };
         return KeywordWithLeadingAndTrailingTrivia;
     })();    
+    function collectTokenTextElements(token, elements) {
+        (token.leadingTrivia()).collectTextElements(elements);
+        elements.push(token.text());
+        (token.trailingTrivia()).collectTextElements(elements);
+    }
     function fixedWidthToken(sourceText, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo) {
         if(leadingTriviaInfo === 0) {
             if(trailingTriviaInfo === 0) {
@@ -20414,11 +20394,6 @@ var Syntax;
 })(Syntax || (Syntax = {}));
 var Syntax;
 (function (Syntax) {
-    function collectSyntaxTriviaListTextElements(elements, list) {
-        for(var i = 0, n = list.count(); i < n; i++) {
-            list.syntaxTriviaAt(i).collectTextElements(elements);
-        }
-    }
     Syntax.emptyTriviaList = {
         kind: function () {
             return 3 /* TriviaList */ ;
@@ -20555,7 +20530,7 @@ var Syntax;
             ];
         };
         SingletonSyntaxTriviaList.prototype.collectTextElements = function (elements) {
-            collectSyntaxTriviaListTextElements(elements, this);
+            (this.item).collectTextElements(elements);
         };
         SingletonSyntaxTriviaList.prototype.toArray = function () {
             return [
@@ -20652,7 +20627,9 @@ var Syntax;
             return this.trivia;
         };
         NormalSyntaxTriviaList.prototype.collectTextElements = function (elements) {
-            collectSyntaxTriviaListTextElements(elements, this);
+            for(var i = 0; i < this.trivia.length; i++) {
+                (this.trivia[i]).collectTextElements(elements);
+            }
         };
         NormalSyntaxTriviaList.prototype.toArray = function () {
             return this.trivia.slice(0);
@@ -23653,12 +23630,6 @@ var Syntax;
         return new RealizedToken(token.tokenKind, token.keywordKind(), token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia(), token.isMissing());
     }
     Syntax.realize = realize;
-    function collectTokenTextElements(token, elements) {
-        token.leadingTrivia().collectTextElements(elements);
-        elements.push(token.text());
-        token.trailingTrivia().collectTextElements(elements);
-    }
-    Syntax.collectTokenTextElements = collectTokenTextElements;
     function tokenToJSON(token) {
         var result = {
             kind: (SyntaxKind)._map[token.tokenKind]
@@ -23838,7 +23809,6 @@ var Syntax;
             return realize(this);
         };
         EmptyToken.prototype.collectTextElements = function (elements) {
-            collectTokenTextElements(this, elements);
         };
         EmptyToken.prototype.withLeadingTrivia = function (leadingTrivia) {
             throw Errors.invalidOperation('Can not call on a non-realized token.');
@@ -23953,7 +23923,9 @@ var Syntax;
             return this;
         };
         RealizedToken.prototype.collectTextElements = function (elements) {
-            collectTokenTextElements(this, elements);
+            (this.leadingTrivia()).collectTextElements(elements);
+            elements.push(this.text());
+            (this.trailingTrivia()).collectTextElements(elements);
         };
         RealizedToken.prototype.withLeadingTrivia = function (leadingTrivia) {
             return new RealizedToken(this.tokenKind, this._keywordKind, leadingTrivia, this._text, this._value, this._trailingTrivia, this._isMissing);

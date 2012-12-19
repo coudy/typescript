@@ -1936,10 +1936,10 @@ function generateCollectTextElementsMethod(definition: ITypeDefinition): string 
         }
 
         if (child.isOptional) {
-            result += "        if (" + getPropertyAccess(child) + " !== null) { " + getPropertyAccess(child) + ".collectTextElements(elements); }\r\n";
+            result += "        if (" + getPropertyAccess(child) + " !== null) { (<any>" + getPropertyAccess(child) + ").collectTextElements(elements); }\r\n";
         }
         else {
-            result += "        " + getPropertyAccess(child) + ".collectTextElements(elements);\r\n";
+            result += "        (<any>" + getPropertyAccess(child) + ").collectTextElements(elements);\r\n";
         }
     }
 
@@ -2348,7 +2348,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
     result += 
 "        public toJSON(key) { return tokenToJSON(this); }\r\n" +
 "        public realize(): ISyntaxToken { return realize(this); }\r\n" +
-"        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
+"        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
 
     result += 
 "        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" +
@@ -2401,6 +2401,12 @@ function generateTokens(): string {
     result += "\r\n";
 
     result += 
+"    function collectTokenTextElements(token: ISyntaxToken, elements: string[]): void {\r\n" +
+"        (<any>token.leadingTrivia()).collectTextElements(elements);\r\n" +
+"        elements.push(token.text());\r\n" +
+"        (<any>token.trailingTrivia()).collectTextElements(elements);\r\n" +
+"    }\r\n" +
+"\r\n" +
 "    function fixedWidthToken(sourceText: IText, fullStart: number,\r\n" +
 "        kind: SyntaxKind,\r\n" +
 "        leadingTriviaInfo: number,\r\n" +

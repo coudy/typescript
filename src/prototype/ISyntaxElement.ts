@@ -13,6 +13,4 @@ interface ISyntaxElement {
 
     fullWidth(): number;
     fullText(): string;
-
-    collectTextElements(elements: string[]): void;
 }

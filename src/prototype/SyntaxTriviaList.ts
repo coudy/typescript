@@ -4,12 +4,6 @@
 ///<reference path='SyntaxTrivia.ts' />
 
 module Syntax {
-    function collectSyntaxTriviaListTextElements(elements: string[], list: ISyntaxTriviaList): void {
-        for (var i = 0, n = list.count(); i < n; i++) {
-            list.syntaxTriviaAt(i).collectTextElements(elements);
-        }
-    }
-
     export var emptyTriviaList: ISyntaxTriviaList = {
         kind: (): SyntaxKind => SyntaxKind.TriviaList,
         isToken: (): bool => false,
@@ -121,7 +115,9 @@ module Syntax {
             return [this.item];
         }
 
-        public collectTextElements(elements: string[]): void { collectSyntaxTriviaListTextElements(elements, this); }
+        private collectTextElements(elements: string[]): void {
+            (<any>this.item).collectTextElements(elements);
+        }
 
         public toArray(): ISyntaxTrivia[] {
             return [this.item];
@@ -221,7 +217,11 @@ module Syntax {
             return this.trivia;
         }
 
-        public collectTextElements(elements: string[]): void { collectSyntaxTriviaListTextElements(elements, this); }
+        private collectTextElements(elements: string[]): void {
+            for (var i = 0; i < this.trivia.length; i++) {
+                (<any>this.trivia[i]).collectTextElements(elements);
+            }
+        }
 
         public toArray(): ISyntaxTrivia[] {
             return this.trivia.slice(0);

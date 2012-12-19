@@ -71,7 +71,7 @@ module Syntax {
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -153,7 +153,7 @@ module Syntax {
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -235,7 +235,7 @@ module Syntax {
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -320,7 +320,7 @@ module Syntax {
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -377,7 +377,7 @@ module Syntax {
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -446,7 +446,7 @@ module Syntax {
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -515,7 +515,7 @@ module Syntax {
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -587,7 +587,7 @@ module Syntax {
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -646,7 +646,7 @@ module Syntax {
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -717,7 +717,7 @@ module Syntax {
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -788,7 +788,7 @@ module Syntax {
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -862,7 +862,7 @@ module Syntax {
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
         public realize(): ISyntaxToken { return realize(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -871,6 +871,12 @@ module Syntax {
         public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withTrailingTrivia(trailingTrivia);
         }
+    }
+
+    function collectTokenTextElements(token: ISyntaxToken, elements: string[]): void {
+        (<any>token.leadingTrivia()).collectTextElements(elements);
+        elements.push(token.text());
+        (<any>token.trailingTrivia()).collectTextElements(elements);
     }
 
     function fixedWidthToken(sourceText: IText, fullStart: number,
