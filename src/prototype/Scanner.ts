@@ -1188,12 +1188,14 @@ class Scanner extends SlidingWindow {
     }
 
     private peekUnicodeOrHexEscape(): number {
-        var rewindPoint = this.getRewindPoint();
+        var startIndex = this.getAndPinAbsoluteIndex();
 
         // if we're peeking, then we don't want to change the position
         var ch = this.scanUnicodeOrHexEscape(/*errors:*/ null);
-        this.rewind(rewindPoint);
-        this.releaseRewindPoint(rewindPoint);
+
+        this.rewindToPinnedIndex(startIndex);
+        this.releaseAndUnpinAbsoluteIndex(startIndex);
+
         return ch;
     }
 

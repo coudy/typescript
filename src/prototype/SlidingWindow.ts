@@ -1,9 +1,5 @@
 ///<reference path='ArrayUtilities.ts' />
 
-interface IRewindPoint {
-    absoluteIndex: number;
-}
-
 class SlidingWindow {
     // A window of items that has been read in from the underlying source.
     public window: any[] = [];
@@ -30,9 +26,6 @@ class SlidingWindow {
     // start of the items array past this point.
     private firstPinnedAbsoluteIndex: number = -1;
 
-    private pool: IRewindPoint[] = [];
-    private poolCount = 0;
-
     // The default value to return when there are no more items left in the window.
     private defaultValue: any;
 
@@ -43,12 +36,6 @@ class SlidingWindow {
         this.defaultValue = defaultValue;
         this.window = ArrayUtilities.createArray(defaultWindowSize, defaultValue);
         this.sourceLength = sourceLength;
-    }
-
-    private storeAdditionalRewindState(rewindPoint: IRewindPoint): void {
-    }
-
-    private restoreStateFromRewindPoint(rewindPoint: IRewindPoint): void {
     }
 
     private fetchMoreItems(argument: any, sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
@@ -155,30 +142,6 @@ class SlidingWindow {
             // things over the next time we read past the end of the array.
             this.firstPinnedAbsoluteIndex = -1;
         }
-
-    }
-
-    public getRewindPoint(): any {
-        // Find the absolute index of this rewind point.  i.e. it's the index as if we had an 
-        // array containing *all* tokens.  
-        var absoluteIndex = this.getAndPinAbsoluteIndex();
-
-        var rewindPoint = this.poolCount === 0
-            ? <IRewindPoint>{}
-            : this.pop();
-
-        rewindPoint.absoluteIndex = absoluteIndex;
-
-        this.storeAdditionalRewindState(rewindPoint);
-
-        return rewindPoint;
-    }
-
-    private pop(): IRewindPoint {
-        this.poolCount--;
-        var result = this.pool[this.poolCount];
-        this.pool[this.poolCount] = null;
-        return result;
     }
 
     public rewindToPinnedIndex(absoluteIndex: number): void {
@@ -191,19 +154,6 @@ class SlidingWindow {
 
         // Set ourselves back to that point.
         this.currentRelativeItemIndex = relativeIndex;
-    }
-
-    public rewind(rewindPoint: IRewindPoint): void {
-        this.rewindToPinnedIndex(rewindPoint.absoluteIndex);
-        this.restoreStateFromRewindPoint(rewindPoint);
-    }
-
-    public releaseRewindPoint(rewindPoint: IRewindPoint): void {
-        this.releaseAndUnpinAbsoluteIndex(rewindPoint.absoluteIndex);
-
-        // this.rewindPoints.push(rewindPoint);
-        this.pool[this.poolCount] = rewindPoint;
-        this.poolCount++;
     }
 
     public currentItem(argument: any): any {

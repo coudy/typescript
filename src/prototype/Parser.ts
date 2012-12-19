@@ -9,7 +9,8 @@
 /// <reference path='TextChangeRange.ts' />
 
 module Parser {
-    interface IParserRewindPoint extends IRewindPoint {
+    interface IParserRewindPoint {
+        absoluteIndex: number;
         previousToken: ISyntaxToken;
         currentTokenFullStart: number;
         isInStrictMode: bool;
@@ -318,7 +319,45 @@ module Parser {
             return this.oldTree !== null;
         }
 
-        public storeAdditionalRewindState(rewindPoint: IParserRewindPoint): void {
+        private pool: IParserRewindPoint[] = [];
+        private poolCount = 0;
+
+        private getOrCreateRewindPoint(): IParserRewindPoint {
+            if (this.poolCount === 0) {
+                return <IParserRewindPoint>{};
+            }
+
+            this.poolCount--;
+            var result = this.pool[this.poolCount];
+            this.pool[this.poolCount] = null;
+            return result;
+        }
+
+        private getRewindPoint(): IParserRewindPoint {
+            var absoluteIndex = this.getAndPinAbsoluteIndex();
+
+            var rewindPoint = this.getOrCreateRewindPoint();
+
+            rewindPoint.absoluteIndex = absoluteIndex;
+            this.storeAdditionalRewindState(rewindPoint);
+
+            return rewindPoint;
+        }
+
+        private rewind(rewindPoint: IParserRewindPoint): void {
+            this.rewindToPinnedIndex(rewindPoint.absoluteIndex);
+            this.restoreStateFromRewindPoint(rewindPoint);
+        }
+
+        private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
+            this.releaseAndUnpinAbsoluteIndex(rewindPoint.absoluteIndex);
+
+            // this.rewindPoints.push(rewindPoint);
+            this.pool[this.poolCount] = rewindPoint;
+            this.poolCount++;
+        }
+
+        private storeAdditionalRewindState(rewindPoint: IParserRewindPoint): void {
             rewindPoint.previousToken = this.previousToken;
             rewindPoint.currentTokenFullStart = this.currentTokenFullStart;
             rewindPoint.isInStrictMode = this.isInStrictMode;
@@ -326,7 +365,7 @@ module Parser {
             rewindPoint.skippedTokensCount = this.skippedTokens.length;
         }
 
-        public restoreStateFromRewindPoint(rewindPoint: IParserRewindPoint): void {
+        private restoreStateFromRewindPoint(rewindPoint: IParserRewindPoint): void {
             this._currentToken = null;
             this.previousToken = rewindPoint.previousToken;
             this.currentTokenFullStart = rewindPoint.currentTokenFullStart;
@@ -335,7 +374,7 @@ module Parser {
             this.skippedTokens.length = rewindPoint.skippedTokensCount;
         }
 
-        public fetchMoreItems(argument: any, sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
+        private fetchMoreItems(argument: any, sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
             // Assert disabled because it is actually expensive enugh to affect perf.
             // Debug.assert(spaceAvailable > 0);
             window[destinationIndex] = this.scanner.scan(this.tokenDiagnostics, argument);

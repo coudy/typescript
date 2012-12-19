@@ -17951,16 +17951,10 @@ var SlidingWindow = (function () {
         this.currentRelativeItemIndex = 0;
         this.pinCount = 0;
         this.firstPinnedAbsoluteIndex = -1;
-        this.pool = [];
-        this.poolCount = 0;
         this.defaultValue = defaultValue;
         this.window = ArrayUtilities.createArray(defaultWindowSize, defaultValue);
         this.sourceLength = sourceLength;
     }
-    SlidingWindow.prototype.storeAdditionalRewindState = function (rewindPoint) {
-    };
-    SlidingWindow.prototype.restoreStateFromRewindPoint = function (rewindPoint) {
-    };
     SlidingWindow.prototype.fetchMoreItems = function (argument, sourceIndex, window, destinationIndex, spaceAvailable) {
         throw Errors.notYetImplemented();
     };
@@ -18016,33 +18010,10 @@ var SlidingWindow = (function () {
             this.firstPinnedAbsoluteIndex = -1;
         }
     };
-    SlidingWindow.prototype.getRewindPoint = function () {
-        var absoluteIndex = this.getAndPinAbsoluteIndex();
-        var rewindPoint = this.poolCount === 0 ? {
-        } : this.pop();
-        rewindPoint.absoluteIndex = absoluteIndex;
-        this.storeAdditionalRewindState(rewindPoint);
-        return rewindPoint;
-    };
-    SlidingWindow.prototype.pop = function () {
-        this.poolCount--;
-        var result = this.pool[this.poolCount];
-        this.pool[this.poolCount] = null;
-        return result;
-    };
     SlidingWindow.prototype.rewindToPinnedIndex = function (absoluteIndex) {
         var relativeIndex = absoluteIndex - this.windowAbsoluteStartIndex;
         Debug.assert(relativeIndex >= 0 && relativeIndex < this.windowCount);
         this.currentRelativeItemIndex = relativeIndex;
-    };
-    SlidingWindow.prototype.rewind = function (rewindPoint) {
-        this.rewindToPinnedIndex(rewindPoint.absoluteIndex);
-        this.restoreStateFromRewindPoint(rewindPoint);
-    };
-    SlidingWindow.prototype.releaseRewindPoint = function (rewindPoint) {
-        this.releaseAndUnpinAbsoluteIndex(rewindPoint.absoluteIndex);
-        this.pool[this.poolCount] = rewindPoint;
-        this.poolCount++;
     };
     SlidingWindow.prototype.currentItem = function (argument) {
         if(this.currentRelativeItemIndex >= this.windowCount) {
@@ -23800,10 +23771,10 @@ var Scanner = (function (_super) {
         }
     };
     Scanner.prototype.peekUnicodeOrHexEscape = function () {
-        var rewindPoint = this.getRewindPoint();
+        var startIndex = this.getAndPinAbsoluteIndex();
         var ch = this.scanUnicodeOrHexEscape(null);
-        this.rewind(rewindPoint);
-        this.releaseRewindPoint(rewindPoint);
+        this.rewindToPinnedIndex(startIndex);
+        this.releaseAndUnpinAbsoluteIndex(startIndex);
         return ch;
     };
     Scanner.prototype.scanCharOrUnicodeEscape = function (errors) {
@@ -25490,12 +25461,40 @@ var Parser;
             this.isInStrictMode = false;
             this.skippedTokens = [];
             this.diagnostics = [];
+            this.pool = [];
+            this.poolCount = 0;
             this.scanner = new Scanner(text, languageVersion, stringTable);
             this.oldTree = oldTree;
             this.options = options || new ParseOptions();
         }
         ParserImpl.prototype.isIncremental = function () {
             return this.oldTree !== null;
+        };
+        ParserImpl.prototype.getOrCreateRewindPoint = function () {
+            if(this.poolCount === 0) {
+                return {
+                };
+            }
+            this.poolCount--;
+            var result = this.pool[this.poolCount];
+            this.pool[this.poolCount] = null;
+            return result;
+        };
+        ParserImpl.prototype.getRewindPoint = function () {
+            var absoluteIndex = this.getAndPinAbsoluteIndex();
+            var rewindPoint = this.getOrCreateRewindPoint();
+            rewindPoint.absoluteIndex = absoluteIndex;
+            this.storeAdditionalRewindState(rewindPoint);
+            return rewindPoint;
+        };
+        ParserImpl.prototype.rewind = function (rewindPoint) {
+            this.rewindToPinnedIndex(rewindPoint.absoluteIndex);
+            this.restoreStateFromRewindPoint(rewindPoint);
+        };
+        ParserImpl.prototype.releaseRewindPoint = function (rewindPoint) {
+            this.releaseAndUnpinAbsoluteIndex(rewindPoint.absoluteIndex);
+            this.pool[this.poolCount] = rewindPoint;
+            this.poolCount++;
         };
         ParserImpl.prototype.storeAdditionalRewindState = function (rewindPoint) {
             rewindPoint.previousToken = this.previousToken;
