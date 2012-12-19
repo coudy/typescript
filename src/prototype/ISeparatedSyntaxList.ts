@@ -21,6 +21,4 @@ interface ISeparatedSyntaxList extends ISyntaxElement {
 
     hasSkippedText(): bool;
     hasZeroWidthToken(): bool;
-
-    syntaxElementThatContainsPosition(position: number): ISyntaxElement;
 }

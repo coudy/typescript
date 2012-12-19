@@ -61,7 +61,7 @@ module Syntax {
             return false;
         }
 
-        public syntaxNodeThatContainsPosition(position: number): SyntaxNode {
+        public findTokenInternal(position: number): SyntaxNode {
             // This should never have been called on this list.  It has a 0 width, so the client 
             // should have skipped over this.
             throw Errors.invalidOperation();
@@ -138,9 +138,9 @@ module Syntax {
             return this.item.hasZeroWidthToken();
         }
 
-        public syntaxNodeThatContainsPosition(position: number): SyntaxNode {
+        public findTokenInternal(position: number): SyntaxNode {
             Debug.assert(position >= 0 && position < this.item.fullWidth());
-            return this.item;
+            return (<any>this.item).findTokenInternal(position);
         }
     }
 
@@ -270,14 +270,14 @@ module Syntax {
             return this._data;
         }
 
-        public syntaxNodeThatContainsPosition(position: number): SyntaxNode {
+        public findTokenInternal(position: number): SyntaxNode {
             Debug.assert(position >= 0 && position < this.fullWidth());
 
             for (var i = 0, n = this.nodes.length; i < n; i++) {
                 var node = this.nodes[i];
 
                 var childWidth = node.fullWidth();
-                if (position < childWidth) { return node; }
+                if (position < childWidth) { return (<any>node).findTokenInternal(position); }
                 position -= childWidth;
             }
 

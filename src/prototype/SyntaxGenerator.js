@@ -4072,11 +4072,11 @@ function generateComputeDataMethod(definition) {
     result += "    }\r\n";
     return result;
 }
-function generateElementThatContainsPositionMethod(definition) {
+function generateFindTokenInternalMethod(definition) {
     if(definition.isAbstract) {
         return "";
     }
-    var result = "\r\n    private elementThatContainsPosition(position: number): ISyntaxElement {\r\n";
+    var result = "\r\n    private findTokenInternal(position: number): ISyntaxElement {\r\n";
     if(definition.children.length > 0) {
         result += "        Debug.assert(position >= 0 && position < this.fullWidth());\r\n";
         result += "        var childWidth = 0;\r\n";
@@ -4095,14 +4095,10 @@ function generateElementThatContainsPositionMethod(definition) {
         }
         result += indent + "        childWidth = " + getPropertyAccess(child) + ".fullWidth();\r\n";
         result += indent + "        if (position < childWidth) { ";
-        if(child.isList) {
-            result += "return " + getPropertyAccess(child) + ".syntaxNodeThatContainsPosition(position); }\r\n";
+        if(child.isToken) {
+            result += "return " + getPropertyAccess(child) + "; }\r\n";
         } else {
-            if(child.isSeparatedList) {
-                result += "return " + getPropertyAccess(child) + ".syntaxElementThatContainsPosition(position); }\r\n";
-            } else {
-                result += "return " + getPropertyAccess(child) + "; }\r\n";
-            }
+            result += "return (<any>" + getPropertyAccess(child) + ").findTokenInternal(position); }\r\n";
         }
         result += indent + "        position -= childWidth;\r\n";
         if(child.isOptional) {
@@ -4153,7 +4149,7 @@ function generateNode(definition) {
     result += generateCollectTextElementsMethod(definition);
     result += generateIsTypeScriptSpecificMethod(definition);
     result += generateComputeDataMethod(definition);
-    result += generateElementThatContainsPositionMethod(definition);
+    result += generateFindTokenInternalMethod(definition);
     result += "}";
     return result;
 }

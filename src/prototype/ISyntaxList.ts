@@ -13,6 +13,4 @@ interface ISyntaxList extends ISyntaxElement {
 
     hasSkippedText(): bool;
     hasZeroWidthToken(): bool;
-
-    syntaxNodeThatContainsPosition(position: number): SyntaxNode;
 }
