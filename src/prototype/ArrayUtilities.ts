@@ -6,6 +6,16 @@ class ArrayUtilities {
         return Object.prototype.toString.apply(value, []) === '[object Array]';
     }
 
+    public static contains(array: any[], value: any): bool {
+        for (var i = 0; i < array.length; i++) {
+            if (array[i] === value) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static groupBy(array: any[], func:(v: any) => string): any {
         var result = {};
 

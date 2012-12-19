@@ -55,6 +55,10 @@ class SyntaxNode implements ISyntaxElement {
             result.hasZeroWidthToken = true;
         }
 
+        if (this.hasRegularExpressionToken()) {
+            result.hasRegularExpressionToken = true;
+        }
+
         for (var name in this) {
             if (name !== "_data") {
                 var value = this[name];
@@ -107,6 +111,37 @@ class SyntaxNode implements ISyntaxElement {
 
     public hasZeroWidthToken(): bool {
         return (this.data() & Constants.NodeZeroWidthTokenMask) !== 0;
+    }
+
+    // True if this node contains a regex token somewhere under it.  A regex token is either a 
+    // regex itself (i.e. /foo/), or is a token which could start a regex (i.e. "/" or "/=").  This
+    // data is used by the incremental parser to decide if a node can be reused.  Due to the 
+    // lookahead nature of regex tokens, a node containing a regex token cannot be reused.  Normally,
+    // changes to text only affect the tokens directly intersected.  However, because regex tokens 
+    // have such unbounded lookahead (technically bounded at the end of a line, but htat's minor), 
+    // we need to recheck them to see if they've changed due to the edit.  For example, if you had:
+    //
+    //      while (true) /3; return;
+    //
+    // And you changed it to:
+    //
+    //      while (true) /3; return/;
+    //
+    // Then even though only the 'return' and ';' colons were touched, we'd want to rescan the '/'
+    // token which we would then realize was a regex.
+    public hasRegularExpressionToken(): bool {
+        return (this.data() & Constants.NodeRegularExpressionTokenMask) !== 0;
+    }
+
+    private static isRegularExpressionToken(kind: SyntaxKind): bool {
+        switch (kind) {
+            case SyntaxKind.SlashToken:
+            case SyntaxKind.SlashEqualsToken:
+            case SyntaxKind.RegularExpressionLiteral:
+                return true;
+            default:
+                return false;
+        }
     }
 
     public fullWidth(): number {

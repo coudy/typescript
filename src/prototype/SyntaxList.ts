@@ -61,6 +61,10 @@ module Syntax {
             return false;
         }
 
+        public hasRegularExpressionToken(): bool {
+            return false;
+        }
+
         public findTokenInternal(position: number): SyntaxNode {
             // This should never have been called on this list.  It has a 0 width, so the client 
             // should have skipped over this.
@@ -136,6 +140,10 @@ module Syntax {
 
         public hasZeroWidthToken(): bool {
             return this.item.hasZeroWidthToken();
+        }
+
+        public hasRegularExpressionToken(): bool {
+            return this.item.hasRegularExpressionToken();
         }
 
         public findTokenInternal(position: number): SyntaxNode {
@@ -243,6 +251,10 @@ module Syntax {
             return (this.data() & Constants.NodeZeroWidthTokenMask) !== 0;
         }
 
+        public hasRegularExpressionToken(): bool {
+            return (this.data() & Constants.NodeRegularExpressionTokenMask) !== 0;
+        }
+
         public fullWidth(): number {
             return this.data() & Constants.NodeFullWidthMask;
         }
@@ -251,15 +263,20 @@ module Syntax {
             var fullWidth = 0;
             var hasSkippedText = false;
             var hasZeroWidthToken = false;
+            var hasRegularExpressionToken = false;
 
             for (var i = 0, n = this.nodes.length; i < n; i++) {
                 var node = this.nodes[i];
                 fullWidth += node.fullWidth();
                 hasSkippedText = hasSkippedText || node.hasSkippedText();
                 hasZeroWidthToken = hasZeroWidthToken || node.hasZeroWidthToken();
+                hasRegularExpressionToken = hasRegularExpressionToken || node.hasRegularExpressionToken();
             }
 
-            return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+            return fullWidth
+                 | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
+                 | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
+                 | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
         }
     
         private data(): number {

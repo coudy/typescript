@@ -21,4 +21,5 @@ interface ISeparatedSyntaxList extends ISyntaxElement {
 
     hasSkippedText(): bool;
     hasZeroWidthToken(): bool;
+    hasRegularExpressionToken(): bool;
 }

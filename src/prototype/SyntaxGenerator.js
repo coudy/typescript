@@ -34,6 +34,14 @@ var ArrayUtilities = (function () {
     ArrayUtilities.isArray = function isArray(value) {
         return Object.prototype.toString.apply(value, []) === '[object Array]';
     }
+    ArrayUtilities.contains = function contains(array, value) {
+        for(var i = 0; i < array.length; i++) {
+            if(array[i] === value) {
+                return true;
+            }
+        }
+        return false;
+    }
     ArrayUtilities.groupBy = function groupBy(array, func) {
         var result = {
         };
@@ -4035,6 +4043,10 @@ function generateIsTypeScriptSpecificMethod(definition) {
     result += "    }\r\n";
     return result;
 }
+function couldBeRegularExpressionToken(child) {
+    var kinds = tokenKinds(child);
+    return ArrayUtilities.contains(kinds, "SlashToken") || ArrayUtilities.contains(kinds, "SlashEqualsToken") || ArrayUtilities.contains(kinds, "RegularExpressionLiteral");
+}
 function generateComputeDataMethod(definition) {
     if(definition.isAbstract) {
         return "";
@@ -4044,6 +4056,7 @@ function generateComputeDataMethod(definition) {
     result += "        var childWidth = 0;\r\n";
     result += "        var hasSkippedText = false;\r\n";
     result += "        var hasZeroWidthToken = " + (definition.children.length === 0) + ";\r\n";
+    result += "        var hasRegularExpressionToken = false;\r\n";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
         if(child.type === "SyntaxKind") {
@@ -4061,14 +4074,18 @@ function generateComputeDataMethod(definition) {
         result += indent + "        hasSkippedText = hasSkippedText || " + getPropertyAccess(child) + ".hasSkippedText();\r\n";
         if(child.isToken) {
             result += indent + "        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);\r\n";
+            if(couldBeRegularExpressionToken(child)) {
+                result += indent + "        hasRegularExpressionToken = hasRegularExpressionToken || (<any>SyntaxNode).isRegularExpressionToken(" + getPropertyAccess(child) + ".kind());\r\n";
+            }
         } else {
             result += indent + "        hasZeroWidthToken = hasZeroWidthToken || " + getPropertyAccess(child) + ".hasZeroWidthToken();\r\n";
+            result += indent + "        hasRegularExpressionToken = hasRegularExpressionToken || " + getPropertyAccess(child) + ".hasRegularExpressionToken();\r\n";
         }
         if(child.isOptional) {
             result += "        }\r\n";
         }
     }
-    result += "\r\n        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);\r\n";
+    result += "\r\n        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);\r\n";
     result += "    }\r\n";
     return result;
 }

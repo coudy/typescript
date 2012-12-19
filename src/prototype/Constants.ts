@@ -13,13 +13,15 @@ enum Constants {
     TriviaCommentMask = 0x04000000, //  0000 0100 0000 0000 0000 0000 0000 0000
     TriviaWidthMask =   0x03FFFFFF, //  0000 0011 1111 1111 1111 1111 1111 1111
 
-    // Masks that we use to place information about a node into a single int.  The first two tell
+    // Masks that we use to place information about a node into a single int.  The first three tell
     // us if the node either contained any skipped tokens, or if it had any zero width tokens 
-    // anywhere within it.  If it does, then we cannot be reused by the incremental parser.  The 
-    // last masks off the part of the int that tells us the full width of the node.  It allows us
-    // to have up to 511MB for a single node, and that seems like more than enough.  Do *not* use 
-    // bit 32 as that will force chakra to use more htan 32 bits to store this value.
-    NodeSkippedTextMask =    0x40000000, // 0100 0000 0000 0000 0000 0000 0000 0000
-    NodeZeroWidthTokenMask = 0x20000000, // 0010 0000 0000 0000 0000 0000 0000 0000
-    NodeFullWidthMask =      0x1FFFFFFF, // 0001 1111 1111 1111 1111 1111 1111 1111
+    // anywhere within it, or if it had a regex token in it ("/", "/=" or "/.../").  If it does, 
+    // then we cannot be reused by the incremental parser.  The  last masks off the part of the int 
+    // that tells us the full width of the node.  It allows us to have up to 255MB for a single node,
+    // and that seems like more than enough.  Do *not* use bit 32 as that will force chakra to use 
+    // more than 32 bits to store this value.
+    NodeSkippedTextMask =            0x40000000, // 0100 0000 0000 0000 0000 0000 0000 0000
+    NodeZeroWidthTokenMask =         0x20000000, // 0010 0000 0000 0000 0000 0000 0000 0000
+    NodeRegularExpressionTokenMask = 0x10000000, // 0001 0000 0000 0000 0000 0000 0000 0000
+    NodeFullWidthMask =              0x0FFFFFFF, // 0000 1111 1111 1111 1111 1111 1111 1111
 }

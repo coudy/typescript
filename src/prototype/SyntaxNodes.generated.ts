@@ -105,18 +105,20 @@ class SourceUnitSyntax extends SyntaxNode {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._moduleElements.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._moduleElements.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._moduleElements.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._moduleElements.hasRegularExpressionToken();
 
         childWidth = this._endOfFileToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._endOfFileToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -303,6 +305,7 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._moduleKeyword.fullWidth();
         fullWidth += childWidth;
@@ -324,7 +327,7 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -424,13 +427,15 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._moduleName.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._moduleName.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._moduleName.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._moduleName.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -596,6 +601,7 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._importKeyword.fullWidth();
         fullWidth += childWidth;
@@ -616,13 +622,14 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._moduleReference.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._moduleReference.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._moduleReference.hasRegularExpressionToken();
 
         childWidth = this._semicolonToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -888,6 +895,7 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         if (this._exportKeyword !== null) {
             childWidth = this._exportKeyword.fullWidth();
@@ -918,6 +926,7 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._extendsClause.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._extendsClause.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._extendsClause.hasRegularExpressionToken();
         }
 
         if (this._implementsClause !== null) {
@@ -925,6 +934,7 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._implementsClause.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._implementsClause.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._implementsClause.hasRegularExpressionToken();
         }
 
         childWidth = this._openBraceToken.fullWidth();
@@ -936,13 +946,14 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._classElements.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._classElements.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._classElements.hasRegularExpressionToken();
 
         childWidth = this._closeBraceToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -1154,6 +1165,7 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         if (this._exportKeyword !== null) {
             childWidth = this._exportKeyword.fullWidth();
@@ -1177,14 +1189,16 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._extendsClause.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._extendsClause.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._extendsClause.hasRegularExpressionToken();
         }
 
         childWidth = this._body.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._body.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._body.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._body.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -1319,6 +1333,7 @@ class ExtendsClauseSyntax extends SyntaxNode {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._extendsKeyword.fullWidth();
         fullWidth += childWidth;
@@ -1329,8 +1344,9 @@ class ExtendsClauseSyntax extends SyntaxNode {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._typeNames.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._typeNames.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._typeNames.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -1449,6 +1465,7 @@ class ImplementsClauseSyntax extends SyntaxNode {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._implementsKeyword.fullWidth();
         fullWidth += childWidth;
@@ -1459,8 +1476,9 @@ class ImplementsClauseSyntax extends SyntaxNode {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._typeNames.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._typeNames.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._typeNames.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -1698,6 +1716,7 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         if (this._exportKeyword !== null) {
             childWidth = this._exportKeyword.fullWidth();
@@ -1723,6 +1742,7 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._moduleName.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._moduleName.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._moduleName.hasRegularExpressionToken();
         }
 
         if (this._stringLiteral !== null) {
@@ -1741,13 +1761,14 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._moduleElements.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._moduleElements.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._moduleElements.hasRegularExpressionToken();
 
         childWidth = this._closeBraceToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -1998,6 +2019,7 @@ class FunctionDeclarationSyntax extends StatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         if (this._exportKeyword !== null) {
             childWidth = this._exportKeyword.fullWidth();
@@ -2022,12 +2044,14 @@ class FunctionDeclarationSyntax extends StatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._functionSignature.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._functionSignature.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._functionSignature.hasRegularExpressionToken();
 
         if (this._block !== null) {
             childWidth = this._block.fullWidth();
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._block.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
         }
 
         if (this._semicolonToken !== null) {
@@ -2037,7 +2061,7 @@ class FunctionDeclarationSyntax extends StatementSyntax {
             hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         }
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -2224,6 +2248,7 @@ class VariableStatementSyntax extends StatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         if (this._exportKeyword !== null) {
             childWidth = this._exportKeyword.fullWidth();
@@ -2243,13 +2268,14 @@ class VariableStatementSyntax extends StatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._variableDeclaration.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._variableDeclaration.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclaration.hasRegularExpressionToken();
 
         childWidth = this._semicolonToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -2417,6 +2443,7 @@ class VariableDeclarationSyntax extends SyntaxNode {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._varKeyword.fullWidth();
         fullWidth += childWidth;
@@ -2427,8 +2454,9 @@ class VariableDeclarationSyntax extends SyntaxNode {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._variableDeclarators.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._variableDeclarators.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclarators.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -2565,6 +2593,7 @@ class VariableDeclaratorSyntax extends SyntaxNode {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._identifier.fullWidth();
         fullWidth += childWidth;
@@ -2576,6 +2605,7 @@ class VariableDeclaratorSyntax extends SyntaxNode {
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
         }
 
         if (this._equalsValueClause !== null) {
@@ -2583,9 +2613,10 @@ class VariableDeclaratorSyntax extends SyntaxNode {
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._equalsValueClause.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._equalsValueClause.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._equalsValueClause.hasRegularExpressionToken();
         }
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -2709,6 +2740,7 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._equalsToken.fullWidth();
         fullWidth += childWidth;
@@ -2719,8 +2751,9 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._value.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._value.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._value.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -2849,6 +2882,7 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._operatorToken.fullWidth();
         fullWidth += childWidth;
@@ -2859,8 +2893,9 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._operand.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._operand.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._operand.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -2957,13 +2992,14 @@ class ThisExpressionSyntax extends UnaryExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._thisKeyword.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._thisKeyword.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -3077,13 +3113,15 @@ class LiteralExpressionSyntax extends UnaryExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._literalToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._literalToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+        hasRegularExpressionToken = hasRegularExpressionToken || (<any>SyntaxNode).isRegularExpressionToken(this._literalToken.kind());
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -3222,6 +3260,7 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._openBracketToken.fullWidth();
         fullWidth += childWidth;
@@ -3232,13 +3271,14 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._expressions.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._expressions.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._expressions.hasRegularExpressionToken();
 
         childWidth = this._closeBracketToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._closeBracketToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -3312,8 +3352,9 @@ class OmittedExpressionSyntax extends ExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = true;
+        var hasRegularExpressionToken = false;
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -3436,6 +3477,7 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._openParenToken.fullWidth();
         fullWidth += childWidth;
@@ -3446,13 +3488,14 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
 
         childWidth = this._closeParenToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -3616,6 +3659,7 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._identifier.fullWidth();
         fullWidth += childWidth;
@@ -3631,8 +3675,9 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._body.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._body.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._body.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -3769,11 +3814,13 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._callSignature.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._callSignature.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._callSignature.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._callSignature.hasRegularExpressionToken();
 
         childWidth = this._equalsGreaterThanToken.fullWidth();
         fullWidth += childWidth;
@@ -3784,8 +3831,9 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._body.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._body.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._body.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -3917,13 +3965,14 @@ class IdentifierNameSyntax extends NameSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._identifier.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -4055,11 +4104,13 @@ class QualifiedNameSyntax extends NameSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._left.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._left.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._left.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._left.hasRegularExpressionToken();
 
         childWidth = this._dotToken.fullWidth();
         fullWidth += childWidth;
@@ -4070,8 +4121,9 @@ class QualifiedNameSyntax extends NameSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._right.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._right.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._right.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -4226,6 +4278,7 @@ class ConstructorTypeSyntax extends TypeSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._newKeyword.fullWidth();
         fullWidth += childWidth;
@@ -4236,6 +4289,7 @@ class ConstructorTypeSyntax extends TypeSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
 
         childWidth = this._equalsGreaterThanToken.fullWidth();
         fullWidth += childWidth;
@@ -4246,8 +4300,9 @@ class ConstructorTypeSyntax extends TypeSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._type.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -4388,11 +4443,13 @@ class FunctionTypeSyntax extends TypeSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._parameterList.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
 
         childWidth = this._equalsGreaterThanToken.fullWidth();
         fullWidth += childWidth;
@@ -4403,8 +4460,9 @@ class FunctionTypeSyntax extends TypeSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._type.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -4550,6 +4608,7 @@ class ObjectTypeSyntax extends TypeSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._openBraceToken.fullWidth();
         fullWidth += childWidth;
@@ -4560,13 +4619,14 @@ class ObjectTypeSyntax extends TypeSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._typeMembers.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._typeMembers.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._typeMembers.hasRegularExpressionToken();
 
         childWidth = this._closeBraceToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -4703,11 +4763,13 @@ class ArrayTypeSyntax extends TypeSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._type.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._type.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
 
         childWidth = this._openBracketToken.fullWidth();
         fullWidth += childWidth;
@@ -4719,7 +4781,7 @@ class ArrayTypeSyntax extends TypeSyntax {
         hasSkippedText = hasSkippedText || this._closeBracketToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -4824,13 +4886,14 @@ class PredefinedTypeSyntax extends TypeSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._keyword.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._keyword.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -4941,6 +5004,7 @@ class TypeAnnotationSyntax extends SyntaxNode {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._colonToken.fullWidth();
         fullWidth += childWidth;
@@ -4951,8 +5015,9 @@ class TypeAnnotationSyntax extends SyntaxNode {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._type.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -5095,6 +5160,7 @@ class BlockSyntax extends StatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._openBraceToken.fullWidth();
         fullWidth += childWidth;
@@ -5105,13 +5171,14 @@ class BlockSyntax extends StatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._statements.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._statements.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._statements.hasRegularExpressionToken();
 
         childWidth = this._closeBraceToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -5315,6 +5382,7 @@ class ParameterSyntax extends SyntaxNode {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         if (this._dotDotDotToken !== null) {
             childWidth = this._dotDotDotToken.fullWidth();
@@ -5347,6 +5415,7 @@ class ParameterSyntax extends SyntaxNode {
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
         }
 
         if (this._equalsValueClause !== null) {
@@ -5354,9 +5423,10 @@ class ParameterSyntax extends SyntaxNode {
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._equalsValueClause.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._equalsValueClause.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._equalsValueClause.hasRegularExpressionToken();
         }
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -5518,11 +5588,13 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._expression.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
 
         childWidth = this._dotToken.fullWidth();
         fullWidth += childWidth;
@@ -5533,8 +5605,9 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._identifierName.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._identifierName.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._identifierName.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -5657,18 +5730,20 @@ class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._operand.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._operand.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._operand.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._operand.hasRegularExpressionToken();
 
         childWidth = this._operatorToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._operatorToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -5822,11 +5897,13 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._expression.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
 
         childWidth = this._openBracketToken.fullWidth();
         fullWidth += childWidth;
@@ -5837,13 +5914,14 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._argumentExpression.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._argumentExpression.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._argumentExpression.hasRegularExpressionToken();
 
         childWidth = this._closeBracketToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._closeBracketToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -5968,18 +6046,21 @@ class InvocationExpressionSyntax extends UnaryExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._expression.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
 
         childWidth = this._argumentList.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._argumentList.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._argumentList.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._argumentList.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -6122,6 +6203,7 @@ class ArgumentListSyntax extends SyntaxNode {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._openParenToken.fullWidth();
         fullWidth += childWidth;
@@ -6132,13 +6214,14 @@ class ArgumentListSyntax extends SyntaxNode {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._arguments.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._arguments.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._arguments.hasRegularExpressionToken();
 
         childWidth = this._closeParenToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -6320,23 +6403,27 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._left.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._left.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._left.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._left.hasRegularExpressionToken();
 
         childWidth = this._operatorToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._operatorToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+        hasRegularExpressionToken = hasRegularExpressionToken || (<any>SyntaxNode).isRegularExpressionToken(this._operatorToken.kind());
 
         childWidth = this._right.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._right.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._right.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._right.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -6514,11 +6601,13 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._condition.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._condition.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._condition.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._condition.hasRegularExpressionToken();
 
         childWidth = this._questionToken.fullWidth();
         fullWidth += childWidth;
@@ -6529,6 +6618,7 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._whenTrue.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._whenTrue.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._whenTrue.hasRegularExpressionToken();
 
         childWidth = this._colonToken.fullWidth();
         fullWidth += childWidth;
@@ -6539,8 +6629,9 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._whenFalse.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._whenFalse.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._whenFalse.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -6711,6 +6802,7 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._newKeyword.fullWidth();
         fullWidth += childWidth;
@@ -6721,15 +6813,17 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
 
         if (this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
         }
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -6894,6 +6988,7 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._identifier.fullWidth();
         fullWidth += childWidth;
@@ -6911,15 +7006,17 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
 
         if (this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
         }
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -7087,6 +7184,7 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._openBracketToken.fullWidth();
         fullWidth += childWidth;
@@ -7097,6 +7195,7 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._parameter.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._parameter.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._parameter.hasRegularExpressionToken();
 
         childWidth = this._closeBracketToken.fullWidth();
         fullWidth += childWidth;
@@ -7108,9 +7207,10 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
         }
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -7258,6 +7358,7 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._identifier.fullWidth();
         fullWidth += childWidth;
@@ -7276,9 +7377,10 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
         }
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -7429,6 +7531,7 @@ class ParameterListSyntax extends SyntaxNode {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._openParenToken.fullWidth();
         fullWidth += childWidth;
@@ -7439,13 +7542,14 @@ class ParameterListSyntax extends SyntaxNode {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._parameters.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._parameters.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._parameters.hasRegularExpressionToken();
 
         childWidth = this._closeParenToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -7569,20 +7673,23 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._parameterList.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
 
         if (this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
         }
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -7700,6 +7807,7 @@ class ElseClauseSyntax extends SyntaxNode {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._elseKeyword.fullWidth();
         fullWidth += childWidth;
@@ -7710,8 +7818,9 @@ class ElseClauseSyntax extends SyntaxNode {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -7909,6 +8018,7 @@ class IfStatementSyntax extends StatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._ifKeyword.fullWidth();
         fullWidth += childWidth;
@@ -7924,6 +8034,7 @@ class IfStatementSyntax extends StatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._condition.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._condition.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._condition.hasRegularExpressionToken();
 
         childWidth = this._closeParenToken.fullWidth();
         fullWidth += childWidth;
@@ -7934,15 +8045,17 @@ class IfStatementSyntax extends StatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
 
         if (this._elseClause !== null) {
             childWidth = this._elseClause.fullWidth();
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._elseClause.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._elseClause.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._elseClause.hasRegularExpressionToken();
         }
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -8076,18 +8189,20 @@ class ExpressionStatementSyntax extends StatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._expression.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
 
         childWidth = this._semicolonToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -8262,6 +8377,7 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._constructorKeyword.fullWidth();
         fullWidth += childWidth;
@@ -8272,12 +8388,14 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
 
         if (this._block !== null) {
             childWidth = this._block.fullWidth();
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._block.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
         }
 
         if (this._semicolonToken !== null) {
@@ -8287,7 +8405,7 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
             hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         }
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -8503,6 +8621,7 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         if (this._publicOrPrivateKeyword !== null) {
             childWidth = this._publicOrPrivateKeyword.fullWidth();
@@ -8522,12 +8641,14 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._functionSignature.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._functionSignature.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._functionSignature.hasRegularExpressionToken();
 
         if (this._block !== null) {
             childWidth = this._block.fullWidth();
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._block.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
         }
 
         if (this._semicolonToken !== null) {
@@ -8537,7 +8658,7 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
             hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         }
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -8810,6 +8931,7 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         if (this._publicOrPrivateKeyword !== null) {
             childWidth = this._publicOrPrivateKeyword.fullWidth();
@@ -8839,20 +8961,23 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
 
         if (this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
         }
 
         childWidth = this._block.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._block.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -9076,6 +9201,7 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         if (this._publicOrPrivateKeyword !== null) {
             childWidth = this._publicOrPrivateKeyword.fullWidth();
@@ -9105,13 +9231,15 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
 
         childWidth = this._block.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._block.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -9291,6 +9419,7 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         if (this._publicOrPrivateKeyword !== null) {
             childWidth = this._publicOrPrivateKeyword.fullWidth();
@@ -9310,13 +9439,14 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._variableDeclarator.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._variableDeclarator.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclarator.hasRegularExpressionToken();
 
         childWidth = this._semicolonToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -9462,6 +9592,7 @@ class ThrowStatementSyntax extends StatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._throwKeyword.fullWidth();
         fullWidth += childWidth;
@@ -9472,13 +9603,14 @@ class ThrowStatementSyntax extends StatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
 
         childWidth = this._semicolonToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -9620,6 +9752,7 @@ class ReturnStatementSyntax extends StatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._returnKeyword.fullWidth();
         fullWidth += childWidth;
@@ -9631,6 +9764,7 @@ class ReturnStatementSyntax extends StatementSyntax {
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
         }
 
         childWidth = this._semicolonToken.fullWidth();
@@ -9638,7 +9772,7 @@ class ReturnStatementSyntax extends StatementSyntax {
         hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -9783,6 +9917,7 @@ class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._newKeyword.fullWidth();
         fullWidth += childWidth;
@@ -9793,15 +9928,17 @@ class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
 
         if (this._argumentList !== null) {
             childWidth = this._argumentList.fullWidth();
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._argumentList.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._argumentList.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._argumentList.hasRegularExpressionToken();
         }
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -10027,6 +10164,7 @@ class SwitchStatementSyntax extends StatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._switchKeyword.fullWidth();
         fullWidth += childWidth;
@@ -10042,6 +10180,7 @@ class SwitchStatementSyntax extends StatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
 
         childWidth = this._closeParenToken.fullWidth();
         fullWidth += childWidth;
@@ -10057,13 +10196,14 @@ class SwitchStatementSyntax extends StatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._switchClauses.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._switchClauses.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._switchClauses.hasRegularExpressionToken();
 
         childWidth = this._closeBraceToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -10272,6 +10412,7 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._caseKeyword.fullWidth();
         fullWidth += childWidth;
@@ -10282,6 +10423,7 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
 
         childWidth = this._colonToken.fullWidth();
         fullWidth += childWidth;
@@ -10292,8 +10434,9 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._statements.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._statements.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._statements.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -10444,6 +10587,7 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._defaultKeyword.fullWidth();
         fullWidth += childWidth;
@@ -10459,8 +10603,9 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._statements.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._statements.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._statements.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -10604,6 +10749,7 @@ class BreakStatementSyntax extends StatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._breakKeyword.fullWidth();
         fullWidth += childWidth;
@@ -10622,7 +10768,7 @@ class BreakStatementSyntax extends StatementSyntax {
         hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -10768,6 +10914,7 @@ class ContinueStatementSyntax extends StatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._continueKeyword.fullWidth();
         fullWidth += childWidth;
@@ -10786,7 +10933,7 @@ class ContinueStatementSyntax extends StatementSyntax {
         hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -11129,6 +11276,7 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._forKeyword.fullWidth();
         fullWidth += childWidth;
@@ -11145,6 +11293,7 @@ class ForStatementSyntax extends BaseForStatementSyntax {
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._variableDeclaration.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._variableDeclaration.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclaration.hasRegularExpressionToken();
         }
 
         if (this._initializer !== null) {
@@ -11152,6 +11301,7 @@ class ForStatementSyntax extends BaseForStatementSyntax {
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._initializer.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._initializer.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._initializer.hasRegularExpressionToken();
         }
 
         childWidth = this._firstSemicolonToken.fullWidth();
@@ -11164,6 +11314,7 @@ class ForStatementSyntax extends BaseForStatementSyntax {
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._condition.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._condition.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._condition.hasRegularExpressionToken();
         }
 
         childWidth = this._secondSemicolonToken.fullWidth();
@@ -11176,6 +11327,7 @@ class ForStatementSyntax extends BaseForStatementSyntax {
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._incrementor.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._incrementor.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._incrementor.hasRegularExpressionToken();
         }
 
         childWidth = this._closeParenToken.fullWidth();
@@ -11187,8 +11339,9 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -11463,6 +11616,7 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._forKeyword.fullWidth();
         fullWidth += childWidth;
@@ -11479,6 +11633,7 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._variableDeclaration.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._variableDeclaration.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclaration.hasRegularExpressionToken();
         }
 
         if (this._left !== null) {
@@ -11486,6 +11641,7 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._left.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._left.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._left.hasRegularExpressionToken();
         }
 
         childWidth = this._inKeyword.fullWidth();
@@ -11497,6 +11653,7 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
 
         childWidth = this._closeParenToken.fullWidth();
         fullWidth += childWidth;
@@ -11507,8 +11664,9 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -11708,6 +11866,7 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._whileKeyword.fullWidth();
         fullWidth += childWidth;
@@ -11723,6 +11882,7 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._condition.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._condition.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._condition.hasRegularExpressionToken();
 
         childWidth = this._closeParenToken.fullWidth();
         fullWidth += childWidth;
@@ -11733,8 +11893,9 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -11918,6 +12079,7 @@ class WithStatementSyntax extends StatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._withKeyword.fullWidth();
         fullWidth += childWidth;
@@ -11933,6 +12095,7 @@ class WithStatementSyntax extends StatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._condition.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._condition.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._condition.hasRegularExpressionToken();
 
         childWidth = this._closeParenToken.fullWidth();
         fullWidth += childWidth;
@@ -11943,8 +12106,9 @@ class WithStatementSyntax extends StatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -12156,6 +12320,7 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         if (this._exportKeyword !== null) {
             childWidth = this._exportKeyword.fullWidth();
@@ -12183,13 +12348,14 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._variableDeclarators.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._variableDeclarators.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclarators.hasRegularExpressionToken();
 
         childWidth = this._closeBraceToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -12359,6 +12525,7 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._lessThanToken.fullWidth();
         fullWidth += childWidth;
@@ -12369,6 +12536,7 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._type.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
 
         childWidth = this._greaterThanToken.fullWidth();
         fullWidth += childWidth;
@@ -12379,8 +12547,9 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -12531,6 +12700,7 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._openBraceToken.fullWidth();
         fullWidth += childWidth;
@@ -12541,13 +12711,14 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._propertyAssignments.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._propertyAssignments.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._propertyAssignments.hasRegularExpressionToken();
 
         childWidth = this._closeBraceToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -12715,6 +12886,7 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._propertyName.fullWidth();
         fullWidth += childWidth;
@@ -12730,8 +12902,9 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -12939,6 +13112,7 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._getKeyword.fullWidth();
         fullWidth += childWidth;
@@ -12964,8 +13138,9 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._block.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -13166,6 +13341,7 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._setKeyword.fullWidth();
         fullWidth += childWidth;
@@ -13196,8 +13372,9 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._block.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -13374,6 +13551,7 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._functionKeyword.fullWidth();
         fullWidth += childWidth;
@@ -13391,13 +13569,15 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._callSignature.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._callSignature.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._callSignature.hasRegularExpressionToken();
 
         childWidth = this._block.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._block.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -13504,13 +13684,14 @@ class EmptyStatementSyntax extends StatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._semicolonToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -13603,13 +13784,14 @@ class SuperExpressionSyntax extends UnaryExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._superKeyword.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._superKeyword.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -13762,6 +13944,7 @@ class TryStatementSyntax extends StatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._tryKeyword.fullWidth();
         fullWidth += childWidth;
@@ -13772,12 +13955,14 @@ class TryStatementSyntax extends StatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._block.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
 
         if (this._catchClause !== null) {
             childWidth = this._catchClause.fullWidth();
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._catchClause.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._catchClause.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._catchClause.hasRegularExpressionToken();
         }
 
         if (this._finallyClause !== null) {
@@ -13785,9 +13970,10 @@ class TryStatementSyntax extends StatementSyntax {
             fullWidth += childWidth;
             hasSkippedText = hasSkippedText || this._finallyClause.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || this._finallyClause.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._finallyClause.hasRegularExpressionToken();
         }
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -13969,6 +14155,7 @@ class CatchClauseSyntax extends SyntaxNode {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._catchKeyword.fullWidth();
         fullWidth += childWidth;
@@ -13994,8 +14181,9 @@ class CatchClauseSyntax extends SyntaxNode {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._block.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -14123,6 +14311,7 @@ class FinallyClauseSyntax extends SyntaxNode {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._finallyKeyword.fullWidth();
         fullWidth += childWidth;
@@ -14133,8 +14322,9 @@ class FinallyClauseSyntax extends SyntaxNode {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._block.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -14269,6 +14459,7 @@ class LabeledStatement extends StatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._identifier.fullWidth();
         fullWidth += childWidth;
@@ -14284,8 +14475,9 @@ class LabeledStatement extends StatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -14497,6 +14689,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._doKeyword.fullWidth();
         fullWidth += childWidth;
@@ -14507,6 +14700,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
 
         childWidth = this._whileKeyword.fullWidth();
         fullWidth += childWidth;
@@ -14522,6 +14716,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._condition.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._condition.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._condition.hasRegularExpressionToken();
 
         childWidth = this._closeParenToken.fullWidth();
         fullWidth += childWidth;
@@ -14533,7 +14728,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
         hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -14669,6 +14864,7 @@ class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._typeOfKeyword.fullWidth();
         fullWidth += childWidth;
@@ -14679,8 +14875,9 @@ class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -14796,6 +14993,7 @@ class DeleteExpressionSyntax extends UnaryExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._deleteKeyword.fullWidth();
         fullWidth += childWidth;
@@ -14806,8 +15004,9 @@ class DeleteExpressionSyntax extends UnaryExpressionSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -14923,6 +15122,7 @@ class VoidExpressionSyntax extends UnaryExpressionSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._voidKeyword.fullWidth();
         fullWidth += childWidth;
@@ -14933,8 +15133,9 @@ class VoidExpressionSyntax extends UnaryExpressionSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
@@ -15049,6 +15250,7 @@ class DebuggerStatementSyntax extends StatementSyntax {
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
 
         childWidth = this._debuggerKeyword.fullWidth();
         fullWidth += childWidth;
@@ -15060,7 +15262,7 @@ class DebuggerStatementSyntax extends StatementSyntax {
         hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0);
+        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
     private findTokenInternal(position: number): ISyntaxElement {
