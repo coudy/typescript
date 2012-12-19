@@ -1871,7 +1871,10 @@ function generateComputeDataMethod(definition: ITypeDefinition): string {
         }
     }
 
-    result += "\r\n        return fullWidth | (hasSkippedText ? Constants.NodeSkippedTextMask : 0) | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0) | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);\r\n";
+    result += "\r\n        return (fullWidth << Constants.NodeFullWidthShift)";
+    result += "\r\n             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)";
+    result += "\r\n             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)";
+    result += "\r\n             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);\r\n";
 
     result += "    }\r\n";
 
@@ -2500,8 +2503,8 @@ function generateTokens(): string {
 "    }\r\n\r\n"
 
     result += 
-"    function getTriviaWidth(value: number) {\r\n" +
-"        return value & Constants.TriviaWidthMask;\r\n" +
+"    function getTriviaWidth(value: number): number {\r\n" +
+"        return value >>> Constants.TriviaFullWidthShift;\r\n" +
 "    }\r\n" +
 "\r\n" +
 "    function hasTriviaComment(value: number): bool {\r\n" +

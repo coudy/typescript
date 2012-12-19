@@ -959,8 +959,8 @@ module Syntax {
         }
     }
 
-    function getTriviaWidth(value: number) {
-        return value & Constants.TriviaWidthMask;
+    function getTriviaWidth(value: number): number {
+        return value >>> Constants.TriviaFullWidthShift;
     }
 
     function hasTriviaComment(value: number): bool {

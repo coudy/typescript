@@ -219,7 +219,9 @@ class Scanner extends SlidingWindow {
                     break;
             }
 
-            return width | (hasComment ? Constants.TriviaCommentMask : 0) | (hasNewLine ? Constants.TriviaNewLineMask : 0);
+            return (width << Constants.TriviaFullWidthShift)
+                 | (hasComment ? Constants.TriviaCommentMask : 0)
+                 | (hasNewLine ? Constants.TriviaNewLineMask : 0);
         }
     }
 

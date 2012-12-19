@@ -256,7 +256,7 @@ module Syntax {
         }
 
         public fullWidth(): number {
-            return this.data() & Constants.NodeFullWidthMask;
+            return this.data() >>> Constants.NodeFullWidthShift;
         }
 
         private computeData(): number {
@@ -273,7 +273,7 @@ module Syntax {
                 hasRegularExpressionToken = hasRegularExpressionToken || node.hasRegularExpressionToken();
             }
 
-            return fullWidth
+            return (fullWidth << Constants.NodeFullWidthShift)
                  | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
                  | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
                  | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);

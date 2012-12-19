@@ -145,7 +145,7 @@ class SyntaxNode implements ISyntaxElement {
     }
 
     public fullWidth(): number {
-        return this.data() & Constants.NodeFullWidthMask;
+        return this.data() >>> Constants.NodeFullWidthShift;
     }
 
     private computeData(): number {
