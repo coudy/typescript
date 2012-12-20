@@ -535,6 +535,10 @@ module Parser {
             return this.previousTokenStart() + this.previousToken().width();
         }
 
+        private currentNode(): SyntaxNode {
+            return this.source.currentNode();
+        }
+
         private currentToken(): ISyntaxToken {
             return this.source.currentToken();
         }
@@ -567,70 +571,10 @@ module Parser {
             return this.source.previousToken();
         }
 
-        private canEatAutomaticSemicolon(allowWithoutNewLine: bool): bool {
-            var token = this.currentToken();
-
-            // An automatic semicolon is always allowed if we're at the end of the file.
-            if (token.tokenKind === SyntaxKind.EndOfFileToken) {
-                return true;
-            }
-
-            // Or if the next token is a close brace (regardless of which line it is on).
-            if (token.tokenKind === SyntaxKind.CloseBraceToken) {
-                return true;
-            }
-
-            if (allowWithoutNewLine) {
-                return true;
-            }
-
-            // It is also allowed if there is a newline between the last token seen and the next one.
-            if (this.previousToken() !== null && this.previousToken().hasTrailingNewLine()) {
-                return true;
-            }
-
-            return false;
-        }
-
-        private canEatExplicitOrAutomaticSemicolon(allowWithoutNewline: bool): bool {
-            var token = this.currentToken();
-
-            if (token.tokenKind === SyntaxKind.SemicolonToken) {
-                return true;
-            }
-
-            return this.canEatAutomaticSemicolon(allowWithoutNewline);
-        }
-
-        private eatExplicitOrAutomaticSemicolon(allowWithoutNewline: bool): ISyntaxToken {
-            var token = this.currentToken();
-
-            // If we see a semicolon, then we can definitely eat it.
-            if (token.tokenKind === SyntaxKind.SemicolonToken) {
-                return this.eatToken(SyntaxKind.SemicolonToken);
-            }
-
-            // Check if an automatic semicolon could go here.  If so, synthesize one.  However, if the
-            // user has the option set to error on automatic semicolons, then add an error to that
-            // token as well.
-            if (this.canEatAutomaticSemicolon(allowWithoutNewline)) {
-                // Note: the missing token needs to go between real tokens.  So we place it at the 
-                // fullstart of the current token.
-                var semicolonToken = Syntax.emptyToken(SyntaxKind.SemicolonToken, SyntaxKind.None);
-
-                if (!this.options.allowAutomaticSemicolonInsertion()) {
-                    // Report the missing semicolon at the end of the *previous* token.
-
-                    this.addDiagnostic(
-                        new SyntaxDiagnostic(this.previousTokenEnd(), 0, DiagnosticCode.Automatic_semicolon_insertion_not_allowed, null));
-                }
-
-                return semicolonToken;
-            }
-
-            // No semicolon could be consumed here at all.  Just call the standard eating function
-            // so we get the token and the error for it.
-            return this.eatToken(SyntaxKind.SemicolonToken);
+        private eatNode(): SyntaxNode {
+            var node = this.source.currentNode();
+            this.source.moveToNextNode();
+            return node;
         }
 
         //this method is called very frequently
@@ -706,6 +650,72 @@ module Parser {
             }
 
             return this.createMissingToken(SyntaxKind.IdentifierNameToken, SyntaxKind.None, token);
+        }
+
+        private canEatAutomaticSemicolon(allowWithoutNewLine: bool): bool {
+            var token = this.currentToken();
+
+            // An automatic semicolon is always allowed if we're at the end of the file.
+            if (token.tokenKind === SyntaxKind.EndOfFileToken) {
+                return true;
+            }
+
+            // Or if the next token is a close brace (regardless of which line it is on).
+            if (token.tokenKind === SyntaxKind.CloseBraceToken) {
+                return true;
+            }
+
+            if (allowWithoutNewLine) {
+                return true;
+            }
+
+            // It is also allowed if there is a newline between the last token seen and the next one.
+            if (this.previousToken() !== null && this.previousToken().hasTrailingNewLine()) {
+                return true;
+            }
+
+            return false;
+        }
+
+        private canEatExplicitOrAutomaticSemicolon(allowWithoutNewline: bool): bool {
+            var token = this.currentToken();
+
+            if (token.tokenKind === SyntaxKind.SemicolonToken) {
+                return true;
+            }
+
+            return this.canEatAutomaticSemicolon(allowWithoutNewline);
+        }
+
+        private eatExplicitOrAutomaticSemicolon(allowWithoutNewline: bool): ISyntaxToken {
+            var token = this.currentToken();
+
+            // If we see a semicolon, then we can definitely eat it.
+            if (token.tokenKind === SyntaxKind.SemicolonToken) {
+                return this.eatToken(SyntaxKind.SemicolonToken);
+            }
+
+            // Check if an automatic semicolon could go here.  If so, synthesize one.  However, if the
+            // user has the option set to error on automatic semicolons, then add an error to that
+            // token as well.
+            if (this.canEatAutomaticSemicolon(allowWithoutNewline)) {
+                // Note: the missing token needs to go between real tokens.  So we place it at the 
+                // fullstart of the current token.
+                var semicolonToken = Syntax.emptyToken(SyntaxKind.SemicolonToken, SyntaxKind.None);
+
+                if (!this.options.allowAutomaticSemicolonInsertion()) {
+                    // Report the missing semicolon at the end of the *previous* token.
+
+                    this.addDiagnostic(
+                        new SyntaxDiagnostic(this.previousTokenEnd(), 0, DiagnosticCode.Automatic_semicolon_insertion_not_allowed, null));
+                }
+
+                return semicolonToken;
+            }
+
+            // No semicolon could be consumed here at all.  Just call the standard eating function
+            // so we get the token and the error for it.
+            return this.eatToken(SyntaxKind.SemicolonToken);
         }
 
         private isIdentifier(token: ISyntaxToken): bool {
@@ -913,15 +923,23 @@ module Parser {
         }
 
         private isModuleElement(): bool {
+            if (this.currentNode() !== null && this.currentNode().isModuleElement()) {
+                return true;
+            }
+
             return this.isImportDeclaration() ||
                    this.isModuleDeclaration() ||
                    this.isInterfaceDeclaration() ||
                    this.isClassDeclaration() ||
                    this.isEnumDeclaration() ||
-                   this.isStatement(/*allowFunctionDeclaration:*/ true);
+                   this.isStatement();
         }
-
+        
         private parseModuleElement(): ModuleElementSyntax {
+            if (this.currentNode() !== null && this.currentNode().isModuleElement()) {
+                return <ModuleElementSyntax>this.eatNode();
+            }
+
             if (this.isImportDeclaration()) {
                 return this.parseImportDeclaration();
             }
@@ -937,8 +955,8 @@ module Parser {
             else if (this.isEnumDeclaration()) {
                 return this.parseEnumDeclaration();
             }
-            else if (this.isStatement(/*allowFunctionDeclaration:*/ true)) {
-                return this.parseStatement(/*allowFunctionDeclaration:*/ true);
+            else if (this.isStatement()) {
+                return this.parseStatement();
             }
             else {
                 throw Errors.invalidOperation();
@@ -1223,6 +1241,10 @@ module Parser {
         }
 
         private isClassElement(): bool {
+            if (this.currentNode() !== null && this.currentNode().isClassElement()) {
+                return true;
+            }
+
             // Note: the order of these calls is important.  Specifically, isMemberVariableDeclaration
             // checks for a subset of the conditions of the previous two.
             return this.isConstructorDeclaration() ||
@@ -1311,6 +1333,10 @@ module Parser {
         }
 
         private parseClassElement(): ClassElementSyntax {
+            if (this.currentNode() !== null && this.currentNode().isClassElement()) {
+                return <ClassElementSyntax>this.eatNode();
+            }
+
             Debug.assert(this.isClassElement());
             if (this.isConstructorDeclaration()) {
                 return this.parseConstructorDeclaration();
@@ -1481,6 +1507,10 @@ module Parser {
         }
 
         private isTypeMember(): bool {
+            if (this.currentNode() !== null && this.currentNode().isTypeMember()) {
+                return true;
+            }
+
             return this.isCallSignature() ||
                    this.isConstructSignature() ||
                    this.isIndexSignature() ||
@@ -1489,6 +1519,10 @@ module Parser {
         }
 
         private parseTypeMember(): TypeMemberSyntax {
+            if (this.currentNode() !== null && this.currentNode().isTypeMember()) {
+                return <TypeMemberSyntax>this.eatNode();
+            }
+
             if (this.isCallSignature()) {
                 return this.parseCallSignature();
             }
@@ -1613,7 +1647,11 @@ module Parser {
             return new ImplementsClauseSyntax(implementsKeyword, typeNames);
         }
 
-        private isStatement(allowFunctionDeclaration: bool): bool {
+        private isStatement(): bool {
+            if (this.currentNode() !== null && this.currentNode().isStatement()) {
+                return true;
+            }
+
             // ERROR RECOVERY
             switch (this.currentToken().keywordKind()) {
                 case SyntaxKind.PublicKeyword:
@@ -1632,7 +1670,7 @@ module Parser {
 
             return this.isVariableStatement() ||
                    this.isLabeledStatement() ||
-                   (allowFunctionDeclaration && this.isFunctionDeclaration()) ||
+                   this.isFunctionDeclaration() ||
                    this.isIfStatement() ||
                    this.isBlock() ||
                    this.isExpressionStatement() ||
@@ -1650,14 +1688,18 @@ module Parser {
                    this.isDebuggerStatement();
         }
 
-        private parseStatement(allowFunctionDeclaration: bool): StatementSyntax {
+        private parseStatement(): StatementSyntax {
+            if (this.currentNode() !== null && this.currentNode().isStatement()) {
+                return <StatementSyntax>this.eatNode();
+            }
+
             if (this.isVariableStatement()) {
                 return this.parseVariableStatement();
             }
             else if (this.isLabeledStatement()) {
                 return this.parseLabeledStatement();
             }
-            else if (allowFunctionDeclaration && this.isFunctionDeclaration()) {
+            else if (this.isFunctionDeclaration()) {
                 return this.parseFunctionDeclaration();
             }
             else if (this.isIfStatement()) {
@@ -1729,7 +1771,7 @@ module Parser {
             Debug.assert(this.isDoStatement());
 
             var doKeyword = this.eatKeyword(SyntaxKind.DoKeyword);
-            var statement = this.parseStatement(/*allowFunctionDeclaration:*/ false);
+            var statement = this.parseStatement();
             var whileKeyword = this.eatKeyword(SyntaxKind.WhileKeyword);
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var condition = this.parseExpression(/*allowIn:*/ true);
@@ -1753,7 +1795,7 @@ module Parser {
 
             var identifier = this.eatIdentifierToken();
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
-            var statement = this.parseStatement(/*allowFunctionDeclaration:*/ false);
+            var statement = this.parseStatement();
 
             return new LabeledStatement(identifier, colonToken, statement);
         }
@@ -1824,7 +1866,7 @@ module Parser {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var condition = this.parseExpression(/*allowIn:*/ true);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-            var statement = this.parseStatement(/*allowFunctionDeclaration:*/ false);
+            var statement = this.parseStatement();
 
             return new WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement);
         }
@@ -1840,7 +1882,7 @@ module Parser {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var condition = this.parseExpression(/*allowIn:*/ true);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-            var statement = this.parseStatement(/*allowFunctionDeclaration:*/ false);
+            var statement = this.parseStatement();
 
             return new WhileStatementSyntax(whileKeyword, openParenToken, condition, closeParenToken, statement);
         }
@@ -1910,7 +1952,7 @@ module Parser {
             var inKeyword = this.eatKeyword(SyntaxKind.InKeyword);
             var expression = this.parseExpression(/*allowIn:*/ true);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-            var statement = this.parseStatement(/*allowFunctionDeclaration:*/ false);
+            var statement = this.parseStatement();
 
             return new ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration,
                 initializer, inKeyword, expression, closeParenToken, statement);
@@ -1971,7 +2013,7 @@ module Parser {
             }
 
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-            var statement = this.parseStatement(/*allowFunctionDeclaration:*/ false);
+            var statement = this.parseStatement();
 
             return new ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer,
                 firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement);
@@ -2268,7 +2310,7 @@ module Parser {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var condition = this.parseExpression(/*allowIn:*/ true);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-            var statement = this.parseStatement(/*allowFunctionDeclaration:*/ false);
+            var statement = this.parseStatement();
 
             var elseClause: ElseClauseSyntax = null;
             if (this.isElseClause()) {
@@ -2286,7 +2328,7 @@ module Parser {
             Debug.assert(this.isElseClause());
 
             var elseKeyword = this.eatKeyword(SyntaxKind.ElseKeyword);
-            var statement = this.parseStatement(/*allowFunctionDeclaration:*/ false);
+            var statement = this.parseStatement();
 
             return new ElseClauseSyntax(elseKeyword, statement);
         }
@@ -3924,10 +3966,10 @@ module Parser {
                     return this.isSwitchClause();
 
                 case ListParsingState.SwitchClause_Statements:
-                    return this.isStatement(/*allowFunctionDeclaration:*/ true);
+                    return this.isStatement();
 
                 case ListParsingState.Block_Statements:
-                    return this.isStatement(/*allowFunctionDeclaration:*/ true);
+                    return this.isStatement();
 
                 case ListParsingState.EnumDeclaration_VariableDeclarators:
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
@@ -3972,10 +4014,10 @@ module Parser {
                     return this.parseSwitchClause();
 
                 case ListParsingState.SwitchClause_Statements:
-                    return this.parseStatement(/*allowFunctionDeclaration:*/ false);
+                    return this.parseStatement();
 
                 case ListParsingState.Block_Statements:
-                    return this.parseStatement(/*allowFunctionDeclaration:*/ true);
+                    return this.parseStatement();
 
                 case ListParsingState.EnumDeclaration_VariableDeclarators:
                     return this.parseVariableDeclarator(/*allowIn:*/ true);

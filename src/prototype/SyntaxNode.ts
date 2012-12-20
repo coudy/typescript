@@ -198,4 +198,20 @@ class SyntaxNode implements ISyntaxElement {
     private findTokenInternal(position: number): ISyntaxToken {
         throw Errors.abstract();
     }
+
+    public isModuleElement(): bool {
+        return false;
+    }
+
+    public isClassElement(): bool {
+        return false;
+    }
+
+    public isTypeMember(): bool {
+        return false
+    }
+
+    public isStatement(): bool {
+        return false;
+    }
 }
