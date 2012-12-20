@@ -24,6 +24,9 @@ enum Constants {
     // The width of the node is stored in the remainder of the int.  This allows us up to 255 MB
     // for a node by using all 28 bits.  However, in the common case, we'll use less than 28 bits
     // for the width.  Thus, the info will be stored in a single int in chakra.
+    //
+    // If we need more space, we can always merge the first 3 bits into a single bit:
+    // 'canBeIncrementallyReused'.  That will allow us up to 1023MB for a single node.
     NodeSkippedTextMask =            0x00000001, // 0000 0000 0000 0000 0000 0000 0000 0001
     NodeZeroWidthTokenMask =         0x00000002, // 0000 0000 0000 0000 0000 0000 0000 0010
     NodeRegularExpressionTokenMask = 0x00000004, // 0000 0000 0000 0000 0000 0000 0000 0100
