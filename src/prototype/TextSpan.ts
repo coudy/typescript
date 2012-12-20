@@ -120,6 +120,11 @@ class TextSpan {
         return span._start <= this.end() && span.end() >= this._start;
     }
 
+    public intersectsWith(start: number, length: number): bool {
+        var end = start + length;
+        return start <= this.end() && end >= this._start;
+    }
+
     /// <summary>
     /// Determines whether <paramref name="position"/> intersects this span. 
     /// A position is considered to intersect if it is between the start and

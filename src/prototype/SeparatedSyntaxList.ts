@@ -3,78 +3,51 @@
 ///<reference path='SyntaxFacts.ts' />
 
 module Syntax {
-    class EmptySeparatedSyntaxList implements ISeparatedSyntaxList {
-        public isToken(): bool { return false; }
-        public isNode(): bool { return false; }
-        public isList(): bool { return false; }
-        public isSeparatedList(): bool { return true; }
-        public isTrivia(): bool { return false; }
-        public isTriviaList(): bool { return false; }
-        public kind() { return SyntaxKind.SeparatedList; }
-        public isMissing(): bool { return true; }
+    export var emptySeparatedList = {
+        isToken: () => false,
+        isNode: () => false,
+        isList: () => false,
+        isSeparatedList: () => true,
+        isTrivia: () => false,
+        isTriviaList: () => false,
+        kind: () => SyntaxKind.SeparatedList,
+        isMissing: () => true,
 
-        public toJSON(key) { return []; }
+        toJSON: (key) => [],
 
-        public count() { return 0; }
-        public syntaxNodeCount() { return 0; }
-        public separatorCount() { return 0 }
+        count: () => 0,
+        syntaxNodeCount: () => 0,
+        separatorCount: () => 0,
 
-        public itemAt(index: number): ISyntaxElement {
+        itemAt: (index: number): ISyntaxElement => {
             throw Errors.argumentOutOfRange("index");
-        }
+        },
 
-        public syntaxNodeAt(index: number): SyntaxNode {
+        syntaxNodeAt: (index: number): SyntaxNode => {
             throw Errors.argumentOutOfRange("index");
-        }
+        },
 
-        public separatorAt(index: number): ISyntaxToken {
+        separatorAt: (index: number): ISyntaxToken => {
             throw Errors.argumentOutOfRange("index");
-        }
+        },
 
-        private collectTextElements(elements: string[]): void {
-        }
+        collectTextElements: (elements: string[]): void => {
+        },
 
-        public firstToken(): ISyntaxToken {
-            return null;
-        }
+        firstToken: (): ISyntaxToken =>null,
+        lastToken: (): ISyntaxToken => null,
+        fullWidth: () => 0,
+        fullText: () => "",
 
-        public lastToken(): ISyntaxToken {
-            return null;
-        }
+        toArray: (): ISyntaxElement[] => [],
+        toSyntaxNodeArray: (): SyntaxNode[] => [],
 
-        public fullWidth(): number {
-            return 0;
-        }
+        isTypeScriptSpecific: () => false,
+        hasSkippedText: () => false,
+        hasZeroWidthToken: () => false,
+        hasRegularExpressionToken: () => false,
 
-        public fullText(): string {
-            return "";
-        }
-
-        public toArray(): ISyntaxElement[] {
-            return [];
-        }
-
-        public toSyntaxNodeArray(): SyntaxNode[] {
-            return [];
-        }
-
-        public isTypeScriptSpecific(): bool {
-            return false;
-        }
-
-        public hasSkippedText(): bool {
-            return false;
-        }
-
-        public hasZeroWidthToken(): bool {
-            return false;
-        }
-
-        public hasRegularExpressionToken(): bool {
-            return false;
-        }
-
-        public findTokenInternal(position: number): SyntaxNode {
+        findTokenInternal: (position: number): SyntaxNode {
             // This should never have been called on this list.  It has a 0 width, so the client 
             // should have skipped over this.
             throw Errors.invalidOperation();
@@ -421,6 +394,4 @@ module Syntax {
 
         return new NormalSeparatedSyntaxList(nodes);
     }
-
-    export var emptySeparatedList: ISeparatedSyntaxList = new EmptySeparatedSyntaxList();
 }

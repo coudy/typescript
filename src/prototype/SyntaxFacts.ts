@@ -323,4 +323,15 @@ class SyntaxFacts {
                 return SyntaxKind.None;
         }
     }
+
+    public static isRegularExpressionToken(kind: SyntaxKind): bool {
+        switch (kind) {
+            case SyntaxKind.SlashToken:
+            case SyntaxKind.SlashEqualsToken:
+            case SyntaxKind.RegularExpressionLiteral:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

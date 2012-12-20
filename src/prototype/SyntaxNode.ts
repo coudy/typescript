@@ -133,17 +133,6 @@ class SyntaxNode implements ISyntaxElement {
         return (this.data() & Constants.NodeRegularExpressionTokenMask) !== 0;
     }
 
-    private static isRegularExpressionToken(kind: SyntaxKind): bool {
-        switch (kind) {
-            case SyntaxKind.SlashToken:
-            case SyntaxKind.SlashEqualsToken:
-            case SyntaxKind.RegularExpressionLiteral:
-                return true;
-            default:
-                return false;
-        }
-    }
-
     public fullWidth(): number {
         return this.data() >>> Constants.NodeFullWidthShift;
     }
@@ -213,5 +202,9 @@ class SyntaxNode implements ISyntaxElement {
 
     public isStatement(): bool {
         return false;
+    }
+
+    public spliceInto(array: ISyntaxElement[], start: number, deleteCount: number) {
+        throw Errors.abstract();
     }
 }

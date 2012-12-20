@@ -1871,7 +1871,7 @@ function generateComputeDataMethod(definition: ITypeDefinition): string {
             result += indent + "        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);\r\n";
 
             if (couldBeRegularExpressionToken(child)) {
-                result += indent + "        hasRegularExpressionToken = hasRegularExpressionToken || (<any>SyntaxNode).isRegularExpressionToken(" + getPropertyAccess(child) + ".kind());\r\n";
+                result += indent + "        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isRegularExpressionToken(" + getPropertyAccess(child) + ".kind());\r\n";
             }
         }
         else {

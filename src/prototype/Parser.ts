@@ -10,9 +10,9 @@
 
 module Parser {
     interface IParserRewindPoint {
-        absoluteIndex: number;
-        //previousToken: ISyntaxToken;
-        //currentTokenFullStart: number;
+        // absoluteIndex: number;
+        // previousToken: ISyntaxToken;
+        // currentTokenFullStart: number;
         diagnosticsCount: number;
         skippedTokensCount: number;
 
@@ -310,14 +310,14 @@ module Parser {
         private rewindPointPoolCount = 0;
 
         constructor(text: IText,
-                    languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
-                    stringTable: Collections.StringTable = null) {
+                    languageVersion: LanguageVersion,
+                    stringTable: Collections.StringTable) {
             super(32, null);
 
             this.scanner = new Scanner(text, languageVersion, stringTable);
         }
 
-        private tokenDiagnostics(): SyntaxDiagnostic[] {
+        public tokenDiagnostics(): SyntaxDiagnostic[] {
             return this._tokenDiagnostics;
         }
 
@@ -347,7 +347,7 @@ module Parser {
             throw Errors.invalidOperation();
         }
 
-        private currentToken(): ISyntaxToken {
+        public currentToken(): ISyntaxToken {
             var result = this._currentToken;
 
             if (result === null) {
@@ -358,7 +358,7 @@ module Parser {
             return result;
         }
 
-        private currentTokenAllowingRegularExpression(): ISyntaxToken {
+        public currentTokenAllowingRegularExpression(): ISyntaxToken {
             Debug.assert(this._currentToken === null);
 
             var result = this.currentItem(/*allowRegularExpression:*/ true);
@@ -394,40 +394,33 @@ module Parser {
             
             var rewindPoint = this.getOrCreateRewindPoint();
 
-            rewindPoint.absoluteIndex = absoluteIndex;
+            (<any>rewindPoint).absoluteIndex = absoluteIndex;
+            (<any>rewindPoint).previousToken = this._previousToken;
+            (<any>rewindPoint).currentTokenFullStart = this._currentTokenFullStart;
+
             rewindPoint.pinCount = this.pinCount();
 
-            this.storeAdditionalRewindState(rewindPoint);
-            
             return rewindPoint;
         }
 
         private rewind(rewindPoint: IParserRewindPoint): void {
-            this.rewindToPinnedIndex(rewindPoint.absoluteIndex);
-            this.restoreStateFromRewindPoint(rewindPoint);
+            this.rewindToPinnedIndex((<any>rewindPoint).absoluteIndex);
+            
+            this._currentToken = null;
+            this._previousToken = (<any>rewindPoint).previousToken;
+            this._currentTokenFullStart = (<any>rewindPoint).currentTokenFullStart;
         }
 
         private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
             Debug.assert(this.pinCount() === rewindPoint.pinCount);
-            this.releaseAndUnpinAbsoluteIndex(rewindPoint.absoluteIndex);
+            this.releaseAndUnpinAbsoluteIndex((<any>rewindPoint).absoluteIndex);
 
             // this.rewindPoints.push(rewindPoint);
             this.rewindPointPool[this.rewindPointPoolCount] = rewindPoint;
             this.rewindPointPoolCount++;
         }
 
-        private storeAdditionalRewindState(rewindPoint: any): void {
-            rewindPoint.previousToken = this._previousToken;
-            rewindPoint.currentTokenFullStart = this._currentTokenFullStart;
-        }
-
-        private restoreStateFromRewindPoint(rewindPoint: any): void {
-            this._currentToken = null;
-            this._previousToken = rewindPoint.previousToken;
-            this._currentTokenFullStart = rewindPoint.currentTokenFullStart;
-        }
-
-        private resetToCurrentTokenFullStart(): void {
+        public resetToCurrentTokenFullStart(): void {
             // First, we're going to rewind all our data to the point where this / or /= token started.
             // That's because if it does turn out to be a regular expression, then any tokens or token 
             // diagnostics we produced after the original / may no longer be valid.  This would actually
@@ -460,18 +453,392 @@ module Parser {
             // Our cached currentToken is no longer value.
             // Note: previousToken is still valid. 
             this._currentToken = null;
-
+            
             // Now tell the scanner to reset its position to the start of the / token as well.  That way
             // when we try to scan the next item, we'll be at the right location.
+            this.setAbsoluteIndex(this._currentTokenFullStart);
+        }
+
+        private setAbsoluteIndex(absoluteIndex: number): void {
+            if (absoluteIndex !== this._currentTokenFullStart) {
+                this._currentToken = null;
+                this._previousToken = null;
+            }
+
             this.scanner.setAbsoluteIndex(this._currentTokenFullStart);
         }
     }
 
-    //class IncrementalParserSource implements IParserSource {
-    //    // The previous version of the syntax tree that was parsed.  Used for incremental parsing if it
-    //    // is provided.
-    //    private oldTree: SyntaxTree;
-    //}
+    class IncrementalParserSource implements IParserSource {
+        // The scanner we'll use to scan tokens when we can't use the existing ones for any reason.
+        private normalParserSource: NormalParserSource;
+
+        // This number represents how our position in the old tree relates to the position we're 
+        // pointing at in the new text.  If it is 0 then our positions are in sync and we can read
+        // nodes or tokens from the old tree.  If it is non-zero, then our positions are not in 
+        // sync and we cannot use nodes or tokens from the old tree.
+        //
+        // Now, changeDelta could be negative or positive.  Negative means 'the position we're at
+        // in the original tree is behind the position we're at in the text'.  In this case we 
+        // keep throwing out old nodes or tokens (and thus move forward in the original tree) until
+        // changeDelta becomes 0 again or positive.  If it becomes 0 then we are resynched and can
+        // read nodes or tokesn from the tree.
+        //
+        // If changeDelta is positive, that means the current node or token we're pointing at in 
+        // the old tree is at a further ahead position than the position we're pointing at in the
+        // new text.  In this case we have no choice but to scan tokens from teh new text.  We will
+        // continue to do so until, again, changeDelta becomes 0 and we've resynced, or change delta
+        // becomes negative and we need to skip nodes or tokes in the original tree.
+        private _changeDelta: number = 0;
+
+        // The elements of _oldTree that we're crumbling.
+        private _elements: ISyntaxElement[];
+
+        // The index inside _elements that we're at.  Nearly always 0, unless we've pinned the array
+        // and are speculative parsing.
+        private _currentIndex: number = 0;
+
+        // How many outstanding pins we have.  As long as there is at least one pin, we won't remove
+        // items from _elements.
+        private _pinCount: number = 0;
+
+        // The range of text in the *original* text that was changed, and the new length of it after
+        // the change.
+        private _changeRange: TextChangeRange;
+
+        // The current node or token we're pointing at.  
+        private _currentElement: ISyntaxElement = null;
+
+        // The absolute position that the current element starts at.  This position is specified 
+        // within the *new* text, not the old text.
+        private _currentElementFullStart: number = 0;
+        private _previousToken: ISyntaxToken = null;
+
+        private rewindPointPool: IParserRewindPoint[] = [];
+        private rewindPointPoolCount = 0;
+        
+        constructor(oldSourceUnit: SourceUnitSyntax,
+                    changeRanges: TextChangeRange[],
+                    newText: IText,
+                    languageVersion: LanguageVersion,
+                    stringTable: Collections.StringTable) {
+            // In general supporting multiple individual edits is just not that important.  So we 
+            // just collapse this all down to a single range to make the code here easier.  The only
+            // time this could be problematic would be if the user made a ton of discontinuous edits.
+            // For example, doing a column select on a *large* section of a code.  If this is a 
+            // problem, we can always update this code to handle multiple changes.
+            this._changeRange = TextChangeRange.collapse(changeRanges);
+
+            // The old tree's length, plus whatever length change was caused by the edit better 
+            // equal the new text's length!
+            Debug.assert((oldSourceUnit.fullWidth() - this._changeRange.span().length() + this._changeRange.newLength()) ===
+                         newText.length());
+
+            // Set up a scanner so that we can scan tokens out of the new text.
+            this.normalParserSource = new NormalParserSource(newText, languageVersion, stringTable);
+
+            // Initialize our elements array to point at the first node in the tree.
+            this._elements = [];
+            this._elements.push(oldSourceUnit);
+        }
+
+        private tokenDiagnostics() {
+            return this.normalParserSource.tokenDiagnostics();
+        }
+
+        private isPinned(): bool {
+            return this._pinCount > 0;
+        }
+
+        private peekToken(): ISyntaxToken {
+            throw Errors.abstract();
+        }
+
+        private peekTokenN(index: number): ISyntaxToken {
+            throw Errors.abstract();
+        }
+
+        private previousToken(): ISyntaxToken {
+            return this._previousToken;
+        }
+
+        private moveToNextElement(): void {
+            // Clear our cached state so taht the next call to currentNode or currentToken will 
+            // compute it for us.
+            this._currentElementFullStart += this._currentElement.fullWidth();
+            
+            // If, after moving past the last element, we're now past the end of the changed range,
+            // then we want to updata our delta accordingly.  i.e. if the change was a delete of 
+            // some characters, then our delta will decrease (which will cause us to skip tokens
+            // until we resync).  If the change was an insert then our delta will increase, and 
+            // we'll have to read new tokens until we we resync.
+            this.skipPastChangedRange();
+
+            if (this._currentElement.isToken()) {
+                this._previousToken = <ISyntaxToken>this._currentElement;
+            }
+            else {
+                this._previousToken = (<SyntaxNode>this._currentElement).lastToken();
+            }
+
+            Debug.assert(!this._previousToken.isMissing());
+            Debug.assert(this._previousToken.width() > 0);
+            this._currentElement = null;
+        }
+
+        private moveToNextNode(): void {
+            this.moveToNextElement();
+        }
+
+        private moveToNextToken(): void {
+            this.moveToNextElement();
+        }
+        
+        private currentNode(): SyntaxNode {
+            if (this._currentElement === null) {
+                // We may not always be able to get a node at the current position.  Or we may try
+                // to read a node, but may get a token instead.
+                this._currentElement = this.readElement(/*readToken:*/ false);
+            }
+
+            return this._currentElement !== null && this._currentElement.isNode()
+                ? <SyntaxNode>this._currentElement
+                : null;
+        }
+
+        private currentTokenFullStart(): number {
+            return this._currentElementFullStart;
+        }
+
+        private currentToken(): ISyntaxToken {
+            if (this._currentElement === null) {
+                this._currentElement = this.readElement(/*readToken:*/ true);
+            }
+
+            // We should always be able to get a token (though it may be an EOF token).
+            Debug.assert(this._currentElement !== null);
+            Debug.assert(this._currentElement.isToken());
+            return <ISyntaxToken>this._currentElement;
+        }
+
+        private currentTokenAllowingRegularExpression(): ISyntaxToken {
+            this._currentElement = null;
+            this.normalParserSource.resetToCurrentTokenFullStart(); 
+            this._currentElement = this.normalParserSource.currentTokenAllowingRegularExpression();
+            
+            Debug.assert(this._currentElement !== null);
+            Debug.assert(this._currentElement.isToken());
+            Debug.assert(SyntaxFacts.isRegularExpressionToken(this._currentElement.kind()));
+
+            return <ISyntaxToken>this._currentElement;
+        }
+
+        private readElement(readToken: bool): ISyntaxElement {
+            while (true) {
+                if (this._currentIndex === this._elements.length) {
+                    // We're at the end of the original blended tree.  We can only read new tokens
+                    // from now on.
+                    return this.readTokenFromScanner();
+                }
+
+                if (this._changeDelta < 0) {
+                    // Our position in the original tree is behind our position in the new text.
+                    // If we're pointing at a node, and that node's width is less than our delta,
+                    // then we can just skip that node.  Otherwise, if we're pointing at a node
+                    // whose width is greater than the delta, then crumble it and try again.
+                    // Otherwise, we must be pointing at a token.  Just skip it and try again.
+                    this.skipNodeOrToken();
+                }
+                else if (this._changeDelta > 0) {
+                    // Our position in the original tree is ahead of our position in the new text.
+                    // Just read out a token from the new text.
+                    return this.readTokenFromScanner();
+                }
+
+                // We were in sync.  Attempt to get a node or token depending on what we were 
+                // asked for.
+                var currentElement = this._elements[this._currentIndex];
+                if (currentElement.isNode()) {
+                    var currentNode = <SyntaxNode>currentElement;
+                    if (readToken || !this.canReuse(currentNode)) {
+                        // caller wants a token, but we're pointing at a node, or we can't use this 
+                        // node for some reason.  Crumble it into children and try again.
+                        this.crumbleCurrentNode();
+                        continue;
+                    }
+
+                    // Caller wanted a node and we can use this node.  Terrific.  Return what we 
+                    // have to them.
+                    return currentNode;
+                }
+                else {
+                    // We're currently pointing at a token.
+                    var currentToken = <ISyntaxToken>currentElement;
+
+                    // If we can use that token, great.  Just return it to the caller.  Otherwise
+                    // we have to skip the token.  We'll then continue the loop and read hte next
+                    // token from the scanner instead.
+                    if (this.canReuse(currentToken)) {
+                        return currentToken;
+                    }
+
+                    this.skipNodeOrToken();
+                    continue;
+                }
+            }
+        }
+
+        private readTokenFromScanner(): ISyntaxToken {
+            this.normalParserSource.setAbsoluteIndex(this._currentElementFullStart);
+            return this.normalParserSource.currentToken();
+        }
+
+        private canReuse(element: ISyntaxElement): bool {
+            var fullWidth = element.fullWidth();
+
+            // We don't reuse empty nodes/tokens.
+            if (fullWidth === 0) {
+                return false;
+            }
+
+            // can't reuse the node if it intersects with the changed range.
+            if (this._changeRange != null && this._changeRange.span().intersectsWith(this._currentElementFullStart, fullWidth)) {
+                return false;
+            }
+
+            if (element.isToken()) {
+                // If an element is a token, then we can't use reuse it if it is part of a regex token.
+                if (SyntaxFacts.isRegularExpressionToken(element.kind())) {
+                    return false;
+                }
+            }
+            else {
+                var syntaxNode = <SyntaxNode>element;
+                // If an element is a node, we can't use it if it has any missing or zkipped 
+                // tokens, or if it contains a regex token.
+                if (syntaxNode.hasRegularExpressionToken() || syntaxNode.hasSkippedText() || syntaxNode.hasZeroWidthToken()) {
+                    return false;
+                }
+            }
+
+            // Otherwise, looks good to reuse.
+            return true;
+        }
+        
+        
+        private crumbleCurrentNode(): void {
+            var currentElement = this._elements[this._currentIndex];
+            Debug.assert(currentElement.isNode());
+
+            (<SyntaxNode>currentElement).spliceInto(this._elements, this._currentIndex, 1);
+        }
+
+        private skipNodeOrToken(): void {
+            Debug.assert(this._currentIndex < this._elements.length);
+            Debug.assert(this._changeDelta < 0);
+
+            // We're behind in the original tree.  Throw out a node or token in an attempt to 
+            // catch up to the position we're at in the new text.
+
+            var currentElement = this._elements[this._currentIndex];
+
+            // If we're pointing at a node, and that node's width is less than our delta,
+            // then we can just skip that node.  Otherwise, if we're pointing at a node
+            // whose width is greater than the delta, then crumble it and try again.
+            // Otherwise, we must be pointing at a token.  Just skip it and try again.
+
+            if (currentElement.isNode() && (currentElement.fullWidth() > Math.abs(this._changeDelta))) {
+                // We were pointing at a node whose width was more than changeDelta.  Crumble the 
+                // node and try again.  Note: we haven't changed changeDelta.  So the callers loop
+                // will just repeat this until we get to a node or token that we can skip over.
+                this.crumbleCurrentNode();
+                return;
+            }
+
+            if (this.isPinned()) {
+                // If we're pinned, then just point after this node.
+                this._currentIndex++;
+            }
+            else {
+                Debug.assert(this._currentIndex === 0);
+                // Otherwise, just shift us past this element.
+                this._elements.shift();
+            }
+
+            // Get our change delta closer to 0 as we skip past this item.
+            this._changeDelta += currentElement.fullWidth();
+        }
+
+        private skipPastChangedRange(): void {
+            // If, after moving past the last element, we're now past the end of the changed range,
+            // then we want to updata our delta accordingly.  i.e. if the change was a delete of 
+            // some characters, then our delta will decrease (which will cause us to skip tokens
+            // until we resync).  If the change was an insert then our delta will increase, and 
+            // we'll have to read new tokens until we we resync.
+            
+            if (this._changeRange != null && this._currentElementFullStart >= this._changeRange.span().end()) {
+                this._changeDelta += this._changeRange.newLength() - this._changeRange.span().length();
+                this._changeRange = null;
+            }
+        }
+
+        private getOrCreateRewindPoint(): IParserRewindPoint {
+            if (this.rewindPointPoolCount === 0) {
+                return <IParserRewindPoint>{};
+            }
+
+            this.rewindPointPoolCount--;
+            var result = this.rewindPointPool[this.rewindPointPoolCount];
+            this.rewindPointPool[this.rewindPointPoolCount] = null;
+            return result;
+        }
+
+        private getRewindPoint(): IParserRewindPoint {
+            var currentIndex = this._currentIndex;
+            this._pinCount++;
+
+            var rewindPoint = this.getOrCreateRewindPoint();
+
+            rewindPoint.pinCount = this._pinCount;
+
+            (<any>rewindPoint).currentIndex = currentIndex;
+            (<any>rewindPoint).previousToken = this._previousToken;
+            (<any>rewindPoint).currentTokenFullStart = this._currentElementFullStart;
+            
+            return rewindPoint;
+        }
+
+        private rewind(rewindPoint: IParserRewindPoint): void {
+            this._currentIndex = (<any>rewindPoint).absoluteIndex;
+            this._previousToken = (<any>rewindPoint).previousToken;
+            this._currentElementFullStart = (<any>rewindPoint).currentTokenFullStart;
+
+            this._currentElement = null;
+        }
+
+        private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
+            Debug.assert(this._pinCount === rewindPoint.pinCount);
+
+            this._pinCount--;
+
+            // If this was the last pin, then remove any elements we no longer need.
+            if (this._pinCount === 0) {
+                while (this._currentIndex > 0) {
+                    this._elements.shift();
+                    this._currentIndex--;
+                }
+            }
+
+            // this.rewindPoints.push(rewindPoint);
+            this.rewindPointPool[this.rewindPointPoolCount] = rewindPoint;
+            this.rewindPointPoolCount++;
+        }
+
+        private resetToCurrentTokenFullStart(): void {
+            this.normalParserSource.resetToCurrentTokenFullStart();
+            this._currentElement = null;
+        }
+    }
 
     class ParserImpl {
         private source: IParserSource;
