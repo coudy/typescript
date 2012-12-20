@@ -3753,6 +3753,16 @@ function generateAcceptMethods(definition) {
     }
     return result;
 }
+function generateIsMethod(definition) {
+    var result = "";
+    if(definition.isAbstract) {
+        result += "\r\n";
+        result += "    private is" + getNameWithoutSuffix(definition) + "(): bool {\r\n";
+        result += "        return true;\r\n";
+        result += "    }\r\n";
+    }
+    return result;
+}
 function generateKindMethod(definition) {
     var result = "";
     if(!definition.isAbstract) {
@@ -4159,6 +4169,7 @@ function generateNode(definition) {
     result += generateFactoryMethod(definition);
     result += generateAcceptMethods(definition);
     result += generateKindMethod(definition);
+    result += generateIsMethod(definition);
     result += generateIsMissingMethod(definition);
     result += generateFirstTokenMethod(definition);
     result += generateLastTokenMethod(definition);

@@ -2232,6 +2232,9 @@ var ModuleElementSyntax = (function (_super) {
     function ModuleElementSyntax() {
         _super.call(this);
     }
+    ModuleElementSyntax.prototype.isModuleElement = function () {
+        return true;
+    };
     ModuleElementSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
     };
@@ -2248,6 +2251,9 @@ var ModuleReferenceSyntax = (function (_super) {
     function ModuleReferenceSyntax() {
         _super.call(this);
     }
+    ModuleReferenceSyntax.prototype.isModuleReference = function () {
+        return true;
+    };
     ModuleReferenceSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
     };
@@ -3861,6 +3867,9 @@ var StatementSyntax = (function (_super) {
     function StatementSyntax() {
         _super.call(this);
     }
+    StatementSyntax.prototype.isStatement = function () {
+        return true;
+    };
     StatementSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
     };
@@ -4354,6 +4363,9 @@ var ExpressionSyntax = (function (_super) {
     function ExpressionSyntax() {
         _super.call(this);
     }
+    ExpressionSyntax.prototype.isExpression = function () {
+        return true;
+    };
     ExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
     };
@@ -4370,6 +4382,9 @@ var UnaryExpressionSyntax = (function (_super) {
     function UnaryExpressionSyntax() {
         _super.call(this);
     }
+    UnaryExpressionSyntax.prototype.isUnaryExpression = function () {
+        return true;
+    };
     UnaryExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
     };
@@ -5480,6 +5495,9 @@ var ArrowFunctionExpressionSyntax = (function (_super) {
     function ArrowFunctionExpressionSyntax() {
         _super.call(this);
     }
+    ArrowFunctionExpressionSyntax.prototype.isArrowFunctionExpression = function () {
+        return true;
+    };
     ArrowFunctionExpressionSyntax.prototype.equalsGreaterThanToken = function () {
         throw Errors.abstract();
     };
@@ -5793,6 +5811,9 @@ var TypeSyntax = (function (_super) {
     function TypeSyntax() {
         _super.call(this);
     }
+    TypeSyntax.prototype.isType = function () {
+        return true;
+    };
     TypeSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
     };
@@ -5809,6 +5830,9 @@ var NameSyntax = (function (_super) {
     function NameSyntax() {
         _super.call(this);
     }
+    NameSyntax.prototype.isName = function () {
+        return true;
+    };
     NameSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
     };
@@ -8479,6 +8503,9 @@ var TypeMemberSyntax = (function (_super) {
     function TypeMemberSyntax() {
         _super.call(this);
     }
+    TypeMemberSyntax.prototype.isTypeMember = function () {
+        return true;
+    };
     TypeMemberSyntax.prototype.typeAnnotation = function () {
         throw Errors.abstract();
     };
@@ -9957,6 +9984,9 @@ var ClassElementSyntax = (function (_super) {
     function ClassElementSyntax() {
         _super.call(this);
     }
+    ClassElementSyntax.prototype.isClassElement = function () {
+        return true;
+    };
     ClassElementSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
     };
@@ -10162,6 +10192,9 @@ var MemberDeclarationSyntax = (function (_super) {
     function MemberDeclarationSyntax() {
         _super.call(this);
     }
+    MemberDeclarationSyntax.prototype.isMemberDeclaration = function () {
+        return true;
+    };
     MemberDeclarationSyntax.prototype.publicOrPrivateKeyword = function () {
         throw Errors.abstract();
     };
@@ -10418,6 +10451,9 @@ var MemberAccessorDeclarationSyntax = (function (_super) {
     function MemberAccessorDeclarationSyntax() {
         _super.call(this);
     }
+    MemberAccessorDeclarationSyntax.prototype.isMemberAccessorDeclaration = function () {
+        return true;
+    };
     MemberAccessorDeclarationSyntax.prototype.publicOrPrivateKeyword = function () {
         throw Errors.abstract();
     };
@@ -11915,6 +11951,9 @@ var SwitchClauseSyntax = (function (_super) {
     function SwitchClauseSyntax() {
         _super.call(this);
     }
+    SwitchClauseSyntax.prototype.isSwitchClause = function () {
+        return true;
+    };
     SwitchClauseSyntax.prototype.colonToken = function () {
         throw Errors.abstract();
     };
@@ -12592,6 +12631,9 @@ var IterationStatementSyntax = (function (_super) {
     function IterationStatementSyntax() {
         _super.call(this);
     }
+    IterationStatementSyntax.prototype.isIterationStatement = function () {
+        return true;
+    };
     IterationStatementSyntax.prototype.openParenToken = function () {
         throw Errors.abstract();
     };
@@ -12617,6 +12659,9 @@ var BaseForStatementSyntax = (function (_super) {
     function BaseForStatementSyntax() {
         _super.call(this);
     }
+    BaseForStatementSyntax.prototype.isBaseForStatement = function () {
+        return true;
+    };
     BaseForStatementSyntax.prototype.forKeyword = function () {
         throw Errors.abstract();
     };
@@ -14343,6 +14388,9 @@ var PropertyAssignmentSyntax = (function (_super) {
     function PropertyAssignmentSyntax() {
         _super.call(this);
     }
+    PropertyAssignmentSyntax.prototype.isPropertyAssignment = function () {
+        return true;
+    };
     PropertyAssignmentSyntax.prototype.propertyName = function () {
         throw Errors.abstract();
     };
@@ -14519,6 +14567,9 @@ var AccessorPropertyAssignmentSyntax = (function (_super) {
     function AccessorPropertyAssignmentSyntax() {
         _super.call(this);
     }
+    AccessorPropertyAssignmentSyntax.prototype.isAccessorPropertyAssignment = function () {
+        return true;
+    };
     AccessorPropertyAssignmentSyntax.prototype.propertyName = function () {
         throw Errors.abstract();
     };

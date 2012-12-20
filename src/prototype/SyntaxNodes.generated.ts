@@ -145,6 +145,10 @@ class ModuleElementSyntax extends SyntaxNode {
         super();
     }
 
+    private isModuleElement(): bool {
+        return true;
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ModuleElementSyntax {
         return <ModuleElementSyntax>super.withLeadingTrivia(trivia);
     }
@@ -161,6 +165,10 @@ class ModuleElementSyntax extends SyntaxNode {
 class ModuleReferenceSyntax extends SyntaxNode {
     constructor() {
         super();
+    }
+
+    private isModuleReference(): bool {
+        return true;
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ModuleReferenceSyntax {
@@ -1851,6 +1859,10 @@ class StatementSyntax extends ModuleElementSyntax {
         super();
     }
 
+    private isStatement(): bool {
+        return true;
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): StatementSyntax {
         return <StatementSyntax>super.withLeadingTrivia(trivia);
     }
@@ -2344,6 +2356,10 @@ class ExpressionSyntax extends SyntaxNode {
         super();
     }
 
+    private isExpression(): bool {
+        return true;
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ExpressionSyntax {
         return <ExpressionSyntax>super.withLeadingTrivia(trivia);
     }
@@ -2360,6 +2376,10 @@ class ExpressionSyntax extends SyntaxNode {
 class UnaryExpressionSyntax extends ExpressionSyntax {
     constructor() {
         super();
+    }
+
+    private isUnaryExpression(): bool {
+        return true;
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): UnaryExpressionSyntax {
@@ -3583,6 +3603,10 @@ class ArrowFunctionExpressionSyntax extends UnaryExpressionSyntax {
         super();
     }
 
+    private isArrowFunctionExpression(): bool {
+        return true;
+    }
+
     public equalsGreaterThanToken(): ISyntaxToken {
         throw Errors.abstract();
     }
@@ -3927,6 +3951,10 @@ class TypeSyntax extends UnaryExpressionSyntax {
         super();
     }
 
+    private isType(): bool {
+        return true;
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeSyntax {
         return <TypeSyntax>super.withLeadingTrivia(trivia);
     }
@@ -3943,6 +3971,10 @@ class TypeSyntax extends UnaryExpressionSyntax {
 class NameSyntax extends TypeSyntax {
     constructor() {
         super();
+    }
+
+    private isName(): bool {
+        return true;
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): NameSyntax {
@@ -6784,6 +6816,10 @@ class TypeMemberSyntax extends SyntaxNode {
         super();
     }
 
+    private isTypeMember(): bool {
+        return true;
+    }
+
     public typeAnnotation(): TypeAnnotationSyntax {
         throw Errors.abstract();
     }
@@ -8370,6 +8406,10 @@ class ClassElementSyntax extends SyntaxNode {
         super();
     }
 
+    private isClassElement(): bool {
+        return true;
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ClassElementSyntax {
         return <ClassElementSyntax>super.withLeadingTrivia(trivia);
     }
@@ -8586,6 +8626,10 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
 class MemberDeclarationSyntax extends ClassElementSyntax {
     constructor() {
         super();
+    }
+
+    private isMemberDeclaration(): bool {
+        return true;
     }
 
     public publicOrPrivateKeyword(): ISyntaxToken {
@@ -8850,6 +8894,10 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
 class MemberAccessorDeclarationSyntax extends MemberDeclarationSyntax {
     constructor() {
         super();
+    }
+
+    private isMemberAccessorDeclaration(): bool {
+        return true;
     }
 
     public publicOrPrivateKeyword(): ISyntaxToken {
@@ -10418,6 +10466,10 @@ class SwitchClauseSyntax extends SyntaxNode {
         super();
     }
 
+    private isSwitchClause(): bool {
+        return true;
+    }
+
     public colonToken(): ISyntaxToken {
         throw Errors.abstract();
     }
@@ -11146,6 +11198,10 @@ class IterationStatementSyntax extends StatementSyntax {
         super();
     }
 
+    private isIterationStatement(): bool {
+        return true;
+    }
+
     public openParenToken(): ISyntaxToken {
         throw Errors.abstract();
     }
@@ -11174,6 +11230,10 @@ class IterationStatementSyntax extends StatementSyntax {
 class BaseForStatementSyntax extends IterationStatementSyntax {
     constructor() {
         super();
+    }
+
+    private isBaseForStatement(): bool {
+        return true;
     }
 
     public forKeyword(): ISyntaxToken {
@@ -12950,6 +13010,10 @@ class PropertyAssignmentSyntax extends SyntaxNode {
         super();
     }
 
+    private isPropertyAssignment(): bool {
+        return true;
+    }
+
     public propertyName(): ISyntaxToken {
         throw Errors.abstract();
     }
@@ -13137,6 +13201,10 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
 class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
     constructor() {
         super();
+    }
+
+    private isAccessorPropertyAssignment(): bool {
+        return true;
     }
 
     public propertyName(): ISyntaxToken {
