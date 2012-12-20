@@ -26103,23 +26103,18 @@ var Parser;
             return this.currentToken().keywordKind() === 60 /* ConstructorKeyword */ ;
         };
         ParserImpl.prototype.isMemberAccessorDeclaration = function () {
-            var rewindPoint = this.getRewindPoint();
-            try  {
-                if(this.currentToken().keywordKind() === 55 /* PublicKeyword */  || this.currentToken().keywordKind() === 53 /* PrivateKeyword */ ) {
-                    this.eatAnyToken();
-                }
-                if(this.currentToken().keywordKind() === 56 /* StaticKeyword */ ) {
-                    this.eatAnyToken();
-                }
-                if(this.currentToken().keywordKind() !== 62 /* GetKeyword */  && this.currentToken().keywordKind() !== 65 /* SetKeyword */ ) {
-                    return false;
-                }
-                this.eatAnyToken();
-                return this.isIdentifier(this.currentToken());
-            }finally {
-                this.rewind(rewindPoint);
-                this.releaseRewindPoint(rewindPoint);
+            var index = 0;
+            if(this.currentToken().keywordKind() === 55 /* PublicKeyword */  || this.currentToken().keywordKind() === 53 /* PrivateKeyword */ ) {
+                index++;
             }
+            if(this.peekTokenN(index).keywordKind() === 56 /* StaticKeyword */ ) {
+                index++;
+            }
+            if(this.peekTokenN(index).keywordKind() !== 62 /* GetKeyword */  && this.peekTokenN(index).keywordKind() !== 65 /* SetKeyword */ ) {
+                return false;
+            }
+            index++;
+            return this.isIdentifier(this.peekTokenN(index));
         };
         ParserImpl.prototype.parseMemberAccessorDeclaration = function () {
             Debug.assert(this.isMemberAccessorDeclaration());
@@ -26156,25 +26151,20 @@ var Parser;
             return new SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block);
         };
         ParserImpl.prototype.isMemberVariableDeclaration = function () {
-            var rewindPoint = this.getRewindPoint();
-            try  {
-                if(this.currentToken().keywordKind() === 55 /* PublicKeyword */  || this.currentToken().keywordKind() === 53 /* PrivateKeyword */ ) {
-                    this.eatAnyToken();
-                    if(this.currentToken().tokenKind === 68 /* CloseBraceToken */  || this.currentToken().tokenKind === 118 /* EndOfFileToken */ ) {
-                        return true;
-                    }
+            var index = 0;
+            if(this.currentToken().keywordKind() === 55 /* PublicKeyword */  || this.currentToken().keywordKind() === 53 /* PrivateKeyword */ ) {
+                index++;
+                if(this.peekTokenN(index).tokenKind === 68 /* CloseBraceToken */  || this.peekTokenN(index).tokenKind === 118 /* EndOfFileToken */ ) {
+                    return true;
                 }
-                if(this.currentToken().keywordKind() === 56 /* StaticKeyword */ ) {
-                    this.eatAnyToken();
-                    if(this.currentToken().tokenKind === 68 /* CloseBraceToken */  || this.currentToken().tokenKind === 118 /* EndOfFileToken */ ) {
-                        return true;
-                    }
-                }
-                return this.isVariableDeclarator();
-            }finally {
-                this.rewind(rewindPoint);
-                this.releaseRewindPoint(rewindPoint);
             }
+            if(this.peekTokenN(index).keywordKind() === 56 /* StaticKeyword */ ) {
+                index++;
+                if(this.peekTokenN(index).tokenKind === 68 /* CloseBraceToken */  || this.peekTokenN(index).tokenKind === 118 /* EndOfFileToken */ ) {
+                    return true;
+                }
+            }
+            return this.isIdentifier(this.peekTokenN(index));
         };
         ParserImpl.prototype.isClassElement = function () {
             if(this.currentNode() !== null && this.currentNode().isClassElement()) {
@@ -26196,19 +26186,14 @@ var Parser;
             return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken);
         };
         ParserImpl.prototype.isMemberFunctionDeclaration = function () {
-            var rewindPoint = this.getRewindPoint();
-            try  {
-                if(this.currentToken().keywordKind() === 55 /* PublicKeyword */  || this.currentToken().keywordKind() === 53 /* PrivateKeyword */ ) {
-                    this.eatAnyToken();
-                }
-                if(this.currentToken().keywordKind() === 56 /* StaticKeyword */ ) {
-                    this.eatAnyToken();
-                }
-                return this.isFunctionSignature();
-            }finally {
-                this.rewind(rewindPoint);
-                this.releaseRewindPoint(rewindPoint);
+            var index = 0;
+            if(this.currentToken().keywordKind() === 55 /* PublicKeyword */  || this.currentToken().keywordKind() === 53 /* PrivateKeyword */ ) {
+                index++;
             }
+            if(this.peekTokenN(index).keywordKind() === 56 /* StaticKeyword */ ) {
+                index++;
+            }
+            return this.isFunctionSignature(index);
         };
         ParserImpl.prototype.parseMemberFunctionDeclaration = function () {
             Debug.assert(this.isMemberFunctionDeclaration());
@@ -26365,7 +26350,7 @@ var Parser;
             if(this.currentNode() !== null && this.currentNode().isTypeMember()) {
                 return true;
             }
-            return this.isCallSignature() || this.isConstructSignature() || this.isIndexSignature() || this.isFunctionSignature() || this.isPropertySignature();
+            return this.isCallSignature() || this.isConstructSignature() || this.isIndexSignature() || this.isFunctionSignature(0) || this.isPropertySignature();
         };
         ParserImpl.prototype.parseTypeMember = function () {
             if(this.currentNode() !== null && this.currentNode().isTypeMember()) {
@@ -26380,7 +26365,7 @@ var Parser;
                     if(this.isIndexSignature()) {
                         return this.parseIndexSignature();
                     } else {
-                        if(this.isFunctionSignature()) {
+                        if(this.isFunctionSignature(0)) {
                             return this.parseFunctionSignature();
                         } else {
                             if(this.isPropertySignature()) {
@@ -26431,12 +26416,12 @@ var Parser;
         ParserImpl.prototype.isIndexSignature = function () {
             return this.currentToken().tokenKind === 71 /* OpenBracketToken */ ;
         };
-        ParserImpl.prototype.isFunctionSignature = function () {
-            if(this.isIdentifier(this.currentToken())) {
-                if(this.peekTokenN(1).tokenKind === 69 /* OpenParenToken */ ) {
+        ParserImpl.prototype.isFunctionSignature = function (tokenIndex) {
+            if(this.isIdentifier(this.peekTokenN(tokenIndex))) {
+                if(this.peekTokenN(tokenIndex + 1).tokenKind === 69 /* OpenParenToken */ ) {
                     return true;
                 }
-                if(this.peekTokenN(1).tokenKind === 102 /* QuestionToken */  && this.peekTokenN(2).tokenKind === 69 /* OpenParenToken */ ) {
+                if(this.peekTokenN(tokenIndex + 1).tokenKind === 102 /* QuestionToken */  && this.peekTokenN(tokenIndex + 2).tokenKind === 69 /* OpenParenToken */ ) {
                     return true;
                 }
             }

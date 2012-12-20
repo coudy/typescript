@@ -257,7 +257,7 @@ module Parser {
         currentTokenAllowingRegularExpression(): ISyntaxToken;
 
         currentTokenFullStart(): number;
-        
+
         moveToNextNode(): void;
         moveToNextToken(): void;
 
@@ -1130,29 +1130,24 @@ module Parser {
         }
 
         private isMemberAccessorDeclaration(): bool {
-            var rewindPoint = this.getRewindPoint();
-            try {
-                if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
-                    this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
-                    this.eatAnyToken();
-                }
+            var index = 0;
 
-                if (this.currentToken().keywordKind() === SyntaxKind.StaticKeyword) {
-                    this.eatAnyToken();
-                }
-
-                if (this.currentToken().keywordKind() !== SyntaxKind.GetKeyword &&
-                    this.currentToken().keywordKind() !== SyntaxKind.SetKeyword) {
-                    return false;
-                }
-
-                this.eatAnyToken();
-                return this.isIdentifier(this.currentToken());
+            if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
+                this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
+                index++;
             }
-            finally {
-                this.rewind(rewindPoint);
-                this.releaseRewindPoint(rewindPoint);
+
+            if (this.peekTokenN(index).keywordKind() === SyntaxKind.StaticKeyword) {
+                index++;
             }
+
+            if (this.peekTokenN(index).keywordKind() !== SyntaxKind.GetKeyword &&
+                this.peekTokenN(index).keywordKind() !== SyntaxKind.SetKeyword) {
+                return false;
+            }
+
+            index++;
+            return this.isIdentifier(this.peekTokenN(index));
         }
 
         private parseMemberAccessorDeclaration(): MemberAccessorDeclarationSyntax {
@@ -1205,39 +1200,34 @@ module Parser {
         }
 
         private isMemberVariableDeclaration(): bool {
-            var rewindPoint = this.getRewindPoint();
-            try {
-                if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
-                    this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
-                    this.eatAnyToken();
+            var index = 0;
 
-                    // ERROR RECOVERY: 
-                    // If we're following by an close curly or EOF, then consider this the start of a
-                    // variable declaration.
-                    if (this.currentToken().tokenKind === SyntaxKind.CloseBraceToken ||
-                        this.currentToken().tokenKind === SyntaxKind.EndOfFileToken) {
-                        return true;
-                    }
+            if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
+                this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
+                index++;
+
+                // ERROR RECOVERY: 
+                // If we're following by an close curly or EOF, then consider this the start of a
+                // variable declaration.
+                if (this.peekTokenN(index).tokenKind === SyntaxKind.CloseBraceToken ||
+                    this.peekTokenN(index).tokenKind === SyntaxKind.EndOfFileToken) {
+                    return true;
                 }
+            }
 
-                if (this.currentToken().keywordKind() === SyntaxKind.StaticKeyword) {
-                    this.eatAnyToken();
+            if (this.peekTokenN(index).keywordKind() === SyntaxKind.StaticKeyword) {
+                index++;
 
-                    // ERROR RECOVERY: 
-                    // If we're following by an close curly or EOF, then consider this the start of a
-                    // variable declaration.
-                    if (this.currentToken().tokenKind === SyntaxKind.CloseBraceToken ||
-                        this.currentToken().tokenKind === SyntaxKind.EndOfFileToken) {
-                        return true;
-                    }
+                // ERROR RECOVERY: 
+                // If we're following by an close curly or EOF, then consider this the start of a
+                // variable declaration.
+                if (this.peekTokenN(index).tokenKind === SyntaxKind.CloseBraceToken ||
+                    this.peekTokenN(index).tokenKind === SyntaxKind.EndOfFileToken) {
+                    return true;
                 }
+            }
 
-                return this.isVariableDeclarator();
-            }
-            finally {
-                this.rewind(rewindPoint);
-                this.releaseRewindPoint(rewindPoint);
-            }
+            return this.isIdentifier(this.peekTokenN(index));
         }
 
         private isClassElement(): bool {
@@ -1273,23 +1263,18 @@ module Parser {
         }
 
         private isMemberFunctionDeclaration(): bool {
-            var rewindPoint = this.getRewindPoint();
-            try {
-                if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
-                    this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
-                    this.eatAnyToken();
-                }
+            var index = 0;
 
-                if (this.currentToken().keywordKind() === SyntaxKind.StaticKeyword) {
-                    this.eatAnyToken();
-                }
+            if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
+                this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
+                index++;
+            }
 
-                return this.isFunctionSignature();
+            if (this.peekTokenN(index).keywordKind() === SyntaxKind.StaticKeyword) {
+                index++;
             }
-            finally {
-                this.rewind(rewindPoint);
-                this.releaseRewindPoint(rewindPoint);
-            }
+
+            return this.isFunctionSignature(index);
         }
 
         private parseMemberFunctionDeclaration(): MemberFunctionDeclarationSyntax {
@@ -1514,7 +1499,7 @@ module Parser {
             return this.isCallSignature() ||
                    this.isConstructSignature() ||
                    this.isIndexSignature() ||
-                   this.isFunctionSignature() ||
+                   this.isFunctionSignature(/*tokenIndex:*/ 0) ||
                    this.isPropertySignature();
         }
 
@@ -1532,7 +1517,7 @@ module Parser {
             else if (this.isIndexSignature()) {
                 return this.parseIndexSignature();
             }
-            else if (this.isFunctionSignature()) {
+            else if (this.isFunctionSignature(/*tokenIndex:*/ 0)) {
                 // Note: it is important that isFunctionSignature is called before isPropertySignature.
                 // isPropertySignature checks for a subset of isFunctionSignature.
                 return this.parseFunctionSignature();
@@ -1598,16 +1583,16 @@ module Parser {
             return this.currentToken().tokenKind === SyntaxKind.OpenBracketToken;
         }
 
-        private isFunctionSignature(): bool {
-            if (this.isIdentifier(this.currentToken())) {
+        private isFunctionSignature(tokenIndex: number): bool {
+            if (this.isIdentifier(this.peekTokenN(tokenIndex))) {
                 // id(
-                if (this.peekTokenN(1).tokenKind === SyntaxKind.OpenParenToken) {
+                if (this.peekTokenN(tokenIndex + 1).tokenKind === SyntaxKind.OpenParenToken) {
                     return true;
                 }
 
                 // id?(
-                if (this.peekTokenN(1).tokenKind === SyntaxKind.QuestionToken &&
-                    this.peekTokenN(2).tokenKind === SyntaxKind.OpenParenToken) {
+                if (this.peekTokenN(tokenIndex + 1).tokenKind === SyntaxKind.QuestionToken &&
+                    this.peekTokenN(tokenIndex + 2).tokenKind === SyntaxKind.OpenParenToken) {
                     return true;
                 }
             }
