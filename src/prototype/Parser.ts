@@ -80,7 +80,7 @@ module Parser {
     // The current state of the parser wrt to list parsing.  The way to read these is as:
     // CurrentProduction_SubList.  i.e. "Block_Statements" means "we're parsing a Block, and we're 
     // currently parsing list of statements within it".  This is used by the list parsing mechanism
-    // to both the elements of the lists, and recover from errors we encounter when we run into 
+    // to parser the elements of the lists, and recover from errors we encounter when we run into 
     // unexpected code.
     // 
     // For example, when we are in ArgumentList_Arguments, we will continue trying to consume code as 
