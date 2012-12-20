@@ -1415,6 +1415,19 @@ function generateAcceptMethods(definition: ITypeDefinition): string {
     return result;
 }
 
+function generateIsMethod(definition: ITypeDefinition): string {
+    var result = "";
+
+    if (definition.isAbstract) {
+        result += "\r\n";
+        result += "    private is" + getNameWithoutSuffix(definition) + "(): bool {\r\n";
+        result += "        return true;\r\n";
+        result += "    }\r\n";
+    }
+
+    return result;
+}
+
 function generateKindMethod(definition: ITypeDefinition): string {
     var result = "";
 
@@ -1972,6 +1985,7 @@ function generateNode(definition: ITypeDefinition): string {
     result += generateFactoryMethod(definition);
     result += generateAcceptMethods(definition);
     result += generateKindMethod(definition);
+    result += generateIsMethod(definition);
     result += generateIsMissingMethod(definition);
     result += generateFirstTokenMethod(definition);
     result += generateLastTokenMethod(definition);

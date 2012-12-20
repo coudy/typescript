@@ -25470,6 +25470,12 @@ var Parser;
         NormalParserSource.prototype.previousToken = function () {
             return this._previousToken;
         };
+        NormalParserSource.prototype.currentNode = function () {
+            return null;
+        };
+        NormalParserSource.prototype.moveToNextNode = function () {
+            throw Errors.invalidOperation();
+        };
         NormalParserSource.prototype.currentToken = function () {
             var result = this._currentToken;
             if(result === null) {

@@ -252,10 +252,13 @@ module Parser {
 
         previousToken(): ISyntaxToken;
 
+        currentNode(): SyntaxNode;
         currentToken(): ISyntaxToken;
         currentTokenAllowingRegularExpression(): ISyntaxToken;
-        currentTokenFullStart(): number;
 
+        currentTokenFullStart(): number;
+        
+        moveToNextNode(): void;
         moveToNextToken(): void;
 
         getRewindPoint(): IParserRewindPoint;
@@ -316,6 +319,17 @@ module Parser {
 
         private previousToken(): ISyntaxToken {
             return this._previousToken;
+        }
+
+        private currentNode(): SyntaxNode {
+            // The normal parser source never returns nodes.  They're only returned by the 
+            // incremental parser source.
+            return null;
+        }
+
+        private moveToNextNode(): void {
+            // Should never get called.
+            throw Errors.invalidOperation();
         }
 
         private currentToken(): ISyntaxToken {
