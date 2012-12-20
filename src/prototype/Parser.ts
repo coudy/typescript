@@ -13,9 +13,24 @@ module Parser {
         absoluteIndex: number;
         //previousToken: ISyntaxToken;
         //currentTokenFullStart: number;
-        isInStrictMode: bool;
         diagnosticsCount: number;
         skippedTokensCount: number;
+
+        // For debug purposes only, we also track the following information. They help us assert 
+        // that we're not doing anything unexpected.
+
+        // Rewind points should work like a stack.  The first rewind point given out should be the
+        // last one released.  By keeping track of the count of points out when this was created, 
+        // we can ensure that invariant was preserved.
+        pinCount: number;
+
+        // isInStrictMode and listParsingState should not have to be tracked by a rewind point.
+        // Because they are naturally mutated and restored based on the normal stack movement of 
+        // the parser, they should automatically return to whatever value they had to begin with
+        // if the parser decides to rewind or not.  However, to ensure that this is true, we track
+        // these variables and check if they have the same value when we're rewinding/releasing.
+        isInStrictMode: bool;
+        listParsingState: ListParsingState;
     }
 
     // The precedence of expressions in typescript.  While we're parsing an expression, we will 
@@ -380,8 +395,10 @@ module Parser {
             var rewindPoint = this.getOrCreateRewindPoint();
 
             rewindPoint.absoluteIndex = absoluteIndex;
-            this.storeAdditionalRewindState(rewindPoint);
+            rewindPoint.pinCount = this.pinCount();
 
+            this.storeAdditionalRewindState(rewindPoint);
+            
             return rewindPoint;
         }
 
@@ -391,6 +408,7 @@ module Parser {
         }
 
         private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
+            Debug.assert(this.pinCount() === rewindPoint.pinCount);
             this.releaseAndUnpinAbsoluteIndex(rewindPoint.absoluteIndex);
 
             // this.rewindPoints.push(rewindPoint);
@@ -461,9 +479,6 @@ module Parser {
         // Parsing options.
         private options: ParseOptions = null;
 
-        // Current state of the parser.  If we need to rewind we will store and reset these values as
-        // appropriate.
-
         // TODO: do we need to store/restore this when speculative parsing?  I don't think so.  The
         // parsing logic already handles storing/restoring this and should work properly even if we're
         // speculative parsing.
@@ -472,7 +487,14 @@ module Parser {
         // Whether or not we are in strict parsing mode.  All that changes in strict parsing mode is
         // that some tokens that would be considered identifiers may be considered keywords.  When 
         // rewinding, we need to store and restore this as the mode may have changed.
+        //
+        // TODO: do we need to store/restore this when speculative parsing?  I don't think so.  The
+        // parsing logic already handles storing/restoring this and should work properly even if we're
+        // speculative parsing.
         private isInStrictMode: bool = false;
+
+        // Current state of the parser.  If we need to rewind we will store and reset these values as
+        // appropriate.
 
         // Tokens we've decided to skip because they couldn't fit into the current production.  Any
         // tokens that are skipped when speculative parsing need to removed when rewinding.  To do this
@@ -494,9 +516,12 @@ module Parser {
         private getRewindPoint(): IParserRewindPoint {
             var rewindPoint = this.source.getRewindPoint();
 
-            rewindPoint.isInStrictMode = this.isInStrictMode;
             rewindPoint.diagnosticsCount = this.diagnostics.length;
             rewindPoint.skippedTokensCount = this.skippedTokens.length;
+
+            // Values we keep around for debug asserting purposes.
+            rewindPoint.isInStrictMode = this.isInStrictMode;
+            rewindPoint.listParsingState = this.listParsingState;
 
             return rewindPoint;
         }
@@ -504,12 +529,14 @@ module Parser {
         private rewind(rewindPoint: IParserRewindPoint): void {
             this.source.rewind(rewindPoint);
 
-            this.isInStrictMode = rewindPoint.isInStrictMode;
             this.diagnostics.length = rewindPoint.diagnosticsCount;
             this.skippedTokens.length = rewindPoint.skippedTokensCount;
         }
 
         private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
+            Debug.assert(this.listParsingState === rewindPoint.listParsingState);
+            Debug.assert(this.isInStrictMode === rewindPoint.isInStrictMode);
+
             this.source.releaseRewindPoint(rewindPoint);
         }
 

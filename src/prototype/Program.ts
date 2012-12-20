@@ -9,7 +9,7 @@
 var stringTable = Collections.createStringTable();
 
 var specificFile = 
-    // "FindToken11";
+    // "resolver.ts";
     undefined;
 
 class Program {

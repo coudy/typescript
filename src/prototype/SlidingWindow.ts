@@ -19,7 +19,7 @@ class SlidingWindow {
 
     // The number of pinned points there are.  As long as there is at least one  pinned point, we 
     // will not advance the start of the window array past the item marked by that pin point.
-    private pinCount: number = 0;
+    private _pinCount: number = 0;
 
     // If there are any outstanding rewind points, this is index in the full array of items
     // that the first rewind point points to.  If this is not -1, then we will not shift the
@@ -124,19 +124,19 @@ class SlidingWindow {
         // Find the absolute index of this pin point.  i.e. it's the index as if we had an 
         // array containing *all* tokens.  
         var absoluteIndex = this.absoluteIndex();
-        if (this.pinCount === 0) {
+        if (this._pinCount === 0) {
             // If this is the first pinned point, then store off this index.  We will ensure that
             // we never shift the window past this point.
             this.firstPinnedAbsoluteIndex = absoluteIndex;
         }
 
-        this.pinCount++;
+        this._pinCount++;
         return absoluteIndex;
     }
 
     public releaseAndUnpinAbsoluteIndex(absoluteIndex: number) {
-        this.pinCount--;
-        if (this.pinCount === 0) {
+        this._pinCount--;
+        if (this._pinCount === 0) {
             // If we just released the last outstanding pin, then we no longer need to 'fix' the 
             // token window so it can't move forward.  Set the index to -1 so that we can shift 
             // things over the next time we read past the end of the array.
@@ -191,7 +191,7 @@ class SlidingWindow {
 
     public setAbsoluteIndex(absoluteIndex: number): void {
         // Shoudln't try to set the index while we currently have an active pin.
-        Debug.assert(this.pinCount === 0);
+        Debug.assert(this._pinCount === 0);
 
         if (absoluteIndex >= this.windowAbsoluteStartIndex && absoluteIndex < this.windowAbsoluteEndIndex()) {
             // The caller is setting the index to some place inside our current window.  This is 
@@ -211,5 +211,9 @@ class SlidingWindow {
             // And set us back to the start of the window.
             this.currentRelativeItemIndex = 0;
         }
+    }
+
+    public pinCount(): number {
+        return this._pinCount;
     }
 }
