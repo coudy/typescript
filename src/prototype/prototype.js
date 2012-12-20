@@ -25443,94 +25443,34 @@ var Parser;
         };
         return SkippedTokensAdder;
     })(SyntaxRewriter);    
-    var ParserImpl = (function (_super) {
-        __extends(ParserImpl, _super);
-        function ParserImpl(text, languageVersion, stringTable, oldTree, changes, options) {
+    var NormalParserSource = (function (_super) {
+        __extends(NormalParserSource, _super);
+        function NormalParserSource(text, languageVersion, stringTable) {
             if (typeof languageVersion === "undefined") { languageVersion = 1 /* EcmaScript5 */ ; }
             if (typeof stringTable === "undefined") { stringTable = null; }
-            if (typeof oldTree === "undefined") { oldTree = null; }
-            if (typeof changes === "undefined") { changes = null; }
-            if (typeof options === "undefined") { options = null; }
                 _super.call(this, 32, null);
-            this.options = null;
             this._currentToken = null;
-            this.previousToken = null;
-            this.currentTokenFullStart = 0;
-            this.tokenDiagnostics = [];
-            this.listParsingState = 0;
-            this.isInStrictMode = false;
-            this.skippedTokens = [];
-            this.diagnostics = [];
-            this.pool = [];
-            this.poolCount = 0;
+            this._previousToken = null;
+            this._currentTokenFullStart = 0;
+            this._tokenDiagnostics = [];
+            this.rewindPointPool = [];
+            this.rewindPointPoolCount = 0;
             this.scanner = new Scanner(text, languageVersion, stringTable);
-            this.oldTree = oldTree;
-            this.options = options || new ParseOptions();
         }
-        ParserImpl.prototype.isIncremental = function () {
-            return this.oldTree !== null;
+        NormalParserSource.prototype.tokenDiagnostics = function () {
+            return this._tokenDiagnostics;
         };
-        ParserImpl.prototype.getOrCreateRewindPoint = function () {
-            if(this.poolCount === 0) {
-                return {
-                };
-            }
-            this.poolCount--;
-            var result = this.pool[this.poolCount];
-            this.pool[this.poolCount] = null;
-            return result;
-        };
-        ParserImpl.prototype.getRewindPoint = function () {
-            var absoluteIndex = this.getAndPinAbsoluteIndex();
-            var rewindPoint = this.getOrCreateRewindPoint();
-            rewindPoint.absoluteIndex = absoluteIndex;
-            this.storeAdditionalRewindState(rewindPoint);
-            return rewindPoint;
-        };
-        ParserImpl.prototype.rewind = function (rewindPoint) {
-            this.rewindToPinnedIndex(rewindPoint.absoluteIndex);
-            this.restoreStateFromRewindPoint(rewindPoint);
-        };
-        ParserImpl.prototype.releaseRewindPoint = function (rewindPoint) {
-            this.releaseAndUnpinAbsoluteIndex(rewindPoint.absoluteIndex);
-            this.pool[this.poolCount] = rewindPoint;
-            this.poolCount++;
-        };
-        ParserImpl.prototype.storeAdditionalRewindState = function (rewindPoint) {
-            rewindPoint.previousToken = this.previousToken;
-            rewindPoint.currentTokenFullStart = this.currentTokenFullStart;
-            rewindPoint.isInStrictMode = this.isInStrictMode;
-            rewindPoint.diagnosticsCount = this.diagnostics.length;
-            rewindPoint.skippedTokensCount = this.skippedTokens.length;
-        };
-        ParserImpl.prototype.restoreStateFromRewindPoint = function (rewindPoint) {
-            this._currentToken = null;
-            this.previousToken = rewindPoint.previousToken;
-            this.currentTokenFullStart = rewindPoint.currentTokenFullStart;
-            this.isInStrictMode = rewindPoint.isInStrictMode;
-            this.diagnostics.length = rewindPoint.diagnosticsCount;
-            this.skippedTokens.length = rewindPoint.skippedTokensCount;
-        };
-        ParserImpl.prototype.fetchMoreItems = function (argument, sourceIndex, window, destinationIndex, spaceAvailable) {
-            window[destinationIndex] = this.scanner.scan(this.tokenDiagnostics, argument);
+        NormalParserSource.prototype.fetchMoreItems = function (argument, sourceIndex, window, destinationIndex, spaceAvailable) {
+            window[destinationIndex] = this.scanner.scan(this._tokenDiagnostics, argument);
             return 1;
         };
-        ParserImpl.prototype.currentTokenStart = function () {
-            return this.currentTokenFullStart + this.currentToken().leadingTriviaWidth();
+        NormalParserSource.prototype.peekTokenN = function (n) {
+            return this.peekItemN(n);
         };
-        ParserImpl.prototype.previousTokenStart = function () {
-            if(this.previousToken === null) {
-                return 0;
-            }
-            return this.currentTokenFullStart - this.previousToken.fullWidth() + this.previousToken.leadingTriviaWidth();
+        NormalParserSource.prototype.previousToken = function () {
+            return this._previousToken;
         };
-        ParserImpl.prototype.previousTokenEnd = function () {
-            if(this.previousToken === null) {
-                return 0;
-            }
-            return this.previousTokenStart() + this.previousToken.width();
-        };
-        ParserImpl.prototype.currentToken = function () {
+        NormalParserSource.prototype.currentToken = function () {
             var result = this._currentToken;
             if(result === null) {
                 result = this.currentItem(false);
@@ -25538,14 +25478,126 @@ var Parser;
             }
             return result;
         };
-        ParserImpl.prototype.currentTokenAllowingRegularExpression = function () {
+        NormalParserSource.prototype.currentTokenAllowingRegularExpression = function () {
             Debug.assert(this._currentToken === null);
             var result = this.currentItem(true);
             this._currentToken = result;
             return result;
         };
+        NormalParserSource.prototype.moveToNextToken = function () {
+            this._currentTokenFullStart += this._currentToken.fullWidth();
+            this._previousToken = this._currentToken;
+            this._currentToken = null;
+            this.moveToNextItem();
+        };
+        NormalParserSource.prototype.currentTokenFullStart = function () {
+            return this._currentTokenFullStart;
+        };
+        NormalParserSource.prototype.getOrCreateRewindPoint = function () {
+            if(this.rewindPointPoolCount === 0) {
+                return {
+                };
+            }
+            this.rewindPointPoolCount--;
+            var result = this.rewindPointPool[this.rewindPointPoolCount];
+            this.rewindPointPool[this.rewindPointPoolCount] = null;
+            return result;
+        };
+        NormalParserSource.prototype.getRewindPoint = function () {
+            var absoluteIndex = this.getAndPinAbsoluteIndex();
+            var rewindPoint = this.getOrCreateRewindPoint();
+            rewindPoint.absoluteIndex = absoluteIndex;
+            this.storeAdditionalRewindState(rewindPoint);
+            return rewindPoint;
+        };
+        NormalParserSource.prototype.rewind = function (rewindPoint) {
+            this.rewindToPinnedIndex(rewindPoint.absoluteIndex);
+            this.restoreStateFromRewindPoint(rewindPoint);
+        };
+        NormalParserSource.prototype.releaseRewindPoint = function (rewindPoint) {
+            this.releaseAndUnpinAbsoluteIndex(rewindPoint.absoluteIndex);
+            this.rewindPointPool[this.rewindPointPoolCount] = rewindPoint;
+            this.rewindPointPoolCount++;
+        };
+        NormalParserSource.prototype.storeAdditionalRewindState = function (rewindPoint) {
+            rewindPoint.previousToken = this._previousToken;
+            rewindPoint.currentTokenFullStart = this._currentTokenFullStart;
+        };
+        NormalParserSource.prototype.restoreStateFromRewindPoint = function (rewindPoint) {
+            this._currentToken = null;
+            this._previousToken = rewindPoint.previousToken;
+            this._currentTokenFullStart = rewindPoint.currentTokenFullStart;
+        };
+        NormalParserSource.prototype.resetToCurrentTokenFullStart = function () {
+            var slashTokenFullStart = this._currentTokenFullStart;
+            var tokenDiagnosticsLength = this._tokenDiagnostics.length;
+            while(tokenDiagnosticsLength > 0) {
+                var diagnostic = this._tokenDiagnostics[tokenDiagnosticsLength - 1];
+                if(diagnostic.position() >= slashTokenFullStart) {
+                    tokenDiagnosticsLength--;
+                } else {
+                    break;
+                }
+            }
+            this._tokenDiagnostics.length = tokenDiagnosticsLength;
+            this.disgardAllItemsFromCurrentIndexOnwards();
+            this._currentToken = null;
+            this.scanner.setAbsoluteIndex(this._currentTokenFullStart);
+        };
+        return NormalParserSource;
+    })(SlidingWindow);    
+    var ParserImpl = (function () {
+        function ParserImpl(source, options) {
+            this.options = null;
+            this.listParsingState = 0;
+            this.isInStrictMode = false;
+            this.skippedTokens = [];
+            this.diagnostics = [];
+            this.source = source;
+            this.options = options;
+        }
+        ParserImpl.prototype.getRewindPoint = function () {
+            var rewindPoint = this.source.getRewindPoint();
+            rewindPoint.isInStrictMode = this.isInStrictMode;
+            rewindPoint.diagnosticsCount = this.diagnostics.length;
+            rewindPoint.skippedTokensCount = this.skippedTokens.length;
+            return rewindPoint;
+        };
+        ParserImpl.prototype.rewind = function (rewindPoint) {
+            this.source.rewind(rewindPoint);
+            this.isInStrictMode = rewindPoint.isInStrictMode;
+            this.diagnostics.length = rewindPoint.diagnosticsCount;
+            this.skippedTokens.length = rewindPoint.skippedTokensCount;
+        };
+        ParserImpl.prototype.releaseRewindPoint = function (rewindPoint) {
+            this.source.releaseRewindPoint(rewindPoint);
+        };
+        ParserImpl.prototype.currentTokenStart = function () {
+            return this.currentTokenFullStart() + this.currentToken().leadingTriviaWidth();
+        };
+        ParserImpl.prototype.previousTokenStart = function () {
+            if(this.previousToken() === null) {
+                return 0;
+            }
+            return this.currentTokenFullStart() - this.previousToken().fullWidth() + this.previousToken().leadingTriviaWidth();
+        };
+        ParserImpl.prototype.previousTokenEnd = function () {
+            if(this.previousToken() === null) {
+                return 0;
+            }
+            return this.previousTokenStart() + this.previousToken().width();
+        };
+        ParserImpl.prototype.currentToken = function () {
+            return this.source.currentToken();
+        };
+        ParserImpl.prototype.currentTokenAllowingRegularExpression = function () {
+            return this.source.currentTokenAllowingRegularExpression();
+        };
+        ParserImpl.prototype.currentTokenFullStart = function () {
+            return this.source.currentTokenFullStart();
+        };
         ParserImpl.prototype.peekTokenN = function (n) {
-            return this.peekItemN(n);
+            return this.source.peekTokenN(n);
         };
         ParserImpl.prototype.eatAnyToken = function () {
             var token = this.currentToken();
@@ -25553,10 +25605,10 @@ var Parser;
             return token;
         };
         ParserImpl.prototype.moveToNextToken = function () {
-            this.currentTokenFullStart += this._currentToken.fullWidth();
-            this.previousToken = this._currentToken;
-            this._currentToken = null;
-            this.moveToNextItem();
+            this.source.moveToNextToken();
+        };
+        ParserImpl.prototype.previousToken = function () {
+            return this.source.previousToken();
         };
         ParserImpl.prototype.canEatAutomaticSemicolon = function (allowWithoutNewLine) {
             var token = this.currentToken();
@@ -25569,7 +25621,7 @@ var Parser;
             if(allowWithoutNewLine) {
                 return true;
             }
-            if(this.previousToken !== null && this.previousToken.hasTrailingNewLine()) {
+            if(this.previousToken() !== null && this.previousToken().hasTrailingNewLine()) {
                 return true;
             }
             return false;
@@ -25797,7 +25849,7 @@ var Parser;
         }
         ParserImpl.prototype.parseSyntaxTree = function () {
             var sourceUnit = this.parseSourceUnit();
-            var allDiagnostics = this.tokenDiagnostics.concat(this.diagnostics);
+            var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
             allDiagnostics.sort(function (a, b) {
                 return a.position() - b.position();
             });
@@ -26967,7 +27019,7 @@ var Parser;
                     }
                     case 90 /* PlusPlusToken */ :
                     case 91 /* MinusMinusToken */ : {
-                        if(this.previousToken !== null && this.previousToken.hasTrailingNewLine()) {
+                        if(this.previousToken() !== null && this.previousToken().hasTrailingNewLine()) {
                             return expression;
                         }
                         expression = new PostfixUnaryExpressionSyntax(SyntaxFacts.getPostfixUnaryExpressionFromOperatorToken(currentTokenKind), expression, this.eatAnyToken());
@@ -27107,11 +27159,11 @@ var Parser;
             var currentToken = this.currentToken();
             var currentTokenKind = currentToken.tokenKind;
             Debug.assert(currentTokenKind === 115 /* SlashToken */  || currentTokenKind === 116 /* SlashEqualsToken */ );
-            if(this.previousToken !== null) {
-                var previousTokenKind = this.previousToken.tokenKind;
+            if(this.previousToken() !== null) {
+                var previousTokenKind = this.previousToken().tokenKind;
                 switch(previousTokenKind) {
                     case 9 /* IdentifierNameToken */ : {
-                        var previousTokenKeywordKind = this.previousToken.keywordKind();
+                        var previousTokenKeywordKind = this.previousToken().keywordKind();
                         if(previousTokenKeywordKind === 0 /* None */  || previousTokenKeywordKind === 33 /* ThisKeyword */  || previousTokenKeywordKind === 35 /* TrueKeyword */  || previousTokenKeywordKind === 22 /* FalseKeyword */ ) {
                             return null;
                         }
@@ -27130,20 +27182,7 @@ var Parser;
                     }
                 }
             }
-            var slashTokenFullStart = this.currentTokenFullStart;
-            var tokenDiagnosticsLength = this.tokenDiagnostics.length;
-            while(tokenDiagnosticsLength > 0) {
-                var diagnostic = this.tokenDiagnostics[tokenDiagnosticsLength - 1];
-                if(diagnostic.position() >= slashTokenFullStart) {
-                    tokenDiagnosticsLength--;
-                } else {
-                    break;
-                }
-            }
-            this.tokenDiagnostics.length = tokenDiagnosticsLength;
-            this.disgardAllItemsFromCurrentIndexOnwards();
-            this._currentToken = null;
-            this.scanner.setAbsoluteIndex(slashTokenFullStart);
+            this.source.resetToCurrentTokenFullStart();
             currentToken = this.currentTokenAllowingRegularExpression();
             Debug.assert(currentToken.tokenKind === 115 /* SlashToken */  || currentToken.tokenKind === 116 /* SlashEqualsToken */  || currentToken.tokenKind === 10 /* RegularExpressionLiteral */ );
             if(currentToken.tokenKind === 115 /* SlashToken */  || currentToken.tokenKind === 116 /* SlashEqualsToken */ ) {
@@ -27604,7 +27643,7 @@ var Parser;
             var token = this.currentToken();
             this.skippedTokens.push({
                 skippedToken: token,
-                owningToken: this.previousToken
+                owningToken: this.previousToken()
             });
             this.moveToNextToken();
             return false;
@@ -27654,7 +27693,7 @@ var Parser;
                 var itemsCount = items === null ? 0 : items.length;
                 if(this.listIsTerminated(currentListType, itemsCount)) {
                     if(lastSeparator !== null && !allowTrailingSeparator && !lastSeparator.isMissing()) {
-                        Debug.assert(this.previousToken === lastSeparator);
+                        Debug.assert(this.previousToken() === lastSeparator);
                         this.addDiagnostic(new SyntaxDiagnostic(this.previousTokenStart(), lastSeparator.width(), 9 /* Trailing_separator_not_allowed */ , null));
                     }
                     break;
@@ -27929,7 +27968,7 @@ var Parser;
             return false;
         };
         ParserImpl.prototype.isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator = function (itemCount) {
-            if(this.previousToken.tokenKind === 76 /* CommaToken */ ) {
+            if(this.previousToken().tokenKind === 76 /* CommaToken */ ) {
                 return false;
             }
             if(this.currentToken().tokenKind === 82 /* EqualsGreaterThanToken */ ) {
@@ -28154,11 +28193,14 @@ var Parser;
             }
         };
         return ParserImpl;
-    })(SlidingWindow);    
-    function parse(text, languageVersion, stringTable) {
+    })();    
+    function parse(text, languageVersion, stringTable, options) {
         if (typeof languageVersion === "undefined") { languageVersion = 1 /* EcmaScript5 */ ; }
         if (typeof stringTable === "undefined") { stringTable = null; }
-        return new ParserImpl(text, languageVersion, stringTable).parseSyntaxTree();
+        if (typeof options === "undefined") { options = null; }
+        var source = new NormalParserSource(text, languageVersion, stringTable);
+        options = options || new ParseOptions();
+        return new ParserImpl(source, options).parseSyntaxTree();
     }
     Parser.parse = parse;
 })(Parser || (Parser = {}));

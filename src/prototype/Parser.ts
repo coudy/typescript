@@ -11,8 +11,8 @@
 module Parser {
     interface IParserRewindPoint {
         absoluteIndex: number;
-        previousToken: ISyntaxToken;
-        currentTokenFullStart: number;
+        //previousToken: ISyntaxToken;
+        //currentTokenFullStart: number;
         isInStrictMode: bool;
         diagnosticsCount: number;
         skippedTokensCount: number;
@@ -47,7 +47,6 @@ module Parser {
     //      *   c
     //     / \
     //    a   b
-
     enum ExpressionPrecedence {
         // Intuitively, commas have the lowest precedence.  "a || b, c" is "(a || b), c", not
         // "a || (b, c)"
@@ -248,19 +247,29 @@ module Parser {
         }
     }
 
-    class ParserImpl extends SlidingWindow {
+    interface IParserSource {
+        peekTokenN(n: number): ISyntaxToken;
+
+        previousToken(): ISyntaxToken;
+
+        currentToken(): ISyntaxToken;
+        currentTokenAllowingRegularExpression(): ISyntaxToken;
+        currentTokenFullStart(): number;
+
+        moveToNextToken(): void;
+
+        getRewindPoint(): IParserRewindPoint;
+        rewind(rewindPoint: IParserRewindPoint): void;
+        releaseRewindPoint(rewindPoint: IParserRewindPoint): void;
+
+        resetToCurrentTokenFullStart(): void;
+
+        tokenDiagnostics(): SyntaxDiagnostic[];
+    }
+
+    class NormalParserSource extends SlidingWindow implements IParserSource {
         // The scanner we're pulling tokens from.
         private scanner: Scanner;
-
-        // The previous version of the syntax tree that was parsed.  Used for incremental parsing if it
-        // is provided.
-        private oldTree: SyntaxTree;
-
-        // Parsing options.
-        private options: ParseOptions = null;
-
-        // Current state of the parser.  If we need to rewind we will store and reset these values as
-        // appropriate.
 
         // The current token the parser is examining.  If it is null it needs to be fetched from the 
         // scanner.  Cached because it's accessed so often that even getting it from the sliding window
@@ -268,16 +277,178 @@ module Parser {
         private _currentToken: ISyntaxToken = null;
 
         // The previous token to the current token.  Set when we advance to the next token.
-        private previousToken: ISyntaxToken = null;
+        private _previousToken: ISyntaxToken = null;
 
         // The full start position of the current token the parser is pointing at.
-        private currentTokenFullStart: number = 0;
+        private _currentTokenFullStart: number = 0;
 
         // The diagnostics we get while scanning.  Note: this never gets rewound when we do a normal
         // rewind.  That's because rewinding doesn't affect the tokens created.  It only affects where
         // in the token stream we're pointing at.  However, it will get modified if we we decide to
         // reparse a / or /= as a regular expression.
-        private tokenDiagnostics: SyntaxDiagnostic[] = [];
+        private _tokenDiagnostics: SyntaxDiagnostic[] = [];
+
+        private rewindPointPool: IParserRewindPoint[] = [];
+        private rewindPointPoolCount = 0;
+
+        constructor(text: IText,
+                    languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
+                    stringTable: Collections.StringTable = null) {
+            super(32, null);
+
+            this.scanner = new Scanner(text, languageVersion, stringTable);
+        }
+
+        private tokenDiagnostics(): SyntaxDiagnostic[] {
+            return this._tokenDiagnostics;
+        }
+
+        private fetchMoreItems(argument: any, sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
+            // Assert disabled because it is actually expensive enugh to affect perf.
+            // Debug.assert(spaceAvailable > 0);
+            window[destinationIndex] = this.scanner.scan(this._tokenDiagnostics, argument);
+            return 1;
+        }
+
+        private peekTokenN(n: number): ISyntaxToken {
+            return this.peekItemN(n);
+        }
+
+        private previousToken(): ISyntaxToken {
+            return this._previousToken;
+        }
+
+        private currentToken(): ISyntaxToken {
+            var result = this._currentToken;
+
+            if (result === null) {
+                result = this.currentItem(/*allowRegularExpression:*/ false);
+                this._currentToken = result;
+            }
+
+            return result;
+        }
+
+        private currentTokenAllowingRegularExpression(): ISyntaxToken {
+            Debug.assert(this._currentToken === null);
+
+            var result = this.currentItem(/*allowRegularExpression:*/ true);
+            this._currentToken = result;
+            return result;
+        }
+
+        private moveToNextToken(): void {
+            this._currentTokenFullStart += this._currentToken.fullWidth();
+            this._previousToken = this._currentToken;
+            this._currentToken = null;
+
+            this.moveToNextItem();
+        }
+
+        private currentTokenFullStart() {
+            return this._currentTokenFullStart;
+        }
+
+        private getOrCreateRewindPoint(): IParserRewindPoint {
+            if (this.rewindPointPoolCount === 0) {
+                return <IParserRewindPoint>{};
+            }
+
+            this.rewindPointPoolCount--;
+            var result = this.rewindPointPool[this.rewindPointPoolCount];
+            this.rewindPointPool[this.rewindPointPoolCount] = null;
+            return result;
+        }
+
+        private getRewindPoint(): IParserRewindPoint {
+            var absoluteIndex = this.getAndPinAbsoluteIndex();
+            
+            var rewindPoint = this.getOrCreateRewindPoint();
+
+            rewindPoint.absoluteIndex = absoluteIndex;
+            this.storeAdditionalRewindState(rewindPoint);
+
+            return rewindPoint;
+        }
+
+        private rewind(rewindPoint: IParserRewindPoint): void {
+            this.rewindToPinnedIndex(rewindPoint.absoluteIndex);
+            this.restoreStateFromRewindPoint(rewindPoint);
+        }
+
+        private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
+            this.releaseAndUnpinAbsoluteIndex(rewindPoint.absoluteIndex);
+
+            // this.rewindPoints.push(rewindPoint);
+            this.rewindPointPool[this.rewindPointPoolCount] = rewindPoint;
+            this.rewindPointPoolCount++;
+        }
+
+        private storeAdditionalRewindState(rewindPoint: any): void {
+            rewindPoint.previousToken = this._previousToken;
+            rewindPoint.currentTokenFullStart = this._currentTokenFullStart;
+        }
+
+        private restoreStateFromRewindPoint(rewindPoint: any): void {
+            this._currentToken = null;
+            this._previousToken = rewindPoint.previousToken;
+            this._currentTokenFullStart = rewindPoint.currentTokenFullStart;
+        }
+
+        private resetToCurrentTokenFullStart(): void {
+            // First, we're going to rewind all our data to the point where this / or /= token started.
+            // That's because if it does turn out to be a regular expression, then any tokens or token 
+            // diagnostics we produced after the original / may no longer be valid.  This would actually
+            // be a  fairly expected case.  For example, if you had:  / ... gibberish ... /, we may have 
+            // produced several diagnostics in the process of scanning the tokens after the first / as
+            // they may not have been legal javascript okens.
+            //
+            // We also need to remove all the tokesn we've gotten from the slash and onwards.  They may
+            // not have been what the scanner would have produced if it decides that this is actually
+            // a regular expresion.
+
+            // First, remove any diagnostics that came from the slash or afterwards.
+            var slashTokenFullStart = this._currentTokenFullStart;
+            var tokenDiagnosticsLength = this._tokenDiagnostics.length;
+            while (tokenDiagnosticsLength > 0) {
+                var diagnostic = this._tokenDiagnostics[tokenDiagnosticsLength - 1];
+                if (diagnostic.position() >= slashTokenFullStart) {
+                    tokenDiagnosticsLength--;
+                }
+                else {
+                    break;
+                }
+            }
+
+            this._tokenDiagnostics.length = tokenDiagnosticsLength;
+
+            // Now, tell our sliding window to throw away all tokens from the / onwards (including the /).
+            this.disgardAllItemsFromCurrentIndexOnwards();
+
+            // Our cached currentToken is no longer value.
+            // Note: previousToken is still valid. 
+            this._currentToken = null;
+
+            // Now tell the scanner to reset its position to the start of the / token as well.  That way
+            // when we try to scan the next item, we'll be at the right location.
+            this.scanner.setAbsoluteIndex(this._currentTokenFullStart);
+        }
+    }
+
+    //class IncrementalParserSource implements IParserSource {
+    //    // The previous version of the syntax tree that was parsed.  Used for incremental parsing if it
+    //    // is provided.
+    //    private oldTree: SyntaxTree;
+    //}
+
+    class ParserImpl {
+        private source: IParserSource;
+
+        // Parsing options.
+        private options: ParseOptions = null;
+
+        // Current state of the parser.  If we need to rewind we will store and reset these values as
+        // appropriate.
 
         // TODO: do we need to store/restore this when speculative parsing?  I don't think so.  The
         // parsing logic already handles storing/restoring this and should work properly even if we're
@@ -301,129 +472,69 @@ module Parser {
         // started at.
         private diagnostics: SyntaxDiagnostic[] = [];
 
-        constructor(text: IText,
-                    languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
-                    stringTable: Collections.StringTable = null,
-                    oldTree?: SyntaxTree = null,
-                    changes?: TextChangeRange[] = null,
-                    options?: ParseOptions = null) {
-            super(32, null);
-
-            this.scanner = new Scanner(text, languageVersion, stringTable);
-
-            this.oldTree = oldTree;
-            this.options = options || new ParseOptions();
-        }
-
-        private isIncremental(): bool {
-            return this.oldTree !== null;
-        }
-
-        private pool: IParserRewindPoint[] = [];
-        private poolCount = 0;
-
-        private getOrCreateRewindPoint(): IParserRewindPoint {
-            if (this.poolCount === 0) {
-                return <IParserRewindPoint>{};
-            }
-
-            this.poolCount--;
-            var result = this.pool[this.poolCount];
-            this.pool[this.poolCount] = null;
-            return result;
+        constructor(source: IParserSource, options?: ParseOptions) {
+            this.source = source;
+            this.options = options;
         }
 
         private getRewindPoint(): IParserRewindPoint {
-            var absoluteIndex = this.getAndPinAbsoluteIndex();
+            var rewindPoint = this.source.getRewindPoint();
 
-            var rewindPoint = this.getOrCreateRewindPoint();
-
-            rewindPoint.absoluteIndex = absoluteIndex;
-            this.storeAdditionalRewindState(rewindPoint);
+            rewindPoint.isInStrictMode = this.isInStrictMode;
+            rewindPoint.diagnosticsCount = this.diagnostics.length;
+            rewindPoint.skippedTokensCount = this.skippedTokens.length;
 
             return rewindPoint;
         }
 
         private rewind(rewindPoint: IParserRewindPoint): void {
-            this.rewindToPinnedIndex(rewindPoint.absoluteIndex);
-            this.restoreStateFromRewindPoint(rewindPoint);
-        }
+            this.source.rewind(rewindPoint);
 
-        private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
-            this.releaseAndUnpinAbsoluteIndex(rewindPoint.absoluteIndex);
-
-            // this.rewindPoints.push(rewindPoint);
-            this.pool[this.poolCount] = rewindPoint;
-            this.poolCount++;
-        }
-
-        private storeAdditionalRewindState(rewindPoint: IParserRewindPoint): void {
-            rewindPoint.previousToken = this.previousToken;
-            rewindPoint.currentTokenFullStart = this.currentTokenFullStart;
-            rewindPoint.isInStrictMode = this.isInStrictMode;
-            rewindPoint.diagnosticsCount = this.diagnostics.length;
-            rewindPoint.skippedTokensCount = this.skippedTokens.length;
-        }
-
-        private restoreStateFromRewindPoint(rewindPoint: IParserRewindPoint): void {
-            this._currentToken = null;
-            this.previousToken = rewindPoint.previousToken;
-            this.currentTokenFullStart = rewindPoint.currentTokenFullStart;
             this.isInStrictMode = rewindPoint.isInStrictMode;
             this.diagnostics.length = rewindPoint.diagnosticsCount;
             this.skippedTokens.length = rewindPoint.skippedTokensCount;
         }
 
-        private fetchMoreItems(argument: any, sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
-            // Assert disabled because it is actually expensive enugh to affect perf.
-            // Debug.assert(spaceAvailable > 0);
-            window[destinationIndex] = this.scanner.scan(this.tokenDiagnostics, argument);
-            return 1;
+        private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
+            this.source.releaseRewindPoint(rewindPoint);
         }
 
         private currentTokenStart(): number {
-            return this.currentTokenFullStart + this.currentToken().leadingTriviaWidth();
+            return this.currentTokenFullStart() + this.currentToken().leadingTriviaWidth();
         }
 
         private previousTokenStart(): number {
-            if (this.previousToken === null) {
+            if (this.previousToken() === null) {
                 return 0;
             }
 
-            return this.currentTokenFullStart -
-                   this.previousToken.fullWidth() +
-                   this.previousToken.leadingTriviaWidth();
+            return this.currentTokenFullStart() -
+                   this.previousToken().fullWidth() +
+                   this.previousToken().leadingTriviaWidth();
         }
 
         private previousTokenEnd(): number {
-            if (this.previousToken === null) {
+            if (this.previousToken() === null) {
                 return 0;
             }
 
-            return this.previousTokenStart() + this.previousToken.width();
+            return this.previousTokenStart() + this.previousToken().width();
         }
 
         private currentToken(): ISyntaxToken {
-            var result = this._currentToken;
-
-            if (result === null) {
-                result = this.currentItem(/*allowRegularExpression:*/ false);
-                this._currentToken = result;
-            }
-
-            return result;
+            return this.source.currentToken();
         }
 
         private currentTokenAllowingRegularExpression(): ISyntaxToken {
-            Debug.assert(this._currentToken === null);
+            return this.source.currentTokenAllowingRegularExpression();
+        }
 
-            var result = this.currentItem(/*allowRegularExpression:*/ true);
-            this._currentToken = result;
-            return result;
+        private currentTokenFullStart(): number {
+            return this.source.currentTokenFullStart();
         }
 
         private peekTokenN(n: number): ISyntaxToken {
-            return this.peekItemN(n);
+            return this.source.peekTokenN(n);
         }
 
         //this method is called very frequently
@@ -435,11 +546,11 @@ module Parser {
         }
 
         private moveToNextToken(): void {
-            this.currentTokenFullStart += this._currentToken.fullWidth();
-            this.previousToken = this._currentToken;
-            this._currentToken = null;
+            this.source.moveToNextToken();
+        }
 
-            this.moveToNextItem();
+        private previousToken(): ISyntaxToken {
+            return this.source.previousToken();
         }
 
         private canEatAutomaticSemicolon(allowWithoutNewLine: bool): bool {
@@ -460,7 +571,7 @@ module Parser {
             }
 
             // It is also allowed if there is a newline between the last token seen and the next one.
-            if (this.previousToken !== null && this.previousToken.hasTrailingNewLine()) {
+            if (this.previousToken() !== null && this.previousToken().hasTrailingNewLine()) {
                 return true;
             }
 
@@ -745,7 +856,7 @@ module Parser {
         public parseSyntaxTree(): SyntaxTree {
             var sourceUnit = this.parseSourceUnit();
 
-            var allDiagnostics = this.tokenDiagnostics.concat(this.diagnostics);
+            var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
             allDiagnostics.sort((a: SyntaxDiagnostic, b: SyntaxDiagnostic) => a.position() - b.position());
 
             sourceUnit = this.addSkippedTokensTo(sourceUnit);
@@ -2394,7 +2505,7 @@ module Parser {
                     case SyntaxKind.MinusMinusToken:
                         // Because of automatic semicolon insertion, we should only consume the ++ or -- 
                         // if it is on the same line as the previous token.
-                        if (this.previousToken !== null && this.previousToken.hasTrailingNewLine()) {
+                        if (this.previousToken() !== null && this.previousToken().hasTrailingNewLine()) {
                             return expression;
                         }
 
@@ -2565,14 +2676,14 @@ module Parser {
 
             // There are several contexts where we could never see a regex.  Don't even bother 
             // reinterpretting the / in these contexts.
-            if (this.previousToken !== null) {
-                var previousTokenKind = this.previousToken.tokenKind;
+            if (this.previousToken() !== null) {
+                var previousTokenKind = this.previousToken().tokenKind;
                 switch (previousTokenKind) {
                     case SyntaxKind.IdentifierNameToken:
                         // Could be a keyword or identifier.  Regular expressions can't follow identifiers.
                         // And they also can't follow some keywords.
 
-                        var previousTokenKeywordKind = this.previousToken.keywordKind();
+                        var previousTokenKeywordKind = this.previousToken().keywordKind();
                         if (previousTokenKeywordKind === SyntaxKind.None ||
                             previousTokenKeywordKind === SyntaxKind.ThisKeyword ||
                             previousTokenKeywordKind === SyntaxKind.TrueKeyword ||
@@ -2610,44 +2721,10 @@ module Parser {
             }
 
             // Ok, from our quick lexical check, this could be a place where a regular expression could
-            // go.  Now we have to do a bunch of work.
+            // go.  Now we have to do a bunch of work.  Reset the source to the position where the 
+            // "/" or "/=" token started.
 
-            // First, we're going to rewind all our data to the point where this / or /= token started.
-            // That's because if it does turn out to be a regular expression, then any tokens or token 
-            // diagnostics we produced after the original / may no longer be valid.  This would actually
-            // be a  fairly expected case.  For example, if you had:  / ... gibberish ... /, we may have 
-            // produced several diagnostics in the process of scanning the tokens after the first / as
-            // they may not have been legal javascript okens.
-            //
-            // We also need to remove all the tokesn we've gotten from the slash and onwards.  They may
-            // not have been what the scanner would have produced if it decides that this is actually
-            // a regular expresion.
-
-            // First, remove any diagnostics that came from the slash or afterwards.
-            var slashTokenFullStart = this.currentTokenFullStart;
-            var tokenDiagnosticsLength = this.tokenDiagnostics.length;
-            while (tokenDiagnosticsLength > 0) {
-                var diagnostic = this.tokenDiagnostics[tokenDiagnosticsLength - 1];
-                if (diagnostic.position() >= slashTokenFullStart) {
-                    tokenDiagnosticsLength--;
-                }
-                else {
-                    break;
-                }
-            }
-
-            this.tokenDiagnostics.length = tokenDiagnosticsLength;
-
-            // Now, tell our sliding window to throw away all tokens from the / onwards (including the /).
-            this.disgardAllItemsFromCurrentIndexOnwards();
-
-            // Our cached currentToken is no longer value.
-            // Note: previousToken is still valid. 
-            this._currentToken = null;
-
-            // Now tell the scanner to reset its position to the start of the / token as well.  That way
-            // when we try to scan the next item, we'll be at the right location.
-            this.scanner.setAbsoluteIndex(slashTokenFullStart);
+            this.source.resetToCurrentTokenFullStart();
 
             // Now try to retrieve the current token again.  This time, allow the scanner to consider it
             // as a regular expression
@@ -3360,7 +3437,7 @@ module Parser {
             // Otherwise, if none of the lists we're in can capture this token, then we need to 
             // unilaterally skip it.  Note: we've already reported the error.
             var token = this.currentToken();
-            this.skippedTokens.push({ skippedToken: token, owningToken: this.previousToken });
+            this.skippedTokens.push({ skippedToken: token, owningToken: this.previousToken() });
 
             // Consume this token and move onto the next item in the list.
             this.moveToNextToken();
@@ -3440,7 +3517,7 @@ module Parser {
                     // allow trailing separators, then report an error.  But don't report an error if
                     // the separator is missing.  We'll have already reported it.
                     if (lastSeparator !== null && !allowTrailingSeparator && !lastSeparator.isMissing()) {
-                        Debug.assert(this.previousToken === lastSeparator);
+                        Debug.assert(this.previousToken() === lastSeparator);
                         this.addDiagnostic(new SyntaxDiagnostic(
                             this.previousTokenStart(), lastSeparator.width(), DiagnosticCode.Trailing_separator_not_allowed, null));
                     }
@@ -3767,7 +3844,7 @@ module Parser {
             // If we just parsed a comma, then we can't terminate this list.  i.e.:
             //      var a = bar, // <-- just consumed the comma
             //          b = baz;
-            if (this.previousToken.tokenKind === SyntaxKind.CommaToken) {
+            if (this.previousToken().tokenKind === SyntaxKind.CommaToken) {
                 return false;
             }
 
@@ -3969,7 +4046,11 @@ module Parser {
 
     export function parse(text: IText,
                           languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
-                          stringTable: Collections.StringTable = null): SyntaxTree {
-        return new ParserImpl(text, languageVersion, stringTable).parseSyntaxTree();
+                          stringTable: Collections.StringTable = null,
+                          options?: ParseOptions = null): SyntaxTree {
+        var source = new NormalParserSource(text, languageVersion, stringTable);
+        options = options || new ParseOptions();
+
+        return new ParserImpl(source, options).parseSyntaxTree();
     }
 }
