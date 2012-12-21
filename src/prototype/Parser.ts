@@ -9,10 +9,14 @@
 /// <reference path='TextChangeRange.ts' />
 
 module Parser {
+    // Information the parser needs to effectively rewind.  Note: individual parser sources may
+    // store additional information in this structure for their own purposes.
     interface IParserRewindPoint {
-        // absoluteIndex: number;
-        // previousToken: ISyntaxToken;
-        // currentTokenFullStart: number;
+        // As we speculatively parser, we may build up diagnostics and skipped tokens.  When we
+        // rewind we want to 'forget' that information.  In order to do that we store the count
+        // of diagnostics and skipped tokens when we start speculating, and we reset to that
+        // count when we're done.  That way the speculative parse does not affect any further
+        // results.
         diagnosticsCount: number;
         skippedTokensCount: number;
 
@@ -95,31 +99,32 @@ module Parser {
     // The current state of the parser wrt to list parsing.  The way to read these is as:
     // CurrentProduction_SubList.  i.e. "Block_Statements" means "we're parsing a Block, and we're 
     // currently parsing list of statements within it".  This is used by the list parsing mechanism
-    // to parser the elements of the lists, and recover from errors we encounter when we run into 
+    // to parse the elements of the lists, and recover from errors we encounter when we run into 
     // unexpected code.
     // 
-    // For example, when we are in ArgumentList_Arguments, we will continue trying to consume code as 
-    // long as "isArgument" is true.  If we run into a token for which "isArgument" is not true we will
-    // do the following:
+    // For example, when we are in ArgumentList_Arguments, we will continue trying to consume code 
+    // as long as "isArgument" is true.  If we run into a token for which "isArgument" is not true 
+    // we will do the following:
     //
-    // If the token is a StopToken for ArgumentList_Arguments then we will stop parsing the list of 
-    // arguments with no error.
+    // If the token is a StopToken for ArgumentList_Arguments (like ")" ) then we will stop parsing
+    // the list of arguments with no error.
     //
-    // Otherwise, we *do* report an error for this unexpected token.
+    // Otherwise, we *do* report an error for this unexpected token, and then enter error recovery 
+    // mode to decide how to try to recover from this unexpected token.
     //
-    // We then will attempt error recovery.  Error recovery will walk up the list of states we're in 
-    // seeing if the token is a stop token for that construct *or* could start another element within
-    // what construct.  For example, if the unexpected token was '}' then that would be a stop token
-    // for Block_Statements.  Alternatively, if the unexpected token was 'return', then that would be
+    // Error recovery will walk up the list of states we're in seeing if the token is a stop token
+    // for that construct *or* could start another element within what construct.  For example, if
+    // the unexpected token was '}' then that would be a stop token for Block_Statements. 
+    // Alternatively, if the unexpected token was 'return', then that would be
     // a start token for the next statment in Block_Statements.
     // 
     // If either of those cases are true, We will then return *without* consuming  that token. 
     // (Remember, we've already reported an error).  Now we're just letting the higher up parse 
     // constructs eventually try to consume that token.
     //
-    // If none of the higher up states consider this a stop or start token, then we will simply consume
-    // the token and add it to our list of 'skipped tokens'.  We will then repeat the above algorithm
-    // until we resynchronize at some point.
+    // If none of the higher up states consider this a stop or start token, then we will simply 
+    // consume the token and add it to our list of 'skipped tokens'.  We will then repeat the 
+    // above algorithm until we resynchronize at some point.
     enum ListParsingState {
         SourceUnit_ModuleElements = 1 << 0,
         ClassDeclaration_ClassElements = 1 << 1,
@@ -152,6 +157,9 @@ module Parser {
         owningToken: ISyntaxToken;
     }
 
+    // Helper class to take the tokens that we've skipped over and attach them as 'SkippedText' 
+    // trivia to the token that preceded them (or to the first token in teh file if no token 
+    // preceded them).
     class SkippedTokensAdder extends SyntaxRewriter {
         private skippedTokens: SkippedToken[];
 
@@ -262,7 +270,45 @@ module Parser {
         }
     }
 
+    // Interface that represents the source that the parser pulls tokens from.  Essentially, this 
+    // is the interface that the parser needs an underlying scanner to provide.  This allows us to
+    // separate out "what" the parser does with the tokens it retrieves versus "how" it obtains
+    // the tokens.  i.e. all the logic for parsing language constructs sits in ParserImpl, while 
+    // all the logic for retrieving tokens sits in the ParserSource.
+    //
+    // By separating out this interface, we also make incremental parsing much easier.  Instead of
+    // having the parser directly sit on top of the scanner, we sit it on this abstraction.  Then
+    // in incremental scenarios, we can use the IncrementalParserSource to pull tokens (or even 
+    // full nodes) from the previous tree when possible.  Of course, we'll still end up using a 
+    // scanner for new text.  But that can all happen inside hte source, with none of the logic in
+    // the parser having to be aware of it.
+    //
+    // In general terms, a parser source represents a position within a text.  At that position, 
+    // one can ask for the 'currentToken' that the source is pointing at.  The 'previousToken' that
+    // precedes this token (generally used for automatic semicolon insertion, and other minor 
+    // parsing decisions).  Then, once the parser consumes that token it can ask the source to
+    // 'moveToNextToken'.
+    //
+    // Additional special abilities include:
+    //  1) Being able to peek an arbitrary number of tokens ahead efficiently.
+    //  2) Being able to retrived fully parsed nodes from the source, not just tokens. This happens
+    //     in incremental scenarios when the source is certain that the node is completley safe to
+    //     reuse.
+    //  3) Being able to get a 'rewind point' to the current location.  THis allows hte parser to
+    //     speculatively parse as much as it wants, and then reset itself back to that point, 
+    //     ensuring that no state changes that occurred after getting the 'rewing point' are 
+    //     observable.
+    //  4) Being able to reinterpret the current token being pointed at as a regular expression 
+    //     token.  This is necessary as the scanner does not have enough information to correctly
+    //     distinguish "/" or "/=" as divide tokens, versus "/..../" as a regex token.  If the 
+    //     parser sees a "/" in a place where a divide is not allowed, but a regex would be, then
+    //     it can call into the source and ask if a regex token could be returned instead.  The 
+    //     sources are smart enough to do that and not be affected by any additional work they may
+    //     have done when they originally scanned that token.
     interface IParserSource {
+        // Peek any number of tokens ahead from the current location in source.  peekTokenN(0) is
+        // equivalent to 'currentToken', peekTokenN(1) is the next token, peekTokenN(2) the token
+        // after that, etc.
         peekTokenN(n: number): ISyntaxToken;
 
         previousToken(): ISyntaxToken;
