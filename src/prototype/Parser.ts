@@ -12,7 +12,7 @@ module Parser {
     // Information the parser needs to effectively rewind.  Note: individual parser sources may
     // store additional information in this structure for their own purposes.
     interface IParserRewindPoint {
-        // As we speculatively parser, we may build up diagnostics and skipped tokens.  When we
+        // As we speculatively parser, we may build up diagnostics and skipped tokens.  When we    
         // rewind we want to 'forget' that information.  In order to do that we store the count
         // of diagnostics and skipped tokens when we start speculating, and we reset to that
         // count when we're done.  That way the speculative parse does not affect any further
@@ -311,19 +311,63 @@ module Parser {
         // after that, etc.
         peekTokenN(n: number): ISyntaxToken;
 
+        // The token that comes before the 'currentToken' that hte source is pointing at.
         previousToken(): ISyntaxToken;
 
+        // The current syntax node the source is pointing at.  Only available in incremental settings.
+        // The source can point at a node if that node doesn't intersect any of the text changes in
+        // the file, and doesn't contain certain unacceptable constructs.  For example, if the node
+        // contains skipped text, then it will not be reused.
         currentNode(): SyntaxNode;
+
+        // The current token the source is pointing at.
         currentToken(): ISyntaxToken;
+
+        // The current token reinterpretted as a regex token.  This must only be called when the 
+        // source is pointing at a "/" or "/=" token. 
         currentTokenAllowingRegularExpression(): ISyntaxToken;
 
+        // The absolute index that the current token starts at.  
         currentTokenFullStart(): number;
 
+        // Called to move the source to the next node or token once the parser has consumed the 
+        // current one.
         moveToNextNode(): void;
         moveToNextToken(): void;
 
+        // Gets a rewind point that the parser can use to move back to after it speculatively 
+        // parses something.  The source guarantees that if the parser calls 'rewind' with that 
+        // point that it will be mostly in the same state that it was in when 'getRewindPoint'
+        // was called.  i.e. calling currentToken, peekToken, tokenDiagnostics, etc. will result
+        // in the same values.  One allowed exemption to this is 'currentNode'.  If a rewind point
+        // is requested and rewound, then getting the currentNode may not be possible.  However,
+        // as this is purely a performance optimization, it will not affect correctness.
+        //
+        // Note: that rewind points are not free (but they should also not be too expensive).  So
+        // they should be used judiciously.  While a rewind point is held by the parser, the source
+        // is not free to do things that it would normally do.  For example, it cannot throw away
+        // tokens that it has scanned on or after the rewind point as it must keep them alive for
+        // the parser to move back to.
+        //
+        // Rewind points also work in a stack fashion.  The first rewind point given out must be
+        // the last rewind point released.  Do not release them out of order, or bad things can 
+        // happen.
+        //
+        // Do *NOT* forget to release a rewind point.  Always put them in a finally block to ensure
+        // that they are released.  If they are not released, things will still work, you will just
+        // consume far more memory than necessary.
         getRewindPoint(): IParserRewindPoint;
+
+        // Rewinds the source to the position and state it was at when this rewind point was created.
+        // This does not need to be called if the parser decides it does not need to rewind.  For 
+        // example, the parser may speculatively parse out a lambda expression when it sees something
+        // ambiguous like "(a = b, c = ...".  If it succeeds parsing that as a lambda, then it will
+        // just return that result.  However, if it fails *then* it will rewind and try it again as
+        // a parenthesized expression.  
         rewind(rewindPoint: IParserRewindPoint): void;
+
+        // Called when the parser is done speculative parsing and no longer needs the rewind point.
+        // Must be called for every rewing point retrived.
         releaseRewindPoint(rewindPoint: IParserRewindPoint): void;
 
         resetToCurrentTokenFullStart(): void;
