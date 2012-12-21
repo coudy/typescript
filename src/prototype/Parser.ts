@@ -370,8 +370,8 @@ module Parser {
         // Must be called for every rewing point retrived.
         releaseRewindPoint(rewindPoint: IParserRewindPoint): void;
 
-        resetToCurrentTokenFullStart(): void;
-
+        // Retrieves the diagnostics generated while the source was producing nodes or tokens. 
+        // Should generally only be called after the document has been completely parsed.
         tokenDiagnostics(): SyntaxDiagnostic[];
     }
 
@@ -437,25 +437,6 @@ module Parser {
             throw Errors.invalidOperation();
         }
 
-        public currentToken(): ISyntaxToken {
-            var result = this._currentToken;
-
-            if (result === null) {
-                result = this.currentItem(/*allowRegularExpression:*/ false);
-                this._currentToken = result;
-            }
-
-            return result;
-        }
-
-        public currentTokenAllowingRegularExpression(): ISyntaxToken {
-            Debug.assert(this._currentToken === null);
-
-            var result = this.currentItem(/*allowRegularExpression:*/ true);
-            this._currentToken = result;
-            return result;
-        }
-
         private moveToNextToken(): void {
             this._currentTokenFullStart += this._currentToken.fullWidth();
             this._previousToken = this._currentToken;
@@ -510,24 +491,24 @@ module Parser {
             this.rewindPointPoolCount++;
         }
 
-        public resetToCurrentTokenFullStart(): void {
-            // First, we're going to rewind all our data to the point where this / or /= token started.
-            // That's because if it does turn out to be a regular expression, then any tokens or token 
-            // diagnostics we produced after the original / may no longer be valid.  This would actually
-            // be a  fairly expected case.  For example, if you had:  / ... gibberish ... /, we may have 
-            // produced several diagnostics in the process of scanning the tokens after the first / as
-            // they may not have been legal javascript okens.
-            //
-            // We also need to remove all the tokesn we've gotten from the slash and onwards.  They may
-            // not have been what the scanner would have produced if it decides that this is actually
-            // a regular expresion.
+        public currentToken(): ISyntaxToken {
+            var result = this._currentToken;
 
-            // First, remove any diagnostics that came from the slash or afterwards.
-            var slashTokenFullStart = this._currentTokenFullStart;
+            if (result === null) {
+                result = this.currentItem(/*allowRegularExpression:*/ false);
+                this._currentToken = result;
+            }
+
+            return result;
+        }
+
+        private removeDiagnosticsAfterCurrentTokenFullStart() {
+            // walk backwards, removing any diagnostics that came after the the current token's
+            // full start position.
             var tokenDiagnosticsLength = this._tokenDiagnostics.length;
             while (tokenDiagnosticsLength > 0) {
                 var diagnostic = this._tokenDiagnostics[tokenDiagnosticsLength - 1];
-                if (diagnostic.position() >= slashTokenFullStart) {
+                if (diagnostic.position() >= this._currentTokenFullStart) {
                     tokenDiagnosticsLength--;
                 }
                 else {
@@ -536,26 +517,50 @@ module Parser {
             }
 
             this._tokenDiagnostics.length = tokenDiagnosticsLength;
+        }
+
+        public resetToPosition(absolutePosition: number, previousToken: ISyntaxToken): void {
+            this._currentTokenFullStart = absolutePosition;
+            this._previousToken = previousToken;
+            this._currentToken = null;
+
+            // First, remove any diagnostics that came from the slash or afterwards.
+            this.removeDiagnosticsAfterCurrentTokenFullStart();
 
             // Now, tell our sliding window to throw away all tokens from the / onwards (including the /).
             this.disgardAllItemsFromCurrentIndexOnwards();
 
-            // Our cached currentToken is no longer value.
-            // Note: previousToken is still valid. 
-            this._currentToken = null;
-            
             // Now tell the scanner to reset its position to the start of the / token as well.  That way
             // when we try to scan the next item, we'll be at the right location.
-            this.setAbsoluteIndex(this._currentTokenFullStart);
+            this.scanner.setAbsoluteIndex(this._currentTokenFullStart);
         }
 
-        private setAbsoluteIndex(absoluteIndex: number): void {
-            if (absoluteIndex !== this._currentTokenFullStart) {
-                this._currentToken = null;
-                this._previousToken = null;
-            }
+        public currentTokenAllowingRegularExpression(): ISyntaxToken {
+            // First, we're going to rewind all our data to the point where this / or /= token started.
+            // That's because if it does turn out to be a regular expression, then any tokens or token 
+            // diagnostics we produced after the original / may no longer be valid.  This would actually
+            // be a  fairly expected case.  For example, if you had:  / ... gibberish ... /, we may have 
+            // produced several diagnostics in the process of scanning the tokens after the first / as
+            // they may not have been legal javascript okens.
+            //
+            // We also need to remove all the tokens we've gotten from the slash and onwards.  They may
+            // not have been what the scanner would have produced if it decides that this is actually
+            // a regular expresion.
 
-            this.scanner.setAbsoluteIndex(this._currentTokenFullStart);
+            this.resetToPosition(this._currentTokenFullStart, this._previousToken);
+
+            // We better not have a token anymore.
+            Debug.assert(this._currentToken === null);
+
+            // Now actually fetch the token again from the scanner. This time let it know that it
+            // can scan it as a regex token if it wants to.
+            this._currentToken = this.currentItem(/*allowRegularExpression:*/ true);
+
+            // We have better gotten some sort of regex token.  Otherwise, something *very* wrong has
+            // occurred.
+            Debug.assert(SyntaxFacts.isDivideOrRegularExpressionToken(this._currentToken.kind()));
+
+            return this._currentToken;
         }
     }
 
@@ -712,13 +717,19 @@ module Parser {
         }
 
         private currentTokenAllowingRegularExpression(): ISyntaxToken {
-            this._currentElement = null;
-            this.normalParserSource.resetToCurrentTokenFullStart(); 
+            // This should only have been called if the parser thought we were pointing at a token.
+            Debug.assert(this._currentElement.isToken());
+            Debug.assert(SyntaxFacts.isDivideOrRegularExpressionToken(this._currentElement.kind()));
+
+            // Reset the underlying parser source to the start of our / or /= token and ask it to 
+            // give us the token again allowing it as a regex.
+            this.normalParserSource.resetToPosition(this._currentElementFullStart, this._previousToken);
             this._currentElement = this.normalParserSource.currentTokenAllowingRegularExpression();
             
+            // We better have gotten it back as a regex token!
             Debug.assert(this._currentElement !== null);
             Debug.assert(this._currentElement.isToken());
-            Debug.assert(SyntaxFacts.isRegularExpressionToken(this._currentElement.kind()));
+            Debug.assert(SyntaxFacts.isDivideOrRegularExpressionToken(this._currentElement.kind()));
 
             return <ISyntaxToken>this._currentElement;
         }
@@ -779,7 +790,7 @@ module Parser {
         }
 
         private readTokenFromScanner(): ISyntaxToken {
-            this.normalParserSource.setAbsoluteIndex(this._currentElementFullStart);
+            this.normalParserSource.resetToPosition(this._currentElementFullStart, this._previousToken);
             return this.normalParserSource.currentToken();
         }
 
@@ -798,7 +809,7 @@ module Parser {
 
             if (element.isToken()) {
                 // If an element is a token, then we can't use reuse it if it is part of a regex token.
-                if (SyntaxFacts.isRegularExpressionToken(element.kind())) {
+                if (SyntaxFacts.isDivideOrRegularExpressionToken(element.kind())) {
                     return false;
                 }
             }
@@ -922,11 +933,6 @@ module Parser {
             // this.rewindPoints.push(rewindPoint);
             this.rewindPointPool[this.rewindPointPoolCount] = rewindPoint;
             this.rewindPointPoolCount++;
-        }
-
-        private resetToCurrentTokenFullStart(): void {
-            this.normalParserSource.resetToCurrentTokenFullStart();
-            this._currentElement = null;
         }
     }
 
@@ -3219,6 +3225,7 @@ module Parser {
                         }
 
                         // A regular expression could follow other keywords.  i.e. "return /blah/;"
+                        // TODO: be more specific about the keywords that a regex could follow.
                         break;
 
                     case SyntaxKind.StringLiteral:
@@ -3246,20 +3253,13 @@ module Parser {
             }
 
             // Ok, from our quick lexical check, this could be a place where a regular expression could
-            // go.  Now we have to do a bunch of work.  Reset the source to the position where the 
-            // "/" or "/=" token started.
-
-            this.source.resetToCurrentTokenFullStart();
-
-            // Now try to retrieve the current token again.  This time, allow the scanner to consider it
-            // as a regular expression
+            // go.  Now we have to do a bunch of work.  Ask the source to retrive the token at the 
+            // current position again.  But this time allow it to retrive it as a regular expression.
             currentToken = this.currentTokenAllowingRegularExpression();
 
             // Note: we *must* have gotten a /, /= or regular expression.  Or else something went *very*
             // wrong with our logic above.
-            Debug.assert(currentToken.tokenKind === SyntaxKind.SlashToken ||
-                         currentToken.tokenKind === SyntaxKind.SlashEqualsToken ||
-                         currentToken.tokenKind === SyntaxKind.RegularExpressionLiteral);
+            Debug.assert(SyntaxFacts.isDivideOrRegularExpressionToken(currentToken.tokenKind));
 
             if (currentToken.tokenKind === SyntaxKind.SlashToken || currentToken.tokenKind === SyntaxKind.SlashEqualsToken) {
                 // Still came back as a / or /=.   This is not a regular expression literal.

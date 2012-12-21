@@ -1410,7 +1410,7 @@ var SyntaxFacts = (function () {
             }
         }
     }
-    SyntaxFacts.isRegularExpressionToken = function isRegularExpressionToken(kind) {
+    SyntaxFacts.isDivideOrRegularExpressionToken = function isDivideOrRegularExpressionToken(kind) {
         switch(kind) {
             case 115 /* SlashToken */ :
             case 116 /* SlashEqualsToken */ :
@@ -5134,7 +5134,7 @@ var LiteralExpressionSyntax = (function (_super) {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._literalToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isRegularExpressionToken(this._literalToken.kind());
+        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isDivideOrRegularExpressionToken(this._literalToken.kind());
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     LiteralExpressionSyntax.prototype.findTokenInternal = function (position) {
@@ -8266,7 +8266,7 @@ var BinaryExpressionSyntax = (function (_super) {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._operatorToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isRegularExpressionToken(this._operatorToken.kind());
+        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isDivideOrRegularExpressionToken(this._operatorToken.kind());
         childWidth = this._right.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._right.hasSkippedText();
@@ -25544,20 +25544,6 @@ var Parser;
         NormalParserSource.prototype.moveToNextNode = function () {
             throw Errors.invalidOperation();
         };
-        NormalParserSource.prototype.currentToken = function () {
-            var result = this._currentToken;
-            if(result === null) {
-                result = this.currentItem(false);
-                this._currentToken = result;
-            }
-            return result;
-        };
-        NormalParserSource.prototype.currentTokenAllowingRegularExpression = function () {
-            Debug.assert(this._currentToken === null);
-            var result = this.currentItem(true);
-            this._currentToken = result;
-            return result;
-        };
         NormalParserSource.prototype.moveToNextToken = function () {
             this._currentTokenFullStart += this._currentToken.fullWidth();
             this._previousToken = this._currentToken;
@@ -25598,28 +25584,40 @@ var Parser;
             this.rewindPointPool[this.rewindPointPoolCount] = rewindPoint;
             this.rewindPointPoolCount++;
         };
-        NormalParserSource.prototype.resetToCurrentTokenFullStart = function () {
-            var slashTokenFullStart = this._currentTokenFullStart;
+        NormalParserSource.prototype.currentToken = function () {
+            var result = this._currentToken;
+            if(result === null) {
+                result = this.currentItem(false);
+                this._currentToken = result;
+            }
+            return result;
+        };
+        NormalParserSource.prototype.removeDiagnosticsAfterCurrentTokenFullStart = function () {
             var tokenDiagnosticsLength = this._tokenDiagnostics.length;
             while(tokenDiagnosticsLength > 0) {
                 var diagnostic = this._tokenDiagnostics[tokenDiagnosticsLength - 1];
-                if(diagnostic.position() >= slashTokenFullStart) {
+                if(diagnostic.position() >= this._currentTokenFullStart) {
                     tokenDiagnosticsLength--;
                 } else {
                     break;
                 }
             }
             this._tokenDiagnostics.length = tokenDiagnosticsLength;
-            this.disgardAllItemsFromCurrentIndexOnwards();
-            this._currentToken = null;
-            this.setAbsoluteIndex(this._currentTokenFullStart);
         };
-        NormalParserSource.prototype.setAbsoluteIndex = function (absoluteIndex) {
-            if(absoluteIndex !== this._currentTokenFullStart) {
-                this._currentToken = null;
-                this._previousToken = null;
-            }
+        NormalParserSource.prototype.resetToPosition = function (absolutePosition, previousToken) {
+            this._currentTokenFullStart = absolutePosition;
+            this._previousToken = previousToken;
+            this._currentToken = null;
+            this.removeDiagnosticsAfterCurrentTokenFullStart();
+            this.disgardAllItemsFromCurrentIndexOnwards();
             this.scanner.setAbsoluteIndex(this._currentTokenFullStart);
+        };
+        NormalParserSource.prototype.currentTokenAllowingRegularExpression = function () {
+            this.resetToPosition(this._currentTokenFullStart, this._previousToken);
+            Debug.assert(this._currentToken === null);
+            this._currentToken = this.currentItem(true);
+            Debug.assert(SyntaxFacts.isDivideOrRegularExpressionToken(this._currentToken.kind()));
+            return this._currentToken;
         };
         return NormalParserSource;
     })(SlidingWindow);    
@@ -25690,12 +25688,13 @@ var Parser;
             return this._currentElement;
         };
         IncrementalParserSource.prototype.currentTokenAllowingRegularExpression = function () {
-            this._currentElement = null;
-            this.normalParserSource.resetToCurrentTokenFullStart();
+            Debug.assert(this._currentElement.isToken());
+            Debug.assert(SyntaxFacts.isDivideOrRegularExpressionToken(this._currentElement.kind()));
+            this.normalParserSource.resetToPosition(this._currentElementFullStart, this._previousToken);
             this._currentElement = this.normalParserSource.currentTokenAllowingRegularExpression();
             Debug.assert(this._currentElement !== null);
             Debug.assert(this._currentElement.isToken());
-            Debug.assert(SyntaxFacts.isRegularExpressionToken(this._currentElement.kind()));
+            Debug.assert(SyntaxFacts.isDivideOrRegularExpressionToken(this._currentElement.kind()));
             return this._currentElement;
         };
         IncrementalParserSource.prototype.readElement = function (readToken) {
@@ -25729,7 +25728,7 @@ var Parser;
             }
         };
         IncrementalParserSource.prototype.readTokenFromScanner = function () {
-            this.normalParserSource.setAbsoluteIndex(this._currentElementFullStart);
+            this.normalParserSource.resetToPosition(this._currentElementFullStart, this._previousToken);
             return this.normalParserSource.currentToken();
         };
         IncrementalParserSource.prototype.canReuse = function (element) {
@@ -25741,7 +25740,7 @@ var Parser;
                 return false;
             }
             if(element.isToken()) {
-                if(SyntaxFacts.isRegularExpressionToken(element.kind())) {
+                if(SyntaxFacts.isDivideOrRegularExpressionToken(element.kind())) {
                     return false;
                 }
             } else {
@@ -25816,10 +25815,6 @@ var Parser;
             }
             this.rewindPointPool[this.rewindPointPoolCount] = rewindPoint;
             this.rewindPointPoolCount++;
-        };
-        IncrementalParserSource.prototype.resetToCurrentTokenFullStart = function () {
-            this.normalParserSource.resetToCurrentTokenFullStart();
-            this._currentElement = null;
         };
         return IncrementalParserSource;
     })();    
@@ -27478,9 +27473,8 @@ var Parser;
                     }
                 }
             }
-            this.source.resetToCurrentTokenFullStart();
             currentToken = this.currentTokenAllowingRegularExpression();
-            Debug.assert(currentToken.tokenKind === 115 /* SlashToken */  || currentToken.tokenKind === 116 /* SlashEqualsToken */  || currentToken.tokenKind === 10 /* RegularExpressionLiteral */ );
+            Debug.assert(SyntaxFacts.isDivideOrRegularExpressionToken(currentToken.tokenKind));
             if(currentToken.tokenKind === 115 /* SlashToken */  || currentToken.tokenKind === 116 /* SlashEqualsToken */ ) {
                 return null;
             } else {
