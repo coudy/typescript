@@ -404,8 +404,9 @@ module Parser {
         // source is pointing at a "/" or "/=" token. 
         currentTokenAllowingRegularExpression(): ISyntaxToken;
 
-        // The absolute index that the current token starts at.  
-        currentTokenFullStart(): number;
+        // The absolute index that the current token starts at.  'currentToken' and 'currentNode'
+        // have their fullStart at this position.  previousToken has it's fullEnd at this position.
+        absolutePosition(): number;
 
         // Called to move the source to the next node or token once the parser has consumed the 
         // current one.
@@ -462,8 +463,8 @@ module Parser {
         // The previous token to the current token.  Set when we advance to the next token.
         private _previousToken: ISyntaxToken = null;
 
-        // The full start position of the current token the parser is pointing at.
-        private _currentTokenFullStart: number = 0;
+        // The absolute position we're at in the text we're reading from.
+        private _absolutePosition: number = 0;
 
         // The diagnostics we get while scanning.  Note: this never gets rewound when we do a normal
         // rewind.  That's because rewinding doesn't affect the tokens created.  It only affects where
@@ -513,14 +514,14 @@ module Parser {
         }
 
         private moveToNextToken(): void {
-            this._currentTokenFullStart += this.currentToken().fullWidth();
+            this._absolutePosition += this.currentToken().fullWidth();
             this._previousToken = this.currentToken();
 
             this.slidingWindow.moveToNextItem();
         }
 
-        private currentTokenFullStart() {
-            return this._currentTokenFullStart;
+        private absolutePosition() {
+            return this._absolutePosition;
         }
 
         private getOrCreateRewindPoint(): IParserRewindPoint {
@@ -541,7 +542,7 @@ module Parser {
 
             (<any>rewindPoint).absoluteIndex = absoluteIndex;
             (<any>rewindPoint).previousToken = this._previousToken;
-            (<any>rewindPoint).currentTokenFullStart = this._currentTokenFullStart;
+            (<any>rewindPoint).absolutePosition = this._absolutePosition;
 
             rewindPoint.pinCount = this.slidingWindow.pinCount();
 
@@ -552,7 +553,7 @@ module Parser {
             this.slidingWindow.rewindToPinnedIndex((<any>rewindPoint).absoluteIndex);
             
             this._previousToken = (<any>rewindPoint).previousToken;
-            this._currentTokenFullStart = (<any>rewindPoint).currentTokenFullStart;
+            this._absolutePosition = (<any>rewindPoint).absolutePosition;
         }
 
         private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
@@ -567,13 +568,13 @@ module Parser {
             return this.slidingWindow.currentItem(/*allowRegularExpression:*/ false);
         }
 
-        private removeDiagnosticsAfterCurrentTokenFullStart() {
+        private removeDiagnosticsOnOrAfterPosition(position: number): void {
             // walk backwards, removing any diagnostics that came after the the current token's
             // full start position.
             var tokenDiagnosticsLength = this._tokenDiagnostics.length;
             while (tokenDiagnosticsLength > 0) {
                 var diagnostic = this._tokenDiagnostics[tokenDiagnosticsLength - 1];
-                if (diagnostic.position() >= this._currentTokenFullStart) {
+                if (diagnostic.position() >= position) {
                     tokenDiagnosticsLength--;
                 }
                 else {
@@ -585,18 +586,18 @@ module Parser {
         }
 
         public resetToPosition(absolutePosition: number, previousToken: ISyntaxToken): void {
-            this._currentTokenFullStart = absolutePosition;
+            this._absolutePosition = absolutePosition;
             this._previousToken = previousToken;
 
             // First, remove any diagnostics that came from the slash or afterwards.
-            this.removeDiagnosticsAfterCurrentTokenFullStart();
+            this.removeDiagnosticsOnOrAfterPosition(absolutePosition);
 
             // Now, tell our sliding window to throw away all tokens from the / onwards (including the /).
             this.slidingWindow.disgardAllItemsFromCurrentIndexOnwards();
 
             // Now tell the scanner to reset its position to the start of the / token as well.  That way
             // when we try to scan the next item, we'll be at the right location.
-            this.scanner.setAbsoluteIndex(this._currentTokenFullStart);
+            this.scanner.setAbsoluteIndex(absolutePosition);
         }
 
         public currentTokenAllowingRegularExpression(): ISyntaxToken {
@@ -611,7 +612,7 @@ module Parser {
             // not have been what the scanner would have produced if it decides that this is actually
             // a regular expresion.
 
-            this.resetToPosition(this._currentTokenFullStart, this._previousToken);
+            this.resetToPosition(this._absolutePosition, this._previousToken);
 
             // Now actually fetch the token again from the scanner. This time let it know that it
             // can scan it as a regex token if it wants to.
@@ -762,7 +763,7 @@ module Parser {
                 : null;
         }
 
-        private currentTokenFullStart(): number {
+        private absolutePosition(): number {
             return this._currentElementFullStart;
         }
 
@@ -1065,7 +1066,7 @@ module Parser {
         }
 
         private currentTokenStart(): number {
-            return this.currentTokenFullStart() + this.currentToken().leadingTriviaWidth();
+            return this.source.absolutePosition() + this.currentToken().leadingTriviaWidth();
         }
 
         private previousTokenStart(): number {
@@ -1073,7 +1074,7 @@ module Parser {
                 return 0;
             }
 
-            return this.currentTokenFullStart() -
+            return this.source.absolutePosition() -
                    this.previousToken().fullWidth() +
                    this.previousToken().leadingTriviaWidth();
         }
@@ -1096,10 +1097,6 @@ module Parser {
 
         private currentTokenAllowingRegularExpression(): ISyntaxToken {
             return this.source.currentTokenAllowingRegularExpression();
-        }
-
-        private currentTokenFullStart(): number {
-            return this.source.currentTokenFullStart();
         }
 
         private peekTokenN(n: number): ISyntaxToken {
