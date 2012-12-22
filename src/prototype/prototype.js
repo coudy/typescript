@@ -26223,32 +26223,20 @@ var Parser;
             this.slidingWindow = new SlidingWindow(this, 32, null);
             this.scanner = new Scanner(text, languageVersion, stringTable);
         }
-        NormalParserSource.prototype.tokenDiagnostics = function () {
-            return this._tokenDiagnostics;
-        };
-        NormalParserSource.prototype.fetchMoreItems = function (allowRegularExpression, sourceIndex, window, destinationIndex, spaceAvailable) {
-            window[destinationIndex] = this.scanner.scan(this._tokenDiagnostics, allowRegularExpression);
-            return 1;
-        };
-        NormalParserSource.prototype.peekTokenN = function (n) {
-            return this.slidingWindow.peekItemN(n);
-        };
-        NormalParserSource.prototype.previousToken = function () {
-            return this._previousToken;
-        };
         NormalParserSource.prototype.currentNode = function () {
             return null;
         };
         NormalParserSource.prototype.moveToNextNode = function () {
             throw Errors.invalidOperation();
         };
-        NormalParserSource.prototype.moveToNextToken = function () {
-            this._absolutePosition += this.currentToken().fullWidth();
-            this._previousToken = this.currentToken();
-            this.slidingWindow.moveToNextItem();
-        };
         NormalParserSource.prototype.absolutePosition = function () {
             return this._absolutePosition;
+        };
+        NormalParserSource.prototype.previousToken = function () {
+            return this._previousToken;
+        };
+        NormalParserSource.prototype.tokenDiagnostics = function () {
+            return this._tokenDiagnostics;
         };
         NormalParserSource.prototype.getOrCreateRewindPoint = function () {
             if(this.rewindPointPoolCount === 0) {
@@ -26279,6 +26267,18 @@ var Parser;
             this.slidingWindow.releaseAndUnpinAbsoluteIndex((rewindPoint).absoluteIndex);
             this.rewindPointPool[this.rewindPointPoolCount] = rewindPoint;
             this.rewindPointPoolCount++;
+        };
+        NormalParserSource.prototype.fetchMoreItems = function (allowRegularExpression, sourceIndex, window, destinationIndex, spaceAvailable) {
+            window[destinationIndex] = this.scanner.scan(this._tokenDiagnostics, allowRegularExpression);
+            return 1;
+        };
+        NormalParserSource.prototype.peekTokenN = function (n) {
+            return this.slidingWindow.peekItemN(n);
+        };
+        NormalParserSource.prototype.moveToNextToken = function () {
+            this._absolutePosition += this.currentToken().fullWidth();
+            this._previousToken = this.currentToken();
+            this.slidingWindow.moveToNextItem();
         };
         NormalParserSource.prototype.currentToken = function () {
             return this.slidingWindow.currentItem(false);

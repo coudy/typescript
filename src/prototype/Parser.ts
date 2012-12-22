@@ -545,25 +545,6 @@ module Parser {
             this.scanner = new Scanner(text, languageVersion, stringTable);
         }
 
-        public tokenDiagnostics(): SyntaxDiagnostic[] {
-            return this._tokenDiagnostics;
-        }
-
-        private fetchMoreItems(allowRegularExpression: bool, sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
-            // Assert disabled because it is actually expensive enugh to affect perf.
-            // Debug.assert(spaceAvailable > 0);
-            window[destinationIndex] = this.scanner.scan(this._tokenDiagnostics, allowRegularExpression);
-            return 1;
-        }
-
-        private peekTokenN(n: number): ISyntaxToken {
-            return this.slidingWindow.peekItemN(n);
-        }
-
-        private previousToken(): ISyntaxToken {
-            return this._previousToken;
-        }
-
         private currentNode(): SyntaxNode {
             // The normal parser source never returns nodes.  They're only returned by the 
             // incremental parser source.
@@ -575,15 +556,16 @@ module Parser {
             throw Errors.invalidOperation();
         }
 
-        private moveToNextToken(): void {
-            this._absolutePosition += this.currentToken().fullWidth();
-            this._previousToken = this.currentToken();
-
-            this.slidingWindow.moveToNextItem();
-        }
-
         private absolutePosition() {
             return this._absolutePosition;
+        }
+
+        private previousToken(): ISyntaxToken {
+            return this._previousToken;
+        }
+
+        public tokenDiagnostics(): SyntaxDiagnostic[] {
+            return this._tokenDiagnostics;
         }
 
         private getOrCreateRewindPoint(): IParserRewindPoint {
@@ -624,6 +606,24 @@ module Parser {
 
             this.rewindPointPool[this.rewindPointPoolCount] = rewindPoint;
             this.rewindPointPoolCount++;
+        }
+
+        private fetchMoreItems(allowRegularExpression: bool, sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
+            // Assert disabled because it is actually expensive enugh to affect perf.
+            // Debug.assert(spaceAvailable > 0);
+            window[destinationIndex] = this.scanner.scan(this._tokenDiagnostics, allowRegularExpression);
+            return 1;
+        }
+
+        private peekTokenN(n: number): ISyntaxToken {
+            return this.slidingWindow.peekItemN(n);
+        }
+
+        private moveToNextToken(): void {
+            this._absolutePosition += this.currentToken().fullWidth();
+            this._previousToken = this.currentToken();
+
+            this.slidingWindow.moveToNextItem();
         }
 
         public currentToken(): ISyntaxToken {
