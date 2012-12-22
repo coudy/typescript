@@ -204,7 +204,7 @@ class SyntaxNode implements ISyntaxElement {
         return false;
     }
 
-    public spliceInto(array: ISyntaxElement[], start: number, deleteCount: number) {
+    public insertChildrenInto(array: ISyntaxElement[], index: number) {
         throw Errors.abstract();
     }
 }

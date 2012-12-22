@@ -1573,6 +1573,38 @@ function generateLastTokenMethod(definition: ITypeDefinition): string {
     return result;
 }
 
+function generateInsertChildrenIntoMethod(definition: ITypeDefinition): string {
+    var result = "";
+
+    if (!definition.isAbstract) {
+
+        result += "\r\n";
+        result += "    public insertChildrenInto(array: ISyntaxElement[], index: number) {\r\n";
+
+        for (var i = definition.children.length - 1; i >= 0; i--) {
+            var child = definition.children[i];
+
+            if (child.type === "SyntaxKind") {
+                continue;
+            }
+
+            if (child.isList || child.isSeparatedList) {
+                result += "        " + getPropertyAccess(child) + ".insertChildrenInto(array, index);\r\n";
+            }
+            else if (child.isOptional) {
+                result += "        if (" + getPropertyAccess(child) + " !== null) { array.splice(index, 0, " + getPropertyAccess(child) + "); }\r\n";
+            }
+            else {
+                result += "        array.splice(index, 0, " + getPropertyAccess(child) + ");\r\n";
+            }
+        }
+
+        result += "    }\r\n";
+    }
+
+    return result;
+}
+
 function baseType(definition: ITypeDefinition) {
     return ArrayUtilities.firstOrDefault(definitions, d => d.name === definition.baseType);
 }
@@ -1989,6 +2021,7 @@ function generateNode(definition: ITypeDefinition): string {
     result += generateIsMissingMethod(definition);
     result += generateFirstTokenMethod(definition);
     result += generateLastTokenMethod(definition);
+    result += generateInsertChildrenIntoMethod(definition);
     result += generateAccessors(definition);
     result += generateUpdateMethod(definition);
     result += generateTriviaMethods(definition);

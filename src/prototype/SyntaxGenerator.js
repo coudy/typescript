@@ -3880,6 +3880,30 @@ function generateLastTokenMethod(definition) {
     }
     return result;
 }
+function generateInsertChildrenIntoMethod(definition) {
+    var result = "";
+    if(!definition.isAbstract) {
+        result += "\r\n";
+        result += "    public insertChildrenInto(array: ISyntaxElement[], index: number) {\r\n";
+        for(var i = definition.children.length - 1; i >= 0; i--) {
+            var child = definition.children[i];
+            if(child.type === "SyntaxKind") {
+                continue;
+            }
+            if(child.isList || child.isSeparatedList) {
+                result += "        " + getPropertyAccess(child) + ".insertChildrenInto(array, index);\r\n";
+            } else {
+                if(child.isOptional) {
+                    result += "        if (" + getPropertyAccess(child) + " !== null) { array.splice(index, 0, " + getPropertyAccess(child) + "); }\r\n";
+                } else {
+                    result += "        array.splice(index, 0, " + getPropertyAccess(child) + ");\r\n";
+                }
+            }
+        }
+        result += "    }\r\n";
+    }
+    return result;
+}
 function baseType(definition) {
     return ArrayUtilities.firstOrDefault(definitions, function (d) {
         return d.name === definition.baseType;
@@ -4187,6 +4211,7 @@ function generateNode(definition) {
     result += generateIsMissingMethod(definition);
     result += generateFirstTokenMethod(definition);
     result += generateLastTokenMethod(definition);
+    result += generateInsertChildrenIntoMethod(definition);
     result += generateAccessors(definition);
     result += generateUpdateMethod(definition);
     result += generateTriviaMethods(definition);

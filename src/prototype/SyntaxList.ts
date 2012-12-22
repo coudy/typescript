@@ -70,6 +70,9 @@ module Syntax {
             // should have skipped over this.
             throw Errors.invalidOperation();
         }
+
+        public insertChildrenInto(array: ISyntaxElement[], index: number): void {
+        }
     }
 
     export var emptyList: ISyntaxList = new EmptySyntaxList();
@@ -149,6 +152,10 @@ module Syntax {
         public findTokenInternal(position: number): SyntaxNode {
             Debug.assert(position >= 0 && position < this.item.fullWidth());
             return (<any>this.item).findTokenInternal(position);
+        }
+
+        public insertChildrenInto(array: ISyntaxElement[], index: number): void {
+            array.splice(index, 0, this.item);
         }
     }
 
@@ -299,6 +306,10 @@ module Syntax {
             }
 
             throw Errors.invalidOperation();
+        }
+
+        public insertChildrenInto(array: ISyntaxElement[], index: number): void {
+            array.splice.apply(array, index, 0, this.nodes);
         }
     }
 

@@ -14,4 +14,6 @@ interface ISyntaxList extends ISyntaxElement {
     hasSkippedText(): bool;
     hasZeroWidthToken(): bool;
     hasRegularExpressionToken(): bool;
+
+    insertChildrenInto(array: ISyntaxElement[], index: number): void;
 }

@@ -51,6 +51,9 @@ module Syntax {
             // This should never have been called on this list.  It has a 0 width, so the client 
             // should have skipped over this.
             throw Errors.invalidOperation();
+        },
+
+        insertChildrenInto: (array: ISyntaxElement[], index: number): void {
         }
     }
 
@@ -145,6 +148,10 @@ module Syntax {
         public findTokenInternal(position: number): SyntaxNode {
             Debug.assert(position >= 0 && position < this.item.fullWidth());
             return (<any>this.item).findTokenInternal(position);
+        }
+
+        public insertChildrenInto(array: ISyntaxElement[], index: number): void {
+            array.splice(index, 0, this.item);
         }
     }
 
@@ -362,6 +369,10 @@ module Syntax {
                 var element: any = this.elements[i];
                 element.collectTextElements(elements);
             }
+        }
+
+        public insertChildrenInto(array: ISyntaxElement[], index: number): void {
+            array.splice.apply(array, index, 0, this.elements);
         }
     }
 
