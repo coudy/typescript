@@ -18696,7 +18696,9 @@ var SlidingWindow = (function () {
         if(this.absoluteIndex() === absoluteIndex) {
             return;
         }
-        Debug.assert(this._pinCount === 0);
+        if(this._pinCount > 0) {
+            Debug.assert(absoluteIndex >= this.windowAbsoluteStartIndex && absoluteIndex < this.windowAbsoluteEndIndex());
+        }
         if(absoluteIndex >= this.windowAbsoluteStartIndex && absoluteIndex < this.windowAbsoluteEndIndex()) {
             this.currentRelativeItemIndex = (absoluteIndex - this.windowAbsoluteStartIndex);
         } else {
@@ -26111,53 +26113,56 @@ var Parser;
     })(SyntaxRewriter);    
     var SyntaxCursor = (function () {
         function SyntaxCursor(sourceUnit) {
-            this.elements = [];
-            this.index = 0;
-            this.pinCount = 0;
-            sourceUnit.insertChildrenInto(this.elements, 0);
+            this._elements = [];
+            this._index = 0;
+            this._pinCount = 0;
+            sourceUnit.insertChildrenInto(this._elements, 0);
         }
         SyntaxCursor.prototype.currentElement = function () {
             Debug.assert(!this.isFinished());
-            return this.elements[this.index];
+            return this._elements[this._index];
         };
         SyntaxCursor.prototype.isFinished = function () {
-            return this.elements[this.index].kind() === 118 /* EndOfFileToken */ ;
+            return this._elements[this._index].kind() === 118 /* EndOfFileToken */ ;
         };
         SyntaxCursor.prototype.moveToFirstChild = function () {
             Debug.assert(!this.isFinished());
-            var element = this.elements[this.index];
+            var element = this._elements[this._index];
             if(element.isToken()) {
                 return;
             }
             var node = element;
-            this.elements.splice(this.index, 1);
-            node.insertChildrenInto(this.elements, this.index);
+            this._elements.splice(this._index, 1);
+            node.insertChildrenInto(this._elements, this._index);
         };
         SyntaxCursor.prototype.moveToNextSibling = function () {
             Debug.assert(!this.isFinished());
-            if(this.pinCount > 0) {
-                this.index++;
+            if(this._pinCount > 0) {
+                this._index++;
                 return;
             }
-            Debug.assert(this.index === 0);
-            this.elements.shift();
+            Debug.assert(this._index === 0);
+            this._elements.shift();
         };
         SyntaxCursor.prototype.getAndPinCursorIndex = function () {
-            this.pinCount++;
-            return this.index;
+            this._pinCount++;
+            return this._index;
         };
         SyntaxCursor.prototype.releaseAndUnpinCursorIndex = function (index) {
-            this.index = index;
-            Debug.assert(this.pinCount > 0);
-            this.pinCount--;
-            if(this.pinCount === 0) {
-                Debug.assert(this.index === 0);
+            this._index = index;
+            Debug.assert(this._pinCount > 0);
+            this._pinCount--;
+            if(this._pinCount === 0) {
+                Debug.assert(this._index === 0);
             }
         };
         SyntaxCursor.prototype.rewindToPinnedCursorIndex = function (index) {
-            Debug.assert(index >= 0 && index < this.elements.length);
-            Debug.assert(this.pinCount > 0);
-            this.index = index;
+            Debug.assert(index >= 0 && index < this._elements.length);
+            Debug.assert(this._pinCount > 0);
+            this._index = index;
+        };
+        SyntaxCursor.prototype.pinCount = function () {
+            return this._pinCount;
         };
         return SyntaxCursor;
     })();    
@@ -26223,6 +26228,7 @@ var Parser;
             return false;
         };
         NormalParserSource.prototype.readTokenFromScanner = function (allowRegularExpression) {
+            Debug.assert(this._changeDelta > 0 || this._previousSourceUnitCursor.isFinished());
             return this._scanner.scan(this._tokenDiagnostics, allowRegularExpression);
         };
         NormalParserSource.prototype.skipNodeOrToken = function () {
@@ -26267,22 +26273,31 @@ var Parser;
             return result;
         };
         NormalParserSource.prototype.getRewindPoint = function () {
-            var absoluteIndex = this._slidingWindow.getAndPinAbsoluteIndex();
+            var slidingWindowIndex = this._slidingWindow.getAndPinAbsoluteIndex();
+            var cursorIndex = this._previousSourceUnitCursor.getAndPinCursorIndex();
             var rewindPoint = this.getOrCreateRewindPoint();
-            (rewindPoint).absoluteIndex = absoluteIndex;
-            (rewindPoint).previousToken = this._previousToken;
-            (rewindPoint).absolutePosition = this._absolutePosition;
+            rewindPoint.slidingWindowIndex = slidingWindowIndex;
+            rewindPoint.cursorIndex = cursorIndex;
+            rewindPoint.previousToken = this._previousToken;
+            rewindPoint.absolutePosition = this._absolutePosition;
+            rewindPoint.changeDelta = this._changeDelta;
+            rewindPoint.changeRange = this._changeRange;
+            Debug.assert(this._slidingWindow.pinCount() === this._previousSourceUnitCursor.pinCount());
             rewindPoint.pinCount = this._slidingWindow.pinCount();
             return rewindPoint;
         };
         NormalParserSource.prototype.rewind = function (rewindPoint) {
-            this._slidingWindow.rewindToPinnedIndex((rewindPoint).absoluteIndex);
-            this._previousToken = (rewindPoint).previousToken;
-            this._absolutePosition = (rewindPoint).absolutePosition;
+            this._slidingWindow.rewindToPinnedIndex(rewindPoint.slidingWindowIndex);
+            this._previousSourceUnitCursor.rewindToPinnedCursorIndex(rewindPoint.cursorIndex);
+            this._previousToken = rewindPoint.previousToken;
+            this._absolutePosition = rewindPoint.absolutePosition;
+            this._changeDelta = rewindPoint.changeDelta;
+            this._changeRange = rewindPoint.changeRange;
         };
         NormalParserSource.prototype.releaseRewindPoint = function (rewindPoint) {
             Debug.assert(this._slidingWindow.pinCount() === rewindPoint.pinCount);
-            this._slidingWindow.releaseAndUnpinAbsoluteIndex((rewindPoint).absoluteIndex);
+            this._slidingWindow.releaseAndUnpinAbsoluteIndex(rewindPoint.slidingWindowIndex);
+            this._previousSourceUnitCursor.releaseAndUnpinCursorIndex(rewindPoint.cursorIndex);
             this.rewindPointPool[this.rewindPointPoolCount] = rewindPoint;
             this.rewindPointPoolCount++;
         };

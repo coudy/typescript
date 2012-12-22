@@ -12,6 +12,16 @@ module Parser {
     // Information the parser needs to effectively rewind.  Note: individual parser sources may
     // store additional information in this structure for their own purposes.
     interface IParserRewindPoint {
+        // Information used by the parser source.
+        slidingWindowIndex: number;
+        cursorIndex: number;
+        previousToken: ISyntaxToken;
+        absolutePosition: number;
+        changeDelta: number;
+        changeRange: TextChangeRange;
+
+        // Information used by the parser itself.
+
         // As we speculatively parser, we may build up diagnostics and skipped tokens.  When we    
         // rewind we want to 'forget' that information.  In order to do that we store the count
         // of diagnostics and skipped tokens when we start speculating, and we reset to that
@@ -274,27 +284,27 @@ module Parser {
     // the previously parsed tree to provide nodes and tokens that can be reused when parsing the
     // updated text.
     class SyntaxCursor {
-        private elements: ISyntaxElement[] = [];
-        private index: number = 0;
-        private pinCount: number = 0;
+        private _elements: ISyntaxElement[] = [];
+        private _index: number = 0;
+        private _pinCount: number = 0;
 
         constructor(sourceUnit: SourceUnitSyntax) {
-            sourceUnit.insertChildrenInto(this.elements, 0);
+            sourceUnit.insertChildrenInto(this._elements, 0);
         }
 
         public currentElement(): ISyntaxElement {
             Debug.assert(!this.isFinished());
-            return this.elements[this.index];
+            return this._elements[this._index];
         }
 
         public isFinished(): bool {
-            return this.elements[this.index].kind() === SyntaxKind.EndOfFileToken;
+            return this._elements[this._index].kind() === SyntaxKind.EndOfFileToken;
         }
 
         public moveToFirstChild() {
             Debug.assert(!this.isFinished());
 
-            var element = this.elements[this.index];
+            var element = this._elements[this._index];
             if (element.isToken()) {
                 // If we're already on a token, there's nothing to do.
                 return;
@@ -303,48 +313,52 @@ module Parser {
             // Otherwise, break the node we're pointing at into its children.  We'll then be 
             // pointing at the first child
             var node = <SyntaxNode>element;
-            this.elements.splice(this.index, 1);
-            node.insertChildrenInto(this.elements, this.index);
+            this._elements.splice(this._index, 1);
+            node.insertChildrenInto(this._elements, this._index);
         }
 
         public moveToNextSibling() {
             Debug.assert(!this.isFinished());
 
-            if (this.pinCount > 0) {
+            if (this._pinCount > 0) {
                 // If we're currently pinned, then just move our index forward.  We'll then be 
                 // pointing at the next sibling.
-                this.index++;
+                this._index++;
                 return;
             }
 
             // if we're not pinned, we better be pointed at the first item in the list.
-            Debug.assert(this.index === 0);
+            Debug.assert(this._index === 0);
 
             // Just shift ourselves over so we forget the current element we're pointing at and 
             // we're pointing at the next slibing.
-            this.elements.shift();
+            this._elements.shift();
         }
 
         public getAndPinCursorIndex(): number {
-            this.pinCount++;
-            return this.index;
+            this._pinCount++;
+            return this._index;
         }
 
         public releaseAndUnpinCursorIndex(index: number) {
-            this.index = index;
+            this._index = index;
 
-            Debug.assert(this.pinCount > 0);
-            this.pinCount--;
-            if (this.pinCount === 0) {
+            Debug.assert(this._pinCount > 0);
+            this._pinCount--;
+            if (this._pinCount === 0) {
                 // The first pin was given out at index 0.  So we better be back at index 0.
-                Debug.assert(this.index === 0);
+                Debug.assert(this._index === 0);
             }
         }
 
         public rewindToPinnedCursorIndex(index: number): void {
-            Debug.assert(index >= 0 && index < this.elements.length);
-            Debug.assert(this.pinCount > 0);
-            this.index = index;
+            Debug.assert(index >= 0 && index < this._elements.length);
+            Debug.assert(this._pinCount > 0);
+            this._index = index;
+        }
+
+        public pinCount(): number {
+            return this._pinCount;
         }
     }
 
@@ -638,6 +652,8 @@ module Parser {
         }
 
         private currentNode(): SyntaxNode {
+            // We can only return nodes if we're not currently eating into any tokens.
+
             // The normal parser source never returns nodes.  They're only returned by the 
             // incremental parser source.
             return null;
@@ -671,29 +687,37 @@ module Parser {
         }
 
         private getRewindPoint(): IParserRewindPoint {
-            var absoluteIndex = this._slidingWindow.getAndPinAbsoluteIndex();
-            
+            var slidingWindowIndex = this._slidingWindow.getAndPinAbsoluteIndex();
+            var cursorIndex = this._previousSourceUnitCursor.getAndPinCursorIndex();
+
             var rewindPoint = this.getOrCreateRewindPoint();
 
-            (<any>rewindPoint).absoluteIndex = absoluteIndex;
-            (<any>rewindPoint).previousToken = this._previousToken;
-            (<any>rewindPoint).absolutePosition = this._absolutePosition;
+            rewindPoint.slidingWindowIndex = slidingWindowIndex;
+            rewindPoint.cursorIndex = cursorIndex;
+            rewindPoint.previousToken = this._previousToken;
+            rewindPoint.absolutePosition = this._absolutePosition;
+            rewindPoint.changeDelta = this._changeDelta;
+            rewindPoint.changeRange = this._changeRange;
 
+            Debug.assert(this._slidingWindow.pinCount() === this._previousSourceUnitCursor.pinCount());
             rewindPoint.pinCount = this._slidingWindow.pinCount();
 
             return rewindPoint;
         }
 
         private rewind(rewindPoint: IParserRewindPoint): void {
-            this._slidingWindow.rewindToPinnedIndex((<any>rewindPoint).absoluteIndex);
-            
-            this._previousToken = (<any>rewindPoint).previousToken;
-            this._absolutePosition = (<any>rewindPoint).absolutePosition;
+            this._slidingWindow.rewindToPinnedIndex(rewindPoint.slidingWindowIndex);
+            this._previousSourceUnitCursor.rewindToPinnedCursorIndex(rewindPoint.cursorIndex);
+            this._previousToken = rewindPoint.previousToken;
+            this._absolutePosition = rewindPoint.absolutePosition;
+            this._changeDelta = rewindPoint.changeDelta;
+            this._changeRange = rewindPoint.changeRange;
         }
 
         private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
             Debug.assert(this._slidingWindow.pinCount() === rewindPoint.pinCount);
-            this._slidingWindow.releaseAndUnpinAbsoluteIndex((<any>rewindPoint).absoluteIndex);
+            this._slidingWindow.releaseAndUnpinAbsoluteIndex(rewindPoint.slidingWindowIndex);
+            this._previousSourceUnitCursor.releaseAndUnpinCursorIndex(rewindPoint.cursorIndex);
 
             this.rewindPointPool[this.rewindPointPoolCount] = rewindPoint;
             this.rewindPointPoolCount++;
@@ -720,7 +744,7 @@ module Parser {
             this._tokenDiagnostics.length = tokenDiagnosticsLength;
         }
 
-        public resetToPosition(absolutePosition: number, previousToken: ISyntaxToken): void {
+        private resetToPosition(absolutePosition: number, previousToken: ISyntaxToken): void {
             this._absolutePosition = absolutePosition;
             this._previousToken = previousToken;
 

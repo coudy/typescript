@@ -197,11 +197,15 @@ class SlidingWindow {
 
     public setAbsoluteIndex(absoluteIndex: number): void {
         if (this.absoluteIndex() === absoluteIndex) {
+            // Nothing to do if we're setting hte absolute index to where we current are.
             return;
         }
 
-        // Shoudln't try to set the index while we currently have an active pin.
-        Debug.assert(this._pinCount === 0);
+        if (this._pinCount > 0) {
+            // If we have any active pins, then the caller better be setting the index somewhere
+            // inside our active window.
+            Debug.assert(absoluteIndex >= this.windowAbsoluteStartIndex && absoluteIndex < this.windowAbsoluteEndIndex());
+        }
 
         if (absoluteIndex >= this.windowAbsoluteStartIndex && absoluteIndex < this.windowAbsoluteEndIndex()) {
             // The caller is setting the index to some place inside our current window.  This is 
