@@ -459,11 +459,6 @@ module Parser {
         // The scanner we're pulling tokens from.
         private scanner: Scanner;
 
-        // The current token the parser is examining.  If it is null it needs to be fetched from the 
-        // scanner.  Cached because it's accessed so often that even getting it from the sliding window
-        // can be expensive.
-        private _currentToken: ISyntaxToken = null;
-
         // The previous token to the current token.  Set when we advance to the next token.
         private _previousToken: ISyntaxToken = null;
 
@@ -518,9 +513,8 @@ module Parser {
         }
 
         private moveToNextToken(): void {
-            this._currentTokenFullStart += this._currentToken.fullWidth();
-            this._previousToken = this._currentToken;
-            this._currentToken = null;
+            this._currentTokenFullStart += this.currentToken().fullWidth();
+            this._previousToken = this.currentToken();
 
             this.slidingWindow.moveToNextItem();
         }
@@ -557,7 +551,6 @@ module Parser {
         private rewind(rewindPoint: IParserRewindPoint): void {
             this.slidingWindow.rewindToPinnedIndex((<any>rewindPoint).absoluteIndex);
             
-            this._currentToken = null;
             this._previousToken = (<any>rewindPoint).previousToken;
             this._currentTokenFullStart = (<any>rewindPoint).currentTokenFullStart;
         }
@@ -566,20 +559,12 @@ module Parser {
             Debug.assert(this.slidingWindow.pinCount() === rewindPoint.pinCount);
             this.slidingWindow.releaseAndUnpinAbsoluteIndex((<any>rewindPoint).absoluteIndex);
 
-            // this.rewindPoints.push(rewindPoint);
             this.rewindPointPool[this.rewindPointPoolCount] = rewindPoint;
             this.rewindPointPoolCount++;
         }
 
         public currentToken(): ISyntaxToken {
-            var result = this._currentToken;
-
-            if (result === null) {
-                result = this.slidingWindow.currentItem(/*allowRegularExpression:*/ false);
-                this._currentToken = result;
-            }
-
-            return result;
+            return this.slidingWindow.currentItem(/*allowRegularExpression:*/ false);
         }
 
         private removeDiagnosticsAfterCurrentTokenFullStart() {
@@ -602,7 +587,6 @@ module Parser {
         public resetToPosition(absolutePosition: number, previousToken: ISyntaxToken): void {
             this._currentTokenFullStart = absolutePosition;
             this._previousToken = previousToken;
-            this._currentToken = null;
 
             // First, remove any diagnostics that came from the slash or afterwards.
             this.removeDiagnosticsAfterCurrentTokenFullStart();
@@ -629,18 +613,15 @@ module Parser {
 
             this.resetToPosition(this._currentTokenFullStart, this._previousToken);
 
-            // We better not have a token anymore.
-            Debug.assert(this._currentToken === null);
-
             // Now actually fetch the token again from the scanner. This time let it know that it
             // can scan it as a regex token if it wants to.
-            this._currentToken = this.slidingWindow.currentItem(/*allowRegularExpression:*/ true);
+            var token = this.slidingWindow.currentItem(/*allowRegularExpression:*/ true);
 
             // We have better gotten some sort of regex token.  Otherwise, something *very* wrong has
             // occurred.
-            Debug.assert(SyntaxFacts.isDivideOrRegularExpressionToken(this._currentToken.kind()));
+            Debug.assert(SyntaxFacts.isDivideOrRegularExpressionToken(token.kind()));
 
-            return this._currentToken;
+            return token;
         }
     }
 

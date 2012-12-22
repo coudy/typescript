@@ -25567,7 +25567,6 @@ var Parser;
     })();    
     var NormalParserSource = (function () {
         function NormalParserSource(text, languageVersion, stringTable) {
-            this._currentToken = null;
             this._previousToken = null;
             this._currentTokenFullStart = 0;
             this._tokenDiagnostics = [];
@@ -25596,9 +25595,8 @@ var Parser;
             throw Errors.invalidOperation();
         };
         NormalParserSource.prototype.moveToNextToken = function () {
-            this._currentTokenFullStart += this._currentToken.fullWidth();
-            this._previousToken = this._currentToken;
-            this._currentToken = null;
+            this._currentTokenFullStart += this.currentToken().fullWidth();
+            this._previousToken = this.currentToken();
             this.slidingWindow.moveToNextItem();
         };
         NormalParserSource.prototype.currentTokenFullStart = function () {
@@ -25625,7 +25623,6 @@ var Parser;
         };
         NormalParserSource.prototype.rewind = function (rewindPoint) {
             this.slidingWindow.rewindToPinnedIndex((rewindPoint).absoluteIndex);
-            this._currentToken = null;
             this._previousToken = (rewindPoint).previousToken;
             this._currentTokenFullStart = (rewindPoint).currentTokenFullStart;
         };
@@ -25636,12 +25633,7 @@ var Parser;
             this.rewindPointPoolCount++;
         };
         NormalParserSource.prototype.currentToken = function () {
-            var result = this._currentToken;
-            if(result === null) {
-                result = this.slidingWindow.currentItem(false);
-                this._currentToken = result;
-            }
-            return result;
+            return this.slidingWindow.currentItem(false);
         };
         NormalParserSource.prototype.removeDiagnosticsAfterCurrentTokenFullStart = function () {
             var tokenDiagnosticsLength = this._tokenDiagnostics.length;
@@ -25658,17 +25650,15 @@ var Parser;
         NormalParserSource.prototype.resetToPosition = function (absolutePosition, previousToken) {
             this._currentTokenFullStart = absolutePosition;
             this._previousToken = previousToken;
-            this._currentToken = null;
             this.removeDiagnosticsAfterCurrentTokenFullStart();
             this.slidingWindow.disgardAllItemsFromCurrentIndexOnwards();
             this.scanner.setAbsoluteIndex(this._currentTokenFullStart);
         };
         NormalParserSource.prototype.currentTokenAllowingRegularExpression = function () {
             this.resetToPosition(this._currentTokenFullStart, this._previousToken);
-            Debug.assert(this._currentToken === null);
-            this._currentToken = this.slidingWindow.currentItem(true);
-            Debug.assert(SyntaxFacts.isDivideOrRegularExpressionToken(this._currentToken.kind()));
-            return this._currentToken;
+            var token = this.slidingWindow.currentItem(true);
+            Debug.assert(SyntaxFacts.isDivideOrRegularExpressionToken(token.kind()));
+            return token;
         };
         return NormalParserSource;
     })();    
