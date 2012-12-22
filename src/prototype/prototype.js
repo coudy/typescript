@@ -25512,6 +25512,59 @@ var Parser;
         };
         return SkippedTokensAdder;
     })(SyntaxRewriter);    
+    var SyntaxCursor = (function () {
+        function SyntaxCursor() {
+            this.elements = [];
+            this.index = 0;
+            this.pinCount = 0;
+        }
+        SyntaxCursor.prototype.SyntaxCursor = function (sourceUnit) {
+            sourceUnit.spliceInto(this.elements, 0, 0);
+        };
+        SyntaxCursor.prototype.currentElement = function () {
+            Debug.assert(!this.isFinished());
+            return this.elements[this.index];
+        };
+        SyntaxCursor.prototype.isFinished = function () {
+            return this.elements[this.index].kind() === 118 /* EndOfFileToken */ ;
+        };
+        SyntaxCursor.prototype.moveToFirstChild = function () {
+            Debug.assert(!this.isFinished());
+            var element = this.elements[this.index];
+            if(element.isToken()) {
+                return;
+            }
+            var node = element;
+            node.spliceInto(this.elements, this.index, 1);
+        };
+        SyntaxCursor.prototype.moveToNextSibling = function () {
+            Debug.assert(!this.isFinished());
+            if(this.pinCount > 0) {
+                this.index++;
+                return;
+            }
+            Debug.assert(this.index === 0);
+            this.elements.shift();
+        };
+        SyntaxCursor.prototype.getAndPinCursorIndex = function () {
+            this.pinCount++;
+            return this.index;
+        };
+        SyntaxCursor.prototype.releaseAndUnpinCursorIndex = function (index) {
+            this.index = index;
+            Debug.assert(this.pinCount > 0);
+            this.pinCount--;
+            if(this.pinCount === 0) {
+                Debug.assert(this.index === 0);
+            }
+        };
+        SyntaxCursor.prototype.rewindToPinnedCursorIndex = function (index) {
+            Debug.assert(index >= 0 && index < this.elements.length);
+            Debug.assert(this.pinCount > 0);
+            this.index = index;
+        };
+        return SyntaxCursor;
+    })();    
     var NormalParserSource = (function () {
         function NormalParserSource(text, languageVersion, stringTable) {
             this._currentToken = null;

@@ -270,6 +270,83 @@ module Parser {
         }
     }
 
+    // Allows one to easily move over a syntax tree.  Used during incremental parsing to move over
+    // the previously parsed tree to provide nodes and tokens that can be reused when parsing the
+    // updated text.
+    class SyntaxCursor {
+        private elements: ISyntaxElement[] = [];
+        private index: number = 0;
+        private pinCount: number = 0;
+
+        public SyntaxCursor(sourceUnit: SourceUnitSyntax) {
+            sourceUnit.spliceInto(this.elements, 0, 0);
+        }
+
+        public currentElement(): ISyntaxElement {
+            Debug.assert(!this.isFinished());
+            return this.elements[this.index];
+        }
+
+        public isFinished(): bool {
+            return this.elements[this.index].kind() === SyntaxKind.EndOfFileToken;
+        }
+
+        public moveToFirstChild() {
+            Debug.assert(!this.isFinished());
+
+            var element = this.elements[this.index];
+            if (element.isToken()) {
+                // If we're already on a token, there's nothing to do.
+                return;
+            }
+
+            // Otherwise, break the node we're pointing at into its children.  We'll then be 
+            // pointing at the first child
+            var node = <SyntaxNode>element;
+            node.spliceInto(this.elements, this.index, 1);
+        }
+
+        public moveToNextSibling() {
+            Debug.assert(!this.isFinished());
+
+            if (this.pinCount > 0) {
+                // If we're currently pinned, then just move our index forward.  We'll then be 
+                // pointing at the next sibling.
+                this.index++;
+                return;
+            }
+
+            // if we're not pinned, we better be pointed at the first item in the list.
+            Debug.assert(this.index === 0);
+
+            // Just shift ourselves over so we forget the current element we're pointing at and 
+            // we're pointing at the next slibing.
+            this.elements.shift();
+        }
+
+        public getAndPinCursorIndex(): number {
+            this.pinCount++;
+            return this.index;
+        }
+
+        public releaseAndUnpinCursorIndex(index: number) {
+            this.index = index;
+
+            Debug.assert(this.pinCount > 0);
+            this.pinCount--;
+            if (this.pinCount === 0) {
+                // The first pin was given out at index 0.  So we better be back at index 0.
+                Debug.assert(this.index === 0);
+            }
+        }
+
+        public rewindToPinnedCursorIndex(index: number): void {
+            Debug.assert(index >= 0 && index < this.elements.length);
+            Debug.assert(this.pinCount > 0);
+            this.index = index;
+        }
+    }
+
     // Interface that represents the source that the parser pulls tokens from.  Essentially, this 
     // is the interface that the parser needs an underlying scanner to provide.  This allows us to
     // separate out "what" the parser does with the tokens it retrieves versus "how" it obtains
