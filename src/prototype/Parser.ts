@@ -313,7 +313,11 @@ module Parser {
             // Otherwise, break the node we're pointing at into its children.  We'll then be 
             // pointing at the first child
             var node = <SyntaxNode>element;
+
+            // Remove the item that we're pointing at.
             this._elements.splice(this._index, 1);
+
+            // And add its children into the position it was at.
             node.insertChildrenInto(this._elements, this._index);
         }
 
@@ -378,19 +382,28 @@ module Parser {
         }
 
         public peekTokenN(n: number): ISyntaxToken {
-            this.moveToFirstToken();
-            var pin = this.getAndPinCursorIndex();
-
-            for (var i = 0; i < n; i++) {
-                this.moveToNextSibling();
-                this.moveToFirstToken();
+            if (this.isFinished()) {
+                return null;
             }
 
-            var result = this.currentToken();
-            this.rewindToPinnedCursorIndex(pin);
-            this.releaseAndUnpinCursorIndex(pin);
+            this.moveToFirstToken();
+            var pin = this.getAndPinCursorIndex();
+            try {
+                for (var i = 0; i < n; i++) {
+                    this.moveToNextSibling();
+                    if (this.isFinished()) {
+                        return null;
+                    }
 
-            return result;
+                    this.moveToFirstToken();
+                }
+
+                return this.currentToken();
+            }
+            finally {
+                this.rewindToPinnedCursorIndex(pin);
+                this.releaseAndUnpinCursorIndex(pin);
+            }
         }
     }
     

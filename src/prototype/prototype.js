@@ -26189,16 +26189,24 @@ var Parser;
             return element;
         };
         SyntaxCursor.prototype.peekTokenN = function (n) {
+            if(this.isFinished()) {
+                return null;
+            }
             this.moveToFirstToken();
             var pin = this.getAndPinCursorIndex();
-            for(var i = 0; i < n; i++) {
-                this.moveToNextSibling();
-                this.moveToFirstToken();
+            try  {
+                for(var i = 0; i < n; i++) {
+                    this.moveToNextSibling();
+                    if(this.isFinished()) {
+                        return null;
+                    }
+                    this.moveToFirstToken();
+                }
+                return this.currentToken();
+            }finally {
+                this.rewindToPinnedCursorIndex(pin);
+                this.releaseAndUnpinCursorIndex(pin);
             }
-            var result = this.currentToken();
-            this.rewindToPinnedCursorIndex(pin);
-            this.releaseAndUnpinCursorIndex(pin);
-            return result;
         };
         return SyntaxCursor;
     })();    
