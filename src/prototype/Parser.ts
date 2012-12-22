@@ -335,13 +335,13 @@ module Parser {
             this._elements.shift();
         }
 
-        public getAndPinCursorIndex(): number {
+        private getAndPinCursorIndex(): number {
             this._pinCount++;
             return this._index;
         }
 
-        public releaseAndUnpinCursorIndex(index: number) {
-            this._index = index;
+        private releaseAndUnpinCursorIndex(index: number) {
+            // this._index = index;
 
             Debug.assert(this._pinCount > 0);
             this._pinCount--;
@@ -351,7 +351,7 @@ module Parser {
             }
         }
 
-        public rewindToPinnedCursorIndex(index: number): void {
+        private rewindToPinnedCursorIndex(index: number): void {
             Debug.assert(index >= 0 && index < this._elements.length);
             Debug.assert(this._pinCount > 0);
             this._index = index;
@@ -360,8 +360,40 @@ module Parser {
         public pinCount(): number {
             return this._pinCount;
         }
-    }
 
+        private moveToFirstToken(): void {
+            var element: ISyntaxElement;
+
+            while ((element = this.currentElement()).isNode()) {
+                this.moveToFirstChild();
+            }
+        }
+
+        public currentToken(): ISyntaxToken {
+            this.moveToFirstToken();
+            var element = this.currentElement();
+
+            Debug.assert(element.isToken());
+            return <ISyntaxToken>element;
+        }
+
+        public peekTokenN(n: number): ISyntaxToken {
+            this.moveToFirstToken();
+            var pin = this.getAndPinCursorIndex();
+
+            for (var i = 0; i < n; i++) {
+                this.moveToNextSibling();
+                this.moveToFirstToken();
+            }
+
+            var result = this.currentToken();
+            this.rewindToPinnedCursorIndex(pin);
+            this.releaseAndUnpinCursorIndex(pin);
+
+            return result;
+        }
+    }
+    
     // Interface that represents the source that the parser pulls tokens from.  Essentially, this 
     // is the interface that the parser needs an underlying scanner to provide.  This allows us to
     // separate out "what" the parser does with the tokens it retrieves versus "how" it obtains

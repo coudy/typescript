@@ -26162,7 +26162,6 @@ var Parser;
             return this._index;
         };
         SyntaxCursor.prototype.releaseAndUnpinCursorIndex = function (index) {
-            this._index = index;
             Debug.assert(this._pinCount > 0);
             this._pinCount--;
             if(this._pinCount === 0) {
@@ -26176,6 +26175,30 @@ var Parser;
         };
         SyntaxCursor.prototype.pinCount = function () {
             return this._pinCount;
+        };
+        SyntaxCursor.prototype.moveToFirstToken = function () {
+            var element;
+            while((element = this.currentElement()).isNode()) {
+                this.moveToFirstChild();
+            }
+        };
+        SyntaxCursor.prototype.currentToken = function () {
+            this.moveToFirstToken();
+            var element = this.currentElement();
+            Debug.assert(element.isToken());
+            return element;
+        };
+        SyntaxCursor.prototype.peekTokenN = function (n) {
+            this.moveToFirstToken();
+            var pin = this.getAndPinCursorIndex();
+            for(var i = 0; i < n; i++) {
+                this.moveToNextSibling();
+                this.moveToFirstToken();
+            }
+            var result = this.currentToken();
+            this.rewindToPinnedCursorIndex(pin);
+            this.releaseAndUnpinCursorIndex(pin);
+            return result;
         };
         return SyntaxCursor;
     })();    
