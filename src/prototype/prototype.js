@@ -18693,6 +18693,9 @@ var SlidingWindow = (function () {
         this.windowCount = this.currentRelativeItemIndex;
     };
     SlidingWindow.prototype.setAbsoluteIndex = function (absoluteIndex) {
+        if(this.absoluteIndex() === absoluteIndex) {
+            return;
+        }
         Debug.assert(this._pinCount === 0);
         if(absoluteIndex >= this.windowAbsoluteStartIndex && absoluteIndex < this.windowAbsoluteEndIndex()) {
             this.currentRelativeItemIndex = (absoluteIndex - this.windowAbsoluteStartIndex);
@@ -26183,6 +26186,54 @@ var Parser;
         NormalParserSource.prototype.fetchMoreItems = function (allowRegularExpression, sourceIndex, window, destinationIndex, spaceAvailable) {
             window[destinationIndex] = this._scanner.scan(this._tokenDiagnostics, allowRegularExpression);
             return 1;
+        };
+        NormalParserSource.prototype.readElement = function (readToken) {
+            while(true) {
+                if(this._previousSourceUnitCursor.isFinished()) {
+                    return this.readTokenFromScanner();
+                }
+                if(this._changeDelta < 0) {
+                    this.skipNodeOrToken();
+                } else {
+                    if(this._changeDelta > 0) {
+                        return this.readTokenFromScanner();
+                    }
+                }
+                var currentElement = this._previousSourceUnitCursor.currentElement();
+                if(currentElement.isNode()) {
+                    var currentNode = currentElement;
+                    if(readToken || !this.canReuse(currentNode)) {
+                        this._previousSourceUnitCursor.moveToFirstChild();
+                        continue;
+                    }
+                    return currentNode;
+                } else {
+                    var currentToken = currentElement;
+                    if(this.canReuse(currentToken)) {
+                        return currentToken;
+                    }
+                    this.skipNodeOrToken();
+                    continue;
+                }
+            }
+        };
+        NormalParserSource.prototype.canReuse = function (element) {
+            return false;
+        };
+        NormalParserSource.prototype.readTokenFromScanner = function () {
+            this._scanner.setAbsoluteIndex(this.absolutePosition());
+            return this._scanner.scan(this._tokenDiagnostics, false);
+        };
+        NormalParserSource.prototype.skipNodeOrToken = function () {
+            Debug.assert(!this._previousSourceUnitCursor.isFinished());
+            Debug.assert(this._changeDelta < 0);
+            var currentElement = this._previousSourceUnitCursor.currentElement();
+            if(currentElement.isNode() && (currentElement.fullWidth() > Math.abs(this._changeDelta))) {
+                this._previousSourceUnitCursor.moveToFirstChild();
+                return;
+            }
+            this._previousSourceUnitCursor.moveToNextSibling();
+            this._changeDelta += currentElement.fullWidth();
         };
         NormalParserSource.prototype.peekTokenN = function (n) {
             return this._slidingWindow.peekItemN(n);

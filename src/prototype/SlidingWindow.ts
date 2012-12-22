@@ -196,6 +196,10 @@ class SlidingWindow {
     }
 
     public setAbsoluteIndex(absoluteIndex: number): void {
+        if (this.absoluteIndex() === absoluteIndex) {
+            return;
+        }
+
         // Shoudln't try to set the index while we currently have an active pin.
         Debug.assert(this._pinCount === 0);
 

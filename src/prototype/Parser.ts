@@ -533,6 +533,98 @@ module Parser {
             return 1;
         }
 
+        private readElement(readToken: bool): ISyntaxElement {
+            while (true) {
+                if (this._previousSourceUnitCursor.isFinished()) {
+                    // We're at the end of the original blended tree.  We can only read new tokens
+                    // from now on.
+                    return this.readTokenFromScanner();
+                }
+
+                if (this._changeDelta < 0) {
+                    // Our position in the original tree is behind our position in the new text.
+                    // If we're pointing at a node, and that node's width is less than our delta,
+                    // then we can just skip that node.  Otherwise, if we're pointing at a node
+                    // whose width is greater than the delta, then crumble it and try again.
+                    // Otherwise, we must be pointing at a token.  Just skip it and try again.
+                    this.skipNodeOrToken();
+                }
+                else if (this._changeDelta > 0) {
+                    // Our position in the original tree is ahead of our position in the new text.
+                    // Just read out a token from the new text.
+                    return this.readTokenFromScanner();
+                }
+
+                // We were in sync.  Attempt to get a node or token depending on what we were 
+                // asked for.
+                var currentElement = this._previousSourceUnitCursor.currentElement();
+                if (currentElement.isNode()) {
+                    var currentNode = <SyntaxNode>currentElement;
+                    if (readToken || !this.canReuse(currentNode)) {
+                        // caller wants a token, but we're pointing at a node, or we can't use this 
+                        // node for some reason.  Crumble it into children and try again.
+                        this._previousSourceUnitCursor.moveToFirstChild();
+                        continue;
+                    }
+
+                    // Caller wanted a node and we can use this node.  Terrific.  Return what we 
+                    // have to them.
+                    return currentNode;
+                }
+                else {
+                    // We're currently pointing at a token.
+                    var currentToken = <ISyntaxToken>currentElement;
+
+                    // If we can use that token, great.  Just return it to the caller.  Otherwise
+                    // we have to skip the token.  We'll then continue the loop and read hte next
+                    // token from the scanner instead.
+                    if (this.canReuse(currentToken)) {
+                        return currentToken;
+                    }
+
+                    this.skipNodeOrToken();
+                    continue;
+                }
+            }
+        }
+
+        private canReuse(element: ISyntaxElement): bool {
+            return false;
+        }
+
+        private readTokenFromScanner(): ISyntaxToken {
+            this._scanner.setAbsoluteIndex(this.absolutePosition());
+            return this._scanner.scan(this._tokenDiagnostics, /*allowRegularExpression:*/ false);
+        }
+
+        private skipNodeOrToken(): void {
+            Debug.assert(!this._previousSourceUnitCursor.isFinished());
+            Debug.assert(this._changeDelta < 0);
+
+            // We're behind in the original tree.  Throw out a node or token in an attempt to 
+            // catch up to the position we're at in the new text.
+
+            var currentElement = this._previousSourceUnitCursor.currentElement();
+
+            // If we're pointing at a node, and that node's width is less than our delta,
+            // then we can just skip that node.  Otherwise, if we're pointing at a node
+            // whose width is greater than the delta, then crumble it and try again.
+            // Otherwise, we must be pointing at a token.  Just skip it and try again.
+
+            if (currentElement.isNode() && (currentElement.fullWidth() > Math.abs(this._changeDelta))) {
+                // We were pointing at a node whose width was more than changeDelta.  Crumble the 
+                // node and try again.  Note: we haven't changed changeDelta.  So the callers loop
+                // will just repeat this until we get to a node or token that we can skip over.
+                this._previousSourceUnitCursor.moveToFirstChild();
+                return;
+            }
+
+            this._previousSourceUnitCursor.moveToNextSibling();
+
+            // Get our change delta closer to 0 as we skip past this item.
+            this._changeDelta += currentElement.fullWidth();
+        }
+
         private peekTokenN(n: number): ISyntaxToken {
             return this._slidingWindow.peekItemN(n);
         }
