@@ -1346,7 +1346,7 @@ var SyntaxFacts = (function () {
     }
     return SyntaxFacts;
 })();
-var argumentChecks = false;
+var argumentChecks = true;
 var definitions = [
     {
         name: 'SourceUnitSyntax',

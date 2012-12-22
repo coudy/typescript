@@ -6,7 +6,7 @@
 
 // Adds argument checking to the generated nodes.  Argument checking appears to slow things down
 // parsing about 7%.  If we want to get that perf back, we can always remove this.
-var argumentChecks = false;
+var argumentChecks = true;
 
 interface ITypeDefinition {
     name: string;
