@@ -529,16 +529,18 @@ module Parser {
         private fetchMoreItems(allowRegularExpression: bool, sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
             // Assert disabled because it is actually expensive enugh to affect perf.
             // Debug.assert(spaceAvailable > 0);
-            window[destinationIndex] = this._scanner.scan(this._tokenDiagnostics, allowRegularExpression);
+            var element = this.readElement(/*readToken:*/ true, allowRegularExpression);
+            Debug.assert(element.isToken());
+            window[destinationIndex] = <ISyntaxToken>element;
             return 1;
         }
 
-        private readElement(readToken: bool): ISyntaxElement {
+        private readElement(readToken: bool, allowRegularExpression: bool): ISyntaxElement {
             while (true) {
                 if (this._previousSourceUnitCursor.isFinished()) {
                     // We're at the end of the original blended tree.  We can only read new tokens
                     // from now on.
-                    return this.readTokenFromScanner();
+                    return this.readTokenFromScanner(allowRegularExpression);
                 }
 
                 if (this._changeDelta < 0) {
@@ -552,7 +554,7 @@ module Parser {
                 else if (this._changeDelta > 0) {
                     // Our position in the original tree is ahead of our position in the new text.
                     // Just read out a token from the new text.
-                    return this.readTokenFromScanner();
+                    return this.readTokenFromScanner(allowRegularExpression);
                 }
 
                 // We were in sync.  Attempt to get a node or token depending on what we were 
@@ -592,9 +594,11 @@ module Parser {
             return false;
         }
 
-        private readTokenFromScanner(): ISyntaxToken {
-            this._scanner.setAbsoluteIndex(this.absolutePosition());
-            return this._scanner.scan(this._tokenDiagnostics, /*allowRegularExpression:*/ false);
+        private readTokenFromScanner(allowRegularExpression: bool): ISyntaxToken {
+            Debug.assert(this._changeDelta > 0 || this._previousSourceUnitCursor.isFinished());
+
+            // this._scanner.setAbsoluteIndex(this.absolutePosition());
+            return this._scanner.scan(this._tokenDiagnostics, allowRegularExpression);
         }
 
         private skipNodeOrToken(): void {

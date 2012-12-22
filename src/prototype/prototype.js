@@ -26184,19 +26184,21 @@ var Parser;
             return this._tokenDiagnostics;
         };
         NormalParserSource.prototype.fetchMoreItems = function (allowRegularExpression, sourceIndex, window, destinationIndex, spaceAvailable) {
-            window[destinationIndex] = this._scanner.scan(this._tokenDiagnostics, allowRegularExpression);
+            var element = this.readElement(true, allowRegularExpression);
+            Debug.assert(element.isToken());
+            window[destinationIndex] = element;
             return 1;
         };
-        NormalParserSource.prototype.readElement = function (readToken) {
+        NormalParserSource.prototype.readElement = function (readToken, allowRegularExpression) {
             while(true) {
                 if(this._previousSourceUnitCursor.isFinished()) {
-                    return this.readTokenFromScanner();
+                    return this.readTokenFromScanner(allowRegularExpression);
                 }
                 if(this._changeDelta < 0) {
                     this.skipNodeOrToken();
                 } else {
                     if(this._changeDelta > 0) {
-                        return this.readTokenFromScanner();
+                        return this.readTokenFromScanner(allowRegularExpression);
                     }
                 }
                 var currentElement = this._previousSourceUnitCursor.currentElement();
@@ -26220,9 +26222,8 @@ var Parser;
         NormalParserSource.prototype.canReuse = function (element) {
             return false;
         };
-        NormalParserSource.prototype.readTokenFromScanner = function () {
-            this._scanner.setAbsoluteIndex(this.absolutePosition());
-            return this._scanner.scan(this._tokenDiagnostics, false);
+        NormalParserSource.prototype.readTokenFromScanner = function (allowRegularExpression) {
+            return this._scanner.scan(this._tokenDiagnostics, allowRegularExpression);
         };
         NormalParserSource.prototype.skipNodeOrToken = function () {
             Debug.assert(!this._previousSourceUnitCursor.isFinished());
