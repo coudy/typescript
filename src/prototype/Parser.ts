@@ -472,42 +472,16 @@ module Parser {
 
     class NormalParserSource implements IParserSource {
         // The sliding window that we store tokens in.
-        private _tokenSlidingWindow: SlidingWindow;
+        private slidingWindow: SlidingWindow;
 
         // The scanner we're pulling tokens from.
-        private _scanner: Scanner;
+        private scanner: Scanner;
 
         // The previous token to the current token.  Set when we advance to the next token.
         private _previousToken: ISyntaxToken = null;
 
         // The absolute position we're at in the text we're reading from.
         private _absolutePosition: number = 0;
-
-        // This number represents how our position in the old tree relates to the position we're 
-        // pointing at in the new text.  If it is 0 then our positions are in sync and we can read
-        // nodes or tokens from the old tree.  If it is non-zero, then our positions are not in 
-        // sync and we cannot use nodes or tokens from the old tree.
-        //
-        // Now, changeDelta could be negative or positive.  Negative means 'the position we're at
-        // in the original tree is behind the position we're at in the text'.  In this case we 
-        // keep throwing out old nodes or tokens (and thus move forward in the original tree) until
-        // changeDelta becomes 0 again or positive.  If it becomes 0 then we are resynched and can
-        // read nodes or tokesn from the tree.
-        //
-        // If changeDelta is positive, that means the current node or token we're pointing at in 
-        // the old tree is at a further ahead position than the position we're pointing at in the
-        // new text.  In this case we have no choice but to scan tokens from teh new text.  We will
-        // continue to do so until, again, changeDelta becomes 0 and we've resynced, or change delta
-        // becomes negative and we need to skip nodes or tokes in the original tree.
-        private _changeDelta: number = 0;
-
-        // Our cursor within the previous tree.  We will attempt to pull nodes and tokens from here
-        // when we can.
-        private _previousSourceUnitCursor: SyntaxCursor;
-
-        // The range of text in the *original* text that was changed, and the new length of it after
-        // the change.
-        private _changeRange: TextChangeRange;
 
         // The diagnostics we get while scanning.  Note: this never gets rewound when we do a normal
         // rewind.  That's because rewinding doesn't affect the tokens created.  It only affects where
@@ -520,20 +494,10 @@ module Parser {
         private rewindPointPoolCount = 0;
 
         constructor(text: IText,
-                    languageVersion: LanguageVersion,
-                    stringTable: Collections.StringTable,
-                    previousSourceUnit: SourceUnitSyntax,
-                    changeRange: TextChangeRange) {
-            this._tokenSlidingWindow = new SlidingWindow(this, /*defaultWindowSize:*/ 32, null);
-            this._scanner = new Scanner(text, languageVersion, stringTable);
-            this._previousSourceUnitCursor = new SyntaxCursor(previousSourceUnit);
-            this._changeRange = changeRange;
-        }
-
-        public static create(text: IText,
-                             languageVersion: LanguageVersion,
-                             stringTable: Collections.StringTable): IParserSource {
-            return new NormalParserSource(text, languageVersion, stringTable, emptySourceUnit, /*changeRange:*/ null);
+            languageVersion: LanguageVersion,
+            stringTable: Collections.StringTable) {
+            this.slidingWindow = new SlidingWindow(this, /*defaultWindowSize:*/ 32, null);
+            this.scanner = new Scanner(text, languageVersion, stringTable);
         }
 
         public tokenDiagnostics(): SyntaxDiagnostic[] {
@@ -543,108 +507,12 @@ module Parser {
         private fetchMoreItems(allowRegularExpression: bool, sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
             // Assert disabled because it is actually expensive enugh to affect perf.
             // Debug.assert(spaceAvailable > 0);
-            var element = this.readElement(/*readToken:*/ true, allowRegularExpression);
-            Debug.assert(element.isToken());
-            window[destinationIndex] = <ISyntaxToken>element;
+            window[destinationIndex] = this.scanner.scan(this._tokenDiagnostics, allowRegularExpression);
             return 1;
         }
 
-        private readElement(readToken: bool, allowRegularExpression: bool): ISyntaxElement {
-            while (true) {
-                if (this._previousSourceUnitCursor.isFinished()) {
-                    // We're at the end of the original blended tree.  We can only read new tokens
-                    // from now on.
-                    return this.readTokenFromScanner(allowRegularExpression);
-                }
-
-                if (this._changeDelta < 0) {
-                    // Our position in the original tree is behind our position in the new text.
-                    // If we're pointing at a node, and that node's width is less than our delta,
-                    // then we can just skip that node.  Otherwise, if we're pointing at a node
-                    // whose width is greater than the delta, then crumble it and try again.
-                    // Otherwise, we must be pointing at a token.  Just skip it and try again.
-                    this.skipNodeOrToken();
-                }
-                else if (this._changeDelta > 0) {
-                    // Our position in the original tree is ahead of our position in the new text.
-                    // Just read out a token from the new text.
-                    return this.readTokenFromScanner(allowRegularExpression);
-                }
-
-                // We were in sync.  Attempt to get a node or token depending on what we were 
-                // asked for.
-                var currentElement = this._previousSourceUnitCursor.currentElement();
-                if (currentElement.isNode()) {
-                    var currentNode = <SyntaxNode>currentElement;
-                    if (readToken || !this.canReuse(currentNode)) {
-                        // caller wants a token, but we're pointing at a node, or we can't use this 
-                        // node for some reason.  Crumble it into children and try again.
-                        this._previousSourceUnitCursor.moveToFirstChild();
-                        continue;
-                    }
-
-                    // Caller wanted a node and we can use this node.  Terrific.  Return what we 
-                    // have to them.
-                    return currentNode;
-                }
-                else {
-                    // We're currently pointing at a token.
-                    var currentToken = <ISyntaxToken>currentElement;
-
-                    // If we can use that token, great.  Just return it to the caller.  Otherwise
-                    // we have to skip the token.  We'll then continue the loop and read hte next
-                    // token from the scanner instead.
-                    if (this.canReuse(currentToken)) {
-                        return currentToken;
-                    }
-
-                    this.skipNodeOrToken();
-                    continue;
-                }
-            }
-        }
-
-        private canReuse(element: ISyntaxElement): bool {
-            return false;
-        }
-
-        private readTokenFromScanner(allowRegularExpression: bool): ISyntaxToken {
-            Debug.assert(this._changeDelta > 0 || this._previousSourceUnitCursor.isFinished());
-
-            // this._scanner.setAbsoluteIndex(this.absolutePosition());
-            return this._scanner.scan(this._tokenDiagnostics, allowRegularExpression);
-        }
-
-        private skipNodeOrToken(): void {
-            Debug.assert(!this._previousSourceUnitCursor.isFinished());
-            Debug.assert(this._changeDelta < 0);
-
-            // We're behind in the original tree.  Throw out a node or token in an attempt to 
-            // catch up to the position we're at in the new text.
-
-            var currentElement = this._previousSourceUnitCursor.currentElement();
-
-            // If we're pointing at a node, and that node's width is less than our delta,
-            // then we can just skip that node.  Otherwise, if we're pointing at a node
-            // whose width is greater than the delta, then crumble it and try again.
-            // Otherwise, we must be pointing at a token.  Just skip it and try again.
-
-            if (currentElement.isNode() && (currentElement.fullWidth() > Math.abs(this._changeDelta))) {
-                // We were pointing at a node whose width was more than changeDelta.  Crumble the 
-                // node and try again.  Note: we haven't changed changeDelta.  So the callers loop
-                // will just repeat this until we get to a node or token that we can skip over.
-                this._previousSourceUnitCursor.moveToFirstChild();
-                return;
-            }
-
-            this._previousSourceUnitCursor.moveToNextSibling();
-
-            // Get our change delta closer to 0 as we skip past this item.
-            this._changeDelta += currentElement.fullWidth();
-        }
-
         private peekTokenN(n: number): ISyntaxToken {
-            return this._tokenSlidingWindow.peekItemN(n);
+            return this.slidingWindow.peekItemN(n);
         }
 
         private previousToken(): ISyntaxToken {
@@ -652,8 +520,6 @@ module Parser {
         }
 
         private currentNode(): SyntaxNode {
-            // We can only return nodes if we're not currently eating into any tokens.
-
             // The normal parser source never returns nodes.  They're only returned by the 
             // incremental parser source.
             return null;
@@ -668,7 +534,7 @@ module Parser {
             this._absolutePosition += this.currentToken().fullWidth();
             this._previousToken = this.currentToken();
 
-            this._tokenSlidingWindow.moveToNextItem();
+            this.slidingWindow.moveToNextItem();
         }
 
         private absolutePosition() {
@@ -687,44 +553,36 @@ module Parser {
         }
 
         private getRewindPoint(): IParserRewindPoint {
-            var tokenSlidingWindowIndex = this._tokenSlidingWindow.getAndPinAbsoluteIndex();
-            var previousSourceUnitCursorIndex = this._previousSourceUnitCursor.getAndPinCursorIndex();
+            var absoluteIndex = this.slidingWindow.getAndPinAbsoluteIndex();
 
             var rewindPoint = this.getOrCreateRewindPoint();
 
-            rewindPoint.tokenSlidingWindowIndex = tokenSlidingWindowIndex;
-            rewindPoint.previousSourceUnitCursorIndex = previousSourceUnitCursorIndex;
-            rewindPoint.previousToken = this._previousToken;
-            rewindPoint.absolutePosition = this._absolutePosition;
-            rewindPoint.changeDelta = this._changeDelta;
-            rewindPoint.changeRange = this._changeRange;
+            (<any>rewindPoint).absoluteIndex = absoluteIndex;
+            (<any>rewindPoint).previousToken = this._previousToken;
+            (<any>rewindPoint).absolutePosition = this._absolutePosition;
 
-            Debug.assert(this._tokenSlidingWindow.pinCount() === this._previousSourceUnitCursor.pinCount());
-            rewindPoint.pinCount = this._tokenSlidingWindow.pinCount();
+            rewindPoint.pinCount = this.slidingWindow.pinCount();
 
             return rewindPoint;
         }
 
         private rewind(rewindPoint: IParserRewindPoint): void {
-            this._tokenSlidingWindow.rewindToPinnedIndex(rewindPoint.tokenSlidingWindowIndex);
-            this._previousSourceUnitCursor.rewindToPinnedCursorIndex(rewindPoint.previousSourceUnitCursorIndex);
-            this._previousToken = rewindPoint.previousToken;
-            this._absolutePosition = rewindPoint.absolutePosition;
-            this._changeDelta = rewindPoint.changeDelta;
-            this._changeRange = rewindPoint.changeRange;
+            this.slidingWindow.rewindToPinnedIndex((<any>rewindPoint).absoluteIndex);
+
+            this._previousToken = (<any>rewindPoint).previousToken;
+            this._absolutePosition = (<any>rewindPoint).absolutePosition;
         }
 
         private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
-            Debug.assert(this._tokenSlidingWindow.pinCount() === rewindPoint.pinCount);
-            this._tokenSlidingWindow.releaseAndUnpinAbsoluteIndex(rewindPoint.tokenSlidingWindowIndex);
-            this._previousSourceUnitCursor.releaseAndUnpinCursorIndex(rewindPoint.previousSourceUnitCursorIndex);
+            Debug.assert(this.slidingWindow.pinCount() === rewindPoint.pinCount);
+            this.slidingWindow.releaseAndUnpinAbsoluteIndex((<any>rewindPoint).absoluteIndex);
 
             this.rewindPointPool[this.rewindPointPoolCount] = rewindPoint;
             this.rewindPointPoolCount++;
         }
 
         public currentToken(): ISyntaxToken {
-            return this._tokenSlidingWindow.currentItem(/*allowRegularExpression:*/ false);
+            return this.slidingWindow.currentItem(/*allowRegularExpression:*/ false);
         }
 
         private removeDiagnosticsOnOrAfterPosition(position: number): void {
@@ -744,7 +602,7 @@ module Parser {
             this._tokenDiagnostics.length = tokenDiagnosticsLength;
         }
 
-        private resetToPosition(absolutePosition: number, previousToken: ISyntaxToken): void {
+        public resetToPosition(absolutePosition: number, previousToken: ISyntaxToken): void {
             this._absolutePosition = absolutePosition;
             this._previousToken = previousToken;
 
@@ -752,14 +610,17 @@ module Parser {
             this.removeDiagnosticsOnOrAfterPosition(absolutePosition);
 
             // Now, tell our sliding window to throw away all tokens from the / onwards (including the /).
-            this._tokenSlidingWindow.disgardAllItemsFromCurrentIndexOnwards();
+            this.slidingWindow.disgardAllItemsFromCurrentIndexOnwards();
 
             // Now tell the scanner to reset its position to the start of the / token as well.  That way
             // when we try to scan the next item, we'll be at the right location.
-            this._scanner.setAbsoluteIndex(absolutePosition);
+            this.scanner.setAbsoluteIndex(absolutePosition);
         }
 
         public currentTokenAllowingRegularExpression(): ISyntaxToken {
+            // We better be on a divide token right now.
+            Debug.assert(SyntaxFacts.isAnyDivideToken(this.currentToken().kind()));
+
             // First, we're going to rewind all our data to the point where this / or /= token started.
             // That's because if it does turn out to be a regular expression, then any tokens or token 
             // diagnostics we produced after the original / may no longer be valid.  This would actually
@@ -775,11 +636,11 @@ module Parser {
 
             // Now actually fetch the token again from the scanner. This time let it know that it
             // can scan it as a regex token if it wants to.
-            var token = this._tokenSlidingWindow.currentItem(/*allowRegularExpression:*/ true);
+            var token = this.slidingWindow.currentItem(/*allowRegularExpression:*/ true);
 
             // We have better gotten some sort of regex token.  Otherwise, something *very* wrong has
             // occurred.
-            Debug.assert(SyntaxFacts.isDivideOrRegularExpressionToken(token.kind()));
+            Debug.assert(SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.kind()));
 
             return token;
         }
@@ -3104,7 +2965,7 @@ module Parser {
 
             // Note: we *must* have gotten a /, /= or regular expression.  Or else something went *very*
             // wrong with our logic above.
-            Debug.assert(SyntaxFacts.isDivideOrRegularExpressionToken(currentToken.tokenKind));
+            Debug.assert(SyntaxFacts.isAnyDivideOrRegularExpressionToken(currentToken.tokenKind));
 
             if (currentToken.tokenKind === SyntaxKind.SlashToken || currentToken.tokenKind === SyntaxKind.SlashEqualsToken) {
                 // Still came back as a / or /=.   This is not a regular expression literal.
@@ -4418,7 +4279,7 @@ module Parser {
                           languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
                           stringTable: Collections.StringTable = null,
                           options?: ParseOptions = null): SyntaxTree {
-        var source = NormalParserSource.create(text, languageVersion, stringTable);
+        var source = new NormalParserSource(text, languageVersion, stringTable);
         options = options || new ParseOptions();
 
         return new ParserImpl(source, options).parseSyntaxTree();

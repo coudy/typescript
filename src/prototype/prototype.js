@@ -1410,7 +1410,20 @@ var SyntaxFacts = (function () {
             }
         }
     }
-    SyntaxFacts.isDivideOrRegularExpressionToken = function isDivideOrRegularExpressionToken(kind) {
+    SyntaxFacts.isAnyDivideToken = function isAnyDivideToken(kind) {
+        switch(kind) {
+            case 115 /* SlashToken */ :
+            case 116 /* SlashEqualsToken */ : {
+                return true;
+
+            }
+            default: {
+                return false;
+
+            }
+        }
+    }
+    SyntaxFacts.isAnyDivideOrRegularExpressionToken = function isAnyDivideOrRegularExpressionToken(kind) {
         switch(kind) {
             case 115 /* SlashToken */ :
             case 116 /* SlashEqualsToken */ :
@@ -5279,7 +5292,7 @@ var LiteralExpressionSyntax = (function (_super) {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._literalToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isDivideOrRegularExpressionToken(this._literalToken.kind());
+        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this._literalToken.kind());
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     LiteralExpressionSyntax.prototype.findTokenInternal = function (position) {
@@ -8521,7 +8534,7 @@ var BinaryExpressionSyntax = (function (_super) {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._operatorToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isDivideOrRegularExpressionToken(this._operatorToken.kind());
+        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this._operatorToken.kind());
         childWidth = this._right.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._right.hasSkippedText();
@@ -26170,80 +26183,24 @@ var Parser;
         text: ""
     }));
     var NormalParserSource = (function () {
-        function NormalParserSource(text, languageVersion, stringTable, previousSourceUnit, changeRange) {
+        function NormalParserSource(text, languageVersion, stringTable) {
             this._previousToken = null;
             this._absolutePosition = 0;
-            this._changeDelta = 0;
             this._tokenDiagnostics = [];
             this.rewindPointPool = [];
             this.rewindPointPoolCount = 0;
-            this._tokenSlidingWindow = new SlidingWindow(this, 32, null);
-            this._scanner = new Scanner(text, languageVersion, stringTable);
-            this._previousSourceUnitCursor = new SyntaxCursor(previousSourceUnit);
-            this._changeRange = changeRange;
-        }
-        NormalParserSource.create = function create(text, languageVersion, stringTable) {
-            return new NormalParserSource(text, languageVersion, stringTable, emptySourceUnit, null);
+            this.slidingWindow = new SlidingWindow(this, 32, null);
+            this.scanner = new Scanner(text, languageVersion, stringTable);
         }
         NormalParserSource.prototype.tokenDiagnostics = function () {
             return this._tokenDiagnostics;
         };
         NormalParserSource.prototype.fetchMoreItems = function (allowRegularExpression, sourceIndex, window, destinationIndex, spaceAvailable) {
-            var element = this.readElement(true, allowRegularExpression);
-            Debug.assert(element.isToken());
-            window[destinationIndex] = element;
+            window[destinationIndex] = this.scanner.scan(this._tokenDiagnostics, allowRegularExpression);
             return 1;
         };
-        NormalParserSource.prototype.readElement = function (readToken, allowRegularExpression) {
-            while(true) {
-                if(this._previousSourceUnitCursor.isFinished()) {
-                    return this.readTokenFromScanner(allowRegularExpression);
-                }
-                if(this._changeDelta < 0) {
-                    this.skipNodeOrToken();
-                } else {
-                    if(this._changeDelta > 0) {
-                        return this.readTokenFromScanner(allowRegularExpression);
-                    }
-                }
-                var currentElement = this._previousSourceUnitCursor.currentElement();
-                if(currentElement.isNode()) {
-                    var currentNode = currentElement;
-                    if(readToken || !this.canReuse(currentNode)) {
-                        this._previousSourceUnitCursor.moveToFirstChild();
-                        continue;
-                    }
-                    return currentNode;
-                } else {
-                    var currentToken = currentElement;
-                    if(this.canReuse(currentToken)) {
-                        return currentToken;
-                    }
-                    this.skipNodeOrToken();
-                    continue;
-                }
-            }
-        };
-        NormalParserSource.prototype.canReuse = function (element) {
-            return false;
-        };
-        NormalParserSource.prototype.readTokenFromScanner = function (allowRegularExpression) {
-            Debug.assert(this._changeDelta > 0 || this._previousSourceUnitCursor.isFinished());
-            return this._scanner.scan(this._tokenDiagnostics, allowRegularExpression);
-        };
-        NormalParserSource.prototype.skipNodeOrToken = function () {
-            Debug.assert(!this._previousSourceUnitCursor.isFinished());
-            Debug.assert(this._changeDelta < 0);
-            var currentElement = this._previousSourceUnitCursor.currentElement();
-            if(currentElement.isNode() && (currentElement.fullWidth() > Math.abs(this._changeDelta))) {
-                this._previousSourceUnitCursor.moveToFirstChild();
-                return;
-            }
-            this._previousSourceUnitCursor.moveToNextSibling();
-            this._changeDelta += currentElement.fullWidth();
-        };
         NormalParserSource.prototype.peekTokenN = function (n) {
-            return this._tokenSlidingWindow.peekItemN(n);
+            return this.slidingWindow.peekItemN(n);
         };
         NormalParserSource.prototype.previousToken = function () {
             return this._previousToken;
@@ -26257,7 +26214,7 @@ var Parser;
         NormalParserSource.prototype.moveToNextToken = function () {
             this._absolutePosition += this.currentToken().fullWidth();
             this._previousToken = this.currentToken();
-            this._tokenSlidingWindow.moveToNextItem();
+            this.slidingWindow.moveToNextItem();
         };
         NormalParserSource.prototype.absolutePosition = function () {
             return this._absolutePosition;
@@ -26273,36 +26230,27 @@ var Parser;
             return result;
         };
         NormalParserSource.prototype.getRewindPoint = function () {
-            var tokenSlidingWindowIndex = this._tokenSlidingWindow.getAndPinAbsoluteIndex();
-            var previousSourceUnitCursorIndex = this._previousSourceUnitCursor.getAndPinCursorIndex();
+            var absoluteIndex = this.slidingWindow.getAndPinAbsoluteIndex();
             var rewindPoint = this.getOrCreateRewindPoint();
-            rewindPoint.tokenSlidingWindowIndex = tokenSlidingWindowIndex;
-            rewindPoint.previousSourceUnitCursorIndex = previousSourceUnitCursorIndex;
-            rewindPoint.previousToken = this._previousToken;
-            rewindPoint.absolutePosition = this._absolutePosition;
-            rewindPoint.changeDelta = this._changeDelta;
-            rewindPoint.changeRange = this._changeRange;
-            Debug.assert(this._tokenSlidingWindow.pinCount() === this._previousSourceUnitCursor.pinCount());
-            rewindPoint.pinCount = this._tokenSlidingWindow.pinCount();
+            (rewindPoint).absoluteIndex = absoluteIndex;
+            (rewindPoint).previousToken = this._previousToken;
+            (rewindPoint).absolutePosition = this._absolutePosition;
+            rewindPoint.pinCount = this.slidingWindow.pinCount();
             return rewindPoint;
         };
         NormalParserSource.prototype.rewind = function (rewindPoint) {
-            this._tokenSlidingWindow.rewindToPinnedIndex(rewindPoint.tokenSlidingWindowIndex);
-            this._previousSourceUnitCursor.rewindToPinnedCursorIndex(rewindPoint.previousSourceUnitCursorIndex);
-            this._previousToken = rewindPoint.previousToken;
-            this._absolutePosition = rewindPoint.absolutePosition;
-            this._changeDelta = rewindPoint.changeDelta;
-            this._changeRange = rewindPoint.changeRange;
+            this.slidingWindow.rewindToPinnedIndex((rewindPoint).absoluteIndex);
+            this._previousToken = (rewindPoint).previousToken;
+            this._absolutePosition = (rewindPoint).absolutePosition;
         };
         NormalParserSource.prototype.releaseRewindPoint = function (rewindPoint) {
-            Debug.assert(this._tokenSlidingWindow.pinCount() === rewindPoint.pinCount);
-            this._tokenSlidingWindow.releaseAndUnpinAbsoluteIndex(rewindPoint.tokenSlidingWindowIndex);
-            this._previousSourceUnitCursor.releaseAndUnpinCursorIndex(rewindPoint.previousSourceUnitCursorIndex);
+            Debug.assert(this.slidingWindow.pinCount() === rewindPoint.pinCount);
+            this.slidingWindow.releaseAndUnpinAbsoluteIndex((rewindPoint).absoluteIndex);
             this.rewindPointPool[this.rewindPointPoolCount] = rewindPoint;
             this.rewindPointPoolCount++;
         };
         NormalParserSource.prototype.currentToken = function () {
-            return this._tokenSlidingWindow.currentItem(false);
+            return this.slidingWindow.currentItem(false);
         };
         NormalParserSource.prototype.removeDiagnosticsOnOrAfterPosition = function (position) {
             var tokenDiagnosticsLength = this._tokenDiagnostics.length;
@@ -26320,13 +26268,14 @@ var Parser;
             this._absolutePosition = absolutePosition;
             this._previousToken = previousToken;
             this.removeDiagnosticsOnOrAfterPosition(absolutePosition);
-            this._tokenSlidingWindow.disgardAllItemsFromCurrentIndexOnwards();
-            this._scanner.setAbsoluteIndex(absolutePosition);
+            this.slidingWindow.disgardAllItemsFromCurrentIndexOnwards();
+            this.scanner.setAbsoluteIndex(absolutePosition);
         };
         NormalParserSource.prototype.currentTokenAllowingRegularExpression = function () {
+            Debug.assert(SyntaxFacts.isAnyDivideToken(this.currentToken().kind()));
             this.resetToPosition(this._absolutePosition, this._previousToken);
-            var token = this._tokenSlidingWindow.currentItem(true);
-            Debug.assert(SyntaxFacts.isDivideOrRegularExpressionToken(token.kind()));
+            var token = this.slidingWindow.currentItem(true);
+            Debug.assert(SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.kind()));
             return token;
         };
         return NormalParserSource;
@@ -27984,7 +27933,7 @@ var Parser;
                 }
             }
             currentToken = this.currentTokenAllowingRegularExpression();
-            Debug.assert(SyntaxFacts.isDivideOrRegularExpressionToken(currentToken.tokenKind));
+            Debug.assert(SyntaxFacts.isAnyDivideOrRegularExpressionToken(currentToken.tokenKind));
             if(currentToken.tokenKind === 115 /* SlashToken */  || currentToken.tokenKind === 116 /* SlashEqualsToken */ ) {
                 return null;
             } else {
@@ -28998,7 +28947,7 @@ var Parser;
         if (typeof languageVersion === "undefined") { languageVersion = 1 /* EcmaScript5 */ ; }
         if (typeof stringTable === "undefined") { stringTable = null; }
         if (typeof options === "undefined") { options = null; }
-        var source = NormalParserSource.create(text, languageVersion, stringTable);
+        var source = new NormalParserSource(text, languageVersion, stringTable);
         options = options || new ParseOptions();
         return new ParserImpl(source, options).parseSyntaxTree();
     }

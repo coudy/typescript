@@ -324,7 +324,17 @@ class SyntaxFacts {
         }
     }
 
-    public static isDivideOrRegularExpressionToken(kind: SyntaxKind): bool {
+    public static isAnyDivideToken(kind: SyntaxKind): bool {
+        switch (kind) {
+            case SyntaxKind.SlashToken:
+            case SyntaxKind.SlashEqualsToken:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public static isAnyDivideOrRegularExpressionToken(kind: SyntaxKind): bool {
         switch (kind) {
             case SyntaxKind.SlashToken:
             case SyntaxKind.SlashEqualsToken:
