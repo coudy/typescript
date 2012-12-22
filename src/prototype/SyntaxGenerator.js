@@ -1330,9 +1330,23 @@ var SyntaxFacts = (function () {
             }
         }
     }
+    SyntaxFacts.isDivideOrRegularExpressionToken = function isDivideOrRegularExpressionToken(kind) {
+        switch(kind) {
+            case 115 /* SlashToken */ :
+            case 116 /* SlashEqualsToken */ :
+            case 10 /* RegularExpressionLiteral */ : {
+                return true;
+
+            }
+            default: {
+                return false;
+
+            }
+        }
+    }
     return SyntaxFacts;
 })();
-var argumentChecks = true;
+var argumentChecks = false;
 var definitions = [
     {
         name: 'SourceUnitSyntax',
@@ -4085,7 +4099,7 @@ function generateComputeDataMethod(definition) {
         if(child.isToken) {
             result += indent + "        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);\r\n";
             if(couldBeRegularExpressionToken(child)) {
-                result += indent + "        hasRegularExpressionToken = hasRegularExpressionToken || (<any>SyntaxNode).isRegularExpressionToken(" + getPropertyAccess(child) + ".kind());\r\n";
+                result += indent + "        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isDivideOrRegularExpressionToken(" + getPropertyAccess(child) + ".kind());\r\n";
             }
         } else {
             result += indent + "        hasZeroWidthToken = hasZeroWidthToken || " + getPropertyAccess(child) + ".hasZeroWidthToken();\r\n";

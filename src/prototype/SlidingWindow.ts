@@ -1,6 +1,15 @@
 ///<reference path='ArrayUtilities.ts' />
 
+interface ISlidingWindowSource {
+    // Asks the source to copy items starting at sourceIndex into the window at 'destinationIndex'
+    // with up to 'spaceAvailable' items.  The actual number of items fetched should be given as 
+    // the return value.
+    fetchMoreItems(argument: any, sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number;
+}
+
 class SlidingWindow {
+    private source: ISlidingWindowSource;
+
     // A window of items that has been read in from the underlying source.
     public window: any[] = [];
 
@@ -32,14 +41,11 @@ class SlidingWindow {
     // The length of the source we're reading from if we know it up front.  -1 if we do not.
     private sourceLength: number;
 
-    constructor(defaultWindowSize: number, defaultValue: any, sourceLength = -1) {
+    constructor(source: ISlidingWindowSource, defaultWindowSize: number, defaultValue: any, sourceLength = -1) {
+        this.source = source;
         this.defaultValue = defaultValue;
         this.window = ArrayUtilities.createArray(defaultWindowSize, defaultValue);
         this.sourceLength = sourceLength;
-    }
-
-    private fetchMoreItems(argument: any, sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
-        throw Errors.notYetImplemented();
     }
 
     // The last legal index of the window (exclusive).
@@ -58,7 +64,7 @@ class SlidingWindow {
         }
 
         var spaceAvailable = this.window.length - this.windowCount;
-        var amountFetched = this.fetchMoreItems(argument, this.windowAbsoluteEndIndex(), this.window, this.windowCount, spaceAvailable);
+        var amountFetched = this.source.fetchMoreItems(argument, this.windowAbsoluteEndIndex(), this.window, this.windowCount, spaceAvailable);
 
         // Assert disabled because it is actually expensive enugh to affect perf.
 

@@ -375,7 +375,10 @@ module Parser {
         tokenDiagnostics(): SyntaxDiagnostic[];
     }
 
-    class NormalParserSource extends SlidingWindow implements IParserSource {
+    class NormalParserSource implements IParserSource {
+        // The sliding window that we store tokens in.
+        private slidingWindow: SlidingWindow;
+
         // The scanner we're pulling tokens from.
         private scanner: Scanner;
 
@@ -396,14 +399,14 @@ module Parser {
         // reparse a / or /= as a regular expression.
         private _tokenDiagnostics: SyntaxDiagnostic[] = [];
 
+        // Pool of rewind points we give out if the parser needs one.
         private rewindPointPool: IParserRewindPoint[] = [];
         private rewindPointPoolCount = 0;
 
         constructor(text: IText,
                     languageVersion: LanguageVersion,
                     stringTable: Collections.StringTable) {
-            super(32, null);
-
+            this.slidingWindow = new SlidingWindow(this, /*defaultWindowSize:*/ 32, null);
             this.scanner = new Scanner(text, languageVersion, stringTable);
         }
 
@@ -419,7 +422,7 @@ module Parser {
         }
 
         private peekTokenN(n: number): ISyntaxToken {
-            return this.peekItemN(n);
+            return this.slidingWindow.peekItemN(n);
         }
 
         private previousToken(): ISyntaxToken {
@@ -442,7 +445,7 @@ module Parser {
             this._previousToken = this._currentToken;
             this._currentToken = null;
 
-            this.moveToNextItem();
+            this.slidingWindow.moveToNextItem();
         }
 
         private currentTokenFullStart() {
@@ -461,7 +464,7 @@ module Parser {
         }
 
         private getRewindPoint(): IParserRewindPoint {
-            var absoluteIndex = this.getAndPinAbsoluteIndex();
+            var absoluteIndex = this.slidingWindow.getAndPinAbsoluteIndex();
             
             var rewindPoint = this.getOrCreateRewindPoint();
 
@@ -469,13 +472,13 @@ module Parser {
             (<any>rewindPoint).previousToken = this._previousToken;
             (<any>rewindPoint).currentTokenFullStart = this._currentTokenFullStart;
 
-            rewindPoint.pinCount = this.pinCount();
+            rewindPoint.pinCount = this.slidingWindow.pinCount();
 
             return rewindPoint;
         }
 
         private rewind(rewindPoint: IParserRewindPoint): void {
-            this.rewindToPinnedIndex((<any>rewindPoint).absoluteIndex);
+            this.slidingWindow.rewindToPinnedIndex((<any>rewindPoint).absoluteIndex);
             
             this._currentToken = null;
             this._previousToken = (<any>rewindPoint).previousToken;
@@ -483,8 +486,8 @@ module Parser {
         }
 
         private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
-            Debug.assert(this.pinCount() === rewindPoint.pinCount);
-            this.releaseAndUnpinAbsoluteIndex((<any>rewindPoint).absoluteIndex);
+            Debug.assert(this.slidingWindow.pinCount() === rewindPoint.pinCount);
+            this.slidingWindow.releaseAndUnpinAbsoluteIndex((<any>rewindPoint).absoluteIndex);
 
             // this.rewindPoints.push(rewindPoint);
             this.rewindPointPool[this.rewindPointPoolCount] = rewindPoint;
@@ -495,7 +498,7 @@ module Parser {
             var result = this._currentToken;
 
             if (result === null) {
-                result = this.currentItem(/*allowRegularExpression:*/ false);
+                result = this.slidingWindow.currentItem(/*allowRegularExpression:*/ false);
                 this._currentToken = result;
             }
 
@@ -528,7 +531,7 @@ module Parser {
             this.removeDiagnosticsAfterCurrentTokenFullStart();
 
             // Now, tell our sliding window to throw away all tokens from the / onwards (including the /).
-            this.disgardAllItemsFromCurrentIndexOnwards();
+            this.slidingWindow.disgardAllItemsFromCurrentIndexOnwards();
 
             // Now tell the scanner to reset its position to the start of the / token as well.  That way
             // when we try to scan the next item, we'll be at the right location.
@@ -554,7 +557,7 @@ module Parser {
 
             // Now actually fetch the token again from the scanner. This time let it know that it
             // can scan it as a regex token if it wants to.
-            this._currentToken = this.currentItem(/*allowRegularExpression:*/ true);
+            this._currentToken = this.slidingWindow.currentItem(/*allowRegularExpression:*/ true);
 
             // We have better gotten some sort of regex token.  Otherwise, something *very* wrong has
             // occurred.
