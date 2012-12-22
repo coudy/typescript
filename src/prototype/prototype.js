@@ -25578,8 +25578,8 @@ var Parser;
         NormalParserSource.prototype.tokenDiagnostics = function () {
             return this._tokenDiagnostics;
         };
-        NormalParserSource.prototype.fetchMoreItems = function (argument, sourceIndex, window, destinationIndex, spaceAvailable) {
-            window[destinationIndex] = this.scanner.scan(this._tokenDiagnostics, argument);
+        NormalParserSource.prototype.fetchMoreItems = function (allowRegularExpression, sourceIndex, window, destinationIndex, spaceAvailable) {
+            window[destinationIndex] = this.scanner.scan(this._tokenDiagnostics, allowRegularExpression);
             return 1;
         };
         NormalParserSource.prototype.peekTokenN = function (n) {
