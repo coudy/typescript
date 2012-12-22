@@ -443,10 +443,9 @@ module Parser {
     //     sources are smart enough to do that and not be affected by any additional work they may
     //     have done when they originally scanned that token.
     interface IParserSource {
-        // Peek any number of tokens ahead from the current location in source.  peekTokenN(0) is
-        // equivalent to 'currentToken', peekTokenN(1) is the next token, peekTokenN(2) the token
-        // after that, etc.
-        peekTokenN(n: number): ISyntaxToken;
+        // The absolute index that the current token starts at.  'currentToken' and 'currentNode'
+        // have their fullStart at this position.  previousToken has it's fullEnd at this position.
+        absolutePosition(): number;
 
         // The token that comes before the 'currentToken' that hte source is pointing at.
         previousToken(): ISyntaxToken;
@@ -464,9 +463,10 @@ module Parser {
         // source is pointing at a "/" or "/=" token. 
         currentTokenAllowingRegularExpression(): ISyntaxToken;
 
-        // The absolute index that the current token starts at.  'currentToken' and 'currentNode'
-        // have their fullStart at this position.  previousToken has it's fullEnd at this position.
-        absolutePosition(): number;
+        // Peek any number of tokens ahead from the current location in source.  peekTokenN(0) is
+        // equivalent to 'currentToken', peekTokenN(1) is the next token, peekTokenN(2) the token
+        // after that, etc.
+        peekTokenN(n: number): ISyntaxToken;
 
         // Called to move the source to the next node or token once the parser has consumed the 
         // current one.
