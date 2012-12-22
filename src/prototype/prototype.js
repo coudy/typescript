@@ -26177,7 +26177,7 @@ var Parser;
             this._tokenDiagnostics = [];
             this.rewindPointPool = [];
             this.rewindPointPoolCount = 0;
-            this._slidingWindow = new SlidingWindow(this, 32, null);
+            this._tokenSlidingWindow = new SlidingWindow(this, 32, null);
             this._scanner = new Scanner(text, languageVersion, stringTable);
             this._previousSourceUnitCursor = new SyntaxCursor(previousSourceUnit);
             this._changeRange = changeRange;
@@ -26243,7 +26243,7 @@ var Parser;
             this._changeDelta += currentElement.fullWidth();
         };
         NormalParserSource.prototype.peekTokenN = function (n) {
-            return this._slidingWindow.peekItemN(n);
+            return this._tokenSlidingWindow.peekItemN(n);
         };
         NormalParserSource.prototype.previousToken = function () {
             return this._previousToken;
@@ -26257,7 +26257,7 @@ var Parser;
         NormalParserSource.prototype.moveToNextToken = function () {
             this._absolutePosition += this.currentToken().fullWidth();
             this._previousToken = this.currentToken();
-            this._slidingWindow.moveToNextItem();
+            this._tokenSlidingWindow.moveToNextItem();
         };
         NormalParserSource.prototype.absolutePosition = function () {
             return this._absolutePosition;
@@ -26273,36 +26273,36 @@ var Parser;
             return result;
         };
         NormalParserSource.prototype.getRewindPoint = function () {
-            var slidingWindowIndex = this._slidingWindow.getAndPinAbsoluteIndex();
-            var cursorIndex = this._previousSourceUnitCursor.getAndPinCursorIndex();
+            var tokenSlidingWindowIndex = this._tokenSlidingWindow.getAndPinAbsoluteIndex();
+            var previousSourceUnitCursorIndex = this._previousSourceUnitCursor.getAndPinCursorIndex();
             var rewindPoint = this.getOrCreateRewindPoint();
-            rewindPoint.slidingWindowIndex = slidingWindowIndex;
-            rewindPoint.cursorIndex = cursorIndex;
+            rewindPoint.tokenSlidingWindowIndex = tokenSlidingWindowIndex;
+            rewindPoint.previousSourceUnitCursorIndex = previousSourceUnitCursorIndex;
             rewindPoint.previousToken = this._previousToken;
             rewindPoint.absolutePosition = this._absolutePosition;
             rewindPoint.changeDelta = this._changeDelta;
             rewindPoint.changeRange = this._changeRange;
-            Debug.assert(this._slidingWindow.pinCount() === this._previousSourceUnitCursor.pinCount());
-            rewindPoint.pinCount = this._slidingWindow.pinCount();
+            Debug.assert(this._tokenSlidingWindow.pinCount() === this._previousSourceUnitCursor.pinCount());
+            rewindPoint.pinCount = this._tokenSlidingWindow.pinCount();
             return rewindPoint;
         };
         NormalParserSource.prototype.rewind = function (rewindPoint) {
-            this._slidingWindow.rewindToPinnedIndex(rewindPoint.slidingWindowIndex);
-            this._previousSourceUnitCursor.rewindToPinnedCursorIndex(rewindPoint.cursorIndex);
+            this._tokenSlidingWindow.rewindToPinnedIndex(rewindPoint.tokenSlidingWindowIndex);
+            this._previousSourceUnitCursor.rewindToPinnedCursorIndex(rewindPoint.previousSourceUnitCursorIndex);
             this._previousToken = rewindPoint.previousToken;
             this._absolutePosition = rewindPoint.absolutePosition;
             this._changeDelta = rewindPoint.changeDelta;
             this._changeRange = rewindPoint.changeRange;
         };
         NormalParserSource.prototype.releaseRewindPoint = function (rewindPoint) {
-            Debug.assert(this._slidingWindow.pinCount() === rewindPoint.pinCount);
-            this._slidingWindow.releaseAndUnpinAbsoluteIndex(rewindPoint.slidingWindowIndex);
-            this._previousSourceUnitCursor.releaseAndUnpinCursorIndex(rewindPoint.cursorIndex);
+            Debug.assert(this._tokenSlidingWindow.pinCount() === rewindPoint.pinCount);
+            this._tokenSlidingWindow.releaseAndUnpinAbsoluteIndex(rewindPoint.tokenSlidingWindowIndex);
+            this._previousSourceUnitCursor.releaseAndUnpinCursorIndex(rewindPoint.previousSourceUnitCursorIndex);
             this.rewindPointPool[this.rewindPointPoolCount] = rewindPoint;
             this.rewindPointPoolCount++;
         };
         NormalParserSource.prototype.currentToken = function () {
-            return this._slidingWindow.currentItem(false);
+            return this._tokenSlidingWindow.currentItem(false);
         };
         NormalParserSource.prototype.removeDiagnosticsOnOrAfterPosition = function (position) {
             var tokenDiagnosticsLength = this._tokenDiagnostics.length;
@@ -26320,12 +26320,12 @@ var Parser;
             this._absolutePosition = absolutePosition;
             this._previousToken = previousToken;
             this.removeDiagnosticsOnOrAfterPosition(absolutePosition);
-            this._slidingWindow.disgardAllItemsFromCurrentIndexOnwards();
+            this._tokenSlidingWindow.disgardAllItemsFromCurrentIndexOnwards();
             this._scanner.setAbsoluteIndex(absolutePosition);
         };
         NormalParserSource.prototype.currentTokenAllowingRegularExpression = function () {
             this.resetToPosition(this._absolutePosition, this._previousToken);
-            var token = this._slidingWindow.currentItem(true);
+            var token = this._tokenSlidingWindow.currentItem(true);
             Debug.assert(SyntaxFacts.isDivideOrRegularExpressionToken(token.kind()));
             return token;
         };
