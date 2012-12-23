@@ -1009,6 +1009,9 @@ var SyntaxNode = (function () {
     SyntaxNode.prototype.isStatement = function () {
         return false;
     };
+    SyntaxNode.prototype.isSwitchClause = function () {
+        return false;
+    };
     SyntaxNode.prototype.insertChildrenInto = function (array, index) {
         throw Errors.abstract();
     };
@@ -30583,10 +30586,16 @@ var Parser;
             return this.currentToken().keywordKind() === 18 /* DefaultKeyword */ ;
         };
         ParserImpl.prototype.isSwitchClause = function () {
+            if(this.currentNode() !== null && this.currentNode().isSwitchClause()) {
+                return true;
+            }
             return this.isCaseSwitchClause() || this.isDefaultSwitchClause();
         };
         ParserImpl.prototype.parseSwitchClause = function () {
             Debug.assert(this.isSwitchClause());
+            if(this.currentNode() !== null && this.currentNode().isSwitchClause()) {
+                return this.eatNode();
+            }
             if(this.isCaseSwitchClause()) {
                 return this.parseCaseSwitchClause();
             } else {
@@ -30794,9 +30803,15 @@ var Parser;
             return new VariableDeclarationSyntax(varKeyword, variableDeclarators);
         };
         ParserImpl.prototype.isVariableDeclarator = function () {
+            if(this.currentNode() !== null && this.currentNode().kind() === 224 /* VariableDeclarator */ ) {
+                return true;
+            }
             return this.isIdentifier(this.currentToken());
         };
         ParserImpl.prototype.parseVariableDeclarator = function (allowIn) {
+            if(this.currentNode() !== null && this.currentNode().kind() === 224 /* VariableDeclarator */ ) {
+                return this.eatNode();
+            }
             var identifier = this.eatIdentifierToken();
             var equalsValueClause = null;
             var typeAnnotation = null;

@@ -204,6 +204,10 @@ class SyntaxNode implements ISyntaxElement {
         return false;
     }
 
+    public isSwitchClause(): bool {
+        return false;
+    }
+
     public insertChildrenInto(array: ISyntaxElement[], index: number): void {
         throw Errors.abstract();
     }

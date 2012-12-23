@@ -2752,11 +2752,19 @@ module Parser {
         }
 
         private isSwitchClause(): bool {
+            if (this.currentNode() !== null && this.currentNode().isSwitchClause()) {
+                return true;
+            }
+
             return this.isCaseSwitchClause() || this.isDefaultSwitchClause();
         }
 
         private parseSwitchClause(): SwitchClauseSyntax {
             Debug.assert(this.isSwitchClause());
+            if (this.currentNode() !== null && this.currentNode().isSwitchClause()) {
+                return <SwitchClauseSyntax>this.eatNode();
+            }
+
             if (this.isCaseSwitchClause()) {
                 return this.parseCaseSwitchClause();
             }
@@ -3029,10 +3037,18 @@ module Parser {
         }
 
         private isVariableDeclarator(): bool {
+            if (this.currentNode() !== null && this.currentNode().kind() === SyntaxKind.VariableDeclarator) {
+                return true;
+            }
+
             return this.isIdentifier(this.currentToken());
         }
 
         private parseVariableDeclarator(allowIn: bool): VariableDeclaratorSyntax {
+            if (this.currentNode() !== null && this.currentNode().kind() === SyntaxKind.VariableDeclarator) {
+                return <VariableDeclaratorSyntax>this.eatNode();
+            }
+
             var identifier = this.eatIdentifierToken();
             var equalsValueClause: EqualsValueClauseSyntax = null;
             var typeAnnotation: TypeAnnotationSyntax = null;
