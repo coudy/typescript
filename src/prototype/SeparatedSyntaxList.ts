@@ -47,7 +47,7 @@ module Syntax {
         hasZeroWidthToken: () => false,
         hasRegularExpressionToken: () => false,
 
-        findTokenInternal: (position: number): SyntaxNode {
+        findTokenInternal: (position: number, fullStart: number): { token: ISyntaxElement; fullStart: number; } {
             // This should never have been called on this list.  It has a 0 width, so the client 
             // should have skipped over this.
             throw Errors.invalidOperation();
@@ -145,9 +145,9 @@ module Syntax {
             return this.item.hasRegularExpressionToken();
         }
 
-        public findTokenInternal(position: number): SyntaxNode {
+        public findTokenInternal(position: number, fullStart: number): { token: ISyntaxElement; fullStart: number; } {
             Debug.assert(position >= 0 && position < this.item.fullWidth());
-            return (<any>this.item).findTokenInternal(position);
+            return (<any>this.item).findTokenInternal(position, fullStart);
         }
 
         public insertChildrenInto(array: ISyntaxElement[], index: number): void {
@@ -343,22 +343,23 @@ module Syntax {
             return this._data;
         }
 
-        public findTokenInternal(position: number): ISyntaxElement {
+        public findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
             for (var i = 0, n = this.elements.length; i < n; i++) {
                 var element = this.elements[i];
-
+                
                 var childWidth = element.fullWidth();
 
                 if (i % 2 === 0) {
                     // Node
-                    if (position < childWidth) { return (<any>element).findTokenInternal(position); }
+                    if (position < childWidth) { return (<any>element).findTokenInternal(position, fullStart); }
                 }
                 else {
                     // Token
-                    if (position < childWidth) { return element; }
+                    if (position < childWidth) { return { token: <ISyntaxToken>element, fullStart: fullStart }; }
                 }
 
                 position -= childWidth;
+                fullStart += childWidth;
             }
 
             throw Errors.invalidOperation();

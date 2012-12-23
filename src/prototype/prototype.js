@@ -982,16 +982,19 @@ var SyntaxNode = (function () {
         if(position < 0 || position >= this.fullWidth()) {
             throw Errors.argumentOutOfRange("position");
         }
-        return this.findTokenInternal(position);
+        return this.findTokenInternal(position, 0);
     };
     SyntaxNode.prototype.tryGetEndOfFileAt = function (position) {
         if(this.kind() === 119 /* SourceUnit */  && position == this.fullWidth()) {
             var sourceUnit = this;
-            return sourceUnit.endOfFileToken();
+            return {
+                token: sourceUnit.endOfFileToken(),
+                fullStart: sourceUnit.moduleElements().fullWidth()
+            };
         }
         return null;
     };
-    SyntaxNode.prototype.findTokenInternal = function (position) {
+    SyntaxNode.prototype.findTokenInternal = function (position, fullStart) {
         throw Errors.abstract();
     };
     SyntaxNode.prototype.isModuleElement = function () {
@@ -1522,7 +1525,7 @@ var Syntax;
         hasRegularExpressionToken: function () {
             return false;
         },
-        findTokenInternal: function (position) {
+        findTokenInternal: function (position, fullStart) {
             throw Errors.invalidOperation();
         },
         insertChildrenInto: function (array, index) {
@@ -1622,9 +1625,9 @@ var Syntax;
         SingletonSeparatedSyntaxList.prototype.hasRegularExpressionToken = function () {
             return this.item.hasRegularExpressionToken();
         };
-        SingletonSeparatedSyntaxList.prototype.findTokenInternal = function (position) {
+        SingletonSeparatedSyntaxList.prototype.findTokenInternal = function (position, fullStart) {
             Debug.assert(position >= 0 && position < this.item.fullWidth());
-            return (this.item).findTokenInternal(position);
+            return (this.item).findTokenInternal(position, fullStart);
         };
         SingletonSeparatedSyntaxList.prototype.insertChildrenInto = function (array, index) {
             array.splice(index, 0, this.item);
@@ -1796,20 +1799,24 @@ var Syntax;
             }
             return this._data;
         };
-        NormalSeparatedSyntaxList.prototype.findTokenInternal = function (position) {
+        NormalSeparatedSyntaxList.prototype.findTokenInternal = function (position, fullStart) {
             for(var i = 0, n = this.elements.length; i < n; i++) {
                 var element = this.elements[i];
                 var childWidth = element.fullWidth();
                 if(i % 2 === 0) {
                     if(position < childWidth) {
-                        return (element).findTokenInternal(position);
+                        return (element).findTokenInternal(position, fullStart);
                     }
                 } else {
                     if(position < childWidth) {
-                        return element;
+                        return {
+                            token: element,
+                            fullStart: fullStart
+                        };
                     }
                 }
                 position -= childWidth;
+                fullStart += childWidth;
             }
             throw Errors.invalidOperation();
         };
@@ -1923,7 +1930,7 @@ var Syntax;
         EmptySyntaxList.prototype.hasRegularExpressionToken = function () {
             return false;
         };
-        EmptySyntaxList.prototype.findTokenInternal = function (position) {
+        EmptySyntaxList.prototype.findTokenInternal = function (position, fullStart) {
             throw Errors.invalidOperation();
         };
         EmptySyntaxList.prototype.insertChildrenInto = function (array, index) {
@@ -2005,9 +2012,9 @@ var Syntax;
         SingletonSyntaxList.prototype.hasRegularExpressionToken = function () {
             return this.item.hasRegularExpressionToken();
         };
-        SingletonSyntaxList.prototype.findTokenInternal = function (position) {
+        SingletonSyntaxList.prototype.findTokenInternal = function (position, fullStart) {
             Debug.assert(position >= 0 && position < this.item.fullWidth());
-            return (this.item).findTokenInternal(position);
+            return (this.item).findTokenInternal(position, fullStart);
         };
         SingletonSyntaxList.prototype.insertChildrenInto = function (array, index) {
             array.splice(index, 0, this.item);
@@ -2132,15 +2139,16 @@ var Syntax;
             }
             return this._data;
         };
-        NormalSyntaxList.prototype.findTokenInternal = function (position) {
+        NormalSyntaxList.prototype.findTokenInternal = function (position, fullStart) {
             Debug.assert(position >= 0 && position < this.fullWidth());
             for(var i = 0, n = this.nodes.length; i < n; i++) {
                 var node = this.nodes[i];
                 var childWidth = node.fullWidth();
                 if(position < childWidth) {
-                    return (node).findTokenInternal(position);
+                    return (node).findTokenInternal(position, fullStart);
                 }
                 position -= childWidth;
+                fullStart += childWidth;
             }
             throw Errors.invalidOperation();
         };
@@ -9007,19 +9015,24 @@ var SourceUnitSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    SourceUnitSyntax.prototype.findTokenInternal = function (position) {
+    SourceUnitSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._moduleElements.fullWidth();
         if(position < childWidth) {
-            return (this._moduleElements).findTokenInternal(position);
+            return (this._moduleElements).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._endOfFileToken.fullWidth();
         if(position < childWidth) {
-            return this._endOfFileToken;
+            return {
+                token: this._endOfFileToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     SourceUnitSyntax.prototype.structuralEquals = function (node) {
@@ -9233,29 +9246,45 @@ var ExternalModuleReferenceSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ExternalModuleReferenceSyntax.prototype.findTokenInternal = function (position) {
+    ExternalModuleReferenceSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._moduleKeyword.fullWidth();
         if(position < childWidth) {
-            return this._moduleKeyword;
+            return {
+                token: this._moduleKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._openParenToken.fullWidth();
         if(position < childWidth) {
-            return this._openParenToken;
+            return {
+                token: this._openParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._stringLiteral.fullWidth();
         if(position < childWidth) {
-            return this._stringLiteral;
+            return {
+                token: this._stringLiteral,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeParenToken.fullWidth();
         if(position < childWidth) {
-            return this._closeParenToken;
+            return {
+                token: this._closeParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ExternalModuleReferenceSyntax.prototype.structuralEquals = function (node) {
@@ -9360,14 +9389,15 @@ var ModuleNameModuleReferenceSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._moduleName.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ModuleNameModuleReferenceSyntax.prototype.findTokenInternal = function (position) {
+    ModuleNameModuleReferenceSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._moduleName.fullWidth();
         if(position < childWidth) {
-            return (this._moduleName).findTokenInternal(position);
+            return (this._moduleName).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ModuleNameModuleReferenceSyntax.prototype.structuralEquals = function (node) {
@@ -9566,34 +9596,51 @@ var ImportDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ImportDeclarationSyntax.prototype.findTokenInternal = function (position) {
+    ImportDeclarationSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._importKeyword.fullWidth();
         if(position < childWidth) {
-            return this._importKeyword;
+            return {
+                token: this._importKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._identifier.fullWidth();
         if(position < childWidth) {
-            return this._identifier;
+            return {
+                token: this._identifier,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._equalsToken.fullWidth();
         if(position < childWidth) {
-            return this._equalsToken;
+            return {
+                token: this._equalsToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._moduleReference.fullWidth();
         if(position < childWidth) {
-            return (this._moduleReference).findTokenInternal(position);
+            return (this._moduleReference).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._semicolonToken.fullWidth();
         if(position < childWidth) {
-            return this._semicolonToken;
+            return {
+                token: this._semicolonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ImportDeclarationSyntax.prototype.structuralEquals = function (node) {
@@ -9936,62 +9983,89 @@ var ClassDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ClassDeclarationSyntax.prototype.findTokenInternal = function (position) {
+    ClassDeclarationSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._exportKeyword !== null) {
             childWidth = this._exportKeyword.fullWidth();
             if(position < childWidth) {
-                return this._exportKeyword;
+                return {
+                    token: this._exportKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._declareKeyword !== null) {
             childWidth = this._declareKeyword.fullWidth();
             if(position < childWidth) {
-                return this._declareKeyword;
+                return {
+                    token: this._declareKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._classKeyword.fullWidth();
         if(position < childWidth) {
-            return this._classKeyword;
+            return {
+                token: this._classKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._identifier.fullWidth();
         if(position < childWidth) {
-            return this._identifier;
+            return {
+                token: this._identifier,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._extendsClause !== null) {
             childWidth = this._extendsClause.fullWidth();
             if(position < childWidth) {
-                return (this._extendsClause).findTokenInternal(position);
+                return (this._extendsClause).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._implementsClause !== null) {
             childWidth = this._implementsClause.fullWidth();
             if(position < childWidth) {
-                return (this._implementsClause).findTokenInternal(position);
+                return (this._implementsClause).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._openBraceToken.fullWidth();
         if(position < childWidth) {
-            return this._openBraceToken;
+            return {
+                token: this._openBraceToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._classElements.fullWidth();
         if(position < childWidth) {
-            return (this._classElements).findTokenInternal(position);
+            return (this._classElements).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeBraceToken.fullWidth();
         if(position < childWidth) {
-            return this._closeBraceToken;
+            return {
+                token: this._closeBraceToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ClassDeclarationSyntax.prototype.structuralEquals = function (node) {
@@ -10229,38 +10303,52 @@ var InterfaceDeclarationSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._body.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    InterfaceDeclarationSyntax.prototype.findTokenInternal = function (position) {
+    InterfaceDeclarationSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._exportKeyword !== null) {
             childWidth = this._exportKeyword.fullWidth();
             if(position < childWidth) {
-                return this._exportKeyword;
+                return {
+                    token: this._exportKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._interfaceKeyword.fullWidth();
         if(position < childWidth) {
-            return this._interfaceKeyword;
+            return {
+                token: this._interfaceKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._identifier.fullWidth();
         if(position < childWidth) {
-            return this._identifier;
+            return {
+                token: this._identifier,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._extendsClause !== null) {
             childWidth = this._extendsClause.fullWidth();
             if(position < childWidth) {
-                return (this._extendsClause).findTokenInternal(position);
+                return (this._extendsClause).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._body.fullWidth();
         if(position < childWidth) {
-            return (this._body).findTokenInternal(position);
+            return (this._body).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     InterfaceDeclarationSyntax.prototype.structuralEquals = function (node) {
@@ -10401,19 +10489,24 @@ var ExtendsClauseSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._typeNames.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ExtendsClauseSyntax.prototype.findTokenInternal = function (position) {
+    ExtendsClauseSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._extendsKeyword.fullWidth();
         if(position < childWidth) {
-            return this._extendsKeyword;
+            return {
+                token: this._extendsKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._typeNames.fullWidth();
         if(position < childWidth) {
-            return (this._typeNames).findTokenInternal(position);
+            return (this._typeNames).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ExtendsClauseSyntax.prototype.structuralEquals = function (node) {
@@ -10545,19 +10638,24 @@ var ImplementsClauseSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._typeNames.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ImplementsClauseSyntax.prototype.findTokenInternal = function (position) {
+    ImplementsClauseSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._implementsKeyword.fullWidth();
         if(position < childWidth) {
-            return this._implementsKeyword;
+            return {
+                token: this._implementsKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._typeNames.fullWidth();
         if(position < childWidth) {
-            return (this._typeNames).findTokenInternal(position);
+            return (this._typeNames).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ImplementsClauseSyntax.prototype.structuralEquals = function (node) {
@@ -10870,57 +10968,83 @@ var ModuleDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ModuleDeclarationSyntax.prototype.findTokenInternal = function (position) {
+    ModuleDeclarationSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._exportKeyword !== null) {
             childWidth = this._exportKeyword.fullWidth();
             if(position < childWidth) {
-                return this._exportKeyword;
+                return {
+                    token: this._exportKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._declareKeyword !== null) {
             childWidth = this._declareKeyword.fullWidth();
             if(position < childWidth) {
-                return this._declareKeyword;
+                return {
+                    token: this._declareKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._moduleKeyword.fullWidth();
         if(position < childWidth) {
-            return this._moduleKeyword;
+            return {
+                token: this._moduleKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._moduleName !== null) {
             childWidth = this._moduleName.fullWidth();
             if(position < childWidth) {
-                return (this._moduleName).findTokenInternal(position);
+                return (this._moduleName).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._stringLiteral !== null) {
             childWidth = this._stringLiteral.fullWidth();
             if(position < childWidth) {
-                return this._stringLiteral;
+                return {
+                    token: this._stringLiteral,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._openBraceToken.fullWidth();
         if(position < childWidth) {
-            return this._openBraceToken;
+            return {
+                token: this._openBraceToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._moduleElements.fullWidth();
         if(position < childWidth) {
-            return (this._moduleElements).findTokenInternal(position);
+            return (this._moduleElements).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeBraceToken.fullWidth();
         if(position < childWidth) {
-            return this._closeBraceToken;
+            return {
+                token: this._closeBraceToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ModuleDeclarationSyntax.prototype.structuralEquals = function (node) {
@@ -11227,46 +11351,64 @@ var FunctionDeclarationSyntax = (function (_super) {
         }
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    FunctionDeclarationSyntax.prototype.findTokenInternal = function (position) {
+    FunctionDeclarationSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._exportKeyword !== null) {
             childWidth = this._exportKeyword.fullWidth();
             if(position < childWidth) {
-                return this._exportKeyword;
+                return {
+                    token: this._exportKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._declareKeyword !== null) {
             childWidth = this._declareKeyword.fullWidth();
             if(position < childWidth) {
-                return this._declareKeyword;
+                return {
+                    token: this._declareKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._functionKeyword.fullWidth();
         if(position < childWidth) {
-            return this._functionKeyword;
+            return {
+                token: this._functionKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._functionSignature.fullWidth();
         if(position < childWidth) {
-            return (this._functionSignature).findTokenInternal(position);
+            return (this._functionSignature).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._block !== null) {
             childWidth = this._block.fullWidth();
             if(position < childWidth) {
-                return (this._block).findTokenInternal(position);
+                return (this._block).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._semicolonToken !== null) {
             childWidth = this._semicolonToken.fullWidth();
             if(position < childWidth) {
-                return this._semicolonToken;
+                return {
+                    token: this._semicolonToken,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         throw Errors.invalidOperation();
     };
@@ -11484,33 +11626,46 @@ var VariableStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    VariableStatementSyntax.prototype.findTokenInternal = function (position) {
+    VariableStatementSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._exportKeyword !== null) {
             childWidth = this._exportKeyword.fullWidth();
             if(position < childWidth) {
-                return this._exportKeyword;
+                return {
+                    token: this._exportKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._declareKeyword !== null) {
             childWidth = this._declareKeyword.fullWidth();
             if(position < childWidth) {
-                return this._declareKeyword;
+                return {
+                    token: this._declareKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._variableDeclaration.fullWidth();
         if(position < childWidth) {
-            return (this._variableDeclaration).findTokenInternal(position);
+            return (this._variableDeclaration).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._semicolonToken.fullWidth();
         if(position < childWidth) {
-            return this._semicolonToken;
+            return {
+                token: this._semicolonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     VariableStatementSyntax.prototype.structuralEquals = function (node) {
@@ -11689,19 +11844,24 @@ var VariableDeclarationSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclarators.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    VariableDeclarationSyntax.prototype.findTokenInternal = function (position) {
+    VariableDeclarationSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._varKeyword.fullWidth();
         if(position < childWidth) {
-            return this._varKeyword;
+            return {
+                token: this._varKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._variableDeclarators.fullWidth();
         if(position < childWidth) {
-            return (this._variableDeclarators).findTokenInternal(position);
+            return (this._variableDeclarators).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     VariableDeclarationSyntax.prototype.structuralEquals = function (node) {
@@ -11869,27 +12029,33 @@ var VariableDeclaratorSyntax = (function (_super) {
         }
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    VariableDeclaratorSyntax.prototype.findTokenInternal = function (position) {
+    VariableDeclaratorSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._identifier.fullWidth();
         if(position < childWidth) {
-            return this._identifier;
+            return {
+                token: this._identifier,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
             if(position < childWidth) {
-                return (this._typeAnnotation).findTokenInternal(position);
+                return (this._typeAnnotation).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._equalsValueClause !== null) {
             childWidth = this._equalsValueClause.fullWidth();
             if(position < childWidth) {
-                return (this._equalsValueClause).findTokenInternal(position);
+                return (this._equalsValueClause).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         throw Errors.invalidOperation();
     };
@@ -12023,19 +12189,24 @@ var EqualsValueClauseSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._value.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    EqualsValueClauseSyntax.prototype.findTokenInternal = function (position) {
+    EqualsValueClauseSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._equalsToken.fullWidth();
         if(position < childWidth) {
-            return this._equalsToken;
+            return {
+                token: this._equalsToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._value.fullWidth();
         if(position < childWidth) {
-            return (this._value).findTokenInternal(position);
+            return (this._value).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     EqualsValueClauseSyntax.prototype.structuralEquals = function (node) {
@@ -12181,19 +12352,24 @@ var PrefixUnaryExpressionSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._operand.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    PrefixUnaryExpressionSyntax.prototype.findTokenInternal = function (position) {
+    PrefixUnaryExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._operatorToken.fullWidth();
         if(position < childWidth) {
-            return this._operatorToken;
+            return {
+                token: this._operatorToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._operand.fullWidth();
         if(position < childWidth) {
-            return (this._operand).findTokenInternal(position);
+            return (this._operand).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     PrefixUnaryExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -12294,14 +12470,18 @@ var ThisExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ThisExpressionSyntax.prototype.findTokenInternal = function (position) {
+    ThisExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._thisKeyword.fullWidth();
         if(position < childWidth) {
-            return this._thisKeyword;
+            return {
+                token: this._thisKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ThisExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -12429,14 +12609,18 @@ var LiteralExpressionSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this._literalToken.kind());
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    LiteralExpressionSyntax.prototype.findTokenInternal = function (position) {
+    LiteralExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._literalToken.fullWidth();
         if(position < childWidth) {
-            return this._literalToken;
+            return {
+                token: this._literalToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     LiteralExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -12596,24 +12780,33 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ArrayLiteralExpressionSyntax.prototype.findTokenInternal = function (position) {
+    ArrayLiteralExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._openBracketToken.fullWidth();
         if(position < childWidth) {
-            return this._openBracketToken;
+            return {
+                token: this._openBracketToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._expressions.fullWidth();
         if(position < childWidth) {
-            return (this._expressions).findTokenInternal(position);
+            return (this._expressions).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeBracketToken.fullWidth();
         if(position < childWidth) {
-            return this._closeBracketToken;
+            return {
+                token: this._closeBracketToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ArrayLiteralExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -12686,7 +12879,7 @@ var OmittedExpressionSyntax = (function (_super) {
         var hasRegularExpressionToken = false;
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    OmittedExpressionSyntax.prototype.findTokenInternal = function (position) {
+    OmittedExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         throw Errors.invalidOperation();
     };
     OmittedExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -12835,24 +13028,33 @@ var ParenthesizedExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ParenthesizedExpressionSyntax.prototype.findTokenInternal = function (position) {
+    ParenthesizedExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._openParenToken.fullWidth();
         if(position < childWidth) {
-            return this._openParenToken;
+            return {
+                token: this._openParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._expression.fullWidth();
         if(position < childWidth) {
-            return (this._expression).findTokenInternal(position);
+            return (this._expression).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeParenToken.fullWidth();
         if(position < childWidth) {
-            return this._closeParenToken;
+            return {
+                token: this._closeParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ParenthesizedExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -13032,24 +13234,33 @@ var SimpleArrowFunctionExpressionSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._body.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    SimpleArrowFunctionExpressionSyntax.prototype.findTokenInternal = function (position) {
+    SimpleArrowFunctionExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._identifier.fullWidth();
         if(position < childWidth) {
-            return this._identifier;
+            return {
+                token: this._identifier,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._equalsGreaterThanToken.fullWidth();
         if(position < childWidth) {
-            return this._equalsGreaterThanToken;
+            return {
+                token: this._equalsGreaterThanToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._body.fullWidth();
         if(position < childWidth) {
-            return (this._body).findTokenInternal(position);
+            return (this._body).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     SimpleArrowFunctionExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -13205,24 +13416,30 @@ var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._body.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ParenthesizedArrowFunctionExpressionSyntax.prototype.findTokenInternal = function (position) {
+    ParenthesizedArrowFunctionExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._callSignature.fullWidth();
         if(position < childWidth) {
-            return (this._callSignature).findTokenInternal(position);
+            return (this._callSignature).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._equalsGreaterThanToken.fullWidth();
         if(position < childWidth) {
-            return this._equalsGreaterThanToken;
+            return {
+                token: this._equalsGreaterThanToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._body.fullWidth();
         if(position < childWidth) {
-            return (this._body).findTokenInternal(position);
+            return (this._body).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ParenthesizedArrowFunctionExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -13361,14 +13578,18 @@ var IdentifierNameSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    IdentifierNameSyntax.prototype.findTokenInternal = function (position) {
+    IdentifierNameSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._identifier.fullWidth();
         if(position < childWidth) {
-            return this._identifier;
+            return {
+                token: this._identifier,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     IdentifierNameSyntax.prototype.structuralEquals = function (node) {
@@ -13524,24 +13745,30 @@ var QualifiedNameSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._right.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    QualifiedNameSyntax.prototype.findTokenInternal = function (position) {
+    QualifiedNameSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._left.fullWidth();
         if(position < childWidth) {
-            return (this._left).findTokenInternal(position);
+            return (this._left).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._dotToken.fullWidth();
         if(position < childWidth) {
-            return this._dotToken;
+            return {
+                token: this._dotToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._right.fullWidth();
         if(position < childWidth) {
-            return (this._right).findTokenInternal(position);
+            return (this._right).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     QualifiedNameSyntax.prototype.structuralEquals = function (node) {
@@ -13722,29 +13949,39 @@ var ConstructorTypeSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ConstructorTypeSyntax.prototype.findTokenInternal = function (position) {
+    ConstructorTypeSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._newKeyword.fullWidth();
         if(position < childWidth) {
-            return this._newKeyword;
+            return {
+                token: this._newKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._parameterList.fullWidth();
         if(position < childWidth) {
-            return (this._parameterList).findTokenInternal(position);
+            return (this._parameterList).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._equalsGreaterThanToken.fullWidth();
         if(position < childWidth) {
-            return this._equalsGreaterThanToken;
+            return {
+                token: this._equalsGreaterThanToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._type.fullWidth();
         if(position < childWidth) {
-            return (this._type).findTokenInternal(position);
+            return (this._type).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ConstructorTypeSyntax.prototype.structuralEquals = function (node) {
@@ -13903,24 +14140,30 @@ var FunctionTypeSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    FunctionTypeSyntax.prototype.findTokenInternal = function (position) {
+    FunctionTypeSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._parameterList.fullWidth();
         if(position < childWidth) {
-            return (this._parameterList).findTokenInternal(position);
+            return (this._parameterList).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._equalsGreaterThanToken.fullWidth();
         if(position < childWidth) {
-            return this._equalsGreaterThanToken;
+            return {
+                token: this._equalsGreaterThanToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._type.fullWidth();
         if(position < childWidth) {
-            return (this._type).findTokenInternal(position);
+            return (this._type).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     FunctionTypeSyntax.prototype.structuralEquals = function (node) {
@@ -14083,24 +14326,33 @@ var ObjectTypeSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ObjectTypeSyntax.prototype.findTokenInternal = function (position) {
+    ObjectTypeSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._openBraceToken.fullWidth();
         if(position < childWidth) {
-            return this._openBraceToken;
+            return {
+                token: this._openBraceToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._typeMembers.fullWidth();
         if(position < childWidth) {
-            return (this._typeMembers).findTokenInternal(position);
+            return (this._typeMembers).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeBraceToken.fullWidth();
         if(position < childWidth) {
-            return this._closeBraceToken;
+            return {
+                token: this._closeBraceToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ObjectTypeSyntax.prototype.structuralEquals = function (node) {
@@ -14255,24 +14507,33 @@ var ArrayTypeSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ArrayTypeSyntax.prototype.findTokenInternal = function (position) {
+    ArrayTypeSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._type.fullWidth();
         if(position < childWidth) {
-            return (this._type).findTokenInternal(position);
+            return (this._type).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._openBracketToken.fullWidth();
         if(position < childWidth) {
-            return this._openBracketToken;
+            return {
+                token: this._openBracketToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeBracketToken.fullWidth();
         if(position < childWidth) {
-            return this._closeBracketToken;
+            return {
+                token: this._closeBracketToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ArrayTypeSyntax.prototype.structuralEquals = function (node) {
@@ -14384,14 +14645,18 @@ var PredefinedTypeSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    PredefinedTypeSyntax.prototype.findTokenInternal = function (position) {
+    PredefinedTypeSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._keyword.fullWidth();
         if(position < childWidth) {
-            return this._keyword;
+            return {
+                token: this._keyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     PredefinedTypeSyntax.prototype.structuralEquals = function (node) {
@@ -14515,19 +14780,24 @@ var TypeAnnotationSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    TypeAnnotationSyntax.prototype.findTokenInternal = function (position) {
+    TypeAnnotationSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._colonToken.fullWidth();
         if(position < childWidth) {
-            return this._colonToken;
+            return {
+                token: this._colonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._type.fullWidth();
         if(position < childWidth) {
-            return (this._type).findTokenInternal(position);
+            return (this._type).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     TypeAnnotationSyntax.prototype.structuralEquals = function (node) {
@@ -14690,24 +14960,33 @@ var BlockSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    BlockSyntax.prototype.findTokenInternal = function (position) {
+    BlockSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._openBraceToken.fullWidth();
         if(position < childWidth) {
-            return this._openBraceToken;
+            return {
+                token: this._openBraceToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._statements.fullWidth();
         if(position < childWidth) {
-            return (this._statements).findTokenInternal(position);
+            return (this._statements).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeBraceToken.fullWidth();
         if(position < childWidth) {
-            return this._closeBraceToken;
+            return {
+                token: this._closeBraceToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     BlockSyntax.prototype.structuralEquals = function (node) {
@@ -14986,48 +15265,66 @@ var ParameterSyntax = (function (_super) {
         }
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ParameterSyntax.prototype.findTokenInternal = function (position) {
+    ParameterSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._dotDotDotToken !== null) {
             childWidth = this._dotDotDotToken.fullWidth();
             if(position < childWidth) {
-                return this._dotDotDotToken;
+                return {
+                    token: this._dotDotDotToken,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._publicOrPrivateKeyword !== null) {
             childWidth = this._publicOrPrivateKeyword.fullWidth();
             if(position < childWidth) {
-                return this._publicOrPrivateKeyword;
+                return {
+                    token: this._publicOrPrivateKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._identifier.fullWidth();
         if(position < childWidth) {
-            return this._identifier;
+            return {
+                token: this._identifier,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._questionToken !== null) {
             childWidth = this._questionToken.fullWidth();
             if(position < childWidth) {
-                return this._questionToken;
+                return {
+                    token: this._questionToken,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
             if(position < childWidth) {
-                return (this._typeAnnotation).findTokenInternal(position);
+                return (this._typeAnnotation).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._equalsValueClause !== null) {
             childWidth = this._equalsValueClause.fullWidth();
             if(position < childWidth) {
-                return (this._equalsValueClause).findTokenInternal(position);
+                return (this._equalsValueClause).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         throw Errors.invalidOperation();
     };
@@ -15199,24 +15496,30 @@ var MemberAccessExpressionSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._identifierName.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    MemberAccessExpressionSyntax.prototype.findTokenInternal = function (position) {
+    MemberAccessExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._expression.fullWidth();
         if(position < childWidth) {
-            return (this._expression).findTokenInternal(position);
+            return (this._expression).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._dotToken.fullWidth();
         if(position < childWidth) {
-            return this._dotToken;
+            return {
+                token: this._dotToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._identifierName.fullWidth();
         if(position < childWidth) {
-            return (this._identifierName).findTokenInternal(position);
+            return (this._identifierName).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     MemberAccessExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -15353,19 +15656,24 @@ var PostfixUnaryExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    PostfixUnaryExpressionSyntax.prototype.findTokenInternal = function (position) {
+    PostfixUnaryExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._operand.fullWidth();
         if(position < childWidth) {
-            return (this._operand).findTokenInternal(position);
+            return (this._operand).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._operatorToken.fullWidth();
         if(position < childWidth) {
-            return this._operatorToken;
+            return {
+                token: this._operatorToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     PostfixUnaryExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -15549,29 +15857,39 @@ var ElementAccessExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ElementAccessExpressionSyntax.prototype.findTokenInternal = function (position) {
+    ElementAccessExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._expression.fullWidth();
         if(position < childWidth) {
-            return (this._expression).findTokenInternal(position);
+            return (this._expression).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._openBracketToken.fullWidth();
         if(position < childWidth) {
-            return this._openBracketToken;
+            return {
+                token: this._openBracketToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._argumentExpression.fullWidth();
         if(position < childWidth) {
-            return (this._argumentExpression).findTokenInternal(position);
+            return (this._argumentExpression).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeBracketToken.fullWidth();
         if(position < childWidth) {
-            return this._closeBracketToken;
+            return {
+                token: this._closeBracketToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ElementAccessExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -15711,19 +16029,21 @@ var InvocationExpressionSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._argumentList.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    InvocationExpressionSyntax.prototype.findTokenInternal = function (position) {
+    InvocationExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._expression.fullWidth();
         if(position < childWidth) {
-            return (this._expression).findTokenInternal(position);
+            return (this._expression).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._argumentList.fullWidth();
         if(position < childWidth) {
-            return (this._argumentList).findTokenInternal(position);
+            return (this._argumentList).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     InvocationExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -15886,24 +16206,33 @@ var ArgumentListSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ArgumentListSyntax.prototype.findTokenInternal = function (position) {
+    ArgumentListSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._openParenToken.fullWidth();
         if(position < childWidth) {
-            return this._openParenToken;
+            return {
+                token: this._openParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._arguments.fullWidth();
         if(position < childWidth) {
-            return (this._arguments).findTokenInternal(position);
+            return (this._arguments).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeParenToken.fullWidth();
         if(position < childWidth) {
-            return this._closeParenToken;
+            return {
+                token: this._closeParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ArgumentListSyntax.prototype.structuralEquals = function (node) {
@@ -16117,24 +16446,30 @@ var BinaryExpressionSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._right.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    BinaryExpressionSyntax.prototype.findTokenInternal = function (position) {
+    BinaryExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._left.fullWidth();
         if(position < childWidth) {
-            return (this._left).findTokenInternal(position);
+            return (this._left).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._operatorToken.fullWidth();
         if(position < childWidth) {
-            return this._operatorToken;
+            return {
+                token: this._operatorToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._right.fullWidth();
         if(position < childWidth) {
-            return (this._right).findTokenInternal(position);
+            return (this._right).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     BinaryExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -16350,34 +16685,45 @@ var ConditionalExpressionSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._whenFalse.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ConditionalExpressionSyntax.prototype.findTokenInternal = function (position) {
+    ConditionalExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._condition.fullWidth();
         if(position < childWidth) {
-            return (this._condition).findTokenInternal(position);
+            return (this._condition).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._questionToken.fullWidth();
         if(position < childWidth) {
-            return this._questionToken;
+            return {
+                token: this._questionToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._whenTrue.fullWidth();
         if(position < childWidth) {
-            return (this._whenTrue).findTokenInternal(position);
+            return (this._whenTrue).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._colonToken.fullWidth();
         if(position < childWidth) {
-            return this._colonToken;
+            return {
+                token: this._colonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._whenFalse.fullWidth();
         if(position < childWidth) {
-            return (this._whenFalse).findTokenInternal(position);
+            return (this._whenFalse).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ConditionalExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -16567,25 +16913,31 @@ var ConstructSignatureSyntax = (function (_super) {
         }
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ConstructSignatureSyntax.prototype.findTokenInternal = function (position) {
+    ConstructSignatureSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._newKeyword.fullWidth();
         if(position < childWidth) {
-            return this._newKeyword;
+            return {
+                token: this._newKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._parameterList.fullWidth();
         if(position < childWidth) {
-            return (this._parameterList).findTokenInternal(position);
+            return (this._parameterList).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
             if(position < childWidth) {
-                return (this._typeAnnotation).findTokenInternal(position);
+                return (this._typeAnnotation).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         throw Errors.invalidOperation();
     };
@@ -16787,32 +17139,42 @@ var FunctionSignatureSyntax = (function (_super) {
         }
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    FunctionSignatureSyntax.prototype.findTokenInternal = function (position) {
+    FunctionSignatureSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._identifier.fullWidth();
         if(position < childWidth) {
-            return this._identifier;
+            return {
+                token: this._identifier,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._questionToken !== null) {
             childWidth = this._questionToken.fullWidth();
             if(position < childWidth) {
-                return this._questionToken;
+                return {
+                    token: this._questionToken,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._parameterList.fullWidth();
         if(position < childWidth) {
-            return (this._parameterList).findTokenInternal(position);
+            return (this._parameterList).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
             if(position < childWidth) {
-                return (this._typeAnnotation).findTokenInternal(position);
+                return (this._typeAnnotation).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         throw Errors.invalidOperation();
     };
@@ -17003,30 +17365,40 @@ var IndexSignatureSyntax = (function (_super) {
         }
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    IndexSignatureSyntax.prototype.findTokenInternal = function (position) {
+    IndexSignatureSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._openBracketToken.fullWidth();
         if(position < childWidth) {
-            return this._openBracketToken;
+            return {
+                token: this._openBracketToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._parameter.fullWidth();
         if(position < childWidth) {
-            return (this._parameter).findTokenInternal(position);
+            return (this._parameter).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeBracketToken.fullWidth();
         if(position < childWidth) {
-            return this._closeBracketToken;
+            return {
+                token: this._closeBracketToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
             if(position < childWidth) {
-                return (this._typeAnnotation).findTokenInternal(position);
+                return (this._typeAnnotation).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         throw Errors.invalidOperation();
     };
@@ -17199,27 +17571,36 @@ var PropertySignatureSyntax = (function (_super) {
         }
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    PropertySignatureSyntax.prototype.findTokenInternal = function (position) {
+    PropertySignatureSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._identifier.fullWidth();
         if(position < childWidth) {
-            return this._identifier;
+            return {
+                token: this._identifier,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._questionToken !== null) {
             childWidth = this._questionToken.fullWidth();
             if(position < childWidth) {
-                return this._questionToken;
+                return {
+                    token: this._questionToken,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
             if(position < childWidth) {
-                return (this._typeAnnotation).findTokenInternal(position);
+                return (this._typeAnnotation).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         throw Errors.invalidOperation();
     };
@@ -17386,24 +17767,33 @@ var ParameterListSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ParameterListSyntax.prototype.findTokenInternal = function (position) {
+    ParameterListSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._openParenToken.fullWidth();
         if(position < childWidth) {
-            return this._openParenToken;
+            return {
+                token: this._openParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._parameters.fullWidth();
         if(position < childWidth) {
-            return (this._parameters).findTokenInternal(position);
+            return (this._parameters).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeParenToken.fullWidth();
         if(position < childWidth) {
-            return this._closeParenToken;
+            return {
+                token: this._closeParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ParameterListSyntax.prototype.structuralEquals = function (node) {
@@ -17546,20 +17936,22 @@ var CallSignatureSyntax = (function (_super) {
         }
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    CallSignatureSyntax.prototype.findTokenInternal = function (position) {
+    CallSignatureSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._parameterList.fullWidth();
         if(position < childWidth) {
-            return (this._parameterList).findTokenInternal(position);
+            return (this._parameterList).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
             if(position < childWidth) {
-                return (this._typeAnnotation).findTokenInternal(position);
+                return (this._typeAnnotation).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         throw Errors.invalidOperation();
     };
@@ -17690,19 +18082,24 @@ var ElseClauseSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ElseClauseSyntax.prototype.findTokenInternal = function (position) {
+    ElseClauseSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._elseKeyword.fullWidth();
         if(position < childWidth) {
-            return this._elseKeyword;
+            return {
+                token: this._elseKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._statement.fullWidth();
         if(position < childWidth) {
-            return (this._statement).findTokenInternal(position);
+            return (this._statement).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ElseClauseSyntax.prototype.structuralEquals = function (node) {
@@ -17946,40 +18343,55 @@ var IfStatementSyntax = (function (_super) {
         }
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    IfStatementSyntax.prototype.findTokenInternal = function (position) {
+    IfStatementSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._ifKeyword.fullWidth();
         if(position < childWidth) {
-            return this._ifKeyword;
+            return {
+                token: this._ifKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._openParenToken.fullWidth();
         if(position < childWidth) {
-            return this._openParenToken;
+            return {
+                token: this._openParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._condition.fullWidth();
         if(position < childWidth) {
-            return (this._condition).findTokenInternal(position);
+            return (this._condition).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeParenToken.fullWidth();
         if(position < childWidth) {
-            return this._closeParenToken;
+            return {
+                token: this._closeParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._statement.fullWidth();
         if(position < childWidth) {
-            return (this._statement).findTokenInternal(position);
+            return (this._statement).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._elseClause !== null) {
             childWidth = this._elseClause.fullWidth();
             if(position < childWidth) {
-                return (this._elseClause).findTokenInternal(position);
+                return (this._elseClause).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         throw Errors.invalidOperation();
     };
@@ -18122,19 +18534,24 @@ var ExpressionStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ExpressionStatementSyntax.prototype.findTokenInternal = function (position) {
+    ExpressionStatementSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._expression.fullWidth();
         if(position < childWidth) {
-            return (this._expression).findTokenInternal(position);
+            return (this._expression).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._semicolonToken.fullWidth();
         if(position < childWidth) {
-            return this._semicolonToken;
+            return {
+                token: this._semicolonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ExpressionStatementSyntax.prototype.structuralEquals = function (node) {
@@ -18345,32 +18762,42 @@ var ConstructorDeclarationSyntax = (function (_super) {
         }
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ConstructorDeclarationSyntax.prototype.findTokenInternal = function (position) {
+    ConstructorDeclarationSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._constructorKeyword.fullWidth();
         if(position < childWidth) {
-            return this._constructorKeyword;
+            return {
+                token: this._constructorKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._parameterList.fullWidth();
         if(position < childWidth) {
-            return (this._parameterList).findTokenInternal(position);
+            return (this._parameterList).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._block !== null) {
             childWidth = this._block.fullWidth();
             if(position < childWidth) {
-                return (this._block).findTokenInternal(position);
+                return (this._block).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._semicolonToken !== null) {
             childWidth = this._semicolonToken.fullWidth();
             if(position < childWidth) {
-                return this._semicolonToken;
+                return {
+                    token: this._semicolonToken,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         throw Errors.invalidOperation();
     };
@@ -18635,41 +19062,55 @@ var MemberFunctionDeclarationSyntax = (function (_super) {
         }
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    MemberFunctionDeclarationSyntax.prototype.findTokenInternal = function (position) {
+    MemberFunctionDeclarationSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._publicOrPrivateKeyword !== null) {
             childWidth = this._publicOrPrivateKeyword.fullWidth();
             if(position < childWidth) {
-                return this._publicOrPrivateKeyword;
+                return {
+                    token: this._publicOrPrivateKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._staticKeyword !== null) {
             childWidth = this._staticKeyword.fullWidth();
             if(position < childWidth) {
-                return this._staticKeyword;
+                return {
+                    token: this._staticKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._functionSignature.fullWidth();
         if(position < childWidth) {
-            return (this._functionSignature).findTokenInternal(position);
+            return (this._functionSignature).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._block !== null) {
             childWidth = this._block.fullWidth();
             if(position < childWidth) {
-                return (this._block).findTokenInternal(position);
+                return (this._block).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._semicolonToken !== null) {
             childWidth = this._semicolonToken.fullWidth();
             if(position < childWidth) {
-                return this._semicolonToken;
+                return {
+                    token: this._semicolonToken,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         throw Errors.invalidOperation();
     };
@@ -18989,50 +19430,69 @@ var GetMemberAccessorDeclarationSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    GetMemberAccessorDeclarationSyntax.prototype.findTokenInternal = function (position) {
+    GetMemberAccessorDeclarationSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._publicOrPrivateKeyword !== null) {
             childWidth = this._publicOrPrivateKeyword.fullWidth();
             if(position < childWidth) {
-                return this._publicOrPrivateKeyword;
+                return {
+                    token: this._publicOrPrivateKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._staticKeyword !== null) {
             childWidth = this._staticKeyword.fullWidth();
             if(position < childWidth) {
-                return this._staticKeyword;
+                return {
+                    token: this._staticKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._getKeyword.fullWidth();
         if(position < childWidth) {
-            return this._getKeyword;
+            return {
+                token: this._getKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._identifier.fullWidth();
         if(position < childWidth) {
-            return this._identifier;
+            return {
+                token: this._identifier,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._parameterList.fullWidth();
         if(position < childWidth) {
-            return (this._parameterList).findTokenInternal(position);
+            return (this._parameterList).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
             if(position < childWidth) {
-                return (this._typeAnnotation).findTokenInternal(position);
+                return (this._typeAnnotation).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._block.fullWidth();
         if(position < childWidth) {
-            return (this._block).findTokenInternal(position);
+            return (this._block).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     GetMemberAccessorDeclarationSyntax.prototype.structuralEquals = function (node) {
@@ -19294,43 +19754,61 @@ var SetMemberAccessorDeclarationSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    SetMemberAccessorDeclarationSyntax.prototype.findTokenInternal = function (position) {
+    SetMemberAccessorDeclarationSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._publicOrPrivateKeyword !== null) {
             childWidth = this._publicOrPrivateKeyword.fullWidth();
             if(position < childWidth) {
-                return this._publicOrPrivateKeyword;
+                return {
+                    token: this._publicOrPrivateKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._staticKeyword !== null) {
             childWidth = this._staticKeyword.fullWidth();
             if(position < childWidth) {
-                return this._staticKeyword;
+                return {
+                    token: this._staticKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._setKeyword.fullWidth();
         if(position < childWidth) {
-            return this._setKeyword;
+            return {
+                token: this._setKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._identifier.fullWidth();
         if(position < childWidth) {
-            return this._identifier;
+            return {
+                token: this._identifier,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._parameterList.fullWidth();
         if(position < childWidth) {
-            return (this._parameterList).findTokenInternal(position);
+            return (this._parameterList).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._block.fullWidth();
         if(position < childWidth) {
-            return (this._block).findTokenInternal(position);
+            return (this._block).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     SetMemberAccessorDeclarationSyntax.prototype.structuralEquals = function (node) {
@@ -19538,33 +20016,46 @@ var MemberVariableDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    MemberVariableDeclarationSyntax.prototype.findTokenInternal = function (position) {
+    MemberVariableDeclarationSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._publicOrPrivateKeyword !== null) {
             childWidth = this._publicOrPrivateKeyword.fullWidth();
             if(position < childWidth) {
-                return this._publicOrPrivateKeyword;
+                return {
+                    token: this._publicOrPrivateKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._staticKeyword !== null) {
             childWidth = this._staticKeyword.fullWidth();
             if(position < childWidth) {
-                return this._staticKeyword;
+                return {
+                    token: this._staticKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._variableDeclarator.fullWidth();
         if(position < childWidth) {
-            return (this._variableDeclarator).findTokenInternal(position);
+            return (this._variableDeclarator).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._semicolonToken.fullWidth();
         if(position < childWidth) {
-            return this._semicolonToken;
+            return {
+                token: this._semicolonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     MemberVariableDeclarationSyntax.prototype.structuralEquals = function (node) {
@@ -19725,24 +20216,33 @@ var ThrowStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ThrowStatementSyntax.prototype.findTokenInternal = function (position) {
+    ThrowStatementSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._throwKeyword.fullWidth();
         if(position < childWidth) {
-            return this._throwKeyword;
+            return {
+                token: this._throwKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._expression.fullWidth();
         if(position < childWidth) {
-            return (this._expression).findTokenInternal(position);
+            return (this._expression).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._semicolonToken.fullWidth();
         if(position < childWidth) {
-            return this._semicolonToken;
+            return {
+                token: this._semicolonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ThrowStatementSyntax.prototype.structuralEquals = function (node) {
@@ -19906,26 +20406,35 @@ var ReturnStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ReturnStatementSyntax.prototype.findTokenInternal = function (position) {
+    ReturnStatementSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._returnKeyword.fullWidth();
         if(position < childWidth) {
-            return this._returnKeyword;
+            return {
+                token: this._returnKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._expression !== null) {
             childWidth = this._expression.fullWidth();
             if(position < childWidth) {
-                return (this._expression).findTokenInternal(position);
+                return (this._expression).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._semicolonToken.fullWidth();
         if(position < childWidth) {
-            return this._semicolonToken;
+            return {
+                token: this._semicolonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ReturnStatementSyntax.prototype.structuralEquals = function (node) {
@@ -20093,25 +20602,31 @@ var ObjectCreationExpressionSyntax = (function (_super) {
         }
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ObjectCreationExpressionSyntax.prototype.findTokenInternal = function (position) {
+    ObjectCreationExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._newKeyword.fullWidth();
         if(position < childWidth) {
-            return this._newKeyword;
+            return {
+                token: this._newKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._expression.fullWidth();
         if(position < childWidth) {
-            return (this._expression).findTokenInternal(position);
+            return (this._expression).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._argumentList !== null) {
             childWidth = this._argumentList.fullWidth();
             if(position < childWidth) {
-                return (this._argumentList).findTokenInternal(position);
+                return (this._argumentList).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         throw Errors.invalidOperation();
     };
@@ -20382,44 +20897,66 @@ var SwitchStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    SwitchStatementSyntax.prototype.findTokenInternal = function (position) {
+    SwitchStatementSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._switchKeyword.fullWidth();
         if(position < childWidth) {
-            return this._switchKeyword;
+            return {
+                token: this._switchKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._openParenToken.fullWidth();
         if(position < childWidth) {
-            return this._openParenToken;
+            return {
+                token: this._openParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._expression.fullWidth();
         if(position < childWidth) {
-            return (this._expression).findTokenInternal(position);
+            return (this._expression).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeParenToken.fullWidth();
         if(position < childWidth) {
-            return this._closeParenToken;
+            return {
+                token: this._closeParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._openBraceToken.fullWidth();
         if(position < childWidth) {
-            return this._openBraceToken;
+            return {
+                token: this._openBraceToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._switchClauses.fullWidth();
         if(position < childWidth) {
-            return (this._switchClauses).findTokenInternal(position);
+            return (this._switchClauses).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeBraceToken.fullWidth();
         if(position < childWidth) {
-            return this._closeBraceToken;
+            return {
+                token: this._closeBraceToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     SwitchStatementSyntax.prototype.structuralEquals = function (node) {
@@ -20651,29 +21188,39 @@ var CaseSwitchClauseSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._statements.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    CaseSwitchClauseSyntax.prototype.findTokenInternal = function (position) {
+    CaseSwitchClauseSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._caseKeyword.fullWidth();
         if(position < childWidth) {
-            return this._caseKeyword;
+            return {
+                token: this._caseKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._expression.fullWidth();
         if(position < childWidth) {
-            return (this._expression).findTokenInternal(position);
+            return (this._expression).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._colonToken.fullWidth();
         if(position < childWidth) {
-            return this._colonToken;
+            return {
+                token: this._colonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._statements.fullWidth();
         if(position < childWidth) {
-            return (this._statements).findTokenInternal(position);
+            return (this._statements).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     CaseSwitchClauseSyntax.prototype.structuralEquals = function (node) {
@@ -20842,24 +21389,33 @@ var DefaultSwitchClauseSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._statements.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    DefaultSwitchClauseSyntax.prototype.findTokenInternal = function (position) {
+    DefaultSwitchClauseSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._defaultKeyword.fullWidth();
         if(position < childWidth) {
-            return this._defaultKeyword;
+            return {
+                token: this._defaultKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._colonToken.fullWidth();
         if(position < childWidth) {
-            return this._colonToken;
+            return {
+                token: this._colonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._statements.fullWidth();
         if(position < childWidth) {
-            return (this._statements).findTokenInternal(position);
+            return (this._statements).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     DefaultSwitchClauseSyntax.prototype.structuralEquals = function (node) {
@@ -21024,26 +21580,38 @@ var BreakStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    BreakStatementSyntax.prototype.findTokenInternal = function (position) {
+    BreakStatementSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._breakKeyword.fullWidth();
         if(position < childWidth) {
-            return this._breakKeyword;
+            return {
+                token: this._breakKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._identifier !== null) {
             childWidth = this._identifier.fullWidth();
             if(position < childWidth) {
-                return this._identifier;
+                return {
+                    token: this._identifier,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._semicolonToken.fullWidth();
         if(position < childWidth) {
-            return this._semicolonToken;
+            return {
+                token: this._semicolonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     BreakStatementSyntax.prototype.structuralEquals = function (node) {
@@ -21208,26 +21776,38 @@ var ContinueStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ContinueStatementSyntax.prototype.findTokenInternal = function (position) {
+    ContinueStatementSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._continueKeyword.fullWidth();
         if(position < childWidth) {
-            return this._continueKeyword;
+            return {
+                token: this._continueKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._identifier !== null) {
             childWidth = this._identifier.fullWidth();
             if(position < childWidth) {
-                return this._identifier;
+                return {
+                    token: this._identifier,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._semicolonToken.fullWidth();
         if(position < childWidth) {
-            return this._semicolonToken;
+            return {
+                token: this._semicolonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ContinueStatementSyntax.prototype.structuralEquals = function (node) {
@@ -21653,67 +22233,92 @@ var ForStatementSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ForStatementSyntax.prototype.findTokenInternal = function (position) {
+    ForStatementSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._forKeyword.fullWidth();
         if(position < childWidth) {
-            return this._forKeyword;
+            return {
+                token: this._forKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._openParenToken.fullWidth();
         if(position < childWidth) {
-            return this._openParenToken;
+            return {
+                token: this._openParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._variableDeclaration !== null) {
             childWidth = this._variableDeclaration.fullWidth();
             if(position < childWidth) {
-                return (this._variableDeclaration).findTokenInternal(position);
+                return (this._variableDeclaration).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._initializer !== null) {
             childWidth = this._initializer.fullWidth();
             if(position < childWidth) {
-                return (this._initializer).findTokenInternal(position);
+                return (this._initializer).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._firstSemicolonToken.fullWidth();
         if(position < childWidth) {
-            return this._firstSemicolonToken;
+            return {
+                token: this._firstSemicolonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._condition !== null) {
             childWidth = this._condition.fullWidth();
             if(position < childWidth) {
-                return (this._condition).findTokenInternal(position);
+                return (this._condition).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._secondSemicolonToken.fullWidth();
         if(position < childWidth) {
-            return this._secondSemicolonToken;
+            return {
+                token: this._secondSemicolonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._incrementor !== null) {
             childWidth = this._incrementor.fullWidth();
             if(position < childWidth) {
-                return (this._incrementor).findTokenInternal(position);
+                return (this._incrementor).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._closeParenToken.fullWidth();
         if(position < childWidth) {
-            return this._closeParenToken;
+            return {
+                token: this._closeParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._statement.fullWidth();
         if(position < childWidth) {
-            return (this._statement).findTokenInternal(position);
+            return (this._statement).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ForStatementSyntax.prototype.structuralEquals = function (node) {
@@ -22038,53 +22643,73 @@ var ForInStatementSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ForInStatementSyntax.prototype.findTokenInternal = function (position) {
+    ForInStatementSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._forKeyword.fullWidth();
         if(position < childWidth) {
-            return this._forKeyword;
+            return {
+                token: this._forKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._openParenToken.fullWidth();
         if(position < childWidth) {
-            return this._openParenToken;
+            return {
+                token: this._openParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._variableDeclaration !== null) {
             childWidth = this._variableDeclaration.fullWidth();
             if(position < childWidth) {
-                return (this._variableDeclaration).findTokenInternal(position);
+                return (this._variableDeclaration).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._left !== null) {
             childWidth = this._left.fullWidth();
             if(position < childWidth) {
-                return (this._left).findTokenInternal(position);
+                return (this._left).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._inKeyword.fullWidth();
         if(position < childWidth) {
-            return this._inKeyword;
+            return {
+                token: this._inKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._expression.fullWidth();
         if(position < childWidth) {
-            return (this._expression).findTokenInternal(position);
+            return (this._expression).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeParenToken.fullWidth();
         if(position < childWidth) {
-            return this._closeParenToken;
+            return {
+                token: this._closeParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._statement.fullWidth();
         if(position < childWidth) {
-            return (this._statement).findTokenInternal(position);
+            return (this._statement).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ForInStatementSyntax.prototype.structuralEquals = function (node) {
@@ -22311,34 +22936,48 @@ var WhileStatementSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    WhileStatementSyntax.prototype.findTokenInternal = function (position) {
+    WhileStatementSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._whileKeyword.fullWidth();
         if(position < childWidth) {
-            return this._whileKeyword;
+            return {
+                token: this._whileKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._openParenToken.fullWidth();
         if(position < childWidth) {
-            return this._openParenToken;
+            return {
+                token: this._openParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._condition.fullWidth();
         if(position < childWidth) {
-            return (this._condition).findTokenInternal(position);
+            return (this._condition).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeParenToken.fullWidth();
         if(position < childWidth) {
-            return this._closeParenToken;
+            return {
+                token: this._closeParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._statement.fullWidth();
         if(position < childWidth) {
-            return (this._statement).findTokenInternal(position);
+            return (this._statement).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     WhileStatementSyntax.prototype.structuralEquals = function (node) {
@@ -22556,34 +23195,48 @@ var WithStatementSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    WithStatementSyntax.prototype.findTokenInternal = function (position) {
+    WithStatementSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._withKeyword.fullWidth();
         if(position < childWidth) {
-            return this._withKeyword;
+            return {
+                token: this._withKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._openParenToken.fullWidth();
         if(position < childWidth) {
-            return this._openParenToken;
+            return {
+                token: this._openParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._condition.fullWidth();
         if(position < childWidth) {
-            return (this._condition).findTokenInternal(position);
+            return (this._condition).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeParenToken.fullWidth();
         if(position < childWidth) {
-            return this._closeParenToken;
+            return {
+                token: this._closeParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._statement.fullWidth();
         if(position < childWidth) {
-            return (this._statement).findTokenInternal(position);
+            return (this._statement).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     WithStatementSyntax.prototype.structuralEquals = function (node) {
@@ -22835,41 +23488,62 @@ var EnumDeclarationSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    EnumDeclarationSyntax.prototype.findTokenInternal = function (position) {
+    EnumDeclarationSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         if(this._exportKeyword !== null) {
             childWidth = this._exportKeyword.fullWidth();
             if(position < childWidth) {
-                return this._exportKeyword;
+                return {
+                    token: this._exportKeyword,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._enumKeyword.fullWidth();
         if(position < childWidth) {
-            return this._enumKeyword;
+            return {
+                token: this._enumKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._identifier.fullWidth();
         if(position < childWidth) {
-            return this._identifier;
+            return {
+                token: this._identifier,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._openBraceToken.fullWidth();
         if(position < childWidth) {
-            return this._openBraceToken;
+            return {
+                token: this._openBraceToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._variableDeclarators.fullWidth();
         if(position < childWidth) {
-            return (this._variableDeclarators).findTokenInternal(position);
+            return (this._variableDeclarators).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeBraceToken.fullWidth();
         if(position < childWidth) {
-            return this._closeBraceToken;
+            return {
+                token: this._closeBraceToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     EnumDeclarationSyntax.prototype.structuralEquals = function (node) {
@@ -23059,29 +23733,39 @@ var CastExpressionSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    CastExpressionSyntax.prototype.findTokenInternal = function (position) {
+    CastExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._lessThanToken.fullWidth();
         if(position < childWidth) {
-            return this._lessThanToken;
+            return {
+                token: this._lessThanToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._type.fullWidth();
         if(position < childWidth) {
-            return (this._type).findTokenInternal(position);
+            return (this._type).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._greaterThanToken.fullWidth();
         if(position < childWidth) {
-            return this._greaterThanToken;
+            return {
+                token: this._greaterThanToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._expression.fullWidth();
         if(position < childWidth) {
-            return (this._expression).findTokenInternal(position);
+            return (this._expression).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     CastExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -23250,24 +23934,33 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    ObjectLiteralExpressionSyntax.prototype.findTokenInternal = function (position) {
+    ObjectLiteralExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._openBraceToken.fullWidth();
         if(position < childWidth) {
-            return this._openBraceToken;
+            return {
+                token: this._openBraceToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._propertyAssignments.fullWidth();
         if(position < childWidth) {
-            return (this._propertyAssignments).findTokenInternal(position);
+            return (this._propertyAssignments).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeBraceToken.fullWidth();
         if(position < childWidth) {
-            return this._closeBraceToken;
+            return {
+                token: this._closeBraceToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     ObjectLiteralExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -23456,24 +24149,33 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    SimplePropertyAssignmentSyntax.prototype.findTokenInternal = function (position) {
+    SimplePropertyAssignmentSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._propertyName.fullWidth();
         if(position < childWidth) {
-            return this._propertyName;
+            return {
+                token: this._propertyName,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._colonToken.fullWidth();
         if(position < childWidth) {
-            return this._colonToken;
+            return {
+                token: this._colonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._expression.fullWidth();
         if(position < childWidth) {
-            return (this._expression).findTokenInternal(position);
+            return (this._expression).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     SimplePropertyAssignmentSyntax.prototype.structuralEquals = function (node) {
@@ -23712,34 +24414,51 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    GetAccessorPropertyAssignmentSyntax.prototype.findTokenInternal = function (position) {
+    GetAccessorPropertyAssignmentSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._getKeyword.fullWidth();
         if(position < childWidth) {
-            return this._getKeyword;
+            return {
+                token: this._getKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._propertyName.fullWidth();
         if(position < childWidth) {
-            return this._propertyName;
+            return {
+                token: this._propertyName,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._openParenToken.fullWidth();
         if(position < childWidth) {
-            return this._openParenToken;
+            return {
+                token: this._openParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeParenToken.fullWidth();
         if(position < childWidth) {
-            return this._closeParenToken;
+            return {
+                token: this._closeParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._block.fullWidth();
         if(position < childWidth) {
-            return (this._block).findTokenInternal(position);
+            return (this._block).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     GetAccessorPropertyAssignmentSyntax.prototype.structuralEquals = function (node) {
@@ -23978,39 +24697,60 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    SetAccessorPropertyAssignmentSyntax.prototype.findTokenInternal = function (position) {
+    SetAccessorPropertyAssignmentSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._setKeyword.fullWidth();
         if(position < childWidth) {
-            return this._setKeyword;
+            return {
+                token: this._setKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._propertyName.fullWidth();
         if(position < childWidth) {
-            return this._propertyName;
+            return {
+                token: this._propertyName,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._openParenToken.fullWidth();
         if(position < childWidth) {
-            return this._openParenToken;
+            return {
+                token: this._openParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._parameterName.fullWidth();
         if(position < childWidth) {
-            return this._parameterName;
+            return {
+                token: this._parameterName,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeParenToken.fullWidth();
         if(position < childWidth) {
-            return this._closeParenToken;
+            return {
+                token: this._closeParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._block.fullWidth();
         if(position < childWidth) {
-            return (this._block).findTokenInternal(position);
+            return (this._block).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     SetAccessorPropertyAssignmentSyntax.prototype.structuralEquals = function (node) {
@@ -24217,31 +24957,41 @@ var FunctionExpressionSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    FunctionExpressionSyntax.prototype.findTokenInternal = function (position) {
+    FunctionExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._functionKeyword.fullWidth();
         if(position < childWidth) {
-            return this._functionKeyword;
+            return {
+                token: this._functionKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._identifier !== null) {
             childWidth = this._identifier.fullWidth();
             if(position < childWidth) {
-                return this._identifier;
+                return {
+                    token: this._identifier,
+                    fullStart: fullStart
+                };
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         childWidth = this._callSignature.fullWidth();
         if(position < childWidth) {
-            return (this._callSignature).findTokenInternal(position);
+            return (this._callSignature).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._block.fullWidth();
         if(position < childWidth) {
-            return (this._block).findTokenInternal(position);
+            return (this._block).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     FunctionExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -24348,14 +25098,18 @@ var EmptyStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    EmptyStatementSyntax.prototype.findTokenInternal = function (position) {
+    EmptyStatementSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._semicolonToken.fullWidth();
         if(position < childWidth) {
-            return this._semicolonToken;
+            return {
+                token: this._semicolonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     EmptyStatementSyntax.prototype.structuralEquals = function (node) {
@@ -24453,14 +25207,18 @@ var SuperExpressionSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    SuperExpressionSyntax.prototype.findTokenInternal = function (position) {
+    SuperExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._superKeyword.fullWidth();
         if(position < childWidth) {
-            return this._superKeyword;
+            return {
+                token: this._superKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     SuperExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -24654,32 +25412,39 @@ var TryStatementSyntax = (function (_super) {
         }
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    TryStatementSyntax.prototype.findTokenInternal = function (position) {
+    TryStatementSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._tryKeyword.fullWidth();
         if(position < childWidth) {
-            return this._tryKeyword;
+            return {
+                token: this._tryKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._block.fullWidth();
         if(position < childWidth) {
-            return (this._block).findTokenInternal(position);
+            return (this._block).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         if(this._catchClause !== null) {
             childWidth = this._catchClause.fullWidth();
             if(position < childWidth) {
-                return (this._catchClause).findTokenInternal(position);
+                return (this._catchClause).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         if(this._finallyClause !== null) {
             childWidth = this._finallyClause.fullWidth();
             if(position < childWidth) {
-                return (this._finallyClause).findTokenInternal(position);
+                return (this._finallyClause).findTokenInternal(position, fullStart);
             }
             position -= childWidth;
+            fullStart += childWidth;
         }
         throw Errors.invalidOperation();
     };
@@ -24891,34 +25656,51 @@ var CatchClauseSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    CatchClauseSyntax.prototype.findTokenInternal = function (position) {
+    CatchClauseSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._catchKeyword.fullWidth();
         if(position < childWidth) {
-            return this._catchKeyword;
+            return {
+                token: this._catchKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._openParenToken.fullWidth();
         if(position < childWidth) {
-            return this._openParenToken;
+            return {
+                token: this._openParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._identifier.fullWidth();
         if(position < childWidth) {
-            return this._identifier;
+            return {
+                token: this._identifier,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeParenToken.fullWidth();
         if(position < childWidth) {
-            return this._closeParenToken;
+            return {
+                token: this._closeParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._block.fullWidth();
         if(position < childWidth) {
-            return (this._block).findTokenInternal(position);
+            return (this._block).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     CatchClauseSyntax.prototype.structuralEquals = function (node) {
@@ -25057,19 +25839,24 @@ var FinallyClauseSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    FinallyClauseSyntax.prototype.findTokenInternal = function (position) {
+    FinallyClauseSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._finallyKeyword.fullWidth();
         if(position < childWidth) {
-            return this._finallyKeyword;
+            return {
+                token: this._finallyKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._block.fullWidth();
         if(position < childWidth) {
-            return (this._block).findTokenInternal(position);
+            return (this._block).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     FinallyClauseSyntax.prototype.structuralEquals = function (node) {
@@ -25224,24 +26011,33 @@ var LabeledStatement = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    LabeledStatement.prototype.findTokenInternal = function (position) {
+    LabeledStatement.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._identifier.fullWidth();
         if(position < childWidth) {
-            return this._identifier;
+            return {
+                token: this._identifier,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._colonToken.fullWidth();
         if(position < childWidth) {
-            return this._colonToken;
+            return {
+                token: this._colonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._statement.fullWidth();
         if(position < childWidth) {
-            return (this._statement).findTokenInternal(position);
+            return (this._statement).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     LabeledStatement.prototype.structuralEquals = function (node) {
@@ -25503,44 +26299,66 @@ var DoStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    DoStatementSyntax.prototype.findTokenInternal = function (position) {
+    DoStatementSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._doKeyword.fullWidth();
         if(position < childWidth) {
-            return this._doKeyword;
+            return {
+                token: this._doKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._statement.fullWidth();
         if(position < childWidth) {
-            return (this._statement).findTokenInternal(position);
+            return (this._statement).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._whileKeyword.fullWidth();
         if(position < childWidth) {
-            return this._whileKeyword;
+            return {
+                token: this._whileKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._openParenToken.fullWidth();
         if(position < childWidth) {
-            return this._openParenToken;
+            return {
+                token: this._openParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._condition.fullWidth();
         if(position < childWidth) {
-            return (this._condition).findTokenInternal(position);
+            return (this._condition).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._closeParenToken.fullWidth();
         if(position < childWidth) {
-            return this._closeParenToken;
+            return {
+                token: this._closeParenToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._semicolonToken.fullWidth();
         if(position < childWidth) {
-            return this._semicolonToken;
+            return {
+                token: this._semicolonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     DoStatementSyntax.prototype.structuralEquals = function (node) {
@@ -25685,19 +26503,24 @@ var TypeOfExpressionSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    TypeOfExpressionSyntax.prototype.findTokenInternal = function (position) {
+    TypeOfExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._typeOfKeyword.fullWidth();
         if(position < childWidth) {
-            return this._typeOfKeyword;
+            return {
+                token: this._typeOfKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._expression.fullWidth();
         if(position < childWidth) {
-            return (this._expression).findTokenInternal(position);
+            return (this._expression).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     TypeOfExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -25827,19 +26650,24 @@ var DeleteExpressionSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    DeleteExpressionSyntax.prototype.findTokenInternal = function (position) {
+    DeleteExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._deleteKeyword.fullWidth();
         if(position < childWidth) {
-            return this._deleteKeyword;
+            return {
+                token: this._deleteKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._expression.fullWidth();
         if(position < childWidth) {
-            return (this._expression).findTokenInternal(position);
+            return (this._expression).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     DeleteExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -25969,19 +26797,24 @@ var VoidExpressionSyntax = (function (_super) {
         hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    VoidExpressionSyntax.prototype.findTokenInternal = function (position) {
+    VoidExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._voidKeyword.fullWidth();
         if(position < childWidth) {
-            return this._voidKeyword;
+            return {
+                token: this._voidKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._expression.fullWidth();
         if(position < childWidth) {
-            return (this._expression).findTokenInternal(position);
+            return (this._expression).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     VoidExpressionSyntax.prototype.structuralEquals = function (node) {
@@ -26107,19 +26940,27 @@ var DebuggerStatementSyntax = (function (_super) {
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
-    DebuggerStatementSyntax.prototype.findTokenInternal = function (position) {
+    DebuggerStatementSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
         childWidth = this._debuggerKeyword.fullWidth();
         if(position < childWidth) {
-            return this._debuggerKeyword;
+            return {
+                token: this._debuggerKeyword,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         childWidth = this._semicolonToken.fullWidth();
         if(position < childWidth) {
-            return this._semicolonToken;
+            return {
+                token: this._semicolonToken,
+                fullStart: fullStart
+            };
         }
         position -= childWidth;
+        fullStart += childWidth;
         throw Errors.invalidOperation();
     };
     DebuggerStatementSyntax.prototype.structuralEquals = function (node) {
@@ -28423,12 +29264,12 @@ var Parser;
             }
             var maxLookahead = 1;
             var start = changeRange.span().start();
-            var syntaxInformationMap = SyntaxInformationMap.create(sourceUnit);
             for(var i = 0; start > 0 && i <= maxLookahead; i++) {
-                var token = sourceUnit.findToken(start);
+                var tokenAndFullStart = sourceUnit.findToken(start);
+                var token = tokenAndFullStart.token;
                 Debug.assert(token.kind() !== 0 /* None */ );
                 Debug.assert(token.fullWidth() > 0);
-                var position = syntaxInformationMap.tokenInformation(token).fullStart;
+                var position = tokenAndFullStart.fullStart;
                 start = MathPrototype.max(0, position - 1);
             }
             var finalSpan = TextSpan.fromBounds(start, changeRange.span().end());
@@ -33638,6 +34479,7 @@ var Program = (function () {
         if(true) {
         }
         environment.standardOut.WriteLine("Testing Incremental Perf.");
+        this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");
         environment.standardOut.WriteLine("Testing findToken.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
             return _this.runFindToken(environment, filePath, 1 /* EcmaScript5 */ , verify, false);
@@ -33680,7 +34522,7 @@ var Program = (function () {
         var text = TextFactory.create(contents);
         var tree = Parser.parse(text, 1 /* EcmaScript5 */ , stringTable);
         var totalIncrementalTime = 0;
-        var count = 10;
+        var count = 1000;
         for(var i = 0; i < count; i++) {
             var start = new Date().getTime();
             var changeLength = i * 2;
@@ -33826,7 +34668,7 @@ var Program = (function () {
         var result = {
         };
         for(var i = 0; i <= contents.length; i++) {
-            var token = sourceUnit.findToken(i);
+            var token = sourceUnit.findToken(i).token;
             Debug.assert(token.isToken());
             if(i === contents.length) {
                 Debug.assert(token.kind() === 118 /* EndOfFileToken */ );

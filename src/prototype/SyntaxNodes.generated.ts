@@ -131,17 +131,19 @@ class SourceUnitSyntax extends SyntaxNode {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._moduleElements.fullWidth();
-        if (position < childWidth) { return (<any>this._moduleElements).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._moduleElements).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._endOfFileToken.fullWidth();
-        if (position < childWidth) { return this._endOfFileToken; }
+        if (position < childWidth) { return { token: this._endOfFileToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -368,25 +370,29 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._moduleKeyword.fullWidth();
-        if (position < childWidth) { return this._moduleKeyword; }
+        if (position < childWidth) { return { token: this._moduleKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._openParenToken.fullWidth();
-        if (position < childWidth) { return this._openParenToken; }
+        if (position < childWidth) { return { token: this._openParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._stringLiteral.fullWidth();
-        if (position < childWidth) { return this._stringLiteral; }
+        if (position < childWidth) { return { token: this._stringLiteral, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeParenToken.fullWidth();
-        if (position < childWidth) { return this._closeParenToken; }
+        if (position < childWidth) { return { token: this._closeParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -495,13 +501,14 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._moduleName.fullWidth();
-        if (position < childWidth) { return (<any>this._moduleName).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._moduleName).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -709,29 +716,34 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._importKeyword.fullWidth();
-        if (position < childWidth) { return this._importKeyword; }
+        if (position < childWidth) { return { token: this._importKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._identifier.fullWidth();
-        if (position < childWidth) { return this._identifier; }
+        if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._equalsToken.fullWidth();
-        if (position < childWidth) { return this._equalsToken; }
+        if (position < childWidth) { return { token: this._equalsToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._moduleReference.fullWidth();
-        if (position < childWidth) { return (<any>this._moduleReference).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._moduleReference).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._semicolonToken.fullWidth();
-        if (position < childWidth) { return this._semicolonToken; }
+        if (position < childWidth) { return { token: this._semicolonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -1061,53 +1073,62 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         if (this._exportKeyword !== null) {
             childWidth = this._exportKeyword.fullWidth();
-            if (position < childWidth) { return this._exportKeyword; }
+            if (position < childWidth) { return { token: this._exportKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._declareKeyword !== null) {
             childWidth = this._declareKeyword.fullWidth();
-            if (position < childWidth) { return this._declareKeyword; }
+            if (position < childWidth) { return { token: this._declareKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._classKeyword.fullWidth();
-        if (position < childWidth) { return this._classKeyword; }
+        if (position < childWidth) { return { token: this._classKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._identifier.fullWidth();
-        if (position < childWidth) { return this._identifier; }
+        if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._extendsClause !== null) {
             childWidth = this._extendsClause.fullWidth();
-            if (position < childWidth) { return (<any>this._extendsClause).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._extendsClause).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._implementsClause !== null) {
             childWidth = this._implementsClause.fullWidth();
-            if (position < childWidth) { return (<any>this._implementsClause).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._implementsClause).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._openBraceToken.fullWidth();
-        if (position < childWidth) { return this._openBraceToken; }
+        if (position < childWidth) { return { token: this._openBraceToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._classElements.fullWidth();
-        if (position < childWidth) { return (<any>this._classElements).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._classElements).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeBraceToken.fullWidth();
-        if (position < childWidth) { return this._closeBraceToken; }
+        if (position < childWidth) { return { token: this._closeBraceToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -1334,33 +1355,38 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         if (this._exportKeyword !== null) {
             childWidth = this._exportKeyword.fullWidth();
-            if (position < childWidth) { return this._exportKeyword; }
+            if (position < childWidth) { return { token: this._exportKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._interfaceKeyword.fullWidth();
-        if (position < childWidth) { return this._interfaceKeyword; }
+        if (position < childWidth) { return { token: this._interfaceKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._identifier.fullWidth();
-        if (position < childWidth) { return this._identifier; }
+        if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._extendsClause !== null) {
             childWidth = this._extendsClause.fullWidth();
-            if (position < childWidth) { return (<any>this._extendsClause).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._extendsClause).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._body.fullWidth();
-        if (position < childWidth) { return (<any>this._body).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._body).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -1503,17 +1529,19 @@ class ExtendsClauseSyntax extends SyntaxNode {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._extendsKeyword.fullWidth();
-        if (position < childWidth) { return this._extendsKeyword; }
+        if (position < childWidth) { return { token: this._extendsKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._typeNames.fullWidth();
-        if (position < childWidth) { return (<any>this._typeNames).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._typeNames).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -1653,17 +1681,19 @@ class ImplementsClauseSyntax extends SyntaxNode {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._implementsKeyword.fullWidth();
-        if (position < childWidth) { return this._implementsKeyword; }
+        if (position < childWidth) { return { token: this._implementsKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._typeNames.fullWidth();
-        if (position < childWidth) { return (<any>this._typeNames).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._typeNames).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -1967,49 +1997,57 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         if (this._exportKeyword !== null) {
             childWidth = this._exportKeyword.fullWidth();
-            if (position < childWidth) { return this._exportKeyword; }
+            if (position < childWidth) { return { token: this._exportKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._declareKeyword !== null) {
             childWidth = this._declareKeyword.fullWidth();
-            if (position < childWidth) { return this._declareKeyword; }
+            if (position < childWidth) { return { token: this._declareKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._moduleKeyword.fullWidth();
-        if (position < childWidth) { return this._moduleKeyword; }
+        if (position < childWidth) { return { token: this._moduleKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._moduleName !== null) {
             childWidth = this._moduleName.fullWidth();
-            if (position < childWidth) { return (<any>this._moduleName).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._moduleName).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._stringLiteral !== null) {
             childWidth = this._stringLiteral.fullWidth();
-            if (position < childWidth) { return this._stringLiteral; }
+            if (position < childWidth) { return { token: this._stringLiteral, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._openBraceToken.fullWidth();
-        if (position < childWidth) { return this._openBraceToken; }
+        if (position < childWidth) { return { token: this._openBraceToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._moduleElements.fullWidth();
-        if (position < childWidth) { return (<any>this._moduleElements).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._moduleElements).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeBraceToken.fullWidth();
-        if (position < childWidth) { return this._closeBraceToken; }
+        if (position < childWidth) { return { token: this._closeBraceToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -2292,40 +2330,46 @@ class FunctionDeclarationSyntax extends StatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         if (this._exportKeyword !== null) {
             childWidth = this._exportKeyword.fullWidth();
-            if (position < childWidth) { return this._exportKeyword; }
+            if (position < childWidth) { return { token: this._exportKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._declareKeyword !== null) {
             childWidth = this._declareKeyword.fullWidth();
-            if (position < childWidth) { return this._declareKeyword; }
+            if (position < childWidth) { return { token: this._declareKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._functionKeyword.fullWidth();
-        if (position < childWidth) { return this._functionKeyword; }
+        if (position < childWidth) { return { token: this._functionKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._functionSignature.fullWidth();
-        if (position < childWidth) { return (<any>this._functionSignature).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._functionSignature).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._block !== null) {
             childWidth = this._block.fullWidth();
-            if (position < childWidth) { return (<any>this._block).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._block).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._semicolonToken !== null) {
             childWidth = this._semicolonToken.fullWidth();
-            if (position < childWidth) { return this._semicolonToken; }
+            if (position < childWidth) { return { token: this._semicolonToken, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         throw Errors.invalidOperation();
@@ -2530,29 +2574,33 @@ class VariableStatementSyntax extends StatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         if (this._exportKeyword !== null) {
             childWidth = this._exportKeyword.fullWidth();
-            if (position < childWidth) { return this._exportKeyword; }
+            if (position < childWidth) { return { token: this._exportKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._declareKeyword !== null) {
             childWidth = this._declareKeyword.fullWidth();
-            if (position < childWidth) { return this._declareKeyword; }
+            if (position < childWidth) { return { token: this._declareKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._variableDeclaration.fullWidth();
-        if (position < childWidth) { return (<any>this._variableDeclaration).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._variableDeclaration).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._semicolonToken.fullWidth();
-        if (position < childWidth) { return this._semicolonToken; }
+        if (position < childWidth) { return { token: this._semicolonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -2739,17 +2787,19 @@ class VariableDeclarationSyntax extends SyntaxNode {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._varKeyword.fullWidth();
-        if (position < childWidth) { return this._varKeyword; }
+        if (position < childWidth) { return { token: this._varKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._variableDeclarators.fullWidth();
-        if (position < childWidth) { return (<any>this._variableDeclarators).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._variableDeclarators).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -2918,24 +2968,27 @@ class VariableDeclaratorSyntax extends SyntaxNode {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._identifier.fullWidth();
-        if (position < childWidth) { return this._identifier; }
+        if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
-            if (position < childWidth) { return (<any>this._typeAnnotation).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._typeAnnotation).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._equalsValueClause !== null) {
             childWidth = this._equalsValueClause.fullWidth();
-            if (position < childWidth) { return (<any>this._equalsValueClause).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._equalsValueClause).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         throw Errors.invalidOperation();
@@ -3074,17 +3127,19 @@ class EqualsValueClauseSyntax extends SyntaxNode {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._equalsToken.fullWidth();
-        if (position < childWidth) { return this._equalsToken; }
+        if (position < childWidth) { return { token: this._equalsToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._value.fullWidth();
-        if (position < childWidth) { return (<any>this._value).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._value).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -3234,17 +3289,19 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._operatorToken.fullWidth();
-        if (position < childWidth) { return this._operatorToken; }
+        if (position < childWidth) { return { token: this._operatorToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._operand.fullWidth();
-        if (position < childWidth) { return (<any>this._operand).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._operand).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -3355,13 +3412,14 @@ class ThisExpressionSyntax extends UnaryExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._thisKeyword.fullWidth();
-        if (position < childWidth) { return this._thisKeyword; }
+        if (position < childWidth) { return { token: this._thisKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -3493,13 +3551,14 @@ class LiteralExpressionSyntax extends UnaryExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._literalToken.fullWidth();
-        if (position < childWidth) { return this._literalToken; }
+        if (position < childWidth) { return { token: this._literalToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -3668,21 +3727,24 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._openBracketToken.fullWidth();
-        if (position < childWidth) { return this._openBracketToken; }
+        if (position < childWidth) { return { token: this._openBracketToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._expressions.fullWidth();
-        if (position < childWidth) { return (<any>this._expressions).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._expressions).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeBracketToken.fullWidth();
-        if (position < childWidth) { return this._closeBracketToken; }
+        if (position < childWidth) { return { token: this._closeBracketToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -3761,7 +3823,7 @@ class OmittedExpressionSyntax extends ExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         throw Errors.invalidOperation();
     }
 
@@ -3919,21 +3981,24 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._openParenToken.fullWidth();
-        if (position < childWidth) { return this._openParenToken; }
+        if (position < childWidth) { return { token: this._openParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._expression.fullWidth();
-        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeParenToken.fullWidth();
-        if (position < childWidth) { return this._closeParenToken; }
+        if (position < childWidth) { return { token: this._closeParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -4125,21 +4190,24 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._identifier.fullWidth();
-        if (position < childWidth) { return this._identifier; }
+        if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._equalsGreaterThanToken.fullWidth();
-        if (position < childWidth) { return this._equalsGreaterThanToken; }
+        if (position < childWidth) { return { token: this._equalsGreaterThanToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._body.fullWidth();
-        if (position < childWidth) { return (<any>this._body).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._body).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -4301,21 +4369,24 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._callSignature.fullWidth();
-        if (position < childWidth) { return (<any>this._callSignature).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._callSignature).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._equalsGreaterThanToken.fullWidth();
-        if (position < childWidth) { return this._equalsGreaterThanToken; }
+        if (position < childWidth) { return { token: this._equalsGreaterThanToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._body.fullWidth();
-        if (position < childWidth) { return (<any>this._body).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._body).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -4466,13 +4537,14 @@ class IdentifierNameSyntax extends NameSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._identifier.fullWidth();
-        if (position < childWidth) { return this._identifier; }
+        if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -4635,21 +4707,24 @@ class QualifiedNameSyntax extends NameSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._left.fullWidth();
-        if (position < childWidth) { return (<any>this._left).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._left).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._dotToken.fullWidth();
-        if (position < childWidth) { return this._dotToken; }
+        if (position < childWidth) { return { token: this._dotToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._right.fullWidth();
-        if (position < childWidth) { return (<any>this._right).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._right).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -4835,25 +4910,29 @@ class ConstructorTypeSyntax extends TypeSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._newKeyword.fullWidth();
-        if (position < childWidth) { return this._newKeyword; }
+        if (position < childWidth) { return { token: this._newKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._parameterList.fullWidth();
-        if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._equalsGreaterThanToken.fullWidth();
-        if (position < childWidth) { return this._equalsGreaterThanToken; }
+        if (position < childWidth) { return { token: this._equalsGreaterThanToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._type.fullWidth();
-        if (position < childWidth) { return (<any>this._type).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._type).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -5016,21 +5095,24 @@ class FunctionTypeSyntax extends TypeSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._parameterList.fullWidth();
-        if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._equalsGreaterThanToken.fullWidth();
-        if (position < childWidth) { return this._equalsGreaterThanToken; }
+        if (position < childWidth) { return { token: this._equalsGreaterThanToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._type.fullWidth();
-        if (position < childWidth) { return (<any>this._type).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._type).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -5200,21 +5282,24 @@ class ObjectTypeSyntax extends TypeSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._openBraceToken.fullWidth();
-        if (position < childWidth) { return this._openBraceToken; }
+        if (position < childWidth) { return { token: this._openBraceToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._typeMembers.fullWidth();
-        if (position < childWidth) { return (<any>this._typeMembers).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._typeMembers).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeBraceToken.fullWidth();
-        if (position < childWidth) { return this._closeBraceToken; }
+        if (position < childWidth) { return { token: this._closeBraceToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -5375,21 +5460,24 @@ class ArrayTypeSyntax extends TypeSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._type.fullWidth();
-        if (position < childWidth) { return (<any>this._type).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._type).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._openBracketToken.fullWidth();
-        if (position < childWidth) { return this._openBracketToken; }
+        if (position < childWidth) { return { token: this._openBracketToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeBracketToken.fullWidth();
-        if (position < childWidth) { return this._closeBracketToken; }
+        if (position < childWidth) { return { token: this._closeBracketToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -5505,13 +5593,14 @@ class PredefinedTypeSyntax extends TypeSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._keyword.fullWidth();
-        if (position < childWidth) { return this._keyword; }
+        if (position < childWidth) { return { token: this._keyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -5646,17 +5735,19 @@ class TypeAnnotationSyntax extends SyntaxNode {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._colonToken.fullWidth();
-        if (position < childWidth) { return this._colonToken; }
+        if (position < childWidth) { return { token: this._colonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._type.fullWidth();
-        if (position < childWidth) { return (<any>this._type).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._type).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -5826,21 +5917,24 @@ class BlockSyntax extends StatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._openBraceToken.fullWidth();
-        if (position < childWidth) { return this._openBraceToken; }
+        if (position < childWidth) { return { token: this._openBraceToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._statements.fullWidth();
-        if (position < childWidth) { return (<any>this._statements).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._statements).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeBraceToken.fullWidth();
-        if (position < childWidth) { return this._closeBraceToken; }
+        if (position < childWidth) { return { token: this._closeBraceToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -6097,42 +6191,48 @@ class ParameterSyntax extends SyntaxNode {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         if (this._dotDotDotToken !== null) {
             childWidth = this._dotDotDotToken.fullWidth();
-            if (position < childWidth) { return this._dotDotDotToken; }
+            if (position < childWidth) { return { token: this._dotDotDotToken, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._publicOrPrivateKeyword !== null) {
             childWidth = this._publicOrPrivateKeyword.fullWidth();
-            if (position < childWidth) { return this._publicOrPrivateKeyword; }
+            if (position < childWidth) { return { token: this._publicOrPrivateKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._identifier.fullWidth();
-        if (position < childWidth) { return this._identifier; }
+        if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._questionToken !== null) {
             childWidth = this._questionToken.fullWidth();
-            if (position < childWidth) { return this._questionToken; }
+            if (position < childWidth) { return { token: this._questionToken, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
-            if (position < childWidth) { return (<any>this._typeAnnotation).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._typeAnnotation).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._equalsValueClause !== null) {
             childWidth = this._equalsValueClause.fullWidth();
-            if (position < childWidth) { return (<any>this._equalsValueClause).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._equalsValueClause).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         throw Errors.invalidOperation();
@@ -6301,21 +6401,24 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._expression.fullWidth();
-        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._dotToken.fullWidth();
-        if (position < childWidth) { return this._dotToken; }
+        if (position < childWidth) { return { token: this._dotToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._identifierName.fullWidth();
-        if (position < childWidth) { return (<any>this._identifierName).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._identifierName).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -6456,17 +6559,19 @@ class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._operand.fullWidth();
-        if (position < childWidth) { return (<any>this._operand).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._operand).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._operatorToken.fullWidth();
-        if (position < childWidth) { return this._operatorToken; }
+        if (position < childWidth) { return { token: this._operatorToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -6654,25 +6759,29 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._expression.fullWidth();
-        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._openBracketToken.fullWidth();
-        if (position < childWidth) { return this._openBracketToken; }
+        if (position < childWidth) { return { token: this._openBracketToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._argumentExpression.fullWidth();
-        if (position < childWidth) { return (<any>this._argumentExpression).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._argumentExpression).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeBracketToken.fullWidth();
-        if (position < childWidth) { return this._closeBracketToken; }
+        if (position < childWidth) { return { token: this._closeBracketToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -6813,17 +6922,19 @@ class InvocationExpressionSyntax extends UnaryExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._expression.fullWidth();
-        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._argumentList.fullWidth();
-        if (position < childWidth) { return (<any>this._argumentList).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._argumentList).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -6993,21 +7104,24 @@ class ArgumentListSyntax extends SyntaxNode {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._openParenToken.fullWidth();
-        if (position < childWidth) { return this._openParenToken; }
+        if (position < childWidth) { return { token: this._openParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._arguments.fullWidth();
-        if (position < childWidth) { return (<any>this._arguments).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._arguments).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeParenToken.fullWidth();
-        if (position < childWidth) { return this._closeParenToken; }
+        if (position < childWidth) { return { token: this._closeParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -7215,21 +7329,24 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._left.fullWidth();
-        if (position < childWidth) { return (<any>this._left).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._left).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._operatorToken.fullWidth();
-        if (position < childWidth) { return this._operatorToken; }
+        if (position < childWidth) { return { token: this._operatorToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._right.fullWidth();
-        if (position < childWidth) { return (<any>this._right).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._right).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -7445,29 +7562,34 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._condition.fullWidth();
-        if (position < childWidth) { return (<any>this._condition).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._condition).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._questionToken.fullWidth();
-        if (position < childWidth) { return this._questionToken; }
+        if (position < childWidth) { return { token: this._questionToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._whenTrue.fullWidth();
-        if (position < childWidth) { return (<any>this._whenTrue).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._whenTrue).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._colonToken.fullWidth();
-        if (position < childWidth) { return this._colonToken; }
+        if (position < childWidth) { return { token: this._colonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._whenFalse.fullWidth();
-        if (position < childWidth) { return (<any>this._whenFalse).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._whenFalse).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -7663,22 +7785,25 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._newKeyword.fullWidth();
-        if (position < childWidth) { return this._newKeyword; }
+        if (position < childWidth) { return { token: this._newKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._parameterList.fullWidth();
-        if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
-            if (position < childWidth) { return (<any>this._typeAnnotation).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._typeAnnotation).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         throw Errors.invalidOperation();
@@ -7877,28 +8002,32 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._identifier.fullWidth();
-        if (position < childWidth) { return this._identifier; }
+        if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._questionToken !== null) {
             childWidth = this._questionToken.fullWidth();
-            if (position < childWidth) { return this._questionToken; }
+            if (position < childWidth) { return { token: this._questionToken, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._parameterList.fullWidth();
-        if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
-            if (position < childWidth) { return (<any>this._typeAnnotation).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._typeAnnotation).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         throw Errors.invalidOperation();
@@ -8093,26 +8222,30 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._openBracketToken.fullWidth();
-        if (position < childWidth) { return this._openBracketToken; }
+        if (position < childWidth) { return { token: this._openBracketToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._parameter.fullWidth();
-        if (position < childWidth) { return (<any>this._parameter).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._parameter).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeBracketToken.fullWidth();
-        if (position < childWidth) { return this._closeBracketToken; }
+        if (position < childWidth) { return { token: this._closeBracketToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
-            if (position < childWidth) { return (<any>this._typeAnnotation).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._typeAnnotation).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         throw Errors.invalidOperation();
@@ -8284,24 +8417,27 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._identifier.fullWidth();
-        if (position < childWidth) { return this._identifier; }
+        if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._questionToken !== null) {
             childWidth = this._questionToken.fullWidth();
-            if (position < childWidth) { return this._questionToken; }
+            if (position < childWidth) { return { token: this._questionToken, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
-            if (position < childWidth) { return (<any>this._typeAnnotation).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._typeAnnotation).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         throw Errors.invalidOperation();
@@ -8473,21 +8609,24 @@ class ParameterListSyntax extends SyntaxNode {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._openParenToken.fullWidth();
-        if (position < childWidth) { return this._openParenToken; }
+        if (position < childWidth) { return { token: this._openParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._parameters.fullWidth();
-        if (position < childWidth) { return (<any>this._parameters).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._parameters).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeParenToken.fullWidth();
-        if (position < childWidth) { return this._closeParenToken; }
+        if (position < childWidth) { return { token: this._closeParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -8632,18 +8771,20 @@ class CallSignatureSyntax extends TypeMemberSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._parameterList.fullWidth();
-        if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
-            if (position < childWidth) { return (<any>this._typeAnnotation).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._typeAnnotation).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         throw Errors.invalidOperation();
@@ -8781,17 +8922,19 @@ class ElseClauseSyntax extends SyntaxNode {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._elseKeyword.fullWidth();
-        if (position < childWidth) { return this._elseKeyword; }
+        if (position < childWidth) { return { token: this._elseKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._statement.fullWidth();
-        if (position < childWidth) { return (<any>this._statement).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._statement).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -9038,34 +9181,40 @@ class IfStatementSyntax extends StatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._ifKeyword.fullWidth();
-        if (position < childWidth) { return this._ifKeyword; }
+        if (position < childWidth) { return { token: this._ifKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._openParenToken.fullWidth();
-        if (position < childWidth) { return this._openParenToken; }
+        if (position < childWidth) { return { token: this._openParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._condition.fullWidth();
-        if (position < childWidth) { return (<any>this._condition).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._condition).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeParenToken.fullWidth();
-        if (position < childWidth) { return this._closeParenToken; }
+        if (position < childWidth) { return { token: this._closeParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._statement.fullWidth();
-        if (position < childWidth) { return (<any>this._statement).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._statement).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._elseClause !== null) {
             childWidth = this._elseClause.fullWidth();
-            if (position < childWidth) { return (<any>this._elseClause).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._elseClause).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         throw Errors.invalidOperation();
@@ -9207,17 +9356,19 @@ class ExpressionStatementSyntax extends StatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._expression.fullWidth();
-        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._semicolonToken.fullWidth();
-        if (position < childWidth) { return this._semicolonToken; }
+        if (position < childWidth) { return { token: this._semicolonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -9434,28 +9585,32 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._constructorKeyword.fullWidth();
-        if (position < childWidth) { return this._constructorKeyword; }
+        if (position < childWidth) { return { token: this._constructorKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._parameterList.fullWidth();
-        if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._block !== null) {
             childWidth = this._block.fullWidth();
-            if (position < childWidth) { return (<any>this._block).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._block).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._semicolonToken !== null) {
             childWidth = this._semicolonToken.fullWidth();
-            if (position < childWidth) { return this._semicolonToken; }
+            if (position < childWidth) { return { token: this._semicolonToken, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         throw Errors.invalidOperation();
@@ -9714,36 +9869,41 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         if (this._publicOrPrivateKeyword !== null) {
             childWidth = this._publicOrPrivateKeyword.fullWidth();
-            if (position < childWidth) { return this._publicOrPrivateKeyword; }
+            if (position < childWidth) { return { token: this._publicOrPrivateKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._staticKeyword !== null) {
             childWidth = this._staticKeyword.fullWidth();
-            if (position < childWidth) { return this._staticKeyword; }
+            if (position < childWidth) { return { token: this._staticKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._functionSignature.fullWidth();
-        if (position < childWidth) { return (<any>this._functionSignature).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._functionSignature).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._block !== null) {
             childWidth = this._block.fullWidth();
-            if (position < childWidth) { return (<any>this._block).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._block).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._semicolonToken !== null) {
             childWidth = this._semicolonToken.fullWidth();
-            if (position < childWidth) { return this._semicolonToken; }
+            if (position < childWidth) { return { token: this._semicolonToken, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         throw Errors.invalidOperation();
@@ -10063,43 +10223,50 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         if (this._publicOrPrivateKeyword !== null) {
             childWidth = this._publicOrPrivateKeyword.fullWidth();
-            if (position < childWidth) { return this._publicOrPrivateKeyword; }
+            if (position < childWidth) { return { token: this._publicOrPrivateKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._staticKeyword !== null) {
             childWidth = this._staticKeyword.fullWidth();
-            if (position < childWidth) { return this._staticKeyword; }
+            if (position < childWidth) { return { token: this._staticKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._getKeyword.fullWidth();
-        if (position < childWidth) { return this._getKeyword; }
+        if (position < childWidth) { return { token: this._getKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._identifier.fullWidth();
-        if (position < childWidth) { return this._identifier; }
+        if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._parameterList.fullWidth();
-        if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._typeAnnotation !== null) {
             childWidth = this._typeAnnotation.fullWidth();
-            if (position < childWidth) { return (<any>this._typeAnnotation).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._typeAnnotation).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._block.fullWidth();
-        if (position < childWidth) { return (<any>this._block).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._block).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -10352,37 +10519,43 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         if (this._publicOrPrivateKeyword !== null) {
             childWidth = this._publicOrPrivateKeyword.fullWidth();
-            if (position < childWidth) { return this._publicOrPrivateKeyword; }
+            if (position < childWidth) { return { token: this._publicOrPrivateKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._staticKeyword !== null) {
             childWidth = this._staticKeyword.fullWidth();
-            if (position < childWidth) { return this._staticKeyword; }
+            if (position < childWidth) { return { token: this._staticKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._setKeyword.fullWidth();
-        if (position < childWidth) { return this._setKeyword; }
+        if (position < childWidth) { return { token: this._setKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._identifier.fullWidth();
-        if (position < childWidth) { return this._identifier; }
+        if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._parameterList.fullWidth();
-        if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._block.fullWidth();
-        if (position < childWidth) { return (<any>this._block).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._block).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -10583,29 +10756,33 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         if (this._publicOrPrivateKeyword !== null) {
             childWidth = this._publicOrPrivateKeyword.fullWidth();
-            if (position < childWidth) { return this._publicOrPrivateKeyword; }
+            if (position < childWidth) { return { token: this._publicOrPrivateKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._staticKeyword !== null) {
             childWidth = this._staticKeyword.fullWidth();
-            if (position < childWidth) { return this._staticKeyword; }
+            if (position < childWidth) { return { token: this._staticKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._variableDeclarator.fullWidth();
-        if (position < childWidth) { return (<any>this._variableDeclarator).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._variableDeclarator).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._semicolonToken.fullWidth();
-        if (position < childWidth) { return this._semicolonToken; }
+        if (position < childWidth) { return { token: this._semicolonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -10768,21 +10945,24 @@ class ThrowStatementSyntax extends StatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._throwKeyword.fullWidth();
-        if (position < childWidth) { return this._throwKeyword; }
+        if (position < childWidth) { return { token: this._throwKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._expression.fullWidth();
-        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._semicolonToken.fullWidth();
-        if (position < childWidth) { return this._semicolonToken; }
+        if (position < childWidth) { return { token: this._semicolonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -10950,23 +11130,26 @@ class ReturnStatementSyntax extends StatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._returnKeyword.fullWidth();
-        if (position < childWidth) { return this._returnKeyword; }
+        if (position < childWidth) { return { token: this._returnKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._expression !== null) {
             childWidth = this._expression.fullWidth();
-            if (position < childWidth) { return (<any>this._expression).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._expression).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._semicolonToken.fullWidth();
-        if (position < childWidth) { return this._semicolonToken; }
+        if (position < childWidth) { return { token: this._semicolonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -11136,22 +11319,25 @@ class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._newKeyword.fullWidth();
-        if (position < childWidth) { return this._newKeyword; }
+        if (position < childWidth) { return { token: this._newKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._expression.fullWidth();
-        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._argumentList !== null) {
             childWidth = this._argumentList.fullWidth();
-            if (position < childWidth) { return (<any>this._argumentList).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._argumentList).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         throw Errors.invalidOperation();
@@ -11425,37 +11611,44 @@ class SwitchStatementSyntax extends StatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._switchKeyword.fullWidth();
-        if (position < childWidth) { return this._switchKeyword; }
+        if (position < childWidth) { return { token: this._switchKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._openParenToken.fullWidth();
-        if (position < childWidth) { return this._openParenToken; }
+        if (position < childWidth) { return { token: this._openParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._expression.fullWidth();
-        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeParenToken.fullWidth();
-        if (position < childWidth) { return this._closeParenToken; }
+        if (position < childWidth) { return { token: this._closeParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._openBraceToken.fullWidth();
-        if (position < childWidth) { return this._openBraceToken; }
+        if (position < childWidth) { return { token: this._openBraceToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._switchClauses.fullWidth();
-        if (position < childWidth) { return (<any>this._switchClauses).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._switchClauses).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeBraceToken.fullWidth();
-        if (position < childWidth) { return this._closeBraceToken; }
+        if (position < childWidth) { return { token: this._closeBraceToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -11687,25 +11880,29 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._caseKeyword.fullWidth();
-        if (position < childWidth) { return this._caseKeyword; }
+        if (position < childWidth) { return { token: this._caseKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._expression.fullWidth();
-        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._colonToken.fullWidth();
-        if (position < childWidth) { return this._colonToken; }
+        if (position < childWidth) { return { token: this._colonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._statements.fullWidth();
-        if (position < childWidth) { return (<any>this._statements).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._statements).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -11877,21 +12074,24 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._defaultKeyword.fullWidth();
-        if (position < childWidth) { return this._defaultKeyword; }
+        if (position < childWidth) { return { token: this._defaultKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._colonToken.fullWidth();
-        if (position < childWidth) { return this._colonToken; }
+        if (position < childWidth) { return { token: this._colonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._statements.fullWidth();
-        if (position < childWidth) { return (<any>this._statements).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._statements).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -12060,23 +12260,26 @@ class BreakStatementSyntax extends StatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._breakKeyword.fullWidth();
-        if (position < childWidth) { return this._breakKeyword; }
+        if (position < childWidth) { return { token: this._breakKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._identifier !== null) {
             childWidth = this._identifier.fullWidth();
-            if (position < childWidth) { return this._identifier; }
+            if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._semicolonToken.fullWidth();
-        if (position < childWidth) { return this._semicolonToken; }
+        if (position < childWidth) { return { token: this._semicolonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -12245,23 +12448,26 @@ class ContinueStatementSyntax extends StatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._continueKeyword.fullWidth();
-        if (position < childWidth) { return this._continueKeyword; }
+        if (position < childWidth) { return { token: this._continueKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._identifier !== null) {
             childWidth = this._identifier.fullWidth();
-            if (position < childWidth) { return this._identifier; }
+            if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._semicolonToken.fullWidth();
-        if (position < childWidth) { return this._semicolonToken; }
+        if (position < childWidth) { return { token: this._semicolonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -12688,57 +12894,67 @@ class ForStatementSyntax extends BaseForStatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._forKeyword.fullWidth();
-        if (position < childWidth) { return this._forKeyword; }
+        if (position < childWidth) { return { token: this._forKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._openParenToken.fullWidth();
-        if (position < childWidth) { return this._openParenToken; }
+        if (position < childWidth) { return { token: this._openParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._variableDeclaration !== null) {
             childWidth = this._variableDeclaration.fullWidth();
-            if (position < childWidth) { return (<any>this._variableDeclaration).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._variableDeclaration).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._initializer !== null) {
             childWidth = this._initializer.fullWidth();
-            if (position < childWidth) { return (<any>this._initializer).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._initializer).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._firstSemicolonToken.fullWidth();
-        if (position < childWidth) { return this._firstSemicolonToken; }
+        if (position < childWidth) { return { token: this._firstSemicolonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._condition !== null) {
             childWidth = this._condition.fullWidth();
-            if (position < childWidth) { return (<any>this._condition).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._condition).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._secondSemicolonToken.fullWidth();
-        if (position < childWidth) { return this._secondSemicolonToken; }
+        if (position < childWidth) { return { token: this._secondSemicolonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._incrementor !== null) {
             childWidth = this._incrementor.fullWidth();
-            if (position < childWidth) { return (<any>this._incrementor).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._incrementor).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._closeParenToken.fullWidth();
-        if (position < childWidth) { return this._closeParenToken; }
+        if (position < childWidth) { return { token: this._closeParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._statement.fullWidth();
-        if (position < childWidth) { return (<any>this._statement).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._statement).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -13045,45 +13261,53 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._forKeyword.fullWidth();
-        if (position < childWidth) { return this._forKeyword; }
+        if (position < childWidth) { return { token: this._forKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._openParenToken.fullWidth();
-        if (position < childWidth) { return this._openParenToken; }
+        if (position < childWidth) { return { token: this._openParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._variableDeclaration !== null) {
             childWidth = this._variableDeclaration.fullWidth();
-            if (position < childWidth) { return (<any>this._variableDeclaration).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._variableDeclaration).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._left !== null) {
             childWidth = this._left.fullWidth();
-            if (position < childWidth) { return (<any>this._left).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._left).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._inKeyword.fullWidth();
-        if (position < childWidth) { return this._inKeyword; }
+        if (position < childWidth) { return { token: this._inKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._expression.fullWidth();
-        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeParenToken.fullWidth();
-        if (position < childWidth) { return this._closeParenToken; }
+        if (position < childWidth) { return { token: this._closeParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._statement.fullWidth();
-        if (position < childWidth) { return (<any>this._statement).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._statement).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -13301,29 +13525,34 @@ class WhileStatementSyntax extends IterationStatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._whileKeyword.fullWidth();
-        if (position < childWidth) { return this._whileKeyword; }
+        if (position < childWidth) { return { token: this._whileKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._openParenToken.fullWidth();
-        if (position < childWidth) { return this._openParenToken; }
+        if (position < childWidth) { return { token: this._openParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._condition.fullWidth();
-        if (position < childWidth) { return (<any>this._condition).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._condition).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeParenToken.fullWidth();
-        if (position < childWidth) { return this._closeParenToken; }
+        if (position < childWidth) { return { token: this._closeParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._statement.fullWidth();
-        if (position < childWidth) { return (<any>this._statement).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._statement).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -13538,29 +13767,34 @@ class WithStatementSyntax extends StatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._withKeyword.fullWidth();
-        if (position < childWidth) { return this._withKeyword; }
+        if (position < childWidth) { return { token: this._withKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._openParenToken.fullWidth();
-        if (position < childWidth) { return this._openParenToken; }
+        if (position < childWidth) { return { token: this._openParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._condition.fullWidth();
-        if (position < childWidth) { return (<any>this._condition).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._condition).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeParenToken.fullWidth();
-        if (position < childWidth) { return this._closeParenToken; }
+        if (position < childWidth) { return { token: this._closeParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._statement.fullWidth();
-        if (position < childWidth) { return (<any>this._statement).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._statement).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -13810,35 +14044,41 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         if (this._exportKeyword !== null) {
             childWidth = this._exportKeyword.fullWidth();
-            if (position < childWidth) { return this._exportKeyword; }
+            if (position < childWidth) { return { token: this._exportKeyword, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._enumKeyword.fullWidth();
-        if (position < childWidth) { return this._enumKeyword; }
+        if (position < childWidth) { return { token: this._enumKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._identifier.fullWidth();
-        if (position < childWidth) { return this._identifier; }
+        if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._openBraceToken.fullWidth();
-        if (position < childWidth) { return this._openBraceToken; }
+        if (position < childWidth) { return { token: this._openBraceToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._variableDeclarators.fullWidth();
-        if (position < childWidth) { return (<any>this._variableDeclarators).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._variableDeclarators).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeBraceToken.fullWidth();
-        if (position < childWidth) { return this._closeBraceToken; }
+        if (position < childWidth) { return { token: this._closeBraceToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -14028,25 +14268,29 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._lessThanToken.fullWidth();
-        if (position < childWidth) { return this._lessThanToken; }
+        if (position < childWidth) { return { token: this._lessThanToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._type.fullWidth();
-        if (position < childWidth) { return (<any>this._type).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._type).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._greaterThanToken.fullWidth();
-        if (position < childWidth) { return this._greaterThanToken; }
+        if (position < childWidth) { return { token: this._greaterThanToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._expression.fullWidth();
-        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -14218,21 +14462,24 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._openBraceToken.fullWidth();
-        if (position < childWidth) { return this._openBraceToken; }
+        if (position < childWidth) { return { token: this._openBraceToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._propertyAssignments.fullWidth();
-        if (position < childWidth) { return (<any>this._propertyAssignments).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._propertyAssignments).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeBraceToken.fullWidth();
-        if (position < childWidth) { return this._closeBraceToken; }
+        if (position < childWidth) { return { token: this._closeBraceToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -14428,21 +14675,24 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._propertyName.fullWidth();
-        if (position < childWidth) { return this._propertyName; }
+        if (position < childWidth) { return { token: this._propertyName, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._colonToken.fullWidth();
-        if (position < childWidth) { return this._colonToken; }
+        if (position < childWidth) { return { token: this._colonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._expression.fullWidth();
-        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -14690,29 +14940,34 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._getKeyword.fullWidth();
-        if (position < childWidth) { return this._getKeyword; }
+        if (position < childWidth) { return { token: this._getKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._propertyName.fullWidth();
-        if (position < childWidth) { return this._propertyName; }
+        if (position < childWidth) { return { token: this._propertyName, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._openParenToken.fullWidth();
-        if (position < childWidth) { return this._openParenToken; }
+        if (position < childWidth) { return { token: this._openParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeParenToken.fullWidth();
-        if (position < childWidth) { return this._closeParenToken; }
+        if (position < childWidth) { return { token: this._closeParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._block.fullWidth();
-        if (position < childWidth) { return (<any>this._block).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._block).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -14949,33 +15204,39 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._setKeyword.fullWidth();
-        if (position < childWidth) { return this._setKeyword; }
+        if (position < childWidth) { return { token: this._setKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._propertyName.fullWidth();
-        if (position < childWidth) { return this._propertyName; }
+        if (position < childWidth) { return { token: this._propertyName, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._openParenToken.fullWidth();
-        if (position < childWidth) { return this._openParenToken; }
+        if (position < childWidth) { return { token: this._openParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._parameterName.fullWidth();
-        if (position < childWidth) { return this._parameterName; }
+        if (position < childWidth) { return { token: this._parameterName, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeParenToken.fullWidth();
-        if (position < childWidth) { return this._closeParenToken; }
+        if (position < childWidth) { return { token: this._closeParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._block.fullWidth();
-        if (position < childWidth) { return (<any>this._block).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._block).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -15176,27 +15437,31 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._functionKeyword.fullWidth();
-        if (position < childWidth) { return this._functionKeyword; }
+        if (position < childWidth) { return { token: this._functionKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._identifier !== null) {
             childWidth = this._identifier.fullWidth();
-            if (position < childWidth) { return this._identifier; }
+            if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         childWidth = this._callSignature.fullWidth();
-        if (position < childWidth) { return (<any>this._callSignature).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._callSignature).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._block.fullWidth();
-        if (position < childWidth) { return (<any>this._block).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._block).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -15309,13 +15574,14 @@ class EmptyStatementSyntax extends StatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._semicolonToken.fullWidth();
-        if (position < childWidth) { return this._semicolonToken; }
+        if (position < childWidth) { return { token: this._semicolonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -15425,13 +15691,14 @@ class SuperExpressionSyntax extends UnaryExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._superKeyword.fullWidth();
-        if (position < childWidth) { return this._superKeyword; }
+        if (position < childWidth) { return { token: this._superKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -15626,28 +15893,32 @@ class TryStatementSyntax extends StatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._tryKeyword.fullWidth();
-        if (position < childWidth) { return this._tryKeyword; }
+        if (position < childWidth) { return { token: this._tryKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._block.fullWidth();
-        if (position < childWidth) { return (<any>this._block).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._block).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         if (this._catchClause !== null) {
             childWidth = this._catchClause.fullWidth();
-            if (position < childWidth) { return (<any>this._catchClause).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._catchClause).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         if (this._finallyClause !== null) {
             childWidth = this._finallyClause.fullWidth();
-            if (position < childWidth) { return (<any>this._finallyClause).findTokenInternal(position); }
+            if (position < childWidth) { return (<any>this._finallyClause).findTokenInternal(position, fullStart); }
             position -= childWidth;
+            fullStart += childWidth;
         }
 
         throw Errors.invalidOperation();
@@ -15859,29 +16130,34 @@ class CatchClauseSyntax extends SyntaxNode {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._catchKeyword.fullWidth();
-        if (position < childWidth) { return this._catchKeyword; }
+        if (position < childWidth) { return { token: this._catchKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._openParenToken.fullWidth();
-        if (position < childWidth) { return this._openParenToken; }
+        if (position < childWidth) { return { token: this._openParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._identifier.fullWidth();
-        if (position < childWidth) { return this._identifier; }
+        if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeParenToken.fullWidth();
-        if (position < childWidth) { return this._closeParenToken; }
+        if (position < childWidth) { return { token: this._closeParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._block.fullWidth();
-        if (position < childWidth) { return (<any>this._block).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._block).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -16021,17 +16297,19 @@ class FinallyClauseSyntax extends SyntaxNode {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._finallyKeyword.fullWidth();
-        if (position < childWidth) { return this._finallyKeyword; }
+        if (position < childWidth) { return { token: this._finallyKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._block.fullWidth();
-        if (position < childWidth) { return (<any>this._block).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._block).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -16193,21 +16471,24 @@ class LabeledStatement extends StatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._identifier.fullWidth();
-        if (position < childWidth) { return this._identifier; }
+        if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._colonToken.fullWidth();
-        if (position < childWidth) { return this._colonToken; }
+        if (position < childWidth) { return { token: this._colonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._statement.fullWidth();
-        if (position < childWidth) { return (<any>this._statement).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._statement).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -16468,37 +16749,44 @@ class DoStatementSyntax extends IterationStatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._doKeyword.fullWidth();
-        if (position < childWidth) { return this._doKeyword; }
+        if (position < childWidth) { return { token: this._doKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._statement.fullWidth();
-        if (position < childWidth) { return (<any>this._statement).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._statement).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._whileKeyword.fullWidth();
-        if (position < childWidth) { return this._whileKeyword; }
+        if (position < childWidth) { return { token: this._whileKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._openParenToken.fullWidth();
-        if (position < childWidth) { return this._openParenToken; }
+        if (position < childWidth) { return { token: this._openParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._condition.fullWidth();
-        if (position < childWidth) { return (<any>this._condition).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._condition).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._closeParenToken.fullWidth();
-        if (position < childWidth) { return this._closeParenToken; }
+        if (position < childWidth) { return { token: this._closeParenToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._semicolonToken.fullWidth();
-        if (position < childWidth) { return this._semicolonToken; }
+        if (position < childWidth) { return { token: this._semicolonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -16640,17 +16928,19 @@ class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._typeOfKeyword.fullWidth();
-        if (position < childWidth) { return this._typeOfKeyword; }
+        if (position < childWidth) { return { token: this._typeOfKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._expression.fullWidth();
-        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -16787,17 +17077,19 @@ class DeleteExpressionSyntax extends UnaryExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._deleteKeyword.fullWidth();
-        if (position < childWidth) { return this._deleteKeyword; }
+        if (position < childWidth) { return { token: this._deleteKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._expression.fullWidth();
-        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -16934,17 +17226,19 @@ class VoidExpressionSyntax extends UnaryExpressionSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._voidKeyword.fullWidth();
-        if (position < childWidth) { return this._voidKeyword; }
+        if (position < childWidth) { return { token: this._voidKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._expression.fullWidth();
-        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position); }
+        if (position < childWidth) { return (<any>this._expression).findTokenInternal(position, fullStart); }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }
@@ -17079,17 +17373,19 @@ class DebuggerStatementSyntax extends StatementSyntax {
              | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 
-    private findTokenInternal(position: number): ISyntaxElement {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
         childWidth = this._debuggerKeyword.fullWidth();
-        if (position < childWidth) { return this._debuggerKeyword; }
+        if (position < childWidth) { return { token: this._debuggerKeyword, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         childWidth = this._semicolonToken.fullWidth();
-        if (position < childWidth) { return this._semicolonToken; }
+        if (position < childWidth) { return { token: this._semicolonToken, fullStart: fullStart }; }
         position -= childWidth;
+        fullStart += childWidth;
 
         throw Errors.invalidOperation();
     }

@@ -65,7 +65,7 @@ module Syntax {
             return false;
         }
 
-        public findTokenInternal(position: number): SyntaxNode {
+        public findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
             // This should never have been called on this list.  It has a 0 width, so the client 
             // should have skipped over this.
             throw Errors.invalidOperation();
@@ -149,9 +149,9 @@ module Syntax {
             return this.item.hasRegularExpressionToken();
         }
 
-        public findTokenInternal(position: number): SyntaxNode {
+        public findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
             Debug.assert(position >= 0 && position < this.item.fullWidth());
-            return (<any>this.item).findTokenInternal(position);
+            return (<any>this.item).findTokenInternal(position, fullStart);
         }
 
         public insertChildrenInto(array: ISyntaxElement[], index: number): void {
@@ -294,15 +294,17 @@ module Syntax {
             return this._data;
         }
 
-        public findTokenInternal(position: number): SyntaxNode {
+        public findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
             Debug.assert(position >= 0 && position < this.fullWidth());
 
             for (var i = 0, n = this.nodes.length; i < n; i++) {
                 var node = this.nodes[i];
 
                 var childWidth = node.fullWidth();
-                if (position < childWidth) { return (<any>node).findTokenInternal(position); }
+                if (position < childWidth) { return (<any>node).findTokenInternal(position, fullStart); }
+
                 position -= childWidth;
+                fullStart += childWidth;
             }
 
             throw Errors.invalidOperation();

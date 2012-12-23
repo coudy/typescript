@@ -24,7 +24,7 @@ class Program {
         }
         
         environment.standardOut.WriteLine("Testing Incremental Perf.");
-        // this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");
+        this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");
 
         environment.standardOut.WriteLine("Testing findToken.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5",
@@ -71,7 +71,7 @@ class Program {
         var tree = Parser.parse(text, LanguageVersion.EcmaScript5, stringTable);
 
         var totalIncrementalTime = 0;
-        var count = 10;
+        var count = 1000;
 
         for (var i = 0; i < count; i++) {
             var start = new Date().getTime();
@@ -291,7 +291,7 @@ class Program {
         var result = {};
 
         for (var i = 0; i <= contents.length; i++) {
-            var token = sourceUnit.findToken(i);
+            var token = sourceUnit.findToken(i).token;
 
             Debug.assert(token.isToken());
             if (i === contents.length) {

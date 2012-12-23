@@ -1966,7 +1966,7 @@ function generateFindTokenInternalMethod(definition: ITypeDefinition): string {
         return "";
     }
 
-    var result = "\r\n    private findTokenInternal(position: number): ISyntaxElement {\r\n";
+    var result = "\r\n    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {\r\n";
 
     if (definition.children.length > 0) {
         result += "        Debug.assert(position >= 0 && position < this.fullWidth());\r\n";
@@ -1993,13 +1993,14 @@ function generateFindTokenInternalMethod(definition: ITypeDefinition): string {
         result += indent + "        if (position < childWidth) { ";
         
         if (child.isToken) {
-            result += "return " + getPropertyAccess(child) + "; }\r\n";
+            result += "return { token: " + getPropertyAccess(child) + ", fullStart: fullStart }; }\r\n";
         }
         else {
-            result += "return (<any>" + getPropertyAccess(child) + ").findTokenInternal(position); }\r\n";
+            result += "return (<any>" + getPropertyAccess(child) + ").findTokenInternal(position, fullStart); }\r\n";
         }
 
         result += indent + "        position -= childWidth;\r\n";
+        result += indent + "        fullStart += childWidth;\r\n";
 
         if (child.isOptional) {
             result += "        }\r\n";

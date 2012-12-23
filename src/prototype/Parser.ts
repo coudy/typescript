@@ -769,18 +769,19 @@ module Parser {
             var maxLookahead = 1;
 
             var start = changeRange.span().start();
-            var syntaxInformationMap = SyntaxInformationMap.create(sourceUnit);
+            // var syntaxInformationMap = SyntaxInformationMap.create(sourceUnit);
 
             // the first iteration aligns us with the change start. subsequent iteration move us to
             // the left by maxLookahead tokens.  We only need to do this as long as we're not at the
             // start of the tree.
             for (var i = 0; start > 0 && i <= maxLookahead; i++)
             {
-                var token = sourceUnit.findToken(start);
+                var tokenAndFullStart = sourceUnit.findToken(start);
+                var token = tokenAndFullStart.token;
                 Debug.assert(token.kind() !== SyntaxKind.None);
                 Debug.assert(token.fullWidth() > 0);
 
-                var position = syntaxInformationMap.tokenInformation(token).fullStart;
+                var position = tokenAndFullStart.fullStart;
 
                 start = MathPrototype.max(0, position - 1);
             }

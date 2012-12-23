@@ -162,7 +162,7 @@ class SyntaxNode implements ISyntaxElement {
     /// Note: findToken will always return a non missing token with width greater than or equal to
     /// 1 (except for EOF).  Empty tokens syntehsized by teh parser are never returned.
     /// </summary>
-    public findToken(position: number): ISyntaxToken {
+    public findToken(position: number): { token: ISyntaxToken; fullStart: number; } {
         var endOfFileToken = this.tryGetEndOfFileAt(position);
         if (endOfFileToken !== null) {
             return endOfFileToken;
@@ -172,19 +172,19 @@ class SyntaxNode implements ISyntaxElement {
             throw Errors.argumentOutOfRange("position");
         }
 
-        return this.findTokenInternal(position);
+        return this.findTokenInternal(position, 0);
     }
 
-    private tryGetEndOfFileAt(position: number): ISyntaxToken {
+    private tryGetEndOfFileAt(position: number): { token: ISyntaxToken; fullStart: number; } {
         if (this.kind() === SyntaxKind.SourceUnit && position == this.fullWidth()) {
             var sourceUnit = <SourceUnitSyntax>this;
-            return sourceUnit.endOfFileToken();
+            return { token: sourceUnit.endOfFileToken(), fullStart: sourceUnit.moduleElements().fullWidth() };
         }
 
         return null;
     }
 
-    private findTokenInternal(position: number): ISyntaxToken {
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         throw Errors.abstract();
     }
 
