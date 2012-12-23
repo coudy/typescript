@@ -84,6 +84,8 @@ class Program {
             totalIncrementalTime += (end - start);
 
             Debug.assert(tree.structuralEquals(tree2));
+
+            tree = tree2;
         }
         
         // Environment.standardOut.WriteLine("Parsing time    : " + totalParseTime);

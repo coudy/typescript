@@ -100,4 +100,19 @@ class IncrementalParserTests {
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
     }
+
+    public static testIncrementalComment1() {
+        if (true) {
+            return;
+        }
+
+        var source = "class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
+
+        var semicolonIndex = source.indexOf(";");
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, "/");
+
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
+    }
 }
