@@ -9,7 +9,7 @@
 var stringTable = Collections.createStringTable();
 
 var specificFile = 
-    // "ArrowFunctionInExpressionStatement1.ts";
+    // "ErrorRecovery_ParameterList2.ts";
     undefined;
 
 class Program {
@@ -31,12 +31,16 @@ class Program {
         environment.standardOut.WriteLine("Testing parser.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
             filePath => this.runParser(environment, filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ false));
+            
+        environment.standardOut.WriteLine("Testing Incremental 1.");
+        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
+            filePath => this.runIncremental(environment, filePath, LanguageVersion.EcmaScript5));
 
-        environment.standardOut.WriteLine("Testing emitter.");
+        environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5",
             filePath => this.runEmitter(environment, filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false, /*justText:*/ false));
             
-        environment.standardOut.WriteLine("Testing emitter.");
+        environment.standardOut.WriteLine("Testing emitter 2.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter2\\ecmascript5",
             filePath => this.runEmitter(environment, filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false, /*justText:*/ true));
 
@@ -190,6 +194,30 @@ class Program {
             
             this.checkResult(filePath, tree, verify, generateBaseline, false);
         }
+    }
+
+    runIncremental(environment: IEnvironment,
+        filePath: string,
+        languageVersion: LanguageVersion): void {
+        if (!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
+            return;
+        }
+
+        if (filePath.indexOf("RealSource") >= 0) {
+            return;
+        }
+
+        var contents = environment.readFile(filePath, /*useUTF8:*/ true);
+        // environment.standardOut.WriteLine(filePath);
+
+        var text = TextFactory.create(contents);
+
+        var tree1 = Parser.parse(text, languageVersion, stringTable);
+        var tree2 = Parser.incrementalParse(
+            Syntax.emptySourceUnit, [new TextChangeRange(new TextSpan(0, 0), text.length())], text, languageVersion, stringTable);
+
+        Debug.assert(ArrayUtilities.sequenceEquals(tree1.diagnostics(), tree2.diagnostics(), SyntaxDiagnostic.equals));
+        Debug.assert(tree1.sourceUnit().structuralEquals(tree2.sourceUnit()));
     }
 
     runFindToken(environment: IEnvironment, filePath: string,

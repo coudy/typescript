@@ -37,4 +37,10 @@ class SyntaxDiagnostic extends Diagnostic {
     public width(): number {
         return this._width;
     }
+
+    public static equals(diagnostic1: SyntaxDiagnostic, diagnostic2: SyntaxDiagnostic): bool {
+        return diagnostic1._position === diagnostic2._position &&
+               diagnostic1._width === diagnostic2._width &&
+               Diagnostic.equals(diagnostic1, diagnostic2);
+    }
 }

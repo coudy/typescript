@@ -204,7 +204,11 @@ class SyntaxNode implements ISyntaxElement {
         return false;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
+    public insertChildrenInto(array: ISyntaxElement[], index: number): void {
+        throw Errors.abstract();
+    }
+
+    public structuralEquals(node: SyntaxNode): bool {
         throw Errors.abstract();
     }
 }

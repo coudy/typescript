@@ -32,4 +32,9 @@ class Diagnostic {
     public message(): string {
         return DiagnosticMessages.getDiagnosticMessage(this._diagnosticCode, this._arguments);
     }
+
+    public static equals(diagnostic1: Diagnostic, diagnostic2: Diagnostic): bool {
+        return diagnostic1._diagnosticCode === diagnostic2._diagnosticCode &&
+               ArrayUtilities.sequenceEquals(diagnostic1._arguments, diagnostic2._arguments, (v1, v2) => v1 === v2);
+    }
 }

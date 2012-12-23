@@ -1903,7 +1903,7 @@ function generateComputeDataMethod(definition: ITypeDefinition): string {
             result += indent + "        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);\r\n";
 
             if (couldBeRegularExpressionToken(child)) {
-                result += indent + "        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isDivideOrRegularExpressionToken(" + getPropertyAccess(child) + ".kind());\r\n";
+                result += indent + "        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isAnyDivideOrRegularExpressionToken(" + getPropertyAccess(child) + ".kind());\r\n";
             }
         }
         else {
@@ -1923,6 +1923,41 @@ function generateComputeDataMethod(definition: ITypeDefinition): string {
 
     result += "    }\r\n";
 
+    return result;
+}
+
+function generateStructuralEqualsMethod(definition: ITypeDefinition): string {
+    if (definition.isAbstract) {
+        return "";
+    }
+
+    var result = "\r\n    private structuralEquals(node: SyntaxNode): bool {\r\n";
+    result += "        if (this === node) { return true; }\r\n";
+    result += "        if (node === null) { return false; }\r\n";
+    result += "        if (this.kind() !== node.kind()) { return false; }\r\n";
+    result += "        var other = <" + definition.name + ">node;\r\n";
+
+    for (var i = 0; i < definition.children.length; i++) {
+        var child = definition.children[i];
+
+        if (child.type !== "SyntaxKind") {
+            if (child.isList) {
+                result += "        if (!Syntax.listStructuralEquals(" + getPropertyAccess(child) + ", other._" + child.name + ")) { return false; }\r\n";
+            }
+            else if (child.isSeparatedList) {
+                result += "        if (!Syntax.separatedListStructuralEquals(" + getPropertyAccess(child) + ", other._" + child.name + ")) { return false; }\r\n";
+            }
+            else if (child.isToken) {
+                result += "        if (!Syntax.tokenStructuralEquals(" + getPropertyAccess(child) + ", other._" + child.name + ")) { return false; }\r\n";
+            }
+            else {
+                result += "        if (!Syntax.nodeStructuralEquals(" + getPropertyAccess(child) + ", other._" + child.name + ")) { return false; }\r\n";
+            }
+        }
+    }
+
+    result += "        return true;\r\n";
+    result += "    }\r\n";
     return result;
 }
 
@@ -2030,6 +2065,7 @@ function generateNode(definition: ITypeDefinition): string {
     result += generateIsTypeScriptSpecificMethod(definition);
     result += generateComputeDataMethod(definition);
     result += generateFindTokenInternalMethod(definition);
+    result += generateStructuralEqualsMethod(definition);
 
     result += "}";
 
@@ -2041,7 +2077,8 @@ function generateNodes(): string {
     result += "///<reference path='ISyntaxList.ts' />\r\n"
     result += "///<reference path='ISeparatedSyntaxList.ts' />\r\n"
     result += "///<reference path='SeparatedSyntaxList.ts' />\r\n"
-    result += "///<reference path='SyntaxList.ts' />"
+    result += "///<reference path='SyntaxList.ts' />\r\n"
+    result += "///<reference path='SyntaxToken.ts' />"
 
     for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
@@ -2745,9 +2782,11 @@ var rewriter = generateRewriter();
 var tokens = generateTokens();
 var walker = generateWalker();
 var scannerUtilities = generateScannerUtilities();
+// var syntax = generateSyntax();
 
 Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts", syntaxNodes, true);
 Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxRewriter.generated.ts", rewriter, true);
 Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxToken.generated.ts", tokens, true);
 Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxWalker.generated.ts", walker, true);
 Environment.writeFile("C:\\fidelity\\src\\prototype\\ScannerUtilities.generated.ts", scannerUtilities, true);
+// Environment.writeFile("C:\\fidelity\\src\\prototype\\Syntax.generated.ts", syntax, true);

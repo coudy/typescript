@@ -6,6 +6,28 @@ class ArrayUtilities {
         return Object.prototype.toString.apply(value, []) === '[object Array]';
     }
 
+    public static sequenceEquals(array1: any[], array2: any[], equals: (v1, v2) => bool) {
+        if (array1 === array2) {
+            return true;
+        }
+
+        if (array1 === null || array2 === null) {
+            return false;
+        }
+
+        if (array1.length !== array2.length) {
+            return false;
+        }
+
+        for (var i = 0, n = array1.length; i < n; i++) {
+            if (!equals(array1[i], array2[i])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public static contains(array: any[], value: any): bool {
         for (var i = 0; i < array.length; i++) {
             if (array[i] === value) {

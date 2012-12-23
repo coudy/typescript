@@ -13,7 +13,8 @@ module Collections {
     }
 
     export class HashTable {
-        private entries: HashTableEntry[] = [];
+        // TODO: figure out why the type checker dosn't like "StringTableEntry[]" here.
+        private entries/*: HashTableEntry[]*/ = [];
         private count: number = 0;
 
         constructor(capacity: number,
@@ -77,7 +78,7 @@ module Collections {
             return this.addEntry(key, value, hashCode);
         }
 
-        private findEntry(key: any, hashCode: number): HashTableEntry {
+        private findEntry(key: any, hashCode: number) /*: HashTableEntry*/ {
             for (var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
                 if (e.HashCode === hashCode) {
                     var equals = this.equals === null

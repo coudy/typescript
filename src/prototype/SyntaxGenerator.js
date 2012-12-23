@@ -34,6 +34,17 @@ var ArrayUtilities = (function () {
     ArrayUtilities.isArray = function isArray(value) {
         return Object.prototype.toString.apply(value, []) === '[object Array]';
     }
+    ArrayUtilities.sequenceEquals = function sequenceEquals(array1, array2, equals) {
+        if(array1.length !== array2.length) {
+            return false;
+        }
+        for(var i = 0, n = array1.length; i < n; i++) {
+            if(!equals(array1[i], array2[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
     ArrayUtilities.contains = function contains(array, value) {
         for(var i = 0; i < array.length; i++) {
             if(array[i] === value) {
@@ -1330,7 +1341,20 @@ var SyntaxFacts = (function () {
             }
         }
     }
-    SyntaxFacts.isDivideOrRegularExpressionToken = function isDivideOrRegularExpressionToken(kind) {
+    SyntaxFacts.isAnyDivideToken = function isAnyDivideToken(kind) {
+        switch(kind) {
+            case 115 /* SlashToken */ :
+            case 116 /* SlashEqualsToken */ : {
+                return true;
+
+            }
+            default: {
+                return false;
+
+            }
+        }
+    }
+    SyntaxFacts.isAnyDivideOrRegularExpressionToken = function isAnyDivideOrRegularExpressionToken(kind) {
         switch(kind) {
             case 115 /* SlashToken */ :
             case 116 /* SlashEqualsToken */ :
@@ -4123,7 +4147,7 @@ function generateComputeDataMethod(definition) {
         if(child.isToken) {
             result += indent + "        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);\r\n";
             if(couldBeRegularExpressionToken(child)) {
-                result += indent + "        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isDivideOrRegularExpressionToken(" + getPropertyAccess(child) + ".kind());\r\n";
+                result += indent + "        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isAnyDivideOrRegularExpressionToken(" + getPropertyAccess(child) + ".kind());\r\n";
             }
         } else {
             result += indent + "        hasZeroWidthToken = hasZeroWidthToken || " + getPropertyAccess(child) + ".hasZeroWidthToken();\r\n";
@@ -4137,6 +4161,37 @@ function generateComputeDataMethod(definition) {
     result += "\r\n             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)";
     result += "\r\n             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)";
     result += "\r\n             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);\r\n";
+    result += "    }\r\n";
+    return result;
+}
+function generateStructuralEqualsMethod(definition) {
+    if(definition.isAbstract) {
+        return "";
+    }
+    var result = "\r\n    private structuralEquals(node: SyntaxNode): bool {\r\n";
+    result += "        if (this === node) { return true; }\r\n";
+    result += "        if (node === null) { return false; }\r\n";
+    result += "        if (this.kind() !== node.kind()) { return false; }\r\n";
+    result += "        var other = <" + definition.name + ">node;\r\n";
+    for(var i = 0; i < definition.children.length; i++) {
+        var child = definition.children[i];
+        if(child.type !== "SyntaxKind") {
+            if(child.isList) {
+                result += "        if (!Syntax.listStructuralEquals(" + getPropertyAccess(child) + ", other._" + child.name + ")) { return false; }\r\n";
+            } else {
+                if(child.isSeparatedList) {
+                    result += "        if (!Syntax.separatedListStructuralEquals(" + getPropertyAccess(child) + ", other._" + child.name + ")) { return false; }\r\n";
+                } else {
+                    if(child.isToken) {
+                        result += "        if (!Syntax.tokenStructuralEquals(" + getPropertyAccess(child) + ", other._" + child.name + ")) { return false; }\r\n";
+                    } else {
+                        result += "        if (!Syntax.nodeStructuralEquals(" + getPropertyAccess(child) + ", other._" + child.name + ")) { return false; }\r\n";
+                    }
+                }
+            }
+        }
+    }
+    result += "        return true;\r\n";
     result += "    }\r\n";
     return result;
 }
@@ -4220,6 +4275,7 @@ function generateNode(definition) {
     result += generateIsTypeScriptSpecificMethod(definition);
     result += generateComputeDataMethod(definition);
     result += generateFindTokenInternalMethod(definition);
+    result += generateStructuralEqualsMethod(definition);
     result += "}";
     return result;
 }
@@ -4228,7 +4284,8 @@ function generateNodes() {
     result += "///<reference path='ISyntaxList.ts' />\r\n";
     result += "///<reference path='ISeparatedSyntaxList.ts' />\r\n";
     result += "///<reference path='SeparatedSyntaxList.ts' />\r\n";
-    result += "///<reference path='SyntaxList.ts' />";
+    result += "///<reference path='SyntaxList.ts' />\r\n";
+    result += "///<reference path='SyntaxToken.ts' />";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         result += "\r\n\r\n";

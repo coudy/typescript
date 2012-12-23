@@ -27,8 +27,7 @@ module Collections {
     // string and the bucket for the table.  However, that is only incurred the first time each unique 
     // string is added.
     export class StringTable {
-        // TODO: figure out why the type checker dosn't like "StringTableEntry[]" here.
-        private entries /*: StringTableEntry[]*/ = [];
+        private entries: StringTableEntry[] = [];
         private count: number = 0;
 
         constructor(capacity) {
