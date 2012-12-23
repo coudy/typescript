@@ -34530,13 +34530,15 @@ var Program = (function () {
                 new TextChangeRange(new TextSpan((text.length() / 2) - i, changeLength), changeLength)
             ], text, 1 /* EcmaScript5 */ , stringTable);
             var end = new Date().getTime();
-            var diff = (end - start);
             totalIncrementalTime += (end - start);
             Debug.assert(tree.structuralEquals(tree2));
             tree = tree2;
         }
+        var rateBytesPerMillisecond = (contents.length * count) / totalIncrementalTime;
+        var rateBytesPerSecond = rateBytesPerMillisecond * 1000;
+        var rateMBPerSecond = rateBytesPerSecond / (1024 * 1024);
         Environment.standardOut.WriteLine("Incremental time: " + totalIncrementalTime);
-        Environment.standardOut.WriteLine("Incremental rate: " + (contents.length * count) / totalIncrementalTime);
+        Environment.standardOut.WriteLine("Incremental rate: " + rateMBPerSecond + " MB/s");
     };
     Program.prototype.handleException = function (environment, filePath, e) {
         environment.standardOut.WriteLine("");

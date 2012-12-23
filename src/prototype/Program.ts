@@ -81,7 +81,6 @@ class Program {
                 tree.sourceUnit(), [new TextChangeRange(new TextSpan((text.length() / 2) - i, changeLength), changeLength)], text, LanguageVersion.EcmaScript5, stringTable);
             var end = new Date().getTime();
 
-            var diff = (end - start);
             totalIncrementalTime += (end - start);
 
             Debug.assert(tree.structuralEquals(tree2));
@@ -89,10 +88,11 @@ class Program {
             tree = tree2;
         }
         
-        // Environment.standardOut.WriteLine("Parsing time    : " + totalParseTime);
+        var rateBytesPerMillisecond = (contents.length * count) / totalIncrementalTime;
+        var rateBytesPerSecond = rateBytesPerMillisecond * 1000;
+        var rateMBPerSecond = rateBytesPerSecond / (1024 * 1024);
         Environment.standardOut.WriteLine("Incremental time: " + totalIncrementalTime);
-        Environment.standardOut.WriteLine("Incremental rate: " + (contents.length * count) / totalIncrementalTime);
-
+        Environment.standardOut.WriteLine("Incremental rate: " + rateMBPerSecond + " MB/s");
     }
 
     private handleException(environment: IEnvironment, filePath: string, e: Error): void {
