@@ -12,11 +12,13 @@ module Parser {
     // Information the parser needs to effectively rewind.  Note: individual parser sources may
     // store additional information in this structure for their own purposes.
     interface IParserRewindPoint {
-        // Information used by the parser source.
-        tokenSlidingWindowIndex: number;
-        previousSourceUnitCursorIndex: number;
+        // Information used by normal parser source.
         previousToken: ISyntaxToken;
         absolutePosition: number;
+        slidingWindowIndex: number;
+
+        // Information used by the incremental parser source.
+        oldSourceUnitCursorIndex: number;
         changeDelta: number;
         changeRange: TextChangeRange;
 
@@ -292,17 +294,27 @@ module Parser {
             sourceUnit.insertChildrenInto(this._elements, 0);
         }
 
+        public isFinished(): bool {
+            return this._index === this._elements.length;
+        }
+
         public currentElement(): ISyntaxElement {
-            Debug.assert(!this.isFinished());
+            if (this.isFinished()) {
+                return null;
+            }
+
             return this._elements[this._index];
         }
 
-        public isFinished(): bool {
-            return this._elements[this._index].kind() === SyntaxKind.EndOfFileToken;
+        public currentNode(): SyntaxNode {
+            var element = this.currentElement();
+            return element !== null && element.isNode() ? <SyntaxNode>element : null;
         }
-
+        
         public moveToFirstChild() {
-            Debug.assert(!this.isFinished());
+            if (this.isFinished()) {
+                return;
+            }
 
             var element = this._elements[this._index];
             if (element.isToken()) {
@@ -322,7 +334,9 @@ module Parser {
         }
 
         public moveToNextSibling() {
-            Debug.assert(!this.isFinished());
+            if (this.isFinished()) {
+                return;
+            }
 
             if (this._pinCount > 0) {
                 // If we're currently pinned, then just move our index forward.  We'll then be 
@@ -339,12 +353,12 @@ module Parser {
             this._elements.shift();
         }
 
-        private getAndPinCursorIndex(): number {
+        public getAndPinCursorIndex(): number {
             this._pinCount++;
             return this._index;
         }
 
-        private releaseAndUnpinCursorIndex(index: number) {
+        public releaseAndUnpinCursorIndex(index: number) {
             // this._index = index;
 
             Debug.assert(this._pinCount > 0);
@@ -355,8 +369,8 @@ module Parser {
             }
         }
 
-        private rewindToPinnedCursorIndex(index: number): void {
-            Debug.assert(index >= 0 && index < this._elements.length);
+        public rewindToPinnedCursorIndex(index: number): void {
+            Debug.assert(index >= 0 && index <= this._elements.length);
             Debug.assert(this._pinCount > 0);
             this._index = index;
         }
@@ -368,33 +382,36 @@ module Parser {
         private moveToFirstToken(): void {
             var element: ISyntaxElement;
 
-            while ((element = this.currentElement()).isNode()) {
-                this.moveToFirstChild();
+            while (!this.isFinished()) {
+                var element = this.currentElement();
+                if (element.isNode()) {
+                    this.moveToFirstChild();
+                    continue;
+                }
+
+                Debug.assert(element.isToken());
+                return;
             }
         }
-
+        
         public currentToken(): ISyntaxToken {
             this.moveToFirstToken();
+            if (this.isFinished()) {
+                return null;
+            }
+
             var element = this.currentElement();
 
             Debug.assert(element.isToken());
             return <ISyntaxToken>element;
         }
-
-        public peekTokenN(n: number): ISyntaxToken {
-            if (this.isFinished()) {
-                return null;
-            }
-
+        
+        public peekToken(n: number): ISyntaxToken {
             this.moveToFirstToken();
             var pin = this.getAndPinCursorIndex();
             try {
                 for (var i = 0; i < n; i++) {
                     this.moveToNextSibling();
-                    if (this.isFinished()) {
-                        return null;
-                    }
-
                     this.moveToFirstToken();
                 }
 
@@ -463,10 +480,10 @@ module Parser {
         // source is pointing at a "/" or "/=" token. 
         currentTokenAllowingRegularExpression(): ISyntaxToken;
 
-        // Peek any number of tokens ahead from the current location in source.  peekTokenN(0) is
-        // equivalent to 'currentToken', peekTokenN(1) is the next token, peekTokenN(2) the token
+        // Peek any number of tokens ahead from the current location in source.  peekToken(0) is
+        // equivalent to 'currentToken', peekToken(1) is the next token, peekToken(2) the token
         // after that, etc.
-        peekTokenN(n: number): ISyntaxToken;
+        peekToken(n: number): ISyntaxToken;
 
         // Called to move the source to the next node or token once the parser has consumed the 
         // current one.
@@ -556,11 +573,11 @@ module Parser {
             throw Errors.invalidOperation();
         }
 
-        private absolutePosition() {
+        public absolutePosition() {
             return this._absolutePosition;
         }
 
-        private previousToken(): ISyntaxToken {
+        public previousToken(): ISyntaxToken {
             return this._previousToken;
         }
 
@@ -579,28 +596,32 @@ module Parser {
             return result;
         }
 
-        private getRewindPoint(): IParserRewindPoint {
-            var absoluteIndex = this.slidingWindow.getAndPinAbsoluteIndex();
+        public getRewindPoint(): IParserRewindPoint {
+            var slidingWindowIndex = this.slidingWindow.getAndPinAbsoluteIndex();
 
             var rewindPoint = this.getOrCreateRewindPoint();
 
-            (<any>rewindPoint).absoluteIndex = absoluteIndex;
-            (<any>rewindPoint).previousToken = this._previousToken;
-            (<any>rewindPoint).absolutePosition = this._absolutePosition;
+            rewindPoint.slidingWindowIndex = slidingWindowIndex;
+            rewindPoint.previousToken = this._previousToken;
+            rewindPoint.absolutePosition = this._absolutePosition;
 
             rewindPoint.pinCount = this.slidingWindow.pinCount();
 
             return rewindPoint;
         }
 
-        private rewind(rewindPoint: IParserRewindPoint): void {
-            this.slidingWindow.rewindToPinnedIndex((<any>rewindPoint).absoluteIndex);
-
-            this._previousToken = (<any>rewindPoint).previousToken;
-            this._absolutePosition = (<any>rewindPoint).absolutePosition;
+        public isPinned(): bool {
+            return this.slidingWindow.pinCount() > 0;
         }
 
-        private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
+        public rewind(rewindPoint: IParserRewindPoint): void {
+            this.slidingWindow.rewindToPinnedIndex(rewindPoint.slidingWindowIndex);
+
+            this._previousToken = rewindPoint.previousToken;
+            this._absolutePosition = rewindPoint.absolutePosition;
+        }
+
+        public releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
             Debug.assert(this.slidingWindow.pinCount() === rewindPoint.pinCount);
             this.slidingWindow.releaseAndUnpinAbsoluteIndex((<any>rewindPoint).absoluteIndex);
 
@@ -615,11 +636,11 @@ module Parser {
             return 1;
         }
 
-        private peekTokenN(n: number): ISyntaxToken {
+        public peekToken(n: number): ISyntaxToken {
             return this.slidingWindow.peekItemN(n);
         }
 
-        private moveToNextToken(): void {
+        public moveToNextToken(): void {
             this._absolutePosition += this.currentToken().fullWidth();
             this._previousToken = this.currentToken();
 
@@ -688,6 +709,367 @@ module Parser {
             Debug.assert(SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.kind()));
 
             return token;
+        }
+    }
+
+    class IncrementalParserSource implements IParserSource {
+        private _changeRange: TextChangeRange;
+        private _changeDelta: number = 0;
+
+        private _oldSourceUnitCursor: SyntaxCursor;
+        private _normalParserSource: NormalParserSource;
+
+        constructor(oldSourceUnit: SourceUnitSyntax,
+                    changeRanges: TextChangeRange[],
+                    newText: IText,
+                    languageVersion: LanguageVersion,
+                    stringTable: Collections.StringTable) {
+            this._oldSourceUnitCursor = new SyntaxCursor(oldSourceUnit);
+
+            // In general supporting multiple individual edits is just not that important.  So we 
+            // just collapse this all down to a single range to make the code here easier.  The only
+            // time this could be problematic would be if the user made a ton of discontinuous edits.
+            // For example, doing a column select on a *large* section of a code.  If this is a 
+            // problem, we can always update this code to handle multiple changes.
+            this._changeRange = TextChangeRange.collapse(changeRanges);
+
+            // The old tree's length, plus whatever length change was caused by the edit better 
+            // equal the new text's length!
+            Debug.assert((oldSourceUnit.fullWidth() - this._changeRange.span().length() + this._changeRange.newLength()) ===
+                         newText.length());
+
+            // Set up a scanner so that we can scan tokens out of the new text.
+            this._normalParserSource = new NormalParserSource(newText, languageVersion, stringTable);
+        }
+
+        public absolutePosition() {
+            return this._normalParserSource.absolutePosition();
+        }
+
+        public previousToken() {
+            return this._normalParserSource.previousToken();
+        }
+
+        private canReadFromOldSourceUnit() {
+            // If we're currently pinned, then do not want to touch the cursor.  If we end up 
+            // reading from the old source unit, we'll try to then set the position of the normal
+            // parser source.  Doing is unsupported while the underlying source is pinned.
+            if (this._normalParserSource.isPinned()) {
+                return false;
+            }
+
+            // First, try to sync up with the new text if we're behind.
+            this.syncCursorToNewTextIfBehind();
+
+            // Now, if we're synced up *and* we're not currently pinned in the new text scanner,
+            // then we can read a node from the cursor.  If we're pinned in the scanner then we
+            // can't read a node from the cursor because we will mess up the pinned scanner when
+            // we try to move it forward past this node.
+            return this._changeDelta === 0 &&
+                   !this._oldSourceUnitCursor.isFinished();
+        }
+        
+        public currentNode(): SyntaxNode {
+            if (this.canReadFromOldSourceUnit()) {
+                // Try to read a node.  If we can't then our caller will call back in and just try
+                // to get a token.
+                return this.tryGetNodeFromOldSourceUnit();
+            }
+
+            // Either we were ahead of the old text, or we were pinned.  No node can be read here.
+            return null;
+        }
+
+        public currentToken(): ISyntaxToken {
+            if (this.canReadFromOldSourceUnit()) {
+                var token = this.tryGetTokenFromOldSourceUnit();
+                if (token !== null) {
+                    return token;
+                }
+            }
+
+            // Either we couldn't read from the old source unit, or we weren't able to successfully
+            // get a token from it.  In this case we need to read a token from the underlying text.
+            return this._normalParserSource.currentToken();
+        }
+
+        public currentTokenAllowingRegularExpression(): ISyntaxToken {
+            return this._normalParserSource.currentTokenAllowingRegularExpression();
+        }
+
+        private syncCursorToNewTextIfBehind() {
+            while (true) {
+                if (this._oldSourceUnitCursor.isFinished()) {
+                    // Can't sync up if the cursor is finished.
+                    break;
+                }
+
+                if (this._changeDelta >= 0) {
+                    // Nothing to do if we're synced up or ahead of the text.
+                    break;
+                }
+
+                // We're behind in the original tree.  Throw out a node or token in an attempt to 
+                // catch up to the position we're at in the new text.
+
+                var currentElement = this._oldSourceUnitCursor.currentElement();
+
+                // If we're pointing at a node, and that node's width is less than our delta,
+                // then we can just skip that node.  Otherwise, if we're pointing at a node
+                // whose width is greater than the delta, then crumble it and try again.
+                // Otherwise, we must be pointing at a token.  Just skip it and try again.
+                    
+                if (currentElement.isNode() && (currentElement.fullWidth() > Math.abs(this._changeDelta))) {
+                    // We were pointing at a node whose width was more than changeDelta.  Crumble the 
+                    // node and try again.  Note: we haven't changed changeDelta.  So the callers loop
+                    // will just repeat this until we get to a node or token that we can skip over.
+                    this._oldSourceUnitCursor.moveToFirstChild();
+                }
+                else {
+                    this._oldSourceUnitCursor.moveToNextSibling();
+
+                    // Get our change delta closer to 0 as we skip past this item.
+                    this._changeDelta += currentElement.fullWidth();
+
+                    // If this was a node, then our changeDelta is 0 or negative.  If this was a 
+                    // token, then we could still be negative (and we have to read another token),
+                    // we could be zero (we're done), or we could be positive (we've moved ahead
+                    // of the new text).  Only if we're negative will we continue looping.
+                }
+            }
+
+            // At this point, we must be either:
+            //   a) done with the cursor
+            //   b) (ideally) caught up to the new text position.
+            //   c) ahead of the new text position.
+            // In case 'b' we can try to reuse a node from teh old tree.
+            Debug.assert(this._oldSourceUnitCursor.isFinished() || this._changeDelta >= 0);
+        }
+
+        private intersectsWithChangeRangeSpan(start: number, length: number) {
+            return this._changeRange !== null && this._changeRange.span().intersectsWith(start, length);
+        }
+
+        private tryGetNodeFromOldSourceUnit(): SyntaxNode {
+            Debug.assert(this.canReadFromOldSourceUnit());
+
+            // Keep moving the cursor down to the first node that is safe to return.  A node is 
+            // safe to return if:
+            //  a) it does not intersect the changed text.
+            //  b) it does not contain skipped text.
+            //  c) it does not have any zero width tokens in it.
+            //  d) it does not have a regex token in it.
+            //
+            // TODO: we should also only be able to get a node if we're in the same 'strict' 
+            // context we were in when we parsed the node.
+            while (true) {
+                var node = this._oldSourceUnitCursor.currentNode();
+                if (node === null) {
+                    // Couldn't even read a node, nothing to return.
+                    return null;
+                }
+
+                if (!this.intersectsWithChangeRangeSpan(this.absolutePosition(), node.fullWidth())) {
+                    // Didn't intersect with the change range.
+                    if (!node.hasSkippedText() &&
+                        !node.hasZeroWidthToken() &&
+                        !node.hasRegularExpressionToken()) {
+
+                        // Didn't contain anything that would make it unusable.  Awesome.  This is
+                        // a node we can reuse.
+                        return node;
+                    }
+                }
+
+                // We couldn't use currentNode. Try to move to its first child (in case that's a 
+                // node).  If it is we can try using that.  Otherwise we'll just bail out in the
+                // next iteration of the loop.
+                this._oldSourceUnitCursor.moveToFirstChild();
+            }
+        }
+
+        private canReuseTokenFromOldSourceUnit(position: number, token: ISyntaxToken): bool {
+            // A token is safe to return if:
+            //  a) it does not intersect the changed text.
+            //  b) it does not contain skipped text.
+            //  c) it is not zero width.
+            //  d) it is not a regex token.
+            //
+            // NOTE: It is safe to get a token regardless of what our strict context was/is.  That's 
+            // because the strict context doesn't change what tokens are scanned, only how the 
+            // parser reacts to them.
+
+            if (token !== null) {
+                if (!this.intersectsWithChangeRangeSpan(position, token.fullWidth())) {
+                    // Didn't intersect with the change range.
+                    if (!token.hasSkippedText() &&
+                        token.width() > 0 &&
+                        !SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.kind())) {
+
+                        // Didn't contain anything that would make it unusable.  Awesome.  This is
+                        // a token we can reuse.
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private tryGetTokenFromOldSourceUnit(): ISyntaxToken {
+            Debug.assert(this.canReadFromOldSourceUnit());
+
+            // get the current token that the cursor is pointing at.
+            var token = this._oldSourceUnitCursor.currentToken();
+
+            return this.canReuseTokenFromOldSourceUnit(this.absolutePosition(), token) 
+                ? token : null;
+        }
+
+        public peekToken(n: number): ISyntaxToken {
+            if (this.canReadFromOldSourceUnit()) {
+                var token = this.tryPeekTokenFromOldSourceUnit(n);
+                if (token !== null) {
+                    return token;
+                }
+            }
+
+            // Couldn't peek this far in the old tree.  Get the token from the new text.
+            return this._normalParserSource.peekToken(n);
+        }
+
+        private tryPeekTokenFromOldSourceUnit(n: number): ISyntaxToken {
+            Debug.assert(this.canReadFromOldSourceUnit());
+
+            // In order to peek the 'nth' token we need all the tokens up to that point.  That way
+            // we know we know position that the nth token is at.  The position is necessary so 
+            // that we can test if this token (or any that precede it cross the change range).
+            var currentPosition = this.absolutePosition();
+            for (var i = 0; i < n; i++) {
+                var interimToken = this._oldSourceUnitCursor.peekToken(i);
+                if (!this.canReuseTokenFromOldSourceUnit(currentPosition, interimToken)) {
+                    return null;
+                }
+
+                currentPosition += interimToken.fullWidth();
+            }
+
+            var token = this._oldSourceUnitCursor.peekToken(n);
+            return this.canReuseTokenFromOldSourceUnit(currentPosition, token) 
+                ? token : null;
+        }
+
+        private moveToNextNode(): void {
+            // A node could have only come from the old source unit cursor.  Update it and our 
+            // current state.
+            Debug.assert(this._changeDelta === 0);
+
+            // Get the current node we were pointing at, and move to the next element.
+            var currentElement = this._oldSourceUnitCursor.currentElement();
+            var currentNode = this._oldSourceUnitCursor.currentNode();
+
+            // We better still be pointing at the node.
+            Debug.assert(currentElement === currentNode);
+            this._oldSourceUnitCursor.moveToNextSibling();
+
+            // Update the underlying source with where it should now be currently pointing, and 
+            // what the previous token is before that position.
+            var absolutePosition = this.absolutePosition() + currentNode.fullWidth();
+            var previousToken = currentNode.lastToken();
+            this._normalParserSource.resetToPosition(absolutePosition, previousToken);
+
+            Debug.assert(previousToken !== null);
+            Debug.assert(!previousToken.isMissing());
+            Debug.assert(previousToken.width() > 0);
+
+            if (this._changeRange !== null) {
+                // If we still have a change range, then this node must have ended before the 
+                // change range starts.  Thus, we don't need to call 'skipPastChanges'.
+                Debug.assert(this.absolutePosition() < this._changeRange.span().start());
+            }
+        }
+
+        private moveToNextToken(): void {
+            // This token may have come from the old source unit, or from the new text.  Handle
+            // both accordingly.
+            var currentToken = this.currentToken();
+
+            if (this._oldSourceUnitCursor.currentElement() === currentToken) {
+                // The token came from the old source unit.  So our tree and text must be in sync.
+                Debug.assert(this._changeDelta === 0);
+
+                // Move the cursor past this token.
+                this._oldSourceUnitCursor.moveToNextSibling();
+
+                Debug.assert(!this._normalParserSource.isPinned());
+                
+                // Update the underlying source with where it should now be currently pointing, and 
+                // what the previous token is before that position.  We don't need to do this when
+                // the token came from the new text as the source will automatically be placed in
+                // the right position.
+                var absolutePosition = this.absolutePosition() + currentToken.fullWidth();
+                var previousToken = currentToken;
+                this._normalParserSource.resetToPosition(absolutePosition, previousToken);
+
+                Debug.assert(previousToken !== null);
+                Debug.assert(!previousToken.isMissing());
+                Debug.assert(previousToken.width() > 0);
+
+                if (this._changeRange !== null) {
+                    // If we still have a change range, then this token must have ended before the 
+                    // change range starts.  Thus, we don't need to call 'skipPastChanges'.
+                    Debug.assert(this.absolutePosition() < this._changeRange.span().start());
+                }
+            }
+            else {
+                // the token came from the new text.  We have to update our delta appropriately.
+                this._changeDelta -= currentToken.fullWidth();
+
+                // Because we read a token from the new text, we may have moved ourselves past the
+                // change range.  If we did, then we may also have to update our change delta to
+                // compensate for the length change between the old and new text.
+                if (this._changeRange !== null && this.absolutePosition() > this._changeRange.span().end()) {
+                    this._changeDelta += this._changeRange.newLength() - this._changeRange.span().length();
+                    this._changeRange = null;
+                }
+
+                // Move our underlying source forward.
+                this._normalParserSource.moveToNextToken();
+            }
+        }
+
+        private getRewindPoint(): IParserRewindPoint {
+            // Get a rewind point for our new text reader and for our old source unit cursor.
+            var rewindPoint = this._normalParserSource.getRewindPoint();
+            var oldSourceUnitCursorIndex = this._oldSourceUnitCursor.getAndPinCursorIndex();
+
+            // Store where we were when the rewind point was created.
+            rewindPoint.changeDelta = this._changeDelta;
+            rewindPoint.changeRange = this._changeRange;
+            rewindPoint.oldSourceUnitCursorIndex = oldSourceUnitCursorIndex;
+
+            Debug.assert(rewindPoint.pinCount === this._oldSourceUnitCursor.pinCount());
+
+            return rewindPoint;
+        }
+
+        private rewind(rewindPoint: IParserRewindPoint): void {
+            // Restore our state to the values when the rewind point was created.
+            this._changeRange = rewindPoint.changeRange;
+            this._changeDelta = rewindPoint.changeDelta;
+            this._oldSourceUnitCursor.rewindToPinnedCursorIndex(rewindPoint.oldSourceUnitCursorIndex);
+
+            this._normalParserSource.rewind(rewindPoint);
+        }
+
+        private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
+            // Release both the new text reader and the old text cursor.
+            this._oldSourceUnitCursor.releaseAndUnpinCursorIndex(rewindPoint.oldSourceUnitCursorIndex);
+            this._normalParserSource.releaseRewindPoint(rewindPoint);
+        }
+
+        private tokenDiagnostics(): SyntaxDiagnostic[] {
+            return this._normalParserSource.tokenDiagnostics();
         }
     }
 
@@ -792,8 +1174,8 @@ module Parser {
             return this.source.currentTokenAllowingRegularExpression();
         }
 
-        private peekTokenN(n: number): ISyntaxToken {
-            return this.source.peekTokenN(n);
+        private peekToken(n: number): ISyntaxToken {
+            return this.source.peekToken(n);
         }
 
         //this method is called very frequently
@@ -1210,8 +1592,8 @@ module Parser {
             // match any other legal javascript construct.  However, we need to verify that this is
             // actually the case.
             return this.currentToken().keywordKind() === SyntaxKind.ImportKeyword &&
-                   this.peekTokenN(1).tokenKind === SyntaxKind.IdentifierNameToken &&
-                   this.peekTokenN(2).tokenKind === SyntaxKind.EqualsToken;
+                   this.peekToken(1).tokenKind === SyntaxKind.IdentifierNameToken &&
+                   this.peekToken(2).tokenKind === SyntaxKind.EqualsToken;
         }
 
         private parseImportDeclaration(): ImportDeclarationSyntax {
@@ -1237,7 +1619,7 @@ module Parser {
 
         private isExternalModuleReference(): bool {
             return this.currentToken().keywordKind() === SyntaxKind.ModuleKeyword &&
-                   this.peekTokenN(1).tokenKind === SyntaxKind.OpenParenToken;
+                   this.peekToken(1).tokenKind === SyntaxKind.OpenParenToken;
         }
 
         private parseExternalModuleReference(): ExternalModuleReferenceSyntax {
@@ -1288,12 +1670,12 @@ module Parser {
 
         private isEnumDeclaration(): bool {
             if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword &&
-                this.peekTokenN(1).keywordKind() === SyntaxKind.EnumKeyword) {
+                this.peekToken(1).keywordKind() === SyntaxKind.EnumKeyword) {
                 return true;
             }
 
             return this.currentToken().keywordKind() === SyntaxKind.EnumKeyword &&
-                   this.isIdentifier(this.peekTokenN(1));
+                   this.isIdentifier(this.peekToken(1));
         }
 
         private parseEnumDeclaration(): EnumDeclarationSyntax {
@@ -1319,7 +1701,7 @@ module Parser {
         private isClassDeclaration(): bool {
             var token0 = this.currentToken();
 
-            var token1 = this.peekTokenN(1);
+            var token1 = this.peekToken(1);
             if (token0.keywordKind() === SyntaxKind.ExportKeyword &&
                 token1.keywordKind() === SyntaxKind.ClassKeyword) {
                 return true;
@@ -1378,17 +1760,17 @@ module Parser {
                 index++;
             }
 
-            if (this.peekTokenN(index).keywordKind() === SyntaxKind.StaticKeyword) {
+            if (this.peekToken(index).keywordKind() === SyntaxKind.StaticKeyword) {
                 index++;
             }
 
-            if (this.peekTokenN(index).keywordKind() !== SyntaxKind.GetKeyword &&
-                this.peekTokenN(index).keywordKind() !== SyntaxKind.SetKeyword) {
+            if (this.peekToken(index).keywordKind() !== SyntaxKind.GetKeyword &&
+                this.peekToken(index).keywordKind() !== SyntaxKind.SetKeyword) {
                 return false;
             }
 
             index++;
-            return this.isIdentifier(this.peekTokenN(index));
+            return this.isIdentifier(this.peekToken(index));
         }
 
         private parseMemberAccessorDeclaration(): MemberAccessorDeclarationSyntax {
@@ -1450,25 +1832,25 @@ module Parser {
                 // ERROR RECOVERY: 
                 // If we're following by an close curly or EOF, then consider this the start of a
                 // variable declaration.
-                if (this.peekTokenN(index).tokenKind === SyntaxKind.CloseBraceToken ||
-                    this.peekTokenN(index).tokenKind === SyntaxKind.EndOfFileToken) {
+                if (this.peekToken(index).tokenKind === SyntaxKind.CloseBraceToken ||
+                    this.peekToken(index).tokenKind === SyntaxKind.EndOfFileToken) {
                     return true;
                 }
             }
 
-            if (this.peekTokenN(index).keywordKind() === SyntaxKind.StaticKeyword) {
+            if (this.peekToken(index).keywordKind() === SyntaxKind.StaticKeyword) {
                 index++;
 
                 // ERROR RECOVERY: 
                 // If we're following by an close curly or EOF, then consider this the start of a
                 // variable declaration.
-                if (this.peekTokenN(index).tokenKind === SyntaxKind.CloseBraceToken ||
-                    this.peekTokenN(index).tokenKind === SyntaxKind.EndOfFileToken) {
+                if (this.peekToken(index).tokenKind === SyntaxKind.CloseBraceToken ||
+                    this.peekToken(index).tokenKind === SyntaxKind.EndOfFileToken) {
                     return true;
                 }
             }
 
-            return this.isIdentifier(this.peekTokenN(index));
+            return this.isIdentifier(this.peekToken(index));
         }
 
         private isClassElement(): bool {
@@ -1511,7 +1893,7 @@ module Parser {
                 index++;
             }
 
-            if (this.peekTokenN(index).keywordKind() === SyntaxKind.StaticKeyword) {
+            if (this.peekToken(index).keywordKind() === SyntaxKind.StaticKeyword) {
                 index++;
             }
 
@@ -1587,7 +1969,7 @@ module Parser {
                 return true;
             }
 
-            var token1 = this.peekTokenN(1);
+            var token1 = this.peekToken(1);
             if (token0.keywordKind() === SyntaxKind.ExportKeyword &&
                 token1.keywordKind() === SyntaxKind.FunctionKeyword) {
                 return true;
@@ -1621,7 +2003,7 @@ module Parser {
 
         private isModuleDeclaration(): bool {
             var token0 = this.currentToken();
-            var token1 = this.peekTokenN(1);
+            var token1 = this.peekToken(1);
 
             // export module
             if (token0.keywordKind() === SyntaxKind.ExportKeyword &&
@@ -1644,7 +2026,7 @@ module Parser {
                 }
 
                 if (token1.tokenKind === SyntaxKind.IdentifierNameToken) {
-                    var token2 = this.peekTokenN(2);
+                    var token2 = this.peekToken(2);
 
                     // module id {
                     if (token2.tokenKind === SyntaxKind.OpenBraceToken) {
@@ -1694,13 +2076,13 @@ module Parser {
         private isInterfaceDeclaration(): bool {
             // export interface
             if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword &&
-                this.peekTokenN(1).keywordKind() === SyntaxKind.InterfaceKeyword) {
+                this.peekToken(1).keywordKind() === SyntaxKind.InterfaceKeyword) {
                 return true
             }
 
             // interface foo
             return this.currentToken().keywordKind() === SyntaxKind.InterfaceKeyword &&
-                   this.isIdentifier(this.peekTokenN(1));
+                   this.isIdentifier(this.peekToken(1));
         }
 
         private parseInterfaceDeclaration(): InterfaceDeclarationSyntax {
@@ -1825,15 +2207,15 @@ module Parser {
         }
 
         private isFunctionSignature(tokenIndex: number): bool {
-            if (this.isIdentifier(this.peekTokenN(tokenIndex))) {
+            if (this.isIdentifier(this.peekToken(tokenIndex))) {
                 // id(
-                if (this.peekTokenN(tokenIndex + 1).tokenKind === SyntaxKind.OpenParenToken) {
+                if (this.peekToken(tokenIndex + 1).tokenKind === SyntaxKind.OpenParenToken) {
                     return true;
                 }
 
                 // id?(
-                if (this.peekTokenN(tokenIndex + 1).tokenKind === SyntaxKind.QuestionToken &&
-                    this.peekTokenN(tokenIndex + 2).tokenKind === SyntaxKind.OpenParenToken) {
+                if (this.peekToken(tokenIndex + 1).tokenKind === SyntaxKind.QuestionToken &&
+                    this.peekToken(tokenIndex + 2).tokenKind === SyntaxKind.OpenParenToken) {
                     return true;
                 }
             }
@@ -2013,7 +2395,7 @@ module Parser {
         }
 
         private isLabeledStatement(): bool {
-            return this.isIdentifier(this.currentToken()) && this.peekTokenN(1).tokenKind === SyntaxKind.ColonToken;
+            return this.isIdentifier(this.currentToken()) && this.peekToken(1).tokenKind === SyntaxKind.ColonToken;
         }
 
         private parseLabeledStatement(): LabeledStatement {
@@ -2565,7 +2947,7 @@ module Parser {
                 return true;
             }
 
-            var token1 = this.peekTokenN(1);
+            var token1 = this.peekToken(1);
             if (token0.keywordKind() === SyntaxKind.ExportKeyword &&
                 token1.keywordKind() === SyntaxKind.VarKeyword) {
                 return true;
@@ -3185,7 +3567,7 @@ module Parser {
             }
 
             return this.isIdentifier(this.currentToken()) &&
-                   this.peekTokenN(1).tokenKind === SyntaxKind.EqualsGreaterThanToken;
+                   this.peekToken(1).tokenKind === SyntaxKind.EqualsGreaterThanToken;
         }
 
         private parseSimpleArrowFunctionExpression(): SimpleArrowFunctionExpressionSyntax {
@@ -3206,7 +3588,7 @@ module Parser {
         private isDefinitelyArrowFunctionExpression(): bool {
             Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
 
-            var token1 = this.peekTokenN(1);
+            var token1 = this.peekToken(1);
 
             if (token1.tokenKind === SyntaxKind.CloseParenToken) {
                 // ()
@@ -3230,14 +3612,14 @@ module Parser {
             //
             // Lots of options here.  Check for things that make us certain it's an
             // arrow function.
-            var token2 = this.peekTokenN(2);
+            var token2 = this.peekToken(2);
             if (token2.tokenKind === SyntaxKind.ColonToken) {
                 // (id:
                 // Definitely an arrow function.  Could never be a parenthesized expression.
                 return true;
             }
 
-            var token3 = this.peekTokenN(3);
+            var token3 = this.peekToken(3);
             if (token2.tokenKind === SyntaxKind.QuestionToken) {
                 // (id?
                 // Could be an arrow function, or a parenthesized conditional expression.
@@ -3281,7 +3663,7 @@ module Parser {
         private isPossiblyArrowFunctionExpression(): bool {
             Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
 
-            var token1 = this.peekTokenN(1);
+            var token1 = this.peekToken(1);
 
             if (!this.isIdentifier(token1)) {
                 // All other arrow functions must start with (id
@@ -3289,7 +3671,7 @@ module Parser {
                 return false;
             }
 
-            var token2 = this.peekTokenN(2);
+            var token2 = this.peekToken(2);
             if (token2.tokenKind === SyntaxKind.EqualsToken) {
                 // (id =
                 //
@@ -3311,7 +3693,7 @@ module Parser {
             if (token2.tokenKind === SyntaxKind.CloseParenToken) {
                 // (id)
 
-                var token3 = this.peekTokenN(3);
+                var token3 = this.peekToken(3);
                 if (token3.tokenKind === SyntaxKind.ColonToken) {
                     // (id):
                     //
@@ -3361,7 +3743,7 @@ module Parser {
 
         private isGetAccessorPropertyAssignment(): bool {
             return this.currentToken().keywordKind() === SyntaxKind.GetKeyword &&
-                   this.isPropertyName(this.peekTokenN(1), /*inErrorRecovery:*/ false);
+                   this.isPropertyName(this.peekToken(1), /*inErrorRecovery:*/ false);
         }
 
         private parseGetAccessorPropertyAssignment(): GetAccessorPropertyAssignmentSyntax {
@@ -3378,7 +3760,7 @@ module Parser {
 
         private isSetAccessorPropertyAssignment(): bool {
             return this.currentToken().keywordKind() === SyntaxKind.SetKeyword &&
-                   this.isPropertyName(this.peekTokenN(1), /*inErrorRecovery:*/ false);
+                   this.isPropertyName(this.peekToken(1), /*inErrorRecovery:*/ false);
         }
 
         private parseSetAccessorPropertyAssignment(): SetAccessorPropertyAssignmentSyntax {
@@ -3522,7 +3904,7 @@ module Parser {
             var type = this.parseNonArrayType();
 
             while (this.currentToken().tokenKind === SyntaxKind.OpenBracketToken) {
-                if (requireCompleteArraySuffix && this.peekTokenN(1).tokenKind !== SyntaxKind.CloseBracketToken) {
+                if (requireCompleteArraySuffix && this.peekToken(1).tokenKind !== SyntaxKind.CloseBracketToken) {
                     break;
                 }
 

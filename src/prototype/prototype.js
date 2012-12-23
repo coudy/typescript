@@ -26131,15 +26131,23 @@ var Parser;
             this._pinCount = 0;
             sourceUnit.insertChildrenInto(this._elements, 0);
         }
+        SyntaxCursor.prototype.isFinished = function () {
+            return this._index === this._elements.length;
+        };
         SyntaxCursor.prototype.currentElement = function () {
-            Debug.assert(!this.isFinished());
+            if(this.isFinished()) {
+                return null;
+            }
             return this._elements[this._index];
         };
-        SyntaxCursor.prototype.isFinished = function () {
-            return this._elements[this._index].kind() === 118 /* EndOfFileToken */ ;
+        SyntaxCursor.prototype.currentNode = function () {
+            var element = this.currentElement();
+            return element !== null && element.isNode() ? element : null;
         };
         SyntaxCursor.prototype.moveToFirstChild = function () {
-            Debug.assert(!this.isFinished());
+            if(this.isFinished()) {
+                return;
+            }
             var element = this._elements[this._index];
             if(element.isToken()) {
                 return;
@@ -26149,7 +26157,9 @@ var Parser;
             node.insertChildrenInto(this._elements, this._index);
         };
         SyntaxCursor.prototype.moveToNextSibling = function () {
-            Debug.assert(!this.isFinished());
+            if(this.isFinished()) {
+                return;
+            }
             if(this._pinCount > 0) {
                 this._index++;
                 return;
@@ -26169,7 +26179,7 @@ var Parser;
             }
         };
         SyntaxCursor.prototype.rewindToPinnedCursorIndex = function (index) {
-            Debug.assert(index >= 0 && index < this._elements.length);
+            Debug.assert(index >= 0 && index <= this._elements.length);
             Debug.assert(this._pinCount > 0);
             this._index = index;
         };
@@ -26178,28 +26188,31 @@ var Parser;
         };
         SyntaxCursor.prototype.moveToFirstToken = function () {
             var element;
-            while((element = this.currentElement()).isNode()) {
-                this.moveToFirstChild();
+            while(!this.isFinished()) {
+                var element = this.currentElement();
+                if(element.isNode()) {
+                    this.moveToFirstChild();
+                    continue;
+                }
+                Debug.assert(element.isToken());
+                return;
             }
         };
         SyntaxCursor.prototype.currentToken = function () {
             this.moveToFirstToken();
+            if(this.isFinished()) {
+                return null;
+            }
             var element = this.currentElement();
             Debug.assert(element.isToken());
             return element;
         };
-        SyntaxCursor.prototype.peekTokenN = function (n) {
-            if(this.isFinished()) {
-                return null;
-            }
+        SyntaxCursor.prototype.peekToken = function (n) {
             this.moveToFirstToken();
             var pin = this.getAndPinCursorIndex();
             try  {
                 for(var i = 0; i < n; i++) {
                     this.moveToNextSibling();
-                    if(this.isFinished()) {
-                        return null;
-                    }
                     this.moveToFirstToken();
                 }
                 return this.currentToken();
@@ -26249,18 +26262,21 @@ var Parser;
             return result;
         };
         NormalParserSource.prototype.getRewindPoint = function () {
-            var absoluteIndex = this.slidingWindow.getAndPinAbsoluteIndex();
+            var slidingWindowIndex = this.slidingWindow.getAndPinAbsoluteIndex();
             var rewindPoint = this.getOrCreateRewindPoint();
-            (rewindPoint).absoluteIndex = absoluteIndex;
-            (rewindPoint).previousToken = this._previousToken;
-            (rewindPoint).absolutePosition = this._absolutePosition;
+            rewindPoint.slidingWindowIndex = slidingWindowIndex;
+            rewindPoint.previousToken = this._previousToken;
+            rewindPoint.absolutePosition = this._absolutePosition;
             rewindPoint.pinCount = this.slidingWindow.pinCount();
             return rewindPoint;
         };
+        NormalParserSource.prototype.isPinned = function () {
+            return this.slidingWindow.pinCount() > 0;
+        };
         NormalParserSource.prototype.rewind = function (rewindPoint) {
-            this.slidingWindow.rewindToPinnedIndex((rewindPoint).absoluteIndex);
-            this._previousToken = (rewindPoint).previousToken;
-            this._absolutePosition = (rewindPoint).absolutePosition;
+            this.slidingWindow.rewindToPinnedIndex(rewindPoint.slidingWindowIndex);
+            this._previousToken = rewindPoint.previousToken;
+            this._absolutePosition = rewindPoint.absolutePosition;
         };
         NormalParserSource.prototype.releaseRewindPoint = function (rewindPoint) {
             Debug.assert(this.slidingWindow.pinCount() === rewindPoint.pinCount);
@@ -26272,7 +26288,7 @@ var Parser;
             window[destinationIndex] = this.scanner.scan(this._tokenDiagnostics, allowRegularExpression);
             return 1;
         };
-        NormalParserSource.prototype.peekTokenN = function (n) {
+        NormalParserSource.prototype.peekToken = function (n) {
             return this.slidingWindow.peekItemN(n);
         };
         NormalParserSource.prototype.moveToNextToken = function () {
@@ -26310,6 +26326,182 @@ var Parser;
             return token;
         };
         return NormalParserSource;
+    })();    
+    var IncrementalParserSource = (function () {
+        function IncrementalParserSource(oldSourceUnit, changeRanges, newText, languageVersion, stringTable) {
+            this._changeDelta = 0;
+            this._oldSourceUnitCursor = new SyntaxCursor(oldSourceUnit);
+            this._changeRange = TextChangeRange.collapse(changeRanges);
+            Debug.assert((oldSourceUnit.fullWidth() - this._changeRange.span().length() + this._changeRange.newLength()) === newText.length());
+            this._normalParserSource = new NormalParserSource(newText, languageVersion, stringTable);
+        }
+        IncrementalParserSource.prototype.absolutePosition = function () {
+            return this._normalParserSource.absolutePosition();
+        };
+        IncrementalParserSource.prototype.previousToken = function () {
+            return this._normalParserSource.previousToken();
+        };
+        IncrementalParserSource.prototype.canReadFromOldSourceUnit = function () {
+            if(this._normalParserSource.isPinned()) {
+                return false;
+            }
+            this.syncCursorToNewTextIfBehind();
+            return this._changeDelta === 0 && !this._oldSourceUnitCursor.isFinished();
+        };
+        IncrementalParserSource.prototype.currentNode = function () {
+            if(this.canReadFromOldSourceUnit()) {
+                return this.tryGetNodeFromOldSourceUnit();
+            }
+            return null;
+        };
+        IncrementalParserSource.prototype.currentToken = function () {
+            if(this.canReadFromOldSourceUnit()) {
+                var token = this.tryGetTokenFromOldSourceUnit();
+                if(token !== null) {
+                    return token;
+                }
+            }
+            return this._normalParserSource.currentToken();
+        };
+        IncrementalParserSource.prototype.currentTokenAllowingRegularExpression = function () {
+            return this._normalParserSource.currentTokenAllowingRegularExpression();
+        };
+        IncrementalParserSource.prototype.syncCursorToNewTextIfBehind = function () {
+            while(true) {
+                if(this._oldSourceUnitCursor.isFinished()) {
+                    break;
+                }
+                if(this._changeDelta >= 0) {
+                    break;
+                }
+                var currentElement = this._oldSourceUnitCursor.currentElement();
+                if(currentElement.isNode() && (currentElement.fullWidth() > Math.abs(this._changeDelta))) {
+                    this._oldSourceUnitCursor.moveToFirstChild();
+                } else {
+                    this._oldSourceUnitCursor.moveToNextSibling();
+                    this._changeDelta += currentElement.fullWidth();
+                }
+            }
+            Debug.assert(this._oldSourceUnitCursor.isFinished() || this._changeDelta >= 0);
+        };
+        IncrementalParserSource.prototype.intersectsWithChangeRangeSpan = function (start, length) {
+            return this._changeRange !== null && this._changeRange.span().intersectsWith(start, length);
+        };
+        IncrementalParserSource.prototype.tryGetNodeFromOldSourceUnit = function () {
+            Debug.assert(this.canReadFromOldSourceUnit());
+            while(true) {
+                var node = this._oldSourceUnitCursor.currentNode();
+                if(node === null) {
+                    return null;
+                }
+                if(!this.intersectsWithChangeRangeSpan(this.absolutePosition(), node.fullWidth())) {
+                    if(!node.hasSkippedText() && !node.hasZeroWidthToken() && !node.hasRegularExpressionToken()) {
+                        return node;
+                    }
+                }
+                this._oldSourceUnitCursor.moveToFirstChild();
+            }
+        };
+        IncrementalParserSource.prototype.canReuseTokenFromOldSourceUnit = function (position, token) {
+            if(token !== null) {
+                if(!this.intersectsWithChangeRangeSpan(position, token.fullWidth())) {
+                    if(!token.hasSkippedText() && token.width() > 0 && !SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.kind())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+        IncrementalParserSource.prototype.tryGetTokenFromOldSourceUnit = function () {
+            Debug.assert(this.canReadFromOldSourceUnit());
+            var token = this._oldSourceUnitCursor.currentToken();
+            return this.canReuseTokenFromOldSourceUnit(this.absolutePosition(), token) ? token : null;
+        };
+        IncrementalParserSource.prototype.peekToken = function (n) {
+            if(this.canReadFromOldSourceUnit()) {
+                var token = this.tryPeekTokenFromOldSourceUnit(n);
+                if(token !== null) {
+                    return token;
+                }
+            }
+            return this._normalParserSource.peekToken(n);
+        };
+        IncrementalParserSource.prototype.tryPeekTokenFromOldSourceUnit = function (n) {
+            Debug.assert(this.canReadFromOldSourceUnit());
+            var currentPosition = this.absolutePosition();
+            for(var i = 0; i < n; i++) {
+                var interimToken = this._oldSourceUnitCursor.peekToken(i);
+                if(!this.canReuseTokenFromOldSourceUnit(currentPosition, interimToken)) {
+                    return null;
+                }
+                currentPosition += interimToken.fullWidth();
+            }
+            var token = this._oldSourceUnitCursor.peekToken(n);
+            return this.canReuseTokenFromOldSourceUnit(currentPosition, token) ? token : null;
+        };
+        IncrementalParserSource.prototype.moveToNextNode = function () {
+            Debug.assert(this._changeDelta === 0);
+            var currentElement = this._oldSourceUnitCursor.currentElement();
+            var currentNode = this._oldSourceUnitCursor.currentNode();
+            Debug.assert(currentElement === currentNode);
+            this._oldSourceUnitCursor.moveToNextSibling();
+            var absolutePosition = this.absolutePosition() + currentNode.fullWidth();
+            var previousToken = currentNode.lastToken();
+            this._normalParserSource.resetToPosition(absolutePosition, previousToken);
+            Debug.assert(previousToken !== null);
+            Debug.assert(!previousToken.isMissing());
+            Debug.assert(previousToken.width() > 0);
+            if(this._changeRange !== null) {
+                Debug.assert(this.absolutePosition() < this._changeRange.span().start());
+            }
+        };
+        IncrementalParserSource.prototype.moveToNextToken = function () {
+            var currentToken = this.currentToken();
+            if(this._oldSourceUnitCursor.currentElement() === currentToken) {
+                Debug.assert(this._changeDelta === 0);
+                this._oldSourceUnitCursor.moveToNextSibling();
+                Debug.assert(!this._normalParserSource.isPinned());
+                var absolutePosition = this.absolutePosition() + currentToken.fullWidth();
+                var previousToken = currentToken;
+                this._normalParserSource.resetToPosition(absolutePosition, previousToken);
+                Debug.assert(previousToken !== null);
+                Debug.assert(!previousToken.isMissing());
+                Debug.assert(previousToken.width() > 0);
+                if(this._changeRange !== null) {
+                    Debug.assert(this.absolutePosition() < this._changeRange.span().start());
+                }
+            } else {
+                this._changeDelta -= currentToken.fullWidth();
+                if(this._changeRange !== null && this.absolutePosition() > this._changeRange.span().end()) {
+                    this._changeDelta += this._changeRange.newLength() - this._changeRange.span().length();
+                    this._changeRange = null;
+                }
+                this._normalParserSource.moveToNextToken();
+            }
+        };
+        IncrementalParserSource.prototype.getRewindPoint = function () {
+            var rewindPoint = this._normalParserSource.getRewindPoint();
+            var oldSourceUnitCursorIndex = this._oldSourceUnitCursor.getAndPinCursorIndex();
+            rewindPoint.changeDelta = this._changeDelta;
+            rewindPoint.changeRange = this._changeRange;
+            rewindPoint.oldSourceUnitCursorIndex = oldSourceUnitCursorIndex;
+            Debug.assert(rewindPoint.pinCount === this._oldSourceUnitCursor.pinCount());
+            return rewindPoint;
+        };
+        IncrementalParserSource.prototype.rewind = function (rewindPoint) {
+            this._changeRange = rewindPoint.changeRange;
+            this._changeDelta = rewindPoint.changeDelta;
+            this._oldSourceUnitCursor.rewindToPinnedCursorIndex(rewindPoint.oldSourceUnitCursorIndex);
+            this._normalParserSource.rewind(rewindPoint);
+        };
+        IncrementalParserSource.prototype.releaseRewindPoint = function (rewindPoint) {
+            this._oldSourceUnitCursor.releaseAndUnpinCursorIndex(rewindPoint.oldSourceUnitCursorIndex);
+            this._normalParserSource.releaseRewindPoint(rewindPoint);
+        };
+        IncrementalParserSource.prototype.tokenDiagnostics = function () {
+            return this._normalParserSource.tokenDiagnostics();
+        };
+        return IncrementalParserSource;
     })();    
     var ParserImpl = (function () {
         function ParserImpl(source, options) {
@@ -26363,8 +26555,8 @@ var Parser;
         ParserImpl.prototype.currentTokenAllowingRegularExpression = function () {
             return this.source.currentTokenAllowingRegularExpression();
         };
-        ParserImpl.prototype.peekTokenN = function (n) {
-            return this.source.peekTokenN(n);
+        ParserImpl.prototype.peekToken = function (n) {
+            return this.source.peekToken(n);
         };
         ParserImpl.prototype.eatAnyToken = function () {
             var token = this.currentToken();
@@ -26688,7 +26880,7 @@ var Parser;
             }
         };
         ParserImpl.prototype.isImportDeclaration = function () {
-            return this.currentToken().keywordKind() === 47 /* ImportKeyword */  && this.peekTokenN(1).tokenKind === 9 /* IdentifierNameToken */  && this.peekTokenN(2).tokenKind === 104 /* EqualsToken */ ;
+            return this.currentToken().keywordKind() === 47 /* ImportKeyword */  && this.peekToken(1).tokenKind === 9 /* IdentifierNameToken */  && this.peekToken(2).tokenKind === 104 /* EqualsToken */ ;
         };
         ParserImpl.prototype.parseImportDeclaration = function () {
             Debug.assert(this.currentToken().keywordKind() === 47 /* ImportKeyword */ );
@@ -26707,7 +26899,7 @@ var Parser;
             }
         };
         ParserImpl.prototype.isExternalModuleReference = function () {
-            return this.currentToken().keywordKind() === 63 /* ModuleKeyword */  && this.peekTokenN(1).tokenKind === 69 /* OpenParenToken */ ;
+            return this.currentToken().keywordKind() === 63 /* ModuleKeyword */  && this.peekToken(1).tokenKind === 69 /* OpenParenToken */ ;
         };
         ParserImpl.prototype.parseExternalModuleReference = function () {
             Debug.assert(this.isExternalModuleReference());
@@ -26743,10 +26935,10 @@ var Parser;
             return current;
         };
         ParserImpl.prototype.isEnumDeclaration = function () {
-            if(this.currentToken().keywordKind() === 45 /* ExportKeyword */  && this.peekTokenN(1).keywordKind() === 44 /* EnumKeyword */ ) {
+            if(this.currentToken().keywordKind() === 45 /* ExportKeyword */  && this.peekToken(1).keywordKind() === 44 /* EnumKeyword */ ) {
                 return true;
             }
-            return this.currentToken().keywordKind() === 44 /* EnumKeyword */  && this.isIdentifier(this.peekTokenN(1));
+            return this.currentToken().keywordKind() === 44 /* EnumKeyword */  && this.isIdentifier(this.peekToken(1));
         };
         ParserImpl.prototype.parseEnumDeclaration = function () {
             Debug.assert(this.isEnumDeclaration());
@@ -26763,7 +26955,7 @@ var Parser;
         };
         ParserImpl.prototype.isClassDeclaration = function () {
             var token0 = this.currentToken();
-            var token1 = this.peekTokenN(1);
+            var token1 = this.peekToken(1);
             if(token0.keywordKind() === 45 /* ExportKeyword */  && token1.keywordKind() === 42 /* ClassKeyword */ ) {
                 return true;
             }
@@ -26802,14 +26994,14 @@ var Parser;
             if(this.currentToken().keywordKind() === 55 /* PublicKeyword */  || this.currentToken().keywordKind() === 53 /* PrivateKeyword */ ) {
                 index++;
             }
-            if(this.peekTokenN(index).keywordKind() === 56 /* StaticKeyword */ ) {
+            if(this.peekToken(index).keywordKind() === 56 /* StaticKeyword */ ) {
                 index++;
             }
-            if(this.peekTokenN(index).keywordKind() !== 62 /* GetKeyword */  && this.peekTokenN(index).keywordKind() !== 65 /* SetKeyword */ ) {
+            if(this.peekToken(index).keywordKind() !== 62 /* GetKeyword */  && this.peekToken(index).keywordKind() !== 65 /* SetKeyword */ ) {
                 return false;
             }
             index++;
-            return this.isIdentifier(this.peekTokenN(index));
+            return this.isIdentifier(this.peekToken(index));
         };
         ParserImpl.prototype.parseMemberAccessorDeclaration = function () {
             Debug.assert(this.isMemberAccessorDeclaration());
@@ -26849,17 +27041,17 @@ var Parser;
             var index = 0;
             if(this.currentToken().keywordKind() === 55 /* PublicKeyword */  || this.currentToken().keywordKind() === 53 /* PrivateKeyword */ ) {
                 index++;
-                if(this.peekTokenN(index).tokenKind === 68 /* CloseBraceToken */  || this.peekTokenN(index).tokenKind === 118 /* EndOfFileToken */ ) {
+                if(this.peekToken(index).tokenKind === 68 /* CloseBraceToken */  || this.peekToken(index).tokenKind === 118 /* EndOfFileToken */ ) {
                     return true;
                 }
             }
-            if(this.peekTokenN(index).keywordKind() === 56 /* StaticKeyword */ ) {
+            if(this.peekToken(index).keywordKind() === 56 /* StaticKeyword */ ) {
                 index++;
-                if(this.peekTokenN(index).tokenKind === 68 /* CloseBraceToken */  || this.peekTokenN(index).tokenKind === 118 /* EndOfFileToken */ ) {
+                if(this.peekToken(index).tokenKind === 68 /* CloseBraceToken */  || this.peekToken(index).tokenKind === 118 /* EndOfFileToken */ ) {
                     return true;
                 }
             }
-            return this.isIdentifier(this.peekTokenN(index));
+            return this.isIdentifier(this.peekToken(index));
         };
         ParserImpl.prototype.isClassElement = function () {
             if(this.currentNode() !== null && this.currentNode().isClassElement()) {
@@ -26885,7 +27077,7 @@ var Parser;
             if(this.currentToken().keywordKind() === 55 /* PublicKeyword */  || this.currentToken().keywordKind() === 53 /* PrivateKeyword */ ) {
                 index++;
             }
-            if(this.peekTokenN(index).keywordKind() === 56 /* StaticKeyword */ ) {
+            if(this.peekToken(index).keywordKind() === 56 /* StaticKeyword */ ) {
                 index++;
             }
             return this.isFunctionSignature(index);
@@ -26946,7 +27138,7 @@ var Parser;
             if(token0.keywordKind() === 25 /* FunctionKeyword */ ) {
                 return true;
             }
-            var token1 = this.peekTokenN(1);
+            var token1 = this.peekToken(1);
             if(token0.keywordKind() === 45 /* ExportKeyword */  && token1.keywordKind() === 25 /* FunctionKeyword */ ) {
                 return true;
             }
@@ -26969,7 +27161,7 @@ var Parser;
         };
         ParserImpl.prototype.isModuleDeclaration = function () {
             var token0 = this.currentToken();
-            var token1 = this.peekTokenN(1);
+            var token1 = this.peekToken(1);
             if(token0.keywordKind() === 45 /* ExportKeyword */  && token1.keywordKind() === 63 /* ModuleKeyword */ ) {
                 return true;
             }
@@ -26981,7 +27173,7 @@ var Parser;
                     return true;
                 }
                 if(token1.tokenKind === 9 /* IdentifierNameToken */ ) {
-                    var token2 = this.peekTokenN(2);
+                    var token2 = this.peekToken(2);
                     if(token2.tokenKind === 67 /* OpenBraceToken */ ) {
                         return true;
                     }
@@ -27015,10 +27207,10 @@ var Parser;
             return new ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken);
         };
         ParserImpl.prototype.isInterfaceDeclaration = function () {
-            if(this.currentToken().keywordKind() === 45 /* ExportKeyword */  && this.peekTokenN(1).keywordKind() === 50 /* InterfaceKeyword */ ) {
+            if(this.currentToken().keywordKind() === 45 /* ExportKeyword */  && this.peekToken(1).keywordKind() === 50 /* InterfaceKeyword */ ) {
                 return true;
             }
-            return this.currentToken().keywordKind() === 50 /* InterfaceKeyword */  && this.isIdentifier(this.peekTokenN(1));
+            return this.currentToken().keywordKind() === 50 /* InterfaceKeyword */  && this.isIdentifier(this.peekToken(1));
         };
         ParserImpl.prototype.parseInterfaceDeclaration = function () {
             Debug.assert(this.currentToken().keywordKind() === 45 /* ExportKeyword */  || this.currentToken().keywordKind() === 50 /* InterfaceKeyword */ );
@@ -27112,11 +27304,11 @@ var Parser;
             return this.currentToken().tokenKind === 71 /* OpenBracketToken */ ;
         };
         ParserImpl.prototype.isFunctionSignature = function (tokenIndex) {
-            if(this.isIdentifier(this.peekTokenN(tokenIndex))) {
-                if(this.peekTokenN(tokenIndex + 1).tokenKind === 69 /* OpenParenToken */ ) {
+            if(this.isIdentifier(this.peekToken(tokenIndex))) {
+                if(this.peekToken(tokenIndex + 1).tokenKind === 69 /* OpenParenToken */ ) {
                     return true;
                 }
-                if(this.peekTokenN(tokenIndex + 1).tokenKind === 102 /* QuestionToken */  && this.peekTokenN(tokenIndex + 2).tokenKind === 69 /* OpenParenToken */ ) {
+                if(this.peekToken(tokenIndex + 1).tokenKind === 102 /* QuestionToken */  && this.peekToken(tokenIndex + 2).tokenKind === 69 /* OpenParenToken */ ) {
                     return true;
                 }
             }
@@ -27257,7 +27449,7 @@ var Parser;
             return new DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken);
         };
         ParserImpl.prototype.isLabeledStatement = function () {
-            return this.isIdentifier(this.currentToken()) && this.peekTokenN(1).tokenKind === 103 /* ColonToken */ ;
+            return this.isIdentifier(this.currentToken()) && this.peekToken(1).tokenKind === 103 /* ColonToken */ ;
         };
         ParserImpl.prototype.parseLabeledStatement = function () {
             Debug.assert(this.isLabeledStatement());
@@ -27647,7 +27839,7 @@ var Parser;
             if(token0.keywordKind() === 38 /* VarKeyword */ ) {
                 return true;
             }
-            var token1 = this.peekTokenN(1);
+            var token1 = this.peekToken(1);
             if(token0.keywordKind() === 45 /* ExportKeyword */  && token1.keywordKind() === 38 /* VarKeyword */ ) {
                 return true;
             }
@@ -28078,7 +28270,7 @@ var Parser;
             if(this.currentToken().tokenKind === 82 /* EqualsGreaterThanToken */ ) {
                 return true;
             }
-            return this.isIdentifier(this.currentToken()) && this.peekTokenN(1).tokenKind === 82 /* EqualsGreaterThanToken */ ;
+            return this.isIdentifier(this.currentToken()) && this.peekToken(1).tokenKind === 82 /* EqualsGreaterThanToken */ ;
         };
         ParserImpl.prototype.parseSimpleArrowFunctionExpression = function () {
             Debug.assert(this.isSimpleArrowFunctionExpression());
@@ -28092,7 +28284,7 @@ var Parser;
         };
         ParserImpl.prototype.isDefinitelyArrowFunctionExpression = function () {
             Debug.assert(this.currentToken().tokenKind === 69 /* OpenParenToken */ );
-            var token1 = this.peekTokenN(1);
+            var token1 = this.peekToken(1);
             if(token1.tokenKind === 70 /* CloseParenToken */ ) {
                 return true;
             }
@@ -28102,11 +28294,11 @@ var Parser;
             if(!this.isIdentifier(token1)) {
                 return false;
             }
-            var token2 = this.peekTokenN(2);
+            var token2 = this.peekToken(2);
             if(token2.tokenKind === 103 /* ColonToken */ ) {
                 return true;
             }
-            var token3 = this.peekTokenN(3);
+            var token3 = this.peekToken(3);
             if(token2.tokenKind === 102 /* QuestionToken */ ) {
                 if(token3.tokenKind === 103 /* ColonToken */  || token3.tokenKind === 70 /* CloseParenToken */  || token3.tokenKind === 76 /* CommaToken */ ) {
                     return true;
@@ -28121,11 +28313,11 @@ var Parser;
         };
         ParserImpl.prototype.isPossiblyArrowFunctionExpression = function () {
             Debug.assert(this.currentToken().tokenKind === 69 /* OpenParenToken */ );
-            var token1 = this.peekTokenN(1);
+            var token1 = this.peekToken(1);
             if(!this.isIdentifier(token1)) {
                 return false;
             }
-            var token2 = this.peekTokenN(2);
+            var token2 = this.peekToken(2);
             if(token2.tokenKind === 104 /* EqualsToken */ ) {
                 return true;
             }
@@ -28133,7 +28325,7 @@ var Parser;
                 return true;
             }
             if(token2.tokenKind === 70 /* CloseParenToken */ ) {
-                var token3 = this.peekTokenN(3);
+                var token3 = this.peekToken(3);
                 if(token3.tokenKind === 103 /* ColonToken */ ) {
                     return true;
                 }
@@ -28167,7 +28359,7 @@ var Parser;
             return this.isGetAccessorPropertyAssignment() || this.isSetAccessorPropertyAssignment() || this.isSimplePropertyAssignment(inErrorRecovery);
         };
         ParserImpl.prototype.isGetAccessorPropertyAssignment = function () {
-            return this.currentToken().keywordKind() === 62 /* GetKeyword */  && this.isPropertyName(this.peekTokenN(1), false);
+            return this.currentToken().keywordKind() === 62 /* GetKeyword */  && this.isPropertyName(this.peekToken(1), false);
         };
         ParserImpl.prototype.parseGetAccessorPropertyAssignment = function () {
             Debug.assert(this.isGetAccessorPropertyAssignment());
@@ -28179,7 +28371,7 @@ var Parser;
             return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block);
         };
         ParserImpl.prototype.isSetAccessorPropertyAssignment = function () {
-            return this.currentToken().keywordKind() === 65 /* SetKeyword */  && this.isPropertyName(this.peekTokenN(1), false);
+            return this.currentToken().keywordKind() === 65 /* SetKeyword */  && this.isPropertyName(this.peekToken(1), false);
         };
         ParserImpl.prototype.parseSetAccessorPropertyAssignment = function () {
             Debug.assert(this.isSetAccessorPropertyAssignment());
@@ -28281,7 +28473,7 @@ var Parser;
         ParserImpl.prototype.parseType = function (requireCompleteArraySuffix) {
             var type = this.parseNonArrayType();
             while(this.currentToken().tokenKind === 71 /* OpenBracketToken */ ) {
-                if(requireCompleteArraySuffix && this.peekTokenN(1).tokenKind !== 72 /* CloseBracketToken */ ) {
+                if(requireCompleteArraySuffix && this.peekToken(1).tokenKind !== 72 /* CloseBracketToken */ ) {
                     break;
                 }
                 var openBracketToken = this.eatToken(71 /* OpenBracketToken */ );
