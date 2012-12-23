@@ -28537,7 +28537,7 @@ var Parser;
         };
         IncrementalParserSource.prototype.moveToNextToken = function () {
             var currentToken = this.currentToken();
-            if(this._oldSourceUnitCursor.currentElement() === currentToken) {
+            if(this._oldSourceUnitCursor.currentToken() === currentToken) {
                 Debug.assert(this._changeDelta === 0);
                 this._oldSourceUnitCursor.moveToNextSibling();
                 Debug.assert(!this._normalParserSource.isPinned());
@@ -29218,11 +29218,10 @@ var Parser;
             if(token0.keywordKind() === 25 /* FunctionKeyword */ ) {
                 return true;
             }
-            var token1 = this.peekToken(1);
-            if(token0.keywordKind() === 45 /* ExportKeyword */  && token1.keywordKind() === 25 /* FunctionKeyword */ ) {
+            if(token0.keywordKind() === 45 /* ExportKeyword */  && this.peekToken(1).keywordKind() === 25 /* FunctionKeyword */ ) {
                 return true;
             }
-            return token0.keywordKind() === 61 /* DeclareKeyword */  && token1.keywordKind() === 25 /* FunctionKeyword */ ;
+            return token0.keywordKind() === 61 /* DeclareKeyword */  && this.peekToken(1).keywordKind() === 25 /* FunctionKeyword */ ;
         };
         ParserImpl.prototype.parseFunctionDeclaration = function () {
             Debug.assert(this.isFunctionDeclaration());
@@ -29919,11 +29918,10 @@ var Parser;
             if(token0.keywordKind() === 38 /* VarKeyword */ ) {
                 return true;
             }
-            var token1 = this.peekToken(1);
-            if(token0.keywordKind() === 45 /* ExportKeyword */  && token1.keywordKind() === 38 /* VarKeyword */ ) {
+            if(token0.keywordKind() === 45 /* ExportKeyword */  && this.peekToken(1).keywordKind() === 38 /* VarKeyword */ ) {
                 return true;
             }
-            return token0.keywordKind() === 61 /* DeclareKeyword */  && token1.keywordKind() === 38 /* VarKeyword */ ;
+            return token0.keywordKind() === 61 /* DeclareKeyword */  && this.peekToken(1).keywordKind() === 38 /* VarKeyword */ ;
         };
         ParserImpl.prototype.parseVariableStatement = function () {
             Debug.assert(this.isVariableStatement());
@@ -30719,12 +30717,12 @@ var Parser;
             var items = null;
             while(true) {
                 var itemsCount = items === null ? 0 : items.length;
-                if(this.listIsTerminated(currentListType, itemsCount)) {
-                    break;
-                }
                 items = this.tryParseExpectedListItem(currentListType, false, items, processItems);
                 if(items !== null && items.length > itemsCount) {
                     continue;
+                }
+                if(this.listIsTerminated(currentListType, itemsCount)) {
+                    break;
                 }
                 var abort = this.abortParsingListOrMoveToNextToken(currentListType, itemsCount);
                 if(abort) {
@@ -33569,7 +33567,7 @@ var IncrementalParserTests = (function () {
             return ArrayUtilities.contains(allNewElements, v);
         }).length;
     }
-    IncrementalParserTests.compareTrees = function compareTrees(oldText, newText, textChangeRange, reusedNodes) {
+    IncrementalParserTests.compareTrees = function compareTrees(oldText, newText, textChangeRange, reusedElements) {
         var oldTree = Parser.parse(oldText, 1 /* EcmaScript5 */ , IncrementalParserTests.stringTable);
         var newTree = Parser.parse(newText, 1 /* EcmaScript5 */ , IncrementalParserTests.stringTable);
         var incrementalNewTree = Parser.incrementalParse(oldTree.sourceUnit(), [
@@ -33578,7 +33576,7 @@ var IncrementalParserTests = (function () {
         Debug.assert(ArrayUtilities.sequenceEquals(newTree.diagnostics(), incrementalNewTree.diagnostics(), SyntaxDiagnostic.equals));
         Debug.assert(newTree.sourceUnit().structuralEquals(incrementalNewTree.sourceUnit()));
         Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), newTree.sourceUnit()) === 0);
-        Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), incrementalNewTree.sourceUnit()) === reusedNodes);
+        Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), incrementalNewTree.sourceUnit()) === reusedElements);
     }
     IncrementalParserTests.testIncremental1 = function testIncremental1() {
         var source = "class C {\r\n";
@@ -33591,7 +33589,7 @@ var IncrementalParserTests = (function () {
         var semicolonIndex = source.indexOf(";");
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 1);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
     }
     return IncrementalParserTests;
 })();
@@ -33605,7 +33603,6 @@ var Program = (function () {
         environment.standardOut.WriteLine("Testing Incremental 2.");
         IncrementalParserTests.runAllTests();
         if(true) {
-            return;
         }
         environment.standardOut.WriteLine("Testing findToken.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {

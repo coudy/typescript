@@ -54,18 +54,24 @@ class IncrementalParserTests {
             v => ArrayUtilities.contains(allNewElements, v)).length;
     }
 
-    private static compareTrees(oldText: IText, newText: IText, textChangeRange: TextChangeRange, reusedNodes: number): void {
+    // NOTE: 'reusedElements' is the expected count of elements reused from the old tree to the new
+    // tree.  It may change as we tweak the parser.  If the count increases then that should always
+    // be a good thing.  If it decreases, that's not great (less reusability), but that may be 
+    // unavoidable.  If it does decrease an investigation 
+    private static compareTrees(oldText: IText, newText: IText, textChangeRange: TextChangeRange, reusedElements: number): void {
         var oldTree = Parser.parse(oldText, LanguageVersion.EcmaScript5, stringTable);
         
         var newTree = Parser.parse(newText, LanguageVersion.EcmaScript5, stringTable);
         var incrementalNewTree = Parser.incrementalParse(
             oldTree.sourceUnit(), [textChangeRange], newText, LanguageVersion.EcmaScript5, stringTable);
         
+        // We should get the same tree when doign a full or incremental parse.
         Debug.assert(ArrayUtilities.sequenceEquals(newTree.diagnostics(), incrementalNewTree.diagnostics(), SyntaxDiagnostic.equals));
         Debug.assert(newTree.sourceUnit().structuralEquals(incrementalNewTree.sourceUnit()));
         
+        // There should be no reused nodes between two trees that are fully parsed.
         Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), newTree.sourceUnit()) === 0);
-        Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), incrementalNewTree.sourceUnit()) === reusedNodes);
+        Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), incrementalNewTree.sourceUnit()) === reusedElements);
     }
 
     public static testIncremental1() {
@@ -82,6 +88,6 @@ class IncrementalParserTests {
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
 
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 1);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
     }
 }

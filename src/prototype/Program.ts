@@ -20,7 +20,7 @@ class Program {
         environment.standardOut.WriteLine("Testing Incremental 2.");
         IncrementalParserTests.runAllTests();
         if (true) {
-            return;
+            // return;
         }
             
         environment.standardOut.WriteLine("Testing findToken.");

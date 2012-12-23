@@ -992,7 +992,7 @@ module Parser {
             // both accordingly.
             var currentToken = this.currentToken();
 
-            if (this._oldSourceUnitCursor.currentElement() === currentToken) {
+            if (this._oldSourceUnitCursor.currentToken() === currentToken) {
                 // The token came from the old source unit.  So our tree and text must be in sync.
                 Debug.assert(this._changeDelta === 0);
 
@@ -1967,14 +1967,13 @@ module Parser {
                 return true;
             }
 
-            var token1 = this.peekToken(1);
             if (token0.keywordKind() === SyntaxKind.ExportKeyword &&
-                token1.keywordKind() === SyntaxKind.FunctionKeyword) {
+                this.peekToken(1).keywordKind() === SyntaxKind.FunctionKeyword) {
                 return true;
             }
 
             return token0.keywordKind() === SyntaxKind.DeclareKeyword &&
-                   token1.keywordKind() === SyntaxKind.FunctionKeyword;
+                   this.peekToken(1).keywordKind() === SyntaxKind.FunctionKeyword;
         }
 
         private parseFunctionDeclaration(): FunctionDeclarationSyntax {
@@ -2945,14 +2944,13 @@ module Parser {
                 return true;
             }
 
-            var token1 = this.peekToken(1);
             if (token0.keywordKind() === SyntaxKind.ExportKeyword &&
-                token1.keywordKind() === SyntaxKind.VarKeyword) {
+                this.peekToken(1).keywordKind() === SyntaxKind.VarKeyword) {
                 return true;
             }
 
             return token0.keywordKind() === SyntaxKind.DeclareKeyword &&
-                   token1.keywordKind() === SyntaxKind.VarKeyword;
+                   this.peekToken(1).keywordKind() === SyntaxKind.VarKeyword;
         }
 
         private parseVariableStatement(): VariableStatementSyntax {
@@ -4132,16 +4130,18 @@ module Parser {
                 // First check ifthe list is complete already.  If so, we're done.  Also, if we see an 
                 // EOF then definitely stop.  We'll report the error higher when our caller tries to
                 // consume the next token.
-                var itemsCount = items === null ? 0 : items.length;
-                if (this.listIsTerminated(currentListType, itemsCount)) {
-                    break
-                }
 
                 // Try to parse an item of the list.  If we fail then decide if we need to abort or 
                 // continue parsing.
+                var itemsCount = items === null ? 0 : items.length;
                 items = this.tryParseExpectedListItem(currentListType, /*inErrorRecovery:*/ false, items, processItems);
                 if (items !== null && items.length > itemsCount) {
                     continue;
+                }
+
+                // We may not have been able to parse an element because the list is complete.  Check for that.
+                if (this.listIsTerminated(currentListType, itemsCount)) {
+                    break
                 }
 
                 var abort = this.abortParsingListOrMoveToNextToken(currentListType, itemsCount);
