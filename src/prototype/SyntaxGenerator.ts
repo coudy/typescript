@@ -2078,7 +2078,8 @@ function generateNodes(): string {
     result += "///<reference path='ISeparatedSyntaxList.ts' />\r\n"
     result += "///<reference path='SeparatedSyntaxList.ts' />\r\n"
     result += "///<reference path='SyntaxList.ts' />\r\n"
-    result += "///<reference path='SyntaxToken.ts' />"
+    result += "///<reference path='SyntaxToken.ts' />\r\n"
+    result += "///<reference path='Syntax.ts' />"
 
     for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
@@ -2614,6 +2615,10 @@ function generateWalker(): string {
 "    public visitToken(token: ISyntaxToken): void {\r\n" +
 "    }\r\n" +
 "\r\n" +
+"    public visitNode(node: SyntaxNode): void {\r\n" +
+"        node.accept(this);\r\n" +
+"    }\r\n" +
+"\r\n" +
 "    private visitOptionalToken(token: ISyntaxToken): void {\r\n" +
 "        if (token === null) {\r\n" +
 "            return;\r\n" +
@@ -2627,12 +2632,12 @@ function generateWalker(): string {
 "            return;\r\n" +
 "        }\r\n" +
 "\r\n" +
-"        node.accept(this);\r\n" +
+"        this.visitNode(node);\r\n" +
 "    }\r\n" +
 "\r\n" +
 "    public visitList(list: ISyntaxList): void {\r\n" +
 "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" +
-"           list.syntaxNodeAt(i).accept(this);\r\n" +
+"           this.visitNode(list.syntaxNodeAt(i));\r\n" +
 "        }\r\n" +
 "    }\r\n" +
 "\r\n" +
@@ -2643,7 +2648,7 @@ function generateWalker(): string {
 "                this.visitToken(<ISyntaxToken>item);\r\n" + 
 "            }\r\n" + 
 "            else {\r\n" +
-"                (<SyntaxNode>item).accept(this);\r\n" +
+"                this.visitNode(<SyntaxNode>item);\r\n" +
 "            }\r\n" +
 "        }\r\n" +
 "    }\r\n";
@@ -2677,7 +2682,7 @@ function generateWalker(): string {
                     result += "        this.visitOptionalNode(node." + child.name + "());\r\n";
                 }
                 else {
-                    result += "        node." + child.name + "().accept(this);\r\n";
+                    result += "        this.visitNode(node." + child.name + "());\r\n";
                 }
             }
         }

@@ -4,6 +4,10 @@ class SyntaxWalker implements ISyntaxVisitor {
     public visitToken(token: ISyntaxToken): void {
     }
 
+    public visitNode(node: SyntaxNode): void {
+        node.accept(this);
+    }
+
     private visitOptionalToken(token: ISyntaxToken): void {
         if (token === null) {
             return;
@@ -17,12 +21,12 @@ class SyntaxWalker implements ISyntaxVisitor {
             return;
         }
 
-        node.accept(this);
+        this.visitNode(node);
     }
 
     public visitList(list: ISyntaxList): void {
         for (var i = 0, n = list.count(); i < n; i++) {
-           list.syntaxNodeAt(i).accept(this);
+           this.visitNode(list.syntaxNodeAt(i));
         }
     }
 
@@ -33,7 +37,7 @@ class SyntaxWalker implements ISyntaxVisitor {
                 this.visitToken(<ISyntaxToken>item);
             }
             else {
-                (<SyntaxNode>item).accept(this);
+                this.visitNode(<SyntaxNode>item);
             }
         }
     }
@@ -51,14 +55,14 @@ class SyntaxWalker implements ISyntaxVisitor {
     }
 
     public visitModuleNameModuleReference(node: ModuleNameModuleReferenceSyntax): void {
-        node.moduleName().accept(this);
+        this.visitNode(node.moduleName());
     }
 
     public visitImportDeclaration(node: ImportDeclarationSyntax): void {
         this.visitToken(node.importKeyword());
         this.visitToken(node.identifier());
         this.visitToken(node.equalsToken());
-        node.moduleReference().accept(this);
+        this.visitNode(node.moduleReference());
         this.visitToken(node.semicolonToken());
     }
 
@@ -79,7 +83,7 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitToken(node.interfaceKeyword());
         this.visitToken(node.identifier());
         this.visitOptionalNode(node.extendsClause());
-        node.body().accept(this);
+        this.visitNode(node.body());
     }
 
     public visitExtendsClause(node: ExtendsClauseSyntax): void {
@@ -107,7 +111,7 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitOptionalToken(node.exportKeyword());
         this.visitOptionalToken(node.declareKeyword());
         this.visitToken(node.functionKeyword());
-        node.functionSignature().accept(this);
+        this.visitNode(node.functionSignature());
         this.visitOptionalNode(node.block());
         this.visitOptionalToken(node.semicolonToken());
     }
@@ -115,7 +119,7 @@ class SyntaxWalker implements ISyntaxVisitor {
     public visitVariableStatement(node: VariableStatementSyntax): void {
         this.visitOptionalToken(node.exportKeyword());
         this.visitOptionalToken(node.declareKeyword());
-        node.variableDeclaration().accept(this);
+        this.visitNode(node.variableDeclaration());
         this.visitToken(node.semicolonToken());
     }
 
@@ -132,12 +136,12 @@ class SyntaxWalker implements ISyntaxVisitor {
 
     public visitEqualsValueClause(node: EqualsValueClauseSyntax): void {
         this.visitToken(node.equalsToken());
-        node.value().accept(this);
+        this.visitNode(node.value());
     }
 
     public visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): void {
         this.visitToken(node.operatorToken());
-        node.operand().accept(this);
+        this.visitNode(node.operand());
     }
 
     public visitThisExpression(node: ThisExpressionSyntax): void {
@@ -159,20 +163,20 @@ class SyntaxWalker implements ISyntaxVisitor {
 
     public visitParenthesizedExpression(node: ParenthesizedExpressionSyntax): void {
         this.visitToken(node.openParenToken());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
         this.visitToken(node.closeParenToken());
     }
 
     public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): void {
         this.visitToken(node.identifier());
         this.visitToken(node.equalsGreaterThanToken());
-        node.body().accept(this);
+        this.visitNode(node.body());
     }
 
     public visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): void {
-        node.callSignature().accept(this);
+        this.visitNode(node.callSignature());
         this.visitToken(node.equalsGreaterThanToken());
-        node.body().accept(this);
+        this.visitNode(node.body());
     }
 
     public visitIdentifierName(node: IdentifierNameSyntax): void {
@@ -180,22 +184,22 @@ class SyntaxWalker implements ISyntaxVisitor {
     }
 
     public visitQualifiedName(node: QualifiedNameSyntax): void {
-        node.left().accept(this);
+        this.visitNode(node.left());
         this.visitToken(node.dotToken());
-        node.right().accept(this);
+        this.visitNode(node.right());
     }
 
     public visitConstructorType(node: ConstructorTypeSyntax): void {
         this.visitToken(node.newKeyword());
-        node.parameterList().accept(this);
+        this.visitNode(node.parameterList());
         this.visitToken(node.equalsGreaterThanToken());
-        node.type().accept(this);
+        this.visitNode(node.type());
     }
 
     public visitFunctionType(node: FunctionTypeSyntax): void {
-        node.parameterList().accept(this);
+        this.visitNode(node.parameterList());
         this.visitToken(node.equalsGreaterThanToken());
-        node.type().accept(this);
+        this.visitNode(node.type());
     }
 
     public visitObjectType(node: ObjectTypeSyntax): void {
@@ -205,7 +209,7 @@ class SyntaxWalker implements ISyntaxVisitor {
     }
 
     public visitArrayType(node: ArrayTypeSyntax): void {
-        node.type().accept(this);
+        this.visitNode(node.type());
         this.visitToken(node.openBracketToken());
         this.visitToken(node.closeBracketToken());
     }
@@ -216,7 +220,7 @@ class SyntaxWalker implements ISyntaxVisitor {
 
     public visitTypeAnnotation(node: TypeAnnotationSyntax): void {
         this.visitToken(node.colonToken());
-        node.type().accept(this);
+        this.visitNode(node.type());
     }
 
     public visitBlock(node: BlockSyntax): void {
@@ -235,26 +239,26 @@ class SyntaxWalker implements ISyntaxVisitor {
     }
 
     public visitMemberAccessExpression(node: MemberAccessExpressionSyntax): void {
-        node.expression().accept(this);
+        this.visitNode(node.expression());
         this.visitToken(node.dotToken());
-        node.identifierName().accept(this);
+        this.visitNode(node.identifierName());
     }
 
     public visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): void {
-        node.operand().accept(this);
+        this.visitNode(node.operand());
         this.visitToken(node.operatorToken());
     }
 
     public visitElementAccessExpression(node: ElementAccessExpressionSyntax): void {
-        node.expression().accept(this);
+        this.visitNode(node.expression());
         this.visitToken(node.openBracketToken());
-        node.argumentExpression().accept(this);
+        this.visitNode(node.argumentExpression());
         this.visitToken(node.closeBracketToken());
     }
 
     public visitInvocationExpression(node: InvocationExpressionSyntax): void {
-        node.expression().accept(this);
-        node.argumentList().accept(this);
+        this.visitNode(node.expression());
+        this.visitNode(node.argumentList());
     }
 
     public visitArgumentList(node: ArgumentListSyntax): void {
@@ -264,35 +268,35 @@ class SyntaxWalker implements ISyntaxVisitor {
     }
 
     public visitBinaryExpression(node: BinaryExpressionSyntax): void {
-        node.left().accept(this);
+        this.visitNode(node.left());
         this.visitToken(node.operatorToken());
-        node.right().accept(this);
+        this.visitNode(node.right());
     }
 
     public visitConditionalExpression(node: ConditionalExpressionSyntax): void {
-        node.condition().accept(this);
+        this.visitNode(node.condition());
         this.visitToken(node.questionToken());
-        node.whenTrue().accept(this);
+        this.visitNode(node.whenTrue());
         this.visitToken(node.colonToken());
-        node.whenFalse().accept(this);
+        this.visitNode(node.whenFalse());
     }
 
     public visitConstructSignature(node: ConstructSignatureSyntax): void {
         this.visitToken(node.newKeyword());
-        node.parameterList().accept(this);
+        this.visitNode(node.parameterList());
         this.visitOptionalNode(node.typeAnnotation());
     }
 
     public visitFunctionSignature(node: FunctionSignatureSyntax): void {
         this.visitToken(node.identifier());
         this.visitOptionalToken(node.questionToken());
-        node.parameterList().accept(this);
+        this.visitNode(node.parameterList());
         this.visitOptionalNode(node.typeAnnotation());
     }
 
     public visitIndexSignature(node: IndexSignatureSyntax): void {
         this.visitToken(node.openBracketToken());
-        node.parameter().accept(this);
+        this.visitNode(node.parameter());
         this.visitToken(node.closeBracketToken());
         this.visitOptionalNode(node.typeAnnotation());
     }
@@ -310,32 +314,32 @@ class SyntaxWalker implements ISyntaxVisitor {
     }
 
     public visitCallSignature(node: CallSignatureSyntax): void {
-        node.parameterList().accept(this);
+        this.visitNode(node.parameterList());
         this.visitOptionalNode(node.typeAnnotation());
     }
 
     public visitElseClause(node: ElseClauseSyntax): void {
         this.visitToken(node.elseKeyword());
-        node.statement().accept(this);
+        this.visitNode(node.statement());
     }
 
     public visitIfStatement(node: IfStatementSyntax): void {
         this.visitToken(node.ifKeyword());
         this.visitToken(node.openParenToken());
-        node.condition().accept(this);
+        this.visitNode(node.condition());
         this.visitToken(node.closeParenToken());
-        node.statement().accept(this);
+        this.visitNode(node.statement());
         this.visitOptionalNode(node.elseClause());
     }
 
     public visitExpressionStatement(node: ExpressionStatementSyntax): void {
-        node.expression().accept(this);
+        this.visitNode(node.expression());
         this.visitToken(node.semicolonToken());
     }
 
     public visitConstructorDeclaration(node: ConstructorDeclarationSyntax): void {
         this.visitToken(node.constructorKeyword());
-        node.parameterList().accept(this);
+        this.visitNode(node.parameterList());
         this.visitOptionalNode(node.block());
         this.visitOptionalToken(node.semicolonToken());
     }
@@ -343,7 +347,7 @@ class SyntaxWalker implements ISyntaxVisitor {
     public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): void {
         this.visitOptionalToken(node.publicOrPrivateKeyword());
         this.visitOptionalToken(node.staticKeyword());
-        node.functionSignature().accept(this);
+        this.visitNode(node.functionSignature());
         this.visitOptionalNode(node.block());
         this.visitOptionalToken(node.semicolonToken());
     }
@@ -353,9 +357,9 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitOptionalToken(node.staticKeyword());
         this.visitToken(node.getKeyword());
         this.visitToken(node.identifier());
-        node.parameterList().accept(this);
+        this.visitNode(node.parameterList());
         this.visitOptionalNode(node.typeAnnotation());
-        node.block().accept(this);
+        this.visitNode(node.block());
     }
 
     public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): void {
@@ -363,20 +367,20 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitOptionalToken(node.staticKeyword());
         this.visitToken(node.setKeyword());
         this.visitToken(node.identifier());
-        node.parameterList().accept(this);
-        node.block().accept(this);
+        this.visitNode(node.parameterList());
+        this.visitNode(node.block());
     }
 
     public visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): void {
         this.visitOptionalToken(node.publicOrPrivateKeyword());
         this.visitOptionalToken(node.staticKeyword());
-        node.variableDeclarator().accept(this);
+        this.visitNode(node.variableDeclarator());
         this.visitToken(node.semicolonToken());
     }
 
     public visitThrowStatement(node: ThrowStatementSyntax): void {
         this.visitToken(node.throwKeyword());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
         this.visitToken(node.semicolonToken());
     }
 
@@ -388,14 +392,14 @@ class SyntaxWalker implements ISyntaxVisitor {
 
     public visitObjectCreationExpression(node: ObjectCreationExpressionSyntax): void {
         this.visitToken(node.newKeyword());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
         this.visitOptionalNode(node.argumentList());
     }
 
     public visitSwitchStatement(node: SwitchStatementSyntax): void {
         this.visitToken(node.switchKeyword());
         this.visitToken(node.openParenToken());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
         this.visitToken(node.closeParenToken());
         this.visitToken(node.openBraceToken());
         this.visitList(node.switchClauses());
@@ -404,7 +408,7 @@ class SyntaxWalker implements ISyntaxVisitor {
 
     public visitCaseSwitchClause(node: CaseSwitchClauseSyntax): void {
         this.visitToken(node.caseKeyword());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
         this.visitToken(node.colonToken());
         this.visitList(node.statements());
     }
@@ -437,7 +441,7 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitToken(node.secondSemicolonToken());
         this.visitOptionalNode(node.incrementor());
         this.visitToken(node.closeParenToken());
-        node.statement().accept(this);
+        this.visitNode(node.statement());
     }
 
     public visitForInStatement(node: ForInStatementSyntax): void {
@@ -446,25 +450,25 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitOptionalNode(node.variableDeclaration());
         this.visitOptionalNode(node.left());
         this.visitToken(node.inKeyword());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
         this.visitToken(node.closeParenToken());
-        node.statement().accept(this);
+        this.visitNode(node.statement());
     }
 
     public visitWhileStatement(node: WhileStatementSyntax): void {
         this.visitToken(node.whileKeyword());
         this.visitToken(node.openParenToken());
-        node.condition().accept(this);
+        this.visitNode(node.condition());
         this.visitToken(node.closeParenToken());
-        node.statement().accept(this);
+        this.visitNode(node.statement());
     }
 
     public visitWithStatement(node: WithStatementSyntax): void {
         this.visitToken(node.withKeyword());
         this.visitToken(node.openParenToken());
-        node.condition().accept(this);
+        this.visitNode(node.condition());
         this.visitToken(node.closeParenToken());
-        node.statement().accept(this);
+        this.visitNode(node.statement());
     }
 
     public visitEnumDeclaration(node: EnumDeclarationSyntax): void {
@@ -478,9 +482,9 @@ class SyntaxWalker implements ISyntaxVisitor {
 
     public visitCastExpression(node: CastExpressionSyntax): void {
         this.visitToken(node.lessThanToken());
-        node.type().accept(this);
+        this.visitNode(node.type());
         this.visitToken(node.greaterThanToken());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
     }
 
     public visitObjectLiteralExpression(node: ObjectLiteralExpressionSyntax): void {
@@ -492,7 +496,7 @@ class SyntaxWalker implements ISyntaxVisitor {
     public visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): void {
         this.visitToken(node.propertyName());
         this.visitToken(node.colonToken());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
     }
 
     public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): void {
@@ -500,7 +504,7 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitToken(node.propertyName());
         this.visitToken(node.openParenToken());
         this.visitToken(node.closeParenToken());
-        node.block().accept(this);
+        this.visitNode(node.block());
     }
 
     public visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): void {
@@ -509,14 +513,14 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitToken(node.openParenToken());
         this.visitToken(node.parameterName());
         this.visitToken(node.closeParenToken());
-        node.block().accept(this);
+        this.visitNode(node.block());
     }
 
     public visitFunctionExpression(node: FunctionExpressionSyntax): void {
         this.visitToken(node.functionKeyword());
         this.visitOptionalToken(node.identifier());
-        node.callSignature().accept(this);
-        node.block().accept(this);
+        this.visitNode(node.callSignature());
+        this.visitNode(node.block());
     }
 
     public visitEmptyStatement(node: EmptyStatementSyntax): void {
@@ -529,7 +533,7 @@ class SyntaxWalker implements ISyntaxVisitor {
 
     public visitTryStatement(node: TryStatementSyntax): void {
         this.visitToken(node.tryKeyword());
-        node.block().accept(this);
+        this.visitNode(node.block());
         this.visitOptionalNode(node.catchClause());
         this.visitOptionalNode(node.finallyClause());
     }
@@ -539,43 +543,43 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitToken(node.openParenToken());
         this.visitToken(node.identifier());
         this.visitToken(node.closeParenToken());
-        node.block().accept(this);
+        this.visitNode(node.block());
     }
 
     public visitFinallyClause(node: FinallyClauseSyntax): void {
         this.visitToken(node.finallyKeyword());
-        node.block().accept(this);
+        this.visitNode(node.block());
     }
 
     public visitLabeledStatement(node: LabeledStatement): void {
         this.visitToken(node.identifier());
         this.visitToken(node.colonToken());
-        node.statement().accept(this);
+        this.visitNode(node.statement());
     }
 
     public visitDoStatement(node: DoStatementSyntax): void {
         this.visitToken(node.doKeyword());
-        node.statement().accept(this);
+        this.visitNode(node.statement());
         this.visitToken(node.whileKeyword());
         this.visitToken(node.openParenToken());
-        node.condition().accept(this);
+        this.visitNode(node.condition());
         this.visitToken(node.closeParenToken());
         this.visitToken(node.semicolonToken());
     }
 
     public visitTypeOfExpression(node: TypeOfExpressionSyntax): void {
         this.visitToken(node.typeOfKeyword());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
     }
 
     public visitDeleteExpression(node: DeleteExpressionSyntax): void {
         this.visitToken(node.deleteKeyword());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
     }
 
     public visitVoidExpression(node: VoidExpressionSyntax): void {
         this.visitToken(node.voidKeyword());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
     }
 
     public visitDebuggerStatement(node: DebuggerStatementSyntax): void {

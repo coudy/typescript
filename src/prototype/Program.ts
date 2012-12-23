@@ -5,6 +5,7 @@
 ///<reference path='TextFactory.ts' />
 ///<reference path='Test262.ts' />
 ///<reference path='Top1000.ts' />
+///<reference path='tests\IncrementalParserTests.ts' />
 
 var stringTable = Collections.createStringTable();
 
@@ -15,6 +16,12 @@ var specificFile =
 class Program {
     runAllTests(environment: IEnvironment, useTypeScript: bool, verify: bool): void {
         environment.standardOut.WriteLine("");
+
+        environment.standardOut.WriteLine("Testing Incremental 2.");
+        IncrementalParserTests.runAllTests();
+        if (true) {
+            return;
+        }
             
         environment.standardOut.WriteLine("Testing findToken.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5",
@@ -214,7 +221,7 @@ class Program {
 
         var tree1 = Parser.parse(text, languageVersion, stringTable);
         var tree2 = Parser.incrementalParse(
-            Syntax.emptySourceUnit, [new TextChangeRange(new TextSpan(0, 0), text.length())], text, languageVersion, stringTable);
+            Syntax.emptySourceUnit(), [new TextChangeRange(new TextSpan(0, 0), text.length())], text, languageVersion, stringTable);
 
         Debug.assert(ArrayUtilities.sequenceEquals(tree1.diagnostics(), tree2.diagnostics(), SyntaxDiagnostic.equals));
         Debug.assert(tree1.sourceUnit().structuralEquals(tree2.sourceUnit()));

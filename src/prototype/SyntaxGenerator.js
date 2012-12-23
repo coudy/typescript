@@ -35,6 +35,12 @@ var ArrayUtilities = (function () {
         return Object.prototype.toString.apply(value, []) === '[object Array]';
     }
     ArrayUtilities.sequenceEquals = function sequenceEquals(array1, array2, equals) {
+        if(array1 === array2) {
+            return true;
+        }
+        if(array1 === null || array2 === null) {
+            return false;
+        }
         if(array1.length !== array2.length) {
             return false;
         }
@@ -4285,7 +4291,8 @@ function generateNodes() {
     result += "///<reference path='ISeparatedSyntaxList.ts' />\r\n";
     result += "///<reference path='SeparatedSyntaxList.ts' />\r\n";
     result += "///<reference path='SyntaxList.ts' />\r\n";
-    result += "///<reference path='SyntaxToken.ts' />";
+    result += "///<reference path='SyntaxToken.ts' />\r\n";
+    result += "///<reference path='Syntax.ts' />";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         result += "\r\n\r\n";
@@ -4555,7 +4562,7 @@ function generateTokens() {
 }
 function generateWalker() {
     var result = "";
-    result += "///<reference path='ISyntaxVisitor.ts' />\r\n" + "\r\n" + "class SyntaxWalker implements ISyntaxVisitor {\r\n" + "    public visitToken(token: ISyntaxToken): void {\r\n" + "    }\r\n" + "\r\n" + "    private visitOptionalToken(token: ISyntaxToken): void {\r\n" + "        if (token === null) {\r\n" + "            return;\r\n" + "        }\r\n" + "\r\n" + "        this.visitToken(token);\r\n" + "    }\r\n" + "\r\n" + "    public visitOptionalNode(node: SyntaxNode): void {\r\n" + "        if (node === null) {\r\n" + "            return;\r\n" + "        }\r\n" + "\r\n" + "        node.accept(this);\r\n" + "    }\r\n" + "\r\n" + "    public visitList(list: ISyntaxList): void {\r\n" + "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" + "           list.syntaxNodeAt(i).accept(this);\r\n" + "        }\r\n" + "    }\r\n" + "\r\n" + "    public visitSeparatedList(list: ISeparatedSyntaxList): void {\r\n" + "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" + "            var item = list.itemAt(i);\r\n" + "            if (item.isToken()) {\r\n" + "                this.visitToken(<ISyntaxToken>item);\r\n" + "            }\r\n" + "            else {\r\n" + "                (<SyntaxNode>item).accept(this);\r\n" + "            }\r\n" + "        }\r\n" + "    }\r\n";
+    result += "///<reference path='ISyntaxVisitor.ts' />\r\n" + "\r\n" + "class SyntaxWalker implements ISyntaxVisitor {\r\n" + "    public visitToken(token: ISyntaxToken): void {\r\n" + "    }\r\n" + "\r\n" + "    public visitNode(node: SyntaxNode): void {\r\n" + "        node.accept(this);\r\n" + "    }\r\n" + "\r\n" + "    private visitOptionalToken(token: ISyntaxToken): void {\r\n" + "        if (token === null) {\r\n" + "            return;\r\n" + "        }\r\n" + "\r\n" + "        this.visitToken(token);\r\n" + "    }\r\n" + "\r\n" + "    public visitOptionalNode(node: SyntaxNode): void {\r\n" + "        if (node === null) {\r\n" + "            return;\r\n" + "        }\r\n" + "\r\n" + "        this.visitNode(node);\r\n" + "    }\r\n" + "\r\n" + "    public visitList(list: ISyntaxList): void {\r\n" + "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" + "           this.visitNode(list.syntaxNodeAt(i));\r\n" + "        }\r\n" + "    }\r\n" + "\r\n" + "    public visitSeparatedList(list: ISeparatedSyntaxList): void {\r\n" + "        for (var i = 0, n = list.count(); i < n; i++) {\r\n" + "            var item = list.itemAt(i);\r\n" + "            if (item.isToken()) {\r\n" + "                this.visitToken(<ISyntaxToken>item);\r\n" + "            }\r\n" + "            else {\r\n" + "                this.visitNode(<SyntaxNode>item);\r\n" + "            }\r\n" + "        }\r\n" + "    }\r\n";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         if(definition.isAbstract) {
@@ -4582,7 +4589,7 @@ function generateWalker() {
                             if(child.isOptional) {
                                 result += "        this.visitOptionalNode(node." + child.name + "());\r\n";
                             } else {
-                                result += "        node." + child.name + "().accept(this);\r\n";
+                                result += "        this.visitNode(node." + child.name + "());\r\n";
                             }
                         }
                     }

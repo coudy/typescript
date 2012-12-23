@@ -1,6 +1,8 @@
 
 module Syntax {
-    export var emptySourceUnit = new SourceUnitSyntax(Syntax.emptyList, Syntax.token(SyntaxKind.EndOfFileToken, { text: "" }));
+    export function emptySourceUnit() {
+        return new SourceUnitSyntax(Syntax.emptyList, Syntax.token(SyntaxKind.EndOfFileToken, { text: "" }));
+    }
 
     export function nodeStructuralEquals(node1: SyntaxNode, node2: SyntaxNode): bool {
         if (node1 === null) {

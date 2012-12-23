@@ -4,6 +4,7 @@
 ///<reference path='SeparatedSyntaxList.ts' />
 ///<reference path='SyntaxList.ts' />
 ///<reference path='SyntaxToken.ts' />
+///<reference path='Syntax.ts' />
 
 class SourceUnitSyntax extends SyntaxNode {
     private _moduleElements: ISyntaxList;

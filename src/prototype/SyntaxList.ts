@@ -309,7 +309,13 @@ module Syntax {
         }
 
         public insertChildrenInto(array: ISyntaxElement[], index: number): void {
-            array.splice.apply(array, index, 0, this.nodes);
+            if (index === 0) {
+                array.unshift.apply(array, this.nodes);
+            }
+            else {
+                // TODO: this seems awfully innefficient.  Can we do better here?
+                array.splice.apply(array, [index, <any>0].concat(this.nodes));
+            }
         }
     }
 

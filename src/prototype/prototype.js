@@ -1820,7 +1820,14 @@ var Syntax;
             }
         };
         NormalSeparatedSyntaxList.prototype.insertChildrenInto = function (array, index) {
-            array.splice.apply(array, index, 0, this.elements);
+            if(index === 0) {
+                array.unshift.apply(array, this.elements);
+            } else {
+                array.splice.apply(array, [
+                    index, 
+                    0
+                ].concat(this.elements));
+            }
         };
         return NormalSeparatedSyntaxList;
     })();    
@@ -2138,7 +2145,14 @@ var Syntax;
             throw Errors.invalidOperation();
         };
         NormalSyntaxList.prototype.insertChildrenInto = function (array, index) {
-            array.splice.apply(array, index, 0, this.nodes);
+            if(index === 0) {
+                array.unshift.apply(array, this.nodes);
+            } else {
+                array.splice.apply(array, [
+                    index, 
+                    0
+                ].concat(this.nodes));
+            }
         };
         return NormalSyntaxList;
     })();    
@@ -8765,6 +8779,129 @@ var Syntax;
         return token(9 /* IdentifierNameToken */ , info);
     }
     Syntax.identifier = identifier;
+})(Syntax || (Syntax = {}));
+var Syntax;
+(function (Syntax) {
+    function emptySourceUnit() {
+        return new SourceUnitSyntax(Syntax.emptyList, Syntax.token(118 /* EndOfFileToken */ , {
+            text: ""
+        }));
+    }
+    Syntax.emptySourceUnit = emptySourceUnit;
+    function nodeStructuralEquals(node1, node2) {
+        if(node1 === null) {
+            return node2 === null;
+        }
+        return node1.structuralEquals(node2);
+    }
+    Syntax.nodeStructuralEquals = nodeStructuralEquals;
+    function tokenStructuralEquals(token1, token2) {
+        if(token1 === token2) {
+            return true;
+        }
+        if(token1 === null || token2 === null) {
+            return false;
+        }
+        return token1.kind() === token2.kind() && token1.keywordKind() === token2.keywordKind() && token1.width() === token2.width() && token1.fullWidth() === token2.fullWidth() && token1.text() === token2.text() && Syntax.triviaListStructuralEquals(token1.leadingTrivia(), token2.leadingTrivia()) && Syntax.triviaListStructuralEquals(token1.trailingTrivia(), token2.trailingTrivia());
+    }
+    Syntax.tokenStructuralEquals = tokenStructuralEquals;
+    function triviaListStructuralEquals(triviaList1, triviaList2) {
+        if(triviaList1.count() !== triviaList2.count()) {
+            return false;
+        }
+        for(var i = 0, n = triviaList1.count(); i < n; i++) {
+            if(!Syntax.triviaStructuralEquals(triviaList1.syntaxTriviaAt(i), triviaList2.syntaxTriviaAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+    Syntax.triviaListStructuralEquals = triviaListStructuralEquals;
+    function triviaStructuralEquals(trivia1, trivia2) {
+        return trivia1.kind() === trivia2.kind() && trivia1.fullWidth() === trivia2.fullWidth() && trivia1.fullText() === trivia2.fullText();
+    }
+    Syntax.triviaStructuralEquals = triviaStructuralEquals;
+    function listStructuralEquals(list1, list2) {
+        if(list1.count() !== list2.count()) {
+            return false;
+        }
+        for(var i = 0, n = list1.count(); i < n; i++) {
+            if(!Syntax.nodeStructuralEquals(list1.syntaxNodeAt(i), list2.syntaxNodeAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+    Syntax.listStructuralEquals = listStructuralEquals;
+    function separatedListStructuralEquals(list1, list2) {
+        if(list1.count() !== list2.count()) {
+            return false;
+        }
+        for(var i = 0, n = list1.count(); i < n; i++) {
+            var element1 = list1.itemAt(i);
+            var element2 = list2.itemAt(i);
+            if(i % 2 === 0) {
+                if(!Syntax.nodeStructuralEquals(element1, element2)) {
+                    return false;
+                }
+            } else {
+                if(!Syntax.tokenStructuralEquals(element1, element2)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    Syntax.separatedListStructuralEquals = separatedListStructuralEquals;
+    function identifierName(text, info) {
+        if (typeof info === "undefined") { info = null; }
+        return new IdentifierNameSyntax(Syntax.identifier(text));
+    }
+    Syntax.identifierName = identifierName;
+    function callSignature(parameter) {
+        return CallSignatureSyntax.create1().withParameterList(ParameterListSyntax.create1().withParameter(parameter));
+    }
+    Syntax.callSignature = callSignature;
+    function trueExpression() {
+        return new LiteralExpressionSyntax(165 /* BooleanLiteralExpression */ , Syntax.token(35 /* TrueKeyword */ ));
+    }
+    Syntax.trueExpression = trueExpression;
+    function falseExpression() {
+        return new LiteralExpressionSyntax(165 /* BooleanLiteralExpression */ , Syntax.token(22 /* FalseKeyword */ ));
+    }
+    Syntax.falseExpression = falseExpression;
+    function numericLiteralExpression(text) {
+        return new LiteralExpressionSyntax(167 /* NumericLiteralExpression */ , Syntax.token(11 /* NumericLiteral */ , {
+            text: text
+        }));
+    }
+    Syntax.numericLiteralExpression = numericLiteralExpression;
+    function stringLiteralExpression(text) {
+        return new LiteralExpressionSyntax(169 /* StringLiteralExpression */ , Syntax.token(12 /* StringLiteral */ , {
+            text: text
+        }));
+    }
+    Syntax.stringLiteralExpression = stringLiteralExpression;
+    function isSuperInvocationExpression(node) {
+        return node.kind() === 210 /* InvocationExpression */  && (node).expression().kind() === 221 /* SuperExpression */ ;
+    }
+    Syntax.isSuperInvocationExpression = isSuperInvocationExpression;
+    function isSuperInvocationExpressionStatement(node) {
+        return node.kind() === 141 /* ExpressionStatement */  && isSuperInvocationExpression((node).expression());
+    }
+    Syntax.isSuperInvocationExpressionStatement = isSuperInvocationExpressionStatement;
+    function isSuperMemberAccessExpression(node) {
+        return node.kind() === 209 /* MemberAccessExpression */  && (node).expression().kind() === 221 /* SuperExpression */ ;
+    }
+    Syntax.isSuperMemberAccessExpression = isSuperMemberAccessExpression;
+    function isSuperMemberAccessInvocationExpression(node) {
+        return node.kind() === 210 /* InvocationExpression */  && isSuperMemberAccessExpression((node).expression());
+    }
+    Syntax.isSuperMemberAccessInvocationExpression = isSuperMemberAccessInvocationExpression;
+    function assignmentExpression(left, token, right) {
+        return new BinaryExpressionSyntax(171 /* AssignmentExpression */ , left, token, right);
+    }
+    Syntax.assignmentExpression = assignmentExpression;
 })(Syntax || (Syntax = {}));
 var SourceUnitSyntax = (function (_super) {
     __extends(SourceUnitSyntax, _super);
@@ -26266,6 +26403,9 @@ var SyntaxWalker = (function () {
     function SyntaxWalker() { }
     SyntaxWalker.prototype.visitToken = function (token) {
     };
+    SyntaxWalker.prototype.visitNode = function (node) {
+        node.accept(this);
+    };
     SyntaxWalker.prototype.visitOptionalToken = function (token) {
         if(token === null) {
             return;
@@ -26276,11 +26416,11 @@ var SyntaxWalker = (function () {
         if(node === null) {
             return;
         }
-        node.accept(this);
+        this.visitNode(node);
     };
     SyntaxWalker.prototype.visitList = function (list) {
         for(var i = 0, n = list.count(); i < n; i++) {
-            list.syntaxNodeAt(i).accept(this);
+            this.visitNode(list.syntaxNodeAt(i));
         }
     };
     SyntaxWalker.prototype.visitSeparatedList = function (list) {
@@ -26289,7 +26429,7 @@ var SyntaxWalker = (function () {
             if(item.isToken()) {
                 this.visitToken(item);
             } else {
-                (item).accept(this);
+                this.visitNode(item);
             }
         }
     };
@@ -26304,13 +26444,13 @@ var SyntaxWalker = (function () {
         this.visitToken(node.closeParenToken());
     };
     SyntaxWalker.prototype.visitModuleNameModuleReference = function (node) {
-        node.moduleName().accept(this);
+        this.visitNode(node.moduleName());
     };
     SyntaxWalker.prototype.visitImportDeclaration = function (node) {
         this.visitToken(node.importKeyword());
         this.visitToken(node.identifier());
         this.visitToken(node.equalsToken());
-        node.moduleReference().accept(this);
+        this.visitNode(node.moduleReference());
         this.visitToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitClassDeclaration = function (node) {
@@ -26329,7 +26469,7 @@ var SyntaxWalker = (function () {
         this.visitToken(node.interfaceKeyword());
         this.visitToken(node.identifier());
         this.visitOptionalNode(node.extendsClause());
-        node.body().accept(this);
+        this.visitNode(node.body());
     };
     SyntaxWalker.prototype.visitExtendsClause = function (node) {
         this.visitToken(node.extendsKeyword());
@@ -26353,14 +26493,14 @@ var SyntaxWalker = (function () {
         this.visitOptionalToken(node.exportKeyword());
         this.visitOptionalToken(node.declareKeyword());
         this.visitToken(node.functionKeyword());
-        node.functionSignature().accept(this);
+        this.visitNode(node.functionSignature());
         this.visitOptionalNode(node.block());
         this.visitOptionalToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitVariableStatement = function (node) {
         this.visitOptionalToken(node.exportKeyword());
         this.visitOptionalToken(node.declareKeyword());
-        node.variableDeclaration().accept(this);
+        this.visitNode(node.variableDeclaration());
         this.visitToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitVariableDeclaration = function (node) {
@@ -26374,11 +26514,11 @@ var SyntaxWalker = (function () {
     };
     SyntaxWalker.prototype.visitEqualsValueClause = function (node) {
         this.visitToken(node.equalsToken());
-        node.value().accept(this);
+        this.visitNode(node.value());
     };
     SyntaxWalker.prototype.visitPrefixUnaryExpression = function (node) {
         this.visitToken(node.operatorToken());
-        node.operand().accept(this);
+        this.visitNode(node.operand());
     };
     SyntaxWalker.prototype.visitThisExpression = function (node) {
         this.visitToken(node.thisKeyword());
@@ -26395,37 +26535,37 @@ var SyntaxWalker = (function () {
     };
     SyntaxWalker.prototype.visitParenthesizedExpression = function (node) {
         this.visitToken(node.openParenToken());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
         this.visitToken(node.closeParenToken());
     };
     SyntaxWalker.prototype.visitSimpleArrowFunctionExpression = function (node) {
         this.visitToken(node.identifier());
         this.visitToken(node.equalsGreaterThanToken());
-        node.body().accept(this);
+        this.visitNode(node.body());
     };
     SyntaxWalker.prototype.visitParenthesizedArrowFunctionExpression = function (node) {
-        node.callSignature().accept(this);
+        this.visitNode(node.callSignature());
         this.visitToken(node.equalsGreaterThanToken());
-        node.body().accept(this);
+        this.visitNode(node.body());
     };
     SyntaxWalker.prototype.visitIdentifierName = function (node) {
         this.visitToken(node.identifier());
     };
     SyntaxWalker.prototype.visitQualifiedName = function (node) {
-        node.left().accept(this);
+        this.visitNode(node.left());
         this.visitToken(node.dotToken());
-        node.right().accept(this);
+        this.visitNode(node.right());
     };
     SyntaxWalker.prototype.visitConstructorType = function (node) {
         this.visitToken(node.newKeyword());
-        node.parameterList().accept(this);
+        this.visitNode(node.parameterList());
         this.visitToken(node.equalsGreaterThanToken());
-        node.type().accept(this);
+        this.visitNode(node.type());
     };
     SyntaxWalker.prototype.visitFunctionType = function (node) {
-        node.parameterList().accept(this);
+        this.visitNode(node.parameterList());
         this.visitToken(node.equalsGreaterThanToken());
-        node.type().accept(this);
+        this.visitNode(node.type());
     };
     SyntaxWalker.prototype.visitObjectType = function (node) {
         this.visitToken(node.openBraceToken());
@@ -26433,7 +26573,7 @@ var SyntaxWalker = (function () {
         this.visitToken(node.closeBraceToken());
     };
     SyntaxWalker.prototype.visitArrayType = function (node) {
-        node.type().accept(this);
+        this.visitNode(node.type());
         this.visitToken(node.openBracketToken());
         this.visitToken(node.closeBracketToken());
     };
@@ -26442,7 +26582,7 @@ var SyntaxWalker = (function () {
     };
     SyntaxWalker.prototype.visitTypeAnnotation = function (node) {
         this.visitToken(node.colonToken());
-        node.type().accept(this);
+        this.visitNode(node.type());
     };
     SyntaxWalker.prototype.visitBlock = function (node) {
         this.visitToken(node.openBraceToken());
@@ -26458,23 +26598,23 @@ var SyntaxWalker = (function () {
         this.visitOptionalNode(node.equalsValueClause());
     };
     SyntaxWalker.prototype.visitMemberAccessExpression = function (node) {
-        node.expression().accept(this);
+        this.visitNode(node.expression());
         this.visitToken(node.dotToken());
-        node.identifierName().accept(this);
+        this.visitNode(node.identifierName());
     };
     SyntaxWalker.prototype.visitPostfixUnaryExpression = function (node) {
-        node.operand().accept(this);
+        this.visitNode(node.operand());
         this.visitToken(node.operatorToken());
     };
     SyntaxWalker.prototype.visitElementAccessExpression = function (node) {
-        node.expression().accept(this);
+        this.visitNode(node.expression());
         this.visitToken(node.openBracketToken());
-        node.argumentExpression().accept(this);
+        this.visitNode(node.argumentExpression());
         this.visitToken(node.closeBracketToken());
     };
     SyntaxWalker.prototype.visitInvocationExpression = function (node) {
-        node.expression().accept(this);
-        node.argumentList().accept(this);
+        this.visitNode(node.expression());
+        this.visitNode(node.argumentList());
     };
     SyntaxWalker.prototype.visitArgumentList = function (node) {
         this.visitToken(node.openParenToken());
@@ -26482,31 +26622,31 @@ var SyntaxWalker = (function () {
         this.visitToken(node.closeParenToken());
     };
     SyntaxWalker.prototype.visitBinaryExpression = function (node) {
-        node.left().accept(this);
+        this.visitNode(node.left());
         this.visitToken(node.operatorToken());
-        node.right().accept(this);
+        this.visitNode(node.right());
     };
     SyntaxWalker.prototype.visitConditionalExpression = function (node) {
-        node.condition().accept(this);
+        this.visitNode(node.condition());
         this.visitToken(node.questionToken());
-        node.whenTrue().accept(this);
+        this.visitNode(node.whenTrue());
         this.visitToken(node.colonToken());
-        node.whenFalse().accept(this);
+        this.visitNode(node.whenFalse());
     };
     SyntaxWalker.prototype.visitConstructSignature = function (node) {
         this.visitToken(node.newKeyword());
-        node.parameterList().accept(this);
+        this.visitNode(node.parameterList());
         this.visitOptionalNode(node.typeAnnotation());
     };
     SyntaxWalker.prototype.visitFunctionSignature = function (node) {
         this.visitToken(node.identifier());
         this.visitOptionalToken(node.questionToken());
-        node.parameterList().accept(this);
+        this.visitNode(node.parameterList());
         this.visitOptionalNode(node.typeAnnotation());
     };
     SyntaxWalker.prototype.visitIndexSignature = function (node) {
         this.visitToken(node.openBracketToken());
-        node.parameter().accept(this);
+        this.visitNode(node.parameter());
         this.visitToken(node.closeBracketToken());
         this.visitOptionalNode(node.typeAnnotation());
     };
@@ -26521,35 +26661,35 @@ var SyntaxWalker = (function () {
         this.visitToken(node.closeParenToken());
     };
     SyntaxWalker.prototype.visitCallSignature = function (node) {
-        node.parameterList().accept(this);
+        this.visitNode(node.parameterList());
         this.visitOptionalNode(node.typeAnnotation());
     };
     SyntaxWalker.prototype.visitElseClause = function (node) {
         this.visitToken(node.elseKeyword());
-        node.statement().accept(this);
+        this.visitNode(node.statement());
     };
     SyntaxWalker.prototype.visitIfStatement = function (node) {
         this.visitToken(node.ifKeyword());
         this.visitToken(node.openParenToken());
-        node.condition().accept(this);
+        this.visitNode(node.condition());
         this.visitToken(node.closeParenToken());
-        node.statement().accept(this);
+        this.visitNode(node.statement());
         this.visitOptionalNode(node.elseClause());
     };
     SyntaxWalker.prototype.visitExpressionStatement = function (node) {
-        node.expression().accept(this);
+        this.visitNode(node.expression());
         this.visitToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitConstructorDeclaration = function (node) {
         this.visitToken(node.constructorKeyword());
-        node.parameterList().accept(this);
+        this.visitNode(node.parameterList());
         this.visitOptionalNode(node.block());
         this.visitOptionalToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitMemberFunctionDeclaration = function (node) {
         this.visitOptionalToken(node.publicOrPrivateKeyword());
         this.visitOptionalToken(node.staticKeyword());
-        node.functionSignature().accept(this);
+        this.visitNode(node.functionSignature());
         this.visitOptionalNode(node.block());
         this.visitOptionalToken(node.semicolonToken());
     };
@@ -26558,27 +26698,27 @@ var SyntaxWalker = (function () {
         this.visitOptionalToken(node.staticKeyword());
         this.visitToken(node.getKeyword());
         this.visitToken(node.identifier());
-        node.parameterList().accept(this);
+        this.visitNode(node.parameterList());
         this.visitOptionalNode(node.typeAnnotation());
-        node.block().accept(this);
+        this.visitNode(node.block());
     };
     SyntaxWalker.prototype.visitSetMemberAccessorDeclaration = function (node) {
         this.visitOptionalToken(node.publicOrPrivateKeyword());
         this.visitOptionalToken(node.staticKeyword());
         this.visitToken(node.setKeyword());
         this.visitToken(node.identifier());
-        node.parameterList().accept(this);
-        node.block().accept(this);
+        this.visitNode(node.parameterList());
+        this.visitNode(node.block());
     };
     SyntaxWalker.prototype.visitMemberVariableDeclaration = function (node) {
         this.visitOptionalToken(node.publicOrPrivateKeyword());
         this.visitOptionalToken(node.staticKeyword());
-        node.variableDeclarator().accept(this);
+        this.visitNode(node.variableDeclarator());
         this.visitToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitThrowStatement = function (node) {
         this.visitToken(node.throwKeyword());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
         this.visitToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitReturnStatement = function (node) {
@@ -26588,13 +26728,13 @@ var SyntaxWalker = (function () {
     };
     SyntaxWalker.prototype.visitObjectCreationExpression = function (node) {
         this.visitToken(node.newKeyword());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
         this.visitOptionalNode(node.argumentList());
     };
     SyntaxWalker.prototype.visitSwitchStatement = function (node) {
         this.visitToken(node.switchKeyword());
         this.visitToken(node.openParenToken());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
         this.visitToken(node.closeParenToken());
         this.visitToken(node.openBraceToken());
         this.visitList(node.switchClauses());
@@ -26602,7 +26742,7 @@ var SyntaxWalker = (function () {
     };
     SyntaxWalker.prototype.visitCaseSwitchClause = function (node) {
         this.visitToken(node.caseKeyword());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
         this.visitToken(node.colonToken());
         this.visitList(node.statements());
     };
@@ -26631,7 +26771,7 @@ var SyntaxWalker = (function () {
         this.visitToken(node.secondSemicolonToken());
         this.visitOptionalNode(node.incrementor());
         this.visitToken(node.closeParenToken());
-        node.statement().accept(this);
+        this.visitNode(node.statement());
     };
     SyntaxWalker.prototype.visitForInStatement = function (node) {
         this.visitToken(node.forKeyword());
@@ -26639,23 +26779,23 @@ var SyntaxWalker = (function () {
         this.visitOptionalNode(node.variableDeclaration());
         this.visitOptionalNode(node.left());
         this.visitToken(node.inKeyword());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
         this.visitToken(node.closeParenToken());
-        node.statement().accept(this);
+        this.visitNode(node.statement());
     };
     SyntaxWalker.prototype.visitWhileStatement = function (node) {
         this.visitToken(node.whileKeyword());
         this.visitToken(node.openParenToken());
-        node.condition().accept(this);
+        this.visitNode(node.condition());
         this.visitToken(node.closeParenToken());
-        node.statement().accept(this);
+        this.visitNode(node.statement());
     };
     SyntaxWalker.prototype.visitWithStatement = function (node) {
         this.visitToken(node.withKeyword());
         this.visitToken(node.openParenToken());
-        node.condition().accept(this);
+        this.visitNode(node.condition());
         this.visitToken(node.closeParenToken());
-        node.statement().accept(this);
+        this.visitNode(node.statement());
     };
     SyntaxWalker.prototype.visitEnumDeclaration = function (node) {
         this.visitOptionalToken(node.exportKeyword());
@@ -26667,9 +26807,9 @@ var SyntaxWalker = (function () {
     };
     SyntaxWalker.prototype.visitCastExpression = function (node) {
         this.visitToken(node.lessThanToken());
-        node.type().accept(this);
+        this.visitNode(node.type());
         this.visitToken(node.greaterThanToken());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
     };
     SyntaxWalker.prototype.visitObjectLiteralExpression = function (node) {
         this.visitToken(node.openBraceToken());
@@ -26679,14 +26819,14 @@ var SyntaxWalker = (function () {
     SyntaxWalker.prototype.visitSimplePropertyAssignment = function (node) {
         this.visitToken(node.propertyName());
         this.visitToken(node.colonToken());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
     };
     SyntaxWalker.prototype.visitGetAccessorPropertyAssignment = function (node) {
         this.visitToken(node.getKeyword());
         this.visitToken(node.propertyName());
         this.visitToken(node.openParenToken());
         this.visitToken(node.closeParenToken());
-        node.block().accept(this);
+        this.visitNode(node.block());
     };
     SyntaxWalker.prototype.visitSetAccessorPropertyAssignment = function (node) {
         this.visitToken(node.setKeyword());
@@ -26694,13 +26834,13 @@ var SyntaxWalker = (function () {
         this.visitToken(node.openParenToken());
         this.visitToken(node.parameterName());
         this.visitToken(node.closeParenToken());
-        node.block().accept(this);
+        this.visitNode(node.block());
     };
     SyntaxWalker.prototype.visitFunctionExpression = function (node) {
         this.visitToken(node.functionKeyword());
         this.visitOptionalToken(node.identifier());
-        node.callSignature().accept(this);
-        node.block().accept(this);
+        this.visitNode(node.callSignature());
+        this.visitNode(node.block());
     };
     SyntaxWalker.prototype.visitEmptyStatement = function (node) {
         this.visitToken(node.semicolonToken());
@@ -26710,7 +26850,7 @@ var SyntaxWalker = (function () {
     };
     SyntaxWalker.prototype.visitTryStatement = function (node) {
         this.visitToken(node.tryKeyword());
-        node.block().accept(this);
+        this.visitNode(node.block());
         this.visitOptionalNode(node.catchClause());
         this.visitOptionalNode(node.finallyClause());
     };
@@ -26719,37 +26859,37 @@ var SyntaxWalker = (function () {
         this.visitToken(node.openParenToken());
         this.visitToken(node.identifier());
         this.visitToken(node.closeParenToken());
-        node.block().accept(this);
+        this.visitNode(node.block());
     };
     SyntaxWalker.prototype.visitFinallyClause = function (node) {
         this.visitToken(node.finallyKeyword());
-        node.block().accept(this);
+        this.visitNode(node.block());
     };
     SyntaxWalker.prototype.visitLabeledStatement = function (node) {
         this.visitToken(node.identifier());
         this.visitToken(node.colonToken());
-        node.statement().accept(this);
+        this.visitNode(node.statement());
     };
     SyntaxWalker.prototype.visitDoStatement = function (node) {
         this.visitToken(node.doKeyword());
-        node.statement().accept(this);
+        this.visitNode(node.statement());
         this.visitToken(node.whileKeyword());
         this.visitToken(node.openParenToken());
-        node.condition().accept(this);
+        this.visitNode(node.condition());
         this.visitToken(node.closeParenToken());
         this.visitToken(node.semicolonToken());
     };
     SyntaxWalker.prototype.visitTypeOfExpression = function (node) {
         this.visitToken(node.typeOfKeyword());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
     };
     SyntaxWalker.prototype.visitDeleteExpression = function (node) {
         this.visitToken(node.deleteKeyword());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
     };
     SyntaxWalker.prototype.visitVoidExpression = function (node) {
         this.visitToken(node.voidKeyword());
-        node.expression().accept(this);
+        this.visitNode(node.expression());
     };
     SyntaxWalker.prototype.visitDebuggerStatement = function (node) {
         this.visitToken(node.debuggerKeyword());
@@ -27259,126 +27399,6 @@ var SyntaxNodeInvariantsChecker = (function (_super) {
     };
     return SyntaxNodeInvariantsChecker;
 })(SyntaxWalker);
-var Syntax;
-(function (Syntax) {
-    Syntax.emptySourceUnit = new SourceUnitSyntax(Syntax.emptyList, Syntax.token(118 /* EndOfFileToken */ , {
-        text: ""
-    }));
-    function nodeStructuralEquals(node1, node2) {
-        if(node1 === null) {
-            return node2 === null;
-        }
-        return node1.structuralEquals(node2);
-    }
-    Syntax.nodeStructuralEquals = nodeStructuralEquals;
-    function tokenStructuralEquals(token1, token2) {
-        if(token1 === token2) {
-            return true;
-        }
-        if(token1 === null || token2 === null) {
-            return false;
-        }
-        return token1.kind() === token2.kind() && token1.keywordKind() === token2.keywordKind() && token1.width() === token2.width() && token1.fullWidth() === token2.fullWidth() && token1.text() === token2.text() && Syntax.triviaListStructuralEquals(token1.leadingTrivia(), token2.leadingTrivia()) && Syntax.triviaListStructuralEquals(token1.trailingTrivia(), token2.trailingTrivia());
-    }
-    Syntax.tokenStructuralEquals = tokenStructuralEquals;
-    function triviaListStructuralEquals(triviaList1, triviaList2) {
-        if(triviaList1.count() !== triviaList2.count()) {
-            return false;
-        }
-        for(var i = 0, n = triviaList1.count(); i < n; i++) {
-            if(!Syntax.triviaStructuralEquals(triviaList1.syntaxTriviaAt(i), triviaList2.syntaxTriviaAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-    Syntax.triviaListStructuralEquals = triviaListStructuralEquals;
-    function triviaStructuralEquals(trivia1, trivia2) {
-        return trivia1.kind() === trivia2.kind() && trivia1.fullWidth() === trivia2.fullWidth() && trivia1.fullText() === trivia2.fullText();
-    }
-    Syntax.triviaStructuralEquals = triviaStructuralEquals;
-    function listStructuralEquals(list1, list2) {
-        if(list1.count() !== list2.count()) {
-            return false;
-        }
-        for(var i = 0, n = list1.count(); i < n; i++) {
-            if(!Syntax.nodeStructuralEquals(list1.syntaxNodeAt(i), list2.syntaxNodeAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-    Syntax.listStructuralEquals = listStructuralEquals;
-    function separatedListStructuralEquals(list1, list2) {
-        if(list1.count() !== list2.count()) {
-            return false;
-        }
-        for(var i = 0, n = list1.count(); i < n; i++) {
-            var element1 = list1.itemAt(i);
-            var element2 = list2.itemAt(i);
-            if(i % 2 === 0) {
-                if(!Syntax.nodeStructuralEquals(element1, element2)) {
-                    return false;
-                }
-            } else {
-                if(!Syntax.tokenStructuralEquals(element1, element2)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    Syntax.separatedListStructuralEquals = separatedListStructuralEquals;
-    function identifierName(text, info) {
-        if (typeof info === "undefined") { info = null; }
-        return new IdentifierNameSyntax(Syntax.identifier(text));
-    }
-    Syntax.identifierName = identifierName;
-    function callSignature(parameter) {
-        return CallSignatureSyntax.create1().withParameterList(ParameterListSyntax.create1().withParameter(parameter));
-    }
-    Syntax.callSignature = callSignature;
-    function trueExpression() {
-        return new LiteralExpressionSyntax(165 /* BooleanLiteralExpression */ , Syntax.token(35 /* TrueKeyword */ ));
-    }
-    Syntax.trueExpression = trueExpression;
-    function falseExpression() {
-        return new LiteralExpressionSyntax(165 /* BooleanLiteralExpression */ , Syntax.token(22 /* FalseKeyword */ ));
-    }
-    Syntax.falseExpression = falseExpression;
-    function numericLiteralExpression(text) {
-        return new LiteralExpressionSyntax(167 /* NumericLiteralExpression */ , Syntax.token(11 /* NumericLiteral */ , {
-            text: text
-        }));
-    }
-    Syntax.numericLiteralExpression = numericLiteralExpression;
-    function stringLiteralExpression(text) {
-        return new LiteralExpressionSyntax(169 /* StringLiteralExpression */ , Syntax.token(12 /* StringLiteral */ , {
-            text: text
-        }));
-    }
-    Syntax.stringLiteralExpression = stringLiteralExpression;
-    function isSuperInvocationExpression(node) {
-        return node.kind() === 210 /* InvocationExpression */  && (node).expression().kind() === 221 /* SuperExpression */ ;
-    }
-    Syntax.isSuperInvocationExpression = isSuperInvocationExpression;
-    function isSuperInvocationExpressionStatement(node) {
-        return node.kind() === 141 /* ExpressionStatement */  && isSuperInvocationExpression((node).expression());
-    }
-    Syntax.isSuperInvocationExpressionStatement = isSuperInvocationExpressionStatement;
-    function isSuperMemberAccessExpression(node) {
-        return node.kind() === 209 /* MemberAccessExpression */  && (node).expression().kind() === 221 /* SuperExpression */ ;
-    }
-    Syntax.isSuperMemberAccessExpression = isSuperMemberAccessExpression;
-    function isSuperMemberAccessInvocationExpression(node) {
-        return node.kind() === 210 /* InvocationExpression */  && isSuperMemberAccessExpression((node).expression());
-    }
-    Syntax.isSuperMemberAccessInvocationExpression = isSuperMemberAccessInvocationExpression;
-    function assignmentExpression(left, token, right) {
-        return new BinaryExpressionSyntax(171 /* AssignmentExpression */ , left, token, right);
-    }
-    Syntax.assignmentExpression = assignmentExpression;
-})(Syntax || (Syntax = {}));
 var Emitter;
 (function (Emitter) {
     var EnsureTokenUniquenessRewriter = (function (_super) {
@@ -33500,6 +33520,81 @@ var expectedTop1000Failures = {
     "JSFile600\\xstreetsl_com\\mootools_1_2_3_production.js": true,
     "JSFile800\\fedex_com\\InstantInvite3.js": true
 };
+var SyntaxElementsCollector = (function (_super) {
+    __extends(SyntaxElementsCollector, _super);
+    function SyntaxElementsCollector() {
+        _super.apply(this, arguments);
+
+        this.elements = [];
+    }
+    SyntaxElementsCollector.prototype.visitNode = function (node) {
+        this.elements.push(node);
+        _super.prototype.visitNode.call(this, node);
+    };
+    SyntaxElementsCollector.prototype.visitToken = function (token) {
+        this.elements.push(token);
+    };
+    SyntaxElementsCollector.collectElements = function collectElements(node) {
+        var collector = new SyntaxElementsCollector();
+        node.accept(collector);
+        return collector.elements;
+    }
+    return SyntaxElementsCollector;
+})(SyntaxWalker);
+var IncrementalParserTests = (function () {
+    function IncrementalParserTests() { }
+    IncrementalParserTests.stringTable = Collections.createStringTable();
+    IncrementalParserTests.runAllTests = function runAllTests() {
+        for(var name in IncrementalParserTests) {
+            if(IncrementalParserTests.hasOwnProperty(name) && StringUtilities.startsWith(name, "test")) {
+                IncrementalParserTests[name]();
+            }
+        }
+    }
+    IncrementalParserTests.withChange = function withChange(text, start, length, newText) {
+        var contents = text.toString();
+        var newContents = contents.substr(0, start) + newText + contents.substring(start + length);
+        return {
+            text: TextFactory.create(newContents),
+            textChangeRange: new TextChangeRange(new TextSpan(start, length), newText.length)
+        };
+    }
+    IncrementalParserTests.withInsert = function withInsert(text, start, newText) {
+        return IncrementalParserTests.withChange(text, start, 0, newText);
+    }
+    IncrementalParserTests.reusedElements = function reusedElements(oldNode, newNode) {
+        var allOldElements = SyntaxElementsCollector.collectElements(oldNode);
+        var allNewElements = SyntaxElementsCollector.collectElements(newNode);
+        return ArrayUtilities.where(allOldElements, function (v) {
+            return ArrayUtilities.contains(allNewElements, v);
+        }).length;
+    }
+    IncrementalParserTests.compareTrees = function compareTrees(oldText, newText, textChangeRange, reusedNodes) {
+        var oldTree = Parser.parse(oldText, 1 /* EcmaScript5 */ , IncrementalParserTests.stringTable);
+        var newTree = Parser.parse(newText, 1 /* EcmaScript5 */ , IncrementalParserTests.stringTable);
+        var incrementalNewTree = Parser.incrementalParse(oldTree.sourceUnit(), [
+            textChangeRange
+        ], newText, 1 /* EcmaScript5 */ , IncrementalParserTests.stringTable);
+        Debug.assert(ArrayUtilities.sequenceEquals(newTree.diagnostics(), incrementalNewTree.diagnostics(), SyntaxDiagnostic.equals));
+        Debug.assert(newTree.sourceUnit().structuralEquals(incrementalNewTree.sourceUnit()));
+        Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), newTree.sourceUnit()) === 0);
+        Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), incrementalNewTree.sourceUnit()) === reusedNodes);
+    }
+    IncrementalParserTests.testIncremental1 = function testIncremental1() {
+        var source = "class C {\r\n";
+        source += "    public foo1() { }\r\n";
+        source += "    public foo2() {\r\n";
+        source += "        return 1;\r\n";
+        source += "    }\r\n";
+        source += "    public foo3() { }\r\n";
+        source += "}";
+        var semicolonIndex = source.indexOf(";");
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 1);
+    }
+    return IncrementalParserTests;
+})();
 var stringTable = Collections.createStringTable();
 var specificFile = undefined;
 var Program = (function () {
@@ -33507,6 +33602,11 @@ var Program = (function () {
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {
         var _this = this;
         environment.standardOut.WriteLine("");
+        environment.standardOut.WriteLine("Testing Incremental 2.");
+        IncrementalParserTests.runAllTests();
+        if(true) {
+            return;
+        }
         environment.standardOut.WriteLine("Testing findToken.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
             return _this.runFindToken(environment, filePath, 1 /* EcmaScript5 */ , verify, false);
@@ -33649,7 +33749,7 @@ var Program = (function () {
         var contents = environment.readFile(filePath, true);
         var text = TextFactory.create(contents);
         var tree1 = Parser.parse(text, languageVersion, stringTable);
-        var tree2 = Parser.incrementalParse(Syntax.emptySourceUnit, [
+        var tree2 = Parser.incrementalParse(Syntax.emptySourceUnit(), [
             new TextChangeRange(new TextSpan(0, 0), text.length())
         ], text, languageVersion, stringTable);
         Debug.assert(ArrayUtilities.sequenceEquals(tree1.diagnostics(), tree2.diagnostics(), SyntaxDiagnostic.equals));
