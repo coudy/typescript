@@ -2,8 +2,8 @@
 ///<reference path='TextSpan.ts' />
 
 class TextChangeRange {
-    private _span: TextSpan = null;
-    private _newLength: number = 0;
+    private _span: TextSpan;
+    private _newLength: number;
 
     /// <summary>
     /// Initializes a new instance of <see cref="T:TextChangeRange"/>.

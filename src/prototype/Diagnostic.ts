@@ -1,8 +1,8 @@
 ///<reference path='DiagnosticCode.ts' />
 
 class Diagnostic {
-    private _diagnosticCode: DiagnosticCode = 0;
-    private _arguments: any[] = null;
+    private _diagnosticCode: DiagnosticCode;
+    private _arguments: any[];
 
     // Only the compiler creates instances.
     constructor(diagnosticCode: DiagnosticCode, arguments: any[]) {

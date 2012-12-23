@@ -379,9 +379,9 @@ module TextFactory {
         }
     }
 
-/// <summary>
-/// Implementation of IText based on a <see cref="T:System.String"/> input
-/// </summary>
+    /// <summary>
+    /// Implementation of IText based on a <see cref="T:System.String"/> input
+    /// </summary>
     class StringText extends TextBase {
         /// <summary>
         /// Underlying string on which this IText instance is based

@@ -3,8 +3,8 @@
 ///<reference path='MathPrototype.ts' />
 
 class TextSpan {
-    private _start: number = 0;
-    private _length: number = 0;
+    private _start: number;
+    private _length: number;
 
     /// <summary>
     /// Creates a TextSpan instance beginning with the position Start and having the Length

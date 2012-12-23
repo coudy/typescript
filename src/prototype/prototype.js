@@ -2808,8 +2808,6 @@ var MathPrototype = (function () {
 })();
 var TextSpan = (function () {
     function TextSpan(start, length) {
-        this._start = 0;
-        this._length = 0;
         if(start < 0) {
             Errors.argument("start");
         }
@@ -3615,8 +3613,6 @@ var DiagnosticMessages = (function () {
 })();
 var Diagnostic = (function () {
     function Diagnostic(diagnosticCode, arguments) {
-        this._diagnosticCode = 0;
-        this._arguments = null;
         this._diagnosticCode = diagnosticCode;
         this._arguments = (arguments && arguments.length > 0) ? arguments : null;
     }
@@ -28903,8 +28899,6 @@ var SyntaxTree = (function () {
 })();
 var TextChangeRange = (function () {
     function TextChangeRange(span, newLength) {
-        this._span = null;
-        this._newLength = 0;
         if(newLength < 0) {
             throw Errors.argumentOutOfRange("newLength");
         }
