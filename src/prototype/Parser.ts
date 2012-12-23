@@ -4711,4 +4711,17 @@ module Parser {
 
         return new ParserImpl(source, options).parseSyntaxTree();
     }
+
+    export function incrementalParser(oldSourceUnit: SourceUnitSyntax,
+                                      textChangeRanges: TextChangeRange[],
+                                      newText: IText,
+                                      languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
+                                      stringTable: Collections.StringTable = null,
+                                      options?: ParseOptions = null): SyntaxTree {
+        var source = new IncrementalParserSource(
+            oldSourceUnit, textChangeRanges, newText, languageVersion, stringTable);
+        options = options || new ParseOptions();
+
+        return new ParserImpl(source, options).parseSyntaxTree();
+    }
 }

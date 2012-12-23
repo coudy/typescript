@@ -24849,8 +24849,8 @@ var Syntax;
     })();    
     function token(kind, info) {
         if (typeof info === "undefined") { info = null; }
-        var text = (info !== null && info.text) ? info.text : SyntaxFacts.getText(kind);
-        var value = (info !== null && info.value) ? info.value : null;
+        var text = (info !== null && info.text !== undefined) ? info.text : SyntaxFacts.getText(kind);
+        var value = (info !== null && info.value !== undefined) ? info.value : null;
         var keywordKind = 0 /* None */ ;
         if(SyntaxFacts.isAnyKeyword(kind)) {
             keywordKind = kind;
@@ -29175,6 +29175,15 @@ var Parser;
         return new ParserImpl(source, options).parseSyntaxTree();
     }
     Parser.parse = parse;
+    function incrementalParser(oldSourceUnit, textChangeRanges, newText, languageVersion, stringTable, options) {
+        if (typeof languageVersion === "undefined") { languageVersion = 1 /* EcmaScript5 */ ; }
+        if (typeof stringTable === "undefined") { stringTable = null; }
+        if (typeof options === "undefined") { options = null; }
+        var source = new IncrementalParserSource(oldSourceUnit, textChangeRanges, newText, languageVersion, stringTable);
+        options = options || new ParseOptions();
+        return new ParserImpl(source, options).parseSyntaxTree();
+    }
+    Parser.incrementalParser = incrementalParser;
 })(Parser || (Parser = {}));
 
 var Environment = (function () {

@@ -9,7 +9,7 @@
 var stringTable = Collections.createStringTable();
 
 var specificFile = 
-    // "resolver.ts";
+    // "ArrowFunctionInExpressionStatement1.ts";
     undefined;
 
 class Program {

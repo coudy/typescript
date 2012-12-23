@@ -287,8 +287,8 @@ module Syntax {
     }
 
     export function token(kind: SyntaxKind, info: ITokenInfo = null): ISyntaxToken {
-        var text = (info !== null && info.text) ? info.text : SyntaxFacts.getText(kind);
-        var value = (info !== null && info.value) ? info.value : null;
+        var text = (info !== null && info.text !== undefined) ? info.text : SyntaxFacts.getText(kind);
+        var value = (info !== null && info.value !== undefined) ? info.value : null;
         
         var keywordKind = SyntaxKind.None;
         if (SyntaxFacts.isAnyKeyword(kind)) {
