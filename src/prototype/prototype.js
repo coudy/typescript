@@ -28414,9 +28414,26 @@ var Parser;
         function IncrementalParserSource(oldSourceUnit, changeRanges, newText, languageVersion, stringTable) {
             this._changeDelta = 0;
             this._oldSourceUnitCursor = new SyntaxCursor(oldSourceUnit);
-            this._changeRange = TextChangeRange.collapse(changeRanges);
+            this._changeRange = IncrementalParserSource.extendToAffectedRange(TextChangeRange.collapse(changeRanges), oldSourceUnit);
             Debug.assert((oldSourceUnit.fullWidth() - this._changeRange.span().length() + this._changeRange.newLength()) === newText.length());
             this._normalParserSource = new NormalParserSource(newText, languageVersion, stringTable);
+        }
+        IncrementalParserSource.extendToAffectedRange = function extendToAffectedRange(changeRange, sourceUnit) {
+            if(true) {
+            }
+            var maxLookahead = 1;
+            var start = changeRange.span().start();
+            var syntaxInformationMap = SyntaxInformationMap.create(sourceUnit);
+            for(var i = 0; start > 0 && i <= maxLookahead; i++) {
+                var token = sourceUnit.findToken(start);
+                Debug.assert(token.kind() !== 0 /* None */ );
+                Debug.assert(token.fullWidth() > 0);
+                var position = syntaxInformationMap.tokenInformation(token).fullStart;
+                start = MathPrototype.max(0, position - 1);
+            }
+            var finalSpan = TextSpan.fromBounds(start, changeRange.span().end());
+            var finalLength = changeRange.newLength() + (changeRange.span().start() - start);
+            return new TextChangeRange(finalSpan, finalLength);
         }
         IncrementalParserSource.prototype.absolutePosition = function () {
             return this._normalParserSource.absolutePosition();
@@ -33591,7 +33608,7 @@ var IncrementalParserTests = (function () {
         var semicolonIndex = source.indexOf(";");
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 32);
     }
     IncrementalParserTests.testIncrementalRegex1 = function testIncrementalRegex1() {
         var source = "class C { public foo1() { /; } public foo2() { return 1;} public foo3() { } }";
@@ -33601,14 +33618,11 @@ var IncrementalParserTests = (function () {
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
     }
     IncrementalParserTests.testIncrementalComment1 = function testIncrementalComment1() {
-        if(true) {
-            return;
-        }
         var source = "class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
         var semicolonIndex = source.indexOf(";");
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, "/");
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 7);
     }
     return IncrementalParserTests;
 })();
@@ -33623,7 +33637,7 @@ var Program = (function () {
         IncrementalParserTests.runAllTests();
         if(true) {
         }
-        this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");
+        environment.standardOut.WriteLine("Testing Incremental Perf.");
         environment.standardOut.WriteLine("Testing findToken.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
             return _this.runFindToken(environment, filePath, 1 /* EcmaScript5 */ , verify, false);
@@ -33666,7 +33680,7 @@ var Program = (function () {
         var text = TextFactory.create(contents);
         var tree = Parser.parse(text, 1 /* EcmaScript5 */ , stringTable);
         var totalIncrementalTime = 0;
-        var count = 1000;
+        var count = 10;
         for(var i = 0; i < count; i++) {
             var start = new Date().getTime();
             var changeLength = i * 2;

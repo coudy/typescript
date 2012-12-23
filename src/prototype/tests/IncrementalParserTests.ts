@@ -87,7 +87,7 @@ class IncrementalParserTests {
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
 
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 32);
     }
 
     public static testIncrementalRegex1() {
@@ -102,10 +102,6 @@ class IncrementalParserTests {
     }
 
     public static testIncrementalComment1() {
-        if (true) {
-            return;
-        }
-
         var source = "class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
 
         var semicolonIndex = source.indexOf(";");
@@ -113,6 +109,6 @@ class IncrementalParserTests {
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, "/");
 
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 7);
     }
 }

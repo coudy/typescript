@@ -729,7 +729,9 @@ module Parser {
             // time this could be problematic would be if the user made a ton of discontinuous edits.
             // For example, doing a column select on a *large* section of a code.  If this is a 
             // problem, we can always update this code to handle multiple changes.
-            this._changeRange = TextChangeRange.collapse(changeRanges);
+            this._changeRange = IncrementalParserSource.extendToAffectedRange(
+                TextChangeRange.collapse(changeRanges),
+                oldSourceUnit);
 
             // The old tree's length, plus whatever length change was caused by the edit better 
             // equal the new text's length!
@@ -738,6 +740,54 @@ module Parser {
 
             // Set up a scanner so that we can scan tokens out of the new text.
             this._normalParserSource = new NormalParserSource(newText, languageVersion, stringTable);
+        }
+
+        private static extendToAffectedRange(changeRange:TextChangeRange,
+                                             sourceUnit: SourceUnitSyntax): TextChangeRange {
+            // Consider the following code:
+            //      void foo() { /; }
+            //
+            // If the text changes with an insertion of / just before the semicolon then we end up with:
+            //      void foo() { //; }
+            //
+            // If we were to just use the changeRange a is, then we would not rescan the { token 
+            // (as it does not intersect hte actual original change range).  Because an edit may
+            // change the token touching it, we actually need to look back *at least* one token so
+            // that the prior token sees that change.  
+            //
+            // Note: i believe (outside of regex tokens) max lookahead is just one token for 
+            // TypeScript.  However, if this turns out to be wrong, we may have to increase how much
+            // futher we look back. 
+            //
+            // Note: lookahead handling for regex characters is handled specially in during 
+            // incremental parsing, and does not need to be handled here.
+
+            if (true) {
+                //return changeRange;
+            }
+
+            var maxLookahead = 1;
+
+            var start = changeRange.span().start();
+            var syntaxInformationMap = SyntaxInformationMap.create(sourceUnit);
+
+            // the first iteration aligns us with the change start. subsequent iteration move us to
+            // the left by maxLookahead tokens.  We only need to do this as long as we're not at the
+            // start of the tree.
+            for (var i = 0; start > 0 && i <= maxLookahead; i++)
+            {
+                var token = sourceUnit.findToken(start);
+                Debug.assert(token.kind() !== SyntaxKind.None);
+                Debug.assert(token.fullWidth() > 0);
+
+                var position = syntaxInformationMap.tokenInformation(token).fullStart;
+
+                start = MathPrototype.max(0, position - 1);
+            }
+
+            var finalSpan = TextSpan.fromBounds(start, changeRange.span().end());
+            var finalLength = changeRange.newLength() + (changeRange.span().start() - start);
+            return new TextChangeRange(finalSpan, finalLength);
         }
 
         public absolutePosition() {
