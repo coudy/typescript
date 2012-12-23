@@ -4077,6 +4077,10 @@ module Parser {
         }
 
         private isParameter(): bool {
+            if (this.currentNode() !== null && this.currentNode().kind() === SyntaxKind.Parameter) {
+                return true;
+            }
+
             var token = this.currentToken();
             if (token.tokenKind === SyntaxKind.DotDotDotToken) {
                 return true;
@@ -4090,7 +4094,11 @@ module Parser {
             return this.isIdentifier(token);
         }
 
-        private parseParameter(): ParameterSyntax {
+        private parseParameter(): ParameterSyntax {            
+            if (this.currentNode() !== null && this.currentNode().kind() === SyntaxKind.Parameter) {
+                return <ParameterSyntax>this.eatNode();
+            }
+
             var dotDotDotToken = this.tryEatToken(SyntaxKind.DotDotDotToken);
 
             var publicOrPrivateToken: ISyntaxToken = null;

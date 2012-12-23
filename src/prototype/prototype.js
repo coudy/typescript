@@ -31512,6 +31512,9 @@ var Parser;
             return false;
         };
         ParserImpl.prototype.isParameter = function () {
+            if(this.currentNode() !== null && this.currentNode().kind() === 240 /* Parameter */ ) {
+                return true;
+            }
             var token = this.currentToken();
             if(token.tokenKind === 74 /* DotDotDotToken */ ) {
                 return true;
@@ -31522,6 +31525,9 @@ var Parser;
             return this.isIdentifier(token);
         };
         ParserImpl.prototype.parseParameter = function () {
+            if(this.currentNode() !== null && this.currentNode().kind() === 240 /* Parameter */ ) {
+                return this.eatNode();
+            }
             var dotDotDotToken = this.tryEatToken(74 /* DotDotDotToken */ );
             var publicOrPrivateToken = null;
             if(this.currentToken().keywordKind() === 55 /* PublicKeyword */  || this.currentToken().keywordKind() === 53 /* PrivateKeyword */ ) {
