@@ -66,8 +66,7 @@ class IncrementalParserTests {
             oldTree.sourceUnit(), [textChangeRange], newText, LanguageVersion.EcmaScript5, stringTable);
         
         // We should get the same tree when doign a full or incremental parse.
-        Debug.assert(ArrayUtilities.sequenceEquals(newTree.diagnostics(), incrementalNewTree.diagnostics(), SyntaxDiagnostic.equals));
-        Debug.assert(newTree.sourceUnit().structuralEquals(incrementalNewTree.sourceUnit()));
+        Debug.assert(newTree.structuralEquals(incrementalNewTree));
         
         // There should be no reused nodes between two trees that are fully parsed.
         Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), newTree.sourceUnit()) === 0);
@@ -88,6 +87,6 @@ class IncrementalParserTests {
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
 
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
     }
 }

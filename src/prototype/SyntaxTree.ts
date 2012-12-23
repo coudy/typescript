@@ -37,4 +37,9 @@ class SyntaxTree {
 
     //    return null;
     //}
+
+    public structuralEquals(tree: SyntaxTree): bool {
+        return ArrayUtilities.sequenceEquals(this.diagnostics(), tree.diagnostics(), SyntaxDiagnostic.equals) &&
+            this.sourceUnit().structuralEquals(tree.sourceUnit());
+    }
 }

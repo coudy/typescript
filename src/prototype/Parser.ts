@@ -1023,6 +1023,9 @@ module Parser {
                 // the token came from the new text.  We have to update our delta appropriately.
                 this._changeDelta -= currentToken.fullWidth();
 
+                // Move our underlying source forward.
+                this._normalParserSource.moveToNextToken();
+
                 // Because we read a token from the new text, we may have moved ourselves past the
                 // change range.  If we did, then we may also have to update our change delta to
                 // compensate for the length change between the old and new text.
@@ -1030,9 +1033,6 @@ module Parser {
                     this._changeDelta += this._changeRange.newLength() - this._changeRange.span().length();
                     this._changeRange = null;
                 }
-
-                // Move our underlying source forward.
-                this._normalParserSource.moveToNextToken();
             }
         }
 

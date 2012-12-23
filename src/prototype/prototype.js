@@ -28055,6 +28055,9 @@ var SyntaxTree = (function () {
     SyntaxTree.prototype.diagnostics = function () {
         return this._diagnostics;
     };
+    SyntaxTree.prototype.structuralEquals = function (tree) {
+        return ArrayUtilities.sequenceEquals(this.diagnostics(), tree.diagnostics(), SyntaxDiagnostic.equals) && this.sourceUnit().structuralEquals(tree.sourceUnit());
+    };
     return SyntaxTree;
 })();
 var TextChangeRange = (function () {
@@ -28552,11 +28555,11 @@ var Parser;
                 }
             } else {
                 this._changeDelta -= currentToken.fullWidth();
+                this._normalParserSource.moveToNextToken();
                 if(this._changeRange !== null && this.absolutePosition() > this._changeRange.span().end()) {
                     this._changeDelta += this._changeRange.newLength() - this._changeRange.span().length();
                     this._changeRange = null;
                 }
-                this._normalParserSource.moveToNextToken();
             }
         };
         IncrementalParserSource.prototype.getRewindPoint = function () {
@@ -33573,8 +33576,7 @@ var IncrementalParserTests = (function () {
         var incrementalNewTree = Parser.incrementalParse(oldTree.sourceUnit(), [
             textChangeRange
         ], newText, 1 /* EcmaScript5 */ , IncrementalParserTests.stringTable);
-        Debug.assert(ArrayUtilities.sequenceEquals(newTree.diagnostics(), incrementalNewTree.diagnostics(), SyntaxDiagnostic.equals));
-        Debug.assert(newTree.sourceUnit().structuralEquals(incrementalNewTree.sourceUnit()));
+        Debug.assert(newTree.structuralEquals(incrementalNewTree));
         Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), newTree.sourceUnit()) === 0);
         Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), incrementalNewTree.sourceUnit()) === reusedElements);
     }
@@ -33589,7 +33591,7 @@ var IncrementalParserTests = (function () {
         var semicolonIndex = source.indexOf(";");
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
     }
     return IncrementalParserTests;
 })();
@@ -33600,6 +33602,7 @@ var Program = (function () {
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {
         var _this = this;
         environment.standardOut.WriteLine("");
+        this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");
         environment.standardOut.WriteLine("Testing Incremental 2.");
         IncrementalParserTests.runAllTests();
         if(true) {
@@ -33640,6 +33643,27 @@ var Program = (function () {
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
             return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
+    };
+    Program.prototype.testIncrementalSpeed = function (filePath) {
+        var contents = Environment.readFile(filePath, true);
+        var text = TextFactory.create(contents);
+        var totalParseTime = 0;
+        var totalIncrementalTime = 0;
+        for(var i = 0; i < 10; i++) {
+            var start = new Date().getTime();
+            var tree1 = Parser.parse(text, 1 /* EcmaScript5 */ , stringTable);
+            var end = new Date().getTime();
+            totalParseTime += (end - start);
+            start = new Date().getTime();
+            var tree2 = Parser.incrementalParse(tree1.sourceUnit(), [
+                new TextChangeRange(new TextSpan(text.length() / 2, 0), 0)
+            ], text, 1 /* EcmaScript5 */ , stringTable);
+            end = new Date().getTime();
+            totalIncrementalTime += (end - start);
+            Debug.assert(tree1.structuralEquals(tree2));
+        }
+        Environment.standardOut.WriteLine("Parsing time    : " + totalParseTime);
+        Environment.standardOut.WriteLine("Incremental time: " + totalIncrementalTime);
     };
     Program.prototype.handleException = function (environment, filePath, e) {
         environment.standardOut.WriteLine("");
@@ -33749,8 +33773,7 @@ var Program = (function () {
         var tree2 = Parser.incrementalParse(Syntax.emptySourceUnit(), [
             new TextChangeRange(new TextSpan(0, 0), text.length())
         ], text, languageVersion, stringTable);
-        Debug.assert(ArrayUtilities.sequenceEquals(tree1.diagnostics(), tree2.diagnostics(), SyntaxDiagnostic.equals));
-        Debug.assert(tree1.sourceUnit().structuralEquals(tree2.sourceUnit()));
+        Debug.assert(tree1.structuralEquals(tree2));
     };
     Program.prototype.runFindToken = function (environment, filePath, languageVersion, verify, generateBaseline) {
         if(!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
