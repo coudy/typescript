@@ -3,10 +3,9 @@
 ///<reference path='SyntaxInformationMap.ts' />
 
 module Indentation {
-    export function columnForEndOfToken(
-            token: ISyntaxToken,
-            syntaxInformationMap: SyntaxInformationMap,
-            options: FormattingOptions): number {
+    export function columnForEndOfToken(token: ISyntaxToken,
+                                        syntaxInformationMap: SyntaxInformationMap,
+                                        options: FormattingOptions): number {
         return columnForStartOfToken(token, syntaxInformationMap, options) + token.width();
     }
 

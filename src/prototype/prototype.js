@@ -34465,50 +34465,50 @@ var stringTable = Collections.createStringTable();
 var specificFile = undefined;
 var Program = (function () {
     function Program() { }
-    Program.prototype.runAllTests = function (environment, useTypeScript, verify) {
+    Program.prototype.runAllTests = function (useTypeScript, verify) {
         var _this = this;
-        environment.standardOut.WriteLine("");
-        environment.standardOut.WriteLine("Testing Incremental 2.");
+        Environment.standardOut.WriteLine("");
+        Environment.standardOut.WriteLine("Testing Incremental 2.");
         IncrementalParserTests.runAllTests();
         if(true) {
         }
-        environment.standardOut.WriteLine("Testing Incremental Perf.");
+        Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");
-        environment.standardOut.WriteLine("Testing findToken.");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
-            return _this.runFindToken(environment, filePath, 1 /* EcmaScript5 */ , verify, false);
+        Environment.standardOut.WriteLine("Testing findToken.");
+        this.runTests("C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
+            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);
         });
-        environment.standardOut.WriteLine("Testing trivia.");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\trivia\\ecmascript5", function (filePath) {
-            return _this.runTrivia(environment, filePath, 1 /* EcmaScript5 */ , verify, false);
+        Environment.standardOut.WriteLine("Testing trivia.");
+        this.runTests("C:\\fidelity\\src\\prototype\\tests\\trivia\\ecmascript5", function (filePath) {
+            return _this.runTrivia(filePath, 1 /* EcmaScript5 */ , verify, false);
         });
-        environment.standardOut.WriteLine("Testing scanner.");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
-            return _this.runScanner(environment, filePath, 1 /* EcmaScript5 */ , verify, false);
+        Environment.standardOut.WriteLine("Testing scanner.");
+        this.runTests("C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
+            return _this.runScanner(filePath, 1 /* EcmaScript5 */ , verify, false);
         });
-        environment.standardOut.WriteLine("Testing parser.");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, false);
+        Environment.standardOut.WriteLine("Testing parser.");
+        this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, false);
         });
-        environment.standardOut.WriteLine("Testing Incremental 1.");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
-            return _this.runIncremental(environment, filePath, 1 /* EcmaScript5 */ );
+        Environment.standardOut.WriteLine("Testing Incremental 1.");
+        this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
+            return _this.runIncremental(filePath, 1 /* EcmaScript5 */ );
         });
-        environment.standardOut.WriteLine("Testing emitter 1.");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5", function (filePath) {
-            return _this.runEmitter(environment, filePath, 1 /* EcmaScript5 */ , verify, false, false);
+        Environment.standardOut.WriteLine("Testing emitter 1.");
+        this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5", function (filePath) {
+            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, false, false);
         });
-        environment.standardOut.WriteLine("Testing emitter 2.");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\emitter2\\ecmascript5", function (filePath) {
-            return _this.runEmitter(environment, filePath, 1 /* EcmaScript5 */ , verify, false, true);
+        Environment.standardOut.WriteLine("Testing emitter 2.");
+        this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter2\\ecmascript5", function (filePath) {
+            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, false, true);
         });
-        environment.standardOut.WriteLine("Testing against monoco.");
-        this.runTests(environment, "C:\\temp\\monoco-files", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
+        Environment.standardOut.WriteLine("Testing against monoco.");
+        this.runTests("C:\\temp\\monoco-files", function (filePath) {
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
-        environment.standardOut.WriteLine("Testing against 262.");
-        this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
+        Environment.standardOut.WriteLine("Testing against 262.");
+        this.runTests("C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
     };
     Program.prototype.testIncrementalSpeed = function (filePath) {
@@ -34534,16 +34534,16 @@ var Program = (function () {
         Environment.standardOut.WriteLine("Incremental time: " + totalIncrementalTime);
         Environment.standardOut.WriteLine("Incremental rate: " + rateMBPerSecond + " MB/s");
     };
-    Program.prototype.handleException = function (environment, filePath, e) {
-        environment.standardOut.WriteLine("");
+    Program.prototype.handleException = function (filePath, e) {
+        Environment.standardOut.WriteLine("");
         if((e.message).indexOf(filePath) < 0) {
-            environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
+            Environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
         } else {
-            environment.standardOut.WriteLine(e.message);
+            Environment.standardOut.WriteLine(e.message);
         }
     };
-    Program.prototype.runTests = function (environment, path, action) {
-        var testFiles = environment.listFiles(path, null, {
+    Program.prototype.runTests = function (path, action) {
+        var testFiles = Environment.listFiles(path, null, {
             recursive: true
         });
         for(var index in testFiles) {
@@ -34554,7 +34554,7 @@ var Program = (function () {
             try  {
                 action(filePath);
             } catch (e) {
-                this.handleException(environment, filePath, e);
+                this.handleException(filePath, e);
             }
         }
     };
@@ -34581,7 +34581,7 @@ var Program = (function () {
             }
         }
     };
-    Program.prototype.runEmitter = function (environment, filePath, languageVersion, verify, generateBaseline, justText) {
+    Program.prototype.runEmitter = function (filePath, languageVersion, verify, generateBaseline, justText) {
         if(true) {
         }
         if(!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
@@ -34590,7 +34590,7 @@ var Program = (function () {
         if(filePath.indexOf("RealSource") >= 0) {
             return;
         }
-        var contents = environment.readFile(filePath, true);
+        var contents = Environment.readFile(filePath, true);
         var start, end;
         start = new Date().getTime();
         totalSize += contents.length;
@@ -34605,7 +34605,7 @@ var Program = (function () {
         };
         this.checkResult(filePath, result, verify, generateBaseline, justText);
     };
-    Program.prototype.runParser = function (environment, filePath, languageVersion, useTypeScript, verify, generateBaseline) {
+    Program.prototype.runParser = function (filePath, languageVersion, useTypeScript, verify, generateBaseline) {
         if (typeof generateBaseline === "undefined") { generateBaseline = false; }
         if(!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
             return;
@@ -34613,7 +34613,7 @@ var Program = (function () {
         if(filePath.indexOf("RealSource") >= 0) {
             return;
         }
-        var contents = environment.readFile(filePath, true);
+        var contents = Environment.readFile(filePath, true);
         var start, end;
         start = new Date().getTime();
         totalSize += contents.length;
@@ -34629,14 +34629,14 @@ var Program = (function () {
             this.checkResult(filePath, tree, verify, generateBaseline, false);
         }
     };
-    Program.prototype.runIncremental = function (environment, filePath, languageVersion) {
+    Program.prototype.runIncremental = function (filePath, languageVersion) {
         if(!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
             return;
         }
         if(filePath.indexOf("RealSource") >= 0) {
             return;
         }
-        var contents = environment.readFile(filePath, true);
+        var contents = Environment.readFile(filePath, true);
         var text = TextFactory.create(contents);
         var tree1 = Parser.parse(text, languageVersion, stringTable);
         var tree2 = Parser.incrementalParse(Syntax.emptySourceUnit(), [
@@ -34644,14 +34644,14 @@ var Program = (function () {
         ], text, languageVersion, stringTable);
         Debug.assert(tree1.structuralEquals(tree2));
     };
-    Program.prototype.runFindToken = function (environment, filePath, languageVersion, verify, generateBaseline) {
+    Program.prototype.runFindToken = function (filePath, languageVersion, verify, generateBaseline) {
         if(!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
             return;
         }
         if(filePath.indexOf("RealSource") >= 0) {
             return;
         }
-        var contents = environment.readFile(filePath, true);
+        var contents = Environment.readFile(filePath, true);
         var start, end;
         start = new Date().getTime();
         totalSize += contents.length;
@@ -34677,11 +34677,11 @@ var Program = (function () {
         }
         this.checkResult(filePath, result, verify, generateBaseline, false);
     };
-    Program.prototype.runTrivia = function (environment, filePath, languageVersion, verify, generateBaseline) {
+    Program.prototype.runTrivia = function (filePath, languageVersion, verify, generateBaseline) {
         if(!StringUtilities.endsWith(filePath, ".ts")) {
             return;
         }
-        var contents = environment.readFile(filePath, true);
+        var contents = Environment.readFile(filePath, true);
         var start, end;
         start = new Date().getTime();
         var text = TextFactory.create(contents);
@@ -34700,11 +34700,11 @@ var Program = (function () {
         totalTime += (end - start);
         this.checkResult(filePath, tokens, verify, generateBaseline, false);
     };
-    Program.prototype.runScanner = function (environment, filePath, languageVersion, verify, generateBaseline) {
+    Program.prototype.runScanner = function (filePath, languageVersion, verify, generateBaseline) {
         if(!StringUtilities.endsWith(filePath, ".ts")) {
             return;
         }
-        var contents = environment.readFile(filePath, true);
+        var contents = Environment.readFile(filePath, true);
         var start, end;
         start = new Date().getTime();
         var text = TextFactory.create(contents);
@@ -34735,19 +34735,19 @@ var Program = (function () {
         };
         this.checkResult(filePath, result, verify, generateBaseline, false);
     };
-    Program.prototype.run = function (environment, useTypeScript) {
-        environment.standardOut.WriteLine("Testing input files.");
-        for(var index in environment.arguments) {
-            var filePath = environment.arguments[index];
+    Program.prototype.run = function (useTypeScript) {
+        Environment.standardOut.WriteLine("Testing input files.");
+        for(var index in Environment.arguments) {
+            var filePath = Environment.arguments[index];
             if(specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
                 continue;
             }
-            this.runParser(environment, filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
+            this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         }
     };
-    Program.prototype.run262 = function (environment) {
+    Program.prototype.run262 = function () {
         var path = "C:\\temp\\test262\\suite";
-        var testFiles = environment.listFiles(path, null, {
+        var testFiles = Environment.listFiles(path, null, {
             recursive: true
         });
         var testCount = 0;
@@ -34758,7 +34758,7 @@ var Program = (function () {
             if(specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
                 continue;
             }
-            var contents = environment.readFile(filePath, true);
+            var contents = Environment.readFile(filePath, true);
             var start, end;
             start = new Date().getTime();
             try  {
@@ -34773,43 +34773,43 @@ var Program = (function () {
                         var canParseSuccessfully = negative262ExpectedResults[fileName];
                         if(canParseSuccessfully) {
                             if(tree.diagnostics() && tree.diagnostics().length > 0) {
-                                environment.standardOut.WriteLine("Negative test. Unexpected failure: " + filePath);
+                                Environment.standardOut.WriteLine("Negative test. Unexpected failure: " + filePath);
                                 failCount++;
                             }
                         } else {
                             if(tree.diagnostics() === null || tree.diagnostics().length === 0) {
-                                environment.standardOut.WriteLine("Negative test. Unexpected success: " + filePath);
+                                Environment.standardOut.WriteLine("Negative test. Unexpected success: " + filePath);
                                 failCount++;
                             }
                         }
                     } else {
                         if(tree.diagnostics() && tree.diagnostics().length > 0) {
-                            environment.standardOut.WriteLine("Unexpected failure: " + filePath);
+                            Environment.standardOut.WriteLine("Unexpected failure: " + filePath);
                             failCount++;
                         }
                     }
                 } catch (e) {
                     failCount++;
-                    this.handleException(environment, filePath, e);
+                    this.handleException(filePath, e);
                 }
             }finally {
                 end = new Date().getTime();
                 totalTime += (end - start);
             }
         }
-        environment.standardOut.WriteLine("");
-        environment.standardOut.WriteLine("Test 262 results:");
-        environment.standardOut.WriteLine("Test Count: " + testCount);
-        environment.standardOut.WriteLine("Skip Count: " + skippedTests.length);
-        environment.standardOut.WriteLine("Fail Count: " + failCount);
+        Environment.standardOut.WriteLine("");
+        Environment.standardOut.WriteLine("Test 262 results:");
+        Environment.standardOut.WriteLine("Test Count: " + testCount);
+        Environment.standardOut.WriteLine("Skip Count: " + skippedTests.length);
+        Environment.standardOut.WriteLine("Fail Count: " + failCount);
         for(var i = 0; i < skippedTests.length; i++) {
-            environment.standardOut.WriteLine(skippedTests[i]);
+            Environment.standardOut.WriteLine(skippedTests[i]);
         }
     };
-    Program.prototype.runTop1000 = function (environment) {
-        environment.standardOut.WriteLine("Testing top 1000 sites.");
+    Program.prototype.runTop1000 = function () {
+        Environment.standardOut.WriteLine("Testing top 1000 sites.");
         var path = "C:\\Temp\\TopJSFiles";
-        var testFiles = environment.listFiles(path, null, {
+        var testFiles = Environment.listFiles(path, null, {
             recursive: true
         });
         var testCount = 0;
@@ -34821,7 +34821,7 @@ var Program = (function () {
                 continue;
             }
             var canParseSuccessfully = expectedTop1000Failures[filePath.substr(path.length + 1)] === undefined;
-            var contents = environment.readFile(filePath, true);
+            var contents = Environment.readFile(filePath, true);
             var start, end;
             start = new Date().getTime();
             try  {
@@ -34832,31 +34832,31 @@ var Program = (function () {
                     var tree = Parser.parse(stringText, 1 /* EcmaScript5 */ , stringTable);
                     if(canParseSuccessfully) {
                         if(tree.diagnostics() && tree.diagnostics().length > 0) {
-                            environment.standardOut.WriteLine("Unexpected failure: " + filePath);
+                            Environment.standardOut.WriteLine("Unexpected failure: " + filePath);
                             failCount++;
                         }
                     } else {
                         if(tree.diagnostics() === null || tree.diagnostics().length === 0) {
-                            environment.standardOut.WriteLine("Unexpected success: " + filePath);
+                            Environment.standardOut.WriteLine("Unexpected success: " + filePath);
                             failCount++;
                         }
                     }
                 } catch (e) {
                     failCount++;
-                    this.handleException(environment, filePath, e);
+                    this.handleException(filePath, e);
                 }
             }finally {
                 end = new Date().getTime();
                 totalTime += (end - start);
             }
         }
-        environment.standardOut.WriteLine("");
-        environment.standardOut.WriteLine("Top 1000 results:");
-        environment.standardOut.WriteLine("Test Count: " + testCount);
-        environment.standardOut.WriteLine("Skip Count: " + skippedTests.length);
-        environment.standardOut.WriteLine("Fail Count: " + failCount);
+        Environment.standardOut.WriteLine("");
+        Environment.standardOut.WriteLine("Top 1000 results:");
+        Environment.standardOut.WriteLine("Test Count: " + testCount);
+        Environment.standardOut.WriteLine("Skip Count: " + skippedTests.length);
+        Environment.standardOut.WriteLine("Fail Count: " + failCount);
         for(var i = 0; i < skippedTests.length; i++) {
-            environment.standardOut.WriteLine(skippedTests[i]);
+            Environment.standardOut.WriteLine(skippedTests[i]);
         }
     };
     return Program;
@@ -34867,30 +34867,30 @@ var program = new Program();
 if(true) {
     totalTime = 0;
     totalSize = 0;
-    program.runAllTests(Environment, false, true);
-    program.run(Environment, false);
+    program.runAllTests(false, true);
+    program.run(false);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
 if(false) {
     totalTime = 0;
     totalSize = 0;
-    program.runAllTests(Environment, true, false);
-    program.run(Environment, true);
+    program.runAllTests(true, false);
+    program.run(true);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
 if(true) {
     totalTime = 0;
     totalSize = 0;
-    program.run262(Environment);
+    program.run262();
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
 if(false) {
     totalTime = 0;
     totalSize = 0;
-    program.runTop1000(Environment);
+    program.runTop1000();
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
