@@ -89,4 +89,15 @@ class IncrementalParserTests {
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
     }
+
+    public static testIncrementalRegex1() {
+        var source = "class C { public foo1() { /; } public foo2() { return 1;} public foo3() { } }";
+
+        var semicolonIndex = source.indexOf(";}");
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, "/");
+
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
+    }
 }

@@ -33593,6 +33593,13 @@ var IncrementalParserTests = (function () {
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
     }
+    IncrementalParserTests.testIncrementalRegex1 = function testIncrementalRegex1() {
+        var source = "class C { public foo1() { /; } public foo2() { return 1;} public foo3() { } }";
+        var semicolonIndex = source.indexOf(";}");
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, "/");
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
+    }
     return IncrementalParserTests;
 })();
 var stringTable = Collections.createStringTable();
@@ -33602,11 +33609,11 @@ var Program = (function () {
     Program.prototype.runAllTests = function (environment, useTypeScript, verify) {
         var _this = this;
         environment.standardOut.WriteLine("");
-        this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");
         environment.standardOut.WriteLine("Testing Incremental 2.");
         IncrementalParserTests.runAllTests();
         if(true) {
         }
+        this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");
         environment.standardOut.WriteLine("Testing findToken.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
             return _this.runFindToken(environment, filePath, 1 /* EcmaScript5 */ , verify, false);
@@ -33647,23 +33654,22 @@ var Program = (function () {
     Program.prototype.testIncrementalSpeed = function (filePath) {
         var contents = Environment.readFile(filePath, true);
         var text = TextFactory.create(contents);
-        var totalParseTime = 0;
+        var tree = Parser.parse(text, 1 /* EcmaScript5 */ , stringTable);
         var totalIncrementalTime = 0;
-        for(var i = 0; i < 10; i++) {
+        var count = 1000;
+        for(var i = 0; i < count; i++) {
             var start = new Date().getTime();
-            var tree1 = Parser.parse(text, 1 /* EcmaScript5 */ , stringTable);
-            var end = new Date().getTime();
-            totalParseTime += (end - start);
-            start = new Date().getTime();
-            var tree2 = Parser.incrementalParse(tree1.sourceUnit(), [
-                new TextChangeRange(new TextSpan(text.length() / 2, 0), 0)
+            var changeLength = i * 2;
+            var tree2 = Parser.incrementalParse(tree.sourceUnit(), [
+                new TextChangeRange(new TextSpan((text.length() / 2) - i, changeLength), changeLength)
             ], text, 1 /* EcmaScript5 */ , stringTable);
-            end = new Date().getTime();
+            var end = new Date().getTime();
+            var diff = (end - start);
             totalIncrementalTime += (end - start);
-            Debug.assert(tree1.structuralEquals(tree2));
+            Debug.assert(tree.structuralEquals(tree2));
         }
-        Environment.standardOut.WriteLine("Parsing time    : " + totalParseTime);
         Environment.standardOut.WriteLine("Incremental time: " + totalIncrementalTime);
+        Environment.standardOut.WriteLine("Incremental rate: " + (contents.length * count) / totalIncrementalTime);
     };
     Program.prototype.handleException = function (environment, filePath, e) {
         environment.standardOut.WriteLine("");

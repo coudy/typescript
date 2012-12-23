@@ -17,13 +17,13 @@ class Program {
     runAllTests(environment: IEnvironment, useTypeScript: bool, verify: bool): void {
         environment.standardOut.WriteLine("");
 
-        this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");
-
         environment.standardOut.WriteLine("Testing Incremental 2.");
         IncrementalParserTests.runAllTests();
         if (true) {
             // return;
         }
+
+        this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");
 
         environment.standardOut.WriteLine("Testing findToken.");
         this.runTests(environment, "C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5",
@@ -67,29 +67,29 @@ class Program {
         // environment.standardOut.WriteLine(filePath);
 
         var text = TextFactory.create(contents);
+        var tree = Parser.parse(text, LanguageVersion.EcmaScript5, stringTable);
 
-        var totalParseTime = 0;
         var totalIncrementalTime = 0;
+        var count = 1000;
 
-        for (var i = 0; i < 10; i++) {
+        for (var i = 0; i < count; i++) {
             var start = new Date().getTime();
-            var tree1 = Parser.parse(text, LanguageVersion.EcmaScript5, stringTable);
+
+            var changeLength = i * 2;
+            var tree2 = Parser.incrementalParse(
+                tree.sourceUnit(), [new TextChangeRange(new TextSpan((text.length() / 2) - i, changeLength), changeLength)], text, LanguageVersion.EcmaScript5, stringTable);
             var end = new Date().getTime();
 
-            totalParseTime += (end - start);
-            
-            start = new Date().getTime();
-            var tree2 = Parser.incrementalParse(
-                tree1.sourceUnit(), [new TextChangeRange(new TextSpan(text.length() / 2, 0), 0)], text, LanguageVersion.EcmaScript5, stringTable);
-            end = new Date().getTime();
-
+            var diff = (end - start);
             totalIncrementalTime += (end - start);
 
-            Debug.assert(tree1.structuralEquals(tree2));
+            Debug.assert(tree.structuralEquals(tree2));
         }
         
-        Environment.standardOut.WriteLine("Parsing time    : " + totalParseTime);
+        // Environment.standardOut.WriteLine("Parsing time    : " + totalParseTime);
         Environment.standardOut.WriteLine("Incremental time: " + totalIncrementalTime);
+        Environment.standardOut.WriteLine("Incremental rate: " + (contents.length * count) / totalIncrementalTime);
+
     }
 
     private handleException(environment: IEnvironment, filePath: string, e: Error): void {
