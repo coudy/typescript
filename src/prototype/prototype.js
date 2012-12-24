@@ -34547,6 +34547,13 @@ var IncrementalParserTests = (function () {
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 23);
     }
+    IncrementalParserTests.testTypeMember1 = function testTypeMember1() {
+        var source = "interface I { a: number; b: string; (c): d; new (e): f; g(): h }";
+        var index = source.indexOf(": string");
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "?");
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 45);
+    }
     return IncrementalParserTests;
 })();
 var stringTable = Collections.createStringTable();

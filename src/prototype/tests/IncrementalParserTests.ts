@@ -176,4 +176,16 @@ class IncrementalParserTests {
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 23);
     }
+
+    public static testTypeMember1() {
+        // Should be able to reuse most of the type members.
+        var source = "interface I { a: number; b: string; (c): d; new (e): f; g(): h }";
+
+        var index = source.indexOf(": string");
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "?");
+
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 45);
+    }
 }
