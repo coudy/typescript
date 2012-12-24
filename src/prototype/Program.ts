@@ -10,7 +10,7 @@
 var stringTable = Collections.createStringTable();
 
 var specificFile = 
-    // "ErrorRecovery_ParameterList2.ts";
+    // "ErrorRecovery_ExtendsOrImplementsClause3.ts";
     undefined;
 
 class Program {
@@ -18,7 +18,10 @@ class Program {
         Environment.standardOut.WriteLine("");
 
         Environment.standardOut.WriteLine("Testing Incremental 2.");
-        IncrementalParserTests.runAllTests();
+        if (specificFile === undefined) {
+            IncrementalParserTests.runAllTests();
+        }
+
         if (true) {
             // return;
         }
@@ -64,6 +67,10 @@ class Program {
     }
 
     private testIncrementalSpeed(filePath: string): void {
+        if (specificFile !== undefined) {
+            return;
+        }
+
         var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
         // Environment.standardOut.WriteLine(filePath);
 

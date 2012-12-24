@@ -31613,43 +31613,52 @@ var Parser;
             var allowAutomaticSemicolonInsertion = this.allowsAutomaticSemicolonInsertion(currentListType);
             var requiresAtLeastOneItem = this.requiresAtLeastOneItem(currentListType);
             var separatorKind = this.separatorKind(currentListType);
-            var lastSeparator = null;
             var inErrorRecovery = false;
+            var listWasTerminated = false;
             while(true) {
-                var itemsCount = items === null ? 0 : items.length;
-                if(this.listIsTerminated(currentListType, itemsCount)) {
-                    if(lastSeparator !== null && !allowTrailingSeparator && !lastSeparator.isMissing()) {
-                        Debug.assert(this.previousToken() === lastSeparator);
-                        this.addDiagnostic(new SyntaxDiagnostic(this.previousTokenStart(), lastSeparator.width(), 9 /* Trailing_separator_not_allowed */ , null));
-                    }
-                    break;
-                }
-                lastSeparator = null;
+                var oldItemsCount = items === null ? 0 : items.length;
+                Debug.assert(oldItemsCount % 2 === 0);
                 items = this.tryParseExpectedListItem(currentListType, inErrorRecovery, items, null);
-                inErrorRecovery = false;
-                if(items !== null && items.length > itemsCount) {
+                var newItemsCount = items === null ? 0 : items.length;
+                if(newItemsCount > oldItemsCount) {
+                    Debug.assert(newItemsCount % 2 === 1);
+                    inErrorRecovery = false;
                     if(this.currentToken().tokenKind !== separatorKind) {
-                        if(this.listIsTerminated(currentListType, items.length)) {
+                        if(this.listIsTerminated(currentListType, newItemsCount)) {
+                            listWasTerminated = true;
                             break;
                         }
                         if(allowAutomaticSemicolonInsertion && this.canEatAutomaticSemicolon(false)) {
-                            lastSeparator = this.eatExplicitOrAutomaticSemicolon(false);
+                            var lastSeparator = this.eatExplicitOrAutomaticSemicolon(false);
                             items.push(lastSeparator);
+                            Debug.assert(items.length % 2 === 0);
                             continue;
                         }
                     }
-                    lastSeparator = this.eatToken(separatorKind);
+                    var lastSeparator = this.eatToken(separatorKind);
                     items.push(lastSeparator);
                     inErrorRecovery = lastSeparator.isMissing();
+                    Debug.assert(items.length % 2 === 0);
                     continue;
                 }
-                var abort = this.abortParsingListOrMoveToNextToken(currentListType, itemsCount);
+                Debug.assert(items === null || items.length % 2 === 0);
+                if(this.listIsTerminated(currentListType, newItemsCount)) {
+                    listWasTerminated = true;
+                    break;
+                }
+                var abort = this.abortParsingListOrMoveToNextToken(currentListType, oldItemsCount);
                 if(abort) {
                     break;
                 }
             }
             if(requiresAtLeastOneItem && (items === null || items.length === 0)) {
                 this.reportUnexpectedTokenDiagnostic(currentListType);
+            } else {
+                if(listWasTerminated) {
+                    if(!allowTrailingSeparator && items !== null && items.length % 2 === 0 && items[items.length - 1] === this.previousToken()) {
+                        this.addDiagnostic(new SyntaxDiagnostic(this.previousTokenStart(), this.previousToken().width(), 9 /* Trailing_separator_not_allowed */ , null));
+                    }
+                }
             }
             return Syntax.separatedList(items);
         };
@@ -31926,6 +31935,18 @@ var Parser;
         ParserImpl.prototype.isExpectedBlock_StatementsTerminator = function () {
             return this.currentToken().tokenKind === 68 /* CloseBraceToken */ ;
         };
+        ParserImpl.prototype.isExtendsOrImplementsClause = function () {
+            if(this.currentToken().keywordKind() === 49 /* ImplementsKeyword */  || this.currentToken().keywordKind() === 46 /* ExtendsKeyword */ ) {
+                return this.isIdentifier(this.peekToken(1));
+            }
+            return false;
+        };
+        ParserImpl.prototype.isExtendsOrImplementsClauseTypeName = function () {
+            if(this.isName()) {
+                return !this.isExtendsOrImplementsClause();
+            }
+            return false;
+        };
         ParserImpl.prototype.isExpectedListItem = function (currentListType, inErrorRecovery) {
             switch(currentListType) {
                 case 1 /* SourceUnit_ModuleElements */ : {
@@ -31967,7 +31988,7 @@ var Parser;
 
                 }
                 case 512 /* ExtendsOrImplementsClause_TypeNameList */ : {
-                    return this.isName();
+                    return this.isExtendsOrImplementsClauseTypeName();
 
                 }
                 case 8192 /* ObjectLiteralExpression_PropertyAssignments */ : {
@@ -34489,7 +34510,7 @@ var IncrementalParserTests = (function () {
         var semicolonIndex = source.indexOf(";");
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 19);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 23);
     }
     return IncrementalParserTests;
 })();
@@ -34501,7 +34522,9 @@ var Program = (function () {
         var _this = this;
         Environment.standardOut.WriteLine("");
         Environment.standardOut.WriteLine("Testing Incremental 2.");
-        IncrementalParserTests.runAllTests();
+        if(specificFile === undefined) {
+            IncrementalParserTests.runAllTests();
+        }
         if(true) {
         }
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
@@ -34536,14 +34559,17 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, true, false);
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, true, false);
         });
     };
     Program.prototype.testIncrementalSpeed = function (filePath) {
+        if(specificFile !== undefined) {
+            return;
+        }
         var contents = Environment.readFile(filePath, true);
         var text = TextFactory.create(contents);
         var tree = Parser.parse(text, 1 /* EcmaScript5 */ , stringTable);
