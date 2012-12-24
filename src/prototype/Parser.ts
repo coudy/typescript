@@ -4144,12 +4144,12 @@ module Parser {
 
         // Returns true if we should abort parsing the list.
         private abortParsingListOrMoveToNextToken(currentListType: ListParsingState, itemCount: number): bool {
-            // Ok.  It wasn't a terminator and it wasn't the start of an item in the list. 
-            // Definitely report an error for this token.
+            // Ok.  We're at a token that is not a terminator for the list and wasn't the start of 
+            // an item in the list. Definitely report an error for this token.
             this.reportUnexpectedTokenDiagnostic(currentListType);
 
-            // Now, check if the token is the end of one our parent lists, or the start of an item 
-            // in one of our parent lists.  If so, we won't want to consume the token.  We've 
+            // Now, check if the token is a terminator for one our parent lists, or the start of an
+            // item in one of our parent lists.  If so, we won't want to consume the token.  We've 
             // already reported the error, so just return to our caller so that a higher up 
             // production can consume it.
             for (var state = ListParsingState.LastListParsingState;
@@ -4158,18 +4158,21 @@ module Parser {
 
                 if ((this.listParsingState & state) !== 0) {
                     if (this.isExpectedListTerminator(state, itemCount) || this.isExpectedListItem(state, /*inErrorRecovery:*/ true)) {
+                        // Abort parsing this list.
                         return true;
                     }
                 }
             }
 
             // Otherwise, if none of the lists we're in can capture this token, then we need to 
-            // unilaterally skip it.  Note: we've already reported the error.
+            // unilaterally skip it.  Note: we've already reported an error above.
             var token = this.currentToken();
             this.skippedTokens.push({ skippedToken: token, owningToken: this.previousToken() });
 
             // Consume this token and move onto the next item in the list.
             this.moveToNextToken();
+
+            // Continue parsing this list.
             return false;
         }
 
@@ -4199,30 +4202,34 @@ module Parser {
 
         private parseSyntaxListWorker(currentListType: ListParsingState,
             processItems: (parser: ParserImpl, items: any[]) => void ): ISyntaxList {
-            var items: any[] = null;
+            var items: SyntaxNode[] = null;
 
             while (true) {
                 // Try to parse an item of the list.  If we fail then decide if we need to abort or 
                 // continue parsing.
-                var itemsCount = items === null ? 0 : items.length;
+                var oldItemsCount = items === null ? 0 : items.length;
                 items = this.tryParseExpectedListItem(currentListType, /*inErrorRecovery:*/ false, items, processItems);
-                if (items !== null && items.length > itemsCount) {
-                    continue;
+
+                var newItemsCount = items === null ? 0 : items.length;
+                if (newItemsCount === oldItemsCount) {
+                    // We weren't able to parse out a list element.
+
+                    // That may have been because the list is complete.  In that case, break out 
+                    // and return the items we were able parse.
+                    if (this.listIsTerminated(currentListType, newItemsCount)) {
+                        break
+                    }
+
+                    // List wasn't complete and we didn't get an item.  Figure out if we should bail out
+                    // or skip a token and continue.
+                    var abort = this.abortParsingListOrMoveToNextToken(currentListType, newItemsCount);
+                    if (abort) {
+                        break;
+                    }
                 }
 
-                // We may not have been able to parse an element because the list is complete.  Check for that.
-                if (this.listIsTerminated(currentListType, itemsCount)) {
-                    break
-                }
-
-                // List wasn't complete and we didn't get an item.  Figure out if we should bail out
-                // or skip a token and continue.
-                var abort = this.abortParsingListOrMoveToNextToken(currentListType, itemsCount);
-                if (abort) {
-                    break;
-                }
-
-                // Continue parsing the list.
+                // We either parsed an element.  Or we failed to, but weren't at the end of the list
+                // and didn't want to abort. Continue parsing elements.
             }
 
             return Syntax.list(items);

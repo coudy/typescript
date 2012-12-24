@@ -31592,17 +31592,17 @@ var Parser;
         ParserImpl.prototype.parseSyntaxListWorker = function (currentListType, processItems) {
             var items = null;
             while(true) {
-                var itemsCount = items === null ? 0 : items.length;
+                var oldItemsCount = items === null ? 0 : items.length;
                 items = this.tryParseExpectedListItem(currentListType, false, items, processItems);
-                if(items !== null && items.length > itemsCount) {
-                    continue;
-                }
-                if(this.listIsTerminated(currentListType, itemsCount)) {
-                    break;
-                }
-                var abort = this.abortParsingListOrMoveToNextToken(currentListType, itemsCount);
-                if(abort) {
-                    break;
+                var newItemsCount = items === null ? 0 : items.length;
+                if(newItemsCount === oldItemsCount) {
+                    if(this.listIsTerminated(currentListType, newItemsCount)) {
+                        break;
+                    }
+                    var abort = this.abortParsingListOrMoveToNextToken(currentListType, newItemsCount);
+                    if(abort) {
+                        break;
+                    }
                 }
             }
             return Syntax.list(items);
