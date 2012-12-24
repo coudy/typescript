@@ -66,6 +66,26 @@ class Program {
             filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*generateBaselines:*/ false));
     }
 
+    private static reusedElements(oldNode: SourceUnitSyntax, newNode: SourceUnitSyntax, key: any): { originalElements: number; reusedElements: number; } {
+        var allOldElements = SyntaxElementsCollector.collectElements(oldNode);
+        var allNewElements = SyntaxElementsCollector.collectElements(newNode);
+
+        for (var i = 0; i < allOldElements.length; i++) {
+            var oldElement = allOldElements[i];
+            oldElement[key] = key;
+        }
+
+        var reused = 0;
+        for (var j = 0; j < allNewElements.length; j++) {
+            var newElement = allNewElements[j];
+            if (newElement[key] === key) {
+                reused++;
+            }
+        }
+
+        return { originalElements: allOldElements.length, reusedElements: reused };
+    }
+
     private testIncrementalSpeed(filePath: string): void {
         if (specificFile !== undefined) {
             return;
@@ -91,6 +111,12 @@ class Program {
             totalIncrementalTime += (end - start);
 
             Debug.assert(tree.structuralEquals(tree2));
+
+            //if (i % 100 === 0) {
+            //    var info = Program.reusedElements(tree.sourceUnit(), tree2.sourceUnit(), i);
+            //    Environment.standardOut.WriteLine("Total Elements : " + info.originalElements);
+            //    Environment.standardOut.WriteLine("Reused Elements: " + info.reusedElements);
+            //}
 
             tree = tree2;
         }

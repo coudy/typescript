@@ -34517,6 +34517,18 @@ var IncrementalParserTests = (function () {
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, "/");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 7);
     }
+    IncrementalParserTests.testIncrementalComment2 = function testIncrementalComment2() {
+        var source = "class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "//");
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 0);
+    }
+    IncrementalParserTests.testIncrementalComment3 = function testIncrementalComment3() {
+        var source = "//class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, 2);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 0);
+    }
     IncrementalParserTests.testParameter1 = function testParameter1() {
         var source = "class C {\r\n";
         source += "    public foo2(a, b, c, d) {\r\n";
@@ -34582,6 +34594,25 @@ var Program = (function () {
             return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
     };
+    Program.reusedElements = function reusedElements(oldNode, newNode, key) {
+        var allOldElements = SyntaxElementsCollector.collectElements(oldNode);
+        var allNewElements = SyntaxElementsCollector.collectElements(newNode);
+        for(var i = 0; i < allOldElements.length; i++) {
+            var oldElement = allOldElements[i];
+            oldElement[key] = key;
+        }
+        var reused = 0;
+        for(var j = 0; j < allNewElements.length; j++) {
+            var newElement = allNewElements[j];
+            if(newElement[key] === key) {
+                reused++;
+            }
+        }
+        return {
+            originalElements: allOldElements.length,
+            reusedElements: reused
+        };
+    }
     Program.prototype.testIncrementalSpeed = function (filePath) {
         if(specificFile !== undefined) {
             return;

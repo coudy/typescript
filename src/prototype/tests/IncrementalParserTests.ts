@@ -133,6 +133,24 @@ class IncrementalParserTests {
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 7);
     }
 
+    public static testIncrementalComment2() {
+        var source = "class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "//");
+
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 0);
+    }
+
+    public static testIncrementalComment3() {
+        var source = "//class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, 2);
+
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 0);
+    }
+
     public static testParameter1() {
         // Should be able to reuse all the parameters.
         var source = "class C {\r\n";
