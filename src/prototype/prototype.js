@@ -31609,9 +31609,7 @@ var Parser;
         };
         ParserImpl.prototype.parseSeparatedSyntaxListWorker = function (currentListType) {
             var items = null;
-            var allowTrailingSeparator = this.allowsTrailingSeparator(currentListType);
             var allowAutomaticSemicolonInsertion = this.allowsAutomaticSemicolonInsertion(currentListType);
-            var requiresAtLeastOneItem = this.requiresAtLeastOneItem(currentListType);
             var separatorKind = this.separatorKind(currentListType);
             var inErrorRecovery = false;
             var listWasTerminated = false;
@@ -31620,44 +31618,45 @@ var Parser;
                 Debug.assert(oldItemsCount % 2 === 0);
                 items = this.tryParseExpectedListItem(currentListType, inErrorRecovery, items, null);
                 var newItemsCount = items === null ? 0 : items.length;
-                if(newItemsCount > oldItemsCount) {
-                    Debug.assert(newItemsCount % 2 === 1);
-                    inErrorRecovery = false;
-                    if(this.currentToken().tokenKind !== separatorKind) {
-                        if(this.listIsTerminated(currentListType, newItemsCount)) {
-                            listWasTerminated = true;
-                            break;
-                        }
-                        if(allowAutomaticSemicolonInsertion && this.canEatAutomaticSemicolon(false)) {
-                            var lastSeparator = this.eatExplicitOrAutomaticSemicolon(false);
-                            items.push(lastSeparator);
-                            Debug.assert(items.length % 2 === 0);
-                            continue;
-                        }
+                if(newItemsCount === oldItemsCount) {
+                    Debug.assert(items === null || items.length % 2 === 0);
+                    if(this.listIsTerminated(currentListType, newItemsCount)) {
+                        listWasTerminated = true;
+                        break;
                     }
-                    var lastSeparator = this.eatToken(separatorKind);
-                    items.push(lastSeparator);
-                    inErrorRecovery = lastSeparator.isMissing();
-                    Debug.assert(items.length % 2 === 0);
+                    var abort = this.abortParsingListOrMoveToNextToken(currentListType, oldItemsCount);
+                    if(abort) {
+                        break;
+                    } else {
+                        inErrorRecovery = true;
+                        continue;
+                    }
+                }
+                Debug.assert(newItemsCount % 2 === 1);
+                inErrorRecovery = false;
+                if(this.currentToken().tokenKind === separatorKind) {
+                    items.push(this.eatToken(separatorKind));
                     continue;
                 }
-                Debug.assert(items === null || items.length % 2 === 0);
                 if(this.listIsTerminated(currentListType, newItemsCount)) {
                     listWasTerminated = true;
                     break;
                 }
-                var abort = this.abortParsingListOrMoveToNextToken(currentListType, oldItemsCount);
-                if(abort) {
-                    break;
+                if(allowAutomaticSemicolonInsertion && this.canEatAutomaticSemicolon(false)) {
+                    items.push(this.eatExplicitOrAutomaticSemicolon(false));
+                    Debug.assert(items.length % 2 === 0);
+                    continue;
                 }
+                items.push(this.eatToken(separatorKind));
+                inErrorRecovery = true;
             }
-            if(requiresAtLeastOneItem && (items === null || items.length === 0)) {
+            var allowTrailingSeparator = this.allowsTrailingSeparator(currentListType);
+            var requiresAtLeastOneItem = this.requiresAtLeastOneItem(currentListType);
+            if(requiresAtLeastOneItem && items === null) {
                 this.reportUnexpectedTokenDiagnostic(currentListType);
             } else {
-                if(listWasTerminated) {
-                    if(!allowTrailingSeparator && items !== null && items.length % 2 === 0 && items[items.length - 1] === this.previousToken()) {
-                        this.addDiagnostic(new SyntaxDiagnostic(this.previousTokenStart(), this.previousToken().width(), 9 /* Trailing_separator_not_allowed */ , null));
-                    }
+                if(listWasTerminated && !allowTrailingSeparator && items !== null && items.length % 2 === 0 && items[items.length - 1] === this.previousToken()) {
+                    this.addDiagnostic(new SyntaxDiagnostic(this.previousTokenStart(), this.previousToken().width(), 9 /* Trailing_separator_not_allowed */ , null));
                 }
             }
             return Syntax.separatedList(items);
@@ -34608,11 +34607,11 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, true, false);
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, true, false);
         });
     };
     Program.reusedElements = function reusedElements(oldNode, newNode, key) {

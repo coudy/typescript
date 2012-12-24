@@ -4238,9 +4238,7 @@ module Parser {
         private parseSeparatedSyntaxListWorker(currentListType: ListParsingState): ISeparatedSyntaxList {
             var items: ISyntaxElement[] = null;
 
-            var allowTrailingSeparator = this.allowsTrailingSeparator(currentListType);
             var allowAutomaticSemicolonInsertion = this.allowsAutomaticSemicolonInsertion(currentListType);
-            var requiresAtLeastOneItem = this.requiresAtLeastOneItem(currentListType);
             var separatorKind = this.separatorKind(currentListType);
 
             var inErrorRecovery = false;
@@ -4253,109 +4251,116 @@ module Parser {
                 items = this.tryParseExpectedListItem(currentListType, inErrorRecovery, items, null);
                 
                 var newItemsCount = items === null ? 0 : items.length;
-                if (newItemsCount > oldItemsCount) {
-                    Debug.assert(newItemsCount % 2 === 1);
-
-                    // we successfully read in a list element.  We're no longer in error recovery.
-                    inErrorRecovery = false;
-
-                    // We got an item and added it to our list.  At this point we will either be
-                    // followed by an explicit separator, an implicit separator, or the list 
-                    // terminator.  If it's one of the first two, then we consume and continue.
-                    // If it's the terminator, then we're done.
-
-                    // List wasn't done.  We need to try to eat the next separator.  
-
-                    if (this.currentToken().tokenKind !== separatorKind) {
-                        // If we didn't see an expected separator, see if that's because we're at
-                        // the end of the list.
-                        if (this.listIsTerminated(currentListType, newItemsCount)) {
-                            listWasTerminated = true;
-                            break;
-                        }
-
-                        // We didn't see a separator.   This may be because we can consume an 
-                        // implicit separator.
-
-                        // Note: it's important that we check this *after* the check above for
-                        // 'listIsTerminated'.  Consider the following case:
-                        //
-                        //      {
-                        //          a       // <-- just finished parsing 'a'
-                        //      }
-                        //
-                        // Automatic semicolon insertion rules state: "When, as the program is parsed from
-                        // left to right, a token (called the offending token) is encountered that is not 
-                        // allowed by any production of the grammar".  So we should only ever insert a 
-                        // semicolon if we couldn't consume something normally.  in the above case, we can
-                        // consume the '}' just fine.  So ASI doesn't apply.
-
-                        if (allowAutomaticSemicolonInsertion && this.canEatAutomaticSemicolon(/*allowWithoutNewline:*/ false)) {
-                            var lastSeparator = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
-                            items.push(lastSeparator);
-                            Debug.assert(items.length % 2 === 0);
-                            continue;
-                        }
+                if (newItemsCount === oldItemsCount) {
+                    // We weren't able to parse out a list element.
+                    Debug.assert(items === null || items.length % 2 === 0);
+                    
+                    // That may have been because the list is complete.  In that case, break out 
+                    // and return the items we were able parse.
+                    if (this.listIsTerminated(currentListType, newItemsCount)) {
+                        listWasTerminated = true;
+                        break;
                     }
+                    
+                    // List wasn't complete and we didn't get an item.  Figure out if we should bail out
+                    // or skip a token and continue.
+                    var abort = this.abortParsingListOrMoveToNextToken(currentListType, oldItemsCount);
+                    if (abort) {
+                        break;
+                    }
+                    else {
+                        // We just skipped a token.  We're now in error recovery mode.
+                        inErrorRecovery = true;
+                        continue;
+                    }
+                }
 
-                    // We're either at a real separator already that we should parse out.  Or we weren't
-                    // at one, but none of our fallback cases worked.  However, the list still requires
-                    // a separator, so we need to parse it an error version here.
+                Debug.assert(newItemsCount % 2 === 1);
 
-                    // Consume the last separator and continue.
-                    var lastSeparator = this.eatToken(separatorKind);
-                    items.push(lastSeparator);
+                // We were able to successfully parse out a list item.  So we're no longer in error
+                // recovery.
+                inErrorRecovery = false;
 
-                    // Mark if we actually successfully consumed the separator or not.  If not then 
-                    // we're in 'error recovery' mode and we make tweak some parsing rules as 
-                    // appropriate.  For example, if we have:
-                    //
-                    //      var v = { a
-                    //      return
-                    //
-                    // Then we'll be missing the comma.  As such, we want to parse 'return' in a less
-                    // tolerant manner.  Normally 'return' could be a property in an object literal.
-                    // However, in error recovery mode, we do *not* want it to be.
-                    inErrorRecovery = lastSeparator.isMissing();
-                    Debug.assert(items.length % 2 === 0);
+                // Now, we have to see if we have a separator or not.  If we do have a separator
+                // we've got to consume it and continue trying to parse list items.
+                if (this.currentToken().tokenKind === separatorKind) {
+                    // Consume the last separator and continue parsing list elements.
+                    items.push(this.eatToken(separatorKind));
                     continue;
                 }
 
-                Debug.assert(items === null || items.length % 2 === 0);
-
-                // Now see if the list is terminated.  If so, we're done.  This also handles the 
-                // case where the list was empty to begin with.  In that case, 'tryParse' above will
-                // not return an item and we'll bail out here.
+                // We didn't see the expected separator.  There are two reasons this might happen.
+                // First, we may actually be at the end of the list.  If we are, then we're done
+                // parsing list elements.  
                 if (this.listIsTerminated(currentListType, newItemsCount)) {
                     listWasTerminated = true;
                     break;
                 }
 
-                // We failed to parse an item, and the list wasn't done. Decide if we need to abort,
-                // or move to the next token.
-                var abort = this.abortParsingListOrMoveToNextToken(currentListType, oldItemsCount);
-                if (abort) {
-                    break;
+                // Otherwise, it might be a case where we can parse out an implicit semicolon.
+
+                // Note: it's important that we check this *after* the check above for
+                // 'listIsTerminated'.  Consider the following case:
+                //
+                //      {
+                //          a       // <-- just finished parsing 'a'
+                //      }
+                //
+                // Automatic semicolon insertion rules state: "When, as the program is parsed from
+                // left to right, a token (called the offending token) is encountered that is not 
+                // allowed by any production of the grammar".  So we should only ever insert a 
+                // semicolon if we couldn't consume something normally.  in the above case, we can
+                // consume the '}' just fine.  So ASI doesn't apply.
+
+                if (allowAutomaticSemicolonInsertion && this.canEatAutomaticSemicolon(/*allowWithoutNewline:*/ false)) {
+                    items.push(this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false));
+                    Debug.assert(items.length % 2 === 0);
+                    continue;
                 }
+
+                // We weren't at the end of the list.  And thre was no separator we could parse out.
+                // Try parse the separator we expected, and continue parsing more list elements.
+                // This time mark that we're in error recovery mode though.
+                //
+                // Note: trying to eat this token will emit the appropriate diagnostic.
+                items.push(this.eatToken(separatorKind));
+
+                // Now that we're in 'error recovery' mode we cantweak some parsing rules as 
+                // appropriate.  For example, if we have:
+                //
+                //      var v = { a
+                //      return
+                //
+                // Then we'll be missing the comma.  As such, we want to parse 'return' in a less
+                // tolerant manner.  Normally 'return' could be a property in an object literal.
+                // However, in error recovery mode, we do *not* want it to be.
+                //
+                // Continue trying to parse out list elements.
+                inErrorRecovery = true;
             }
 
-            // If this list requires at least one argument, then report an error if we haven't gotten
-            // any.
-            if (requiresAtLeastOneItem && (items === null || items.length === 0)) {
+            // Now that we're done parsing, ensure the list is properly formed.
+            var allowTrailingSeparator = this.allowsTrailingSeparator(currentListType);
+            var requiresAtLeastOneItem = this.requiresAtLeastOneItem(currentListType);
+
+            // If this list requires at least one argument, then report an error if we haven't 
+            // gotten any.
+            if (requiresAtLeastOneItem && items === null) {
                 this.reportUnexpectedTokenDiagnostic(currentListType);
             }
             else {
                 // If the list ended with a trailing separator, and that's not allowed, then report
-                // an error for it.
-                if (listWasTerminated) {
-                    if (!allowTrailingSeparator &&
-                        items !== null &&
-                        items.length % 2 === 0 &&
-                        items[items.length - 1] === this.previousToken()) {
+                // an error for it.  Only do this if the list was successfully terminated.  We don't
+                // want to report multiple errors if we're missing the closing terminator and we 
+                // have a trailing separator.
+                if (listWasTerminated &&
+                    !allowTrailingSeparator &&
+                    items !== null &&
+                    items.length % 2 === 0 &&
+                    items[items.length - 1] === this.previousToken()) {
 
-                        this.addDiagnostic(new SyntaxDiagnostic(
-                            this.previousTokenStart(), this.previousToken().width(), DiagnosticCode.Trailing_separator_not_allowed, null));
-                    }
+                    this.addDiagnostic(new SyntaxDiagnostic(
+                        this.previousTokenStart(), this.previousToken().width(), DiagnosticCode.Trailing_separator_not_allowed, null));
                 }
             }
 
