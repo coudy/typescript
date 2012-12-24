@@ -34529,6 +34529,13 @@ var IncrementalParserTests = (function () {
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, 2);
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 0);
     }
+    IncrementalParserTests.testIncrementalComment4 = function testIncrementalComment4() {
+        var source = "class C { public foo1() { /; } public foo2() { */ return 1; } public foo3() { } }";
+        var index = source.indexOf(";");
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "*");
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 23);
+    }
     IncrementalParserTests.testParameter1 = function testParameter1() {
         var source = "class C {\r\n";
         source += "    public foo2(a, b, c, d) {\r\n";

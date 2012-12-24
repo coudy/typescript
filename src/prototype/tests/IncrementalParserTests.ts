@@ -151,6 +151,16 @@ class IncrementalParserTests {
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 0);
     }
 
+    public static testIncrementalComment4() {
+        var source = "class C { public foo1() { /; } public foo2() { */ return 1; } public foo3() { } }";
+        
+        var index = source.indexOf(";");
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "*");
+
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 23);
+    }
+
     public static testParameter1() {
         // Should be able to reuse all the parameters.
         var source = "class C {\r\n";
