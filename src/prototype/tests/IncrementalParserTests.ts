@@ -46,6 +46,10 @@ class IncrementalParserTests {
         return IncrementalParserTests.withChange(text, start, 0, newText);
     }
 
+    private static withDelete(text: IText, start: number, length: number): { text: IText; textChangeRange: TextChangeRange; } {
+        return IncrementalParserTests.withChange(text, start, length, "");
+    }
+
     private static reusedElements(oldNode: SourceUnitSyntax, newNode: SourceUnitSyntax): number {
         var allOldElements = SyntaxElementsCollector.collectElements(oldNode);
         var allNewElements = SyntaxElementsCollector.collectElements(newNode);
@@ -88,6 +92,23 @@ class IncrementalParserTests {
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 32);
+    }
+
+    public static testIncremental2() {
+        var source = "class C {\r\n";
+        source += "    public foo1() { }\r\n";
+        source += "    public foo2() {\r\n";
+        source += "        return 1 + 1;\r\n";
+        source += "    }\r\n";
+        source += "    public foo3() { }\r\n";
+        source += "}"
+
+        var index = source.indexOf("+ 1");
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, 3);
+
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 29);
     }
 
     public static testIncrementalRegex1() {

@@ -34457,6 +34457,9 @@ var IncrementalParserTests = (function () {
     IncrementalParserTests.withInsert = function withInsert(text, start, newText) {
         return IncrementalParserTests.withChange(text, start, 0, newText);
     }
+    IncrementalParserTests.withDelete = function withDelete(text, start, length) {
+        return IncrementalParserTests.withChange(text, start, length, "");
+    }
     IncrementalParserTests.reusedElements = function reusedElements(oldNode, newNode) {
         var allOldElements = SyntaxElementsCollector.collectElements(oldNode);
         var allNewElements = SyntaxElementsCollector.collectElements(newNode);
@@ -34486,6 +34489,19 @@ var IncrementalParserTests = (function () {
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 32);
+    }
+    IncrementalParserTests.testIncremental2 = function testIncremental2() {
+        var source = "class C {\r\n";
+        source += "    public foo1() { }\r\n";
+        source += "    public foo2() {\r\n";
+        source += "        return 1 + 1;\r\n";
+        source += "    }\r\n";
+        source += "    public foo3() { }\r\n";
+        source += "}";
+        var index = source.indexOf("+ 1");
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, 3);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 29);
     }
     IncrementalParserTests.testIncrementalRegex1 = function testIncrementalRegex1() {
         var source = "class C { public foo1() { /; } public foo2() { return 1;} public foo3() { } }";
@@ -34559,11 +34575,11 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, true, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, true, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
     };
     Program.prototype.testIncrementalSpeed = function (filePath) {
