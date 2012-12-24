@@ -111,4 +111,20 @@ class IncrementalParserTests {
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 7);
     }
+
+    public static testParameter1() {
+        // Should be able to reuse all the parameters.
+        var source = "class C {\r\n";
+        source += "    public foo2(a, b, c, d) {\r\n";
+        source += "        return 1;\r\n";
+        source += "    }\r\n";
+        source += "}"
+
+        var semicolonIndex = source.indexOf(";");
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
+
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 19);
+    }
 }

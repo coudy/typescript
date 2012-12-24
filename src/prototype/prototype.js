@@ -34480,6 +34480,17 @@ var IncrementalParserTests = (function () {
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, "/");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 7);
     }
+    IncrementalParserTests.testParameter1 = function testParameter1() {
+        var source = "class C {\r\n";
+        source += "    public foo2(a, b, c, d) {\r\n";
+        source += "        return 1;\r\n";
+        source += "    }\r\n";
+        source += "}";
+        var semicolonIndex = source.indexOf(";");
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 19);
+    }
     return IncrementalParserTests;
 })();
 var stringTable = Collections.createStringTable();
