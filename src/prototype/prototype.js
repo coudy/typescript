@@ -34554,6 +34554,13 @@ var IncrementalParserTests = (function () {
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "?");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 45);
     }
+    IncrementalParserTests.testVariableDeclarator1 = function testVariableDeclarator1() {
+        var source = "enum E { a = 1, b = 1 << 1, c = 3, e = 4, f = 5, g = 7, h = 8, i = 9, j = 10 }";
+        var index = source.indexOf("<<");
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 2, "+");
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 61);
+    }
     return IncrementalParserTests;
 })();
 var stringTable = Collections.createStringTable();

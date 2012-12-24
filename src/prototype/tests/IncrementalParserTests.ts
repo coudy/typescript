@@ -188,4 +188,16 @@ class IncrementalParserTests {
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 45);
     }
+
+    public static testVariableDeclarator1() {
+        // Should be able to reuse most of the variable declarators.
+        var source = "enum E { a = 1, b = 1 << 1, c = 3, e = 4, f = 5, g = 7, h = 8, i = 9, j = 10 }";
+
+        var index = source.indexOf("<<");
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 2, "+");
+
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 61);
+    }
 }
