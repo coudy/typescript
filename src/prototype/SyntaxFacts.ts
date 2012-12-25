@@ -166,10 +166,14 @@ class SyntaxFacts {
     }
 
     public static isPrefixUnaryExpressionOperatorToken(tokenKind: SyntaxKind): bool {
-        return getPrefixUnaryExpression(tokenKind) !== SyntaxKind.None;
+        return getPrefixUnaryExpressionFromOperatorToken(tokenKind) !== SyntaxKind.None;
     }
 
-    public static getPrefixUnaryExpression(tokenKind: SyntaxKind): SyntaxKind {
+    public static isBinaryExpressionOperatorToken(tokenKind: SyntaxKind): bool {
+        return getBinaryExpressionFromOperatorToken(tokenKind) !== SyntaxKind.None;
+    }
+
+    public static getPrefixUnaryExpressionFromOperatorToken(tokenKind: SyntaxKind): SyntaxKind {
         switch (tokenKind) {
             case SyntaxKind.PlusToken:
                 return SyntaxKind.PlusExpression;
@@ -203,10 +207,6 @@ class SyntaxFacts {
             default:
                 return SyntaxKind.None;
         }
-    }
-
-    public static isBinaryExpressionOperatorToken(tokenKind: SyntaxKind): bool {
-        return getBinaryExpressionFromOperatorToken(tokenKind) !== SyntaxKind.None;
     }
 
     public static getBinaryExpressionFromOperatorToken(tokenKind: SyntaxKind): SyntaxKind {

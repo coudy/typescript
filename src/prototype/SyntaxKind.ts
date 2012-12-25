@@ -167,6 +167,13 @@ enum SyntaxKind {
     GetMemberAccessorDeclaration,
     SetMemberAccessorDeclaration,
 
+    // Type members.
+    PropertySignature,
+    CallSignature,
+    ConstructSignature,
+    IndexSignature,
+    FunctionSignature,
+
     // Statements
     Block,
     IfStatement,
@@ -273,13 +280,6 @@ enum SyntaxKind {
     ElseClause,
     CatchClause,
     FinallyClause,
-
-    // Type members.
-    PropertySignature,
-    CallSignature,
-    ConstructSignature,
-    IndexSignature,
-    FunctionSignature,
 
     // Misc.
     Parameter,

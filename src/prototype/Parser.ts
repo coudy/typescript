@@ -3139,7 +3139,7 @@ module Parser {
         private parseUnaryExpression(): UnaryExpressionSyntax {
             var currentTokenKind = this.currentToken().tokenKind;
             if (SyntaxFacts.isPrefixUnaryExpressionOperatorToken(currentTokenKind)) {
-                var operatorKind = SyntaxFacts.getPrefixUnaryExpression(currentTokenKind);
+                var operatorKind = SyntaxFacts.getPrefixUnaryExpressionFromOperatorToken(currentTokenKind);
 
                 var operatorToken = this.eatAnyToken();
 
