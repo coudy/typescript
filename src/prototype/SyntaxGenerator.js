@@ -3630,6 +3630,9 @@ function generateArgumentChecks(definition) {
     return result;
 }
 function generateConstructor(definition) {
+    if(definition.isAbstract) {
+        return "";
+    }
     var result = "";
     result += "    constructor(";
     for(var i = 0; i < definition.children.length; i++) {

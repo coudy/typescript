@@ -8928,7 +8928,8 @@ var SourceUnitSyntax = (function (_super) {
 var ModuleElementSyntax = (function (_super) {
     __extends(ModuleElementSyntax, _super);
     function ModuleElementSyntax() {
-        _super.call(this);
+        _super.apply(this, arguments);
+
     }
     ModuleElementSyntax.prototype.isModuleElement = function () {
         return true;
@@ -8947,7 +8948,8 @@ var ModuleElementSyntax = (function (_super) {
 var ModuleReferenceSyntax = (function (_super) {
     __extends(ModuleReferenceSyntax, _super);
     function ModuleReferenceSyntax() {
-        _super.call(this);
+        _super.apply(this, arguments);
+
     }
     ModuleReferenceSyntax.prototype.isModuleReference = function () {
         return true;
@@ -10826,7 +10828,8 @@ var ModuleDeclarationSyntax = (function (_super) {
 var StatementSyntax = (function (_super) {
     __extends(StatementSyntax, _super);
     function StatementSyntax() {
-        _super.call(this);
+        _super.apply(this, arguments);
+
     }
     StatementSyntax.prototype.isStatement = function () {
         return true;
@@ -11399,7 +11402,8 @@ var VariableStatementSyntax = (function (_super) {
 var ExpressionSyntax = (function (_super) {
     __extends(ExpressionSyntax, _super);
     function ExpressionSyntax() {
-        _super.call(this);
+        _super.apply(this, arguments);
+
     }
     ExpressionSyntax.prototype.isExpression = function () {
         return true;
@@ -11418,7 +11422,8 @@ var ExpressionSyntax = (function (_super) {
 var UnaryExpressionSyntax = (function (_super) {
     __extends(UnaryExpressionSyntax, _super);
     function UnaryExpressionSyntax() {
-        _super.call(this);
+        _super.apply(this, arguments);
+
     }
     UnaryExpressionSyntax.prototype.isUnaryExpression = function () {
         return true;
@@ -12707,7 +12712,8 @@ var ParenthesizedExpressionSyntax = (function (_super) {
 var ArrowFunctionExpressionSyntax = (function (_super) {
     __extends(ArrowFunctionExpressionSyntax, _super);
     function ArrowFunctionExpressionSyntax() {
-        _super.call(this);
+        _super.apply(this, arguments);
+
     }
     ArrowFunctionExpressionSyntax.prototype.isArrowFunctionExpression = function () {
         return true;
@@ -13068,7 +13074,8 @@ var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
 var TypeSyntax = (function (_super) {
     __extends(TypeSyntax, _super);
     function TypeSyntax() {
-        _super.call(this);
+        _super.apply(this, arguments);
+
     }
     TypeSyntax.prototype.isType = function () {
         return true;
@@ -13087,7 +13094,8 @@ var TypeSyntax = (function (_super) {
 var NameSyntax = (function (_super) {
     __extends(NameSyntax, _super);
     function NameSyntax() {
-        _super.call(this);
+        _super.apply(this, arguments);
+
     }
     NameSyntax.prototype.isName = function () {
         return true;
@@ -16154,7 +16162,8 @@ var ConditionalExpressionSyntax = (function (_super) {
 var TypeMemberSyntax = (function (_super) {
     __extends(TypeMemberSyntax, _super);
     function TypeMemberSyntax() {
-        _super.call(this);
+        _super.apply(this, arguments);
+
     }
     TypeMemberSyntax.prototype.isTypeMember = function () {
         return true;
@@ -17859,7 +17868,8 @@ var ExpressionStatementSyntax = (function (_super) {
 var ClassElementSyntax = (function (_super) {
     __extends(ClassElementSyntax, _super);
     function ClassElementSyntax() {
-        _super.call(this);
+        _super.apply(this, arguments);
+
     }
     ClassElementSyntax.prototype.isClassElement = function () {
         return true;
@@ -18097,7 +18107,8 @@ var ConstructorDeclarationSyntax = (function (_super) {
 var MemberDeclarationSyntax = (function (_super) {
     __extends(MemberDeclarationSyntax, _super);
     function MemberDeclarationSyntax() {
-        _super.call(this);
+        _super.apply(this, arguments);
+
     }
     MemberDeclarationSyntax.prototype.isMemberDeclaration = function () {
         return true;
@@ -18395,7 +18406,8 @@ var MemberFunctionDeclarationSyntax = (function (_super) {
 var MemberAccessorDeclarationSyntax = (function (_super) {
     __extends(MemberAccessorDeclarationSyntax, _super);
     function MemberAccessorDeclarationSyntax() {
-        _super.call(this);
+        _super.apply(this, arguments);
+
     }
     MemberAccessorDeclarationSyntax.prototype.isMemberAccessorDeclaration = function () {
         return true;
@@ -20126,7 +20138,8 @@ var SwitchStatementSyntax = (function (_super) {
 var SwitchClauseSyntax = (function (_super) {
     __extends(SwitchClauseSyntax, _super);
     function SwitchClauseSyntax() {
-        _super.call(this);
+        _super.apply(this, arguments);
+
     }
     SwitchClauseSyntax.prototype.isSwitchClause = function () {
         return true;
@@ -20914,7 +20927,8 @@ var ContinueStatementSyntax = (function (_super) {
 var IterationStatementSyntax = (function (_super) {
     __extends(IterationStatementSyntax, _super);
     function IterationStatementSyntax() {
-        _super.call(this);
+        _super.apply(this, arguments);
+
     }
     IterationStatementSyntax.prototype.isIterationStatement = function () {
         return true;
@@ -20942,7 +20956,8 @@ var IterationStatementSyntax = (function (_super) {
 var BaseForStatementSyntax = (function (_super) {
     __extends(BaseForStatementSyntax, _super);
     function BaseForStatementSyntax() {
-        _super.call(this);
+        _super.apply(this, arguments);
+
     }
     BaseForStatementSyntax.prototype.isBaseForStatement = function () {
         return true;
@@ -22923,7 +22938,8 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
 var PropertyAssignmentSyntax = (function (_super) {
     __extends(PropertyAssignmentSyntax, _super);
     function PropertyAssignmentSyntax() {
-        _super.call(this);
+        _super.apply(this, arguments);
+
     }
     PropertyAssignmentSyntax.prototype.isPropertyAssignment = function () {
         return true;
@@ -23126,7 +23142,8 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
 var AccessorPropertyAssignmentSyntax = (function (_super) {
     __extends(AccessorPropertyAssignmentSyntax, _super);
     function AccessorPropertyAssignmentSyntax() {
-        _super.call(this);
+        _super.apply(this, arguments);
+
     }
     AccessorPropertyAssignmentSyntax.prototype.isAccessorPropertyAssignment = function () {
         return true;

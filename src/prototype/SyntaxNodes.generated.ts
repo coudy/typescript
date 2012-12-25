@@ -154,9 +154,6 @@ class SourceUnitSyntax extends SyntaxNode {
 }
 
 class ModuleElementSyntax extends SyntaxNode {
-    constructor() {
-        super();
-    }
 
     private isModuleElement(): bool {
         return true;
@@ -176,9 +173,6 @@ class ModuleElementSyntax extends SyntaxNode {
 }
 
 class ModuleReferenceSyntax extends SyntaxNode {
-    constructor() {
-        super();
-    }
 
     private isModuleReference(): bool {
         return true;
@@ -1996,9 +1990,6 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
 }
 
 class StatementSyntax extends ModuleElementSyntax {
-    constructor() {
-        super();
-    }
 
     private isStatement(): bool {
         return true;
@@ -2527,9 +2518,6 @@ class VariableStatementSyntax extends StatementSyntax {
 }
 
 class ExpressionSyntax extends SyntaxNode {
-    constructor() {
-        super();
-    }
 
     private isExpression(): bool {
         return true;
@@ -2549,9 +2537,6 @@ class ExpressionSyntax extends SyntaxNode {
 }
 
 class UnaryExpressionSyntax extends ExpressionSyntax {
-    constructor() {
-        super();
-    }
 
     private isUnaryExpression(): bool {
         return true;
@@ -3871,9 +3856,6 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
 }
 
 class ArrowFunctionExpressionSyntax extends UnaryExpressionSyntax {
-    constructor() {
-        super();
-    }
 
     private isArrowFunctionExpression(): bool {
         return true;
@@ -4245,9 +4227,6 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
 }
 
 class TypeSyntax extends UnaryExpressionSyntax {
-    constructor() {
-        super();
-    }
 
     private isType(): bool {
         return true;
@@ -4267,9 +4246,6 @@ class TypeSyntax extends UnaryExpressionSyntax {
 }
 
 class NameSyntax extends TypeSyntax {
-    constructor() {
-        super();
-    }
 
     private isName(): bool {
         return true;
@@ -7331,9 +7307,6 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
 }
 
 class TypeMemberSyntax extends SyntaxNode {
-    constructor() {
-        super();
-    }
 
     private isTypeMember(): bool {
         return true;
@@ -9042,9 +9015,6 @@ class ExpressionStatementSyntax extends StatementSyntax {
 }
 
 class ClassElementSyntax extends SyntaxNode {
-    constructor() {
-        super();
-    }
 
     private isClassElement(): bool {
         return true;
@@ -9279,9 +9249,6 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
 }
 
 class MemberDeclarationSyntax extends ClassElementSyntax {
-    constructor() {
-        super();
-    }
 
     private isMemberDeclaration(): bool {
         return true;
@@ -9564,9 +9531,6 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
 }
 
 class MemberAccessorDeclarationSyntax extends MemberDeclarationSyntax {
-    constructor() {
-        super();
-    }
 
     private isMemberAccessorDeclaration(): bool {
         return true;
@@ -11249,9 +11213,6 @@ class SwitchStatementSyntax extends StatementSyntax {
 }
 
 class SwitchClauseSyntax extends SyntaxNode {
-    constructor() {
-        super();
-    }
 
     private isSwitchClause(): bool {
         return true;
@@ -12035,9 +11996,6 @@ class ContinueStatementSyntax extends StatementSyntax {
 }
 
 class IterationStatementSyntax extends StatementSyntax {
-    constructor() {
-        super();
-    }
 
     private isIterationStatement(): bool {
         return true;
@@ -12069,9 +12027,6 @@ class IterationStatementSyntax extends StatementSyntax {
 }
 
 class BaseForStatementSyntax extends IterationStatementSyntax {
-    constructor() {
-        super();
-    }
 
     private isBaseForStatement(): bool {
         return true;
@@ -13978,9 +13933,6 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
 }
 
 class PropertyAssignmentSyntax extends SyntaxNode {
-    constructor() {
-        super();
-    }
 
     private isPropertyAssignment(): bool {
         return true;
@@ -14184,9 +14136,6 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
 }
 
 class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
-    constructor() {
-        super();
-    }
 
     private isAccessorPropertyAssignment(): bool {
         return true;

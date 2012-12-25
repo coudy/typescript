@@ -1190,6 +1190,10 @@ function generateArgumentChecks(definition: ITypeDefinition): string {
 }
 
 function generateConstructor(definition: ITypeDefinition): string {
+    if (definition.isAbstract) {
+        return "";
+    }
+
     var result = "";
     result += "    constructor("
 
