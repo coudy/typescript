@@ -70,7 +70,7 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        public realize(): ISyntaxToken { return realize(this); }
+        private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
@@ -152,7 +152,7 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        public realize(): ISyntaxToken { return realize(this); }
+        private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
@@ -234,7 +234,7 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        public realize(): ISyntaxToken { return realize(this); }
+        private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
@@ -319,7 +319,7 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        public realize(): ISyntaxToken { return realize(this); }
+        private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
@@ -376,7 +376,7 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        public realize(): ISyntaxToken { return realize(this); }
+        private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
@@ -445,7 +445,7 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        public realize(): ISyntaxToken { return realize(this); }
+        private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
@@ -514,7 +514,7 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        public realize(): ISyntaxToken { return realize(this); }
+        private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
@@ -586,7 +586,7 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        public realize(): ISyntaxToken { return realize(this); }
+        private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
@@ -645,7 +645,7 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        public realize(): ISyntaxToken { return realize(this); }
+        private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
@@ -716,7 +716,7 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        public realize(): ISyntaxToken { return realize(this); }
+        private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
@@ -787,7 +787,7 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        public realize(): ISyntaxToken { return realize(this); }
+        private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
@@ -861,7 +861,7 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        public realize(): ISyntaxToken { return realize(this); }
+        private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {

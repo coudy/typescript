@@ -184,11 +184,11 @@ module Syntax {
         private collectTextElements(elements: string[]): void { }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
-            throw Errors.invalidOperation('Can not call on a non-realized token.');
+            return this.realize().withLeadingTrivia(leadingTrivia);
         }
 
-        public withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
-            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
+            return this.realize().withTrailingTrivia(trailingTrivia);
         }
     }
 
@@ -264,7 +264,6 @@ module Syntax {
         public leadingTrivia(): ISyntaxTriviaList { return this._leadingTrivia; }
         public trailingTrivia(): ISyntaxTriviaList { return this._trailingTrivia; }
 
-        public realize(): ISyntaxToken { return this; }
         private collectTextElements(elements: string[]): void {
             (<any>this.leadingTrivia()).collectTextElements(elements);
             elements.push(this.text());

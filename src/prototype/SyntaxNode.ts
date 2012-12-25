@@ -2,7 +2,6 @@
 ///<reference path='ISyntaxElement.ts' />
 ///<reference path='ISyntaxToken.ts' />
 ///<reference path='ISyntaxVisitor.ts' />
-///<reference path='SyntaxRealizer.ts' />
 ///<reference path='SyntaxTokenReplacer.ts' />
 
 class SyntaxNode implements ISyntaxElement {
@@ -73,10 +72,6 @@ class SyntaxNode implements ISyntaxElement {
 
     public accept(visitor: ISyntaxVisitor): any {
         throw Errors.abstract();
-    }
-
-    public realize(): SyntaxNode {
-        return this.accept(new SyntaxRealizer());
     }
 
     public fullText(): string {

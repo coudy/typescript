@@ -362,7 +362,7 @@ class Program {
 
         while (true) {
             var token = scanner.scan(diagnostics, /*allowRegularExpression:*/ false);
-            tokens.push(token.realize());
+            tokens.push(token);
 
             if (token.tokenKind === SyntaxKind.EndOfFileToken) {
                 break;

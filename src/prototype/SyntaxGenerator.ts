@@ -2448,7 +2448,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
 
     result += 
 "        public toJSON(key) { return tokenToJSON(this); }\r\n" +
-"        public realize(): ISyntaxToken { return realize(this); }\r\n" +
+"        private realize(): ISyntaxToken { return realize(this); }\r\n" +
 "        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
 
     result += 

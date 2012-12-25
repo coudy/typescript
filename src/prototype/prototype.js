@@ -841,16 +841,6 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var SyntaxRealizer = (function (_super) {
-    __extends(SyntaxRealizer, _super);
-    function SyntaxRealizer() {
-        _super.call(this);
-    }
-    SyntaxRealizer.prototype.visitToken = function (token) {
-        return token.realize();
-    };
-    return SyntaxRealizer;
-})(SyntaxRewriter);
 var SyntaxTokenReplacer = (function (_super) {
     __extends(SyntaxTokenReplacer, _super);
     function SyntaxTokenReplacer(token1, token2) {
@@ -929,9 +919,6 @@ var SyntaxNode = (function () {
     };
     SyntaxNode.prototype.accept = function (visitor) {
         throw Errors.abstract();
-    };
-    SyntaxNode.prototype.realize = function () {
-        return this.accept(new SyntaxRealizer());
     };
     SyntaxNode.prototype.fullText = function () {
         var elements = [];
@@ -8642,10 +8629,10 @@ var Syntax;
         EmptyToken.prototype.collectTextElements = function (elements) {
         };
         EmptyToken.prototype.withLeadingTrivia = function (leadingTrivia) {
-            throw Errors.invalidOperation('Can not call on a non-realized token.');
+            return this.realize().withLeadingTrivia(leadingTrivia);
         };
-        EmptyToken.prototype.withTrailingTrivia = function (leadingTrivia) {
-            throw Errors.invalidOperation('Can not call on a non-realized token.');
+        EmptyToken.prototype.withTrailingTrivia = function (trailingTrivia) {
+            return this.realize().withTrailingTrivia(trailingTrivia);
         };
         return EmptyToken;
     })();    
@@ -8749,9 +8736,6 @@ var Syntax;
         };
         RealizedToken.prototype.trailingTrivia = function () {
             return this._trailingTrivia;
-        };
-        RealizedToken.prototype.realize = function () {
-            return this;
         };
         RealizedToken.prototype.collectTextElements = function (elements) {
             (this.leadingTrivia()).collectTextElements(elements);
@@ -34818,7 +34802,7 @@ var Program = (function () {
         var diagnostics = [];
         while(true) {
             var token = scanner.scan(diagnostics, false);
-            tokens.push(token.realize());
+            tokens.push(token);
             if(token.tokenKind === 118 /* EndOfFileToken */ ) {
                 break;
             }

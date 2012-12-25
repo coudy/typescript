@@ -10,7 +10,6 @@ interface ISyntaxToken extends ISyntaxElement {
     text(): string;
 
     value(): any;
-    // valueText(): string;
 
     hasLeadingTrivia(): bool;
     hasLeadingComment(): bool;
@@ -28,8 +27,6 @@ interface ISyntaxToken extends ISyntaxElement {
 
     leadingTrivia(): ISyntaxTriviaList;
     trailingTrivia(): ISyntaxTriviaList;
-
-    realize(): ISyntaxToken;
 
     withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken;
     withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken;
