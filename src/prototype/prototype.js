@@ -28032,6 +28032,28 @@ var Parser;
         IncrementalParserSource.prototype.previousToken = function () {
             return this._normalParserSource.previousToken();
         };
+        IncrementalParserSource.prototype.tokenDiagnostics = function () {
+            return this._normalParserSource.tokenDiagnostics();
+        };
+        IncrementalParserSource.prototype.getRewindPoint = function () {
+            var rewindPoint = this._normalParserSource.getRewindPoint();
+            var oldSourceUnitCursorIndex = this._oldSourceUnitCursor.getAndPinCursorIndex();
+            rewindPoint.changeDelta = this._changeDelta;
+            rewindPoint.changeRange = this._changeRange;
+            rewindPoint.oldSourceUnitCursorIndex = oldSourceUnitCursorIndex;
+            Debug.assert(rewindPoint.pinCount === this._oldSourceUnitCursor.pinCount());
+            return rewindPoint;
+        };
+        IncrementalParserSource.prototype.rewind = function (rewindPoint) {
+            this._changeRange = rewindPoint.changeRange;
+            this._changeDelta = rewindPoint.changeDelta;
+            this._oldSourceUnitCursor.rewindToPinnedCursorIndex(rewindPoint.oldSourceUnitCursorIndex);
+            this._normalParserSource.rewind(rewindPoint);
+        };
+        IncrementalParserSource.prototype.releaseRewindPoint = function (rewindPoint) {
+            this._oldSourceUnitCursor.releaseAndUnpinCursorIndex(rewindPoint.oldSourceUnitCursorIndex);
+            this._normalParserSource.releaseRewindPoint(rewindPoint);
+        };
         IncrementalParserSource.prototype.canReadFromOldSourceUnit = function () {
             if(this._normalParserSource.isPinned()) {
                 return false;
@@ -28168,33 +28190,10 @@ var Parser;
                 }
             }
         };
-        IncrementalParserSource.prototype.getRewindPoint = function () {
-            var rewindPoint = this._normalParserSource.getRewindPoint();
-            var oldSourceUnitCursorIndex = this._oldSourceUnitCursor.getAndPinCursorIndex();
-            rewindPoint.changeDelta = this._changeDelta;
-            rewindPoint.changeRange = this._changeRange;
-            rewindPoint.oldSourceUnitCursorIndex = oldSourceUnitCursorIndex;
-            Debug.assert(rewindPoint.pinCount === this._oldSourceUnitCursor.pinCount());
-            return rewindPoint;
-        };
-        IncrementalParserSource.prototype.rewind = function (rewindPoint) {
-            this._changeRange = rewindPoint.changeRange;
-            this._changeDelta = rewindPoint.changeDelta;
-            this._oldSourceUnitCursor.rewindToPinnedCursorIndex(rewindPoint.oldSourceUnitCursorIndex);
-            this._normalParserSource.rewind(rewindPoint);
-        };
-        IncrementalParserSource.prototype.releaseRewindPoint = function (rewindPoint) {
-            this._oldSourceUnitCursor.releaseAndUnpinCursorIndex(rewindPoint.oldSourceUnitCursorIndex);
-            this._normalParserSource.releaseRewindPoint(rewindPoint);
-        };
-        IncrementalParserSource.prototype.tokenDiagnostics = function () {
-            return this._normalParserSource.tokenDiagnostics();
-        };
         return IncrementalParserSource;
     })();    
     var ParserImpl = (function () {
         function ParserImpl(source, options) {
-            this.options = null;
             this.listParsingState = 0;
             this.isInStrictMode = false;
             this.skippedTokens = [];

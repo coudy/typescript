@@ -9,8 +9,7 @@
 /// <reference path='TextChangeRange.ts' />
 
 module Parser {
-    // Information the parser needs to effectively rewind.  Note: individual parser sources may
-    // store additional information in this structure for their own purposes.
+    // Information the parser needs to effectively rewind.
     interface IParserRewindPoint {
         // Information used by normal parser source.
         previousToken: ISyntaxToken;
@@ -50,13 +49,13 @@ module Parser {
     }
 
     // The precedence of expressions in typescript.  While we're parsing an expression, we will 
-    // continue to consume and form new trees, if the precedence is greater than our current
-    // precedence.  For example, if we have: a + b * c, we will first parse 'a' with precedence 0. We
-    // will then see the + with precedence 13.  13 is greater than 0 so we will decide to create a 
-    // binary expression with the result of parsing the sub expression "b * c".  We'll then parse the 
-    // term 'b' (passing in precedence 13).  We will then see the * with precedence 14.  14 is greater
-    // than 13, so we will create a binary expression from "b" and "c", return that, and join it with 
-    // "a" producing:
+    // continue to consume and form new trees if the precedence is greater than our current
+    // precedence.  For example, if we have: a + b * c, we will first parse 'a' with precedence 0. 
+    // We will then see the + with precedence 13.  13 is greater than 0 so we will decide to create
+    // a binary expression with the result of parsing the sub expression "b * c".  We'll then parse
+    // the term 'b' (passing in precedence 13).  We will then see the * with precedence 14.  14 is
+    // greater than 13, so we will create a binary expression from "b" and "c", return that, and 
+    // join it with "a" producing:
     //
     //      +
     //     / \
@@ -170,7 +169,7 @@ module Parser {
     }
 
     // Helper class to take the tokens that we've skipped over and attach them as 'SkippedText' 
-    // trivia to the token that preceded them (or to the first token in teh file if no token 
+    // trivia to the token that preceded them (or to the first token in the file if no token 
     // preceded them).
     class SkippedTokensAdder extends SyntaxRewriter {
         private skippedTokens: SkippedToken[];
@@ -310,7 +309,7 @@ module Parser {
             var element = this.currentElement();
             return element !== null && element.isNode() ? <SyntaxNode>element : null;
         }
-        
+
         public moveToFirstChild() {
             if (this.isFinished()) {
                 return;
@@ -393,7 +392,7 @@ module Parser {
                 return;
             }
         }
-        
+
         public currentToken(): ISyntaxToken {
             this.moveToFirstToken();
             if (this.isFinished()) {
@@ -405,7 +404,7 @@ module Parser {
             Debug.assert(element.isToken());
             return <ISyntaxToken>element;
         }
-        
+
         public peekToken(n: number): ISyntaxToken {
             this.moveToFirstToken();
             var pin = this.getAndPinCursorIndex();
@@ -428,13 +427,13 @@ module Parser {
     // is the interface that the parser needs an underlying scanner to provide.  This allows us to
     // separate out "what" the parser does with the tokens it retrieves versus "how" it obtains
     // the tokens.  i.e. all the logic for parsing language constructs sits in ParserImpl, while 
-    // all the logic for retrieving tokens sits in the ParserSource.
+    // all the logic for retrieving tokens sits in individual IParserSources.
     //
     // By separating out this interface, we also make incremental parsing much easier.  Instead of
     // having the parser directly sit on top of the scanner, we sit it on this abstraction.  Then
     // in incremental scenarios, we can use the IncrementalParserSource to pull tokens (or even 
     // full nodes) from the previous tree when possible.  Of course, we'll still end up using a 
-    // scanner for new text.  But that can all happen inside hte source, with none of the logic in
+    // scanner for new text.  But that can all happen inside the source, with none of the logic in
     // the parser having to be aware of it.
     //
     // In general terms, a parser source represents a position within a text.  At that position, 
@@ -464,7 +463,8 @@ module Parser {
         // have their fullStart at this position.  previousToken has it's fullEnd at this position.
         absolutePosition(): number;
 
-        // The token that comes before the 'currentToken' that hte source is pointing at.
+        // The token that comes before the 'currentToken' that hte source is pointing at. Initially
+        // null. 
         previousToken(): ISyntaxToken;
 
         // The current syntax node the source is pointing at.  Only available in incremental settings.
@@ -482,7 +482,8 @@ module Parser {
 
         // Peek any number of tokens ahead from the current location in source.  peekToken(0) is
         // equivalent to 'currentToken', peekToken(1) is the next token, peekToken(2) the token
-        // after that, etc.
+        // after that, etc.  If the caller peeks past the end of the text, then EndOfFile tokens
+        // will be returned.
         peekToken(n: number): ISyntaxToken;
 
         // Called to move the source to the next node or token once the parser has consumed the 
@@ -530,6 +531,9 @@ module Parser {
         tokenDiagnostics(): SyntaxDiagnostic[];
     }
 
+    // Parser source used in batch scenarios.  Directly calls into an underlying text scanner and
+    // supports none of the functionality to reuse nodes.  Good for when you just want want to do
+    // a single parse of a file.
     class NormalParserSource implements IParserSource {
         // The sliding window that we store tokens in.
         private slidingWindow: SlidingWindow;
@@ -554,8 +558,8 @@ module Parser {
         private rewindPointPoolCount = 0;
 
         constructor(text: IText,
-            languageVersion: LanguageVersion,
-            stringTable: Collections.StringTable) {
+                    languageVersion: LanguageVersion,
+                    stringTable: Collections.StringTable) {
             this.slidingWindow = new SlidingWindow(this, /*defaultWindowSize:*/ 32, null);
             this.scanner = new Scanner(text, languageVersion, stringTable);
         }
@@ -670,13 +674,13 @@ module Parser {
             this._absolutePosition = absolutePosition;
             this._previousToken = previousToken;
 
-            // First, remove any diagnostics that came from the slash or afterwards.
+            // First, remove any diagnostics that came after this position.
             this.removeDiagnosticsOnOrAfterPosition(absolutePosition);
 
-            // Now, tell our sliding window to throw away all tokens from the / onwards (including the /).
+            // Now, tell our sliding window to throw away all tokens after this position as well.
             this.slidingWindow.disgardAllItemsFromCurrentIndexOnwards();
 
-            // Now tell the scanner to reset its position to the start of the / token as well.  That way
+            // Now tell the scanner to reset its position to this position as well.  That way
             // when we try to scan the next item, we'll be at the right location.
             this.scanner.setAbsoluteIndex(absolutePosition);
         }
@@ -695,7 +699,6 @@ module Parser {
             // We also need to remove all the tokens we've gotten from the slash and onwards.  They may
             // not have been what the scanner would have produced if it decides that this is actually
             // a regular expresion.
-
             this.resetToPosition(this._absolutePosition, this._previousToken);
 
             // Now actually fetch the token again from the scanner. This time let it know that it
@@ -710,12 +713,53 @@ module Parser {
         }
     }
 
+    // Parser source used in incremental scenarios. This parser source wraps an old tree, text 
+    // change and new text, and uses all three to provide nodes and tokens to the parser.  In
+    // general, nodes from the old tree are returned as long as they do not intersect with the text 
+    // change.  Then, once the text change is reached, tokens from the old tree are returned as 
+    // long as they do not intersect with the text change.  Then, the text that is actually changed
+    // will be scanned using a normal scanner.  Then, once the new text is scanned, the source will
+    // attempt to sync back up with nodes or tokens that started where the new tokens end. Once it
+    // can do that, then all subsequent data will come from teh original text.
+    //
+    // This allows for an enormous amount of tree reuse in common scenarios.  Situations that 
+    // prevent this level of reuse include substantially destructive operations like introducing
+    // "/*" without a "*/" nearby to terminate the comment.
     class IncrementalParserSource implements IParserSource {
+        // The underlying parser source that we will use to scan tokens from any new text, or any 
+        // tokens from the old tree that we decide we can't use for any reason.  We will also 
+        // continue scanning tokens from this source until we've decided that we're resynchronized
+        // and can read in subsequent data from the old tree.
+        //
+        // This parser source also keeps track of the absolute position in the text that we're in,
+        // the previous token, and any token diagnostics produced.  That way we dont' have to track
+        // that ourselves.
+        private _normalParserSource: NormalParserSource;
+
+        // The range of text in the *original* text that was changed, and the new length of it after
+        // the change.
         private _changeRange: TextChangeRange;
+
+        // This number represents how our position in the old tree relates to the position we're 
+        // pointing at in the new text.  If it is 0 then our positions are in sync and we can read
+        // nodes or tokens from the old tree.  If it is non-zero, then our positions are not in 
+        // sync and we cannot use nodes or tokens from the old tree.
+        //
+        // Now, changeDelta could be negative or positive.  Negative means 'the position we're at
+        // in the original tree is behind the position we're at in the text'.  In this case we 
+        // keep throwing out old nodes or tokens (and thus move forward in the original tree) until
+        // changeDelta becomes 0 again or positive.  If it becomes 0 then we are resynched and can
+        // read nodes or tokesn from the tree.
+        //
+        // If changeDelta is positive, that means the current node or token we're pointing at in 
+        // the old tree is at a further ahead position than the position we're pointing at in the
+        // new text.  In this case we have no choice but to scan tokens from teh new text.  We will
+        // continue to do so until, again, changeDelta becomes 0 and we've resynced, or change delta
+        // becomes negative and we need to skip nodes or tokes in the original tree.
         private _changeDelta: number = 0;
 
+        // The cursor we use to navigate through and retrieve nodes and tokens from the old tree.
         private _oldSourceUnitCursor: SyntaxCursor;
-        private _normalParserSource: NormalParserSource;
 
         constructor(oldSourceUnit: SourceUnitSyntax,
                     changeRanges: TextChangeRange[],
@@ -799,6 +843,40 @@ module Parser {
             return this._normalParserSource.previousToken();
         }
 
+        private tokenDiagnostics(): SyntaxDiagnostic[] {
+            return this._normalParserSource.tokenDiagnostics();
+        }
+
+        private getRewindPoint(): IParserRewindPoint {
+            // Get a rewind point for our new text reader and for our old source unit cursor.
+            var rewindPoint = this._normalParserSource.getRewindPoint();
+            var oldSourceUnitCursorIndex = this._oldSourceUnitCursor.getAndPinCursorIndex();
+
+            // Store where we were when the rewind point was created.
+            rewindPoint.changeDelta = this._changeDelta;
+            rewindPoint.changeRange = this._changeRange;
+            rewindPoint.oldSourceUnitCursorIndex = oldSourceUnitCursorIndex;
+
+            Debug.assert(rewindPoint.pinCount === this._oldSourceUnitCursor.pinCount());
+
+            return rewindPoint;
+        }
+
+        private rewind(rewindPoint: IParserRewindPoint): void {
+            // Restore our state to the values when the rewind point was created.
+            this._changeRange = rewindPoint.changeRange;
+            this._changeDelta = rewindPoint.changeDelta;
+            this._oldSourceUnitCursor.rewindToPinnedCursorIndex(rewindPoint.oldSourceUnitCursorIndex);
+
+            this._normalParserSource.rewind(rewindPoint);
+        }
+
+        private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
+            // Release both the new text reader and the old text cursor.
+            this._oldSourceUnitCursor.releaseAndUnpinCursorIndex(rewindPoint.oldSourceUnitCursorIndex);
+            this._normalParserSource.releaseRewindPoint(rewindPoint);
+        }
+
         private canReadFromOldSourceUnit() {
             // If we're currently pinned, then do not want to touch the cursor.  If we end up 
             // reading from the old source unit, we'll try to then set the position of the normal
@@ -843,6 +921,7 @@ module Parser {
         }
 
         public currentTokenAllowingRegularExpression(): ISyntaxToken {
+            // Just delegate to the underlying source to handle this.
             return this._normalParserSource.currentTokenAllowingRegularExpression();
         }
 
@@ -1084,47 +1163,17 @@ module Parser {
                 }
             }
         }
-
-        private getRewindPoint(): IParserRewindPoint {
-            // Get a rewind point for our new text reader and for our old source unit cursor.
-            var rewindPoint = this._normalParserSource.getRewindPoint();
-            var oldSourceUnitCursorIndex = this._oldSourceUnitCursor.getAndPinCursorIndex();
-
-            // Store where we were when the rewind point was created.
-            rewindPoint.changeDelta = this._changeDelta;
-            rewindPoint.changeRange = this._changeRange;
-            rewindPoint.oldSourceUnitCursorIndex = oldSourceUnitCursorIndex;
-
-            Debug.assert(rewindPoint.pinCount === this._oldSourceUnitCursor.pinCount());
-
-            return rewindPoint;
-        }
-
-        private rewind(rewindPoint: IParserRewindPoint): void {
-            // Restore our state to the values when the rewind point was created.
-            this._changeRange = rewindPoint.changeRange;
-            this._changeDelta = rewindPoint.changeDelta;
-            this._oldSourceUnitCursor.rewindToPinnedCursorIndex(rewindPoint.oldSourceUnitCursorIndex);
-
-            this._normalParserSource.rewind(rewindPoint);
-        }
-
-        private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
-            // Release both the new text reader and the old text cursor.
-            this._oldSourceUnitCursor.releaseAndUnpinCursorIndex(rewindPoint.oldSourceUnitCursorIndex);
-            this._normalParserSource.releaseRewindPoint(rewindPoint);
-        }
-
-        private tokenDiagnostics(): SyntaxDiagnostic[] {
-            return this._normalParserSource.tokenDiagnostics();
-        }
     }
 
+    // Contains the actual logic to parse typescript/javascript.  This is the code that generally
+    // represents the logic necessary to handle all the language grammar constructs.  When the 
+    // language changes, this should generally only be the place necessary to fix up.
     class ParserImpl {
+        // Underlying source where we pull nodes and tokens from.
         private source: IParserSource;
 
         // Parsing options.
-        private options: ParseOptions = null;
+        private options: ParseOptions;
 
         // TODO: do we need to store/restore this when speculative parsing?  I don't think so.  The
         // parsing logic already handles storing/restoring this and should work properly even if we're
