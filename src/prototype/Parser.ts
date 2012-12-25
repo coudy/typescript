@@ -1357,7 +1357,7 @@ module Parser {
         // *IdentifierName*.
         private eatIdentifierToken(): ISyntaxToken {
             var token = this.currentToken();
-            if (token.kind() === SyntaxKind.IdentifierNameToken && !this.isKeyword(token.keywordKind())) {
+            if (this.isIdentifier(token)) {
                 this.moveToNextToken();
                 return token;
             }

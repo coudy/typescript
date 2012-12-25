@@ -28299,7 +28299,7 @@ var Parser;
         };
         ParserImpl.prototype.eatIdentifierToken = function () {
             var token = this.currentToken();
-            if(token.kind() === 9 /* IdentifierNameToken */  && !this.isKeyword(token.keywordKind())) {
+            if(this.isIdentifier(token)) {
                 this.moveToNextToken();
                 return token;
             }
