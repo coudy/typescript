@@ -1274,8 +1274,6 @@ module Parser {
             return this.source.peekToken(n);
         }
 
-        //this method is called very frequently
-        //we should keep it simple so that it can be inlined.
         private eatAnyToken(): ISyntaxToken {
             var token = this.currentToken();
             this.moveToNextToken();
@@ -1343,7 +1341,7 @@ module Parser {
             return this.createMissingToken(SyntaxKind.IdentifierNameToken, kind, token);
         }
 
-        // This method should be called when the grammar calls for on *IdentifierName* and not an
+        // This method should be called when the grammar calls for an *IdentifierName* and not an
         // *Identifier*.
         private eatIdentifierNameToken(): ISyntaxToken {
             var token = this.currentToken();
@@ -1355,15 +1353,11 @@ module Parser {
             return this.createMissingToken(SyntaxKind.IdentifierNameToken, SyntaxKind.None, token);
         }
 
-        // This method should be called when the grammar calls for on *Identifier* and not an
+        // This method should be called when the grammar calls for an *Identifier* and not an
         // *IdentifierName*.
         private eatIdentifierToken(): ISyntaxToken {
             var token = this.currentToken();
-            if (token.kind() === SyntaxKind.IdentifierNameToken) {
-                if (this.isKeyword(token.keywordKind())) {
-                    return this.createMissingToken(SyntaxKind.IdentifierNameToken, SyntaxKind.None, token);
-                }
-
+            if (token.kind() === SyntaxKind.IdentifierNameToken && !this.isKeyword(token.keywordKind())) {
                 this.moveToNextToken();
                 return token;
             }

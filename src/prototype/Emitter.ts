@@ -10,7 +10,7 @@
 module Emitter {
     // Class that makes sure we're not reusing tokens in a tree
     class EnsureTokenUniquenessRewriter extends SyntaxRewriter {
-        private tokenTable = Collections.createHashTable(Collections.DefaultHashTableCapacity, Syntax.tokenHashCode);
+        private tokenTable = Collections.createHashTable(Collections.DefaultHashTableCapacity, Collections.identityHashCode);
 
         private visitToken(token: ISyntaxToken): ISyntaxToken {
             if (this.tokenTable.containsKey(token)) {

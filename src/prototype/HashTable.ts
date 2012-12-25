@@ -164,4 +164,14 @@ module Collections {
                                     equals: (k1: any, k2: any) => bool = null): HashTable {
         return new HashTable(capacity, hash, equals);
     }
+
+    var currentHashCode = 1;
+    export function identityHashCode(value: any): number {
+        if (value.__hash === undefined) {
+            value.__hash = currentHashCode;
+            currentHashCode++;
+        }
+
+        return value.__hash;
+    }
 }

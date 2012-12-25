@@ -3,36 +3,30 @@
 ///<reference path='Scanner.ts' />
 
 module Syntax {
-    export function tokenHashCode(token: ISyntaxToken): number {
-        var hash = 0;
+    //export function tokenHashCode(token: ISyntaxToken): number {
+    //    var hash = 0;
 
-        hash = Hash.combine(token.leadingTriviaWidth(), hash);
-        hash = Hash.combine(token.hasLeadingComment() ? 1 : 0, hash);
-        hash = Hash.combine(token.hasLeadingNewLine() ? 1 : 0, hash);
-        hash = Hash.combine(token.hasLeadingSkippedText() ? 1 : 0, hash);
+    //    hash = Hash.combine(token.leadingTriviaWidth(), hash);
+    //    hash = Hash.combine(token.hasLeadingComment() ? 1 : 0, hash);
+    //    hash = Hash.combine(token.hasLeadingNewLine() ? 1 : 0, hash);
+    //    hash = Hash.combine(token.hasLeadingSkippedText() ? 1 : 0, hash);
 
-        hash = Hash.combine(token.kind(), hash);
-        hash = Hash.combine(token.keywordKind(), hash);
-        hash = Hash.combine(Hash.computeSimple31BitStringHashCode(token.text()), hash);
+    //    hash = Hash.combine(token.kind(), hash);
+    //    hash = Hash.combine(token.keywordKind(), hash);
+    //    hash = Hash.combine(Hash.computeSimple31BitStringHashCode(token.text()), hash);
 
-        hash = Hash.combine(token.trailingTriviaWidth(), hash);
-        hash = Hash.combine(token.hasTrailingComment() ? 1 : 0, hash);
-        hash = Hash.combine(token.hasTrailingNewLine() ? 1 : 0, hash);
-        hash = Hash.combine(token.hasTrailingSkippedText() ? 1 : 0, hash);
+    //    hash = Hash.combine(token.trailingTriviaWidth(), hash);
+    //    hash = Hash.combine(token.hasTrailingComment() ? 1 : 0, hash);
+    //    hash = Hash.combine(token.hasTrailingNewLine() ? 1 : 0, hash);
+    //    hash = Hash.combine(token.hasTrailingSkippedText() ? 1 : 0, hash);
 
-        return hash;
-    }
+    //    return hash;
+    //}
 
     export function realize(token: ISyntaxToken): ISyntaxToken {
         return new RealizedToken(token.kind(), token.keywordKind(),
             token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia());
     }
-
-    //export function collectTokenTextElements(token: ISyntaxToken, elements: string[]): void {
-    //    token.leadingTrivia().collectTextElements(elements);
-    //    elements.push(token.text());
-    //    token.trailingTrivia().collectTextElements(elements);
-    //}
 
     export function tokenToJSON(token: ISyntaxToken) {
         var result: any = {

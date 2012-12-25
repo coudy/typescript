@@ -8349,22 +8349,6 @@ var Scanner = (function () {
 })();
 var Syntax;
 (function (Syntax) {
-    function tokenHashCode(token) {
-        var hash = 0;
-        hash = Hash.combine(token.leadingTriviaWidth(), hash);
-        hash = Hash.combine(token.hasLeadingComment() ? 1 : 0, hash);
-        hash = Hash.combine(token.hasLeadingNewLine() ? 1 : 0, hash);
-        hash = Hash.combine(token.hasLeadingSkippedText() ? 1 : 0, hash);
-        hash = Hash.combine(token.kind(), hash);
-        hash = Hash.combine(token.keywordKind(), hash);
-        hash = Hash.combine(Hash.computeSimple31BitStringHashCode(token.text()), hash);
-        hash = Hash.combine(token.trailingTriviaWidth(), hash);
-        hash = Hash.combine(token.hasTrailingComment() ? 1 : 0, hash);
-        hash = Hash.combine(token.hasTrailingNewLine() ? 1 : 0, hash);
-        hash = Hash.combine(token.hasTrailingSkippedText() ? 1 : 0, hash);
-        return hash;
-    }
-    Syntax.tokenHashCode = tokenHashCode;
     function realize(token) {
         return new RealizedToken(token.kind(), token.keywordKind(), token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia());
     }
@@ -26600,13 +26584,22 @@ var Collections;
         return new HashTable(capacity, hash, equals);
     }
     Collections.createHashTable = createHashTable;
+    var currentHashCode = 1;
+    function identityHashCode(value) {
+        if(value.__hash === undefined) {
+            value.__hash = currentHashCode;
+            currentHashCode++;
+        }
+        return value.__hash;
+    }
+    Collections.identityHashCode = identityHashCode;
 })(Collections || (Collections = {}));
 var SyntaxInformationMap = (function (_super) {
     __extends(SyntaxInformationMap, _super);
     function SyntaxInformationMap() {
         _super.apply(this, arguments);
 
-        this.tokenToInformation = Collections.createHashTable(Collections.DefaultHashTableCapacity, Syntax.tokenHashCode);
+        this.tokenToInformation = Collections.createHashTable(Collections.DefaultHashTableCapacity, Collections.identityHashCode);
         this._previousToken = null;
         this._previousTokenInformation = null;
         this._currentPosition = 0;
@@ -26987,7 +26980,7 @@ var SyntaxNodeInvariantsChecker = (function (_super) {
     function SyntaxNodeInvariantsChecker() {
         _super.apply(this, arguments);
 
-        this.tokenTable = Collections.createHashTable(Collections.DefaultHashTableCapacity, Syntax.tokenHashCode);
+        this.tokenTable = Collections.createHashTable(Collections.DefaultHashTableCapacity, Collections.identityHashCode);
     }
     SyntaxNodeInvariantsChecker.checkInvariants = function checkInvariants(node) {
         node.accept(new SyntaxNodeInvariantsChecker());
@@ -27004,7 +26997,7 @@ var Emitter;
         function EnsureTokenUniquenessRewriter() {
             _super.apply(this, arguments);
 
-            this.tokenTable = Collections.createHashTable(Collections.DefaultHashTableCapacity, Syntax.tokenHashCode);
+            this.tokenTable = Collections.createHashTable(Collections.DefaultHashTableCapacity, Collections.identityHashCode);
         }
         EnsureTokenUniquenessRewriter.prototype.visitToken = function (token) {
             if(this.tokenTable.containsKey(token)) {
@@ -28306,10 +28299,7 @@ var Parser;
         };
         ParserImpl.prototype.eatIdentifierToken = function () {
             var token = this.currentToken();
-            if(token.kind() === 9 /* IdentifierNameToken */ ) {
-                if(this.isKeyword(token.keywordKind())) {
-                    return this.createMissingToken(9 /* IdentifierNameToken */ , 0 /* None */ , token);
-                }
+            if(token.kind() === 9 /* IdentifierNameToken */  && !this.isKeyword(token.keywordKind())) {
                 this.moveToNextToken();
                 return token;
             }
@@ -33330,8 +33320,6 @@ var Program = (function () {
         }
         if(true) {
         }
-        Environment.standardOut.WriteLine("Testing Incremental Perf.");
-        this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
             return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);
@@ -33368,6 +33356,8 @@ var Program = (function () {
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
             return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
+        Environment.standardOut.WriteLine("Testing Incremental Perf.");
+        this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");
     };
     Program.reusedElements = function reusedElements(oldNode, newNode, key) {
         var allOldElements = SyntaxElementsCollector.collectElements(oldNode);

@@ -10,7 +10,7 @@
 // many algorithms.  For this reason, when generating trees, it is important that nodes that are 
 // reused are cloned before insertion.
 class SyntaxNodeInvariantsChecker extends SyntaxWalker {
-    private tokenTable = Collections.createHashTable(Collections.DefaultHashTableCapacity, Syntax.tokenHashCode);
+    private tokenTable = Collections.createHashTable(Collections.DefaultHashTableCapacity, Collections.identityHashCode);
 
     public static checkInvariants(node: SyntaxNode): void {
         node.accept(new SyntaxNodeInvariantsChecker());
