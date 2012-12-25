@@ -29839,8 +29839,7 @@ var Parser;
         };
         ParserImpl.prototype.tryReparseDivideAsRegularExpression = function () {
             var currentToken = this.currentToken();
-            var currentTokenKind = currentToken.kind();
-            Debug.assert(currentTokenKind === 115 /* SlashToken */  || currentTokenKind === 116 /* SlashEqualsToken */ );
+            Debug.assert(SyntaxFacts.isAnyDivideToken(currentToken.kind()));
             if(this.previousToken() !== null) {
                 var previousTokenKind = this.previousToken().kind();
                 switch(previousTokenKind) {
@@ -30537,9 +30536,6 @@ var Parser;
 
                 }
             }
-        };
-        ParserImpl.prototype.existingDiagnosticAtPosition = function (position) {
-            return this.diagnostics.length > 0 && this.diagnostics[this.diagnostics.length - 1].position() === position;
         };
         ParserImpl.prototype.reportUnexpectedTokenDiagnostic = function (listType) {
             var token = this.currentToken();

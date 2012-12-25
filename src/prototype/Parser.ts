@@ -3348,7 +3348,7 @@ module Parser {
             }
 
             // ERROR RECOVERY TWEAK:
-            // If we see a standalong => try to parse it as an arrow function as that's likely what
+            // If we see a standalone => try to parse it as an arrow function as that's likely what
             // the user intended to write.
             if (currentToken.kind() === SyntaxKind.EqualsGreaterThanToken) {
                 return this.parseSimpleArrowFunctionExpression();
@@ -3440,8 +3440,7 @@ module Parser {
             // contexts.
 
             var currentToken = this.currentToken();
-            var currentTokenKind = currentToken.kind();
-            Debug.assert(currentTokenKind === SyntaxKind.SlashToken || currentTokenKind === SyntaxKind.SlashEqualsToken);
+            Debug.assert(SyntaxFacts.isAnyDivideToken(currentToken.kind()));
 
             // There are several contexts where we could never see a regex.  Don't even bother 
             // reinterpretting the / in these contexts.
@@ -3492,7 +3491,7 @@ module Parser {
 
             // Ok, from our quick lexical check, this could be a place where a regular expression could
             // go.  Now we have to do a bunch of work.  Ask the source to retrive the token at the 
-            // current position again.  But this time allow it to retrive it as a regular expression.
+            // current position again.  But this time allow it to retrieve it as a regular expression.
             currentToken = this.currentTokenAllowingRegularExpression();
 
             // Note: we *must* have gotten a /, /= or regular expression.  Or else something went *very*
@@ -3610,8 +3609,11 @@ module Parser {
             Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
 
             // Because arrow functions and parenthesized expressions look similar, we have to check far
-            // enough ahead to be sure we've actually got an arrow function.
-
+            // enough ahead to be sure we've actually got an arrow function. For example, both nodes can
+            // start with:
+            //    (a = b, c = d, ..., e = f).
+            //So we effectively need infinite lookahead to decide which node we're in.
+            //
             // First, check for things that definitely have enough information to let us know it's an
             // arrow function.
 
@@ -3656,8 +3658,6 @@ module Parser {
 
         private parseArrowFunctionBody(): SyntaxNode {
             if (this.isBlock()) {
-                // TODO: The spec says that function declarations are not allowed.  However, we have some
-                // code that uses them.  So we allow them here.
                 return this.parseBlock();
             }
             else {
@@ -4136,7 +4136,7 @@ module Parser {
             return this.isIdentifier(token);
         }
 
-        private parseParameter(): ParameterSyntax {            
+        private parseParameter(): ParameterSyntax {
             if (this.currentNode() !== null && this.currentNode().kind() === SyntaxKind.Parameter) {
                 return <ParameterSyntax>this.eatNode();
             }
@@ -4158,11 +4158,12 @@ module Parser {
                 equalsValueClause = this.parseEqualsValuesClause(/*allowIn:*/ true);
             }
 
-            return new ParameterSyntax(dotDotDotToken, publicOrPrivateToken, identifier, questionToken, typeAnnotation, equalsValueClause);
+            return new ParameterSyntax(
+                dotDotDotToken, publicOrPrivateToken, identifier, questionToken, typeAnnotation, equalsValueClause);
         }
 
         private parseSyntaxList(currentListType: ListParsingState,
-            processItems: (parser: ParserImpl, items: any[]) => void = null): ISyntaxList {
+                                processItems: (parser: ParserImpl, items: any[]) => void = null): ISyntaxList {
             var savedListParsingState = this.listParsingState;
             this.listParsingState |= currentListType;
 
@@ -4243,7 +4244,7 @@ module Parser {
         }
 
         private parseSyntaxListWorker(currentListType: ListParsingState,
-            processItems: (parser: ParserImpl, items: any[]) => void ): ISyntaxList {
+                                      processItems: (parser: ParserImpl, items: any[]) => void ): ISyntaxList {
             var items: SyntaxNode[] = null;
 
             while (true) {
@@ -4512,11 +4513,6 @@ module Parser {
                 default:
                     throw Errors.notYetImplemented();
             }
-        }
-
-        private existingDiagnosticAtPosition(position: number): bool {
-            return this.diagnostics.length > 0 &&
-                this.diagnostics[this.diagnostics.length - 1].position() === position;
         }
 
         private reportUnexpectedTokenDiagnostic(listType: ListParsingState): void {
