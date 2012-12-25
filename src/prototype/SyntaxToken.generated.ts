@@ -6,14 +6,14 @@ module Syntax {
     class VariableWidthTokenWithNoTrivia implements ISyntaxToken {
         private _sourceText: IText;
         private _fullStart: number;
-        public tokenKind: SyntaxKind;
+        private _kind: SyntaxKind;
         private _textOrWidth: any;
         private _value: any = null;
 
         constructor(sourceText: IText, fullStart: number,kind: SyntaxKind, textOrWidth: any) {
             this._sourceText = sourceText;
             this._fullStart = fullStart;
-            this.tokenKind = kind;
+            this._kind = kind;
             this._textOrWidth = textOrWidth;
         }
 
@@ -21,7 +21,7 @@ module Syntax {
             return new VariableWidthTokenWithNoTrivia(
                 this._sourceText,
                 this._fullStart,
-                this.tokenKind,
+                this._kind,
                 this._textOrWidth);
         }
 
@@ -32,7 +32,7 @@ module Syntax {
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
-        public kind(): SyntaxKind { return this.tokenKind; }
+        public kind(): SyntaxKind { return this._kind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
 
         public fullWidth(): number { return this.width(); }
@@ -44,7 +44,7 @@ module Syntax {
         public text(): string {
             if (typeof this._textOrWidth === 'number') {
                 this._textOrWidth = this._sourceText.substr(
-                    this.start(), this._textOrWidth, /*intern:*/ this.tokenKind === SyntaxKind.IdentifierNameToken);
+                    this.start(), this._textOrWidth, /*intern:*/ this._kind === SyntaxKind.IdentifierNameToken);
             }
 
             return this._textOrWidth;
@@ -84,7 +84,7 @@ module Syntax {
     class VariableWidthTokenWithLeadingTrivia implements ISyntaxToken {
         private _sourceText: IText;
         private _fullStart: number;
-        public tokenKind: SyntaxKind;
+        private _kind: SyntaxKind;
         private _leadingTriviaInfo: number;
         private _textOrWidth: any;
         private _value: any = null;
@@ -92,7 +92,7 @@ module Syntax {
         constructor(sourceText: IText, fullStart: number,kind: SyntaxKind, leadingTriviaInfo: number, textOrWidth: any) {
             this._sourceText = sourceText;
             this._fullStart = fullStart;
-            this.tokenKind = kind;
+            this._kind = kind;
             this._leadingTriviaInfo = leadingTriviaInfo;
             this._textOrWidth = textOrWidth;
         }
@@ -101,7 +101,7 @@ module Syntax {
             return new VariableWidthTokenWithLeadingTrivia(
                 this._sourceText,
                 this._fullStart,
-                this.tokenKind,
+                this._kind,
                 this._leadingTriviaInfo,
                 this._textOrWidth);
         }
@@ -113,7 +113,7 @@ module Syntax {
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
-        public kind(): SyntaxKind { return this.tokenKind; }
+        public kind(): SyntaxKind { return this._kind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
 
         public fullWidth(): number { return getTriviaWidth(this._leadingTriviaInfo) + this.width(); }
@@ -125,7 +125,7 @@ module Syntax {
         public text(): string {
             if (typeof this._textOrWidth === 'number') {
                 this._textOrWidth = this._sourceText.substr(
-                    this.start(), this._textOrWidth, /*intern:*/ this.tokenKind === SyntaxKind.IdentifierNameToken);
+                    this.start(), this._textOrWidth, /*intern:*/ this._kind === SyntaxKind.IdentifierNameToken);
             }
 
             return this._textOrWidth;
@@ -165,7 +165,7 @@ module Syntax {
     class VariableWidthTokenWithTrailingTrivia implements ISyntaxToken {
         private _sourceText: IText;
         private _fullStart: number;
-        public tokenKind: SyntaxKind;
+        private _kind: SyntaxKind;
         private _textOrWidth: any;
         private _value: any = null;
         private _trailingTriviaInfo: number;
@@ -173,7 +173,7 @@ module Syntax {
         constructor(sourceText: IText, fullStart: number,kind: SyntaxKind, textOrWidth: any, trailingTriviaInfo: number) {
             this._sourceText = sourceText;
             this._fullStart = fullStart;
-            this.tokenKind = kind;
+            this._kind = kind;
             this._textOrWidth = textOrWidth;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
@@ -182,7 +182,7 @@ module Syntax {
             return new VariableWidthTokenWithTrailingTrivia(
                 this._sourceText,
                 this._fullStart,
-                this.tokenKind,
+                this._kind,
                 this._textOrWidth,
                 this._trailingTriviaInfo);
         }
@@ -194,7 +194,7 @@ module Syntax {
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
-        public kind(): SyntaxKind { return this.tokenKind; }
+        public kind(): SyntaxKind { return this._kind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
 
         public fullWidth(): number { return this.width() + getTriviaWidth(this._trailingTriviaInfo); }
@@ -206,7 +206,7 @@ module Syntax {
         public text(): string {
             if (typeof this._textOrWidth === 'number') {
                 this._textOrWidth = this._sourceText.substr(
-                    this.start(), this._textOrWidth, /*intern:*/ this.tokenKind === SyntaxKind.IdentifierNameToken);
+                    this.start(), this._textOrWidth, /*intern:*/ this._kind === SyntaxKind.IdentifierNameToken);
             }
 
             return this._textOrWidth;
@@ -246,7 +246,7 @@ module Syntax {
     class VariableWidthTokenWithLeadingAndTrailingTrivia implements ISyntaxToken {
         private _sourceText: IText;
         private _fullStart: number;
-        public tokenKind: SyntaxKind;
+        private _kind: SyntaxKind;
         private _leadingTriviaInfo: number;
         private _textOrWidth: any;
         private _value: any = null;
@@ -255,7 +255,7 @@ module Syntax {
         constructor(sourceText: IText, fullStart: number,kind: SyntaxKind, leadingTriviaInfo: number, textOrWidth: any, trailingTriviaInfo: number) {
             this._sourceText = sourceText;
             this._fullStart = fullStart;
-            this.tokenKind = kind;
+            this._kind = kind;
             this._leadingTriviaInfo = leadingTriviaInfo;
             this._textOrWidth = textOrWidth;
             this._trailingTriviaInfo = trailingTriviaInfo;
@@ -265,7 +265,7 @@ module Syntax {
             return new VariableWidthTokenWithLeadingAndTrailingTrivia(
                 this._sourceText,
                 this._fullStart,
-                this.tokenKind,
+                this._kind,
                 this._leadingTriviaInfo,
                 this._textOrWidth,
                 this._trailingTriviaInfo);
@@ -278,7 +278,7 @@ module Syntax {
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
-        public kind(): SyntaxKind { return this.tokenKind; }
+        public kind(): SyntaxKind { return this._kind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
 
         public fullWidth(): number { return getTriviaWidth(this._leadingTriviaInfo) + this.width() + getTriviaWidth(this._trailingTriviaInfo); }
@@ -290,7 +290,7 @@ module Syntax {
         public text(): string {
             if (typeof this._textOrWidth === 'number') {
                 this._textOrWidth = this._sourceText.substr(
-                    this.start(), this._textOrWidth, /*intern:*/ this.tokenKind === SyntaxKind.IdentifierNameToken);
+                    this.start(), this._textOrWidth, /*intern:*/ this._kind === SyntaxKind.IdentifierNameToken);
             }
 
             return this._textOrWidth;
@@ -328,15 +328,15 @@ module Syntax {
     }
 
     class FixedWidthTokenWithNoTrivia implements ISyntaxToken {
-        public tokenKind: SyntaxKind;
+        private _kind: SyntaxKind;
 
         constructor(kind: SyntaxKind) {
-            this.tokenKind = kind;
+            this._kind = kind;
         }
 
         public clone(): ISyntaxToken {
             return new FixedWidthTokenWithNoTrivia(
-                this.tokenKind);
+                this._kind);
         }
 
         public isToken(): bool { return true; }
@@ -346,12 +346,12 @@ module Syntax {
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
-        public kind(): SyntaxKind { return this.tokenKind; }
+        public kind(): SyntaxKind { return this._kind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
 
         public fullWidth(): number { return this.width(); }
         public width(): number { return this.text().length; }
-        public text(): string { return SyntaxFacts.getText(this.tokenKind); }
+        public text(): string { return SyntaxFacts.getText(this._kind); }
         public fullText(): string { return this.text(); }
 
         public value(): any { return null; }
@@ -386,13 +386,13 @@ module Syntax {
     class FixedWidthTokenWithLeadingTrivia implements ISyntaxToken {
         private _sourceText: IText;
         private _fullStart: number;
-        public tokenKind: SyntaxKind;
+        private _kind: SyntaxKind;
         private _leadingTriviaInfo: number;
 
         constructor(sourceText: IText, fullStart: number,kind: SyntaxKind, leadingTriviaInfo: number) {
             this._sourceText = sourceText;
             this._fullStart = fullStart;
-            this.tokenKind = kind;
+            this._kind = kind;
             this._leadingTriviaInfo = leadingTriviaInfo;
         }
 
@@ -400,7 +400,7 @@ module Syntax {
             return new FixedWidthTokenWithLeadingTrivia(
                 this._sourceText,
                 this._fullStart,
-                this.tokenKind,
+                this._kind,
                 this._leadingTriviaInfo);
         }
 
@@ -411,7 +411,7 @@ module Syntax {
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
-        public kind(): SyntaxKind { return this.tokenKind; }
+        public kind(): SyntaxKind { return this._kind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
 
         public fullWidth(): number { return getTriviaWidth(this._leadingTriviaInfo) + this.width(); }
@@ -419,7 +419,7 @@ module Syntax {
         private end(): number { return this.start() + this.width(); }
 
         public width(): number { return this.text().length; }
-        public text(): string { return SyntaxFacts.getText(this.tokenKind); }
+        public text(): string { return SyntaxFacts.getText(this._kind); }
         public fullText(): string { return this._sourceText.substr(this._fullStart, this.fullWidth(), /*intern:*/ false); }
 
         public value(): any { return null; }
@@ -454,13 +454,13 @@ module Syntax {
     class FixedWidthTokenWithTrailingTrivia implements ISyntaxToken {
         private _sourceText: IText;
         private _fullStart: number;
-        public tokenKind: SyntaxKind;
+        private _kind: SyntaxKind;
         private _trailingTriviaInfo: number;
 
         constructor(sourceText: IText, fullStart: number,kind: SyntaxKind, trailingTriviaInfo: number) {
             this._sourceText = sourceText;
             this._fullStart = fullStart;
-            this.tokenKind = kind;
+            this._kind = kind;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
 
@@ -468,7 +468,7 @@ module Syntax {
             return new FixedWidthTokenWithTrailingTrivia(
                 this._sourceText,
                 this._fullStart,
-                this.tokenKind,
+                this._kind,
                 this._trailingTriviaInfo);
         }
 
@@ -479,7 +479,7 @@ module Syntax {
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
-        public kind(): SyntaxKind { return this.tokenKind; }
+        public kind(): SyntaxKind { return this._kind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
 
         public fullWidth(): number { return this.width() + getTriviaWidth(this._trailingTriviaInfo); }
@@ -487,7 +487,7 @@ module Syntax {
         private end(): number { return this.start() + this.width(); }
 
         public width(): number { return this.text().length; }
-        public text(): string { return SyntaxFacts.getText(this.tokenKind); }
+        public text(): string { return SyntaxFacts.getText(this._kind); }
         public fullText(): string { return this._sourceText.substr(this._fullStart, this.fullWidth(), /*intern:*/ false); }
 
         public value(): any { return null; }
@@ -522,14 +522,14 @@ module Syntax {
     class FixedWidthTokenWithLeadingAndTrailingTrivia implements ISyntaxToken {
         private _sourceText: IText;
         private _fullStart: number;
-        public tokenKind: SyntaxKind;
+        private _kind: SyntaxKind;
         private _leadingTriviaInfo: number;
         private _trailingTriviaInfo: number;
 
         constructor(sourceText: IText, fullStart: number,kind: SyntaxKind, leadingTriviaInfo: number, trailingTriviaInfo: number) {
             this._sourceText = sourceText;
             this._fullStart = fullStart;
-            this.tokenKind = kind;
+            this._kind = kind;
             this._leadingTriviaInfo = leadingTriviaInfo;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
@@ -538,7 +538,7 @@ module Syntax {
             return new FixedWidthTokenWithLeadingAndTrailingTrivia(
                 this._sourceText,
                 this._fullStart,
-                this.tokenKind,
+                this._kind,
                 this._leadingTriviaInfo,
                 this._trailingTriviaInfo);
         }
@@ -550,7 +550,7 @@ module Syntax {
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
-        public kind(): SyntaxKind { return this.tokenKind; }
+        public kind(): SyntaxKind { return this._kind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
 
         public fullWidth(): number { return getTriviaWidth(this._leadingTriviaInfo) + this.width() + getTriviaWidth(this._trailingTriviaInfo); }
@@ -558,7 +558,7 @@ module Syntax {
         private end(): number { return this.start() + this.width(); }
 
         public width(): number { return this.text().length; }
-        public text(): string { return SyntaxFacts.getText(this.tokenKind); }
+        public text(): string { return SyntaxFacts.getText(this._kind); }
         public fullText(): string { return this._sourceText.substr(this._fullStart, this.fullWidth(), /*intern:*/ false); }
 
         public value(): any { return null; }
@@ -591,11 +591,9 @@ module Syntax {
     }
 
     class KeywordWithNoTrivia implements ISyntaxToken {
-        public tokenKind: SyntaxKind;
         private _keywordKind: SyntaxKind;
 
         constructor(keywordKind: SyntaxKind) {
-            this.tokenKind = SyntaxKind.IdentifierNameToken;
             this._keywordKind = keywordKind;
         }
 
@@ -651,14 +649,12 @@ module Syntax {
     class KeywordWithLeadingTrivia implements ISyntaxToken {
         private _sourceText: IText;
         private _fullStart: number;
-        public tokenKind: SyntaxKind;
         private _keywordKind: SyntaxKind;
         private _leadingTriviaInfo: number;
 
         constructor(sourceText: IText, fullStart: number,keywordKind: SyntaxKind, leadingTriviaInfo: number) {
             this._sourceText = sourceText;
             this._fullStart = fullStart;
-            this.tokenKind = SyntaxKind.IdentifierNameToken;
             this._keywordKind = keywordKind;
             this._leadingTriviaInfo = leadingTriviaInfo;
         }
@@ -721,14 +717,12 @@ module Syntax {
     class KeywordWithTrailingTrivia implements ISyntaxToken {
         private _sourceText: IText;
         private _fullStart: number;
-        public tokenKind: SyntaxKind;
         private _keywordKind: SyntaxKind;
         private _trailingTriviaInfo: number;
 
         constructor(sourceText: IText, fullStart: number,keywordKind: SyntaxKind, trailingTriviaInfo: number) {
             this._sourceText = sourceText;
             this._fullStart = fullStart;
-            this.tokenKind = SyntaxKind.IdentifierNameToken;
             this._keywordKind = keywordKind;
             this._trailingTriviaInfo = trailingTriviaInfo;
         }
@@ -791,7 +785,6 @@ module Syntax {
     class KeywordWithLeadingAndTrailingTrivia implements ISyntaxToken {
         private _sourceText: IText;
         private _fullStart: number;
-        public tokenKind: SyntaxKind;
         private _keywordKind: SyntaxKind;
         private _leadingTriviaInfo: number;
         private _trailingTriviaInfo: number;
@@ -799,7 +792,6 @@ module Syntax {
         constructor(sourceText: IText, fullStart: number,keywordKind: SyntaxKind, leadingTriviaInfo: number, trailingTriviaInfo: number) {
             this._sourceText = sourceText;
             this._fullStart = fullStart;
-            this.tokenKind = SyntaxKind.IdentifierNameToken;
             this._keywordKind = keywordKind;
             this._leadingTriviaInfo = leadingTriviaInfo;
             this._trailingTriviaInfo = trailingTriviaInfo;

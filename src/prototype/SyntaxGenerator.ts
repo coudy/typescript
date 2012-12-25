@@ -2201,7 +2201,9 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "        private _fullStart: number;\r\n";
     }
 
-    result += "        public tokenKind: SyntaxKind;\r\n";
+    if (!isKeyword) {
+        result += "        private _kind: SyntaxKind;\r\n";
+    }
 
     if (isKeyword) {
         result += "        private _keywordKind: SyntaxKind;\r\n";
@@ -2256,11 +2258,10 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
     }
 
     if (isKeyword) {
-        result += "            this.tokenKind = SyntaxKind.IdentifierNameToken;\r\n";
         result += "            this._keywordKind = keywordKind;\r\n";
     }
     else {
-        result += "            this.tokenKind = kind;\r\n";
+        result += "            this._kind = kind;\r\n";
     }
 
     if (leading) {
@@ -2289,7 +2290,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "                this._keywordKind";
     }
     else {
-        result += "                this.tokenKind";
+        result += "                this._kind";
     }
 
     if (leading) {
@@ -2320,7 +2321,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "        public keywordKind(): SyntaxKind { return this._keywordKind; }\r\n\r\n";
     }
     else {
-        result += "        public kind(): SyntaxKind { return this.tokenKind; }\r\n";
+        result += "        public kind(): SyntaxKind { return this._kind; }\r\n";
         result += "        public keywordKind(): SyntaxKind { return SyntaxKind.None; }\r\n\r\n";
     }
 
@@ -2359,7 +2360,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
     }
 
     if (isPunctuation) {
-        result += "        public text(): string { return SyntaxFacts.getText(this.tokenKind); }\r\n";
+        result += "        public text(): string { return SyntaxFacts.getText(this._kind); }\r\n";
     }
     else if (isKeyword) {
         result += "        public text(): string { return SyntaxFacts.getText(this._keywordKind); }\r\n";
@@ -2369,7 +2370,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "        public text(): string {\r\n";
         result += "            if (typeof this._textOrWidth === 'number') {\r\n";
         result += "                this._textOrWidth = this._sourceText.substr(\r\n"; 
-        result += "                    this.start(), this._textOrWidth, /*intern:*/ this.tokenKind === SyntaxKind.IdentifierNameToken);\r\n";
+        result += "                    this.start(), this._textOrWidth, /*intern:*/ this._kind === SyntaxKind.IdentifierNameToken);\r\n";
         result += "            }\r\n";
         result += "\r\n";
         result += "            return this._textOrWidth;\r\n";

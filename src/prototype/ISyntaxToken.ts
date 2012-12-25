@@ -2,8 +2,6 @@
 ///<reference path='ISyntaxTriviaList.ts' />
 
 interface ISyntaxToken extends ISyntaxElement {
-    // Same as syntaxKind, just exposed through a property for perf.
-    tokenKind: SyntaxKind;
     keywordKind(): SyntaxKind;
 
     width(): number;

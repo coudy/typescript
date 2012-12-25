@@ -363,7 +363,7 @@ class Program {
             var token = scanner.scan(diagnostics, /*allowRegularExpression:*/ false);
             tokens.push(token);
 
-            if (token.tokenKind === SyntaxKind.EndOfFileToken) {
+            if (token.kind() === SyntaxKind.EndOfFileToken) {
                 break;
             }
         }
@@ -395,7 +395,7 @@ class Program {
             var token = scanner.scan(diagnostics, /*allowRegularExpression:*/ false);
             tokens.push(token);
 
-            if (token.tokenKind === SyntaxKind.EndOfFileToken) {
+            if (token.kind() === SyntaxKind.EndOfFileToken) {
                 break;
             }
         }

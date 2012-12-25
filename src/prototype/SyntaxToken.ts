@@ -24,7 +24,7 @@ module Syntax {
     }
 
     export function realize(token: ISyntaxToken): ISyntaxToken {
-        return new RealizedToken(token.tokenKind, token.keywordKind(),
+        return new RealizedToken(token.kind(), token.keywordKind(),
             token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia());
     }
 
@@ -36,7 +36,7 @@ module Syntax {
 
     export function tokenToJSON(token: ISyntaxToken) {
         var result: any = {
-            kind: (<any>SyntaxKind)._map[token.tokenKind]
+            kind: (<any>SyntaxKind)._map[token.kind()]
         };
 
         if (token.keywordKind() !== SyntaxKind.None) {
@@ -100,7 +100,7 @@ module Syntax {
     }
 
     export function value(token: ISyntaxToken): any {
-        if (token.tokenKind === SyntaxKind.IdentifierNameToken) {
+        if (token.kind() === SyntaxKind.IdentifierNameToken) {
             var text = token.text();
             for (var i = 0; i < text.length; i++) {
                 // TODO: handle unicode and escapes.
@@ -111,19 +111,19 @@ module Syntax {
 
             return text;
         }
-        else if (token.tokenKind === SyntaxKind.NumericLiteral) {
+        else if (token.kind() === SyntaxKind.NumericLiteral) {
             // TODO: implement this.
             return null;
         }
-        else if (token.tokenKind === SyntaxKind.StringLiteral) {
+        else if (token.kind() === SyntaxKind.StringLiteral) {
             // TODO: implement this.
             return null;
         }
-        else if (token.tokenKind === SyntaxKind.RegularExpressionLiteral) {
+        else if (token.kind() === SyntaxKind.RegularExpressionLiteral) {
             // TODO: implement this.
             return null;
         }
-        else if (token.tokenKind === SyntaxKind.EndOfFileToken || token.tokenKind === SyntaxKind.ErrorToken) {
+        else if (token.kind() === SyntaxKind.EndOfFileToken || token.kind() === SyntaxKind.ErrorToken) {
             return null;
         }
         else {
