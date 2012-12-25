@@ -1028,7 +1028,6 @@ module Parser {
             this._normalParserSource.resetToPosition(absolutePosition, previousToken);
 
             Debug.assert(previousToken !== null);
-            Debug.assert(!previousToken.isMissing());
             Debug.assert(previousToken.width() > 0);
 
             if (this._changeRange !== null) {
@@ -1061,7 +1060,6 @@ module Parser {
                 this._normalParserSource.resetToPosition(absolutePosition, previousToken);
 
                 Debug.assert(previousToken !== null);
-                Debug.assert(!previousToken.isMissing());
                 Debug.assert(previousToken.width() > 0);
 
                 if (this._changeRange !== null) {
@@ -1737,7 +1735,7 @@ module Parser {
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
             var variableDeclarators: ISeparatedSyntaxList = Syntax.emptySeparatedList;
 
-            if (!openBraceToken.isMissing()) {
+            if (openBraceToken.width() > 0) {
                 variableDeclarators = this.parseSeparatedSyntaxList(ListParsingState.EnumDeclaration_VariableDeclarators);
             }
 
@@ -1787,7 +1785,7 @@ module Parser {
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
             var classElements: ISyntaxList = Syntax.emptyList;
 
-            if (!openBraceToken.isMissing()) {
+            if (openBraceToken.width() > 0) {
                 classElements = this.parseSyntaxList(ListParsingState.ClassDeclaration_ClassElements);
             }
 
@@ -2110,7 +2108,7 @@ module Parser {
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
             var moduleElements: ISyntaxList = Syntax.emptyList;
-            if (!openBraceToken.isMissing()) {
+            if (openBraceToken.width() > 0) {
                 moduleElements = this.parseSyntaxList(ListParsingState.ModuleDeclaration_ModuleElements);
             }
 
@@ -2154,7 +2152,7 @@ module Parser {
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
             var typeMembers: ISeparatedSyntaxList = Syntax.emptySeparatedList;
-            if (!openBraceToken.isMissing()) {
+            if (openBraceToken.width() > 0) {
                 typeMembers = this.parseSeparatedSyntaxList(ListParsingState.ObjectType_TypeMembers);
             }
 
@@ -2734,7 +2732,7 @@ module Parser {
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
             var switchClauses: ISyntaxList = Syntax.emptyList;
-            if (!openBraceToken.isMissing()) {
+            if (openBraceToken.width() > 0) {
                 switchClauses = this.parseSyntaxList(ListParsingState.SwitchStatement_SwitchClauses);
             }
 
@@ -3053,7 +3051,7 @@ module Parser {
             var equalsValueClause: EqualsValueClauseSyntax = null;
             var typeAnnotation: TypeAnnotationSyntax = null;
 
-            if (!identifier.isMissing()) {
+            if (identifier.width() > 0) {
                 typeAnnotation = this.parseOptionalTypeAnnotation();
 
                 if (this.isEqualsValueClause()) {
@@ -3203,7 +3201,8 @@ module Parser {
             // easier to read and understand in this form.
 
             var term = this.parseTermWorker(insideObjectCreation);
-            if (term.isMissing()) {
+            if (term.kind() === SyntaxKind.IdentifierName &&
+                (<IdentifierNameSyntax>term).identifier().width() === 0) {
                 return term;
             }
 
@@ -3908,7 +3907,7 @@ module Parser {
 
             var statements: ISyntaxList = Syntax.emptyList;
 
-            if (!openBraceToken.isMissing()) {
+            if (openBraceToken.width() > 0) {
                 var savedIsInStrictMode = this.isInStrictMode;
                 statements = this.parseSyntaxList(ListParsingState.Block_Statements, ParserImpl.updateStrictModeState);
                 this.isInStrictMode = savedIsInStrictMode;
@@ -3930,7 +3929,7 @@ module Parser {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var parameters: ISeparatedSyntaxList = Syntax.emptySeparatedList;
 
-            if (!openParenToken.isMissing()) {
+            if (openParenToken.width() > 0) {
                 parameters = this.parseSeparatedSyntaxList(ListParsingState.ParameterList_Parameters);
             }
 

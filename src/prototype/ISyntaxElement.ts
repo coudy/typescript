@@ -9,7 +9,6 @@ interface ISyntaxElement {
     isSeparatedList(): bool;
     isTriviaList(): bool;
     isTrivia(): bool;
-    isMissing(): bool;
 
     fullWidth(): number;
     fullText(): string;

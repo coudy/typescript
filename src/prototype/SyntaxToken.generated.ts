@@ -31,7 +31,6 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
-        public isMissing(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
@@ -113,7 +112,6 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
-        public isMissing(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
@@ -195,7 +193,6 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
-        public isMissing(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
@@ -280,7 +277,6 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
-        public isMissing(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
@@ -349,7 +345,6 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
-        public isMissing(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
@@ -415,7 +410,6 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
-        public isMissing(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
@@ -484,7 +478,6 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
-        public isMissing(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
@@ -556,7 +549,6 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
-        public isMissing(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public keywordKind(): SyntaxKind { return SyntaxKind.None; }
@@ -618,7 +610,6 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
-        public isMissing(): bool { return false; }
 
         public kind(): SyntaxKind { return SyntaxKind.IdentifierNameToken; }
         public keywordKind(): SyntaxKind { return this._keywordKind; }
@@ -686,7 +677,6 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
-        public isMissing(): bool { return false; }
 
         public kind(): SyntaxKind { return SyntaxKind.IdentifierNameToken; }
         public keywordKind(): SyntaxKind { return this._keywordKind; }
@@ -757,7 +747,6 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
-        public isMissing(): bool { return false; }
 
         public kind(): SyntaxKind { return SyntaxKind.IdentifierNameToken; }
         public keywordKind(): SyntaxKind { return this._keywordKind; }
@@ -831,7 +820,6 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
-        public isMissing(): bool { return false; }
 
         public kind(): SyntaxKind { return SyntaxKind.IdentifierNameToken; }
         public keywordKind(): SyntaxKind { return this._keywordKind; }

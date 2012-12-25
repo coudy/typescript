@@ -67,7 +67,6 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
         public isTriviaList(): bool { return true; }
         public isTrivia(): bool { return false; }
-        public isMissing(): bool { return this.item.isMissing(); }
         
         constructor(item: ISyntaxTrivia) {
             this.item = item;
@@ -142,16 +141,6 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
         public isTriviaList(): bool { return true; }
         public isTrivia(): bool { return false; }
-
-        public isMissing(): bool {
-            for (var i = 0, n = this.trivia.length; i < n; i++) {
-                if (!this.trivia[i].isMissing()) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
 
         public count() {
             return this.trivia.length;

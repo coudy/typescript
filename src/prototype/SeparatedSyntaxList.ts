@@ -75,7 +75,6 @@ module Syntax {
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
         public kind() { return SyntaxKind.SeparatedList; }
-        public isMissing(): bool { return this.item.isMissing(); }
 
         public count() { return 1; }
         public syntaxNodeCount() { return 1; }
@@ -171,16 +170,6 @@ module Syntax {
         public isTriviaList(): bool { return false; }
         public kind() { return SyntaxKind.SeparatedList; }
         public toJSON(key) { return this.elements; }
-
-        public isMissing(): bool {
-            for (var i = 0, n = this.elements.length; i < n; i++) {
-                if (!this.elements[i].isMissing()) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
 
         public count() { return this.elements.length; }
         public syntaxNodeCount() { return IntegerUtilities.integerDivide(this.elements.length + 1, 2); }

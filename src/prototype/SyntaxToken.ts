@@ -25,8 +25,7 @@ module Syntax {
 
     export function realize(token: ISyntaxToken): ISyntaxToken {
         return new RealizedToken(token.tokenKind, token.keywordKind(),
-            token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia(),
-            token.isMissing());
+            token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia());
     }
 
     //export function collectTokenTextElements(token: ISyntaxToken, elements: string[]): void {
@@ -49,7 +48,7 @@ module Syntax {
             result.fullWidth = token.fullWidth();
         }
 
-        if (token.isMissing()) {
+        if (token.width() === 0 && token.kind() !== SyntaxKind.EndOfFileToken) {
             result.isMissing = true;
         }
 
@@ -203,27 +202,24 @@ module Syntax {
         private _text: string;
         private _value: any;
         private _trailingTrivia: ISyntaxTriviaList;
-        private _isMissing: bool;
 
         constructor(tokenKind: SyntaxKind,
                     keywordKind: SyntaxKind,
                     leadingTrivia: ISyntaxTriviaList,
                     text: string,
                     value: any,
-                    trailingTrivia: ISyntaxTriviaList,
-                    isMissing: bool) {
+                    trailingTrivia: ISyntaxTriviaList) {
             this.tokenKind = tokenKind;
             this._keywordKind = keywordKind;
             this._leadingTrivia = leadingTrivia;
             this._text = text;
             this._value = value;
             this._trailingTrivia = trailingTrivia;
-            this._isMissing = isMissing;
         }
 
         public clone(): ISyntaxToken {
             return new RealizedToken(this.tokenKind, this._keywordKind, this._leadingTrivia,
-                this._text, this._value, this._trailingTrivia, this._isMissing);
+                this._text, this._value, this._trailingTrivia);
         }
 
         public kind(): SyntaxKind { return this.tokenKind; }
@@ -235,7 +231,6 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
-        public isMissing(): bool { return this._isMissing; }
 
         public keywordKind(): SyntaxKind { return this._keywordKind; }
 
@@ -274,14 +269,14 @@ module Syntax {
             return new RealizedToken(
                 this.tokenKind, this._keywordKind,
                 leadingTrivia, this._text, this._value,
-                this._trailingTrivia, this._isMissing);
+                this._trailingTrivia);
         }
 
         public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return new RealizedToken(
                 this.tokenKind, this._keywordKind,
                 this._leadingTrivia, this._text, this._value,
-                trailingTrivia, this._isMissing);
+                trailingTrivia);
         }
     }
 
@@ -301,8 +296,7 @@ module Syntax {
             Syntax.triviaList(info === null ? null : info.leadingTrivia),
             text,
             value,
-            Syntax.triviaList(info === null ? null : info.trailingTrivia),
-            /*isMissing:*/ false);
+            Syntax.triviaList(info === null ? null : info.trailingTrivia));
     }
     
     export function identifier(text: string, info: ITokenInfo = null): ISyntaxToken {

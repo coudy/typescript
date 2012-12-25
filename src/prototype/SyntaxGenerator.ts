@@ -2054,7 +2054,7 @@ function generateNode(definition: ITypeDefinition): string {
     result += generateAcceptMethods(definition);
     result += generateKindMethod(definition);
     result += generateIsMethod(definition);
-    result += generateIsMissingMethod(definition);
+    // result += generateIsMissingMethod(definition);
     result += generateFirstTokenMethod(definition);
     result += generateLastTokenMethod(definition);
     result += generateInsertChildrenIntoMethod(definition);
@@ -2344,8 +2344,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
 "        public isList(): bool { return false; }\r\n" +
 "        public isSeparatedList(): bool { return false; }\r\n" +
 "        public isTrivia(): bool { return false; }\r\n" +
-"        public isTriviaList(): bool { return false; }\r\n" +
-"        public isMissing(): bool { return false; }\r\n\r\n";
+"        public isTriviaList(): bool { return false; }\r\n\r\n";
 
     if (isKeyword) {
         result += "        public kind(): SyntaxKind { return SyntaxKind.IdentifierNameToken; }\r\n";

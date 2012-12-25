@@ -331,7 +331,6 @@ class Program {
                 Debug.assert(token.kind() === SyntaxKind.EndOfFileToken);
             }
             else {
-                Debug.assert(!token.isMissing());
                 Debug.assert(token.width() > 0 || token.kind() === SyntaxKind.EndOfFileToken);
                 Debug.assert(token.fullWidth() > 0);
             }

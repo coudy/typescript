@@ -18,10 +18,6 @@ class SyntaxNode implements ISyntaxElement {
         throw Errors.abstract();
     }
 
-    public isMissing(): bool {
-        throw Errors.abstract();
-    }
-
     // Returns the first non-missing token inside this node (or null if there are no such token).
     public firstToken(): ISyntaxToken {
         throw Errors.abstract();

@@ -4270,7 +4270,6 @@ function generateNode(definition) {
     result += generateAcceptMethods(definition);
     result += generateKindMethod(definition);
     result += generateIsMethod(definition);
-    result += generateIsMissingMethod(definition);
     result += generateFirstTokenMethod(definition);
     result += generateLastTokenMethod(definition);
     result += generateInsertChildrenIntoMethod(definition);
@@ -4445,7 +4444,7 @@ function generateToken(isPunctuation, isKeyword, leading, trailing) {
     }
     result += ");\r\n";
     result += "        }\r\n\r\n";
-    result += "        public isToken(): bool { return true; }\r\n" + "        public isNode(): bool { return false; }\r\n" + "        public isList(): bool { return false; }\r\n" + "        public isSeparatedList(): bool { return false; }\r\n" + "        public isTrivia(): bool { return false; }\r\n" + "        public isTriviaList(): bool { return false; }\r\n" + "        public isMissing(): bool { return false; }\r\n\r\n";
+    result += "        public isToken(): bool { return true; }\r\n" + "        public isNode(): bool { return false; }\r\n" + "        public isList(): bool { return false; }\r\n" + "        public isSeparatedList(): bool { return false; }\r\n" + "        public isTrivia(): bool { return false; }\r\n" + "        public isTriviaList(): bool { return false; }\r\n\r\n";
     if(isKeyword) {
         result += "        public kind(): SyntaxKind { return SyntaxKind.IdentifierNameToken; }\r\n";
         result += "        public keywordKind(): SyntaxKind { return this._keywordKind; }\r\n\r\n";

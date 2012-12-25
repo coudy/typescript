@@ -15,7 +15,7 @@ class SyntaxIndenter extends SyntaxRewriter {
     }
 
     private visitToken(token: ISyntaxToken): ISyntaxToken {
-        if (token.isMissing()) {
+        if (token.width() === 0) {
             return token;
         }
 

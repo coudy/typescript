@@ -91,7 +91,6 @@ module Syntax {
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
         public kind(): SyntaxKind { return SyntaxKind.List; }
-        public isMissing(): bool { return this.item.isMissing(); }
 
         public toJSON(key) {
             return [this.item];
@@ -174,16 +173,6 @@ module Syntax {
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
         public kind(): SyntaxKind { return SyntaxKind.List; }
-
-        public isMissing(): bool {
-            for (var i = 0, n = this.nodes.length; i < n; i++) {
-                if (!this.nodes[i].isMissing()) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
 
         public toJSON(key) {
             return this.nodes;
