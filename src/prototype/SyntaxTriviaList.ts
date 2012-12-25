@@ -12,7 +12,6 @@ module Syntax {
         isSeparatedList: (): bool => false,
         isTriviaList: (): bool => true,
         isTrivia: (): bool => false,
-        isMissing: (): bool => true,
 
         count: (): number => 0,
 

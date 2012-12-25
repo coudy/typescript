@@ -1456,9 +1456,6 @@ var Syntax;
         kind: function () {
             return 2 /* SeparatedList */ ;
         },
-        isMissing: function () {
-            return true;
-        },
         toJSON: function (key) {
             return [];
         },
@@ -1870,9 +1867,6 @@ var Syntax;
         };
         EmptySyntaxList.prototype.count = function () {
             return 0;
-        };
-        EmptySyntaxList.prototype.isMissing = function () {
-            return true;
         };
         EmptySyntaxList.prototype.syntaxNodeAt = function (index) {
             throw Errors.argumentOutOfRange("index");
@@ -5076,9 +5070,6 @@ var Syntax;
         SyntaxTrivia.prototype.isTriviaList = function () {
             return false;
         };
-        SyntaxTrivia.prototype.isMissing = function () {
-            return false;
-        };
         SyntaxTrivia.prototype.kind = function () {
             return this._kind;
         };
@@ -5171,9 +5162,6 @@ var Syntax;
         },
         isTrivia: function () {
             return false;
-        },
-        isMissing: function () {
-            return true;
         },
         count: function () {
             return 0;
@@ -8387,9 +8375,6 @@ var Syntax;
         if(token.fullWidth() !== token.width()) {
             result.fullWidth = token.fullWidth();
         }
-        if(token.width() === 0 && token.kind() !== 118 /* EndOfFileToken */ ) {
-            result.isMissing = true;
-        }
         result.text = token.text();
         if(token.value() !== null) {
             result.valueText = token.value();
@@ -8499,9 +8484,6 @@ var Syntax;
         };
         EmptyToken.prototype.width = function () {
             return 0;
-        };
-        EmptyToken.prototype.isMissing = function () {
-            return true;
         };
         EmptyToken.prototype.text = function () {
             return "";
@@ -33376,11 +33358,11 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, true, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, true, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
     };
     Program.reusedElements = function reusedElements(oldNode, newNode, key) {

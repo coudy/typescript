@@ -11,7 +11,6 @@ module Syntax {
         isTrivia: () => false,
         isTriviaList: () => false,
         kind: () => SyntaxKind.SeparatedList,
-        isMissing: () => true,
 
         toJSON: (key) => [],
 

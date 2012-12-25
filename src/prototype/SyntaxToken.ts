@@ -48,10 +48,6 @@ module Syntax {
             result.fullWidth = token.fullWidth();
         }
 
-        if (token.width() === 0 && token.kind() !== SyntaxKind.EndOfFileToken) {
-            result.isMissing = true;
-        }
-
         result.text = token.text();
 
         if (token.value() !== null) {
@@ -160,7 +156,6 @@ module Syntax {
         public keywordKind() { return this._keywordKind; }
         public fullWidth() { return 0; }
         public width() { return 0; }
-        public isMissing() { return true; }
         public text() { return ""; }
         public fullText(): string { return ""; }
         public value() { return null; }

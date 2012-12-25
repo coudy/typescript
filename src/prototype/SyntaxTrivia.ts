@@ -26,7 +26,6 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return true; }
         public isTriviaList(): bool { return false; }
-        public isMissing(): bool { return false; }
 
         public kind(): SyntaxKind {
             return this._kind;

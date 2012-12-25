@@ -1443,37 +1443,6 @@ function generateKindMethod(definition: ITypeDefinition): string {
     return result;
 }
 
-function generateIsMissingMethod(definition: ITypeDefinition): string {
-    var result = "";
-
-    if (!definition.isAbstract) {
-
-        result += "\r\n";
-        result += "    public isMissing(): bool {\r\n";
-
-        for (var i = 0; i < definition.children.length; i++) {
-            var child: IMemberDefinition = definition.children[i];
-
-            if (getType(child) === "SyntaxKind") {
-                continue;
-            }
-
-            if (child.isOptional) {
-                result += "        if (" + getPropertyAccess(child) + " !== null && !" + getPropertyAccess(child) + ".isMissing()) { return false; }\r\n";
-            }
-            else {
-                result += "        if (!" + getPropertyAccess(child) + ".isMissing()) { return false; }\r\n";
-            }
-        }
-
-        result += "        return true;\r\n";
-
-        result += "    }\r\n";
-    }
-
-    return result;
-}
-
 function generateFirstTokenMethod(definition: ITypeDefinition): string {
     var result = "";
 

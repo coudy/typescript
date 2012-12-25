@@ -18,10 +18,6 @@ module Syntax {
             return 0;
         }
 
-        public isMissing(): bool {
-            return true;
-        }
-        
         public syntaxNodeAt(index: number): SyntaxNode {
             throw Errors.argumentOutOfRange("index");
         }
