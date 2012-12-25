@@ -34607,11 +34607,11 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, true, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, true, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
     };
     Program.reusedElements = function reusedElements(oldNode, newNode, key) {
@@ -34642,6 +34642,7 @@ var Program = (function () {
         var tree = Parser.parse(text, 1 /* EcmaScript5 */ , stringTable);
         var totalIncrementalTime = 0;
         var count = 1000;
+        var realStart = new Date().getTime();
         for(var i = 0; i < count; i++) {
             var start = new Date().getTime();
             var changeLength = i * 2;
@@ -34653,6 +34654,7 @@ var Program = (function () {
             Debug.assert(tree.structuralEquals(tree2));
             tree = tree2;
         }
+        var realEnd = new Date().getTime();
         var rateBytesPerMillisecond = (contents.length * count) / totalIncrementalTime;
         var rateBytesPerSecond = rateBytesPerMillisecond * 1000;
         var rateMBPerSecond = rateBytesPerSecond / (1024 * 1024);

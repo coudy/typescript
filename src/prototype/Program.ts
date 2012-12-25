@@ -59,11 +59,11 @@ class Program {
 
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ true, /*generateBaselines:*/ false));
+            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ false));
             
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\test262",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ true, /*generateBaselines:*/ false));
+            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*generateBaselines:*/ false));
     }
 
     private static reusedElements(oldNode: SourceUnitSyntax, newNode: SourceUnitSyntax, key: any): { originalElements: number; reusedElements: number; } {
@@ -100,6 +100,8 @@ class Program {
         var totalIncrementalTime = 0;
         var count = 1000;
 
+        var realStart = new Date().getTime();
+
         for (var i = 0; i < count; i++) {
             var start = new Date().getTime();
 
@@ -120,10 +122,12 @@ class Program {
 
             tree = tree2;
         }
+        var realEnd = new Date().getTime();
         
         var rateBytesPerMillisecond = (contents.length * count) / totalIncrementalTime;
         var rateBytesPerSecond = rateBytesPerMillisecond * 1000;
         var rateMBPerSecond = rateBytesPerSecond / (1024 * 1024);
+        // Environment.standardOut.WriteLine("Incremental wall: " + (realEnd - realStart));
         Environment.standardOut.WriteLine("Incremental time: " + totalIncrementalTime);
         Environment.standardOut.WriteLine("Incremental rate: " + rateMBPerSecond + " MB/s");
     }
