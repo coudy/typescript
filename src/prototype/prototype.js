@@ -28566,7 +28566,7 @@ var Parser;
             return this.currentToken().keywordKind() === 47 /* ImportKeyword */  && this.peekToken(1).kind() === 9 /* IdentifierNameToken */  && this.peekToken(2).kind() === 104 /* EqualsToken */ ;
         };
         ParserImpl.prototype.parseImportDeclaration = function () {
-            Debug.assert(this.currentToken().keywordKind() === 47 /* ImportKeyword */ );
+            Debug.assert(this.isImportDeclaration());
             var importKeyword = this.eatKeyword(47 /* ImportKeyword */ );
             var identifier = this.eatIdentifierToken();
             var equalsToken = this.eatToken(104 /* EqualsToken */ );
@@ -28638,14 +28638,13 @@ var Parser;
         };
         ParserImpl.prototype.isClassDeclaration = function () {
             var token0 = this.currentToken();
-            var token1 = this.peekToken(1);
-            if(token0.keywordKind() === 45 /* ExportKeyword */  && token1.keywordKind() === 42 /* ClassKeyword */ ) {
+            if(token0.keywordKind() === 45 /* ExportKeyword */  && this.peekToken(1).keywordKind() === 42 /* ClassKeyword */ ) {
                 return true;
             }
-            if(token0.keywordKind() === 61 /* DeclareKeyword */  && token1.keywordKind() === 42 /* ClassKeyword */ ) {
+            if(token0.keywordKind() === 61 /* DeclareKeyword */  && this.peekToken(1).keywordKind() === 42 /* ClassKeyword */ ) {
                 return true;
             }
-            return token0.keywordKind() === 42 /* ClassKeyword */  && this.isIdentifier(token1);
+            return token0.keywordKind() === 42 /* ClassKeyword */  && this.isIdentifier(this.peekToken(1));
         };
         ParserImpl.prototype.parseClassDeclaration = function () {
             Debug.assert(this.isClassDeclaration());
@@ -28794,10 +28793,10 @@ var Parser;
             return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolon);
         };
         ParserImpl.prototype.parseClassElement = function () {
+            Debug.assert(this.isClassElement());
             if(this.currentNode() !== null && this.currentNode().isClassElement()) {
                 return this.eatNode();
             }
-            Debug.assert(this.isClassElement());
             if(this.isConstructorDeclaration()) {
                 return this.parseConstructorDeclaration();
             } else {
@@ -28843,14 +28842,14 @@ var Parser;
         };
         ParserImpl.prototype.isModuleDeclaration = function () {
             var token0 = this.currentToken();
-            var token1 = this.peekToken(1);
-            if(token0.keywordKind() === 45 /* ExportKeyword */  && token1.keywordKind() === 63 /* ModuleKeyword */ ) {
+            if(token0.keywordKind() === 45 /* ExportKeyword */  && this.peekToken(1).keywordKind() === 63 /* ModuleKeyword */ ) {
                 return true;
             }
-            if(token0.keywordKind() === 61 /* DeclareKeyword */  && token1.keywordKind() === 63 /* ModuleKeyword */ ) {
+            if(token0.keywordKind() === 61 /* DeclareKeyword */  && this.peekToken(1).keywordKind() === 63 /* ModuleKeyword */ ) {
                 return true;
             }
             if(token0.keywordKind() === 63 /* ModuleKeyword */ ) {
+                var token1 = this.peekToken(1);
                 if(token1.kind() === 67 /* OpenBraceToken */ ) {
                     return true;
                 }
@@ -28895,7 +28894,7 @@ var Parser;
             return this.currentToken().keywordKind() === 50 /* InterfaceKeyword */  && this.isIdentifier(this.peekToken(1));
         };
         ParserImpl.prototype.parseInterfaceDeclaration = function () {
-            Debug.assert(this.currentToken().keywordKind() === 45 /* ExportKeyword */  || this.currentToken().keywordKind() === 50 /* InterfaceKeyword */ );
+            Debug.assert(this.isInterfaceDeclaration());
             var exportKeyword = this.tryEatKeyword(45 /* ExportKeyword */ );
             var interfaceKeyword = this.eatKeyword(50 /* InterfaceKeyword */ );
             var identifier = this.eatIdentifierToken();

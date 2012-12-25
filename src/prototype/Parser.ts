@@ -1687,7 +1687,7 @@ module Parser {
         }
 
         private parseImportDeclaration(): ImportDeclarationSyntax {
-            Debug.assert(this.currentToken().keywordKind() === SyntaxKind.ImportKeyword);
+            Debug.assert(this.isImportDeclaration());
 
             var importKeyword = this.eatKeyword(SyntaxKind.ImportKeyword);
             var identifier = this.eatIdentifierToken();
@@ -1791,19 +1791,18 @@ module Parser {
         private isClassDeclaration(): bool {
             var token0 = this.currentToken();
 
-            var token1 = this.peekToken(1);
             if (token0.keywordKind() === SyntaxKind.ExportKeyword &&
-                token1.keywordKind() === SyntaxKind.ClassKeyword) {
+                this.peekToken(1).keywordKind() === SyntaxKind.ClassKeyword) {
                 return true;
             }
 
             if (token0.keywordKind() === SyntaxKind.DeclareKeyword &&
-                token1.keywordKind() === SyntaxKind.ClassKeyword) {
+                this.peekToken(1).keywordKind() === SyntaxKind.ClassKeyword) {
                 return true;
             }
 
             return token0.keywordKind() === SyntaxKind.ClassKeyword &&
-                   this.isIdentifier(token1);
+                   this.isIdentifier(this.peekToken(1));
         }
 
         private parseClassDeclaration(): ClassDeclarationSyntax {
@@ -1886,7 +1885,7 @@ module Parser {
         }
 
         private parseGetMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken,
-            staticKeyword: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
+                                                  staticKeyword: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
             Debug.assert(this.currentToken().keywordKind() === SyntaxKind.GetKeyword);
 
             var getKeyword = this.eatKeyword(SyntaxKind.GetKeyword);
@@ -1900,7 +1899,7 @@ module Parser {
         }
 
         private parseSetMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken,
-            staticKeyword: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
+                                                  staticKeyword: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
             Debug.assert(this.currentToken().keywordKind() === SyntaxKind.SetKeyword);
 
             var setKeyword = this.eatKeyword(SyntaxKind.SetKeyword);
@@ -1949,7 +1948,7 @@ module Parser {
             }
 
             // Note: the order of these calls is important.  Specifically, isMemberVariableDeclaration
-            // checks for a subset of the conditions of the previous two.
+            // checks for a subset of the conditions of the previous two calls.
             return this.isConstructorDeclaration() ||
                    this.isMemberFunctionDeclaration() ||
                    this.isMemberAccessorDeclaration() ||
@@ -1992,6 +1991,7 @@ module Parser {
 
         private parseMemberFunctionDeclaration(): MemberFunctionDeclarationSyntax {
             Debug.assert(this.isMemberFunctionDeclaration());
+
             var publicOrPrivateKeyword: ISyntaxToken = null;
             if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
                 this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
@@ -2031,11 +2031,12 @@ module Parser {
         }
 
         private parseClassElement(): ClassElementSyntax {
+            Debug.assert(this.isClassElement());
+
             if (this.currentNode() !== null && this.currentNode().isClassElement()) {
                 return <ClassElementSyntax>this.eatNode();
             }
 
-            Debug.assert(this.isClassElement());
             if (this.isConstructorDeclaration()) {
                 return this.parseConstructorDeclaration();
             }
@@ -2092,17 +2093,16 @@ module Parser {
 
         private isModuleDeclaration(): bool {
             var token0 = this.currentToken();
-            var token1 = this.peekToken(1);
 
             // export module
             if (token0.keywordKind() === SyntaxKind.ExportKeyword &&
-                token1.keywordKind() === SyntaxKind.ModuleKeyword) {
+                this.peekToken(1).keywordKind() === SyntaxKind.ModuleKeyword) {
                 return true;
             }
 
             // declare module
             if (token0.keywordKind() === SyntaxKind.DeclareKeyword &&
-                token1.keywordKind() === SyntaxKind.ModuleKeyword) {
+                this.peekToken(1).keywordKind() === SyntaxKind.ModuleKeyword) {
                 return true;
             }
 
@@ -2110,6 +2110,7 @@ module Parser {
             // that we're actually looking at a module construct and not some javascript expression.
             if (token0.keywordKind() === SyntaxKind.ModuleKeyword) {
                 // module {
+                var token1 = this.peekToken(1);
                 if (token1.kind() === SyntaxKind.OpenBraceToken) {
                     return true;
                 }
@@ -2175,8 +2176,7 @@ module Parser {
         }
 
         private parseInterfaceDeclaration(): InterfaceDeclarationSyntax {
-            Debug.assert(this.currentToken().keywordKind() === SyntaxKind.ExportKeyword ||
-                         this.currentToken().keywordKind() === SyntaxKind.InterfaceKeyword);
+            Debug.assert(this.isInterfaceDeclaration());
 
             var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
             var interfaceKeyword = this.eatKeyword(SyntaxKind.InterfaceKeyword);
