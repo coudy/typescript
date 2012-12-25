@@ -5075,6 +5075,15 @@ var Syntax;
         SyntaxTrivia.prototype.fullText = function () {
             return this._text;
         };
+        SyntaxTrivia.prototype.isComment = function () {
+            return this.kind() === 7 /* SingleLineCommentTrivia */  || this.kind() === 6 /* MultiLineCommentTrivia */ ;
+        };
+        SyntaxTrivia.prototype.isNewLine = function () {
+            return this.kind() === 5 /* NewLineTrivia */ ;
+        };
+        SyntaxTrivia.prototype.isSkippedText = function () {
+            return this.kind() === 8 /* SkippedTextTrivia */ ;
+        };
         SyntaxTrivia.prototype.collectTextElements = function (elements) {
             elements.push(this.fullText());
         };
@@ -25732,261 +25741,261 @@ var DebuggerStatementSyntax = (function (_super) {
     };
     return DebuggerStatementSyntax;
 })(StatementSyntax);
-var DefaultSyntaxVisitor1 = (function () {
-    function DefaultSyntaxVisitor1() { }
-    DefaultSyntaxVisitor1.prototype.defaultVisit = function (node) {
+var SyntaxVisitor = (function () {
+    function SyntaxVisitor() { }
+    SyntaxVisitor.prototype.defaultVisit = function (node) {
         return null;
     };
-    DefaultSyntaxVisitor1.prototype.visitSourceUnit = function (node) {
-        return null;
+    SyntaxVisitor.prototype.visitSourceUnit = function (node) {
+        return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitExternalModuleReference = function (node) {
+    SyntaxVisitor.prototype.visitExternalModuleReference = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitModuleNameModuleReference = function (node) {
+    SyntaxVisitor.prototype.visitModuleNameModuleReference = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitImportDeclaration = function (node) {
+    SyntaxVisitor.prototype.visitImportDeclaration = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitClassDeclaration = function (node) {
+    SyntaxVisitor.prototype.visitClassDeclaration = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitInterfaceDeclaration = function (node) {
+    SyntaxVisitor.prototype.visitInterfaceDeclaration = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitExtendsClause = function (node) {
+    SyntaxVisitor.prototype.visitExtendsClause = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitImplementsClause = function (node) {
+    SyntaxVisitor.prototype.visitImplementsClause = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitModuleDeclaration = function (node) {
+    SyntaxVisitor.prototype.visitModuleDeclaration = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitFunctionDeclaration = function (node) {
+    SyntaxVisitor.prototype.visitFunctionDeclaration = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitVariableStatement = function (node) {
+    SyntaxVisitor.prototype.visitVariableStatement = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitVariableDeclaration = function (node) {
+    SyntaxVisitor.prototype.visitVariableDeclaration = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitVariableDeclarator = function (node) {
+    SyntaxVisitor.prototype.visitVariableDeclarator = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitEqualsValueClause = function (node) {
+    SyntaxVisitor.prototype.visitEqualsValueClause = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitPrefixUnaryExpression = function (node) {
+    SyntaxVisitor.prototype.visitPrefixUnaryExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitThisExpression = function (node) {
+    SyntaxVisitor.prototype.visitThisExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitLiteralExpression = function (node) {
+    SyntaxVisitor.prototype.visitLiteralExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitArrayLiteralExpression = function (node) {
+    SyntaxVisitor.prototype.visitArrayLiteralExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitOmittedExpression = function (node) {
+    SyntaxVisitor.prototype.visitOmittedExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitParenthesizedExpression = function (node) {
+    SyntaxVisitor.prototype.visitParenthesizedExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitSimpleArrowFunctionExpression = function (node) {
+    SyntaxVisitor.prototype.visitSimpleArrowFunctionExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitParenthesizedArrowFunctionExpression = function (node) {
+    SyntaxVisitor.prototype.visitParenthesizedArrowFunctionExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitIdentifierName = function (node) {
+    SyntaxVisitor.prototype.visitIdentifierName = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitQualifiedName = function (node) {
+    SyntaxVisitor.prototype.visitQualifiedName = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitConstructorType = function (node) {
+    SyntaxVisitor.prototype.visitConstructorType = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitFunctionType = function (node) {
+    SyntaxVisitor.prototype.visitFunctionType = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitObjectType = function (node) {
+    SyntaxVisitor.prototype.visitObjectType = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitArrayType = function (node) {
+    SyntaxVisitor.prototype.visitArrayType = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitPredefinedType = function (node) {
+    SyntaxVisitor.prototype.visitPredefinedType = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitTypeAnnotation = function (node) {
+    SyntaxVisitor.prototype.visitTypeAnnotation = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitBlock = function (node) {
+    SyntaxVisitor.prototype.visitBlock = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitParameter = function (node) {
+    SyntaxVisitor.prototype.visitParameter = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitMemberAccessExpression = function (node) {
+    SyntaxVisitor.prototype.visitMemberAccessExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitPostfixUnaryExpression = function (node) {
+    SyntaxVisitor.prototype.visitPostfixUnaryExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitElementAccessExpression = function (node) {
+    SyntaxVisitor.prototype.visitElementAccessExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitInvocationExpression = function (node) {
+    SyntaxVisitor.prototype.visitInvocationExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitArgumentList = function (node) {
+    SyntaxVisitor.prototype.visitArgumentList = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitBinaryExpression = function (node) {
+    SyntaxVisitor.prototype.visitBinaryExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitConditionalExpression = function (node) {
+    SyntaxVisitor.prototype.visitConditionalExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitConstructSignature = function (node) {
+    SyntaxVisitor.prototype.visitConstructSignature = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitFunctionSignature = function (node) {
+    SyntaxVisitor.prototype.visitFunctionSignature = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitIndexSignature = function (node) {
+    SyntaxVisitor.prototype.visitIndexSignature = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitPropertySignature = function (node) {
+    SyntaxVisitor.prototype.visitPropertySignature = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitParameterList = function (node) {
+    SyntaxVisitor.prototype.visitParameterList = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitCallSignature = function (node) {
+    SyntaxVisitor.prototype.visitCallSignature = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitElseClause = function (node) {
+    SyntaxVisitor.prototype.visitElseClause = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitIfStatement = function (node) {
+    SyntaxVisitor.prototype.visitIfStatement = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitExpressionStatement = function (node) {
+    SyntaxVisitor.prototype.visitExpressionStatement = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitConstructorDeclaration = function (node) {
+    SyntaxVisitor.prototype.visitConstructorDeclaration = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitMemberFunctionDeclaration = function (node) {
+    SyntaxVisitor.prototype.visitMemberFunctionDeclaration = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitGetMemberAccessorDeclaration = function (node) {
+    SyntaxVisitor.prototype.visitGetMemberAccessorDeclaration = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitSetMemberAccessorDeclaration = function (node) {
+    SyntaxVisitor.prototype.visitSetMemberAccessorDeclaration = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitMemberVariableDeclaration = function (node) {
+    SyntaxVisitor.prototype.visitMemberVariableDeclaration = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitThrowStatement = function (node) {
+    SyntaxVisitor.prototype.visitThrowStatement = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitReturnStatement = function (node) {
+    SyntaxVisitor.prototype.visitReturnStatement = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitObjectCreationExpression = function (node) {
+    SyntaxVisitor.prototype.visitObjectCreationExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitSwitchStatement = function (node) {
+    SyntaxVisitor.prototype.visitSwitchStatement = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitCaseSwitchClause = function (node) {
+    SyntaxVisitor.prototype.visitCaseSwitchClause = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitDefaultSwitchClause = function (node) {
+    SyntaxVisitor.prototype.visitDefaultSwitchClause = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitBreakStatement = function (node) {
+    SyntaxVisitor.prototype.visitBreakStatement = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitContinueStatement = function (node) {
+    SyntaxVisitor.prototype.visitContinueStatement = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitForStatement = function (node) {
+    SyntaxVisitor.prototype.visitForStatement = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitForInStatement = function (node) {
+    SyntaxVisitor.prototype.visitForInStatement = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitWhileStatement = function (node) {
+    SyntaxVisitor.prototype.visitWhileStatement = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitWithStatement = function (node) {
+    SyntaxVisitor.prototype.visitWithStatement = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitEnumDeclaration = function (node) {
+    SyntaxVisitor.prototype.visitEnumDeclaration = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitCastExpression = function (node) {
+    SyntaxVisitor.prototype.visitCastExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitObjectLiteralExpression = function (node) {
+    SyntaxVisitor.prototype.visitObjectLiteralExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitSimplePropertyAssignment = function (node) {
+    SyntaxVisitor.prototype.visitSimplePropertyAssignment = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitGetAccessorPropertyAssignment = function (node) {
+    SyntaxVisitor.prototype.visitGetAccessorPropertyAssignment = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitSetAccessorPropertyAssignment = function (node) {
+    SyntaxVisitor.prototype.visitSetAccessorPropertyAssignment = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitFunctionExpression = function (node) {
+    SyntaxVisitor.prototype.visitFunctionExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitEmptyStatement = function (node) {
+    SyntaxVisitor.prototype.visitEmptyStatement = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitSuperExpression = function (node) {
+    SyntaxVisitor.prototype.visitSuperExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitTryStatement = function (node) {
+    SyntaxVisitor.prototype.visitTryStatement = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitCatchClause = function (node) {
+    SyntaxVisitor.prototype.visitCatchClause = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitFinallyClause = function (node) {
+    SyntaxVisitor.prototype.visitFinallyClause = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitLabeledStatement = function (node) {
+    SyntaxVisitor.prototype.visitLabeledStatement = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitDoStatement = function (node) {
+    SyntaxVisitor.prototype.visitDoStatement = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitTypeOfExpression = function (node) {
+    SyntaxVisitor.prototype.visitTypeOfExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitDeleteExpression = function (node) {
+    SyntaxVisitor.prototype.visitDeleteExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitVoidExpression = function (node) {
+    SyntaxVisitor.prototype.visitVoidExpression = function (node) {
         return this.defaultVisit(node);
     };
-    DefaultSyntaxVisitor1.prototype.visitDebuggerStatement = function (node) {
+    SyntaxVisitor.prototype.visitDebuggerStatement = function (node) {
         return this.defaultVisit(node);
     };
-    return DefaultSyntaxVisitor1;
+    return SyntaxVisitor;
 })();
 var SyntaxWalker = (function () {
     function SyntaxWalker() { }

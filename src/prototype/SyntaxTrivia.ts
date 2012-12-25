@@ -39,6 +39,18 @@ module Syntax {
             return this._text;
         }
 
+        public isComment(): bool {
+            return this.kind() === SyntaxKind.SingleLineCommentTrivia || this.kind() === SyntaxKind.MultiLineCommentTrivia;
+        }
+
+        public isNewLine(): bool {
+            return this.kind() === SyntaxKind.NewLineTrivia;
+        }
+
+        public isSkippedText(): bool {
+            return this.kind() === SyntaxKind.SkippedTextTrivia;
+        }
+
         public collectTextElements(elements: string[]): void {
             elements.push(this.fullText());
         }

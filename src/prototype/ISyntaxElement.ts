@@ -3,13 +3,17 @@
 interface ISyntaxElement {
     kind(): SyntaxKind;
 
-    isToken(): bool;
     isNode(): bool;
+    isToken(): bool;
+    isTrivia(): bool;
+
     isList(): bool;
     isSeparatedList(): bool;
     isTriviaList(): bool;
-    isTrivia(): bool;
 
+    // With of this element, including leading and trailing trivia.
     fullWidth(): number;
+
+    // Text for this element, including leading and trailing trivia.
     fullText(): string;
 }

@@ -2,9 +2,17 @@
 ///<reference path='ISyntaxTriviaList.ts' />
 
 interface ISyntaxToken extends ISyntaxElement {
+    // There are no true keywords in javascript.  There are only contextual keywords.  i.e. "if" 
+    // is a keyword when used in a statement location.  But it is actually an identifier when used
+    // in "foo.if".  Because of this, 'kind' for a contextual keyword is always 'IdentifierName',
+    // and 'keywordKind' lets us know if this could be a keyword if it is used in the right 
+    // context.
     keywordKind(): SyntaxKind;
 
+    // Width of this token, not including leading or trailing trivia.
     width(): number;
+
+    // Text for this token, not including leading or trailing trivia.
     text(): string;
 
     value(): any;

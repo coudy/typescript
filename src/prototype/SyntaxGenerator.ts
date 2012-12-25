@@ -2579,7 +2579,7 @@ function generateWalker(): string {
     var result = "";
 
     result +=
-"///<reference path='ISyntaxVisitor.ts' />\r\n"+
+"///<reference path='SyntaxVisitor.generated.ts' />\r\n"+
 "\r\n" +
 "class SyntaxWalker implements ISyntaxVisitor {\r\n" +
 "    public visitToken(token: ISyntaxToken): void {\r\n" +
@@ -2752,16 +2752,52 @@ function generateScannerUtilities(): string {
     return result;
 }
 
+function generateVisitor(): string {
+    var result = "";
+
+    result += "///<reference path='SyntaxNodes.generated.ts' />\r\n\r\n";
+
+    result += "interface ISyntaxVisitor {\r\n";
+
+    for (var i = 0; i < definitions.length; i++) {
+        var definition = definitions[i];
+        if (!definition.isAbstract) {
+            result += "    visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any;\r\n";
+        }
+    }
+
+    result += "}\r\n\r\n";
+
+    result += "class SyntaxVisitor implements ISyntaxVisitor {\r\n";
+    result += "    public defaultVisit(node: SyntaxNode): any {\r\n";
+    result += "        return null;\r\n";
+    result += "    }\r\n";
+
+    for (var i = 0; i < definitions.length; i++) {
+        var definition = definitions[i];
+
+        if (!definition.isAbstract) {
+            result += "\r\n    private visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
+            result += "        return this.defaultVisit(node);\r\n";
+            result += "    }\r\n";
+        }
+    }
+
+    result += "}";
+
+    return result;
+}
+
 var syntaxNodes = generateNodes();
 var rewriter = generateRewriter();
 var tokens = generateTokens();
 var walker = generateWalker();
 var scannerUtilities = generateScannerUtilities();
-// var syntax = generateSyntax();
+var visitor = generateVisitor();
 
 Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts", syntaxNodes, true);
 Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxRewriter.generated.ts", rewriter, true);
 Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxToken.generated.ts", tokens, true);
 Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxWalker.generated.ts", walker, true);
 Environment.writeFile("C:\\fidelity\\src\\prototype\\ScannerUtilities.generated.ts", scannerUtilities, true);
-// Environment.writeFile("C:\\fidelity\\src\\prototype\\Syntax.generated.ts", syntax, true);
+Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxVisitor.generated.ts", visitor, true);

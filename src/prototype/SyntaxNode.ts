@@ -1,8 +1,8 @@
 ///<reference path='Errors.ts' />
 ///<reference path='ISyntaxElement.ts' />
 ///<reference path='ISyntaxToken.ts' />
-///<reference path='ISyntaxVisitor.ts' />
 ///<reference path='SyntaxTokenReplacer.ts' />
+///<reference path='SyntaxVisitor.generated.ts' />
 
 class SyntaxNode implements ISyntaxElement {
     private _data: number = -1;
