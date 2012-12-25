@@ -857,19 +857,19 @@ var SyntaxNode = (function () {
     function SyntaxNode() {
         this._data = -1;
     }
+    SyntaxNode.prototype.isNode = function () {
+        return true;
+    };
     SyntaxNode.prototype.isToken = function () {
         return false;
     };
-    SyntaxNode.prototype.isNode = function () {
-        return true;
+    SyntaxNode.prototype.isTrivia = function () {
+        return false;
     };
     SyntaxNode.prototype.isList = function () {
         return false;
     };
     SyntaxNode.prototype.isSeparatedList = function () {
-        return false;
-    };
-    SyntaxNode.prototype.isTrivia = function () {
         return false;
     };
     SyntaxNode.prototype.isTriviaList = function () {
@@ -1435,10 +1435,16 @@ var SyntaxFacts = (function () {
 var Syntax;
 (function (Syntax) {
     Syntax.emptySeparatedList = {
+        kind: function () {
+            return 2 /* SeparatedList */ ;
+        },
+        isNode: function () {
+            return false;
+        },
         isToken: function () {
             return false;
         },
-        isNode: function () {
+        isTrivia: function () {
             return false;
         },
         isList: function () {
@@ -1447,14 +1453,8 @@ var Syntax;
         isSeparatedList: function () {
             return true;
         },
-        isTrivia: function () {
-            return false;
-        },
         isTriviaList: function () {
             return false;
-        },
-        kind: function () {
-            return 2 /* SeparatedList */ ;
         },
         toJSON: function (key) {
             return [];
@@ -1524,10 +1524,16 @@ var Syntax;
                 this.item
             ];
         };
+        SingletonSeparatedSyntaxList.prototype.kind = function () {
+            return 2 /* SeparatedList */ ;
+        };
+        SingletonSeparatedSyntaxList.prototype.isNode = function () {
+            return false;
+        };
         SingletonSeparatedSyntaxList.prototype.isToken = function () {
             return false;
         };
-        SingletonSeparatedSyntaxList.prototype.isNode = function () {
+        SingletonSeparatedSyntaxList.prototype.isTrivia = function () {
             return false;
         };
         SingletonSeparatedSyntaxList.prototype.isList = function () {
@@ -1536,14 +1542,8 @@ var Syntax;
         SingletonSeparatedSyntaxList.prototype.isSeparatedList = function () {
             return true;
         };
-        SingletonSeparatedSyntaxList.prototype.isTrivia = function () {
-            return false;
-        };
         SingletonSeparatedSyntaxList.prototype.isTriviaList = function () {
             return false;
-        };
-        SingletonSeparatedSyntaxList.prototype.kind = function () {
-            return 2 /* SeparatedList */ ;
         };
         SingletonSeparatedSyntaxList.prototype.count = function () {
             return 1;
@@ -1620,6 +1620,9 @@ var Syntax;
             this._data = -1;
             this.elements = elements;
         }
+        NormalSeparatedSyntaxList.prototype.kind = function () {
+            return 2 /* SeparatedList */ ;
+        };
         NormalSeparatedSyntaxList.prototype.isToken = function () {
             return false;
         };
@@ -1637,9 +1640,6 @@ var Syntax;
         };
         NormalSeparatedSyntaxList.prototype.isTriviaList = function () {
             return false;
-        };
-        NormalSeparatedSyntaxList.prototype.kind = function () {
-            return 2 /* SeparatedList */ ;
         };
         NormalSeparatedSyntaxList.prototype.toJSON = function (key) {
             return this.elements;
@@ -1841,10 +1841,16 @@ var Syntax;
 (function (Syntax) {
     var EmptySyntaxList = (function () {
         function EmptySyntaxList() { }
+        EmptySyntaxList.prototype.kind = function () {
+            return 1 /* List */ ;
+        };
+        EmptySyntaxList.prototype.isNode = function () {
+            return false;
+        };
         EmptySyntaxList.prototype.isToken = function () {
             return false;
         };
-        EmptySyntaxList.prototype.isNode = function () {
+        EmptySyntaxList.prototype.isTrivia = function () {
             return false;
         };
         EmptySyntaxList.prototype.isList = function () {
@@ -1853,14 +1859,8 @@ var Syntax;
         EmptySyntaxList.prototype.isSeparatedList = function () {
             return false;
         };
-        EmptySyntaxList.prototype.isTrivia = function () {
-            return false;
-        };
         EmptySyntaxList.prototype.isTriviaList = function () {
             return false;
-        };
-        EmptySyntaxList.prototype.kind = function () {
-            return 1 /* List */ ;
         };
         EmptySyntaxList.prototype.toJSON = function (key) {
             return [];
@@ -1912,6 +1912,9 @@ var Syntax;
         function SingletonSyntaxList(item) {
             this.item = item;
         }
+        SingletonSyntaxList.prototype.kind = function () {
+            return 1 /* List */ ;
+        };
         SingletonSyntaxList.prototype.isToken = function () {
             return false;
         };
@@ -1929,9 +1932,6 @@ var Syntax;
         };
         SingletonSyntaxList.prototype.isTriviaList = function () {
             return false;
-        };
-        SingletonSyntaxList.prototype.kind = function () {
-            return 1 /* List */ ;
         };
         SingletonSyntaxList.prototype.toJSON = function (key) {
             return [
@@ -1993,10 +1993,16 @@ var Syntax;
             this._data = -1;
             this.nodes = nodes;
         }
+        NormalSyntaxList.prototype.kind = function () {
+            return 1 /* List */ ;
+        };
+        NormalSyntaxList.prototype.isNode = function () {
+            return false;
+        };
         NormalSyntaxList.prototype.isToken = function () {
             return false;
         };
-        NormalSyntaxList.prototype.isNode = function () {
+        NormalSyntaxList.prototype.isTrivia = function () {
             return false;
         };
         NormalSyntaxList.prototype.isList = function () {
@@ -2005,14 +2011,8 @@ var Syntax;
         NormalSyntaxList.prototype.isSeparatedList = function () {
             return false;
         };
-        NormalSyntaxList.prototype.isTrivia = function () {
-            return false;
-        };
         NormalSyntaxList.prototype.isTriviaList = function () {
             return false;
-        };
-        NormalSyntaxList.prototype.kind = function () {
-            return 1 /* List */ ;
         };
         NormalSyntaxList.prototype.toJSON = function (key) {
             return this.nodes;
@@ -3637,19 +3637,19 @@ var Syntax;
         VariableWidthTokenWithNoTrivia.prototype.clone = function () {
             return new VariableWidthTokenWithNoTrivia(this._sourceText, this._fullStart, this._kind, this._textOrWidth);
         };
+        VariableWidthTokenWithNoTrivia.prototype.isNode = function () {
+            return false;
+        };
         VariableWidthTokenWithNoTrivia.prototype.isToken = function () {
             return true;
         };
-        VariableWidthTokenWithNoTrivia.prototype.isNode = function () {
+        VariableWidthTokenWithNoTrivia.prototype.isTrivia = function () {
             return false;
         };
         VariableWidthTokenWithNoTrivia.prototype.isList = function () {
             return false;
         };
         VariableWidthTokenWithNoTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.isTrivia = function () {
             return false;
         };
         VariableWidthTokenWithNoTrivia.prototype.isTriviaList = function () {
@@ -3753,19 +3753,19 @@ var Syntax;
         VariableWidthTokenWithLeadingTrivia.prototype.clone = function () {
             return new VariableWidthTokenWithLeadingTrivia(this._sourceText, this._fullStart, this._kind, this._leadingTriviaInfo, this._textOrWidth);
         };
+        VariableWidthTokenWithLeadingTrivia.prototype.isNode = function () {
+            return false;
+        };
         VariableWidthTokenWithLeadingTrivia.prototype.isToken = function () {
             return true;
         };
-        VariableWidthTokenWithLeadingTrivia.prototype.isNode = function () {
+        VariableWidthTokenWithLeadingTrivia.prototype.isTrivia = function () {
             return false;
         };
         VariableWidthTokenWithLeadingTrivia.prototype.isList = function () {
             return false;
         };
         VariableWidthTokenWithLeadingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.isTrivia = function () {
             return false;
         };
         VariableWidthTokenWithLeadingTrivia.prototype.isTriviaList = function () {
@@ -3869,19 +3869,19 @@ var Syntax;
         VariableWidthTokenWithTrailingTrivia.prototype.clone = function () {
             return new VariableWidthTokenWithTrailingTrivia(this._sourceText, this._fullStart, this._kind, this._textOrWidth, this._trailingTriviaInfo);
         };
+        VariableWidthTokenWithTrailingTrivia.prototype.isNode = function () {
+            return false;
+        };
         VariableWidthTokenWithTrailingTrivia.prototype.isToken = function () {
             return true;
         };
-        VariableWidthTokenWithTrailingTrivia.prototype.isNode = function () {
+        VariableWidthTokenWithTrailingTrivia.prototype.isTrivia = function () {
             return false;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.isList = function () {
             return false;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.isTrivia = function () {
             return false;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.isTriviaList = function () {
@@ -3986,19 +3986,19 @@ var Syntax;
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.clone = function () {
             return new VariableWidthTokenWithLeadingAndTrailingTrivia(this._sourceText, this._fullStart, this._kind, this._leadingTriviaInfo, this._textOrWidth, this._trailingTriviaInfo);
         };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isNode = function () {
+            return false;
+        };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isToken = function () {
             return true;
         };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isNode = function () {
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isTrivia = function () {
             return false;
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isList = function () {
             return false;
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isTrivia = function () {
             return false;
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isTriviaList = function () {
@@ -4097,19 +4097,19 @@ var Syntax;
         FixedWidthTokenWithNoTrivia.prototype.clone = function () {
             return new FixedWidthTokenWithNoTrivia(this._kind);
         };
+        FixedWidthTokenWithNoTrivia.prototype.isNode = function () {
+            return false;
+        };
         FixedWidthTokenWithNoTrivia.prototype.isToken = function () {
             return true;
         };
-        FixedWidthTokenWithNoTrivia.prototype.isNode = function () {
+        FixedWidthTokenWithNoTrivia.prototype.isTrivia = function () {
             return false;
         };
         FixedWidthTokenWithNoTrivia.prototype.isList = function () {
             return false;
         };
         FixedWidthTokenWithNoTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.isTrivia = function () {
             return false;
         };
         FixedWidthTokenWithNoTrivia.prototype.isTriviaList = function () {
@@ -4202,19 +4202,19 @@ var Syntax;
         FixedWidthTokenWithLeadingTrivia.prototype.clone = function () {
             return new FixedWidthTokenWithLeadingTrivia(this._sourceText, this._fullStart, this._kind, this._leadingTriviaInfo);
         };
+        FixedWidthTokenWithLeadingTrivia.prototype.isNode = function () {
+            return false;
+        };
         FixedWidthTokenWithLeadingTrivia.prototype.isToken = function () {
             return true;
         };
-        FixedWidthTokenWithLeadingTrivia.prototype.isNode = function () {
+        FixedWidthTokenWithLeadingTrivia.prototype.isTrivia = function () {
             return false;
         };
         FixedWidthTokenWithLeadingTrivia.prototype.isList = function () {
             return false;
         };
         FixedWidthTokenWithLeadingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.isTrivia = function () {
             return false;
         };
         FixedWidthTokenWithLeadingTrivia.prototype.isTriviaList = function () {
@@ -4313,19 +4313,19 @@ var Syntax;
         FixedWidthTokenWithTrailingTrivia.prototype.clone = function () {
             return new FixedWidthTokenWithTrailingTrivia(this._sourceText, this._fullStart, this._kind, this._trailingTriviaInfo);
         };
+        FixedWidthTokenWithTrailingTrivia.prototype.isNode = function () {
+            return false;
+        };
         FixedWidthTokenWithTrailingTrivia.prototype.isToken = function () {
             return true;
         };
-        FixedWidthTokenWithTrailingTrivia.prototype.isNode = function () {
+        FixedWidthTokenWithTrailingTrivia.prototype.isTrivia = function () {
             return false;
         };
         FixedWidthTokenWithTrailingTrivia.prototype.isList = function () {
             return false;
         };
         FixedWidthTokenWithTrailingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.isTrivia = function () {
             return false;
         };
         FixedWidthTokenWithTrailingTrivia.prototype.isTriviaList = function () {
@@ -4425,19 +4425,19 @@ var Syntax;
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.clone = function () {
             return new FixedWidthTokenWithLeadingAndTrailingTrivia(this._sourceText, this._fullStart, this._kind, this._leadingTriviaInfo, this._trailingTriviaInfo);
         };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isNode = function () {
+            return false;
+        };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isToken = function () {
             return true;
         };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isNode = function () {
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isTrivia = function () {
             return false;
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isList = function () {
             return false;
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isTrivia = function () {
             return false;
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isTriviaList = function () {
@@ -4533,19 +4533,19 @@ var Syntax;
         KeywordWithNoTrivia.prototype.clone = function () {
             return new KeywordWithNoTrivia(this._keywordKind);
         };
+        KeywordWithNoTrivia.prototype.isNode = function () {
+            return false;
+        };
         KeywordWithNoTrivia.prototype.isToken = function () {
             return true;
         };
-        KeywordWithNoTrivia.prototype.isNode = function () {
+        KeywordWithNoTrivia.prototype.isTrivia = function () {
             return false;
         };
         KeywordWithNoTrivia.prototype.isList = function () {
             return false;
         };
         KeywordWithNoTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        KeywordWithNoTrivia.prototype.isTrivia = function () {
             return false;
         };
         KeywordWithNoTrivia.prototype.isTriviaList = function () {
@@ -4638,19 +4638,19 @@ var Syntax;
         KeywordWithLeadingTrivia.prototype.clone = function () {
             return new KeywordWithLeadingTrivia(this._sourceText, this._fullStart, this._keywordKind, this._leadingTriviaInfo);
         };
+        KeywordWithLeadingTrivia.prototype.isNode = function () {
+            return false;
+        };
         KeywordWithLeadingTrivia.prototype.isToken = function () {
             return true;
         };
-        KeywordWithLeadingTrivia.prototype.isNode = function () {
+        KeywordWithLeadingTrivia.prototype.isTrivia = function () {
             return false;
         };
         KeywordWithLeadingTrivia.prototype.isList = function () {
             return false;
         };
         KeywordWithLeadingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        KeywordWithLeadingTrivia.prototype.isTrivia = function () {
             return false;
         };
         KeywordWithLeadingTrivia.prototype.isTriviaList = function () {
@@ -4749,19 +4749,19 @@ var Syntax;
         KeywordWithTrailingTrivia.prototype.clone = function () {
             return new KeywordWithTrailingTrivia(this._sourceText, this._fullStart, this._keywordKind, this._trailingTriviaInfo);
         };
+        KeywordWithTrailingTrivia.prototype.isNode = function () {
+            return false;
+        };
         KeywordWithTrailingTrivia.prototype.isToken = function () {
             return true;
         };
-        KeywordWithTrailingTrivia.prototype.isNode = function () {
+        KeywordWithTrailingTrivia.prototype.isTrivia = function () {
             return false;
         };
         KeywordWithTrailingTrivia.prototype.isList = function () {
             return false;
         };
         KeywordWithTrailingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        KeywordWithTrailingTrivia.prototype.isTrivia = function () {
             return false;
         };
         KeywordWithTrailingTrivia.prototype.isTriviaList = function () {
@@ -4861,19 +4861,19 @@ var Syntax;
         KeywordWithLeadingAndTrailingTrivia.prototype.clone = function () {
             return new KeywordWithLeadingAndTrailingTrivia(this._sourceText, this._fullStart, this._keywordKind, this._leadingTriviaInfo, this._trailingTriviaInfo);
         };
+        KeywordWithLeadingAndTrailingTrivia.prototype.isNode = function () {
+            return false;
+        };
         KeywordWithLeadingAndTrailingTrivia.prototype.isToken = function () {
             return true;
         };
-        KeywordWithLeadingAndTrailingTrivia.prototype.isNode = function () {
+        KeywordWithLeadingAndTrailingTrivia.prototype.isTrivia = function () {
             return false;
         };
         KeywordWithLeadingAndTrailingTrivia.prototype.isList = function () {
             return false;
         };
         KeywordWithLeadingAndTrailingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        KeywordWithLeadingAndTrailingTrivia.prototype.isTrivia = function () {
             return false;
         };
         KeywordWithLeadingAndTrailingTrivia.prototype.isTriviaList = function () {

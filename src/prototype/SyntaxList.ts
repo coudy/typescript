@@ -2,13 +2,14 @@
 
 module Syntax {
     class EmptySyntaxList implements ISyntaxList {
-        public isToken(): bool { return false; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return true; }
-        public isSeparatedList(): bool{ return false; }
-        public isTrivia(): bool { return false; }
-        public isTriviaList(): bool { return false; }
         public kind(): SyntaxKind { return SyntaxKind.List; }
+
+        public isNode(): bool { return false; }
+        public isToken(): bool { return false; }
+        public isTrivia(): bool { return false; }
+        public isList(): bool { return true; }
+        public isSeparatedList(): bool { return false; }
+        public isTriviaList(): bool { return false; }
 
         public toJSON(key) {
             return [];
@@ -79,23 +80,24 @@ module Syntax {
         constructor(item: SyntaxNode) {
             this.item = item;
         }
-        
+
+        public kind(): SyntaxKind { return SyntaxKind.List; }
+
         public isToken(): bool { return false; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return true; }
-        public isSeparatedList(): bool{ return false; }
+        public isNode(): bool { return false; }
+        public isList(): bool { return true; }
+        public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
-        public kind(): SyntaxKind { return SyntaxKind.List; }
 
         public toJSON(key) {
             return [this.item];
         }
-        
+
         public count() {
             return 1;
         }
-        
+
         public syntaxNodeAt(index: number) {
             if (index !== 0) {
                 throw Errors.argumentOutOfRange("index");
@@ -161,14 +163,15 @@ module Syntax {
         constructor(nodes: SyntaxNode[]) {
             this.nodes = nodes;
         }
-        
-        public isToken(): bool { return false; }
-        public isNode(): bool{ return false; }
-        public isList(): bool{ return true; }
-        public isSeparatedList(): bool{ return false; }
-        public isTrivia(): bool { return false; }
-        public isTriviaList(): bool { return false; }
+
         public kind(): SyntaxKind { return SyntaxKind.List; }
+
+        public isNode(): bool { return false; }
+        public isToken(): bool { return false; }
+        public isTrivia(): bool { return false; }
+        public isList(): bool { return true; }
+        public isSeparatedList(): bool { return false; }
+        public isTriviaList(): bool { return false; }
 
         public toJSON(key) {
             return this.nodes;
@@ -270,7 +273,7 @@ module Syntax {
                  | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
                  | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
         }
-    
+
         private data(): number {
             if (this._data === -1) {
                 this._data = this.computeData();

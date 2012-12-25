@@ -25,11 +25,11 @@ module Syntax {
                 this._textOrWidth);
         }
 
-        public isToken(): bool { return true; }
         public isNode(): bool { return false; }
+        public isToken(): bool { return true; }
+        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return this._kind; }
@@ -106,11 +106,11 @@ module Syntax {
                 this._textOrWidth);
         }
 
-        public isToken(): bool { return true; }
         public isNode(): bool { return false; }
+        public isToken(): bool { return true; }
+        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return this._kind; }
@@ -187,11 +187,11 @@ module Syntax {
                 this._trailingTriviaInfo);
         }
 
-        public isToken(): bool { return true; }
         public isNode(): bool { return false; }
+        public isToken(): bool { return true; }
+        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return this._kind; }
@@ -271,11 +271,11 @@ module Syntax {
                 this._trailingTriviaInfo);
         }
 
-        public isToken(): bool { return true; }
         public isNode(): bool { return false; }
+        public isToken(): bool { return true; }
+        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return this._kind; }
@@ -339,11 +339,11 @@ module Syntax {
                 this._kind);
         }
 
-        public isToken(): bool { return true; }
         public isNode(): bool { return false; }
+        public isToken(): bool { return true; }
+        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return this._kind; }
@@ -404,11 +404,11 @@ module Syntax {
                 this._leadingTriviaInfo);
         }
 
-        public isToken(): bool { return true; }
         public isNode(): bool { return false; }
+        public isToken(): bool { return true; }
+        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return this._kind; }
@@ -472,11 +472,11 @@ module Syntax {
                 this._trailingTriviaInfo);
         }
 
-        public isToken(): bool { return true; }
         public isNode(): bool { return false; }
+        public isToken(): bool { return true; }
+        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return this._kind; }
@@ -543,11 +543,11 @@ module Syntax {
                 this._trailingTriviaInfo);
         }
 
-        public isToken(): bool { return true; }
         public isNode(): bool { return false; }
+        public isToken(): bool { return true; }
+        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return this._kind; }
@@ -602,11 +602,11 @@ module Syntax {
                 this._keywordKind);
         }
 
-        public isToken(): bool { return true; }
         public isNode(): bool { return false; }
+        public isToken(): bool { return true; }
+        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return SyntaxKind.IdentifierNameToken; }
@@ -667,11 +667,11 @@ module Syntax {
                 this._leadingTriviaInfo);
         }
 
-        public isToken(): bool { return true; }
         public isNode(): bool { return false; }
+        public isToken(): bool { return true; }
+        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return SyntaxKind.IdentifierNameToken; }
@@ -735,11 +735,11 @@ module Syntax {
                 this._trailingTriviaInfo);
         }
 
-        public isToken(): bool { return true; }
         public isNode(): bool { return false; }
+        public isToken(): bool { return true; }
+        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return SyntaxKind.IdentifierNameToken; }
@@ -806,11 +806,11 @@ module Syntax {
                 this._trailingTriviaInfo);
         }
 
-        public isToken(): bool { return true; }
         public isNode(): bool { return false; }
+        public isToken(): bool { return true; }
+        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return SyntaxKind.IdentifierNameToken; }

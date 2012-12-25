@@ -6,12 +6,12 @@
 
 class SyntaxNode implements ISyntaxElement {
     private _data: number = -1;
-
-    public isToken(): bool { return false; }
+    
     public isNode(): bool{ return true; }
+    public isToken(): bool { return false; }
+    public isTrivia(): bool { return false; }
     public isList(): bool{ return false; }
     public isSeparatedList(): bool{ return false; }
-    public isTrivia(): bool { return false; }
     public isTriviaList(): bool { return false; }
 
     public kind(): SyntaxKind {

@@ -4,13 +4,14 @@
 
 module Syntax {
     export var emptySeparatedList = {
-        isToken: () => false,
+        kind: () => SyntaxKind.SeparatedList,
+
         isNode: () => false,
+        isToken: () => false,
+        isTrivia: () => false,
         isList: () => false,
         isSeparatedList: () => true,
-        isTrivia: () => false,
         isTriviaList: () => false,
-        kind: () => SyntaxKind.SeparatedList,
 
         toJSON: (key) => [],
 
@@ -33,7 +34,7 @@ module Syntax {
         collectTextElements: (elements: string[]): void => {
         },
 
-        firstToken: (): ISyntaxToken =>null,
+        firstToken: (): ISyntaxToken => null,
         lastToken: (): ISyntaxToken => null,
         fullWidth: () => 0,
         fullText: () => "",
@@ -58,7 +59,7 @@ module Syntax {
 
     class SingletonSeparatedSyntaxList implements ISeparatedSyntaxList {
         private item: SyntaxNode;
-        
+
         constructor(item: SyntaxNode) {
             this.item = item;
         }
@@ -67,13 +68,14 @@ module Syntax {
             return [this.item];
         }
 
-        public isToken(): bool { return false; }
+        public kind() { return SyntaxKind.SeparatedList; }
+
         public isNode(): bool { return false; }
+        public isToken(): bool { return false; }
+        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return true; }
-        public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
-        public kind() { return SyntaxKind.SeparatedList; }
 
         public count() { return 1; }
         public syntaxNodeCount() { return 1; }
@@ -161,13 +163,14 @@ module Syntax {
             this.elements = elements;
         }
 
+        public kind() { return SyntaxKind.SeparatedList; }
+
         public isToken(): bool { return false; }
         public isNode(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return true; }
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
-        public kind() { return SyntaxKind.SeparatedList; }
         public toJSON(key) { return this.elements; }
 
         public count() { return this.elements.length; }
@@ -292,10 +295,10 @@ module Syntax {
             var hasSkippedText = false;
             var hasZeroWidthToken = false;
             var hasRegularExpressionToken = false;
-            
+
             for (var i = 0, n = this.elements.length; i < n; i++) {
                 var element = this.elements[i];
-                
+
                 var childWidth = element.fullWidth();
                 fullWidth += childWidth;
 
@@ -322,7 +325,7 @@ module Syntax {
                  | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
                  | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
         }
-    
+
         private data(): number {
             if (this._data === -1) {
                 this._data = this.computeData();
@@ -334,7 +337,7 @@ module Syntax {
         public findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
             for (var i = 0, n = this.elements.length; i < n; i++) {
                 var element = this.elements[i];
-                
+
                 var childWidth = element.fullWidth();
 
                 if (i % 2 === 0) {
