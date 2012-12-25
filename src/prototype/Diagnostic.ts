@@ -1,10 +1,10 @@
+///<reference path='ArrayUtilities.ts' />
 ///<reference path='DiagnosticCode.ts' />
 
 class Diagnostic {
     private _diagnosticCode: DiagnosticCode;
     private _arguments: any[];
 
-    // Only the compiler creates instances.
     constructor(diagnosticCode: DiagnosticCode, arguments: any[]) {
         this._diagnosticCode = diagnosticCode;
         this._arguments = (arguments && arguments.length > 0) ? arguments : null;

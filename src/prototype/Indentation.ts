@@ -9,12 +9,11 @@ module Indentation {
         return columnForStartOfToken(token, syntaxInformationMap, options) + token.width();
     }
 
-    export function columnForStartOfToken(
-            token: ISyntaxToken,
-            syntaxInformationMap: SyntaxInformationMap,
-            options: FormattingOptions): number {
+    export function columnForStartOfToken(token: ISyntaxToken,
+                                          syntaxInformationMap: SyntaxInformationMap,
+                                          options: FormattingOptions): number {
         // Walk backward from this token until we find the first token in the line.  For each token 
-        // we see (that is not the first toke in line), push the entirety of the text into the text 
+        // we see (that is not the first tokem in line), push the entirety of the text into the text 
         // array.  Then, for the first token, add its text (without its leading trivia) to the text
         // array.  i.e. if we have:
         //
@@ -73,9 +72,8 @@ module Indentation {
     // Collect all the trivia that precedes this token.  Stopping when we hit a newline trivia
     // or a multiline comment that spans multiple lines.  This is meant to be called on the first
     // token in a line.
-    function collectLeadingTriviaTextToStartOfLine(
-            firstTokenInLine: ISyntaxToken,
-            leadingTextInReverse: string[]) {
+    function collectLeadingTriviaTextToStartOfLine(firstTokenInLine: ISyntaxToken,
+                                                   leadingTextInReverse: string[]) {
         var leadingTrivia = firstTokenInLine.leadingTrivia();
 
         for (var i = leadingTrivia.count() - 1; i >= 0; i--) {
@@ -100,9 +98,8 @@ module Indentation {
         }
     }
 
-    function columnForLeadingTextInReverse(
-            leadingTextInReverse: string[],
-            options: FormattingOptions): number {
+    function columnForLeadingTextInReverse(leadingTextInReverse: string[],
+                                           options: FormattingOptions): number {
         var column = 0;
 
         // walk backwards.  This means we're actually walking forward from column 0 to the start of
