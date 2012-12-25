@@ -15,7 +15,7 @@ class SourceUnitSyntax extends SyntaxNode {
         super();
 
         if (moduleElements === null) { throw Errors.argumentNull('moduleElements'); }
-        if (endOfFileToken.kind() !== SyntaxKind.EndOfFileToken) { throw Errors.argument('endOfFileToken'); }
+        if (endOfFileToken.tokenKind !== SyntaxKind.EndOfFileToken) { throw Errors.argument('endOfFileToken'); }
 
         this._moduleElements = moduleElements;
         this._endOfFileToken = endOfFileToken;
@@ -154,6 +154,9 @@ class SourceUnitSyntax extends SyntaxNode {
 }
 
 class ModuleElementSyntax extends SyntaxNode {
+    constructor() {
+        super();
+    }
 
     private isModuleElement(): bool {
         return true;
@@ -173,6 +176,9 @@ class ModuleElementSyntax extends SyntaxNode {
 }
 
 class ModuleReferenceSyntax extends SyntaxNode {
+    constructor() {
+        super();
+    }
 
     private isModuleReference(): bool {
         return true;
@@ -204,9 +210,9 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         super();
 
         if (moduleKeyword.keywordKind() !== SyntaxKind.ModuleKeyword) { throw Errors.argument('moduleKeyword'); }
-        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (stringLiteral.kind() !== SyntaxKind.StringLiteral) { throw Errors.argument('stringLiteral'); }
-        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
+        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
+        if (stringLiteral.tokenKind !== SyntaxKind.StringLiteral) { throw Errors.argument('stringLiteral'); }
+        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._moduleKeyword = moduleKeyword;
         this._openParenToken = openParenToken;
@@ -514,9 +520,9 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
 
         if (moduleReference === null) { throw Errors.argumentNull('moduleReference'); }
         if (importKeyword.keywordKind() !== SyntaxKind.ImportKeyword) { throw Errors.argument('importKeyword'); }
-        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
-        if (equalsToken.kind() !== SyntaxKind.EqualsToken) { throw Errors.argument('equalsToken'); }
-        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
+        if (identifier.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
+        if (equalsToken.tokenKind !== SyntaxKind.EqualsToken) { throw Errors.argument('equalsToken'); }
+        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
         this._importKeyword = importKeyword;
         this._identifier = identifier;
@@ -758,9 +764,9 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
             if (declareKeyword.keywordKind() !== SyntaxKind.DeclareKeyword) { throw Errors.argument('declareKeyword'); }
         }
         if (classKeyword.keywordKind() !== SyntaxKind.ClassKeyword) { throw Errors.argument('classKeyword'); }
-        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
-        if (openBraceToken.kind() !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
-        if (closeBraceToken.kind() !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
+        if (identifier.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
+        if (openBraceToken.tokenKind !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
+        if (closeBraceToken.tokenKind !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
 
         this._exportKeyword = exportKeyword;
         this._declareKeyword = declareKeyword;
@@ -1123,7 +1129,7 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
             if (exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) { throw Errors.argument('exportKeyword'); }
         }
         if (interfaceKeyword.keywordKind() !== SyntaxKind.InterfaceKeyword) { throw Errors.argument('interfaceKeyword'); }
-        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
+        if (identifier.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
 
         this._exportKeyword = exportKeyword;
         this._interfaceKeyword = interfaceKeyword;
@@ -1670,10 +1676,10 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
         }
         if (moduleKeyword.keywordKind() !== SyntaxKind.ModuleKeyword) { throw Errors.argument('moduleKeyword'); }
         if (stringLiteral !== null) {
-            if (stringLiteral.kind() !== SyntaxKind.StringLiteral) { throw Errors.argument('stringLiteral'); }
+            if (stringLiteral.tokenKind !== SyntaxKind.StringLiteral) { throw Errors.argument('stringLiteral'); }
         }
-        if (openBraceToken.kind() !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
-        if (closeBraceToken.kind() !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
+        if (openBraceToken.tokenKind !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
+        if (closeBraceToken.tokenKind !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
 
         this._exportKeyword = exportKeyword;
         this._declareKeyword = declareKeyword;
@@ -1990,6 +1996,9 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
 }
 
 class StatementSyntax extends ModuleElementSyntax {
+    constructor() {
+        super();
+    }
 
     private isStatement(): bool {
         return true;
@@ -2033,7 +2042,7 @@ class FunctionDeclarationSyntax extends StatementSyntax {
         }
         if (functionKeyword.keywordKind() !== SyntaxKind.FunctionKeyword) { throw Errors.argument('functionKeyword'); }
         if (semicolonToken !== null) {
-            if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
+            if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
         }
 
         this._exportKeyword = exportKeyword;
@@ -2316,7 +2325,7 @@ class VariableStatementSyntax extends StatementSyntax {
         if (declareKeyword !== null) {
             if (declareKeyword.keywordKind() !== SyntaxKind.DeclareKeyword) { throw Errors.argument('declareKeyword'); }
         }
-        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
+        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
         this._exportKeyword = exportKeyword;
         this._declareKeyword = declareKeyword;
@@ -2518,6 +2527,9 @@ class VariableStatementSyntax extends StatementSyntax {
 }
 
 class ExpressionSyntax extends SyntaxNode {
+    constructor() {
+        super();
+    }
 
     private isExpression(): bool {
         return true;
@@ -2537,6 +2549,9 @@ class ExpressionSyntax extends SyntaxNode {
 }
 
 class UnaryExpressionSyntax extends ExpressionSyntax {
+    constructor() {
+        super();
+    }
 
     private isUnaryExpression(): bool {
         return true;
@@ -2712,7 +2727,7 @@ class VariableDeclaratorSyntax extends SyntaxNode {
                 equalsValueClause: EqualsValueClauseSyntax) {
         super();
 
-        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
+        if (identifier.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
 
         this._identifier = identifier;
         this._typeAnnotation = typeAnnotation;
@@ -2895,7 +2910,7 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         super();
 
         if (value === null) { throw Errors.argumentNull('value'); }
-        if (equalsToken.kind() !== SyntaxKind.EqualsToken) { throw Errors.argument('equalsToken'); }
+        if (equalsToken.tokenKind !== SyntaxKind.EqualsToken) { throw Errors.argument('equalsToken'); }
 
         this._equalsToken = equalsToken;
         this._value = value;
@@ -3041,7 +3056,7 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
 
         if (kind === null) { throw Errors.argumentNull('kind'); }
         if (operand === null) { throw Errors.argumentNull('operand'); }
-        switch (operatorToken.kind()) {
+        switch (operatorToken.tokenKind) {
             case SyntaxKind.PlusPlusToken:
             case SyntaxKind.MinusMinusToken:
             case SyntaxKind.PlusToken:
@@ -3306,7 +3321,7 @@ class LiteralExpressionSyntax extends UnaryExpressionSyntax {
         super();
 
         if (kind === null) { throw Errors.argumentNull('kind'); }
-        switch (literalToken.kind()) {
+        switch (literalToken.tokenKind) {
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
             case SyntaxKind.NumericLiteral:
@@ -3401,7 +3416,7 @@ class LiteralExpressionSyntax extends UnaryExpressionSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._literalToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this._literalToken.kind());
+        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this._literalToken.tokenKind);
 
         return (fullWidth << Constants.NodeFullWidthShift)
              | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
@@ -3442,8 +3457,8 @@ class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
         super();
 
         if (expressions === null) { throw Errors.argumentNull('expressions'); }
-        if (openBracketToken.kind() !== SyntaxKind.OpenBracketToken) { throw Errors.argument('openBracketToken'); }
-        if (closeBracketToken.kind() !== SyntaxKind.CloseBracketToken) { throw Errors.argument('closeBracketToken'); }
+        if (openBracketToken.tokenKind !== SyntaxKind.OpenBracketToken) { throw Errors.argument('openBracketToken'); }
+        if (closeBracketToken.tokenKind !== SyntaxKind.CloseBracketToken) { throw Errors.argument('closeBracketToken'); }
 
         this._openBracketToken = openBracketToken;
         this._expressions = expressions;
@@ -3694,8 +3709,8 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
         super();
 
         if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
+        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
+        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._openParenToken = openParenToken;
         this._expression = expression;
@@ -3856,6 +3871,9 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
 }
 
 class ArrowFunctionExpressionSyntax extends UnaryExpressionSyntax {
+    constructor() {
+        super();
+    }
 
     private isArrowFunctionExpression(): bool {
         return true;
@@ -3893,8 +3911,8 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
         super();
 
         if (body === null) { throw Errors.argumentNull('body'); }
-        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
-        if (equalsGreaterThanToken.kind() !== SyntaxKind.EqualsGreaterThanToken) { throw Errors.argument('equalsGreaterThanToken'); }
+        if (identifier.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
+        if (equalsGreaterThanToken.tokenKind !== SyntaxKind.EqualsGreaterThanToken) { throw Errors.argument('equalsGreaterThanToken'); }
 
         this._identifier = identifier;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
@@ -4066,7 +4084,7 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
 
         if (callSignature === null) { throw Errors.argumentNull('callSignature'); }
         if (body === null) { throw Errors.argumentNull('body'); }
-        if (equalsGreaterThanToken.kind() !== SyntaxKind.EqualsGreaterThanToken) { throw Errors.argument('equalsGreaterThanToken'); }
+        if (equalsGreaterThanToken.tokenKind !== SyntaxKind.EqualsGreaterThanToken) { throw Errors.argument('equalsGreaterThanToken'); }
 
         this._callSignature = callSignature;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
@@ -4227,6 +4245,9 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
 }
 
 class TypeSyntax extends UnaryExpressionSyntax {
+    constructor() {
+        super();
+    }
 
     private isType(): bool {
         return true;
@@ -4246,6 +4267,9 @@ class TypeSyntax extends UnaryExpressionSyntax {
 }
 
 class NameSyntax extends TypeSyntax {
+    constructor() {
+        super();
+    }
 
     private isName(): bool {
         return true;
@@ -4270,7 +4294,7 @@ class IdentifierNameSyntax extends NameSyntax {
     constructor(identifier: ISyntaxToken) {
         super();
 
-        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
+        if (identifier.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
 
         this._identifier = identifier;
     }
@@ -4383,7 +4407,7 @@ class QualifiedNameSyntax extends NameSyntax {
 
         if (left === null) { throw Errors.argumentNull('left'); }
         if (right === null) { throw Errors.argumentNull('right'); }
-        if (dotToken.kind() !== SyntaxKind.DotToken) { throw Errors.argument('dotToken'); }
+        if (dotToken.tokenKind !== SyntaxKind.DotToken) { throw Errors.argument('dotToken'); }
 
         this._left = left;
         this._dotToken = dotToken;
@@ -4561,7 +4585,7 @@ class ConstructorTypeSyntax extends TypeSyntax {
         if (parameterList === null) { throw Errors.argumentNull('parameterList'); }
         if (type === null) { throw Errors.argumentNull('type'); }
         if (newKeyword.keywordKind() !== SyntaxKind.NewKeyword) { throw Errors.argument('newKeyword'); }
-        if (equalsGreaterThanToken.kind() !== SyntaxKind.EqualsGreaterThanToken) { throw Errors.argument('equalsGreaterThanToken'); }
+        if (equalsGreaterThanToken.tokenKind !== SyntaxKind.EqualsGreaterThanToken) { throw Errors.argument('equalsGreaterThanToken'); }
 
         this._newKeyword = newKeyword;
         this._parameterList = parameterList;
@@ -4759,7 +4783,7 @@ class FunctionTypeSyntax extends TypeSyntax {
 
         if (parameterList === null) { throw Errors.argumentNull('parameterList'); }
         if (type === null) { throw Errors.argumentNull('type'); }
-        if (equalsGreaterThanToken.kind() !== SyntaxKind.EqualsGreaterThanToken) { throw Errors.argument('equalsGreaterThanToken'); }
+        if (equalsGreaterThanToken.tokenKind !== SyntaxKind.EqualsGreaterThanToken) { throw Errors.argument('equalsGreaterThanToken'); }
 
         this._parameterList = parameterList;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
@@ -4930,8 +4954,8 @@ class ObjectTypeSyntax extends TypeSyntax {
         super();
 
         if (typeMembers === null) { throw Errors.argumentNull('typeMembers'); }
-        if (openBraceToken.kind() !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
-        if (closeBraceToken.kind() !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
+        if (openBraceToken.tokenKind !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
+        if (closeBraceToken.tokenKind !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
 
         this._openBraceToken = openBraceToken;
         this._typeMembers = typeMembers;
@@ -5110,8 +5134,8 @@ class ArrayTypeSyntax extends TypeSyntax {
         super();
 
         if (type === null) { throw Errors.argumentNull('type'); }
-        if (openBracketToken.kind() !== SyntaxKind.OpenBracketToken) { throw Errors.argument('openBracketToken'); }
-        if (closeBracketToken.kind() !== SyntaxKind.CloseBracketToken) { throw Errors.argument('closeBracketToken'); }
+        if (openBracketToken.tokenKind !== SyntaxKind.OpenBracketToken) { throw Errors.argument('openBracketToken'); }
+        if (closeBracketToken.tokenKind !== SyntaxKind.CloseBracketToken) { throw Errors.argument('closeBracketToken'); }
 
         this._type = type;
         this._openBracketToken = openBracketToken;
@@ -5395,7 +5419,7 @@ class TypeAnnotationSyntax extends SyntaxNode {
         super();
 
         if (type === null) { throw Errors.argumentNull('type'); }
-        if (colonToken.kind() !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
+        if (colonToken.tokenKind !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
 
         this._colonToken = colonToken;
         this._type = type;
@@ -5539,8 +5563,8 @@ class BlockSyntax extends StatementSyntax {
         super();
 
         if (statements === null) { throw Errors.argumentNull('statements'); }
-        if (openBraceToken.kind() !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
-        if (closeBraceToken.kind() !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
+        if (openBraceToken.tokenKind !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
+        if (closeBraceToken.tokenKind !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
 
         this._openBraceToken = openBraceToken;
         this._statements = statements;
@@ -5726,14 +5750,14 @@ class ParameterSyntax extends SyntaxNode {
         super();
 
         if (dotDotDotToken !== null) {
-            if (dotDotDotToken.kind() !== SyntaxKind.DotDotDotToken) { throw Errors.argument('dotDotDotToken'); }
+            if (dotDotDotToken.tokenKind !== SyntaxKind.DotDotDotToken) { throw Errors.argument('dotDotDotToken'); }
         }
         if (publicOrPrivateKeyword !== null) {
             if (publicOrPrivateKeyword.keywordKind() !== SyntaxKind.PublicKeyword && publicOrPrivateKeyword.keywordKind() !== SyntaxKind.PrivateKeyword) { throw Errors.argument('publicOrPrivateKeyword'); }
         }
-        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
+        if (identifier.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
         if (questionToken !== null) {
-            if (questionToken.kind() !== SyntaxKind.QuestionToken) { throw Errors.argument('questionToken'); }
+            if (questionToken.tokenKind !== SyntaxKind.QuestionToken) { throw Errors.argument('questionToken'); }
         }
 
         this._dotDotDotToken = dotDotDotToken;
@@ -6013,7 +6037,7 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
 
         if (expression === null) { throw Errors.argumentNull('expression'); }
         if (identifierName === null) { throw Errors.argumentNull('identifierName'); }
-        if (dotToken.kind() !== SyntaxKind.DotToken) { throw Errors.argument('dotToken'); }
+        if (dotToken.tokenKind !== SyntaxKind.DotToken) { throw Errors.argument('dotToken'); }
 
         this._expression = expression;
         this._dotToken = dotToken;
@@ -6188,7 +6212,7 @@ class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
 
         if (kind === null) { throw Errors.argumentNull('kind'); }
         if (operand === null) { throw Errors.argumentNull('operand'); }
-        if (operatorToken.kind() !== SyntaxKind.PlusPlusToken && operatorToken.kind() !== SyntaxKind.MinusMinusToken) { throw Errors.argument('operatorToken'); }
+        if (operatorToken.tokenKind !== SyntaxKind.PlusPlusToken && operatorToken.tokenKind !== SyntaxKind.MinusMinusToken) { throw Errors.argument('operatorToken'); }
 
         this._kind = kind;
         this._operand = operand;
@@ -6336,8 +6360,8 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
 
         if (expression === null) { throw Errors.argumentNull('expression'); }
         if (argumentExpression === null) { throw Errors.argumentNull('argumentExpression'); }
-        if (openBracketToken.kind() !== SyntaxKind.OpenBracketToken) { throw Errors.argument('openBracketToken'); }
-        if (closeBracketToken.kind() !== SyntaxKind.CloseBracketToken) { throw Errors.argument('closeBracketToken'); }
+        if (openBracketToken.tokenKind !== SyntaxKind.OpenBracketToken) { throw Errors.argument('openBracketToken'); }
+        if (closeBracketToken.tokenKind !== SyntaxKind.CloseBracketToken) { throw Errors.argument('closeBracketToken'); }
 
         this._expression = expression;
         this._openBracketToken = openBracketToken;
@@ -6682,8 +6706,8 @@ class ArgumentListSyntax extends SyntaxNode {
         super();
 
         if (arguments === null) { throw Errors.argumentNull('arguments'); }
-        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
+        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
+        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._openParenToken = openParenToken;
         this._arguments = arguments;
@@ -6867,7 +6891,7 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
         if (kind === null) { throw Errors.argumentNull('kind'); }
         if (left === null) { throw Errors.argumentNull('left'); }
         if (right === null) { throw Errors.argumentNull('right'); }
-        switch (operatorToken.kind()) {
+        switch (operatorToken.tokenKind) {
             case SyntaxKind.AsteriskToken:
             case SyntaxKind.SlashToken:
             case SyntaxKind.PercentToken:
@@ -7022,7 +7046,7 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._operatorToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this._operatorToken.kind());
+        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this._operatorToken.tokenKind);
 
         childWidth = this._right.fullWidth();
         fullWidth += childWidth;
@@ -7087,8 +7111,8 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
         if (condition === null) { throw Errors.argumentNull('condition'); }
         if (whenTrue === null) { throw Errors.argumentNull('whenTrue'); }
         if (whenFalse === null) { throw Errors.argumentNull('whenFalse'); }
-        if (questionToken.kind() !== SyntaxKind.QuestionToken) { throw Errors.argument('questionToken'); }
-        if (colonToken.kind() !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
+        if (questionToken.tokenKind !== SyntaxKind.QuestionToken) { throw Errors.argument('questionToken'); }
+        if (colonToken.tokenKind !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
 
         this._condition = condition;
         this._questionToken = questionToken;
@@ -7307,6 +7331,9 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
 }
 
 class TypeMemberSyntax extends SyntaxNode {
+    constructor() {
+        super();
+    }
 
     private isTypeMember(): bool {
         return true;
@@ -7522,9 +7549,9 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         super();
 
         if (parameterList === null) { throw Errors.argumentNull('parameterList'); }
-        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
+        if (identifier.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
         if (questionToken !== null) {
-            if (questionToken.kind() !== SyntaxKind.QuestionToken) { throw Errors.argument('questionToken'); }
+            if (questionToken.tokenKind !== SyntaxKind.QuestionToken) { throw Errors.argument('questionToken'); }
         }
 
         this._identifier = identifier;
@@ -7739,8 +7766,8 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         super();
 
         if (parameter === null) { throw Errors.argumentNull('parameter'); }
-        if (openBracketToken.kind() !== SyntaxKind.OpenBracketToken) { throw Errors.argument('openBracketToken'); }
-        if (closeBracketToken.kind() !== SyntaxKind.CloseBracketToken) { throw Errors.argument('closeBracketToken'); }
+        if (openBracketToken.tokenKind !== SyntaxKind.OpenBracketToken) { throw Errors.argument('openBracketToken'); }
+        if (closeBracketToken.tokenKind !== SyntaxKind.CloseBracketToken) { throw Errors.argument('closeBracketToken'); }
 
         this._openBracketToken = openBracketToken;
         this._parameter = parameter;
@@ -7946,9 +7973,9 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
                 typeAnnotation: TypeAnnotationSyntax) {
         super();
 
-        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
+        if (identifier.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
         if (questionToken !== null) {
-            if (questionToken.kind() !== SyntaxKind.QuestionToken) { throw Errors.argument('questionToken'); }
+            if (questionToken.tokenKind !== SyntaxKind.QuestionToken) { throw Errors.argument('questionToken'); }
         }
 
         this._identifier = identifier;
@@ -8131,8 +8158,8 @@ class ParameterListSyntax extends SyntaxNode {
         super();
 
         if (parameters === null) { throw Errors.argumentNull('parameters'); }
-        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
+        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
+        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._openParenToken = openParenToken;
         this._parameters = parameters;
@@ -8615,8 +8642,8 @@ class IfStatementSyntax extends StatementSyntax {
         if (condition === null) { throw Errors.argumentNull('condition'); }
         if (statement === null) { throw Errors.argumentNull('statement'); }
         if (ifKeyword.keywordKind() !== SyntaxKind.IfKeyword) { throw Errors.argument('ifKeyword'); }
-        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
+        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
+        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._ifKeyword = ifKeyword;
         this._openParenToken = openParenToken;
@@ -8880,7 +8907,7 @@ class ExpressionStatementSyntax extends StatementSyntax {
         super();
 
         if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
+        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
         this._expression = expression;
         this._semicolonToken = semicolonToken;
@@ -9015,6 +9042,9 @@ class ExpressionStatementSyntax extends StatementSyntax {
 }
 
 class ClassElementSyntax extends SyntaxNode {
+    constructor() {
+        super();
+    }
 
     private isClassElement(): bool {
         return true;
@@ -9048,7 +9078,7 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
         if (parameterList === null) { throw Errors.argumentNull('parameterList'); }
         if (constructorKeyword.keywordKind() !== SyntaxKind.ConstructorKeyword) { throw Errors.argument('constructorKeyword'); }
         if (semicolonToken !== null) {
-            if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
+            if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
         }
 
         this._constructorKeyword = constructorKeyword;
@@ -9249,6 +9279,9 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
 }
 
 class MemberDeclarationSyntax extends ClassElementSyntax {
+    constructor() {
+        super();
+    }
 
     private isMemberDeclaration(): bool {
         return true;
@@ -9297,7 +9330,7 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
             if (staticKeyword.keywordKind() !== SyntaxKind.StaticKeyword) { throw Errors.argument('staticKeyword'); }
         }
         if (semicolonToken !== null) {
-            if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
+            if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
         }
 
         this._publicOrPrivateKeyword = publicOrPrivateKeyword;
@@ -9531,6 +9564,9 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
 }
 
 class MemberAccessorDeclarationSyntax extends MemberDeclarationSyntax {
+    constructor() {
+        super();
+    }
 
     private isMemberAccessorDeclaration(): bool {
         return true;
@@ -9596,7 +9632,7 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
             if (staticKeyword.keywordKind() !== SyntaxKind.StaticKeyword) { throw Errors.argument('staticKeyword'); }
         }
         if (getKeyword.keywordKind() !== SyntaxKind.GetKeyword) { throw Errors.argument('getKeyword'); }
-        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
+        if (identifier.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
 
         this._publicOrPrivateKeyword = publicOrPrivateKeyword;
         this._staticKeyword = staticKeyword;
@@ -9905,7 +9941,7 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
             if (staticKeyword.keywordKind() !== SyntaxKind.StaticKeyword) { throw Errors.argument('staticKeyword'); }
         }
         if (setKeyword.keywordKind() !== SyntaxKind.SetKeyword) { throw Errors.argument('setKeyword'); }
-        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
+        if (identifier.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
 
         this._publicOrPrivateKeyword = publicOrPrivateKeyword;
         this._staticKeyword = staticKeyword;
@@ -10177,7 +10213,7 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
         if (staticKeyword !== null) {
             if (staticKeyword.keywordKind() !== SyntaxKind.StaticKeyword) { throw Errors.argument('staticKeyword'); }
         }
-        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
+        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
         this._publicOrPrivateKeyword = publicOrPrivateKeyword;
         this._staticKeyword = staticKeyword;
@@ -10387,7 +10423,7 @@ class ThrowStatementSyntax extends StatementSyntax {
 
         if (expression === null) { throw Errors.argumentNull('expression'); }
         if (throwKeyword.keywordKind() !== SyntaxKind.ThrowKeyword) { throw Errors.argument('throwKeyword'); }
-        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
+        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
         this._throwKeyword = throwKeyword;
         this._expression = expression;
@@ -10558,7 +10594,7 @@ class ReturnStatementSyntax extends StatementSyntax {
         super();
 
         if (returnKeyword.keywordKind() !== SyntaxKind.ReturnKeyword) { throw Errors.argument('returnKeyword'); }
-        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
+        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
         this._returnKeyword = returnKeyword;
         this._expression = expression;
@@ -10930,10 +10966,10 @@ class SwitchStatementSyntax extends StatementSyntax {
         if (expression === null) { throw Errors.argumentNull('expression'); }
         if (switchClauses === null) { throw Errors.argumentNull('switchClauses'); }
         if (switchKeyword.keywordKind() !== SyntaxKind.SwitchKeyword) { throw Errors.argument('switchKeyword'); }
-        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
-        if (openBraceToken.kind() !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
-        if (closeBraceToken.kind() !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
+        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
+        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
+        if (openBraceToken.tokenKind !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
+        if (closeBraceToken.tokenKind !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
 
         this._switchKeyword = switchKeyword;
         this._openParenToken = openParenToken;
@@ -11213,6 +11249,9 @@ class SwitchStatementSyntax extends StatementSyntax {
 }
 
 class SwitchClauseSyntax extends SyntaxNode {
+    constructor() {
+        super();
+    }
 
     private isSwitchClause(): bool {
         return true;
@@ -11254,7 +11293,7 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         if (expression === null) { throw Errors.argumentNull('expression'); }
         if (statements === null) { throw Errors.argumentNull('statements'); }
         if (caseKeyword.keywordKind() !== SyntaxKind.CaseKeyword) { throw Errors.argument('caseKeyword'); }
-        if (colonToken.kind() !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
+        if (colonToken.tokenKind !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
 
         this._caseKeyword = caseKeyword;
         this._expression = expression;
@@ -11464,7 +11503,7 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
 
         if (statements === null) { throw Errors.argumentNull('statements'); }
         if (defaultKeyword.keywordKind() !== SyntaxKind.DefaultKeyword) { throw Errors.argument('defaultKeyword'); }
-        if (colonToken.kind() !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
+        if (colonToken.tokenKind !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
 
         this._defaultKeyword = defaultKeyword;
         this._colonToken = colonToken;
@@ -11645,9 +11684,9 @@ class BreakStatementSyntax extends StatementSyntax {
 
         if (breakKeyword.keywordKind() !== SyntaxKind.BreakKeyword) { throw Errors.argument('breakKeyword'); }
         if (identifier !== null) {
-            if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
+            if (identifier.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
         }
-        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
+        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
         this._breakKeyword = breakKeyword;
         this._identifier = identifier;
@@ -11826,9 +11865,9 @@ class ContinueStatementSyntax extends StatementSyntax {
 
         if (continueKeyword.keywordKind() !== SyntaxKind.ContinueKeyword) { throw Errors.argument('continueKeyword'); }
         if (identifier !== null) {
-            if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
+            if (identifier.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
         }
-        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
+        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
         this._continueKeyword = continueKeyword;
         this._identifier = identifier;
@@ -11996,6 +12035,9 @@ class ContinueStatementSyntax extends StatementSyntax {
 }
 
 class IterationStatementSyntax extends StatementSyntax {
+    constructor() {
+        super();
+    }
 
     private isIterationStatement(): bool {
         return true;
@@ -12027,6 +12069,9 @@ class IterationStatementSyntax extends StatementSyntax {
 }
 
 class BaseForStatementSyntax extends IterationStatementSyntax {
+    constructor() {
+        super();
+    }
 
     private isBaseForStatement(): bool {
         return true;
@@ -12091,10 +12136,10 @@ class ForStatementSyntax extends BaseForStatementSyntax {
 
         if (statement === null) { throw Errors.argumentNull('statement'); }
         if (forKeyword.keywordKind() !== SyntaxKind.ForKeyword) { throw Errors.argument('forKeyword'); }
-        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (firstSemicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('firstSemicolonToken'); }
-        if (secondSemicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('secondSemicolonToken'); }
-        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
+        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
+        if (firstSemicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('firstSemicolonToken'); }
+        if (secondSemicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('secondSemicolonToken'); }
+        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._forKeyword = forKeyword;
         this._openParenToken = openParenToken;
@@ -12492,9 +12537,9 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         if (expression === null) { throw Errors.argumentNull('expression'); }
         if (statement === null) { throw Errors.argumentNull('statement'); }
         if (forKeyword.keywordKind() !== SyntaxKind.ForKeyword) { throw Errors.argument('forKeyword'); }
-        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
+        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
         if (inKeyword.keywordKind() !== SyntaxKind.InKeyword) { throw Errors.argument('inKeyword'); }
-        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
+        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._forKeyword = forKeyword;
         this._openParenToken = openParenToken;
@@ -12825,8 +12870,8 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         if (condition === null) { throw Errors.argumentNull('condition'); }
         if (statement === null) { throw Errors.argumentNull('statement'); }
         if (whileKeyword.keywordKind() !== SyntaxKind.WhileKeyword) { throw Errors.argument('whileKeyword'); }
-        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
+        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
+        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._whileKeyword = whileKeyword;
         this._openParenToken = openParenToken;
@@ -13058,8 +13103,8 @@ class WithStatementSyntax extends StatementSyntax {
         if (condition === null) { throw Errors.argumentNull('condition'); }
         if (statement === null) { throw Errors.argumentNull('statement'); }
         if (withKeyword.keywordKind() !== SyntaxKind.WithKeyword) { throw Errors.argument('withKeyword'); }
-        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
+        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
+        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._withKeyword = withKeyword;
         this._openParenToken = openParenToken;
@@ -13295,9 +13340,9 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
             if (exportKeyword.keywordKind() !== SyntaxKind.ExportKeyword) { throw Errors.argument('exportKeyword'); }
         }
         if (enumKeyword.keywordKind() !== SyntaxKind.EnumKeyword) { throw Errors.argument('enumKeyword'); }
-        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
-        if (openBraceToken.kind() !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
-        if (closeBraceToken.kind() !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
+        if (identifier.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
+        if (openBraceToken.tokenKind !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
+        if (closeBraceToken.tokenKind !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
 
         this._exportKeyword = exportKeyword;
         this._enumKeyword = enumKeyword;
@@ -13563,8 +13608,8 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
 
         if (type === null) { throw Errors.argumentNull('type'); }
         if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (lessThanToken.kind() !== SyntaxKind.LessThanToken) { throw Errors.argument('lessThanToken'); }
-        if (greaterThanToken.kind() !== SyntaxKind.GreaterThanToken) { throw Errors.argument('greaterThanToken'); }
+        if (lessThanToken.tokenKind !== SyntaxKind.LessThanToken) { throw Errors.argument('lessThanToken'); }
+        if (greaterThanToken.tokenKind !== SyntaxKind.GreaterThanToken) { throw Errors.argument('greaterThanToken'); }
 
         this._lessThanToken = lessThanToken;
         this._type = type;
@@ -13762,8 +13807,8 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
         super();
 
         if (propertyAssignments === null) { throw Errors.argumentNull('propertyAssignments'); }
-        if (openBraceToken.kind() !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
-        if (closeBraceToken.kind() !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
+        if (openBraceToken.tokenKind !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
+        if (closeBraceToken.tokenKind !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
 
         this._openBraceToken = openBraceToken;
         this._propertyAssignments = propertyAssignments;
@@ -13933,6 +13978,9 @@ class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
 }
 
 class PropertyAssignmentSyntax extends SyntaxNode {
+    constructor() {
+        super();
+    }
 
     private isPropertyAssignment(): bool {
         return true;
@@ -13966,7 +14014,7 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         super();
 
         if (expression === null) { throw Errors.argumentNull('expression'); }
-        switch (propertyName.kind()) {
+        switch (propertyName.tokenKind) {
             case SyntaxKind.IdentifierNameToken:
             case SyntaxKind.StringLiteral:
             case SyntaxKind.NumericLiteral:
@@ -13974,7 +14022,7 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
             default:
                 throw Errors.argument('propertyName');
         }
-        if (colonToken.kind() !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
+        if (colonToken.tokenKind !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
 
         this._propertyName = propertyName;
         this._colonToken = colonToken;
@@ -14136,6 +14184,9 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
 }
 
 class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
+    constructor() {
+        super();
+    }
 
     private isAccessorPropertyAssignment(): bool {
         return true;
@@ -14186,9 +14237,9 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
 
         if (block === null) { throw Errors.argumentNull('block'); }
         if (getKeyword.keywordKind() !== SyntaxKind.GetKeyword) { throw Errors.argument('getKeyword'); }
-        if (propertyName.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('propertyName'); }
-        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
+        if (propertyName.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('propertyName'); }
+        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
+        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._getKeyword = getKeyword;
         this._propertyName = propertyName;
@@ -14418,10 +14469,10 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
 
         if (block === null) { throw Errors.argumentNull('block'); }
         if (setKeyword.keywordKind() !== SyntaxKind.SetKeyword) { throw Errors.argument('setKeyword'); }
-        if (propertyName.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('propertyName'); }
-        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (parameterName.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('parameterName'); }
-        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
+        if (propertyName.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('propertyName'); }
+        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
+        if (parameterName.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('parameterName'); }
+        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._setKeyword = setKeyword;
         this._propertyName = propertyName;
@@ -14676,7 +14727,7 @@ class FunctionExpressionSyntax extends UnaryExpressionSyntax {
         if (block === null) { throw Errors.argumentNull('block'); }
         if (functionKeyword.keywordKind() !== SyntaxKind.FunctionKeyword) { throw Errors.argument('functionKeyword'); }
         if (identifier !== null) {
-            if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
+            if (identifier.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
         }
 
         this._functionKeyword = functionKeyword;
@@ -14881,7 +14932,7 @@ class EmptyStatementSyntax extends StatementSyntax {
     constructor(semicolonToken: ISyntaxToken) {
         super();
 
-        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
+        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
         this._semicolonToken = semicolonToken;
     }
@@ -15331,9 +15382,9 @@ class CatchClauseSyntax extends SyntaxNode {
 
         if (block === null) { throw Errors.argumentNull('block'); }
         if (catchKeyword.keywordKind() !== SyntaxKind.CatchKeyword) { throw Errors.argument('catchKeyword'); }
-        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
-        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
+        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
+        if (identifier.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
+        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._catchKeyword = catchKeyword;
         this._openParenToken = openParenToken;
@@ -15699,8 +15750,8 @@ class LabeledStatement extends StatementSyntax {
         super();
 
         if (statement === null) { throw Errors.argumentNull('statement'); }
-        if (identifier.kind() !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
-        if (colonToken.kind() !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
+        if (identifier.tokenKind !== SyntaxKind.IdentifierNameToken) { throw Errors.argument('identifier'); }
+        if (colonToken.tokenKind !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
 
         this._identifier = identifier;
         this._colonToken = colonToken;
@@ -15883,9 +15934,9 @@ class DoStatementSyntax extends IterationStatementSyntax {
         if (condition === null) { throw Errors.argumentNull('condition'); }
         if (doKeyword.keywordKind() !== SyntaxKind.DoKeyword) { throw Errors.argument('doKeyword'); }
         if (whileKeyword.keywordKind() !== SyntaxKind.WhileKeyword) { throw Errors.argument('whileKeyword'); }
-        if (openParenToken.kind() !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (closeParenToken.kind() !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
-        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
+        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
+        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
+        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
         this._doKeyword = doKeyword;
         this._statement = statement;
@@ -16590,7 +16641,7 @@ class DebuggerStatementSyntax extends StatementSyntax {
         super();
 
         if (debuggerKeyword.keywordKind() !== SyntaxKind.DebuggerKeyword) { throw Errors.argument('debuggerKeyword'); }
-        if (semicolonToken.kind() !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
+        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
         this._debuggerKeyword = debuggerKeyword;
         this._semicolonToken = semicolonToken;

@@ -1053,7 +1053,7 @@ function generateIfKindCheck(child: IMemberDefinition, tokenKinds: string[], ind
             result += child.name + ".keywordKind() !== SyntaxKind." + tokenKind;
         }
         else {
-            result += child.name + ".kind() !== SyntaxKind." + tokenKind;
+            result += child.name + ".tokenKind !== SyntaxKind." + tokenKind;
         }
     }
 
@@ -1113,7 +1113,7 @@ function generateSwitchKindCheck(child: IMemberDefinition, tokenKinds: string[],
         }
     }
     else {
-        result += indent + "        switch (" + child.name + ".kind()) {\r\n";
+        result += indent + "        switch (" + child.name + ".tokenKind) {\r\n";
         result += generateSwitchCases(tokens, indent);
 
         if (keywords.length > 0) {
@@ -1191,7 +1191,7 @@ function generateArgumentChecks(definition: ITypeDefinition): string {
 
 function generateConstructor(definition: ITypeDefinition): string {
     if (definition.isAbstract) {
-        return "";
+        // return "";
     }
 
     var result = "";
@@ -1876,7 +1876,7 @@ function generateComputeDataMethod(definition: ITypeDefinition): string {
             result += indent + "        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);\r\n";
 
             if (couldBeRegularExpressionToken(child)) {
-                result += indent + "        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isAnyDivideOrRegularExpressionToken(" + getPropertyAccess(child) + ".kind());\r\n";
+                result += indent + "        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isAnyDivideOrRegularExpressionToken(" + getPropertyAccess(child) + ".tokenKind);\r\n";
             }
         }
         else {
@@ -2205,9 +2205,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "        private _fullStart: number;\r\n";
     }
 
-    if (!isKeyword) {
-        result += "        private _kind: SyntaxKind;\r\n";
-    }
+    result += "        public tokenKind: SyntaxKind;\r\n";
 
     if (isKeyword) {
         result += "        private _keywordKind: SyntaxKind;\r\n";
@@ -2262,10 +2260,11 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
     }
 
     if (isKeyword) {
+        result += "            this.tokenKind = SyntaxKind.IdentifierNameToken;\r\n";
         result += "            this._keywordKind = keywordKind;\r\n";
     }
     else {
-        result += "            this._kind = kind;\r\n";
+        result += "            this.tokenKind = kind;\r\n";
     }
 
     if (leading) {
@@ -2294,7 +2293,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "                this._keywordKind";
     }
     else {
-        result += "                this._kind";
+        result += "                this.tokenKind";
     }
 
     if (leading) {
@@ -2325,7 +2324,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "        public keywordKind(): SyntaxKind { return this._keywordKind; }\r\n\r\n";
     }
     else {
-        result += "        public kind(): SyntaxKind { return this._kind; }\r\n";
+        result += "        public kind(): SyntaxKind { return this.tokenKind; }\r\n";
         result += "        public keywordKind(): SyntaxKind { return SyntaxKind.None; }\r\n\r\n";
     }
 
@@ -2364,7 +2363,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
     }
 
     if (isPunctuation) {
-        result += "        public text(): string { return SyntaxFacts.getText(this._kind); }\r\n";
+        result += "        public text(): string { return SyntaxFacts.getText(this.tokenKind); }\r\n";
     }
     else if (isKeyword) {
         result += "        public text(): string { return SyntaxFacts.getText(this._keywordKind); }\r\n";
@@ -2374,7 +2373,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "        public text(): string {\r\n";
         result += "            if (typeof this._textOrWidth === 'number') {\r\n";
         result += "                this._textOrWidth = this._sourceText.substr(\r\n"; 
-        result += "                    this.start(), this._textOrWidth, /*intern:*/ this._kind === SyntaxKind.IdentifierNameToken);\r\n";
+        result += "                    this.start(), this._textOrWidth, /*intern:*/ this.tokenKind === SyntaxKind.IdentifierNameToken);\r\n";
         result += "            }\r\n";
         result += "\r\n";
         result += "            return this._textOrWidth;\r\n";

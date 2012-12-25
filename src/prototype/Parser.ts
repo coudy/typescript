@@ -1301,7 +1301,7 @@ module Parser {
             // Debug.assert(SyntaxFacts.isTokenKind(kind))
 
             var token = this.currentToken();
-            if (token.kind() === kind) {
+            if (token.tokenKind === kind) {
                 this.moveToNextToken();
                 return token;
             }
@@ -1312,7 +1312,7 @@ module Parser {
 
         // Eats the token if it is there.  Otherwise does nothing.  Will not report errors.
         private tryEatToken(kind: SyntaxKind): ISyntaxToken {
-            if (this.currentToken().kind() === kind) {
+            if (this.currentToken().tokenKind === kind) {
                 return this.eatToken(kind);
             }
 
@@ -1345,7 +1345,7 @@ module Parser {
         // *Identifier*.
         private eatIdentifierNameToken(): ISyntaxToken {
             var token = this.currentToken();
-            if (token.kind() === SyntaxKind.IdentifierNameToken) {
+            if (token.tokenKind === SyntaxKind.IdentifierNameToken) {
                 this.moveToNextToken();
                 return token;
             }
@@ -1357,7 +1357,7 @@ module Parser {
         // *IdentifierName*.
         private eatIdentifierToken(): ISyntaxToken {
             var token = this.currentToken();
-            if (this.isIdentifier(token)) {
+            if (this.isIdentifier(token) && !this.isKeyword(token.keywordKind())) {
                 this.moveToNextToken();
                 return token;
             }
@@ -1369,12 +1369,12 @@ module Parser {
             var token = this.currentToken();
 
             // An automatic semicolon is always allowed if we're at the end of the file.
-            if (token.kind() === SyntaxKind.EndOfFileToken) {
+            if (token.tokenKind === SyntaxKind.EndOfFileToken) {
                 return true;
             }
 
             // Or if the next token is a close brace (regardless of which line it is on).
-            if (token.kind() === SyntaxKind.CloseBraceToken) {
+            if (token.tokenKind === SyntaxKind.CloseBraceToken) {
                 return true;
             }
 
@@ -1393,7 +1393,7 @@ module Parser {
         private canEatExplicitOrAutomaticSemicolon(allowWithoutNewline: bool): bool {
             var token = this.currentToken();
 
-            if (token.kind() === SyntaxKind.SemicolonToken) {
+            if (token.tokenKind === SyntaxKind.SemicolonToken) {
                 return true;
             }
 
@@ -1404,7 +1404,7 @@ module Parser {
             var token = this.currentToken();
 
             // If we see a semicolon, then we can definitely eat it.
-            if (token.kind() === SyntaxKind.SemicolonToken) {
+            if (token.tokenKind === SyntaxKind.SemicolonToken) {
                 return this.eatToken(SyntaxKind.SemicolonToken);
             }
 
@@ -1432,7 +1432,7 @@ module Parser {
         }
 
         private isIdentifier(token: ISyntaxToken): bool {
-            return token.kind() === SyntaxKind.IdentifierNameToken && !this.isKeyword(token.keywordKind());
+            return token.tokenKind === SyntaxKind.IdentifierNameToken && !this.isKeyword(token.keywordKind());
         }
 
         private isKeyword(kind: SyntaxKind): bool {
@@ -1682,8 +1682,8 @@ module Parser {
             // match any other legal javascript construct.  However, we need to verify that this is
             // actually the case.
             return this.currentToken().keywordKind() === SyntaxKind.ImportKeyword &&
-                   this.peekToken(1).kind() === SyntaxKind.IdentifierNameToken &&
-                   this.peekToken(2).kind() === SyntaxKind.EqualsToken;
+                   this.peekToken(1).tokenKind === SyntaxKind.IdentifierNameToken &&
+                   this.peekToken(2).tokenKind === SyntaxKind.EqualsToken;
         }
 
         private parseImportDeclaration(): ImportDeclarationSyntax {
@@ -1709,7 +1709,7 @@ module Parser {
 
         private isExternalModuleReference(): bool {
             return this.currentToken().keywordKind() === SyntaxKind.ModuleKeyword &&
-                   this.peekToken(1).kind() === SyntaxKind.OpenParenToken;
+                   this.peekToken(1).tokenKind === SyntaxKind.OpenParenToken;
         }
 
         private parseExternalModuleReference(): ExternalModuleReferenceSyntax {
@@ -1739,16 +1739,16 @@ module Parser {
         }
 
         private parseName(): NameSyntax {
-            var isIdentifier = this.currentToken().kind() === SyntaxKind.IdentifierNameToken;
+            var isIdentifier = this.currentToken().tokenKind === SyntaxKind.IdentifierNameToken;
             var identifier = this.eatIdentifierToken();
             var identifierName = new IdentifierNameSyntax(identifier);
 
             var current: NameSyntax = identifierName;
 
-            while (isIdentifier && this.currentToken().kind() === SyntaxKind.DotToken) {
+            while (isIdentifier && this.currentToken().tokenKind === SyntaxKind.DotToken) {
                 var dotToken = this.eatToken(SyntaxKind.DotToken);
 
-                isIdentifier = this.currentToken().kind() === SyntaxKind.IdentifierNameToken;
+                isIdentifier = this.currentToken().tokenKind === SyntaxKind.IdentifierNameToken;
                 identifier = this.eatIdentifierToken();
                 identifierName = new IdentifierNameSyntax(identifier);
 
@@ -1921,8 +1921,8 @@ module Parser {
                 // ERROR RECOVERY: 
                 // If we're following by an close curly or EOF, then consider this the start of a
                 // variable declaration.
-                if (this.peekToken(index).kind() === SyntaxKind.CloseBraceToken ||
-                    this.peekToken(index).kind() === SyntaxKind.EndOfFileToken) {
+                if (this.peekToken(index).tokenKind === SyntaxKind.CloseBraceToken ||
+                    this.peekToken(index).tokenKind === SyntaxKind.EndOfFileToken) {
                     return true;
                 }
             }
@@ -1933,8 +1933,8 @@ module Parser {
                 // ERROR RECOVERY: 
                 // If we're following by an close curly or EOF, then consider this the start of a
                 // variable declaration.
-                if (this.peekToken(index).kind() === SyntaxKind.CloseBraceToken ||
-                    this.peekToken(index).kind() === SyntaxKind.EndOfFileToken) {
+                if (this.peekToken(index).tokenKind === SyntaxKind.CloseBraceToken ||
+                    this.peekToken(index).tokenKind === SyntaxKind.EndOfFileToken) {
                     return true;
                 }
             }
@@ -2055,17 +2055,17 @@ module Parser {
         }
 
         private isFunctionDeclaration(): bool {
-            var token0 = this.currentToken();
-            if (token0.keywordKind() === SyntaxKind.FunctionKeyword) {
+            var token0KeywordKind = this.currentToken().keywordKind();
+            if (token0KeywordKind === SyntaxKind.FunctionKeyword) {
                 return true;
             }
 
-            if (token0.keywordKind() === SyntaxKind.ExportKeyword &&
+            if (token0KeywordKind === SyntaxKind.ExportKeyword &&
                 this.peekToken(1).keywordKind() === SyntaxKind.FunctionKeyword) {
                 return true;
             }
 
-            return token0.keywordKind() === SyntaxKind.DeclareKeyword &&
+            return token0KeywordKind === SyntaxKind.DeclareKeyword &&
                    this.peekToken(1).keywordKind() === SyntaxKind.FunctionKeyword;
         }
 
@@ -2111,20 +2111,20 @@ module Parser {
             if (token0.keywordKind() === SyntaxKind.ModuleKeyword) {
                 // module {
                 var token1 = this.peekToken(1);
-                if (token1.kind() === SyntaxKind.OpenBraceToken) {
+                if (token1.tokenKind === SyntaxKind.OpenBraceToken) {
                     return true;
                 }
 
-                if (token1.kind() === SyntaxKind.IdentifierNameToken) {
+                if (token1.tokenKind === SyntaxKind.IdentifierNameToken) {
                     var token2 = this.peekToken(2);
 
                     // module id {
-                    if (token2.kind() === SyntaxKind.OpenBraceToken) {
+                    if (token2.tokenKind === SyntaxKind.OpenBraceToken) {
                         return true;
                     }
 
                     // module id.
-                    if (token2.kind() === SyntaxKind.DotToken) {
+                    if (token2.tokenKind === SyntaxKind.DotToken) {
                         return true;
                     }
                 }
@@ -2145,7 +2145,7 @@ module Parser {
             if (this.isName()) {
                 moduleName = this.parseName();
             }
-            else if (this.currentToken().kind() === SyntaxKind.StringLiteral) {
+            else if (this.currentToken().tokenKind === SyntaxKind.StringLiteral) {
                 stringLiteral = this.eatToken(SyntaxKind.StringLiteral);
             }
 
@@ -2284,7 +2284,7 @@ module Parser {
         }
 
         private isCallSignature(): bool {
-            return this.currentToken().kind() === SyntaxKind.OpenParenToken;
+            return this.currentToken().tokenKind === SyntaxKind.OpenParenToken;
         }
 
         private isConstructSignature(): bool {
@@ -2292,19 +2292,19 @@ module Parser {
         }
 
         private isIndexSignature(): bool {
-            return this.currentToken().kind() === SyntaxKind.OpenBracketToken;
+            return this.currentToken().tokenKind === SyntaxKind.OpenBracketToken;
         }
 
         private isFunctionSignature(tokenIndex: number): bool {
             if (this.isIdentifier(this.peekToken(tokenIndex))) {
                 // id(
-                if (this.peekToken(tokenIndex + 1).kind() === SyntaxKind.OpenParenToken) {
+                if (this.peekToken(tokenIndex + 1).tokenKind === SyntaxKind.OpenParenToken) {
                     return true;
                 }
 
                 // id?(
-                if (this.peekToken(tokenIndex + 1).kind() === SyntaxKind.QuestionToken &&
-                    this.peekToken(tokenIndex + 2).kind() === SyntaxKind.OpenParenToken) {
+                if (this.peekToken(tokenIndex + 1).tokenKind === SyntaxKind.QuestionToken &&
+                    this.peekToken(tokenIndex + 2).tokenKind === SyntaxKind.OpenParenToken) {
                     return true;
                 }
             }
@@ -2484,7 +2484,7 @@ module Parser {
         }
 
         private isLabeledStatement(): bool {
-            return this.isIdentifier(this.currentToken()) && this.peekToken(1).kind() === SyntaxKind.ColonToken;
+            return this.isIdentifier(this.currentToken()) && this.peekToken(1).tokenKind === SyntaxKind.ColonToken;
         }
 
         private parseLabeledStatement(): LabeledStatement {
@@ -2585,7 +2585,7 @@ module Parser {
         }
 
         private isEmptyStatement(): bool {
-            return this.currentToken().kind() === SyntaxKind.SemicolonToken;
+            return this.currentToken().tokenKind === SyntaxKind.SemicolonToken;
         }
 
         private parseEmptyStatement(): EmptyStatementSyntax {
@@ -2611,7 +2611,7 @@ module Parser {
                 // for ( var VariableDeclarationNoIn in Expression ) Statement
                 return this.parseForOrForInStatementWithVariableDeclaration(forKeyword, openParenToken);
             }
-            else if (currentToken.kind() === SyntaxKind.SemicolonToken) {
+            else if (currentToken.tokenKind === SyntaxKind.SemicolonToken) {
                 // for ( ; Expressionopt ; Expressionopt ) Statement
                 return this.parseForStatement(forKeyword, openParenToken);
             }
@@ -2624,7 +2624,7 @@ module Parser {
 
         private parseForOrForInStatementWithVariableDeclaration(forKeyword: ISyntaxToken, openParenToken: ISyntaxToken): BaseForStatementSyntax {
             Debug.assert(forKeyword.keywordKind() === SyntaxKind.ForKeyword &&
-                         openParenToken.kind() === SyntaxKind.OpenParenToken);
+                         openParenToken.tokenKind === SyntaxKind.OpenParenToken);
             Debug.assert(this.currentToken().keywordKind() === SyntaxKind.VarKeyword);
 
             // for ( var VariableDeclarationListNoIn; Expressionopt ; Expressionopt ) Statement
@@ -2657,7 +2657,7 @@ module Parser {
 
         private parseForOrForInStatementWithInitializer(forKeyword: ISyntaxToken, openParenToken: ISyntaxToken): BaseForStatementSyntax {
             Debug.assert(forKeyword.keywordKind() === SyntaxKind.ForKeyword &&
-                         openParenToken.kind() === SyntaxKind.OpenParenToken);
+                         openParenToken.tokenKind === SyntaxKind.OpenParenToken);
 
             // for ( ExpressionNoInopt; Expressionopt ; Expressionopt ) Statement
             // for ( LeftHandSideExpression in Expression ) Statement
@@ -2673,14 +2673,14 @@ module Parser {
 
         private parseForStatement(forKeyword: ISyntaxToken, openParenToken: ISyntaxToken): ForStatementSyntax {
             Debug.assert(forKeyword.keywordKind() === SyntaxKind.ForKeyword &&
-                         openParenToken.kind() === SyntaxKind.OpenParenToken);
+                         openParenToken.tokenKind === SyntaxKind.OpenParenToken);
 
             // for ( ExpressionNoInopt; Expressionopt ; Expressionopt ) Statement
             var initializer: ExpressionSyntax = null;
 
-            if (this.currentToken().kind() !== SyntaxKind.SemicolonToken &&
-                this.currentToken().kind() !== SyntaxKind.CloseParenToken &&
-                this.currentToken().kind() !== SyntaxKind.EndOfFileToken) {
+            if (this.currentToken().tokenKind !== SyntaxKind.SemicolonToken &&
+                this.currentToken().tokenKind !== SyntaxKind.CloseParenToken &&
+                this.currentToken().tokenKind !== SyntaxKind.EndOfFileToken) {
                 initializer = this.parseExpression(/*allowIn:*/ false);
             }
 
@@ -2695,17 +2695,17 @@ module Parser {
             var firstSemicolonToken = this.eatToken(SyntaxKind.SemicolonToken);
 
             var condition: ExpressionSyntax = null;
-            if (this.currentToken().kind() !== SyntaxKind.SemicolonToken &&
-                this.currentToken().kind() !== SyntaxKind.CloseParenToken &&
-                this.currentToken().kind() !== SyntaxKind.EndOfFileToken) {
+            if (this.currentToken().tokenKind !== SyntaxKind.SemicolonToken &&
+                this.currentToken().tokenKind !== SyntaxKind.CloseParenToken &&
+                this.currentToken().tokenKind !== SyntaxKind.EndOfFileToken) {
                 condition = this.parseExpression(/*allowIn:*/ true);
             }
 
             var secondSemicolonToken = this.eatToken(SyntaxKind.SemicolonToken);
 
             var incrementor: ExpressionSyntax = null;
-            if (this.currentToken().kind() !== SyntaxKind.CloseParenToken &&
-                this.currentToken().kind() !== SyntaxKind.EndOfFileToken) {
+            if (this.currentToken().tokenKind !== SyntaxKind.CloseParenToken &&
+                this.currentToken().tokenKind !== SyntaxKind.EndOfFileToken) {
                 incrementor = this.parseExpression(/*allowIn:*/ true);
             }
 
@@ -2886,7 +2886,7 @@ module Parser {
         private isExpressionStatement(): bool {
             // As per the gramar, neither { nor 'function' can start an expression statement.
             var currentToken = this.currentToken();
-            var kind = currentToken.kind();
+            var kind = currentToken.tokenKind;
             if (kind === SyntaxKind.OpenBraceToken) {
                 return false;
             }
@@ -2900,7 +2900,7 @@ module Parser {
         }
 
         private isAssignmentOrOmittedExpression(): bool {
-            if (this.currentToken().kind() === SyntaxKind.CommaToken) {
+            if (this.currentToken().tokenKind === SyntaxKind.CommaToken) {
                 return true;
             }
 
@@ -2910,7 +2910,7 @@ module Parser {
         private parseAssignmentOrOmittedExpression(): ExpressionSyntax {
             Debug.assert(this.isAssignmentOrOmittedExpression());
 
-            if (this.currentToken().kind() === SyntaxKind.CommaToken) {
+            if (this.currentToken().tokenKind === SyntaxKind.CommaToken) {
                 return new OmittedExpressionSyntax();
             }
 
@@ -2919,7 +2919,7 @@ module Parser {
 
         private isExpression(): bool {
             var currentToken = this.currentToken();
-            var kind = currentToken.kind();
+            var kind = currentToken.tokenKind;
 
             switch (kind) {
                 case SyntaxKind.NumericLiteral:
@@ -3039,17 +3039,17 @@ module Parser {
         }
 
         private isVariableStatement(): bool {
-            var token0 = this.currentToken();
-            if (token0.keywordKind() === SyntaxKind.VarKeyword) {
+            var token0KeywordKind = this.currentToken().keywordKind();
+            if (token0KeywordKind === SyntaxKind.VarKeyword) {
                 return true;
             }
 
-            if (token0.keywordKind() === SyntaxKind.ExportKeyword &&
+            if (token0KeywordKind === SyntaxKind.ExportKeyword &&
                 this.peekToken(1).keywordKind() === SyntaxKind.VarKeyword) {
                 return true;
             }
 
-            return token0.keywordKind() === SyntaxKind.DeclareKeyword &&
+            return token0KeywordKind === SyntaxKind.DeclareKeyword &&
                    this.peekToken(1).keywordKind() === SyntaxKind.VarKeyword;
         }
 
@@ -3106,7 +3106,7 @@ module Parser {
         }
 
         private isEqualsValueClause(): bool {
-            return this.currentToken().kind() === SyntaxKind.EqualsToken;
+            return this.currentToken().tokenKind === SyntaxKind.EqualsToken;
         }
 
         private parseEqualsValuesClause(allowIn: bool): EqualsValueClauseSyntax {
@@ -3131,7 +3131,7 @@ module Parser {
         }
 
         private parseUnaryExpression(): UnaryExpressionSyntax {
-            var currentTokenKind = this.currentToken().kind();
+            var currentTokenKind = this.currentToken().tokenKind;
             if (SyntaxFacts.isPrefixUnaryExpressionOperatorToken(currentTokenKind)) {
                 var operatorKind = SyntaxFacts.getPrefixUnaryExpressionFromOperatorToken(currentTokenKind);
 
@@ -3157,7 +3157,7 @@ module Parser {
         private parseBinaryOrConditionalExpressions(precedence: number, allowIn: bool, leftOperand: ExpressionSyntax): ExpressionSyntax {
             while (true) {
                 // We either have a binary operator here, or we're finished.
-                var currentTokenKind = this.currentToken().kind();
+                var currentTokenKind = this.currentToken().tokenKind;
                 var currentTokenKeywordKind = this.currentToken().keywordKind();
 
                 if (currentTokenKeywordKind === SyntaxKind.InstanceOfKeyword || currentTokenKeywordKind === SyntaxKind.InKeyword) {
@@ -3256,7 +3256,7 @@ module Parser {
             Debug.assert(expression !== null);
 
             while (true) {
-                var currentTokenKind = this.currentToken().kind();
+                var currentTokenKind = this.currentToken().tokenKind;
                 switch (currentTokenKind) {
                     case SyntaxKind.OpenParenToken:
                         if (!allowInvocation) {
@@ -3294,7 +3294,7 @@ module Parser {
         }
 
         private isArgumentList(): bool {
-            return this.currentToken().kind() === SyntaxKind.OpenParenToken;
+            return this.currentToken().tokenKind === SyntaxKind.OpenParenToken;
         }
 
         private parseArgumentList(): ArgumentListSyntax {
@@ -3308,7 +3308,7 @@ module Parser {
         }
 
         private parseElementAccessExpression(expression: ExpressionSyntax): ElementAccessExpressionSyntax {
-            Debug.assert(this.currentToken().kind() === SyntaxKind.OpenBracketToken);
+            Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenBracketToken);
 
             var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
             var argumentExpression = this.parseExpression(/*allowIn:*/ true);
@@ -3350,7 +3350,7 @@ module Parser {
             // ERROR RECOVERY TWEAK:
             // If we see a standalone => try to parse it as an arrow function as that's likely what
             // the user intended to write.
-            if (currentToken.kind() === SyntaxKind.EqualsGreaterThanToken) {
+            if (currentToken.tokenKind === SyntaxKind.EqualsGreaterThanToken) {
                 return this.parseSimpleArrowFunctionExpression();
             }
 
@@ -3364,7 +3364,7 @@ module Parser {
                 }
             }
 
-            var currentTokenKind = currentToken.kind();
+            var currentTokenKind = currentToken.tokenKind;
             var currentTokenKeywordKind = currentToken.keywordKind();
             switch (currentTokenKeywordKind) {
                 case SyntaxKind.ThisKeyword:
@@ -3440,12 +3440,12 @@ module Parser {
             // contexts.
 
             var currentToken = this.currentToken();
-            Debug.assert(SyntaxFacts.isAnyDivideToken(currentToken.kind()));
+            Debug.assert(SyntaxFacts.isAnyDivideToken(currentToken.tokenKind));
 
             // There are several contexts where we could never see a regex.  Don't even bother 
             // reinterpretting the / in these contexts.
             if (this.previousToken() !== null) {
-                var previousTokenKind = this.previousToken().kind();
+                var previousTokenKind = this.previousToken().tokenKind;
                 switch (previousTokenKind) {
                     case SyntaxKind.IdentifierNameToken:
                         // Could be a keyword or identifier.  Regular expressions can't follow identifiers.
@@ -3496,13 +3496,13 @@ module Parser {
 
             // Note: we *must* have gotten a /, /= or regular expression.  Or else something went *very*
             // wrong with our logic above.
-            Debug.assert(SyntaxFacts.isAnyDivideOrRegularExpressionToken(currentToken.kind()));
+            Debug.assert(SyntaxFacts.isAnyDivideOrRegularExpressionToken(currentToken.tokenKind));
 
-            if (currentToken.kind() === SyntaxKind.SlashToken || currentToken.kind() === SyntaxKind.SlashEqualsToken) {
+            if (currentToken.tokenKind === SyntaxKind.SlashToken || currentToken.tokenKind === SyntaxKind.SlashEqualsToken) {
                 // Still came back as a / or /=.   This is not a regular expression literal.
                 return null;
             }
-            else if (currentToken.kind() === SyntaxKind.RegularExpressionLiteral) {
+            else if (currentToken.tokenKind === SyntaxKind.RegularExpressionLiteral) {
                 return this.parseLiteralExpression(SyntaxKind.RegularExpressionLiteralExpression);
             }
             else {
@@ -3563,7 +3563,7 @@ module Parser {
         }
 
         private parseCastExpression(): CastExpressionSyntax {
-            Debug.assert(this.currentToken().kind() === SyntaxKind.LessThanToken);
+            Debug.assert(this.currentToken().tokenKind === SyntaxKind.LessThanToken);
 
             var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
             var type = this.parseType(/*requireCompleteArraySuffix:*/ false);
@@ -3590,7 +3590,7 @@ module Parser {
         }
 
         private parseParenthesizedOrArrowFunctionExpression(): UnaryExpressionSyntax {
-            Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
+            Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
 
             var result = this.tryParseArrowFunctionExpression();
             if (result !== null) {
@@ -3606,7 +3606,7 @@ module Parser {
         }
 
         private tryParseArrowFunctionExpression(): ArrowFunctionExpressionSyntax {
-            Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
+            Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
 
             // Because arrow functions and parenthesized expressions look similar, we have to check far
             // enough ahead to be sure we've actually got an arrow function. For example, both nodes can
@@ -3642,11 +3642,11 @@ module Parser {
         }
 
         private parseParenthesizedArrowFunctionExpression(requireArrow: bool): ParenthesizedArrowFunctionExpressionSyntax {
-            Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
+            Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
 
             var callSignature = this.parseCallSignature();
 
-            if (requireArrow && this.currentToken().kind() !== SyntaxKind.EqualsGreaterThanToken) {
+            if (requireArrow && this.currentToken().tokenKind !== SyntaxKind.EqualsGreaterThanToken) {
                 return null;
             }
 
@@ -3667,12 +3667,12 @@ module Parser {
 
         private isSimpleArrowFunctionExpression(): bool {
             // ERROR RECOVERY TWEAK:
-            if (this.currentToken().kind() === SyntaxKind.EqualsGreaterThanToken) {
+            if (this.currentToken().tokenKind === SyntaxKind.EqualsGreaterThanToken) {
                 return true;
             }
 
             return this.isIdentifier(this.currentToken()) &&
-                   this.peekToken(1).kind() === SyntaxKind.EqualsGreaterThanToken;
+                   this.peekToken(1).tokenKind === SyntaxKind.EqualsGreaterThanToken;
         }
 
         private parseSimpleArrowFunctionExpression(): SimpleArrowFunctionExpressionSyntax {
@@ -3687,21 +3687,21 @@ module Parser {
         }
 
         private isBlock(): bool {
-            return this.currentToken().kind() === SyntaxKind.OpenBraceToken;
+            return this.currentToken().tokenKind === SyntaxKind.OpenBraceToken;
         }
 
         private isDefinitelyArrowFunctionExpression(): bool {
-            Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
+            Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
 
             var token1 = this.peekToken(1);
 
-            if (token1.kind() === SyntaxKind.CloseParenToken) {
+            if (token1.tokenKind === SyntaxKind.CloseParenToken) {
                 // ()
                 // Definitely an arrow function.  Could never be a parenthesized expression.
                 return true;
             }
 
-            if (token1.kind() === SyntaxKind.DotDotDotToken) {
+            if (token1.tokenKind === SyntaxKind.DotDotDotToken) {
                 // (...
                 // Definitely an arrow function.  Could never be a parenthesized expression.
                 return true;
@@ -3718,21 +3718,21 @@ module Parser {
             // Lots of options here.  Check for things that make us certain it's an
             // arrow function.
             var token2 = this.peekToken(2);
-            if (token2.kind() === SyntaxKind.ColonToken) {
+            if (token2.tokenKind === SyntaxKind.ColonToken) {
                 // (id:
                 // Definitely an arrow function.  Could never be a parenthesized expression.
                 return true;
             }
 
             var token3 = this.peekToken(3);
-            if (token2.kind() === SyntaxKind.QuestionToken) {
+            if (token2.tokenKind === SyntaxKind.QuestionToken) {
                 // (id?
                 // Could be an arrow function, or a parenthesized conditional expression.
 
                 // Check for the things that could only be arrow functions.
-                if (token3.kind() === SyntaxKind.ColonToken ||
-                    token3.kind() === SyntaxKind.CloseParenToken ||
-                    token3.kind() === SyntaxKind.CommaToken) {
+                if (token3.tokenKind === SyntaxKind.ColonToken ||
+                    token3.tokenKind === SyntaxKind.CloseParenToken ||
+                    token3.tokenKind === SyntaxKind.CommaToken) {
                     // (id?:
                     // (id?)
                     // (id?,
@@ -3742,11 +3742,11 @@ module Parser {
                 }
             }
 
-            if (token2.kind() === SyntaxKind.CloseParenToken) {
+            if (token2.tokenKind === SyntaxKind.CloseParenToken) {
                 // (id)
                 // Could be an arrow function, or a parenthesized conditional expression.
 
-                if (token3.kind() === SyntaxKind.EqualsGreaterThanToken) {
+                if (token3.tokenKind === SyntaxKind.EqualsGreaterThanToken) {
                     // (id) =>
                     // Definitely an arrow function.  Could not be a parenthesized expression.
                     return true;
@@ -3766,7 +3766,7 @@ module Parser {
         }
 
         private isPossiblyArrowFunctionExpression(): bool {
-            Debug.assert(this.currentToken().kind() === SyntaxKind.OpenParenToken);
+            Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
 
             var token1 = this.peekToken(1);
 
@@ -3777,7 +3777,7 @@ module Parser {
             }
 
             var token2 = this.peekToken(2);
-            if (token2.kind() === SyntaxKind.EqualsToken) {
+            if (token2.tokenKind === SyntaxKind.EqualsToken) {
                 // (id =
                 //
                 // This *could* be an arrow function.  i.e. (id = 0) => { }
@@ -3786,7 +3786,7 @@ module Parser {
                 return true;
             }
 
-            if (token2.kind() === SyntaxKind.CommaToken) {
+            if (token2.tokenKind === SyntaxKind.CommaToken) {
                 // (id,
 
                 // This *could* be an arrow function.  i.e. (id, id2) => { }
@@ -3795,11 +3795,11 @@ module Parser {
                 return true;
             }
 
-            if (token2.kind() === SyntaxKind.CloseParenToken) {
+            if (token2.tokenKind === SyntaxKind.CloseParenToken) {
                 // (id)
 
                 var token3 = this.peekToken(3);
-                if (token3.kind() === SyntaxKind.ColonToken) {
+                if (token3.tokenKind === SyntaxKind.ColonToken) {
                     // (id):
                     //
                     // This could be an arrow function. i.e. (id): number => { }
@@ -3814,7 +3814,7 @@ module Parser {
         }
 
         private parseObjectLiteralExpression(): ObjectLiteralExpressionSyntax {
-            Debug.assert(this.currentToken().kind() === SyntaxKind.OpenBraceToken);
+            Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenBraceToken);
 
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
             var propertyAssignments = this.parseSeparatedSyntaxList(ListParsingState.ObjectLiteralExpression_PropertyAssignments);
@@ -3898,7 +3898,7 @@ module Parser {
         private isPropertyName(token: ISyntaxToken, inErrorRecovery: bool): bool {
             // NOTE: we do *not* want to check "this.isIdentifier" here.  Any IdentifierNameToken is 
             // allowed here, even reserved words like keywords.
-            switch (token.kind()) {
+            switch (token.tokenKind) {
                 case SyntaxKind.IdentifierNameToken:
                     // Except: if we're in error recovery, then we don't want to consider keywords. 
                     // After all, if we have:
@@ -3924,7 +3924,7 @@ module Parser {
         }
 
         private parseArrayLiteralExpression(): ArrayLiteralExpressionSyntax {
-            Debug.assert(this.currentToken().kind() === SyntaxKind.OpenBracketToken);
+            Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenBracketToken);
 
             var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
             var expressions = this.parseSeparatedSyntaxList(ListParsingState.ArrayLiteralExpression_AssignmentExpressions);
@@ -3981,7 +3981,7 @@ module Parser {
         }
 
         private isTypeAnnotation(): bool {
-            return this.currentToken().kind() === SyntaxKind.ColonToken;
+            return this.currentToken().tokenKind === SyntaxKind.ColonToken;
         }
 
         private parseOptionalTypeAnnotation(): TypeAnnotationSyntax {
@@ -4008,8 +4008,8 @@ module Parser {
         private parseType(requireCompleteArraySuffix: bool): TypeSyntax {
             var type = this.parseNonArrayType();
 
-            while (this.currentToken().kind() === SyntaxKind.OpenBracketToken) {
-                if (requireCompleteArraySuffix && this.peekToken(1).kind() !== SyntaxKind.CloseBracketToken) {
+            while (this.currentToken().tokenKind === SyntaxKind.OpenBracketToken) {
+                if (requireCompleteArraySuffix && this.peekToken(1).tokenKind !== SyntaxKind.CloseBracketToken) {
                     break;
                 }
 
@@ -4088,11 +4088,11 @@ module Parser {
         }
 
         private isObjectType(): bool {
-            return this.currentToken().kind() === SyntaxKind.OpenBraceToken;
+            return this.currentToken().tokenKind === SyntaxKind.OpenBraceToken;
         }
 
         private isFunctionType(): bool {
-            return this.currentToken().kind() === SyntaxKind.OpenParenToken;
+            return this.currentToken().tokenKind === SyntaxKind.OpenParenToken;
         }
 
         private isConstructorType(): bool {
@@ -4124,7 +4124,7 @@ module Parser {
             }
 
             var token = this.currentToken();
-            if (token.kind() === SyntaxKind.DotDotDotToken) {
+            if (token.tokenKind === SyntaxKind.DotDotDotToken) {
                 return true;
             }
 
@@ -4240,7 +4240,7 @@ module Parser {
 
         private listIsTerminated(currentListType: ListParsingState, itemCount: number): bool {
             return this.isExpectedListTerminator(currentListType, itemCount) ||
-                   this.currentToken().kind() === SyntaxKind.EndOfFileToken;
+                   this.currentToken().tokenKind === SyntaxKind.EndOfFileToken;
         }
 
         private parseSyntaxListWorker(currentListType: ListParsingState,
@@ -4326,7 +4326,7 @@ module Parser {
 
                 // Now, we have to see if we have a separator or not.  If we do have a separator
                 // we've got to consume it and continue trying to parse list items.
-                if (this.currentToken().kind() === separatorKind) {
+                if (this.currentToken().tokenKind === separatorKind) {
                     // Consume the last separator and continue parsing list elements.
                     items.push(this.eatToken(separatorKind));
                     continue;
@@ -4586,44 +4586,44 @@ module Parser {
         }
 
         private isExpectedSourceUnit_ModuleElementsTerminator(): bool {
-            return this.currentToken().kind() === SyntaxKind.EndOfFileToken;
+            return this.currentToken().tokenKind === SyntaxKind.EndOfFileToken;
         }
 
         private isExpectedEnumDeclaration_VariableDeclaratorsTerminator(): bool {
-            return this.currentToken().kind() === SyntaxKind.CloseBraceToken;
+            return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken;
         }
 
         private isExpectedModuleDeclaration_ModuleElementsTerminator(): bool {
-            return this.currentToken().kind() === SyntaxKind.CloseBraceToken;
+            return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken;
         }
 
         private isExpectedObjectType_TypeMembersTerminator(): bool {
-            return this.currentToken().kind() === SyntaxKind.CloseBraceToken;
+            return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken;
         }
 
         private isExpectedObjectLiteralExpression_PropertyAssignmentsTerminator(): bool {
-            return this.currentToken().kind() === SyntaxKind.CloseBraceToken;
+            return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken;
         }
 
         private isExpectedLiteralExpression_AssignmentExpressionsTerminator(): bool {
-            return this.currentToken().kind() === SyntaxKind.CloseBracketToken;
+            return this.currentToken().tokenKind === SyntaxKind.CloseBracketToken;
         }
 
         private isExpectedParameterList_ParametersTerminator(): bool {
             var token = this.currentToken();
-            if (token.kind() === SyntaxKind.CloseParenToken) {
+            if (token.tokenKind === SyntaxKind.CloseParenToken) {
                 return true;
             }
 
             // We may also see a { in an error case.  i.e.:
             // function (a, b, c  {
-            if (token.kind() === SyntaxKind.OpenBraceToken) {
+            if (token.tokenKind === SyntaxKind.OpenBraceToken) {
                 return true;
             }
 
             // We may also see a => in an error case.  i.e.:
             // (f: number => { ... }
-            if (token.kind() === SyntaxKind.EqualsGreaterThanToken) {
+            if (token.tokenKind === SyntaxKind.EqualsGreaterThanToken) {
                 return true;
             }
 
@@ -4632,8 +4632,8 @@ module Parser {
 
         private isExpectedVariableDeclaration_VariableDeclarators_DisallowInTerminator(): bool {
             // This is the case when we're parsing variable declarations in a for/for-in statement.
-            if (this.currentToken().kind() === SyntaxKind.SemicolonToken ||
-                this.currentToken().kind() === SyntaxKind.CloseParenToken) {
+            if (this.currentToken().tokenKind === SyntaxKind.SemicolonToken ||
+                this.currentToken().tokenKind === SyntaxKind.CloseParenToken) {
                 return true;
             }
 
@@ -4650,7 +4650,7 @@ module Parser {
             // If we just parsed a comma, then we can't terminate this list.  i.e.:
             //      var a = bar, // <-- just consumed the comma
             //          b = baz;
-            if (this.previousToken().kind() === SyntaxKind.CommaToken) {
+            if (this.previousToken().tokenKind === SyntaxKind.CommaToken) {
                 return false;
             }
 
@@ -4658,7 +4658,7 @@ module Parser {
             // For better error recovery, if we see a => then we just stop immediately.  We've got an
             // arrow function here and it's going to be veyr unlikely that we'll resynchronize and get
             // another variable declaration.
-            if (this.currentToken().kind() === SyntaxKind.EqualsGreaterThanToken) {
+            if (this.currentToken().tokenKind === SyntaxKind.EqualsGreaterThanToken) {
                 return true;
             }
 
@@ -4672,8 +4672,8 @@ module Parser {
                 return true;
             }
 
-            if (this.currentToken().kind() === SyntaxKind.OpenBraceToken ||
-                this.currentToken().kind() === SyntaxKind.CloseBraceToken) {
+            if (this.currentToken().tokenKind === SyntaxKind.OpenBraceToken ||
+                this.currentToken().tokenKind === SyntaxKind.CloseBraceToken) {
                 return true;
             }
 
@@ -4681,24 +4681,24 @@ module Parser {
         }
 
         private isExpectedArgumentList_AssignmentExpressionsTerminator(): bool {
-            return this.currentToken().kind() === SyntaxKind.CloseParenToken;
+            return this.currentToken().tokenKind === SyntaxKind.CloseParenToken;
         }
 
         private isExpectedClassDeclaration_ClassElementsTerminator(): bool {
-            return this.currentToken().kind() === SyntaxKind.CloseBraceToken;
+            return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken;
         }
 
         private isExpectedSwitchStatement_SwitchClausesTerminator(): bool {
-            return this.currentToken().kind() === SyntaxKind.CloseBraceToken;
+            return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken;
         }
 
         private isExpectedSwitchClause_StatementsTerminator(): bool {
-            return this.currentToken().kind() === SyntaxKind.CloseBraceToken ||
+            return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken ||
                    this.isSwitchClause();
         }
 
         private isExpectedBlock_StatementsTerminator(): bool {
-            return this.currentToken().kind() === SyntaxKind.CloseBraceToken;
+            return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken;
         }
 
         private isExtendsOrImplementsClause(): bool {
