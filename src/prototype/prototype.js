@@ -28303,7 +28303,7 @@ var Parser;
         };
         ParserImpl.prototype.eatIdentifierToken = function () {
             var token = this.currentToken();
-            if(this.isIdentifier(token) && !this.isKeyword(token.keywordKind())) {
+            if(this.isIdentifier(token)) {
                 this.moveToNextToken();
                 return token;
             }
@@ -28350,11 +28350,13 @@ var Parser;
             return token.tokenKind === 9 /* IdentifierNameToken */  && !this.isKeyword(token.keywordKind());
         };
         ParserImpl.prototype.isKeyword = function (kind) {
-            if(SyntaxFacts.isStandardKeyword(kind) || SyntaxFacts.isFutureReservedKeyword(kind)) {
-                return true;
-            }
-            if(this.isInStrictMode && SyntaxFacts.isFutureReservedStrictKeyword(kind)) {
-                return true;
+            if(kind >= SyntaxKind.FirstKeyword) {
+                if(kind <= SyntaxKind.LastFutureReservedKeyword) {
+                    return true;
+                }
+                if(this.isInStrictMode) {
+                    return kind <= SyntaxKind.LastFutureReservedStrictKeyword;
+                }
             }
             return false;
         };
@@ -29669,7 +29671,6 @@ var Parser;
             return this.parsePostFixExpression(term, allowInvocation);
         };
         ParserImpl.prototype.parsePostFixExpression = function (expression, allowInvocation) {
-            Debug.assert(expression !== null);
             while(true) {
                 var currentTokenKind = this.currentToken().tokenKind;
                 switch(currentTokenKind) {

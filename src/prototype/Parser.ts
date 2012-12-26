@@ -1357,7 +1357,7 @@ module Parser {
         // *IdentifierName*.
         private eatIdentifierToken(): ISyntaxToken {
             var token = this.currentToken();
-            if (this.isIdentifier(token) && !this.isKeyword(token.keywordKind())) {
+            if (this.isIdentifier(token)) {
                 this.moveToNextToken();
                 return token;
             }
@@ -1436,13 +1436,14 @@ module Parser {
         }
 
         private isKeyword(kind: SyntaxKind): bool {
-            if (SyntaxFacts.isStandardKeyword(kind) ||
-                SyntaxFacts.isFutureReservedKeyword(kind)) {
-                return true;
-            }
+            if (kind >= SyntaxKind.FirstKeyword) {
+                if (kind <= SyntaxKind.LastFutureReservedKeyword) {
+                    return true;
+                }
 
-            if (this.isInStrictMode && SyntaxFacts.isFutureReservedStrictKeyword(kind)) {
-                return true;
+                if (this.isInStrictMode) {
+                    return kind <= SyntaxKind.LastFutureReservedStrictKeyword;
+                }
             }
 
             return false;
@@ -3253,8 +3254,6 @@ module Parser {
         }
 
         private parsePostFixExpression(expression: UnaryExpressionSyntax, allowInvocation: bool): UnaryExpressionSyntax {
-            Debug.assert(expression !== null);
-
             while (true) {
                 var currentTokenKind = this.currentToken().tokenKind;
                 switch (currentTokenKind) {
