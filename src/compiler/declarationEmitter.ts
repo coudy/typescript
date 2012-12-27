@@ -4,13 +4,33 @@
 ///<reference path='typescript.ts' />
 
 module TypeScript {
+    export class DeclFileWriter {
+        public onNewLine = true;
+        constructor(private declFile: ITextWriter) {
+        }
+
+        public Write(s: string) {
+            this.declFile.Write(s);
+            this.onNewLine = false;
+        }
+
+        public WriteLine(s: string) {
+            this.declFile.WriteLine(s);
+            this.onNewLine = true;
+        }
+
+        public Close() {
+            this.declFile.Close();
+        }
+    }
+
     export class DeclarationEmitter implements AstWalkerWithDetailCallback.AstWalkerDetailCallback {
-        private declFile: ITextWriter = null;
+        private declFile: DeclFileWriter = null;
         public indenter = new Indenter();
         public declarationContainerStack: AST[] = [];
         public isDottedModuleName: bool[] = [];
         public ignoreCallbackAst: AST = null;
-        private singleDeclFile: ITextWriter = null;
+        private singleDeclFile: DeclFileWriter = null;
         private varListCount: number = 0;
 
         private getAstDeclarationContainer() {
@@ -25,7 +45,7 @@ module TypeScript {
         }
 
         public setDeclarationFile(file: ITextWriter) {
-            this.declFile = file;
+            this.declFile = new DeclFileWriter(file);
         }
 
         public Close() {
@@ -210,9 +230,54 @@ module TypeScript {
             this.emitTypeNamesMember(typeNameMembers);
         }
 
+        private emitComment(comment: Comment) {
+            var text = comment.getText();
+            if (this.declFile.onNewLine) {
+                this.emitIndent();
+            }
+            
+            this.declFile.Write(text[0]);
+
+            for (var i = 1; i < text.length; i++) {
+                this.declFile.WriteLine("");
+                this.emitIndent();
+                this.declFile.Write(text[i]);
+            }
+
+            if (comment.endsLine) {
+                this.declFile.WriteLine("");
+            }
+        }
+
+        private emitDeclarationComments(ast: AST, endLine?: bool);
+        private emitDeclarationComments(symbol: Symbol, endLine?: bool);
+        private emitDeclarationComments(astOrSymbol, endLine = true) {
+            if (!this.emitOptions.emitComments) {
+                return;
+            }
+
+            var declComments = <Comment[]>astOrSymbol.getDocComments();
+            if (declComments.length > 0) {
+                for (var i = 0; i < declComments.length; i++) {
+                    this.emitComment(declComments[i]);
+                }
+
+                if (endLine) {
+                    if (!this.declFile.onNewLine) {
+                        this.declFile.WriteLine("");
+                    }
+                } else {
+                    if (this.declFile.onNewLine) {
+                        this.emitIndent();
+                    }
+                }
+            }
+        }
+
         public VarDeclCallback(pre: bool, varDecl: VarDecl): bool {
             if (pre && this.canEmitSignature(ToDeclFlags(varDecl.varFlags), false)) {
                 var interfaceMember = (this.getAstDeclarationContainer().nodeType == NodeType.InterfaceDeclaration);
+                this.emitDeclarationComments(varDecl);
                 if (!interfaceMember) {
                     // If it is var list of form var a, b, c = emit it only if count > 0 - which will be when emitting first var
                     // If it is var list of form  var a = varList count will be 0
@@ -272,6 +337,7 @@ module TypeScript {
         }
 
         private emitArgDecl(argDecl: ArgDecl, funcDecl: FuncDecl) {
+            this.emitDeclarationComments(argDecl, false);
             this.declFile.Write(argDecl.id.text);
             if (argDecl.isOptionalArg()) {
                 this.declFile.Write("?");
@@ -322,6 +388,7 @@ module TypeScript {
                 return false;
             }
 
+            this.emitDeclarationComments(funcDecl);
             if (funcDecl.isConstructor) {
                 this.emitIndent();
                 this.declFile.Write("constructor ");
@@ -350,6 +417,8 @@ module TypeScript {
                 this.declFile.Write("[");
             }
 
+            this.indenter.increaseIndent();
+
             if (funcDecl.arguments) {
                 var argsLen = funcDecl.arguments.members.length;
                 if (funcDecl.variableArgList) {
@@ -374,6 +443,8 @@ module TypeScript {
                 }
                 this.emitArgDecl(lastArg, funcDecl);
             }
+
+            this.indenter.decreaseIndent();
 
             if (!funcDecl.isIndexerMember()) {
                 this.declFile.Write(")");
@@ -416,6 +487,7 @@ module TypeScript {
                 return false;
             }
 
+            this.emitDeclarationComments(accessorSymbol);
             this.emitDeclFlags(ToDeclFlags(accessorSymbol.flags), "var");
             this.declFile.Write(funcDecl.name.text);
             var propertyType = accessorSymbol.getType();
@@ -435,6 +507,7 @@ module TypeScript {
                 for (var i = 0; i < argsLen; i++) {
                     var argDecl = <ArgDecl>funcDecl.arguments.members[i];
                     if (hasFlag(argDecl.varFlags, VarFlags.Property)) {
+                        this.emitDeclarationComments(argDecl);
                         this.emitDeclFlags(ToDeclFlags(argDecl.varFlags), "var");
                         this.declFile.Write(argDecl.id.text);
 
@@ -455,6 +528,7 @@ module TypeScript {
 
             if (pre) {
                 var className = classDecl.name.text;
+                this.emitDeclarationComments(classDecl);
                 this.emitDeclFlags(ToDeclFlags(classDecl.varFlags), "class");
                 this.declFile.Write(className);
                 this.emitBaseList(classDecl.extendsList, "extends");
@@ -484,6 +558,7 @@ module TypeScript {
 
             if (pre) {
                 var interfaceName = interfaceDecl.name.text;
+                this.emitDeclarationComments(interfaceDecl);
                 this.emitDeclFlags(ToDeclFlags(interfaceDecl.varFlags), "interface");
                 this.declFile.Write(interfaceName);
                 this.emitBaseList(interfaceDecl.extendsList, "extends");
@@ -505,6 +580,7 @@ module TypeScript {
         public ImportDeclarationCallback(pre: bool, importDecl: ImportDeclaration): bool {
             if (pre) {
                 if ((<Script>this.declarationContainerStack[0]).isExternallyVisibleSymbol(importDecl.id.sym)) {
+                    this.emitDeclarationComments(importDecl);
                     this.emitIndent();
                     this.declFile.Write("import ");
 
@@ -525,6 +601,7 @@ module TypeScript {
                 return false;
             }
 
+            this.emitDeclarationComments(moduleDecl);
             this.emitDeclFlags(ToDeclFlags(moduleDecl.modFlags), "enum");
             this.declFile.WriteLine(moduleDecl.name.text + " {");
 
@@ -533,6 +610,7 @@ module TypeScript {
             for (var j = 1; j < membersLen; j++) {
                 var memberDecl: AST = moduleDecl.members.members[j];
                 if (memberDecl.nodeType == NodeType.VarDecl) {
+                    this.emitDeclarationComments(memberDecl);
                     this.emitIndent();
                     this.declFile.WriteLine((<VarDecl>memberDecl).id.text + ",");
                 } else {
@@ -559,7 +637,7 @@ module TypeScript {
                             // Create new file
                             var declareFileName = this.emitOptions.mapOutputFileName(stripQuotes(moduleDecl.name.sym.name), TypeScriptCompiler.mapToDTSFileName);
                             var useUTF8InOutputfile = moduleDecl.containsUnicodeChar || (this.emitOptions.emitComments && moduleDecl.containsUnicodeCharInComment);
-                            this.declFile = this.emitOptions.ioHost.createFile(declareFileName, useUTF8InOutputfile);
+                            this.declFile = new DeclFileWriter(this.emitOptions.ioHost.createFile(declareFileName, useUTF8InOutputfile));
                         }
                         this.pushDeclarationContainer(moduleDecl);
                     } else {
@@ -591,6 +669,7 @@ module TypeScript {
                 if (this.emitDottedModuleName()) {
                     this.declFile.Write(".");
                 } else {
+                    this.emitDeclarationComments(moduleDecl);
                     this.emitDeclFlags(ToDeclFlags(moduleDecl.modFlags), "module");
                 }
                 this.declFile.Write(moduleDecl.name.text);
