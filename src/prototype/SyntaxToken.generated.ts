@@ -69,8 +69,18 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
+        private firstToken() { return this; }
+        private lastToken() { return this; }
+        private isTypeScriptSpecific() { return false; }
+        private hasZeroWidthToken() { return false; }
+        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+
+        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+            return { token: this, fullStart: fullStart };
+        }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -150,8 +160,18 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
+        private firstToken() { return this; }
+        private lastToken() { return this; }
+        private isTypeScriptSpecific() { return false; }
+        private hasZeroWidthToken() { return false; }
+        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+
+        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+            return { token: this, fullStart: fullStart };
+        }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -231,8 +251,18 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
+        private firstToken() { return this; }
+        private lastToken() { return this; }
+        private isTypeScriptSpecific() { return false; }
+        private hasZeroWidthToken() { return false; }
+        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+
+        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+            return { token: this, fullStart: fullStart };
+        }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -315,8 +345,18 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
+        private firstToken() { return this; }
+        private lastToken() { return this; }
+        private isTypeScriptSpecific() { return false; }
+        private hasZeroWidthToken() { return false; }
+        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+
+        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+            return { token: this, fullStart: fullStart };
+        }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -371,8 +411,18 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
+        private firstToken() { return this; }
+        private lastToken() { return this; }
+        private isTypeScriptSpecific() { return false; }
+        private hasZeroWidthToken() { return false; }
+        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+
+        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+            return { token: this, fullStart: fullStart };
+        }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -439,8 +489,18 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
+        private firstToken() { return this; }
+        private lastToken() { return this; }
+        private isTypeScriptSpecific() { return false; }
+        private hasZeroWidthToken() { return false; }
+        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+
+        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+            return { token: this, fullStart: fullStart };
+        }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -507,8 +567,18 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
+        private firstToken() { return this; }
+        private lastToken() { return this; }
+        private isTypeScriptSpecific() { return false; }
+        private hasZeroWidthToken() { return false; }
+        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+
+        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+            return { token: this, fullStart: fullStart };
+        }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -578,8 +648,18 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
+        private firstToken() { return this; }
+        private lastToken() { return this; }
+        private isTypeScriptSpecific() { return false; }
+        private hasZeroWidthToken() { return false; }
+        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+
+        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+            return { token: this, fullStart: fullStart };
+        }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -636,8 +716,18 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
+        private firstToken() { return this; }
+        private lastToken() { return this; }
+        private isTypeScriptSpecific() { return false; }
+        private hasZeroWidthToken() { return false; }
+        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+
+        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+            return { token: this, fullStart: fullStart };
+        }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -706,8 +796,18 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
+        private firstToken() { return this; }
+        private lastToken() { return this; }
+        private isTypeScriptSpecific() { return false; }
+        private hasZeroWidthToken() { return false; }
+        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+
+        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+            return { token: this, fullStart: fullStart };
+        }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -776,8 +876,18 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
+        private firstToken() { return this; }
+        private lastToken() { return this; }
+        private isTypeScriptSpecific() { return false; }
+        private hasZeroWidthToken() { return false; }
+        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+
+        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+            return { token: this, fullStart: fullStart };
+        }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -849,8 +959,18 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
+        private firstToken() { return this; }
+        private lastToken() { return this; }
+        private isTypeScriptSpecific() { return false; }
+        private hasZeroWidthToken() { return false; }
+        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+
+        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+            return { token: this, fullStart: fullStart };
+        }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);

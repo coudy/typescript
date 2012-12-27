@@ -14,52 +14,48 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 363,
                         "_expression": {
-                            "kind": "ThisExpression",
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ThisKeyword",
+                            "width": 4,
                             "fullWidth": 357,
-                            "_thisKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ThisKeyword",
-                                "width": 4,
-                                "fullWidth": 357,
-                                "text": "this",
-                                "hasLeadingTrivia": true,
-                                "hasLeadingComment": true,
-                                "hasLeadingNewLine": true,
-                                "leadingTrivia": [
-                                    {
-                                        "kind": "SingleLineCommentTrivia",
-                                        "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
-                                    },
-                                    {
-                                        "kind": "NewLineTrivia",
-                                        "text": "\n"
-                                    },
-                                    {
-                                        "kind": "SingleLineCommentTrivia",
-                                        "text": "// This code is governed by the BSD license found in the LICENSE file."
-                                    },
-                                    {
-                                        "kind": "NewLineTrivia",
-                                        "text": "\n"
-                                    },
-                                    {
-                                        "kind": "NewLineTrivia",
-                                        "text": "\n"
-                                    },
-                                    {
-                                        "kind": "MultiLineCommentTrivia",
-                                        "text": "/**\n * [[Call]] executes code associated with the object\n *\n * @path ch08/8.6/8.6.2/S8.6.2_A5_T1.js\n * @description Call function-property of object, property defined\n *  as testScreen = {touch:function(){count++}}\n */"
-                                    },
-                                    {
-                                        "kind": "NewLineTrivia",
-                                        "text": "\n"
-                                    },
-                                    {
-                                        "kind": "NewLineTrivia",
-                                        "text": "\n"
-                                    }
-                                ]
-                            }
+                            "text": "this",
+                            "hasLeadingTrivia": true,
+                            "hasLeadingComment": true,
+                            "hasLeadingNewLine": true,
+                            "leadingTrivia": [
+                                {
+                                    "kind": "SingleLineCommentTrivia",
+                                    "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                                },
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "text": "\n"
+                                },
+                                {
+                                    "kind": "SingleLineCommentTrivia",
+                                    "text": "// This code is governed by the BSD license found in the LICENSE file."
+                                },
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "text": "\n"
+                                },
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "text": "\n"
+                                },
+                                {
+                                    "kind": "MultiLineCommentTrivia",
+                                    "text": "/**\n * [[Call]] executes code associated with the object\n *\n * @path ch08/8.6/8.6.2/S8.6.2_A5_T1.js\n * @description Call function-property of object, property defined\n *  as testScreen = {touch:function(){count++}}\n */"
+                                },
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "text": "\n"
+                                },
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "text": "\n"
+                                }
+                            ]
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -67,14 +63,10 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 5,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 5,
-                                "text": "count",
-                                "valueText": "count"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 5,
+                            "text": "count",
+                            "valueText": "count"
                         }
                     },
                     "_operatorToken": {
@@ -83,13 +75,9 @@
                         "text": "="
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "0"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "0"
                     }
                 },
                 "_semicolonToken": {
@@ -245,14 +233,10 @@
                                                                 "kind": "PostIncrementExpression",
                                                                 "fullWidth": 7,
                                                                 "_operand": {
-                                                                    "kind": "IdentifierName",
-                                                                    "fullWidth": 5,
-                                                                    "_identifier": {
-                                                                        "kind": "IdentifierNameToken",
-                                                                        "width": 5,
-                                                                        "text": "count",
-                                                                        "valueText": "count"
-                                                                    }
+                                                                    "kind": "IdentifierNameToken",
+                                                                    "width": 5,
+                                                                    "text": "count",
+                                                                    "valueText": "count"
                                                                 },
                                                                 "_operatorToken": {
                                                                     "kind": "PlusPlusToken",
@@ -311,36 +295,32 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 105,
                         "_expression": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 10,
                             "fullWidth": 99,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 10,
-                                "fullWidth": 99,
-                                "text": "testScreen",
-                                "valueText": "testScreen",
-                                "hasLeadingTrivia": true,
-                                "hasLeadingComment": true,
-                                "hasLeadingNewLine": true,
-                                "leadingTrivia": [
-                                    {
-                                        "kind": "SingleLineCommentTrivia",
-                                        "text": "//////////////////////////////////////////////////////////////////////////////"
-                                    },
-                                    {
-                                        "kind": "NewLineTrivia",
-                                        "text": "\n"
-                                    },
-                                    {
-                                        "kind": "SingleLineCommentTrivia",
-                                        "text": "//CHECK#1"
-                                    },
-                                    {
-                                        "kind": "NewLineTrivia",
-                                        "text": "\n"
-                                    }
-                                ]
-                            }
+                            "text": "testScreen",
+                            "valueText": "testScreen",
+                            "hasLeadingTrivia": true,
+                            "hasLeadingComment": true,
+                            "hasLeadingNewLine": true,
+                            "leadingTrivia": [
+                                {
+                                    "kind": "SingleLineCommentTrivia",
+                                    "text": "//////////////////////////////////////////////////////////////////////////////"
+                                },
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "text": "\n"
+                                },
+                                {
+                                    "kind": "SingleLineCommentTrivia",
+                                    "text": "//CHECK#1"
+                                },
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "text": "\n"
+                                }
+                            ]
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -348,14 +328,10 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 5,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 5,
-                                "text": "touch",
-                                "valueText": "touch"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 5,
+                            "text": "touch",
+                            "valueText": "touch"
                         }
                     },
                     "_argumentList": {
@@ -415,22 +391,18 @@
                     "kind": "NotEqualsExpression",
                     "fullWidth": 10,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 5,
                         "fullWidth": 6,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 5,
-                            "fullWidth": 6,
-                            "text": "count",
-                            "valueText": "count",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "count",
+                        "valueText": "count",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "ExclamationEqualsEqualsToken",
@@ -438,13 +410,9 @@
                         "text": "!=="
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "1"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "1"
                     }
                 },
                 "_closeParenToken": {
@@ -485,22 +453,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 123,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -515,21 +479,17 @@
                                             "kind": "AddExpression",
                                             "fullWidth": 113,
                                             "_left": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 103,
                                                 "fullWidth": 104,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 103,
-                                                    "fullWidth": 104,
-                                                    "text": "'#1: this.count=0; testScreen = {touch:function(){count++}}; testScreen.touch(); count === 1. Actual: '",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'#1: this.count=0; testScreen = {touch:function(){count++}}; testScreen.touch(); count === 1. Actual: '",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
@@ -553,14 +513,10 @@
                                                     "text": "("
                                                 },
                                                 "_expression": {
-                                                    "kind": "IdentifierName",
-                                                    "fullWidth": 5,
-                                                    "_identifier": {
-                                                        "kind": "IdentifierNameToken",
-                                                        "width": 5,
-                                                        "text": "count",
-                                                        "valueText": "count"
-                                                    }
+                                                    "kind": "IdentifierNameToken",
+                                                    "width": 5,
+                                                    "text": "count",
+                                                    "valueText": "count"
                                                 },
                                                 "_closeParenToken": {
                                                     "kind": "CloseParenToken",
@@ -619,56 +575,52 @@
                         "kind": "ElementAccessExpression",
                         "fullWidth": 191,
                         "_expression": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 10,
                             "fullWidth": 182,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 10,
-                                "fullWidth": 182,
-                                "text": "testScreen",
-                                "valueText": "testScreen",
-                                "hasLeadingTrivia": true,
-                                "hasLeadingComment": true,
-                                "hasLeadingNewLine": true,
-                                "leadingTrivia": [
-                                    {
-                                        "kind": "SingleLineCommentTrivia",
-                                        "text": "//"
-                                    },
-                                    {
-                                        "kind": "NewLineTrivia",
-                                        "text": "\n"
-                                    },
-                                    {
-                                        "kind": "SingleLineCommentTrivia",
-                                        "text": "//////////////////////////////////////////////////////////////////////////////"
-                                    },
-                                    {
-                                        "kind": "NewLineTrivia",
-                                        "text": "\n"
-                                    },
-                                    {
-                                        "kind": "NewLineTrivia",
-                                        "text": "\n"
-                                    },
-                                    {
-                                        "kind": "SingleLineCommentTrivia",
-                                        "text": "//////////////////////////////////////////////////////////////////////////////"
-                                    },
-                                    {
-                                        "kind": "NewLineTrivia",
-                                        "text": "\n"
-                                    },
-                                    {
-                                        "kind": "SingleLineCommentTrivia",
-                                        "text": "//CHECK#2"
-                                    },
-                                    {
-                                        "kind": "NewLineTrivia",
-                                        "text": "\n"
-                                    }
-                                ]
-                            }
+                            "text": "testScreen",
+                            "valueText": "testScreen",
+                            "hasLeadingTrivia": true,
+                            "hasLeadingComment": true,
+                            "hasLeadingNewLine": true,
+                            "leadingTrivia": [
+                                {
+                                    "kind": "SingleLineCommentTrivia",
+                                    "text": "//"
+                                },
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "text": "\n"
+                                },
+                                {
+                                    "kind": "SingleLineCommentTrivia",
+                                    "text": "//////////////////////////////////////////////////////////////////////////////"
+                                },
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "text": "\n"
+                                },
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "text": "\n"
+                                },
+                                {
+                                    "kind": "SingleLineCommentTrivia",
+                                    "text": "//////////////////////////////////////////////////////////////////////////////"
+                                },
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "text": "\n"
+                                },
+                                {
+                                    "kind": "SingleLineCommentTrivia",
+                                    "text": "//CHECK#2"
+                                },
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "text": "\n"
+                                }
+                            ]
                         },
                         "_openBracketToken": {
                             "kind": "OpenBracketToken",
@@ -676,13 +628,9 @@
                             "text": "["
                         },
                         "_argumentExpression": {
-                            "kind": "StringLiteralExpression",
-                            "fullWidth": 7,
-                            "_literalToken": {
-                                "kind": "StringLiteral",
-                                "width": 7,
-                                "text": "'touch'"
-                            }
+                            "kind": "StringLiteral",
+                            "width": 7,
+                            "text": "'touch'"
                         },
                         "_closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -747,22 +695,18 @@
                     "kind": "NotEqualsExpression",
                     "fullWidth": 10,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 5,
                         "fullWidth": 6,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 5,
-                            "fullWidth": 6,
-                            "text": "count",
-                            "valueText": "count",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "count",
+                        "valueText": "count",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "ExclamationEqualsEqualsToken",
@@ -770,13 +714,9 @@
                         "text": "!=="
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "2"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "2"
                     }
                 },
                 "_closeParenToken": {
@@ -817,22 +757,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 148,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -847,21 +783,17 @@
                                             "kind": "AddExpression",
                                             "fullWidth": 138,
                                             "_left": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 128,
                                                 "fullWidth": 129,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 128,
-                                                    "fullWidth": 129,
-                                                    "text": "'#2: this.count=0; testScreen = {touch:function(){count++}}; testScreen.touch(); testScreen[\\'touch\\'](); count === 2. Actual: '",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'#2: this.count=0; testScreen = {touch:function(){count++}}; testScreen.touch(); testScreen[\\'touch\\'](); count === 2. Actual: '",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
@@ -885,14 +817,10 @@
                                                     "text": "("
                                                 },
                                                 "_expression": {
-                                                    "kind": "IdentifierName",
-                                                    "fullWidth": 5,
-                                                    "_identifier": {
-                                                        "kind": "IdentifierNameToken",
-                                                        "width": 5,
-                                                        "text": "count",
-                                                        "valueText": "count"
-                                                    }
+                                                    "kind": "IdentifierNameToken",
+                                                    "width": 5,
+                                                    "text": "count",
+                                                    "valueText": "count"
                                                 },
                                                 "_closeParenToken": {
                                                     "kind": "CloseParenToken",

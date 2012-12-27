@@ -26,60 +26,55 @@
                     "hasZeroWidthToken": true,
                     "hasRegularExpressionToken": true,
                     "_left": {
-                        "kind": "RegularExpressionLiteralExpression",
+                        "kind": "RegularExpressionLiteral",
+                        "width": 3,
                         "fullWidth": 279,
-                        "hasRegularExpressionToken": true,
-                        "_literalToken": {
-                            "kind": "RegularExpressionLiteral",
-                            "width": 3,
-                            "fullWidth": 279,
-                            "text": "/a/",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingComment": true,
-                            "hasLeadingNewLine": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// This code is governed by the BSD license found in the LICENSE file."
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "MultiLineCommentTrivia",
-                                    "text": "/**\n * RegularExpressionChar :: \\ or / is incorrect\n *\n * @path ch07/7.8/7.8.5/S7.8.5_A2.2_T2.js\n * @description /\n * @negative\n */"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "//CHECK#1"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                }
-                            ]
-                        }
+                        "text": "/a/",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingComment": true,
+                        "hasLeadingNewLine": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// This code is governed by the BSD license found in the LICENSE file."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "MultiLineCommentTrivia",
+                                "text": "/**\n * RegularExpressionChar :: \\ or / is incorrect\n *\n * @path ch07/7.8/7.8.5/S7.8.5_A2.2_T2.js\n * @description /\n * @negative\n */"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "//CHECK#1"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "SlashToken",
@@ -96,14 +91,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 0,
-                        "hasZeroWidthToken": true,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 0,
-                            "text": ""
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 0,
+                        "text": ""
                     }
                 },
                 "_semicolonToken": {
@@ -116,14 +106,10 @@
                 "kind": "ExpressionStatement",
                 "fullWidth": 8,
                 "_expression": {
-                    "kind": "IdentifierName",
-                    "fullWidth": 6,
-                    "_identifier": {
-                        "kind": "IdentifierNameToken",
-                        "width": 6,
-                        "text": "source",
-                        "valueText": "source"
-                    }
+                    "kind": "IdentifierNameToken",
+                    "width": 6,
+                    "text": "source",
+                    "valueText": "source"
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",

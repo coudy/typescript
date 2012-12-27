@@ -10,60 +10,56 @@
                     "kind": "InvocationExpression",
                     "fullWidth": 350,
                     "_expression": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 4,
                         "fullWidth": 326,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 4,
-                            "fullWidth": 326,
-                            "text": "eval",
-                            "valueText": "eval",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingComment": true,
-                            "hasLeadingNewLine": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// This code is governed by the BSD license found in the LICENSE file."
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "MultiLineCommentTrivia",
-                                    "text": "/**\n * Line Terminator between LeftHandSideExpression and \"--\" is not allowed\n *\n * @path ch11/11.3/11.3.2/S11.3.2_A1.1_T1.js\n * @description Checking Line Feed\n * @negative\n */"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "//CHECK#1"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                }
-                            ]
-                        }
+                        "text": "eval",
+                        "valueText": "eval",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingComment": true,
+                        "hasLeadingNewLine": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// This code is governed by the BSD license found in the LICENSE file."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "MultiLineCommentTrivia",
+                                "text": "/**\n * Line Terminator between LeftHandSideExpression and \"--\" is not allowed\n *\n * @path ch11/11.3/11.3.2/S11.3.2_A1.1_T1.js\n * @description Checking Line Feed\n * @negative\n */"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "//CHECK#1"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ]
                     },
                     "_argumentList": {
                         "kind": "ArgumentList",
@@ -75,13 +71,9 @@
                         },
                         "_arguments": [
                             {
-                                "kind": "StringLiteralExpression",
-                                "fullWidth": 22,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 22,
-                                    "text": "\"var x = 1; x\\u000A--\""
-                                }
+                                "kind": "StringLiteral",
+                                "width": 22,
+                                "text": "\"var x = 1; x\\u000A--\""
                             }
                         ],
                         "_closeParenToken": {

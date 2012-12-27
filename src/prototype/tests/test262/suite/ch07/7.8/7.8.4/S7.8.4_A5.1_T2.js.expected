@@ -74,21 +74,17 @@
                     "kind": "NotEqualsExpression",
                     "fullWidth": 17,
                     "_left": {
-                        "kind": "StringLiteralExpression",
+                        "kind": "StringLiteral",
+                        "width": 8,
                         "fullWidth": 9,
-                        "_literalToken": {
-                            "kind": "StringLiteral",
-                            "width": 8,
-                            "fullWidth": 9,
-                            "text": "\"\\u0000\"",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "\"\\u0000\"",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "ExclamationEqualsEqualsToken",
@@ -104,13 +100,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "StringLiteralExpression",
-                        "fullWidth": 4,
-                        "_literalToken": {
-                            "kind": "StringLiteral",
-                            "width": 4,
-                            "text": "\"\\0\""
-                        }
+                        "kind": "StringLiteral",
+                        "width": 4,
+                        "text": "\"\\0\""
                     }
                 },
                 "_closeParenToken": {
@@ -151,22 +143,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 35,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -178,13 +166,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 25,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 25,
-                                                "text": "'#1: \"\\\\u0000\" === \"\\\\0\"'"
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 25,
+                                            "text": "'#1: \"\\\\u0000\" === \"\\\\0\"'"
                                         }
                                     ],
                                     "_closeParenToken": {

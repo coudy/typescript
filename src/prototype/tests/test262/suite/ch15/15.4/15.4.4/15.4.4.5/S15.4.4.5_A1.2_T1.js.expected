@@ -120,14 +120,10 @@
                                         ]
                                     },
                                     "_expression": {
-                                        "kind": "IdentifierName",
-                                        "fullWidth": 5,
-                                        "_identifier": {
-                                            "kind": "IdentifierNameToken",
-                                            "width": 5,
-                                            "text": "Array",
-                                            "valueText": "Array"
-                                        }
+                                        "kind": "IdentifierNameToken",
+                                        "width": 5,
+                                        "text": "Array",
+                                        "valueText": "Array"
                                     },
                                     "_argumentList": {
                                         "kind": "ArgumentList",
@@ -139,13 +135,9 @@
                                         },
                                         "_arguments": [
                                             {
-                                                "kind": "NumericLiteralExpression",
-                                                "fullWidth": 1,
-                                                "_literalToken": {
-                                                    "kind": "NumericLiteral",
-                                                    "width": 1,
-                                                    "text": "0"
-                                                }
+                                                "kind": "NumericLiteral",
+                                                "width": 1,
+                                                "text": "0"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -153,13 +145,9 @@
                                                 "text": ","
                                             },
                                             {
-                                                "kind": "NumericLiteralExpression",
-                                                "fullWidth": 1,
-                                                "_literalToken": {
-                                                    "kind": "NumericLiteral",
-                                                    "width": 1,
-                                                    "text": "1"
-                                                }
+                                                "kind": "NumericLiteral",
+                                                "width": 1,
+                                                "text": "1"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -167,13 +155,9 @@
                                                 "text": ","
                                             },
                                             {
-                                                "kind": "NumericLiteralExpression",
-                                                "fullWidth": 1,
-                                                "_literalToken": {
-                                                    "kind": "NumericLiteral",
-                                                    "width": 1,
-                                                    "text": "2"
-                                                }
+                                                "kind": "NumericLiteral",
+                                                "width": 1,
+                                                "text": "2"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -181,13 +165,9 @@
                                                 "text": ","
                                             },
                                             {
-                                                "kind": "NumericLiteralExpression",
-                                                "fullWidth": 1,
-                                                "_literalToken": {
-                                                    "kind": "NumericLiteral",
-                                                    "width": 1,
-                                                    "text": "3"
-                                                }
+                                                "kind": "NumericLiteral",
+                                                "width": 1,
+                                                "text": "3"
                                             }
                                         ],
                                         "_closeParenToken": {
@@ -248,14 +228,10 @@
                             "kind": "MemberAccessExpression",
                             "fullWidth": 6,
                             "_expression": {
-                                "kind": "IdentifierName",
-                                "fullWidth": 1,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 1,
-                                    "text": "x",
-                                    "valueText": "x"
-                                }
+                                "kind": "IdentifierNameToken",
+                                "width": 1,
+                                "text": "x",
+                                "valueText": "x"
                             },
                             "_dotToken": {
                                 "kind": "DotToken",
@@ -263,14 +239,10 @@
                                 "text": "."
                             },
                             "_identifierName": {
-                                "kind": "IdentifierName",
-                                "fullWidth": 4,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 4,
-                                    "text": "join",
-                                    "valueText": "join"
-                                }
+                                "kind": "IdentifierNameToken",
+                                "width": 4,
+                                "text": "join",
+                                "valueText": "join"
                             }
                         },
                         "_argumentList": {
@@ -311,13 +283,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "StringLiteralExpression",
-                        "fullWidth": 9,
-                        "_literalToken": {
-                            "kind": "StringLiteral",
-                            "width": 9,
-                            "text": "\"0,1,2,3\""
-                        }
+                        "kind": "StringLiteral",
+                        "width": 9,
+                        "text": "\"0,1,2,3\""
                     }
                 },
                 "_closeParenToken": {
@@ -358,22 +326,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 85,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -388,21 +352,17 @@
                                             "kind": "AddExpression",
                                             "fullWidth": 75,
                                             "_left": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 62,
                                                 "fullWidth": 63,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 62,
-                                                    "fullWidth": 63,
-                                                    "text": "'#1: x = new Array(0,1,2,3); x.join() === \"0,1,2,3\". Actual: '",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'#1: x = new Array(0,1,2,3); x.join() === \"0,1,2,3\". Actual: '",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
@@ -432,14 +392,10 @@
                                                         "kind": "MemberAccessExpression",
                                                         "fullWidth": 6,
                                                         "_expression": {
-                                                            "kind": "IdentifierName",
-                                                            "fullWidth": 1,
-                                                            "_identifier": {
-                                                                "kind": "IdentifierNameToken",
-                                                                "width": 1,
-                                                                "text": "x",
-                                                                "valueText": "x"
-                                                            }
+                                                            "kind": "IdentifierNameToken",
+                                                            "width": 1,
+                                                            "text": "x",
+                                                            "valueText": "x"
                                                         },
                                                         "_dotToken": {
                                                             "kind": "DotToken",
@@ -447,14 +403,10 @@
                                                             "text": "."
                                                         },
                                                         "_identifierName": {
-                                                            "kind": "IdentifierName",
-                                                            "fullWidth": 4,
-                                                            "_identifier": {
-                                                                "kind": "IdentifierNameToken",
-                                                                "width": 4,
-                                                                "text": "join",
-                                                                "valueText": "join"
-                                                            }
+                                                            "kind": "IdentifierNameToken",
+                                                            "width": 4,
+                                                            "text": "join",
+                                                            "valueText": "join"
                                                         }
                                                     },
                                                     "_argumentList": {
@@ -527,39 +479,35 @@
                     "kind": "AssignmentExpression",
                     "fullWidth": 17,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 1,
                         "fullWidth": 13,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 1,
-                            "fullWidth": 13,
-                            "text": "x",
-                            "valueText": "x",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingComment": true,
-                            "hasLeadingNewLine": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "//CHECK#2"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "x",
+                        "valueText": "x",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingComment": true,
+                        "hasLeadingNewLine": true,
+                        "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "//CHECK#2"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ],
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "EqualsToken",
@@ -615,14 +563,10 @@
                         "kind": "ElementAccessExpression",
                         "fullWidth": 5,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 1,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 1,
-                                "text": "x",
-                                "valueText": "x"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 1,
+                            "text": "x",
+                            "valueText": "x"
                         },
                         "_openBracketToken": {
                             "kind": "OpenBracketToken",
@@ -630,13 +574,9 @@
                             "text": "["
                         },
                         "_argumentExpression": {
-                            "kind": "NumericLiteralExpression",
-                            "fullWidth": 1,
-                            "_literalToken": {
-                                "kind": "NumericLiteral",
-                                "width": 1,
-                                "text": "0"
-                            }
+                            "kind": "NumericLiteral",
+                            "width": 1,
+                            "text": "0"
                         },
                         "_closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -666,13 +606,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "0"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "0"
                     }
                 },
                 "_semicolonToken": {
@@ -700,14 +636,10 @@
                         "kind": "ElementAccessExpression",
                         "fullWidth": 5,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 1,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 1,
-                                "text": "x",
-                                "valueText": "x"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 1,
+                            "text": "x",
+                            "valueText": "x"
                         },
                         "_openBracketToken": {
                             "kind": "OpenBracketToken",
@@ -715,13 +647,9 @@
                             "text": "["
                         },
                         "_argumentExpression": {
-                            "kind": "NumericLiteralExpression",
-                            "fullWidth": 1,
-                            "_literalToken": {
-                                "kind": "NumericLiteral",
-                                "width": 1,
-                                "text": "3"
-                            }
+                            "kind": "NumericLiteral",
+                            "width": 1,
+                            "text": "3"
                         },
                         "_closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -751,13 +679,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "3"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "3"
                     }
                 },
                 "_semicolonToken": {
@@ -807,14 +731,10 @@
                             "kind": "MemberAccessExpression",
                             "fullWidth": 6,
                             "_expression": {
-                                "kind": "IdentifierName",
-                                "fullWidth": 1,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 1,
-                                    "text": "x",
-                                    "valueText": "x"
-                                }
+                                "kind": "IdentifierNameToken",
+                                "width": 1,
+                                "text": "x",
+                                "valueText": "x"
                             },
                             "_dotToken": {
                                 "kind": "DotToken",
@@ -822,14 +742,10 @@
                                 "text": "."
                             },
                             "_identifierName": {
-                                "kind": "IdentifierName",
-                                "fullWidth": 4,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 4,
-                                    "text": "join",
-                                    "valueText": "join"
-                                }
+                                "kind": "IdentifierNameToken",
+                                "width": 4,
+                                "text": "join",
+                                "valueText": "join"
                             }
                         },
                         "_argumentList": {
@@ -870,13 +786,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "StringLiteralExpression",
-                        "fullWidth": 7,
-                        "_literalToken": {
-                            "kind": "StringLiteral",
-                            "width": 7,
-                            "text": "\"0,,,3\""
-                        }
+                        "kind": "StringLiteral",
+                        "width": 7,
+                        "text": "\"0,,,3\""
                     }
                 },
                 "_closeParenToken": {
@@ -917,22 +829,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 87,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -947,21 +855,17 @@
                                             "kind": "AddExpression",
                                             "fullWidth": 77,
                                             "_left": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 64,
                                                 "fullWidth": 65,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 64,
-                                                    "fullWidth": 65,
-                                                    "text": "'#2: x = []; x[0] = 0; x[3] = 3; x.join() === \"0,,,3\". Actual: '",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'#2: x = []; x[0] = 0; x[3] = 3; x.join() === \"0,,,3\". Actual: '",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
@@ -991,14 +895,10 @@
                                                         "kind": "MemberAccessExpression",
                                                         "fullWidth": 6,
                                                         "_expression": {
-                                                            "kind": "IdentifierName",
-                                                            "fullWidth": 1,
-                                                            "_identifier": {
-                                                                "kind": "IdentifierNameToken",
-                                                                "width": 1,
-                                                                "text": "x",
-                                                                "valueText": "x"
-                                                            }
+                                                            "kind": "IdentifierNameToken",
+                                                            "width": 1,
+                                                            "text": "x",
+                                                            "valueText": "x"
                                                         },
                                                         "_dotToken": {
                                                             "kind": "DotToken",
@@ -1006,14 +906,10 @@
                                                             "text": "."
                                                         },
                                                         "_identifierName": {
-                                                            "kind": "IdentifierName",
-                                                            "fullWidth": 4,
-                                                            "_identifier": {
-                                                                "kind": "IdentifierNameToken",
-                                                                "width": 4,
-                                                                "text": "join",
-                                                                "valueText": "join"
-                                                            }
+                                                            "kind": "IdentifierNameToken",
+                                                            "width": 4,
+                                                            "text": "join",
+                                                            "valueText": "join"
                                                         }
                                                     },
                                                     "_argumentList": {
@@ -1086,39 +982,35 @@
                     "kind": "AssignmentExpression",
                     "fullWidth": 17,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 1,
                         "fullWidth": 13,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 1,
-                            "fullWidth": 13,
-                            "text": "x",
-                            "valueText": "x",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingComment": true,
-                            "hasLeadingNewLine": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "//CHECK#3"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "x",
+                        "valueText": "x",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingComment": true,
+                        "hasLeadingNewLine": true,
+                        "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "//CHECK#3"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ],
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "EqualsToken",
@@ -1174,14 +1066,10 @@
                         "kind": "ElementAccessExpression",
                         "fullWidth": 5,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 1,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 1,
-                                "text": "x",
-                                "valueText": "x"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 1,
+                            "text": "x",
+                            "valueText": "x"
                         },
                         "_openBracketToken": {
                             "kind": "OpenBracketToken",
@@ -1189,13 +1077,9 @@
                             "text": "["
                         },
                         "_argumentExpression": {
-                            "kind": "NumericLiteralExpression",
-                            "fullWidth": 1,
-                            "_literalToken": {
-                                "kind": "NumericLiteral",
-                                "width": 1,
-                                "text": "0"
-                            }
+                            "kind": "NumericLiteral",
+                            "width": 1,
+                            "text": "0"
                         },
                         "_closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1225,13 +1109,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "0"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "0"
                     }
                 },
                 "_semicolonToken": {
@@ -1281,14 +1161,10 @@
                             "kind": "MemberAccessExpression",
                             "fullWidth": 6,
                             "_expression": {
-                                "kind": "IdentifierName",
-                                "fullWidth": 1,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 1,
-                                    "text": "x",
-                                    "valueText": "x"
-                                }
+                                "kind": "IdentifierNameToken",
+                                "width": 1,
+                                "text": "x",
+                                "valueText": "x"
                             },
                             "_dotToken": {
                                 "kind": "DotToken",
@@ -1296,14 +1172,10 @@
                                 "text": "."
                             },
                             "_identifierName": {
-                                "kind": "IdentifierName",
-                                "fullWidth": 4,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 4,
-                                    "text": "join",
-                                    "valueText": "join"
-                                }
+                                "kind": "IdentifierNameToken",
+                                "width": 4,
+                                "text": "join",
+                                "valueText": "join"
                             }
                         },
                         "_argumentList": {
@@ -1344,13 +1216,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "StringLiteralExpression",
-                        "fullWidth": 3,
-                        "_literalToken": {
-                            "kind": "StringLiteral",
-                            "width": 3,
-                            "text": "\"0\""
-                        }
+                        "kind": "StringLiteral",
+                        "width": 3,
+                        "text": "\"0\""
                     }
                 },
                 "_closeParenToken": {
@@ -1391,22 +1259,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 73,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -1421,21 +1285,17 @@
                                             "kind": "AddExpression",
                                             "fullWidth": 63,
                                             "_left": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 50,
                                                 "fullWidth": 51,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 50,
-                                                    "fullWidth": 51,
-                                                    "text": "'#3: x = []; x[0] = 0; x.join() === \"0\". Actual: '",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'#3: x = []; x[0] = 0; x.join() === \"0\". Actual: '",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
@@ -1465,14 +1325,10 @@
                                                         "kind": "MemberAccessExpression",
                                                         "fullWidth": 6,
                                                         "_expression": {
-                                                            "kind": "IdentifierName",
-                                                            "fullWidth": 1,
-                                                            "_identifier": {
-                                                                "kind": "IdentifierNameToken",
-                                                                "width": 1,
-                                                                "text": "x",
-                                                                "valueText": "x"
-                                                            }
+                                                            "kind": "IdentifierNameToken",
+                                                            "width": 1,
+                                                            "text": "x",
+                                                            "valueText": "x"
                                                         },
                                                         "_dotToken": {
                                                             "kind": "DotToken",
@@ -1480,14 +1336,10 @@
                                                             "text": "."
                                                         },
                                                         "_identifierName": {
-                                                            "kind": "IdentifierName",
-                                                            "fullWidth": 4,
-                                                            "_identifier": {
-                                                                "kind": "IdentifierNameToken",
-                                                                "width": 4,
-                                                                "text": "join",
-                                                                "valueText": "join"
-                                                            }
+                                                            "kind": "IdentifierNameToken",
+                                                            "width": 4,
+                                                            "text": "join",
+                                                            "valueText": "join"
                                                         }
                                                     },
                                                     "_argumentList": {

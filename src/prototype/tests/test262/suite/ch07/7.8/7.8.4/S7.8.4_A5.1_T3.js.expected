@@ -74,21 +74,17 @@
                     "kind": "NotEqualsExpression",
                     "fullWidth": 15,
                     "_left": {
-                        "kind": "StringLiteralExpression",
+                        "kind": "StringLiteral",
+                        "width": 6,
                         "fullWidth": 7,
-                        "_literalToken": {
-                            "kind": "StringLiteral",
-                            "width": 6,
-                            "fullWidth": 7,
-                            "text": "\"\\x00\"",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "\"\\x00\"",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "ExclamationEqualsEqualsToken",
@@ -104,13 +100,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "StringLiteralExpression",
-                        "fullWidth": 4,
-                        "_literalToken": {
-                            "kind": "StringLiteral",
-                            "width": 4,
-                            "text": "\"\\0\""
-                        }
+                        "kind": "StringLiteral",
+                        "width": 4,
+                        "text": "\"\\0\""
                     }
                 },
                 "_closeParenToken": {
@@ -151,22 +143,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 33,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -178,13 +166,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 23,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 23,
-                                                "text": "'#1: \"\\\\x00\" === \"\\\\0\"'"
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 23,
+                                            "text": "'#1: \"\\\\x00\" === \"\\\\0\"'"
                                         }
                                     ],
                                     "_closeParenToken": {

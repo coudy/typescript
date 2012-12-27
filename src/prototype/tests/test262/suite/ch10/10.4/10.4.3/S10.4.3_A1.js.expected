@@ -7,51 +7,47 @@
                 "kind": "ExpressionStatement",
                 "fullWidth": 315,
                 "_expression": {
-                    "kind": "StringLiteralExpression",
+                    "kind": "StringLiteral",
+                    "width": 12,
                     "fullWidth": 313,
-                    "_literalToken": {
-                        "kind": "StringLiteral",
-                        "width": 12,
-                        "fullWidth": 313,
-                        "text": "\"use strict\"",
-                        "hasLeadingTrivia": true,
-                        "hasLeadingComment": true,
-                        "hasLeadingNewLine": true,
-                        "leadingTrivia": [
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "// Copyright 2011 Google, Inc.  All rights reserved."
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "// This code is governed by the BSD license found in the LICENSE file."
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "MultiLineCommentTrivia",
-                                "text": "/**\n * @path ch10/10.4/10.4.3/S10.4.3_A1.js\n * @description When calling a strict anonymous function as a\n * function, \"this\" should be bound to undefined.\n * @onlyStrict\n */"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            }
-                        ]
-                    }
+                    "text": "\"use strict\"",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingComment": true,
+                    "hasLeadingNewLine": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "// Copyright 2011 Google, Inc.  All rights reserved."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "// This code is governed by the BSD license found in the LICENSE file."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "MultiLineCommentTrivia",
+                            "text": "/**\n * @path ch10/10.4/10.4.3/S10.4.3_A1.js\n * @description When calling a strict anonymous function as a\n * function, \"this\" should be bound to undefined.\n * @onlyStrict\n */"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        }
+                    ]
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
@@ -204,14 +200,10 @@
                                                             ]
                                                         },
                                                         "_expression": {
-                                                            "kind": "ThisExpression",
-                                                            "fullWidth": 4,
-                                                            "_thisKeyword": {
-                                                                "kind": "IdentifierNameToken",
-                                                                "keywordKind": "ThisKeyword",
-                                                                "width": 4,
-                                                                "text": "this"
-                                                            }
+                                                            "kind": "IdentifierNameToken",
+                                                            "keywordKind": "ThisKeyword",
+                                                            "width": 4,
+                                                            "text": "this"
                                                         },
                                                         "_semicolonToken": {
                                                             "kind": "SemicolonToken",
@@ -302,22 +294,18 @@
                     "kind": "NotEqualsExpression",
                     "fullWidth": 18,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 4,
                         "fullWidth": 5,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 4,
-                            "fullWidth": 5,
-                            "text": "that",
-                            "valueText": "that",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "that",
+                        "valueText": "that",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "ExclamationEqualsEqualsToken",
@@ -333,14 +321,10 @@
                         ]
                     },
                     "_right": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 9,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 9,
-                            "text": "undefined",
-                            "valueText": "undefined"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 9,
+                        "text": "undefined",
+                        "valueText": "undefined"
                     }
                 },
                 "_closeParenToken": {
@@ -381,22 +365,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 41,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -411,21 +391,17 @@
                                             "kind": "AddExpression",
                                             "fullWidth": 31,
                                             "_left": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 24,
                                                 "fullWidth": 25,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 24,
-                                                    "fullWidth": 25,
-                                                    "text": "'#1: \"this\" leaked as: '",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'#1: \"this\" leaked as: '",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
@@ -441,14 +417,10 @@
                                                 ]
                                             },
                                             "_right": {
-                                                "kind": "IdentifierName",
-                                                "fullWidth": 4,
-                                                "_identifier": {
-                                                    "kind": "IdentifierNameToken",
-                                                    "width": 4,
-                                                    "text": "that",
-                                                    "valueText": "that"
-                                                }
+                                                "kind": "IdentifierNameToken",
+                                                "width": 4,
+                                                "text": "that",
+                                                "valueText": "that"
                                             }
                                         }
                                     ],

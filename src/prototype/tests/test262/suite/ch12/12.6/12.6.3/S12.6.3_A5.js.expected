@@ -10,59 +10,55 @@
                     "kind": "AssignmentExpression",
                     "fullWidth": 426,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 3,
                         "fullWidth": 413,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 3,
-                            "fullWidth": 413,
-                            "text": "arr",
-                            "valueText": "arr",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingComment": true,
-                            "hasLeadingNewLine": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// This code is governed by the BSD license found in the LICENSE file."
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "MultiLineCommentTrivia",
-                                    "text": "/**\n * \"in\"-expression wrapped into \"eval\" statement is allowed as a ExpressionNoIn in \"for (ExpressionNoIn; FirstExpression; SecondExpression) Statement\" IterationStatement\n *\n * @path ch12/12.6/12.6.3/S12.6.3_A5.js\n * @description Using eval \"for(eval(\"i in arr\");1;)\"\n */"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "arr",
+                        "valueText": "arr",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingComment": true,
+                        "hasLeadingNewLine": true,
+                        "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// This code is governed by the BSD license found in the LICENSE file."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "MultiLineCommentTrivia",
+                                "text": "/**\n * \"in\"-expression wrapped into \"eval\" statement is allowed as a ExpressionNoIn in \"for (ExpressionNoIn; FirstExpression; SecondExpression) Statement\" IterationStatement\n *\n * @path ch12/12.6/12.6.3/S12.6.3_A5.js\n * @description Using eval \"for(eval(\"i in arr\");1;)\"\n */"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ],
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "EqualsToken",
@@ -87,13 +83,9 @@
                         },
                         "_expressions": [
                             {
-                                "kind": "NumericLiteralExpression",
-                                "fullWidth": 1,
-                                "_literalToken": {
-                                    "kind": "NumericLiteral",
-                                    "width": 1,
-                                    "text": "1"
-                                }
+                                "kind": "NumericLiteral",
+                                "width": 1,
+                                "text": "1"
                             },
                             {
                                 "kind": "CommaToken",
@@ -101,13 +93,9 @@
                                 "text": ","
                             },
                             {
-                                "kind": "NumericLiteralExpression",
-                                "fullWidth": 1,
-                                "_literalToken": {
-                                    "kind": "NumericLiteral",
-                                    "width": 1,
-                                    "text": "2"
-                                }
+                                "kind": "NumericLiteral",
+                                "width": 1,
+                                "text": "2"
                             },
                             {
                                 "kind": "CommaToken",
@@ -115,13 +103,9 @@
                                 "text": ","
                             },
                             {
-                                "kind": "NumericLiteralExpression",
-                                "fullWidth": 1,
-                                "_literalToken": {
-                                    "kind": "NumericLiteral",
-                                    "width": 1,
-                                    "text": "3"
-                                }
+                                "kind": "NumericLiteral",
+                                "width": 1,
+                                "text": "3"
                             },
                             {
                                 "kind": "CommaToken",
@@ -129,13 +113,9 @@
                                 "text": ","
                             },
                             {
-                                "kind": "NumericLiteralExpression",
-                                "fullWidth": 1,
-                                "_literalToken": {
-                                    "kind": "NumericLiteral",
-                                    "width": 1,
-                                    "text": "4"
-                                }
+                                "kind": "NumericLiteral",
+                                "width": 1,
+                                "text": "4"
                             },
                             {
                                 "kind": "CommaToken",
@@ -143,13 +123,9 @@
                                 "text": ","
                             },
                             {
-                                "kind": "NumericLiteralExpression",
-                                "fullWidth": 1,
-                                "_literalToken": {
-                                    "kind": "NumericLiteral",
-                                    "width": 1,
-                                    "text": "5"
-                                }
+                                "kind": "NumericLiteral",
+                                "width": 1,
+                                "text": "5"
                             }
                         ],
                         "_closeBracketToken": {
@@ -181,22 +157,18 @@
                     "kind": "AssignmentExpression",
                     "fullWidth": 5,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 1,
                         "fullWidth": 2,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 1,
-                            "fullWidth": 2,
-                            "text": "i",
-                            "valueText": "i",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "i",
+                        "valueText": "i",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "EqualsToken",
@@ -212,13 +184,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "1"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "1"
                     }
                 },
                 "_semicolonToken": {
@@ -318,14 +286,10 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 16,
                                 "_expression": {
-                                    "kind": "IdentifierName",
-                                    "fullWidth": 4,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 4,
-                                        "text": "eval",
-                                        "valueText": "eval"
-                                    }
+                                    "kind": "IdentifierNameToken",
+                                    "width": 4,
+                                    "text": "eval",
+                                    "valueText": "eval"
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -337,13 +301,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 10,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 10,
-                                                "text": "\"i in arr\""
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 10,
+                                            "text": "\"i in arr\""
                                         }
                                     ],
                                     "_closeParenToken": {
@@ -359,13 +319,9 @@
                                 "text": ";"
                             },
                             "_condition": {
-                                "kind": "NumericLiteralExpression",
-                                "fullWidth": 1,
-                                "_literalToken": {
-                                    "kind": "NumericLiteral",
-                                    "width": 1,
-                                    "text": "1"
-                                }
+                                "kind": "NumericLiteral",
+                                "width": 1,
+                                "text": "1"
                             },
                             "_secondSemicolonToken": {
                                 "kind": "SemicolonToken",
@@ -524,22 +480,18 @@
                                     "kind": "InvocationExpression",
                                     "fullWidth": 88,
                                     "_expression": {
-                                        "kind": "IdentifierName",
+                                        "kind": "IdentifierNameToken",
+                                        "width": 6,
                                         "fullWidth": 8,
-                                        "_identifier": {
-                                            "kind": "IdentifierNameToken",
-                                            "width": 6,
-                                            "fullWidth": 8,
-                                            "text": "$ERROR",
-                                            "valueText": "$ERROR",
-                                            "hasLeadingTrivia": true,
-                                            "leadingTrivia": [
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "text": "\t\t"
-                                                }
-                                            ]
-                                        }
+                                        "text": "$ERROR",
+                                        "valueText": "$ERROR",
+                                        "hasLeadingTrivia": true,
+                                        "leadingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "\t\t"
+                                            }
+                                        ]
                                     },
                                     "_argumentList": {
                                         "kind": "ArgumentList",
@@ -551,13 +503,9 @@
                                         },
                                         "_arguments": [
                                             {
-                                                "kind": "StringLiteralExpression",
-                                                "fullWidth": 78,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 78,
-                                                    "text": "'#1.1: for(eval(\"i in arr\");1;) {break;}; does not lead to throwing exception'"
-                                                }
+                                                "kind": "StringLiteral",
+                                                "width": 78,
+                                                "text": "'#1.1: for(eval(\"i in arr\");1;) {break;}; does not lead to throwing exception'"
                                             }
                                         ],
                                         "_closeParenToken": {
@@ -706,14 +654,10 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 24,
                                 "_expression": {
-                                    "kind": "IdentifierName",
-                                    "fullWidth": 4,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 4,
-                                        "text": "eval",
-                                        "valueText": "eval"
-                                    }
+                                    "kind": "IdentifierNameToken",
+                                    "width": 4,
+                                    "text": "eval",
+                                    "valueText": "eval"
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -725,13 +669,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 18,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 18,
-                                                "text": "\"var i = 1 in arr\""
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 18,
+                                            "text": "\"var i = 1 in arr\""
                                         }
                                     ],
                                     "_closeParenToken": {
@@ -747,13 +687,9 @@
                                 "text": ";"
                             },
                             "_condition": {
-                                "kind": "NumericLiteralExpression",
-                                "fullWidth": 1,
-                                "_literalToken": {
-                                    "kind": "NumericLiteral",
-                                    "width": 1,
-                                    "text": "1"
-                                }
+                                "kind": "NumericLiteral",
+                                "width": 1,
+                                "text": "1"
                             },
                             "_secondSemicolonToken": {
                                 "kind": "SemicolonToken",
@@ -912,22 +848,18 @@
                                     "kind": "InvocationExpression",
                                     "fullWidth": 96,
                                     "_expression": {
-                                        "kind": "IdentifierName",
+                                        "kind": "IdentifierNameToken",
+                                        "width": 6,
                                         "fullWidth": 8,
-                                        "_identifier": {
-                                            "kind": "IdentifierNameToken",
-                                            "width": 6,
-                                            "fullWidth": 8,
-                                            "text": "$ERROR",
-                                            "valueText": "$ERROR",
-                                            "hasLeadingTrivia": true,
-                                            "leadingTrivia": [
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "text": "\t\t"
-                                                }
-                                            ]
-                                        }
+                                        "text": "$ERROR",
+                                        "valueText": "$ERROR",
+                                        "hasLeadingTrivia": true,
+                                        "leadingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "\t\t"
+                                            }
+                                        ]
                                     },
                                     "_argumentList": {
                                         "kind": "ArgumentList",
@@ -939,13 +871,9 @@
                                         },
                                         "_arguments": [
                                             {
-                                                "kind": "StringLiteralExpression",
-                                                "fullWidth": 86,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 86,
-                                                    "text": "'#2.1: for(eval(\"var i = 1 in arr\");1;) {break;}; does not lead to throwing exception'"
-                                                }
+                                                "kind": "StringLiteral",
+                                                "width": 86,
+                                                "text": "'#2.1: for(eval(\"var i = 1 in arr\");1;) {break;}; does not lead to throwing exception'"
                                             }
                                         ],
                                         "_closeParenToken": {
@@ -1094,14 +1022,10 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 16,
                                 "_expression": {
-                                    "kind": "IdentifierName",
-                                    "fullWidth": 4,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 4,
-                                        "text": "eval",
-                                        "valueText": "eval"
-                                    }
+                                    "kind": "IdentifierNameToken",
+                                    "width": 4,
+                                    "text": "eval",
+                                    "valueText": "eval"
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -1113,13 +1037,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 10,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 10,
-                                                "text": "\"1 in arr\""
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 10,
+                                            "text": "\"1 in arr\""
                                         }
                                     ],
                                     "_closeParenToken": {
@@ -1135,13 +1055,9 @@
                                 "text": ";"
                             },
                             "_condition": {
-                                "kind": "NumericLiteralExpression",
-                                "fullWidth": 1,
-                                "_literalToken": {
-                                    "kind": "NumericLiteral",
-                                    "width": 1,
-                                    "text": "1"
-                                }
+                                "kind": "NumericLiteral",
+                                "width": 1,
+                                "text": "1"
                             },
                             "_secondSemicolonToken": {
                                 "kind": "SemicolonToken",
@@ -1296,22 +1212,18 @@
                                     "kind": "InvocationExpression",
                                     "fullWidth": 88,
                                     "_expression": {
-                                        "kind": "IdentifierName",
+                                        "kind": "IdentifierNameToken",
+                                        "width": 6,
                                         "fullWidth": 8,
-                                        "_identifier": {
-                                            "kind": "IdentifierNameToken",
-                                            "width": 6,
-                                            "fullWidth": 8,
-                                            "text": "$ERROR",
-                                            "valueText": "$ERROR",
-                                            "hasLeadingTrivia": true,
-                                            "leadingTrivia": [
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "text": "\t\t"
-                                                }
-                                            ]
-                                        }
+                                        "text": "$ERROR",
+                                        "valueText": "$ERROR",
+                                        "hasLeadingTrivia": true,
+                                        "leadingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "\t\t"
+                                            }
+                                        ]
                                     },
                                     "_argumentList": {
                                         "kind": "ArgumentList",
@@ -1323,13 +1235,9 @@
                                         },
                                         "_arguments": [
                                             {
-                                                "kind": "StringLiteralExpression",
-                                                "fullWidth": 78,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 78,
-                                                    "text": "'#3.1: for(eval(\"1 in arr\");1;) {break;}; does not lead to throwing exception'"
-                                                }
+                                                "kind": "StringLiteral",
+                                                "width": 78,
+                                                "text": "'#3.1: for(eval(\"1 in arr\");1;) {break;}; does not lead to throwing exception'"
                                             }
                                         ],
                                         "_closeParenToken": {

@@ -108,14 +108,9 @@
                                     ]
                                 },
                                 "_value": {
-                                    "kind": "RegularExpressionLiteralExpression",
-                                    "fullWidth": 6,
-                                    "hasRegularExpressionToken": true,
-                                    "_literalToken": {
-                                        "kind": "RegularExpressionLiteral",
-                                        "width": 6,
-                                        "text": "/(?:)/"
-                                    }
+                                    "kind": "RegularExpressionLiteral",
+                                    "width": 6,
+                                    "text": "/(?:)/"
                                 }
                             }
                         }
@@ -195,14 +190,9 @@
                                     ]
                                 },
                                 "_value": {
-                                    "kind": "RegularExpressionLiteralExpression",
-                                    "fullWidth": 6,
-                                    "hasRegularExpressionToken": true,
-                                    "_literalToken": {
-                                        "kind": "RegularExpressionLiteral",
-                                        "width": 6,
-                                        "text": "/(?:)/"
-                                    }
+                                    "kind": "RegularExpressionLiteral",
+                                    "width": 6,
+                                    "text": "/(?:)/"
                                 }
                             }
                         }
@@ -249,22 +239,18 @@
                     "kind": "EqualsExpression",
                     "fullWidth": 19,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 7,
                         "fullWidth": 8,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 7,
-                            "fullWidth": 8,
-                            "text": "regexp1",
-                            "valueText": "regexp1",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "regexp1",
+                        "valueText": "regexp1",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "EqualsEqualsEqualsToken",
@@ -280,14 +266,10 @@
                         ]
                     },
                     "_right": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 7,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 7,
-                            "text": "regexp2",
-                            "valueText": "regexp2"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 7,
+                        "text": "regexp2",
+                        "valueText": "regexp2"
                     }
                 },
                 "_closeParenToken": {
@@ -328,22 +310,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 79,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -355,13 +333,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 69,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 69,
-                                                "text": "'#1: var regexp1 = /(?:)/; var regexp2 = /(?:)/; regexp1 !== regexp2'"
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 69,
+                                            "text": "'#1: var regexp1 = /(?:)/; var regexp2 = /(?:)/; regexp1 !== regexp2'"
                                         }
                                     ],
                                     "_closeParenToken": {

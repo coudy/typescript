@@ -106,22 +106,18 @@
                     "kind": "AssignmentExpression",
                     "fullWidth": 6,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 1,
                         "fullWidth": 2,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 1,
-                            "fullWidth": 2,
-                            "text": "x",
-                            "valueText": "x",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "x",
+                        "valueText": "x",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "EqualsToken",
@@ -137,22 +133,18 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
+                        "kind": "NumericLiteral",
+                        "width": 1,
                         "fullWidth": 2,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "fullWidth": 2,
-                            "text": "1",
-                            "hasTrailingTrivia": true,
-                            "hasTrailingNewLine": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                }
-                            ]
-                        }
+                        "text": "1",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLine": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ]
                     }
                 },
                 "_semicolonToken": {

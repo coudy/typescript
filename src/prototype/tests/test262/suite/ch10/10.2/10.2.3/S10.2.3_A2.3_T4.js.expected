@@ -115,13 +115,9 @@
                                                     "kind": "AddExpression",
                                                     "fullWidth": 40,
                                                     "_left": {
-                                                        "kind": "StringLiteralExpression",
-                                                        "fullWidth": 13,
-                                                        "_literalToken": {
-                                                            "kind": "StringLiteral",
-                                                            "width": 13,
-                                                            "text": "'//CHECK#1\\n'"
-                                                        }
+                                                        "kind": "StringLiteral",
+                                                        "width": 13,
+                                                        "text": "'//CHECK#1\\n'"
                                                     },
                                                     "_operatorToken": {
                                                         "kind": "PlusToken",
@@ -138,13 +134,9 @@
                                                         ]
                                                     },
                                                     "_right": {
-                                                        "kind": "StringLiteralExpression",
-                                                        "fullWidth": 25,
-                                                        "_literalToken": {
-                                                            "kind": "StringLiteral",
-                                                            "width": 25,
-                                                            "text": "'for (var x in this) {\\n'"
-                                                        }
+                                                        "kind": "StringLiteral",
+                                                        "width": 25,
+                                                        "text": "'for (var x in this) {\\n'"
                                                     }
                                                 },
                                                 "_operatorToken": {
@@ -162,13 +154,9 @@
                                                     ]
                                                 },
                                                 "_right": {
-                                                    "kind": "StringLiteralExpression",
-                                                    "fullWidth": 29,
-                                                    "_literalToken": {
-                                                        "kind": "StringLiteral",
-                                                        "width": 29,
-                                                        "text": "'  if ( x === \\'Math\\' ) {\\n'"
-                                                    }
+                                                    "kind": "StringLiteral",
+                                                    "width": 29,
+                                                    "text": "'  if ( x === \\'Math\\' ) {\\n'"
                                                 }
                                             },
                                             "_operatorToken": {
@@ -186,13 +174,9 @@
                                                 ]
                                             },
                                             "_right": {
-                                                "kind": "StringLiteralExpression",
-                                                "fullWidth": 55,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 55,
-                                                    "text": "'    $ERROR(\"#1: \\'Math\\' have attribute DontEnum\");\\n'"
-                                                }
+                                                "kind": "StringLiteral",
+                                                "width": 55,
+                                                "text": "'    $ERROR(\"#1: \\'Math\\' have attribute DontEnum\");\\n'"
                                             }
                                         },
                                         "_operatorToken": {
@@ -210,13 +194,9 @@
                                             ]
                                         },
                                         "_right": {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 7,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 7,
-                                                "text": "'  }\\n'"
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 7,
+                                            "text": "'  }\\n'"
                                         }
                                     },
                                     "_operatorToken": {
@@ -234,13 +214,9 @@
                                         ]
                                     },
                                     "_right": {
-                                        "kind": "StringLiteralExpression",
-                                        "fullWidth": 5,
-                                        "_literalToken": {
-                                            "kind": "StringLiteral",
-                                            "width": 5,
-                                            "text": "'}\\n'"
-                                        }
+                                        "kind": "StringLiteral",
+                                        "width": 5,
+                                        "text": "'}\\n'"
                                     }
                                 }
                             }
@@ -269,23 +245,19 @@
                     "kind": "InvocationExpression",
                     "fullWidth": 14,
                     "_expression": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 4,
                         "fullWidth": 5,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 4,
-                            "fullWidth": 5,
-                            "text": "eval",
-                            "valueText": "eval",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingNewLine": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                }
-                            ]
-                        }
+                        "text": "eval",
+                        "valueText": "eval",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingNewLine": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ]
                     },
                     "_argumentList": {
                         "kind": "ArgumentList",
@@ -297,14 +269,10 @@
                         },
                         "_arguments": [
                             {
-                                "kind": "IdentifierName",
-                                "fullWidth": 7,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 7,
-                                    "text": "evalStr",
-                                    "valueText": "evalStr"
-                                }
+                                "kind": "IdentifierNameToken",
+                                "width": 7,
+                                "text": "evalStr",
+                                "valueText": "evalStr"
                             }
                         ],
                         "_closeParenToken": {

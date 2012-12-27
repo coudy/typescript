@@ -132,22 +132,18 @@
                     "kind": "MemberAccessExpression",
                     "fullWidth": 10,
                     "_expression": {
-                        "kind": "ThisExpression",
+                        "kind": "IdentifierNameToken",
+                        "keywordKind": "ThisKeyword",
+                        "width": 4,
                         "fullWidth": 6,
-                        "_thisKeyword": {
-                            "kind": "IdentifierNameToken",
-                            "keywordKind": "ThisKeyword",
-                            "width": 4,
-                            "fullWidth": 6,
-                            "text": "this",
-                            "hasLeadingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "  "
-                                }
-                            ]
-                        }
+                        "text": "this",
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": "  "
+                            }
+                        ]
                     },
                     "_dotToken": {
                         "kind": "DotToken",
@@ -155,14 +151,10 @@
                         "text": "."
                     },
                     "_identifierName": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 3,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 3,
-                            "text": "NaN",
-                            "valueText": "NaN"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 3,
+                        "text": "NaN",
+                        "valueText": "NaN"
                     }
                 },
                 "_semicolonToken": {
@@ -212,28 +204,24 @@
                                                 "kind": "LessThanExpression",
                                                 "fullWidth": 8,
                                                 "_left": {
-                                                    "kind": "NumericLiteralExpression",
+                                                    "kind": "NumericLiteral",
+                                                    "width": 1,
                                                     "fullWidth": 4,
-                                                    "_literalToken": {
-                                                        "kind": "NumericLiteral",
-                                                        "width": 1,
-                                                        "fullWidth": 4,
-                                                        "text": "1",
-                                                        "hasLeadingTrivia": true,
-                                                        "hasTrailingTrivia": true,
-                                                        "leadingTrivia": [
-                                                            {
-                                                                "kind": "WhitespaceTrivia",
-                                                                "text": "  "
-                                                            }
-                                                        ],
-                                                        "trailingTrivia": [
-                                                            {
-                                                                "kind": "WhitespaceTrivia",
-                                                                "text": " "
-                                                            }
-                                                        ]
-                                                    }
+                                                    "text": "1",
+                                                    "hasLeadingTrivia": true,
+                                                    "hasTrailingTrivia": true,
+                                                    "leadingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "text": "  "
+                                                        }
+                                                    ],
+                                                    "trailingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "text": " "
+                                                        }
+                                                    ]
                                                 },
                                                 "_operatorToken": {
                                                     "kind": "LessThanToken",
@@ -249,21 +237,17 @@
                                                     ]
                                                 },
                                                 "_right": {
-                                                    "kind": "NumericLiteralExpression",
+                                                    "kind": "NumericLiteral",
+                                                    "width": 1,
                                                     "fullWidth": 2,
-                                                    "_literalToken": {
-                                                        "kind": "NumericLiteral",
-                                                        "width": 1,
-                                                        "fullWidth": 2,
-                                                        "text": "2",
-                                                        "hasTrailingTrivia": true,
-                                                        "trailingTrivia": [
-                                                            {
-                                                                "kind": "WhitespaceTrivia",
-                                                                "text": " "
-                                                            }
-                                                        ]
-                                                    }
+                                                    "text": "2",
+                                                    "hasTrailingTrivia": true,
+                                                    "trailingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "text": " "
+                                                        }
+                                                    ]
                                                 }
                                             },
                                             "_operatorToken": {
@@ -280,21 +264,17 @@
                                                 ]
                                             },
                                             "_right": {
-                                                "kind": "NumericLiteralExpression",
+                                                "kind": "NumericLiteral",
+                                                "width": 1,
                                                 "fullWidth": 2,
-                                                "_literalToken": {
-                                                    "kind": "NumericLiteral",
-                                                    "width": 1,
-                                                    "fullWidth": 2,
-                                                    "text": "3",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "3",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             }
                                         },
                                         "_operatorToken": {
@@ -311,21 +291,17 @@
                                             ]
                                         },
                                         "_right": {
-                                            "kind": "NumericLiteralExpression",
+                                            "kind": "NumericLiteral",
+                                            "width": 1,
                                             "fullWidth": 2,
-                                            "_literalToken": {
-                                                "kind": "NumericLiteral",
-                                                "width": 1,
-                                                "fullWidth": 2,
-                                                "text": "4",
-                                                "hasTrailingTrivia": true,
-                                                "trailingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": " "
-                                                    }
-                                                ]
-                                            }
+                                            "text": "4",
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
+                                                }
+                                            ]
                                         }
                                     },
                                     "_operatorToken": {
@@ -342,21 +318,17 @@
                                         ]
                                     },
                                     "_right": {
-                                        "kind": "NumericLiteralExpression",
+                                        "kind": "NumericLiteral",
+                                        "width": 1,
                                         "fullWidth": 2,
-                                        "_literalToken": {
-                                            "kind": "NumericLiteral",
-                                            "width": 1,
-                                            "fullWidth": 2,
-                                            "text": "5",
-                                            "hasTrailingTrivia": true,
-                                            "trailingTrivia": [
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "text": " "
-                                                }
-                                            ]
-                                        }
+                                        "text": "5",
+                                        "hasTrailingTrivia": true,
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": " "
+                                            }
+                                        ]
                                     }
                                 },
                                 "_operatorToken": {
@@ -373,21 +345,17 @@
                                     ]
                                 },
                                 "_right": {
-                                    "kind": "NumericLiteralExpression",
+                                    "kind": "NumericLiteral",
+                                    "width": 1,
                                     "fullWidth": 2,
-                                    "_literalToken": {
-                                        "kind": "NumericLiteral",
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": "6",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
-                                    }
+                                    "text": "6",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
                                 }
                             },
                             "_operatorToken": {
@@ -404,21 +372,17 @@
                                 ]
                             },
                             "_right": {
-                                "kind": "NumericLiteralExpression",
+                                "kind": "NumericLiteral",
+                                "width": 1,
                                 "fullWidth": 2,
-                                "_literalToken": {
-                                    "kind": "NumericLiteral",
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": "7",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                }
+                                "text": "7",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
                             }
                         },
                         "_operatorToken": {
@@ -435,21 +399,17 @@
                             ]
                         },
                         "_right": {
-                            "kind": "NumericLiteralExpression",
+                            "kind": "NumericLiteral",
+                            "width": 1,
                             "fullWidth": 2,
-                            "_literalToken": {
-                                "kind": "NumericLiteral",
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": "8",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                            "text": "8",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -466,13 +426,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "9"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "9"
                     }
                 },
                 "_semicolonToken": {
@@ -514,28 +470,24 @@
                                     "kind": "AddExpression",
                                     "fullWidth": 8,
                                     "_left": {
-                                        "kind": "NumericLiteralExpression",
+                                        "kind": "NumericLiteral",
+                                        "width": 1,
                                         "fullWidth": 4,
-                                        "_literalToken": {
-                                            "kind": "NumericLiteral",
-                                            "width": 1,
-                                            "fullWidth": 4,
-                                            "text": "1",
-                                            "hasLeadingTrivia": true,
-                                            "hasTrailingTrivia": true,
-                                            "leadingTrivia": [
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "text": "  "
-                                                }
-                                            ],
-                                            "trailingTrivia": [
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "text": " "
-                                                }
-                                            ]
-                                        }
+                                        "text": "1",
+                                        "hasLeadingTrivia": true,
+                                        "hasTrailingTrivia": true,
+                                        "leadingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "  "
+                                            }
+                                        ],
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": " "
+                                            }
+                                        ]
                                     },
                                     "_operatorToken": {
                                         "kind": "PlusToken",
@@ -551,21 +503,17 @@
                                         ]
                                     },
                                     "_right": {
-                                        "kind": "NumericLiteralExpression",
+                                        "kind": "NumericLiteral",
+                                        "width": 1,
                                         "fullWidth": 2,
-                                        "_literalToken": {
-                                            "kind": "NumericLiteral",
-                                            "width": 1,
-                                            "fullWidth": 2,
-                                            "text": "2",
-                                            "hasTrailingTrivia": true,
-                                            "trailingTrivia": [
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "text": " "
-                                                }
-                                            ]
-                                        }
+                                        "text": "2",
+                                        "hasTrailingTrivia": true,
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": " "
+                                            }
+                                        ]
                                     }
                                 },
                                 "_operatorToken": {
@@ -592,21 +540,17 @@
                                             "kind": "MultiplyExpression",
                                             "fullWidth": 6,
                                             "_left": {
-                                                "kind": "NumericLiteralExpression",
+                                                "kind": "NumericLiteral",
+                                                "width": 1,
                                                 "fullWidth": 2,
-                                                "_literalToken": {
-                                                    "kind": "NumericLiteral",
-                                                    "width": 1,
-                                                    "fullWidth": 2,
-                                                    "text": "3",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "3",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "AsteriskToken",
@@ -622,21 +566,17 @@
                                                 ]
                                             },
                                             "_right": {
-                                                "kind": "NumericLiteralExpression",
+                                                "kind": "NumericLiteral",
+                                                "width": 1,
                                                 "fullWidth": 2,
-                                                "_literalToken": {
-                                                    "kind": "NumericLiteral",
-                                                    "width": 1,
-                                                    "fullWidth": 2,
-                                                    "text": "4",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "4",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             }
                                         },
                                         "_operatorToken": {
@@ -653,21 +593,17 @@
                                             ]
                                         },
                                         "_right": {
-                                            "kind": "NumericLiteralExpression",
+                                            "kind": "NumericLiteral",
+                                            "width": 1,
                                             "fullWidth": 2,
-                                            "_literalToken": {
-                                                "kind": "NumericLiteral",
-                                                "width": 1,
-                                                "fullWidth": 2,
-                                                "text": "5",
-                                                "hasTrailingTrivia": true,
-                                                "trailingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": " "
-                                                    }
-                                                ]
-                                            }
+                                            "text": "5",
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
+                                                }
+                                            ]
                                         }
                                     },
                                     "_operatorToken": {
@@ -684,21 +620,17 @@
                                         ]
                                     },
                                     "_right": {
-                                        "kind": "NumericLiteralExpression",
+                                        "kind": "NumericLiteral",
+                                        "width": 1,
                                         "fullWidth": 2,
-                                        "_literalToken": {
-                                            "kind": "NumericLiteral",
-                                            "width": 1,
-                                            "fullWidth": 2,
-                                            "text": "6",
-                                            "hasTrailingTrivia": true,
-                                            "trailingTrivia": [
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "text": " "
-                                                }
-                                            ]
-                                        }
+                                        "text": "6",
+                                        "hasTrailingTrivia": true,
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": " "
+                                            }
+                                        ]
                                     }
                                 }
                             },
@@ -716,21 +648,17 @@
                                 ]
                             },
                             "_right": {
-                                "kind": "NumericLiteralExpression",
+                                "kind": "NumericLiteral",
+                                "width": 1,
                                 "fullWidth": 2,
-                                "_literalToken": {
-                                    "kind": "NumericLiteral",
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": "7",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                }
+                                "text": "7",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
                             }
                         },
                         "_operatorToken": {
@@ -747,21 +675,17 @@
                             ]
                         },
                         "_right": {
-                            "kind": "NumericLiteralExpression",
+                            "kind": "NumericLiteral",
+                            "width": 1,
                             "fullWidth": 2,
-                            "_literalToken": {
-                                "kind": "NumericLiteral",
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": "8",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                            "text": "8",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -778,13 +702,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "9"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "9"
                     }
                 },
                 "_semicolonToken": {
@@ -812,22 +732,18 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 10,
                         "_expression": {
-                            "kind": "ThisExpression",
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ThisKeyword",
+                            "width": 4,
                             "fullWidth": 6,
-                            "_thisKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ThisKeyword",
-                                "width": 4,
-                                "fullWidth": 6,
-                                "text": "this",
-                                "hasLeadingTrivia": true,
-                                "leadingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": "  "
-                                    }
-                                ]
-                            }
+                            "text": "this",
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": "  "
+                                }
+                            ]
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -835,14 +751,10 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 3,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 3,
-                                "text": "NaN",
-                                "valueText": "NaN"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 3,
+                            "text": "NaN",
+                            "valueText": "NaN"
                         }
                     },
                     "_operatorToken": {
@@ -880,14 +792,10 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 8,
                         "_expression": {
-                            "kind": "ThisExpression",
-                            "fullWidth": 4,
-                            "_thisKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ThisKeyword",
-                                "width": 4,
-                                "text": "this"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ThisKeyword",
+                            "width": 4,
+                            "text": "this"
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -895,14 +803,10 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 3,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 3,
-                                "text": "NaN",
-                                "valueText": "NaN"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 3,
+                            "text": "NaN",
+                            "valueText": "NaN"
                         }
                     }
                 },
@@ -930,14 +834,10 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 8,
                         "_expression": {
-                            "kind": "ThisExpression",
-                            "fullWidth": 4,
-                            "_thisKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ThisKeyword",
-                                "width": 4,
-                                "text": "this"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ThisKeyword",
+                            "width": 4,
+                            "text": "this"
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -945,14 +845,10 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 3,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 3,
-                                "text": "NaN",
-                                "valueText": "NaN"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 3,
+                            "text": "NaN",
+                            "valueText": "NaN"
                         }
                     },
                     "_operatorToken": {
@@ -990,14 +886,10 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 8,
                         "_expression": {
-                            "kind": "ThisExpression",
-                            "fullWidth": 4,
-                            "_thisKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ThisKeyword",
-                                "width": 4,
-                                "text": "this"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ThisKeyword",
+                            "width": 4,
+                            "text": "this"
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -1005,14 +897,10 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 3,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 3,
-                                "text": "NaN",
-                                "valueText": "NaN"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 3,
+                            "text": "NaN",
+                            "valueText": "NaN"
                         }
                     }
                 },
@@ -1047,28 +935,24 @@
                                 "kind": "BitwiseAndExpression",
                                 "fullWidth": 8,
                                 "_left": {
-                                    "kind": "NumericLiteralExpression",
+                                    "kind": "NumericLiteral",
+                                    "width": 1,
                                     "fullWidth": 4,
-                                    "_literalToken": {
-                                        "kind": "NumericLiteral",
-                                        "width": 1,
-                                        "fullWidth": 4,
-                                        "text": "1",
-                                        "hasLeadingTrivia": true,
-                                        "hasTrailingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ],
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
-                                    }
+                                    "text": "1",
+                                    "hasLeadingTrivia": true,
+                                    "hasTrailingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ],
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
                                 },
                                 "_operatorToken": {
                                     "kind": "AmpersandToken",
@@ -1084,21 +968,17 @@
                                     ]
                                 },
                                 "_right": {
-                                    "kind": "NumericLiteralExpression",
+                                    "kind": "NumericLiteral",
+                                    "width": 1,
                                     "fullWidth": 2,
-                                    "_literalToken": {
-                                        "kind": "NumericLiteral",
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": "2",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
-                                    }
+                                    "text": "2",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
                                 }
                             },
                             "_operatorToken": {
@@ -1118,21 +998,17 @@
                                 "kind": "BitwiseExclusiveOrExpression",
                                 "fullWidth": 6,
                                 "_left": {
-                                    "kind": "NumericLiteralExpression",
+                                    "kind": "NumericLiteral",
+                                    "width": 1,
                                     "fullWidth": 2,
-                                    "_literalToken": {
-                                        "kind": "NumericLiteral",
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": "3",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
-                                    }
+                                    "text": "3",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
                                 },
                                 "_operatorToken": {
                                     "kind": "CaretToken",
@@ -1148,21 +1024,17 @@
                                     ]
                                 },
                                 "_right": {
-                                    "kind": "NumericLiteralExpression",
+                                    "kind": "NumericLiteral",
+                                    "width": 1,
                                     "fullWidth": 2,
-                                    "_literalToken": {
-                                        "kind": "NumericLiteral",
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": "4",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
-                                    }
+                                    "text": "4",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
                                 }
                             }
                         },
@@ -1188,21 +1060,17 @@
                                 "text": "!"
                             },
                             "_operand": {
-                                "kind": "NumericLiteralExpression",
+                                "kind": "NumericLiteral",
+                                "width": 1,
                                 "fullWidth": 2,
-                                "_literalToken": {
-                                    "kind": "NumericLiteral",
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": "5",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                }
+                                "text": "5",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
                             }
                         }
                     },
@@ -1228,13 +1096,9 @@
                             "text": "~"
                         },
                         "_operand": {
-                            "kind": "NumericLiteralExpression",
-                            "fullWidth": 1,
-                            "_literalToken": {
-                                "kind": "NumericLiteral",
-                                "width": 1,
-                                "text": "6"
-                            }
+                            "kind": "NumericLiteral",
+                            "width": 1,
+                            "text": "6"
                         }
                     }
                 },
@@ -1260,28 +1124,24 @@
                     "kind": "ConditionalExpression",
                     "fullWidth": 11,
                     "_condition": {
-                        "kind": "NumericLiteralExpression",
+                        "kind": "NumericLiteral",
+                        "width": 1,
                         "fullWidth": 4,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "fullWidth": 4,
-                            "text": "1",
-                            "hasLeadingTrivia": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "  "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "1",
+                        "hasLeadingTrivia": true,
+                        "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": "  "
+                            }
+                        ],
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_questionToken": {
                         "kind": "QuestionToken",
@@ -1297,21 +1157,17 @@
                         ]
                     },
                     "_whenTrue": {
-                        "kind": "NumericLiteralExpression",
+                        "kind": "NumericLiteral",
+                        "width": 1,
                         "fullWidth": 2,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "fullWidth": 2,
-                            "text": "2",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "2",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_colonToken": {
                         "kind": "ColonToken",
@@ -1327,13 +1183,9 @@
                         ]
                     },
                     "_whenFalse": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "3"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "3"
                     }
                 },
                 "_semicolonToken": {
@@ -1361,22 +1213,18 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 11,
                         "_expression": {
-                            "kind": "ThisExpression",
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ThisKeyword",
+                            "width": 4,
                             "fullWidth": 6,
-                            "_thisKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ThisKeyword",
-                                "width": 4,
-                                "fullWidth": 6,
-                                "text": "this",
-                                "hasLeadingTrivia": true,
-                                "leadingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": "  "
-                                    }
-                                ]
-                            }
+                            "text": "this",
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": "  "
+                                }
+                            ]
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -1384,22 +1232,18 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 3,
                             "fullWidth": 4,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 3,
-                                "fullWidth": 4,
-                                "text": "NaN",
-                                "valueText": "NaN",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                            "text": "NaN",
+                            "valueText": "NaN",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -1416,13 +1260,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "1"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "1"
                     }
                 },
                 "_semicolonToken": {
@@ -1449,14 +1289,10 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 9,
                         "_expression": {
-                            "kind": "ThisExpression",
-                            "fullWidth": 4,
-                            "_thisKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ThisKeyword",
-                                "width": 4,
-                                "text": "this"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ThisKeyword",
+                            "width": 4,
+                            "text": "this"
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -1464,22 +1300,18 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 3,
                             "fullWidth": 4,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 3,
-                                "fullWidth": 4,
-                                "text": "NaN",
-                                "valueText": "NaN",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                            "text": "NaN",
+                            "valueText": "NaN",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -1496,13 +1328,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "2"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "2"
                     }
                 },
                 "_semicolonToken": {
@@ -1529,14 +1357,10 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 9,
                         "_expression": {
-                            "kind": "ThisExpression",
-                            "fullWidth": 4,
-                            "_thisKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ThisKeyword",
-                                "width": 4,
-                                "text": "this"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ThisKeyword",
+                            "width": 4,
+                            "text": "this"
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -1544,22 +1368,18 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 3,
                             "fullWidth": 4,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 3,
-                                "fullWidth": 4,
-                                "text": "NaN",
-                                "valueText": "NaN",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                            "text": "NaN",
+                            "valueText": "NaN",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -1576,13 +1396,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "3"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "3"
                     }
                 },
                 "_semicolonToken": {
@@ -1609,14 +1425,10 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 9,
                         "_expression": {
-                            "kind": "ThisExpression",
-                            "fullWidth": 4,
-                            "_thisKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ThisKeyword",
-                                "width": 4,
-                                "text": "this"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ThisKeyword",
+                            "width": 4,
+                            "text": "this"
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -1624,22 +1436,18 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 3,
                             "fullWidth": 4,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 3,
-                                "fullWidth": 4,
-                                "text": "NaN",
-                                "valueText": "NaN",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                            "text": "NaN",
+                            "valueText": "NaN",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -1656,13 +1464,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "4"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "4"
                     }
                 },
                 "_semicolonToken": {
@@ -1691,14 +1495,10 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 9,
                         "_expression": {
-                            "kind": "ThisExpression",
-                            "fullWidth": 4,
-                            "_thisKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ThisKeyword",
-                                "width": 4,
-                                "text": "this"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ThisKeyword",
+                            "width": 4,
+                            "text": "this"
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -1706,22 +1506,18 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 3,
                             "fullWidth": 4,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 3,
-                                "fullWidth": 4,
-                                "text": "NaN",
-                                "valueText": "NaN",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                            "text": "NaN",
+                            "valueText": "NaN",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -1738,13 +1534,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "5"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "5"
                     }
                 },
                 "_semicolonToken": {
@@ -1772,22 +1564,18 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 11,
                         "_expression": {
-                            "kind": "ThisExpression",
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ThisKeyword",
+                            "width": 4,
                             "fullWidth": 6,
-                            "_thisKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ThisKeyword",
-                                "width": 4,
-                                "fullWidth": 6,
-                                "text": "this",
-                                "hasLeadingTrivia": true,
-                                "leadingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": "  "
-                                    }
-                                ]
-                            }
+                            "text": "this",
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": "  "
+                                }
+                            ]
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -1795,22 +1583,18 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 3,
                             "fullWidth": 4,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 3,
-                                "fullWidth": 4,
-                                "text": "NaN",
-                                "valueText": "NaN",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                            "text": "NaN",
+                            "valueText": "NaN",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -1827,13 +1611,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "6"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "6"
                     }
                 },
                 "_semicolonToken": {
@@ -1860,14 +1640,10 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 9,
                         "_expression": {
-                            "kind": "ThisExpression",
-                            "fullWidth": 4,
-                            "_thisKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ThisKeyword",
-                                "width": 4,
-                                "text": "this"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ThisKeyword",
+                            "width": 4,
+                            "text": "this"
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -1875,22 +1651,18 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 3,
                             "fullWidth": 4,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 3,
-                                "fullWidth": 4,
-                                "text": "NaN",
-                                "valueText": "NaN",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                            "text": "NaN",
+                            "valueText": "NaN",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -1907,13 +1679,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "7"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "7"
                     }
                 },
                 "_semicolonToken": {
@@ -1940,14 +1708,10 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 9,
                         "_expression": {
-                            "kind": "ThisExpression",
-                            "fullWidth": 4,
-                            "_thisKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ThisKeyword",
-                                "width": 4,
-                                "text": "this"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ThisKeyword",
+                            "width": 4,
+                            "text": "this"
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -1955,22 +1719,18 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 3,
                             "fullWidth": 4,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 3,
-                                "fullWidth": 4,
-                                "text": "NaN",
-                                "valueText": "NaN",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                            "text": "NaN",
+                            "valueText": "NaN",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -1987,13 +1747,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "8"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "8"
                     }
                 },
                 "_semicolonToken": {
@@ -2020,14 +1776,10 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 9,
                         "_expression": {
-                            "kind": "ThisExpression",
-                            "fullWidth": 4,
-                            "_thisKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ThisKeyword",
-                                "width": 4,
-                                "text": "this"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ThisKeyword",
+                            "width": 4,
+                            "text": "this"
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -2035,22 +1787,18 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 3,
                             "fullWidth": 4,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 3,
-                                "fullWidth": 4,
-                                "text": "NaN",
-                                "valueText": "NaN",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                            "text": "NaN",
+                            "valueText": "NaN",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -2067,13 +1815,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "9"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "9"
                     }
                 },
                 "_semicolonToken": {
@@ -2101,22 +1845,18 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 11,
                         "_expression": {
-                            "kind": "ThisExpression",
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ThisKeyword",
+                            "width": 4,
                             "fullWidth": 6,
-                            "_thisKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ThisKeyword",
-                                "width": 4,
-                                "fullWidth": 6,
-                                "text": "this",
-                                "hasLeadingTrivia": true,
-                                "leadingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": "  "
-                                    }
-                                ]
-                            }
+                            "text": "this",
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": "  "
+                                }
+                            ]
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -2124,22 +1864,18 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 3,
                             "fullWidth": 4,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 3,
-                                "fullWidth": 4,
-                                "text": "NaN",
-                                "valueText": "NaN",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                            "text": "NaN",
+                            "valueText": "NaN",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -2156,13 +1892,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "1"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "1"
                     }
                 },
                 "_semicolonToken": {
@@ -2189,14 +1921,10 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 9,
                         "_expression": {
-                            "kind": "ThisExpression",
-                            "fullWidth": 4,
-                            "_thisKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ThisKeyword",
-                                "width": 4,
-                                "text": "this"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ThisKeyword",
+                            "width": 4,
+                            "text": "this"
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -2204,22 +1932,18 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 3,
                             "fullWidth": 4,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 3,
-                                "fullWidth": 4,
-                                "text": "NaN",
-                                "valueText": "NaN",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                            "text": "NaN",
+                            "valueText": "NaN",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -2236,13 +1960,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "2"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "2"
                     }
                 },
                 "_semicolonToken": {
@@ -2269,14 +1989,10 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 9,
                         "_expression": {
-                            "kind": "ThisExpression",
-                            "fullWidth": 4,
-                            "_thisKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ThisKeyword",
-                                "width": 4,
-                                "text": "this"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ThisKeyword",
+                            "width": 4,
+                            "text": "this"
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -2284,22 +2000,18 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 3,
                             "fullWidth": 4,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 3,
-                                "fullWidth": 4,
-                                "text": "NaN",
-                                "valueText": "NaN",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                            "text": "NaN",
+                            "valueText": "NaN",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -2316,13 +2028,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "3"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "3"
                     }
                 },
                 "_semicolonToken": {

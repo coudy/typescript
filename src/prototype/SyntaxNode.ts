@@ -4,9 +4,9 @@
 ///<reference path='SyntaxTokenReplacer.ts' />
 ///<reference path='SyntaxVisitor.generated.ts' />
 
-class SyntaxNode implements ISyntaxElement {
+class SyntaxNode implements ISyntaxNodeOrToken {
     private _data: number = -1;
-    
+
     public isNode(): bool{ return true; }
     public isToken(): bool { return false; }
     public isTrivia(): bool { return false; }
@@ -16,6 +16,10 @@ class SyntaxNode implements ISyntaxElement {
 
     public kind(): SyntaxKind {
         throw Errors.abstract();
+    }
+
+    public keywordKind(): SyntaxKind {
+        return SyntaxKind.None;
     }
 
     // Returns the first non-missing token inside this node (or null if there are no such token).

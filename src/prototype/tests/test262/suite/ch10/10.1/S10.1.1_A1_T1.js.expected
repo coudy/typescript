@@ -133,13 +133,9 @@
                                 ]
                             },
                             "_expression": {
-                                "kind": "NumericLiteralExpression",
-                                "fullWidth": 1,
-                                "_literalToken": {
-                                    "kind": "NumericLiteral",
-                                    "width": 1,
-                                    "text": "1"
-                                }
+                                "kind": "NumericLiteral",
+                                "width": 1,
+                                "text": "1"
                             },
                             "_semicolonToken": {
                                 "kind": "SemicolonToken",
@@ -208,14 +204,10 @@
                                 "text": "("
                             },
                             "_expression": {
-                                "kind": "IdentifierName",
-                                "fullWidth": 2,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 2,
-                                    "text": "f1",
-                                    "valueText": "f1"
-                                }
+                                "kind": "IdentifierNameToken",
+                                "width": 2,
+                                "text": "f1",
+                                "valueText": "f1"
                             },
                             "_closeParenToken": {
                                 "kind": "CloseParenToken",
@@ -230,13 +222,9 @@
                         "text": "!=="
                     },
                     "_right": {
-                        "kind": "StringLiteralExpression",
-                        "fullWidth": 10,
-                        "_literalToken": {
-                            "kind": "StringLiteral",
-                            "width": 10,
-                            "text": "\"function\""
-                        }
+                        "kind": "StringLiteral",
+                        "width": 10,
+                        "text": "\"function\""
                     }
                 },
                 "_closeParenToken": {
@@ -260,22 +248,18 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 39,
                         "_expression": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 6,
                             "fullWidth": 8,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 6,
-                                "fullWidth": 8,
-                                "text": "$ERROR",
-                                "valueText": "$ERROR",
-                                "hasLeadingTrivia": true,
-                                "leadingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": "  "
-                                    }
-                                ]
-                            }
+                            "text": "$ERROR",
+                            "valueText": "$ERROR",
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": "  "
+                                }
+                            ]
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -287,13 +271,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 29,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 29,
-                                        "text": "'#1: typeof(f1)!==\"function\"'"
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 29,
+                                    "text": "'#1: typeof(f1)!==\"function\"'"
                                 }
                             ],
                             "_closeParenToken": {

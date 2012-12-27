@@ -1,6 +1,7 @@
 ﻿///<reference path='SyntaxNodes.generated.ts' />
 
 interface ISyntaxVisitor {
+    visitToken(token: ISyntaxToken): any;
     visitSourceUnit(node: SourceUnitSyntax): any;
     visitExternalModuleReference(node: ExternalModuleReferenceSyntax): any;
     visitModuleNameModuleReference(node: ModuleNameModuleReferenceSyntax): any;
@@ -16,20 +17,16 @@ interface ISyntaxVisitor {
     visitVariableDeclarator(node: VariableDeclaratorSyntax): any;
     visitEqualsValueClause(node: EqualsValueClauseSyntax): any;
     visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): any;
-    visitThisExpression(node: ThisExpressionSyntax): any;
-    visitLiteralExpression(node: LiteralExpressionSyntax): any;
     visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): any;
     visitOmittedExpression(node: OmittedExpressionSyntax): any;
     visitParenthesizedExpression(node: ParenthesizedExpressionSyntax): any;
     visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): any;
     visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): any;
-    visitIdentifierName(node: IdentifierNameSyntax): any;
     visitQualifiedName(node: QualifiedNameSyntax): any;
     visitConstructorType(node: ConstructorTypeSyntax): any;
     visitFunctionType(node: FunctionTypeSyntax): any;
     visitObjectType(node: ObjectTypeSyntax): any;
     visitArrayType(node: ArrayTypeSyntax): any;
-    visitPredefinedType(node: PredefinedTypeSyntax): any;
     visitTypeAnnotation(node: TypeAnnotationSyntax): any;
     visitBlock(node: BlockSyntax): any;
     visitParameter(node: ParameterSyntax): any;
@@ -74,7 +71,6 @@ interface ISyntaxVisitor {
     visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): any;
     visitFunctionExpression(node: FunctionExpressionSyntax): any;
     visitEmptyStatement(node: EmptyStatementSyntax): any;
-    visitSuperExpression(node: SuperExpressionSyntax): any;
     visitTryStatement(node: TryStatementSyntax): any;
     visitCatchClause(node: CatchClauseSyntax): any;
     visitFinallyClause(node: FinallyClauseSyntax): any;
@@ -87,8 +83,12 @@ interface ISyntaxVisitor {
 }
 
 class SyntaxVisitor implements ISyntaxVisitor {
-    public defaultVisit(node: SyntaxNode): any {
+    public defaultVisit(node: ISyntaxNodeOrToken): any {
         return null;
+    }
+
+    private visitToken(token: ISyntaxToken): any {
+        return this.defaultVisit(token);
     }
 
     private visitSourceUnit(node: SourceUnitSyntax): any {
@@ -151,14 +151,6 @@ class SyntaxVisitor implements ISyntaxVisitor {
         return this.defaultVisit(node);
     }
 
-    private visitThisExpression(node: ThisExpressionSyntax): any {
-        return this.defaultVisit(node);
-    }
-
-    private visitLiteralExpression(node: LiteralExpressionSyntax): any {
-        return this.defaultVisit(node);
-    }
-
     private visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): any {
         return this.defaultVisit(node);
     }
@@ -179,10 +171,6 @@ class SyntaxVisitor implements ISyntaxVisitor {
         return this.defaultVisit(node);
     }
 
-    private visitIdentifierName(node: IdentifierNameSyntax): any {
-        return this.defaultVisit(node);
-    }
-
     private visitQualifiedName(node: QualifiedNameSyntax): any {
         return this.defaultVisit(node);
     }
@@ -200,10 +188,6 @@ class SyntaxVisitor implements ISyntaxVisitor {
     }
 
     private visitArrayType(node: ArrayTypeSyntax): any {
-        return this.defaultVisit(node);
-    }
-
-    private visitPredefinedType(node: PredefinedTypeSyntax): any {
         return this.defaultVisit(node);
     }
 
@@ -380,10 +364,6 @@ class SyntaxVisitor implements ISyntaxVisitor {
     }
 
     private visitEmptyStatement(node: EmptyStatementSyntax): any {
-        return this.defaultVisit(node);
-    }
-
-    private visitSuperExpression(node: SuperExpressionSyntax): any {
         return this.defaultVisit(node);
     }
 

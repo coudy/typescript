@@ -140,13 +140,9 @@
                                     ]
                                 },
                                 "_expression": {
-                                    "kind": "NumericLiteralExpression",
-                                    "fullWidth": 1,
-                                    "_literalToken": {
-                                        "kind": "NumericLiteral",
-                                        "width": 1,
-                                        "text": "0"
-                                    }
+                                    "kind": "NumericLiteral",
+                                    "width": 1,
+                                    "text": "0"
                                 },
                                 "_semicolonToken": {
                                     "kind": "SemicolonToken",
@@ -259,22 +255,18 @@
                                     "kind": "InvocationExpression",
                                     "fullWidth": 74,
                                     "_expression": {
-                                        "kind": "IdentifierName",
+                                        "kind": "IdentifierNameToken",
+                                        "width": 6,
                                         "fullWidth": 10,
-                                        "_identifier": {
-                                            "kind": "IdentifierNameToken",
-                                            "width": 6,
-                                            "fullWidth": 10,
-                                            "text": "$ERROR",
-                                            "valueText": "$ERROR",
-                                            "hasLeadingTrivia": true,
-                                            "leadingTrivia": [
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "text": "    "
-                                                }
-                                            ]
-                                        }
+                                        "text": "$ERROR",
+                                        "valueText": "$ERROR",
+                                        "hasLeadingTrivia": true,
+                                        "leadingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "    "
+                                            }
+                                        ]
                                     },
                                     "_argumentList": {
                                         "kind": "ArgumentList",
@@ -286,13 +278,9 @@
                                         },
                                         "_arguments": [
                                             {
-                                                "kind": "StringLiteralExpression",
-                                                "fullWidth": 62,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 62,
-                                                    "text": "'#1: Function expession inside the \"if\" expression is allowed'"
-                                                }
+                                                "kind": "StringLiteral",
+                                                "width": 62,
+                                                "text": "'#1: Function expession inside the \"if\" expression is allowed'"
                                             }
                                         ],
                                         "_closeParenToken": {

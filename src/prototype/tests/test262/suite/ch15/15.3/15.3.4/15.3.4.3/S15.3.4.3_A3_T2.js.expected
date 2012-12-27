@@ -16,52 +16,48 @@
                             "kind": "InvocationExpression",
                             "fullWidth": 384,
                             "_expression": {
-                                "kind": "IdentifierName",
+                                "kind": "IdentifierNameToken",
+                                "width": 8,
                                 "fullWidth": 360,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 8,
-                                    "fullWidth": 360,
-                                    "text": "Function",
-                                    "valueText": "Function",
-                                    "hasLeadingTrivia": true,
-                                    "hasLeadingComment": true,
-                                    "hasLeadingNewLine": true,
-                                    "leadingTrivia": [
-                                        {
-                                            "kind": "SingleLineCommentTrivia",
-                                            "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
-                                        },
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\n"
-                                        },
-                                        {
-                                            "kind": "SingleLineCommentTrivia",
-                                            "text": "// This code is governed by the BSD license found in the LICENSE file."
-                                        },
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\n"
-                                        },
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\n"
-                                        },
-                                        {
-                                            "kind": "MultiLineCommentTrivia",
-                                            "text": "/**\n * If thisArg is null or undefined, the called function is passed the global object as the this value\n *\n * @path ch15/15.3/15.3.4/15.3.4.3/S15.3.4.3_A3_T2.js\n * @description Argument at apply function is null\n */"
-                                        },
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\n"
-                                        },
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\n"
-                                        }
-                                    ]
-                                }
+                                "text": "Function",
+                                "valueText": "Function",
+                                "hasLeadingTrivia": true,
+                                "hasLeadingComment": true,
+                                "hasLeadingNewLine": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "SingleLineCommentTrivia",
+                                        "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                                    },
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\n"
+                                    },
+                                    {
+                                        "kind": "SingleLineCommentTrivia",
+                                        "text": "// This code is governed by the BSD license found in the LICENSE file."
+                                    },
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\n"
+                                    },
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\n"
+                                    },
+                                    {
+                                        "kind": "MultiLineCommentTrivia",
+                                        "text": "/**\n * If thisArg is null or undefined, the called function is passed the global object as the this value\n *\n * @path ch15/15.3/15.3.4/15.3.4.3/S15.3.4.3_A3_T2.js\n * @description Argument at apply function is null\n */"
+                                    },
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\n"
+                                    },
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\n"
+                                    }
+                                ]
                             },
                             "_argumentList": {
                                 "kind": "ArgumentList",
@@ -73,13 +69,9 @@
                                 },
                                 "_arguments": [
                                     {
-                                        "kind": "StringLiteralExpression",
-                                        "fullWidth": 22,
-                                        "_literalToken": {
-                                            "kind": "StringLiteral",
-                                            "width": 22,
-                                            "text": "\"this.field=\\\"green\\\"\""
-                                        }
+                                        "kind": "StringLiteral",
+                                        "width": 22,
+                                        "text": "\"this.field=\\\"green\\\"\""
                                     }
                                 ],
                                 "_closeParenToken": {
@@ -95,14 +87,10 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 5,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 5,
-                                "text": "apply",
-                                "valueText": "apply"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 5,
+                            "text": "apply",
+                            "valueText": "apply"
                         }
                     },
                     "_argumentList": {
@@ -115,14 +103,10 @@
                         },
                         "_arguments": [
                             {
-                                "kind": "NullLiteralExpression",
-                                "fullWidth": 4,
-                                "_literalToken": {
-                                    "kind": "IdentifierNameToken",
-                                    "keywordKind": "NullKeyword",
-                                    "width": 4,
-                                    "text": "null"
-                                }
+                                "kind": "IdentifierNameToken",
+                                "keywordKind": "NullKeyword",
+                                "width": 4,
+                                "text": "null"
                             }
                         ],
                         "_closeParenToken": {
@@ -193,14 +177,10 @@
                         "kind": "ElementAccessExpression",
                         "fullWidth": 14,
                         "_expression": {
-                            "kind": "ThisExpression",
-                            "fullWidth": 4,
-                            "_thisKeyword": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ThisKeyword",
-                                "width": 4,
-                                "text": "this"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ThisKeyword",
+                            "width": 4,
+                            "text": "this"
                         },
                         "_openBracketToken": {
                             "kind": "OpenBracketToken",
@@ -208,13 +188,9 @@
                             "text": "["
                         },
                         "_argumentExpression": {
-                            "kind": "StringLiteralExpression",
-                            "fullWidth": 7,
-                            "_literalToken": {
-                                "kind": "StringLiteral",
-                                "width": 7,
-                                "text": "\"field\""
-                            }
+                            "kind": "StringLiteral",
+                            "width": 7,
+                            "text": "\"field\""
                         },
                         "_closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -244,13 +220,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "StringLiteralExpression",
-                        "fullWidth": 7,
-                        "_literalToken": {
-                            "kind": "StringLiteral",
-                            "width": 7,
-                            "text": "\"green\""
-                        }
+                        "kind": "StringLiteral",
+                        "width": 7,
+                        "text": "\"green\""
                     }
                 },
                 "_closeParenToken": {
@@ -291,22 +263,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 114,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -318,13 +286,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 104,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 104,
-                                                "text": "'#1: If thisArg is null or undefined, the called function is passed the global object as the this value'"
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 104,
+                                            "text": "'#1: If thisArg is null or undefined, the called function is passed the global object as the this value'"
                                         }
                                     ],
                                     "_closeParenToken": {

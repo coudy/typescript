@@ -129,14 +129,10 @@
                                 ]
                             },
                             "_expression": {
-                                "kind": "ThisExpression",
-                                "fullWidth": 4,
-                                "_thisKeyword": {
-                                    "kind": "IdentifierNameToken",
-                                    "keywordKind": "ThisKeyword",
-                                    "width": 4,
-                                    "text": "this"
-                                }
+                                "kind": "IdentifierNameToken",
+                                "keywordKind": "ThisKeyword",
+                                "width": 4,
+                                "text": "this"
                             },
                             "_semicolonToken": {
                                 "kind": "SemicolonToken",
@@ -190,14 +186,10 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 13,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 10,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 10,
-                                "text": "MyFunction",
-                                "valueText": "MyFunction"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 10,
+                            "text": "MyFunction",
+                            "valueText": "MyFunction"
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -237,14 +229,10 @@
                         ]
                     },
                     "_right": {
-                        "kind": "ThisExpression",
-                        "fullWidth": 4,
-                        "_thisKeyword": {
-                            "kind": "IdentifierNameToken",
-                            "keywordKind": "ThisKeyword",
-                            "width": 4,
-                            "text": "this"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "keywordKind": "ThisKeyword",
+                        "width": 4,
+                        "text": "this"
                     }
                 },
                 "_closeParenToken": {
@@ -285,22 +273,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 100,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -315,21 +299,17 @@
                                             "kind": "AddExpression",
                                             "fullWidth": 90,
                                             "_left": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 73,
                                                 "fullWidth": 74,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 73,
-                                                    "fullWidth": 74,
-                                                    "text": "'#1: function MyFunction() {return this} MyFunction() === this. Actual: '",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'#1: function MyFunction() {return this} MyFunction() === this. Actual: '",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
@@ -356,14 +336,10 @@
                                                     "kind": "InvocationExpression",
                                                     "fullWidth": 12,
                                                     "_expression": {
-                                                        "kind": "IdentifierName",
-                                                        "fullWidth": 10,
-                                                        "_identifier": {
-                                                            "kind": "IdentifierNameToken",
-                                                            "width": 10,
-                                                            "text": "MyFunction",
-                                                            "valueText": "MyFunction"
-                                                        }
+                                                        "kind": "IdentifierNameToken",
+                                                        "width": 10,
+                                                        "text": "MyFunction",
+                                                        "valueText": "MyFunction"
                                                     },
                                                     "_argumentList": {
                                                         "kind": "ArgumentList",
@@ -528,14 +504,10 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 12,
                                 "_expression": {
-                                    "kind": "IdentifierName",
-                                    "fullWidth": 4,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 4,
-                                        "text": "eval",
-                                        "valueText": "eval"
-                                    }
+                                    "kind": "IdentifierNameToken",
+                                    "width": 4,
+                                    "text": "eval",
+                                    "valueText": "eval"
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -547,13 +519,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 6,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 6,
-                                                "text": "\"this\""
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 6,
+                                            "text": "\"this\""
                                         }
                                     ],
                                     "_closeParenToken": {
@@ -615,14 +583,10 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 13,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 10,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 10,
-                                "text": "MyFunction",
-                                "valueText": "MyFunction"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 10,
+                            "text": "MyFunction",
+                            "valueText": "MyFunction"
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -662,14 +626,10 @@
                         ]
                     },
                     "_right": {
-                        "kind": "ThisExpression",
-                        "fullWidth": 4,
-                        "_thisKeyword": {
-                            "kind": "IdentifierNameToken",
-                            "keywordKind": "ThisKeyword",
-                            "width": 4,
-                            "text": "this"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "keywordKind": "ThisKeyword",
+                        "width": 4,
+                        "text": "this"
                     }
                 },
                 "_closeParenToken": {
@@ -710,22 +670,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 108,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -740,21 +696,17 @@
                                             "kind": "AddExpression",
                                             "fullWidth": 98,
                                             "_left": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 81,
                                                 "fullWidth": 82,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 81,
-                                                    "fullWidth": 82,
-                                                    "text": "'#2: function MyFunction() {return eval(\"this\")} MyFunction() === this. Actual: '",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'#2: function MyFunction() {return eval(\"this\")} MyFunction() === this. Actual: '",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
@@ -781,14 +733,10 @@
                                                     "kind": "InvocationExpression",
                                                     "fullWidth": 12,
                                                     "_expression": {
-                                                        "kind": "IdentifierName",
-                                                        "fullWidth": 10,
-                                                        "_identifier": {
-                                                            "kind": "IdentifierNameToken",
-                                                            "width": 10,
-                                                            "text": "MyFunction",
-                                                            "valueText": "MyFunction"
-                                                        }
+                                                        "kind": "IdentifierNameToken",
+                                                        "width": 10,
+                                                        "text": "MyFunction",
+                                                        "valueText": "MyFunction"
                                                     },
                                                     "_argumentList": {
                                                         "kind": "ArgumentList",

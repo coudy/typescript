@@ -10,7 +10,7 @@
 var stringTable = Collections.createStringTable();
 
 var specificFile = 
-    // "ErrorRecovery_ExtendsOrImplementsClause3.ts";
+    // "SuperExpression1.ts";
     undefined;
 
 class Program {

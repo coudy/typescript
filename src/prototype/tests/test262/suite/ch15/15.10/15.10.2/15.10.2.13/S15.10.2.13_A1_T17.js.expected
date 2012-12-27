@@ -13,59 +13,55 @@
                     "fullWidth": 492,
                     "hasRegularExpressionToken": true,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 10,
                         "fullWidth": 465,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 10,
-                            "fullWidth": 465,
-                            "text": "__executed",
-                            "valueText": "__executed",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingComment": true,
-                            "hasLeadingNewLine": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// This code is governed by the BSD license found in the LICENSE file."
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "MultiLineCommentTrivia",
-                                    "text": "/**\n * The production CharacterClass :: [ [lookahead \\notin {^}] ClassRanges ] evaluates by evaluating ClassRanges to obtain a CharSet and returning that CharSet and the boolean false\n *\n * @path ch15/15.10/15.10.2/15.10.2.13/S15.10.2.13_A1_T17.js\n * @description Execute /[]/.exec(\"a[b\\n[]\\tc]d\") and check results\n */"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "__executed",
+                        "valueText": "__executed",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingComment": true,
+                        "hasLeadingNewLine": true,
+                        "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// This code is governed by the BSD license found in the LICENSE file."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "MultiLineCommentTrivia",
+                                "text": "/**\n * The production CharacterClass :: [ [lookahead \\notin {^}] ClassRanges ] evaluates by evaluating ClassRanges to obtain a CharSet and returning that CharSet and the boolean false\n *\n * @path ch15/15.10/15.10.2/15.10.2.13/S15.10.2.13_A1_T17.js\n * @description Execute /[]/.exec(\"a[b\\n[]\\tc]d\") and check results\n */"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ],
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "EqualsToken",
@@ -89,14 +85,9 @@
                             "fullWidth": 9,
                             "hasRegularExpressionToken": true,
                             "_expression": {
-                                "kind": "RegularExpressionLiteralExpression",
-                                "fullWidth": 4,
-                                "hasRegularExpressionToken": true,
-                                "_literalToken": {
-                                    "kind": "RegularExpressionLiteral",
-                                    "width": 4,
-                                    "text": "/[]/"
-                                }
+                                "kind": "RegularExpressionLiteral",
+                                "width": 4,
+                                "text": "/[]/"
                             },
                             "_dotToken": {
                                 "kind": "DotToken",
@@ -104,14 +95,10 @@
                                 "text": "."
                             },
                             "_identifierName": {
-                                "kind": "IdentifierName",
-                                "fullWidth": 4,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 4,
-                                    "text": "exec",
-                                    "valueText": "exec"
-                                }
+                                "kind": "IdentifierNameToken",
+                                "width": 4,
+                                "text": "exec",
+                                "valueText": "exec"
                             }
                         },
                         "_argumentList": {
@@ -124,13 +111,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 14,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 14,
-                                        "text": "\"a[b\\n[]\\tc]d\""
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 14,
+                                    "text": "\"a[b\\n[]\\tc]d\""
                                 }
                             ],
                             "_closeParenToken": {
@@ -199,22 +182,18 @@
                     "kind": "NotEqualsExpression",
                     "fullWidth": 19,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 10,
                         "fullWidth": 11,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 10,
-                            "fullWidth": 11,
-                            "text": "__executed",
-                            "valueText": "__executed",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "__executed",
+                        "valueText": "__executed",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "ExclamationEqualsEqualsToken",
@@ -230,14 +209,10 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NullLiteralExpression",
-                        "fullWidth": 4,
-                        "_literalToken": {
-                            "kind": "IdentifierNameToken",
-                            "keywordKind": "NullKeyword",
-                            "width": 4,
-                            "text": "null"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "keywordKind": "NullKeyword",
+                        "width": 4,
+                        "text": "null"
                     }
                 },
                 "_closeParenToken": {
@@ -278,22 +253,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 52,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 7,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 7,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "\t"
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "\t"
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -305,13 +276,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 43,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 43,
-                                                "text": "'#1: /[]/.exec(\"a[b\\\\n[]\\\\tc]d\") === false'"
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 43,
+                                            "text": "'#1: /[]/.exec(\"a[b\\\\n[]\\\\tc]d\") === false'"
                                         }
                                     ],
                                     "_closeParenToken": {

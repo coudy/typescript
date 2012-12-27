@@ -133,21 +133,17 @@
                             "kind": "ExpressionStatement",
                             "fullWidth": 19,
                             "_expression": {
-                                "kind": "StringLiteralExpression",
+                                "kind": "StringLiteral",
+                                "width": 12,
                                 "fullWidth": 16,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 12,
-                                    "fullWidth": 16,
-                                    "text": "\"use strict\"",
-                                    "hasLeadingTrivia": true,
-                                    "leadingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "    "
-                                        }
-                                    ]
-                                }
+                                "text": "\"use strict\"",
+                                "hasLeadingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "    "
+                                    }
+                                ]
                             },
                             "_semicolonToken": {
                                 "kind": "SemicolonToken",
@@ -206,14 +202,10 @@
                                     ]
                                 },
                                 "_expression": {
-                                    "kind": "ThisExpression",
-                                    "fullWidth": 4,
-                                    "_thisKeyword": {
-                                        "kind": "IdentifierNameToken",
-                                        "keywordKind": "ThisKeyword",
-                                        "width": 4,
-                                        "text": "this"
-                                    }
+                                    "kind": "IdentifierNameToken",
+                                    "keywordKind": "ThisKeyword",
+                                    "width": 4,
+                                    "text": "this"
                                 }
                             },
                             "_semicolonToken": {
@@ -277,14 +269,10 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 4,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 1,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 1,
-                                "text": "f",
-                                "valueText": "f"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 1,
+                            "text": "f",
+                            "valueText": "f"
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -324,13 +312,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "StringLiteralExpression",
-                        "fullWidth": 11,
-                        "_literalToken": {
-                            "kind": "StringLiteral",
-                            "width": 11,
-                            "text": "\"undefined\""
-                        }
+                        "kind": "StringLiteral",
+                        "width": 11,
+                        "text": "\"undefined\""
                     }
                 },
                 "_closeParenToken": {
@@ -389,13 +373,9 @@
                                 ]
                             },
                             "_expression": {
-                                "kind": "StringLiteralExpression",
-                                "fullWidth": 29,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 29,
-                                    "text": "\"'this' had incorrect value!\""
-                                }
+                                "kind": "StringLiteral",
+                                "width": 29,
+                                "text": "\"'this' had incorrect value!\""
                             },
                             "_semicolonToken": {
                                 "kind": "SemicolonToken",

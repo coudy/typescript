@@ -8,71 +8,67 @@
                 "kind": "ExpressionStatement",
                 "fullWidth": 595,
                 "_expression": {
-                    "kind": "StringLiteralExpression",
+                    "kind": "StringLiteral",
+                    "width": 12,
                     "fullWidth": 592,
-                    "_literalToken": {
-                        "kind": "StringLiteral",
-                        "width": 12,
-                        "fullWidth": 592,
-                        "text": "\"use strict\"",
-                        "hasLeadingTrivia": true,
-                        "hasLeadingComment": true,
-                        "hasLeadingNewLine": true,
-                        "leadingTrivia": [
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "/// Copyright (c) 2012 Ecma International.  All rights reserved. "
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\r\n"
-                            },
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "/// Ecma International makes this code available under the terms and conditions set"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\r\n"
-                            },
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "/// forth on http://hg.ecmascript.org/tests/test262/raw-file/tip/LICENSE (the "
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\r\n"
-                            },
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "/// \"Use Terms\").   Any redistribution of this code must retain the above"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\r\n"
-                            },
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "/// copyright and this notice and otherwise comply with the Use Terms."
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\r\n"
-                            },
-                            {
-                                "kind": "MultiLineCommentTrivia",
-                                "text": "/**\r\n * @path ch10/10.4/10.4.3/10.4.3-1-23gs.js\r\n * @description Strict - checking 'this' from a global scope (New'ed object from FunctionExpression defined within strict mode)\r\n * @onlyStrict\r\n */"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\r\n"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\r\n"
-                            }
-                        ]
-                    }
+                    "text": "\"use strict\"",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingComment": true,
+                    "hasLeadingNewLine": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "/// Copyright (c) 2012 Ecma International.  All rights reserved. "
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "/// Ecma International makes this code available under the terms and conditions set"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "/// forth on http://hg.ecmascript.org/tests/test262/raw-file/tip/LICENSE (the "
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "/// \"Use Terms\").   Any redistribution of this code must retain the above"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "/// copyright and this notice and otherwise comply with the Use Terms."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "MultiLineCommentTrivia",
+                            "text": "/**\r\n * @path ch10/10.4/10.4.3/10.4.3-1-23gs.js\r\n * @description Strict - checking 'this' from a global scope (New'ed object from FunctionExpression defined within strict mode)\r\n * @onlyStrict\r\n */"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        }
+                    ]
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
@@ -231,14 +227,10 @@
                                                     ]
                                                 },
                                                 "_expression": {
-                                                    "kind": "ThisExpression",
-                                                    "fullWidth": 4,
-                                                    "_thisKeyword": {
-                                                        "kind": "IdentifierNameToken",
-                                                        "keywordKind": "ThisKeyword",
-                                                        "width": 4,
-                                                        "text": "this"
-                                                    }
+                                                    "kind": "IdentifierNameToken",
+                                                    "keywordKind": "ThisKeyword",
+                                                    "width": 4,
+                                                    "text": "this"
                                                 },
                                                 "_semicolonToken": {
                                                     "kind": "SemicolonToken",
@@ -344,14 +336,10 @@
                                         ]
                                     },
                                     "_expression": {
-                                        "kind": "IdentifierName",
-                                        "fullWidth": 1,
-                                        "_identifier": {
-                                            "kind": "IdentifierNameToken",
-                                            "width": 1,
-                                            "text": "f",
-                                            "valueText": "f"
-                                        }
+                                        "kind": "IdentifierNameToken",
+                                        "width": 1,
+                                        "text": "f",
+                                        "valueText": "f"
                                     },
                                     "_argumentList": {
                                         "kind": "ArgumentList",
@@ -400,14 +388,10 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 16,
                                 "_expression": {
-                                    "kind": "IdentifierName",
-                                    "fullWidth": 14,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 14,
-                                        "text": "fnGlobalObject",
-                                        "valueText": "fnGlobalObject"
-                                    }
+                                    "kind": "IdentifierNameToken",
+                                    "width": 14,
+                                    "text": "fnGlobalObject",
+                                    "valueText": "fnGlobalObject"
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -507,14 +491,10 @@
                                             ]
                                         },
                                         "_expression": {
-                                            "kind": "IdentifierName",
-                                            "fullWidth": 1,
-                                            "_identifier": {
-                                                "kind": "IdentifierNameToken",
-                                                "width": 1,
-                                                "text": "f",
-                                                "valueText": "f"
-                                            }
+                                            "kind": "IdentifierNameToken",
+                                            "width": 1,
+                                            "text": "f",
+                                            "valueText": "f"
                                         },
                                         "_argumentList": {
                                             "kind": "ArgumentList",
@@ -561,13 +541,9 @@
                                 ]
                             },
                             "_right": {
-                                "kind": "StringLiteralExpression",
-                                "fullWidth": 11,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 11,
-                                    "text": "\"undefined\""
-                                }
+                                "kind": "StringLiteral",
+                                "width": 11,
+                                "text": "\"undefined\""
                             }
                         },
                         "_closeParenToken": {
@@ -633,13 +609,9 @@
                                 ]
                             },
                             "_expression": {
-                                "kind": "StringLiteralExpression",
-                                "fullWidth": 29,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 29,
-                                    "text": "\"'this' had incorrect value!\""
-                                }
+                                "kind": "StringLiteral",
+                                "width": 29,
+                                "text": "\"'this' had incorrect value!\""
                             },
                             "_semicolonToken": {
                                 "kind": "SemicolonToken",

@@ -7,51 +7,47 @@
                 "kind": "ExpressionStatement",
                 "fullWidth": 280,
                 "_expression": {
-                    "kind": "StringLiteralExpression",
+                    "kind": "StringLiteral",
+                    "width": 12,
                     "fullWidth": 278,
-                    "_literalToken": {
-                        "kind": "StringLiteral",
-                        "width": 12,
-                        "fullWidth": 278,
-                        "text": "\"use strict\"",
-                        "hasLeadingTrivia": true,
-                        "hasLeadingComment": true,
-                        "hasLeadingNewLine": true,
-                        "leadingTrivia": [
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "// Copyright 2011 Google Inc.  All rights reserved."
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "// This code is governed by the BSD license found in the LICENSE file."
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "MultiLineCommentTrivia",
-                                "text": "/**\n * @path ch13/13.2/S13.2_A6_T1.js\n * @description check if \"caller\" poisoning poisons\n * getOwnPropertyDescriptor too\n * @onlyStrict\n */"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            }
-                        ]
-                    }
+                    "text": "\"use strict\"",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingComment": true,
+                    "hasLeadingNewLine": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "// Copyright 2011 Google Inc.  All rights reserved."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "// This code is governed by the BSD license found in the LICENSE file."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "MultiLineCommentTrivia",
+                            "text": "/**\n * @path ch13/13.2/S13.2_A6_T1.js\n * @description check if \"caller\" poisoning poisons\n * getOwnPropertyDescriptor too\n * @onlyStrict\n */"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        }
+                    ]
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
@@ -78,14 +74,10 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 31,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 6,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 6,
-                                "text": "Object",
-                                "valueText": "Object"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 6,
+                            "text": "Object",
+                            "valueText": "Object"
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -93,14 +85,10 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 24,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 24,
-                                "text": "getOwnPropertyDescriptor",
-                                "valueText": "getOwnPropertyDescriptor"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 24,
+                            "text": "getOwnPropertyDescriptor",
+                            "valueText": "getOwnPropertyDescriptor"
                         }
                     },
                     "_argumentList": {
@@ -170,13 +158,9 @@
                                 ]
                             },
                             {
-                                "kind": "StringLiteralExpression",
-                                "fullWidth": 8,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 8,
-                                    "text": "'caller'"
-                                }
+                                "kind": "StringLiteral",
+                                "width": 8,
+                                "text": "'caller'"
                             }
                         ],
                         "_closeParenToken": {

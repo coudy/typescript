@@ -29,60 +29,55 @@
                 "hasSkippedText": true,
                 "hasZeroWidthToken": true,
                 "_expression": {
-                    "kind": "NumericLiteralExpression",
+                    "kind": "NumericLiteral",
+                    "width": 1,
                     "fullWidth": 373,
-                    "hasSkippedText": true,
-                    "_literalToken": {
-                        "kind": "NumericLiteral",
-                        "width": 1,
-                        "fullWidth": 373,
-                        "text": "1",
-                        "hasLeadingTrivia": true,
-                        "hasLeadingComment": true,
-                        "hasLeadingNewLine": true,
-                        "hasTrailingTrivia": true,
-                        "hasTrailingSkippedText": true,
-                        "leadingTrivia": [
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "// This code is governed by the BSD license found in the LICENSE file."
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "MultiLineCommentTrivia",
-                                "text": "/**\n * Punctuator cannot be expressed as a Unicode escape sequence consisting of six characters, namely \\u plus four hexadecimal digits\n *\n * @path ch07/7.7/S7.7_A2_T7.js\n * @description Try to use + as a Unicode \\u002B\n * @negative\n */"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            }
-                        ],
-                        "trailingTrivia": [
-                            {
-                                "kind": "SkippedTextTrivia",
-                                "text": "\\"
-                            }
-                        ]
-                    }
+                    "text": "1",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingComment": true,
+                    "hasLeadingNewLine": true,
+                    "hasTrailingTrivia": true,
+                    "hasTrailingSkippedText": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "// This code is governed by the BSD license found in the LICENSE file."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "MultiLineCommentTrivia",
+                            "text": "/**\n * Punctuator cannot be expressed as a Unicode escape sequence consisting of six characters, namely \\u plus four hexadecimal digits\n *\n * @path ch07/7.7/S7.7_A2_T7.js\n * @description Try to use + as a Unicode \\u002B\n * @negative\n */"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        }
+                    ],
+                    "trailingTrivia": [
+                        {
+                            "kind": "SkippedTextTrivia",
+                            "text": "\\"
+                        }
+                    ]
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
@@ -94,14 +89,10 @@
                 "kind": "ExpressionStatement",
                 "fullWidth": 8,
                 "_expression": {
-                    "kind": "IdentifierName",
-                    "fullWidth": 6,
-                    "_identifier": {
-                        "kind": "IdentifierNameToken",
-                        "width": 6,
-                        "text": "u002B2",
-                        "valueText": "u002B2"
-                    }
+                    "kind": "IdentifierNameToken",
+                    "width": 6,
+                    "text": "u002B2",
+                    "valueText": "u002B2"
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",

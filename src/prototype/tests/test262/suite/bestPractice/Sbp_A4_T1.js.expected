@@ -7,51 +7,47 @@
                 "kind": "ExpressionStatement",
                 "fullWidth": 497,
                 "_expression": {
-                    "kind": "StringLiteralExpression",
+                    "kind": "StringLiteral",
+                    "width": 12,
                     "fullWidth": 495,
-                    "_literalToken": {
-                        "kind": "StringLiteral",
-                        "width": 12,
-                        "fullWidth": 495,
-                        "text": "\"use strict\"",
-                        "hasLeadingTrivia": true,
-                        "hasLeadingComment": true,
-                        "hasLeadingNewLine": true,
-                        "leadingTrivia": [
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "// This code is governed by the BSD license found in the LICENSE file."
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "MultiLineCommentTrivia",
-                                "text": "/**\n * FunctionDeclaration within a \"while\" Statement is not allowed\n *\n * @path bestPractice/Sbp_A4_T1.js\n * @description Checking if declaring a function within a \"while\"\n * Statement leads to an exception\n * @onlyStrict\n * @negative SyntaxError\n * @bestPractice http://wiki.ecmascript.org/doku.php?id=conventions:no_non_standard_strict_decls\n */"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            }
-                        ]
-                    }
+                    "text": "\"use strict\"",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingComment": true,
+                    "hasLeadingNewLine": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "// This code is governed by the BSD license found in the LICENSE file."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "MultiLineCommentTrivia",
+                            "text": "/**\n * FunctionDeclaration within a \"while\" Statement is not allowed\n *\n * @path bestPractice/Sbp_A4_T1.js\n * @description Checking if declaring a function within a \"while\"\n * Statement leads to an exception\n * @onlyStrict\n * @negative SyntaxError\n * @bestPractice http://wiki.ecmascript.org/doku.php?id=conventions:no_non_standard_strict_decls\n */"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        }
+                    ]
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
@@ -91,13 +87,9 @@
                     "text": "("
                 },
                 "_condition": {
-                    "kind": "NumericLiteralExpression",
-                    "fullWidth": 1,
-                    "_literalToken": {
-                        "kind": "NumericLiteral",
-                        "width": 1,
-                        "text": "0"
-                    }
+                    "kind": "NumericLiteral",
+                    "width": 1,
+                    "text": "0"
                 },
                 "_closeParenToken": {
                     "kind": "CloseParenToken",

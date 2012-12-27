@@ -147,6 +147,18 @@ module Syntax {
         public kind() { return this.tokenKind; }
 
         public toJSON(key) { return tokenToJSON(this); }
+        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+
+        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+            return { token: this, fullStart: fullStart };
+        }
+
+        private firstToken() { return this; }
+        private lastToken() { return this; }
+        private isTypeScriptSpecific() { return false; }
+        private hasZeroWidthToken() { return true; }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
+
         public keywordKind() { return this._keywordKind; }
         public fullWidth() { return 0; }
         public width() { return 0; }
@@ -213,6 +225,12 @@ module Syntax {
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public toJSON(key) { return tokenToJSON(this); }
+        private firstToken() { return this; }
+        private lastToken() { return this; }
+        private isTypeScriptSpecific() { return false; }
+        private hasZeroWidthToken() { return false; }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
+        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
 
         public isToken(): bool { return true; }
         public isNode(): bool { return false; }
@@ -247,6 +265,10 @@ module Syntax {
 
         public leadingTrivia(): ISyntaxTriviaList { return this._leadingTrivia; }
         public trailingTrivia(): ISyntaxTriviaList { return this._trailingTrivia; }
+
+        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+            return { token: this, fullStart: fullStart };
+        }
 
         private collectTextElements(elements: string[]): void {
             (<any>this.leadingTrivia()).collectTextElements(elements);

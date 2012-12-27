@@ -1572,7 +1572,7 @@ module Parser {
                 var expressionStatement = <ExpressionStatementSyntax>node;
                 var expression = expressionStatement.expression();
 
-                if (expression.kind() === SyntaxKind.StringLiteralExpression) {
+                if (expression.kind() === SyntaxKind.StringLiteral) {
                     return true;
                 }
             }
@@ -1582,10 +1582,7 @@ module Parser {
 
         private static isUseStrictDirective(node: SyntaxNode) {
             var expressionStatement = <ExpressionStatementSyntax>node;
-            var expression = expressionStatement.expression();
-
-            var stringLiteralExpression = <LiteralExpressionSyntax>expression;
-            var stringLiteral = stringLiteralExpression.literalToken();
+            var stringLiteral = <ISyntaxToken>expressionStatement.expression();
 
             var text = stringLiteral.text();
             return text === '"use strict"' || text === "'use strict'";
@@ -1730,28 +1727,28 @@ module Parser {
         }
 
         // NOTE: This will allow all identifier names.  Even the ones that are keywords.
-        private parseIdentifierName(): IdentifierNameSyntax {
+        private parseIdentifierName(): INameSyntax {
             var identifierName = this.eatIdentifierNameToken();
-            return new IdentifierNameSyntax(identifierName);
+            return identifierName;
         }
 
         private isName(): bool {
             return this.isIdentifier(this.currentToken());
         }
 
-        private parseName(): NameSyntax {
+        private parseName(): INameSyntax {
             var isIdentifier = this.currentToken().tokenKind === SyntaxKind.IdentifierNameToken;
             var identifier = this.eatIdentifierToken();
-            var identifierName = new IdentifierNameSyntax(identifier);
+            var identifierName = identifier;
 
-            var current: NameSyntax = identifierName;
+            var current: INameSyntax = identifierName;
 
             while (isIdentifier && this.currentToken().tokenKind === SyntaxKind.DotToken) {
                 var dotToken = this.eatToken(SyntaxKind.DotToken);
 
                 isIdentifier = this.currentToken().tokenKind === SyntaxKind.IdentifierNameToken;
                 identifier = this.eatIdentifierToken();
-                identifierName = new IdentifierNameSyntax(identifier);
+                identifierName = identifier;
 
                 current = new QualifiedNameSyntax(current, dotToken, identifierName);
             }
@@ -2141,7 +2138,7 @@ module Parser {
             var declareKeyword = this.tryEatKeyword(SyntaxKind.DeclareKeyword);
             var moduleKeyword = this.eatKeyword(SyntaxKind.ModuleKeyword);
 
-            var moduleName: NameSyntax = null;
+            var moduleName: INameSyntax = null;
             var stringLiteral: ISyntaxToken = null;
             if (this.isName()) {
                 moduleName = this.parseName();
@@ -2640,10 +2637,11 @@ module Parser {
             return this.parseForStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, variableDeclaration, null);
         }
 
-        private parseForInStatementWithVariableDeclarationOrInitializer(forKeyword: ISyntaxToken,
-            openParenToken: ISyntaxToken,
-            variableDeclaration: VariableDeclarationSyntax,
-            initializer: ExpressionSyntax): ForInStatementSyntax {
+        private parseForInStatementWithVariableDeclarationOrInitializer(
+                forKeyword: ISyntaxToken,
+                openParenToken: ISyntaxToken,
+                variableDeclaration: VariableDeclarationSyntax,
+                initializer: IExpressionSyntax): ForInStatementSyntax {
             Debug.assert(this.currentToken().keywordKind() === SyntaxKind.InKeyword);
 
             // for ( var VariableDeclarationNoIn in Expression ) Statement
@@ -2677,7 +2675,7 @@ module Parser {
                          openParenToken.tokenKind === SyntaxKind.OpenParenToken);
 
             // for ( ExpressionNoInopt; Expressionopt ; Expressionopt ) Statement
-            var initializer: ExpressionSyntax = null;
+            var initializer: IExpressionSyntax = null;
 
             if (this.currentToken().tokenKind !== SyntaxKind.SemicolonToken &&
                 this.currentToken().tokenKind !== SyntaxKind.CloseParenToken &&
@@ -2688,14 +2686,14 @@ module Parser {
             return this.parseForStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, null, initializer);
         }
 
-        private parseForStatementWithVariableDeclarationOrInitializer(forKeyword: ISyntaxToken,
-            openParenToken: ISyntaxToken,
-            variableDeclaration: VariableDeclarationSyntax,
-            initializer: ExpressionSyntax): ForStatementSyntax {
-
+        private parseForStatementWithVariableDeclarationOrInitializer(
+                forKeyword: ISyntaxToken,
+                openParenToken: ISyntaxToken,
+                variableDeclaration: VariableDeclarationSyntax,
+                initializer: IExpressionSyntax): ForStatementSyntax {
             var firstSemicolonToken = this.eatToken(SyntaxKind.SemicolonToken);
 
-            var condition: ExpressionSyntax = null;
+            var condition: IExpressionSyntax = null;
             if (this.currentToken().tokenKind !== SyntaxKind.SemicolonToken &&
                 this.currentToken().tokenKind !== SyntaxKind.CloseParenToken &&
                 this.currentToken().tokenKind !== SyntaxKind.EndOfFileToken) {
@@ -2704,7 +2702,7 @@ module Parser {
 
             var secondSemicolonToken = this.eatToken(SyntaxKind.SemicolonToken);
 
-            var incrementor: ExpressionSyntax = null;
+            var incrementor: IExpressionSyntax = null;
             if (this.currentToken().tokenKind !== SyntaxKind.CloseParenToken &&
                 this.currentToken().tokenKind !== SyntaxKind.EndOfFileToken) {
                 incrementor = this.parseExpression(/*allowIn:*/ true);
@@ -2848,13 +2846,13 @@ module Parser {
 
             var throwKeyword = this.eatKeyword(SyntaxKind.ThrowKeyword);
 
-            var expression: ExpressionSyntax = null;
+            var expression: IExpressionSyntax = null;
             if (this.canEatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false)) {
                 // Because of automatic semicolon insertion, we need to report error if this 
                 // throw could be terminated with a semicolon.  Note: we can't call 'parseExpression'
                 // directly as that might consume an expression on the following line.  
                 var token = this.createMissingToken(SyntaxKind.IdentifierNameToken, SyntaxKind.None, null);
-                expression = new IdentifierNameSyntax(token);
+                expression = token;
             }
             else {
                 expression = this.parseExpression(/*allowIn:*/ true);
@@ -2874,7 +2872,7 @@ module Parser {
 
             var returnKeyword = this.eatKeyword(SyntaxKind.ReturnKeyword);
 
-            var expression: ExpressionSyntax = null;
+            var expression: IExpressionSyntax = null;
             if (!this.canEatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false)) {
                 expression = this.parseExpression(/*allowIn:*/ true);
             }
@@ -2908,7 +2906,7 @@ module Parser {
             return this.isExpression();
         }
 
-        private parseAssignmentOrOmittedExpression(): ExpressionSyntax {
+        private parseAssignmentOrOmittedExpression(): IExpressionSyntax {
             Debug.assert(this.isAssignmentOrOmittedExpression());
 
             if (this.currentToken().tokenKind === SyntaxKind.CommaToken) {
@@ -3119,7 +3117,7 @@ module Parser {
             return new EqualsValueClauseSyntax(equalsToken, value);
         }
 
-        private parseExpression(allowIn: bool): ExpressionSyntax {
+        private parseExpression(allowIn: bool): IExpressionSyntax {
             return this.parseSubExpression(0, allowIn);
         }
 
@@ -3127,11 +3125,11 @@ module Parser {
         // i.e. if you have "var a = 1, b = 2" then when we parse '1' we want to parse with higher 
         // precedence than 'comma'.  Otherwise we'll get: "var a = (1, (b = 2))", instead of
         // "var a = (1), b = (2)");
-        private parseAssignmentExpression(allowIn: bool): ExpressionSyntax {
+        private parseAssignmentExpression(allowIn: bool): IExpressionSyntax {
             return this.parseSubExpression(ExpressionPrecedence.AssignmentExpressionPrecedence, allowIn);
         }
 
-        private parseUnaryExpression(): UnaryExpressionSyntax {
+        private parseUnaryExpression(): IUnaryExpressionSyntax {
             var currentTokenKind = this.currentToken().tokenKind;
             if (SyntaxFacts.isPrefixUnaryExpressionOperatorToken(currentTokenKind)) {
                 var operatorKind = SyntaxFacts.getPrefixUnaryExpressionFromOperatorToken(currentTokenKind);
@@ -3146,16 +3144,16 @@ module Parser {
             }
         }
 
-        private parseSubExpression(precedence: ExpressionPrecedence, allowIn: bool): ExpressionSyntax {
+        private parseSubExpression(precedence: ExpressionPrecedence, allowIn: bool): IExpressionSyntax {
             // Because unary expression have the highest precedence, we can always parse one, regardless 
             // of what precedence was passed in.
-            var leftOperand: ExpressionSyntax = this.parseUnaryExpression();
+            var leftOperand: IExpressionSyntax = this.parseUnaryExpression();
             leftOperand = this.parseBinaryOrConditionalExpressions(precedence, allowIn, leftOperand);
 
             return leftOperand;
         }
 
-        private parseBinaryOrConditionalExpressions(precedence: number, allowIn: bool, leftOperand: ExpressionSyntax): ExpressionSyntax {
+        private parseBinaryOrConditionalExpressions(precedence: number, allowIn: bool, leftOperand: IExpressionSyntax): IExpressionSyntax {
             while (true) {
                 // We either have a binary operator here, or we're finished.
                 var currentTokenKind = this.currentToken().tokenKind;
@@ -3239,21 +3237,21 @@ module Parser {
             }
         }
 
-        private parseTerm(allowInvocation: bool, insideObjectCreation: bool): UnaryExpressionSyntax {
+        private parseTerm(allowInvocation: bool, insideObjectCreation: bool): IUnaryExpressionSyntax {
             // NOTE: allowInvocation and insideObjectCreation are always the negation of the other.
             // We could remove one of them and just use the other.  However, i think this is much
             // easier to read and understand in this form.
 
             var term = this.parseTermWorker(insideObjectCreation);
-            if (term.kind() === SyntaxKind.IdentifierName &&
-                (<IdentifierNameSyntax>term).identifier().width() === 0) {
+            if (term.kind() === SyntaxKind.IdentifierNameToken &&
+                (<ISyntaxToken>term).width() === 0) {
                 return term;
             }
 
             return this.parsePostFixExpression(term, allowInvocation);
         }
 
-        private parsePostFixExpression(expression: UnaryExpressionSyntax, allowInvocation: bool): UnaryExpressionSyntax {
+        private parsePostFixExpression(expression: IUnaryExpressionSyntax, allowInvocation: bool): IUnaryExpressionSyntax {
             while (true) {
                 var currentTokenKind = this.currentToken().tokenKind;
                 switch (currentTokenKind) {
@@ -3283,7 +3281,7 @@ module Parser {
 
                     case SyntaxKind.DotToken:
                         expression = new MemberAccessExpressionSyntax(
-                            expression, this.eatToken(SyntaxKind.DotToken), this.parseIdentifierName());
+                            expression, this.eatToken(SyntaxKind.DotToken), this.eatIdentifierNameToken());
                         break;
 
                     default:
@@ -3306,7 +3304,7 @@ module Parser {
             return new ArgumentListSyntax(openParenToken, arguments, closeParenToken);
         }
 
-        private parseElementAccessExpression(expression: ExpressionSyntax): ElementAccessExpressionSyntax {
+        private parseElementAccessExpression(expression: IExpressionSyntax): ElementAccessExpressionSyntax {
             Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenBracketToken);
 
             var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
@@ -3316,7 +3314,7 @@ module Parser {
             return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken);
         }
 
-        private parseTermWorker(insideObjectCreation: bool): UnaryExpressionSyntax {
+        private parseTermWorker(insideObjectCreation: bool): IUnaryExpressionSyntax {
             var currentToken = this.currentToken();
 
             if (insideObjectCreation) {
@@ -3359,7 +3357,7 @@ module Parser {
                 }
                 else {
                     var identifier = this.eatIdentifierToken();
-                    return new IdentifierNameSyntax(identifier);
+                    return identifier;
                 }
             }
 
@@ -3371,10 +3369,10 @@ module Parser {
 
                 case SyntaxKind.TrueKeyword:
                 case SyntaxKind.FalseKeyword:
-                    return this.parseLiteralExpression(SyntaxKind.BooleanLiteralExpression);
+                    return this.parseLiteralExpression();
 
                 case SyntaxKind.NullKeyword:
-                    return this.parseLiteralExpression(SyntaxKind.NullLiteralExpression);
+                    return this.parseLiteralExpression();
 
                 case SyntaxKind.NewKeyword:
                     return this.parseObjectCreationExpression();
@@ -3397,13 +3395,13 @@ module Parser {
 
             switch (currentTokenKind) {
                 case SyntaxKind.NumericLiteral:
-                    return this.parseLiteralExpression(SyntaxKind.NumericLiteralExpression);
+                    return this.parseLiteralExpression();
 
                 case SyntaxKind.RegularExpressionLiteral:
-                    return this.parseLiteralExpression(SyntaxKind.RegularExpressionLiteralExpression);
+                    return this.parseLiteralExpression();
 
                 case SyntaxKind.StringLiteral:
-                    return this.parseLiteralExpression(SyntaxKind.StringLiteralExpression);
+                    return this.parseLiteralExpression();
 
                 case SyntaxKind.OpenBracketToken:
                     return this.parseArrayLiteralExpression();
@@ -3431,10 +3429,10 @@ module Parser {
             }
 
             // Nothing else worked, just try to consume an identifier so we report an error.
-            return new IdentifierNameSyntax(this.eatIdentifierToken());
+            return this.eatIdentifierToken();
         }
 
-        private tryReparseDivideAsRegularExpression(): LiteralExpressionSyntax {
+        private tryReparseDivideAsRegularExpression(): IUnaryExpressionSyntax {
             // If we see a / or /= token, then that may actually be the start of a regex in certain 
             // contexts.
 
@@ -3502,7 +3500,7 @@ module Parser {
                 return null;
             }
             else if (currentToken.tokenKind === SyntaxKind.RegularExpressionLiteral) {
-                return this.parseLiteralExpression(SyntaxKind.RegularExpressionLiteralExpression);
+                return this.parseLiteralExpression();
             }
             else {
                 // Something *very* wrong happened.  This is an internal parser fault that we need 
@@ -3538,11 +3536,11 @@ module Parser {
             return new VoidExpressionSyntax(voidKeyword, expression);
         }
 
-        private parseSuperExpression(): SuperExpressionSyntax {
+        private parseSuperExpression(): IUnaryExpressionSyntax {
             Debug.assert(this.currentToken().keywordKind() === SyntaxKind.SuperKeyword);
 
             var superKeyword = this.eatKeyword(SyntaxKind.SuperKeyword);
-            return new SuperExpressionSyntax(superKeyword);
+            return superKeyword;
         }
 
         private parseFunctionExpression(): FunctionExpressionSyntax {
@@ -3655,7 +3653,7 @@ module Parser {
             return new ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body);
         }
 
-        private parseArrowFunctionBody(): SyntaxNode {
+        private parseArrowFunctionBody(): ISyntaxNodeOrToken {
             if (this.isBlock()) {
                 return this.parseBlock();
             }
@@ -3932,16 +3930,15 @@ module Parser {
             return new ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken);
         }
 
-        private parseLiteralExpression(expressionKind: SyntaxKind): LiteralExpressionSyntax {
+        private parseLiteralExpression(): IUnaryExpressionSyntax {
             // TODO: add appropriate asserts here.
-            var literal = this.eatAnyToken();
-            return new LiteralExpressionSyntax(expressionKind, literal);
+            return this.eatAnyToken();
         }
 
-        private parseThisExpression(): ThisExpressionSyntax {
+        private parseThisExpression(): IUnaryExpressionSyntax {
             Debug.assert(this.currentToken().keywordKind() === SyntaxKind.ThisKeyword);
             var thisKeyword = this.eatKeyword(SyntaxKind.ThisKeyword);
-            return new ThisExpressionSyntax(thisKeyword);
+            return thisKeyword;
         }
 
         private parseBlock(): BlockSyntax {
@@ -4004,7 +4001,7 @@ module Parser {
                    this.isName();
         }
 
-        private parseType(requireCompleteArraySuffix: bool): TypeSyntax {
+        private parseType(requireCompleteArraySuffix: bool): ITypeSyntax {
             var type = this.parseNonArrayType();
 
             while (this.currentToken().tokenKind === SyntaxKind.OpenBracketToken) {
@@ -4021,7 +4018,7 @@ module Parser {
             return type;
         }
 
-        private parseNonArrayType(): TypeSyntax {
+        private parseNonArrayType(): ITypeSyntax {
             if (this.isPredefinedType()) {
                 return this.parsePredefinedType();
             }
@@ -4098,10 +4095,10 @@ module Parser {
             return this.currentToken().keywordKind() === SyntaxKind.NewKeyword;
         }
 
-        private parsePredefinedType(): PredefinedTypeSyntax {
+        private parsePredefinedType(): ITypeSyntax {
             Debug.assert(this.isPredefinedType());
             var keyword = this.eatAnyToken();
-            return new PredefinedTypeSyntax(keyword);
+            return keyword;
         }
 
         private isPredefinedType(): bool {
@@ -4278,7 +4275,7 @@ module Parser {
         }
 
         private parseSeparatedSyntaxListWorker(currentListType: ListParsingState): ISeparatedSyntaxList {
-            var items: ISyntaxElement[] = null;
+            var items: ISyntaxNodeOrToken[] = null;
 
             var allowAutomaticSemicolonInsertion = this.allowsAutomaticSemicolonInsertion(currentListType);
             var separatorKind = this.separatorKind(currentListType);
@@ -4768,7 +4765,7 @@ module Parser {
             }
         }
 
-        private parseExpectedListItem(currentListType: ListParsingState): SyntaxNode {
+        private parseExpectedListItem(currentListType: ListParsingState): ISyntaxNodeOrToken {
             switch (currentListType) {
                 case ListParsingState.SourceUnit_ModuleElements:
                     return this.parseModuleElement();

@@ -85,21 +85,17 @@
                             "kind": "BitwiseOrExpression",
                             "fullWidth": 9,
                             "_left": {
-                                "kind": "StringLiteralExpression",
+                                "kind": "StringLiteral",
+                                "width": 3,
                                 "fullWidth": 4,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 3,
-                                    "fullWidth": 4,
-                                    "text": "\"1\"",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                }
+                                "text": "\"1\"",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
                             },
                             "_operatorToken": {
                                 "kind": "BarToken",
@@ -115,13 +111,9 @@
                                 ]
                             },
                             "_right": {
-                                "kind": "StringLiteralExpression",
-                                "fullWidth": 3,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 3,
-                                    "text": "\"1\""
-                                }
+                                "kind": "StringLiteral",
+                                "width": 3,
+                                "text": "\"1\""
                             }
                         },
                         "_closeParenToken": {
@@ -152,13 +144,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "1"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "1"
                     }
                 },
                 "_closeParenToken": {
@@ -199,22 +187,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 59,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -229,21 +213,17 @@
                                             "kind": "AddExpression",
                                             "fullWidth": 49,
                                             "_left": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 33,
                                                 "fullWidth": 34,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 33,
-                                                    "fullWidth": 34,
-                                                    "text": "'#1: (\"1\" | \"1\") === 1. Actual: '",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'#1: (\"1\" | \"1\") === 1. Actual: '",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
@@ -278,21 +258,17 @@
                                                         "kind": "BitwiseOrExpression",
                                                         "fullWidth": 9,
                                                         "_left": {
-                                                            "kind": "StringLiteralExpression",
+                                                            "kind": "StringLiteral",
+                                                            "width": 3,
                                                             "fullWidth": 4,
-                                                            "_literalToken": {
-                                                                "kind": "StringLiteral",
-                                                                "width": 3,
-                                                                "fullWidth": 4,
-                                                                "text": "\"1\"",
-                                                                "hasTrailingTrivia": true,
-                                                                "trailingTrivia": [
-                                                                    {
-                                                                        "kind": "WhitespaceTrivia",
-                                                                        "text": " "
-                                                                    }
-                                                                ]
-                                                            }
+                                                            "text": "\"1\"",
+                                                            "hasTrailingTrivia": true,
+                                                            "trailingTrivia": [
+                                                                {
+                                                                    "kind": "WhitespaceTrivia",
+                                                                    "text": " "
+                                                                }
+                                                            ]
                                                         },
                                                         "_operatorToken": {
                                                             "kind": "BarToken",
@@ -308,13 +284,9 @@
                                                             ]
                                                         },
                                                         "_right": {
-                                                            "kind": "StringLiteralExpression",
-                                                            "fullWidth": 3,
-                                                            "_literalToken": {
-                                                                "kind": "StringLiteral",
-                                                                "width": 3,
-                                                                "text": "\"1\""
-                                                            }
+                                                            "kind": "StringLiteral",
+                                                            "width": 3,
+                                                            "text": "\"1\""
                                                         }
                                                     },
                                                     "_closeParenToken": {
@@ -441,14 +413,10 @@
                                     ]
                                 },
                                 "_expression": {
-                                    "kind": "IdentifierName",
-                                    "fullWidth": 6,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "text": "String",
-                                        "valueText": "String"
-                                    }
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
+                                    "text": "String",
+                                    "valueText": "String"
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -460,13 +428,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 3,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 3,
-                                                "text": "\"1\""
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 3,
+                                            "text": "\"1\""
                                         }
                                     ],
                                     "_closeParenToken": {
@@ -498,13 +462,9 @@
                                 ]
                             },
                             "_right": {
-                                "kind": "StringLiteralExpression",
-                                "fullWidth": 3,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 3,
-                                    "text": "\"1\""
-                                }
+                                "kind": "StringLiteral",
+                                "width": 3,
+                                "text": "\"1\""
                             }
                         },
                         "_closeParenToken": {
@@ -535,13 +495,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "1"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "1"
                     }
                 },
                 "_closeParenToken": {
@@ -582,22 +538,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 83,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -612,21 +564,17 @@
                                             "kind": "AddExpression",
                                             "fullWidth": 73,
                                             "_left": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 45,
                                                 "fullWidth": 46,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 45,
-                                                    "fullWidth": 46,
-                                                    "text": "'#2: (new String(\"1\") | \"1\") === 1. Actual: '",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'#2: (new String(\"1\") | \"1\") === 1. Actual: '",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
@@ -678,14 +626,10 @@
                                                                 ]
                                                             },
                                                             "_expression": {
-                                                                "kind": "IdentifierName",
-                                                                "fullWidth": 6,
-                                                                "_identifier": {
-                                                                    "kind": "IdentifierNameToken",
-                                                                    "width": 6,
-                                                                    "text": "String",
-                                                                    "valueText": "String"
-                                                                }
+                                                                "kind": "IdentifierNameToken",
+                                                                "width": 6,
+                                                                "text": "String",
+                                                                "valueText": "String"
                                                             },
                                                             "_argumentList": {
                                                                 "kind": "ArgumentList",
@@ -697,13 +641,9 @@
                                                                 },
                                                                 "_arguments": [
                                                                     {
-                                                                        "kind": "StringLiteralExpression",
-                                                                        "fullWidth": 3,
-                                                                        "_literalToken": {
-                                                                            "kind": "StringLiteral",
-                                                                            "width": 3,
-                                                                            "text": "\"1\""
-                                                                        }
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"1\""
                                                                     }
                                                                 ],
                                                                 "_closeParenToken": {
@@ -735,13 +675,9 @@
                                                             ]
                                                         },
                                                         "_right": {
-                                                            "kind": "StringLiteralExpression",
-                                                            "fullWidth": 3,
-                                                            "_literalToken": {
-                                                                "kind": "StringLiteral",
-                                                                "width": 3,
-                                                                "text": "\"1\""
-                                                            }
+                                                            "kind": "StringLiteral",
+                                                            "width": 3,
+                                                            "text": "\"1\""
                                                         }
                                                     },
                                                     "_closeParenToken": {
@@ -851,21 +787,17 @@
                             "kind": "BitwiseOrExpression",
                             "fullWidth": 21,
                             "_left": {
-                                "kind": "StringLiteralExpression",
+                                "kind": "StringLiteral",
+                                "width": 3,
                                 "fullWidth": 4,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 3,
-                                    "fullWidth": 4,
-                                    "text": "\"1\"",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                }
+                                "text": "\"1\"",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
                             },
                             "_operatorToken": {
                                 "kind": "BarToken",
@@ -898,14 +830,10 @@
                                     ]
                                 },
                                 "_expression": {
-                                    "kind": "IdentifierName",
-                                    "fullWidth": 6,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "text": "String",
-                                        "valueText": "String"
-                                    }
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
+                                    "text": "String",
+                                    "valueText": "String"
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -917,13 +845,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 3,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 3,
-                                                "text": "\"1\""
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 3,
+                                            "text": "\"1\""
                                         }
                                     ],
                                     "_closeParenToken": {
@@ -962,13 +886,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "1"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "1"
                     }
                 },
                 "_closeParenToken": {
@@ -1009,22 +929,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 83,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -1039,21 +955,17 @@
                                             "kind": "AddExpression",
                                             "fullWidth": 73,
                                             "_left": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 45,
                                                 "fullWidth": 46,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 45,
-                                                    "fullWidth": 46,
-                                                    "text": "'#3: (\"1\" | new String(\"1\")) === 1. Actual: '",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'#3: (\"1\" | new String(\"1\")) === 1. Actual: '",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
@@ -1088,21 +1000,17 @@
                                                         "kind": "BitwiseOrExpression",
                                                         "fullWidth": 21,
                                                         "_left": {
-                                                            "kind": "StringLiteralExpression",
+                                                            "kind": "StringLiteral",
+                                                            "width": 3,
                                                             "fullWidth": 4,
-                                                            "_literalToken": {
-                                                                "kind": "StringLiteral",
-                                                                "width": 3,
-                                                                "fullWidth": 4,
-                                                                "text": "\"1\"",
-                                                                "hasTrailingTrivia": true,
-                                                                "trailingTrivia": [
-                                                                    {
-                                                                        "kind": "WhitespaceTrivia",
-                                                                        "text": " "
-                                                                    }
-                                                                ]
-                                                            }
+                                                            "text": "\"1\"",
+                                                            "hasTrailingTrivia": true,
+                                                            "trailingTrivia": [
+                                                                {
+                                                                    "kind": "WhitespaceTrivia",
+                                                                    "text": " "
+                                                                }
+                                                            ]
                                                         },
                                                         "_operatorToken": {
                                                             "kind": "BarToken",
@@ -1135,14 +1043,10 @@
                                                                 ]
                                                             },
                                                             "_expression": {
-                                                                "kind": "IdentifierName",
-                                                                "fullWidth": 6,
-                                                                "_identifier": {
-                                                                    "kind": "IdentifierNameToken",
-                                                                    "width": 6,
-                                                                    "text": "String",
-                                                                    "valueText": "String"
-                                                                }
+                                                                "kind": "IdentifierNameToken",
+                                                                "width": 6,
+                                                                "text": "String",
+                                                                "valueText": "String"
                                                             },
                                                             "_argumentList": {
                                                                 "kind": "ArgumentList",
@@ -1154,13 +1058,9 @@
                                                                 },
                                                                 "_arguments": [
                                                                     {
-                                                                        "kind": "StringLiteralExpression",
-                                                                        "fullWidth": 3,
-                                                                        "_literalToken": {
-                                                                            "kind": "StringLiteral",
-                                                                            "width": 3,
-                                                                            "text": "\"1\""
-                                                                        }
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"1\""
                                                                     }
                                                                 ],
                                                                 "_closeParenToken": {
@@ -1295,14 +1195,10 @@
                                     ]
                                 },
                                 "_expression": {
-                                    "kind": "IdentifierName",
-                                    "fullWidth": 6,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "text": "String",
-                                        "valueText": "String"
-                                    }
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
+                                    "text": "String",
+                                    "valueText": "String"
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -1314,13 +1210,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 3,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 3,
-                                                "text": "\"1\""
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 3,
+                                            "text": "\"1\""
                                         }
                                     ],
                                     "_closeParenToken": {
@@ -1369,14 +1261,10 @@
                                     ]
                                 },
                                 "_expression": {
-                                    "kind": "IdentifierName",
-                                    "fullWidth": 6,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "text": "String",
-                                        "valueText": "String"
-                                    }
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
+                                    "text": "String",
+                                    "valueText": "String"
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -1388,13 +1276,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 3,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 3,
-                                                "text": "\"1\""
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 3,
+                                            "text": "\"1\""
                                         }
                                     ],
                                     "_closeParenToken": {
@@ -1433,13 +1317,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "1"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "1"
                     }
                 },
                 "_closeParenToken": {
@@ -1480,22 +1360,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 107,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -1510,21 +1386,17 @@
                                             "kind": "AddExpression",
                                             "fullWidth": 97,
                                             "_left": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 57,
                                                 "fullWidth": 58,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 57,
-                                                    "fullWidth": 58,
-                                                    "text": "'#4: (new String(\"1\") | new String(\"1\")) === 1. Actual: '",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'#4: (new String(\"1\") | new String(\"1\")) === 1. Actual: '",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
@@ -1576,14 +1448,10 @@
                                                                 ]
                                                             },
                                                             "_expression": {
-                                                                "kind": "IdentifierName",
-                                                                "fullWidth": 6,
-                                                                "_identifier": {
-                                                                    "kind": "IdentifierNameToken",
-                                                                    "width": 6,
-                                                                    "text": "String",
-                                                                    "valueText": "String"
-                                                                }
+                                                                "kind": "IdentifierNameToken",
+                                                                "width": 6,
+                                                                "text": "String",
+                                                                "valueText": "String"
                                                             },
                                                             "_argumentList": {
                                                                 "kind": "ArgumentList",
@@ -1595,13 +1463,9 @@
                                                                 },
                                                                 "_arguments": [
                                                                     {
-                                                                        "kind": "StringLiteralExpression",
-                                                                        "fullWidth": 3,
-                                                                        "_literalToken": {
-                                                                            "kind": "StringLiteral",
-                                                                            "width": 3,
-                                                                            "text": "\"1\""
-                                                                        }
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"1\""
                                                                     }
                                                                 ],
                                                                 "_closeParenToken": {
@@ -1650,14 +1514,10 @@
                                                                 ]
                                                             },
                                                             "_expression": {
-                                                                "kind": "IdentifierName",
-                                                                "fullWidth": 6,
-                                                                "_identifier": {
-                                                                    "kind": "IdentifierNameToken",
-                                                                    "width": 6,
-                                                                    "text": "String",
-                                                                    "valueText": "String"
-                                                                }
+                                                                "kind": "IdentifierNameToken",
+                                                                "width": 6,
+                                                                "text": "String",
+                                                                "valueText": "String"
                                                             },
                                                             "_argumentList": {
                                                                 "kind": "ArgumentList",
@@ -1669,13 +1529,9 @@
                                                                 },
                                                                 "_arguments": [
                                                                     {
-                                                                        "kind": "StringLiteralExpression",
-                                                                        "fullWidth": 3,
-                                                                        "_literalToken": {
-                                                                            "kind": "StringLiteral",
-                                                                            "width": 3,
-                                                                            "text": "\"1\""
-                                                                        }
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"1\""
                                                                     }
                                                                 ],
                                                                 "_closeParenToken": {
@@ -1793,21 +1649,17 @@
                             "kind": "BitwiseOrExpression",
                             "fullWidth": 9,
                             "_left": {
-                                "kind": "StringLiteralExpression",
+                                "kind": "StringLiteral",
+                                "width": 3,
                                 "fullWidth": 4,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 3,
-                                    "fullWidth": 4,
-                                    "text": "\"x\"",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                }
+                                "text": "\"x\"",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
                             },
                             "_operatorToken": {
                                 "kind": "BarToken",
@@ -1823,13 +1675,9 @@
                                 ]
                             },
                             "_right": {
-                                "kind": "StringLiteralExpression",
-                                "fullWidth": 3,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 3,
-                                    "text": "\"1\""
-                                }
+                                "kind": "StringLiteral",
+                                "width": 3,
+                                "text": "\"1\""
                             }
                         },
                         "_closeParenToken": {
@@ -1860,13 +1708,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "1"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "1"
                     }
                 },
                 "_closeParenToken": {
@@ -1907,22 +1751,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 59,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -1937,21 +1777,17 @@
                                             "kind": "AddExpression",
                                             "fullWidth": 49,
                                             "_left": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 33,
                                                 "fullWidth": 34,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 33,
-                                                    "fullWidth": 34,
-                                                    "text": "'#5: (\"x\" | \"1\") === 1. Actual: '",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'#5: (\"x\" | \"1\") === 1. Actual: '",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
@@ -1986,21 +1822,17 @@
                                                         "kind": "BitwiseOrExpression",
                                                         "fullWidth": 9,
                                                         "_left": {
-                                                            "kind": "StringLiteralExpression",
+                                                            "kind": "StringLiteral",
+                                                            "width": 3,
                                                             "fullWidth": 4,
-                                                            "_literalToken": {
-                                                                "kind": "StringLiteral",
-                                                                "width": 3,
-                                                                "fullWidth": 4,
-                                                                "text": "\"x\"",
-                                                                "hasTrailingTrivia": true,
-                                                                "trailingTrivia": [
-                                                                    {
-                                                                        "kind": "WhitespaceTrivia",
-                                                                        "text": " "
-                                                                    }
-                                                                ]
-                                                            }
+                                                            "text": "\"x\"",
+                                                            "hasTrailingTrivia": true,
+                                                            "trailingTrivia": [
+                                                                {
+                                                                    "kind": "WhitespaceTrivia",
+                                                                    "text": " "
+                                                                }
+                                                            ]
                                                         },
                                                         "_operatorToken": {
                                                             "kind": "BarToken",
@@ -2016,13 +1848,9 @@
                                                             ]
                                                         },
                                                         "_right": {
-                                                            "kind": "StringLiteralExpression",
-                                                            "fullWidth": 3,
-                                                            "_literalToken": {
-                                                                "kind": "StringLiteral",
-                                                                "width": 3,
-                                                                "text": "\"1\""
-                                                            }
+                                                            "kind": "StringLiteral",
+                                                            "width": 3,
+                                                            "text": "\"1\""
                                                         }
                                                     },
                                                     "_closeParenToken": {
@@ -2132,21 +1960,17 @@
                             "kind": "BitwiseOrExpression",
                             "fullWidth": 9,
                             "_left": {
-                                "kind": "StringLiteralExpression",
+                                "kind": "StringLiteral",
+                                "width": 3,
                                 "fullWidth": 4,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 3,
-                                    "fullWidth": 4,
-                                    "text": "\"1\"",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                }
+                                "text": "\"1\"",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
                             },
                             "_operatorToken": {
                                 "kind": "BarToken",
@@ -2162,13 +1986,9 @@
                                 ]
                             },
                             "_right": {
-                                "kind": "StringLiteralExpression",
-                                "fullWidth": 3,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 3,
-                                    "text": "\"x\""
-                                }
+                                "kind": "StringLiteral",
+                                "width": 3,
+                                "text": "\"x\""
                             }
                         },
                         "_closeParenToken": {
@@ -2199,13 +2019,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "1"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "1"
                     }
                 },
                 "_closeParenToken": {
@@ -2246,22 +2062,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 59,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -2276,21 +2088,17 @@
                                             "kind": "AddExpression",
                                             "fullWidth": 49,
                                             "_left": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 33,
                                                 "fullWidth": 34,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 33,
-                                                    "fullWidth": 34,
-                                                    "text": "'#6: (\"1\" | \"x\") === 1. Actual: '",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'#6: (\"1\" | \"x\") === 1. Actual: '",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
@@ -2325,21 +2133,17 @@
                                                         "kind": "BitwiseOrExpression",
                                                         "fullWidth": 9,
                                                         "_left": {
-                                                            "kind": "StringLiteralExpression",
+                                                            "kind": "StringLiteral",
+                                                            "width": 3,
                                                             "fullWidth": 4,
-                                                            "_literalToken": {
-                                                                "kind": "StringLiteral",
-                                                                "width": 3,
-                                                                "fullWidth": 4,
-                                                                "text": "\"1\"",
-                                                                "hasTrailingTrivia": true,
-                                                                "trailingTrivia": [
-                                                                    {
-                                                                        "kind": "WhitespaceTrivia",
-                                                                        "text": " "
-                                                                    }
-                                                                ]
-                                                            }
+                                                            "text": "\"1\"",
+                                                            "hasTrailingTrivia": true,
+                                                            "trailingTrivia": [
+                                                                {
+                                                                    "kind": "WhitespaceTrivia",
+                                                                    "text": " "
+                                                                }
+                                                            ]
                                                         },
                                                         "_operatorToken": {
                                                             "kind": "BarToken",
@@ -2355,13 +2159,9 @@
                                                             ]
                                                         },
                                                         "_right": {
-                                                            "kind": "StringLiteralExpression",
-                                                            "fullWidth": 3,
-                                                            "_literalToken": {
-                                                                "kind": "StringLiteral",
-                                                                "width": 3,
-                                                                "text": "\"x\""
-                                                            }
+                                                            "kind": "StringLiteral",
+                                                            "width": 3,
+                                                            "text": "\"x\""
                                                         }
                                                     },
                                                     "_closeParenToken": {

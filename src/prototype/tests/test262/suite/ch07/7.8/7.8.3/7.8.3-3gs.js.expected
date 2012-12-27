@@ -8,71 +8,67 @@
                 "kind": "ExpressionStatement",
                 "fullWidth": 622,
                 "_expression": {
-                    "kind": "StringLiteralExpression",
+                    "kind": "StringLiteral",
+                    "width": 12,
                     "fullWidth": 619,
-                    "_literalToken": {
-                        "kind": "StringLiteral",
-                        "width": 12,
-                        "fullWidth": 619,
-                        "text": "\"use strict\"",
-                        "hasLeadingTrivia": true,
-                        "hasLeadingComment": true,
-                        "hasLeadingNewLine": true,
-                        "leadingTrivia": [
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "/// Copyright (c) 2012 Ecma International.  All rights reserved. "
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\r\n"
-                            },
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "/// Ecma International makes this code available under the terms and conditions set"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\r\n"
-                            },
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "/// forth on http://hg.ecmascript.org/tests/test262/raw-file/tip/LICENSE (the "
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\r\n"
-                            },
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "/// \"Use Terms\").   Any redistribution of this code must retain the above "
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\r\n"
-                            },
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "/// copyright and this notice and otherwise comply with the Use Terms."
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\r\n"
-                            },
-                            {
-                                "kind": "MultiLineCommentTrivia",
-                                "text": "/**\r\n * @path ch07/7.8/7.8.3/7.8.3-3gs.js\r\n * @description Strict Mode - octal extension is forbidden in strict mode (after a hex number is assigned to a variable from an eval)\r\n * @onlyStrict\r\n * @negative SyntaxError\r\n */"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\r\n"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\r\n"
-                            }
-                        ]
-                    }
+                    "text": "\"use strict\"",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingComment": true,
+                    "hasLeadingNewLine": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "/// Copyright (c) 2012 Ecma International.  All rights reserved. "
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "/// Ecma International makes this code available under the terms and conditions set"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "/// forth on http://hg.ecmascript.org/tests/test262/raw-file/tip/LICENSE (the "
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "/// \"Use Terms\").   Any redistribution of this code must retain the above "
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "/// copyright and this notice and otherwise comply with the Use Terms."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "MultiLineCommentTrivia",
+                            "text": "/**\r\n * @path ch07/7.8/7.8.3/7.8.3-3gs.js\r\n * @description Strict Mode - octal extension is forbidden in strict mode (after a hex number is assigned to a variable from an eval)\r\n * @onlyStrict\r\n * @negative SyntaxError\r\n */"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        }
+                    ]
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
@@ -144,14 +140,10 @@
                     "kind": "InvocationExpression",
                     "fullWidth": 23,
                     "_expression": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 4,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 4,
-                            "text": "eval",
-                            "valueText": "eval"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 4,
+                        "text": "eval",
+                        "valueText": "eval"
                     },
                     "_argumentList": {
                         "kind": "ArgumentList",
@@ -163,13 +155,9 @@
                         },
                         "_arguments": [
                             {
-                                "kind": "StringLiteralExpression",
-                                "fullWidth": 17,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 17,
-                                    "text": "\"a = 0x1;a = 01;\""
-                                }
+                                "kind": "StringLiteral",
+                                "width": 17,
+                                "text": "\"a = 0x1;a = 01;\""
                             }
                         ],
                         "_closeParenToken": {

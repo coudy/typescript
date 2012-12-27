@@ -87,14 +87,10 @@
                                         "text": "-"
                                     },
                                     "_operand": {
-                                        "kind": "IdentifierName",
-                                        "fullWidth": 8,
-                                        "_identifier": {
-                                            "kind": "IdentifierNameToken",
-                                            "width": 8,
-                                            "text": "Infinity",
-                                            "valueText": "Infinity"
-                                        }
+                                        "kind": "IdentifierNameToken",
+                                        "width": 8,
+                                        "text": "Infinity",
+                                        "valueText": "Infinity"
                                     }
                                 }
                             }
@@ -159,22 +155,18 @@
                     "kind": "NotEqualsExpression",
                     "fullWidth": 34,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 5,
                         "fullWidth": 6,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 5,
-                            "fullWidth": 6,
-                            "text": "n_inf",
-                            "valueText": "n_inf",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "n_inf",
+                        "valueText": "n_inf",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "ExclamationEqualsEqualsToken",
@@ -193,14 +185,10 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 24,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 6,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 6,
-                                "text": "Number",
-                                "valueText": "Number"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 6,
+                            "text": "Number",
+                            "valueText": "Number"
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -208,14 +196,10 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 17,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 17,
-                                "text": "NEGATIVE_INFINITY",
-                                "valueText": "NEGATIVE_INFINITY"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 17,
+                            "text": "NEGATIVE_INFINITY",
+                            "valueText": "NEGATIVE_INFINITY"
                         }
                     }
                 },
@@ -249,22 +233,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 65,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -276,13 +256,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 55,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 55,
-                                                "text": "'#1: -Infinity is the same as Number.NEGATIVE_INFINITY'"
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 55,
+                                            "text": "'#1: -Infinity is the same as Number.NEGATIVE_INFINITY'"
                                         }
                                     ],
                                     "_closeParenToken": {

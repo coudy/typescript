@@ -77,14 +77,10 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 30,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 8,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 8,
-                                "text": "parseInt",
-                                "valueText": "parseInt"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 8,
+                            "text": "parseInt",
+                            "valueText": "parseInt"
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -96,13 +92,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 4,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 4,
-                                        "text": "\"11\""
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 4,
+                                    "text": "\"11\""
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -135,14 +127,10 @@
                                         ]
                                     },
                                     "_expression": {
-                                        "kind": "IdentifierName",
-                                        "fullWidth": 6,
-                                        "_identifier": {
-                                            "kind": "IdentifierNameToken",
-                                            "width": 6,
-                                            "text": "Number",
-                                            "valueText": "Number"
-                                        }
+                                        "kind": "IdentifierNameToken",
+                                        "width": 6,
+                                        "text": "Number",
+                                        "valueText": "Number"
                                     },
                                     "_argumentList": {
                                         "kind": "ArgumentList",
@@ -154,13 +142,9 @@
                                         },
                                         "_arguments": [
                                             {
-                                                "kind": "NumericLiteralExpression",
-                                                "fullWidth": 1,
-                                                "_literalToken": {
-                                                    "kind": "NumericLiteral",
-                                                    "width": 1,
-                                                    "text": "2"
-                                                }
+                                                "kind": "NumericLiteral",
+                                                "width": 1,
+                                                "text": "2"
                                             }
                                         ],
                                         "_closeParenToken": {
@@ -203,14 +187,10 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 17,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 8,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 8,
-                                "text": "parseInt",
-                                "valueText": "parseInt"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 8,
+                            "text": "parseInt",
+                            "valueText": "parseInt"
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -222,13 +202,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 4,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 4,
-                                        "text": "\"11\""
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 4,
+                                    "text": "\"11\""
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -244,13 +220,9 @@
                                     ]
                                 },
                                 {
-                                    "kind": "NumericLiteralExpression",
-                                    "fullWidth": 1,
-                                    "_literalToken": {
-                                        "kind": "NumericLiteral",
-                                        "width": 1,
-                                        "text": "2"
-                                    }
+                                    "kind": "NumericLiteral",
+                                    "width": 1,
+                                    "text": "2"
                                 }
                             ],
                             "_closeParenToken": {
@@ -299,22 +271,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 111,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -329,21 +297,17 @@
                                             "kind": "AddExpression",
                                             "fullWidth": 101,
                                             "_left": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 67,
                                                 "fullWidth": 68,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 67,
-                                                    "fullWidth": 68,
-                                                    "text": "'#1: parseInt(\"11\", new Number(2)) === parseInt(\"11\", 2). Actual: '",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'#1: parseInt(\"11\", new Number(2)) === parseInt(\"11\", 2). Actual: '",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
@@ -370,14 +334,10 @@
                                                     "kind": "InvocationExpression",
                                                     "fullWidth": 29,
                                                     "_expression": {
-                                                        "kind": "IdentifierName",
-                                                        "fullWidth": 8,
-                                                        "_identifier": {
-                                                            "kind": "IdentifierNameToken",
-                                                            "width": 8,
-                                                            "text": "parseInt",
-                                                            "valueText": "parseInt"
-                                                        }
+                                                        "kind": "IdentifierNameToken",
+                                                        "width": 8,
+                                                        "text": "parseInt",
+                                                        "valueText": "parseInt"
                                                     },
                                                     "_argumentList": {
                                                         "kind": "ArgumentList",
@@ -389,13 +349,9 @@
                                                         },
                                                         "_arguments": [
                                                             {
-                                                                "kind": "StringLiteralExpression",
-                                                                "fullWidth": 4,
-                                                                "_literalToken": {
-                                                                    "kind": "StringLiteral",
-                                                                    "width": 4,
-                                                                    "text": "\"11\""
-                                                                }
+                                                                "kind": "StringLiteral",
+                                                                "width": 4,
+                                                                "text": "\"11\""
                                                             },
                                                             {
                                                                 "kind": "CommaToken",
@@ -428,14 +384,10 @@
                                                                     ]
                                                                 },
                                                                 "_expression": {
-                                                                    "kind": "IdentifierName",
-                                                                    "fullWidth": 6,
-                                                                    "_identifier": {
-                                                                        "kind": "IdentifierNameToken",
-                                                                        "width": 6,
-                                                                        "text": "Number",
-                                                                        "valueText": "Number"
-                                                                    }
+                                                                    "kind": "IdentifierNameToken",
+                                                                    "width": 6,
+                                                                    "text": "Number",
+                                                                    "valueText": "Number"
                                                                 },
                                                                 "_argumentList": {
                                                                     "kind": "ArgumentList",
@@ -447,13 +399,9 @@
                                                                     },
                                                                     "_arguments": [
                                                                         {
-                                                                            "kind": "NumericLiteralExpression",
-                                                                            "fullWidth": 1,
-                                                                            "_literalToken": {
-                                                                                "kind": "NumericLiteral",
-                                                                                "width": 1,
-                                                                                "text": "2"
-                                                                            }
+                                                                            "kind": "NumericLiteral",
+                                                                            "width": 1,
+                                                                            "text": "2"
                                                                         }
                                                                     ],
                                                                     "_closeParenToken": {
@@ -564,14 +512,10 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 37,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 8,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 8,
-                                "text": "parseInt",
-                                "valueText": "parseInt"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 8,
+                            "text": "parseInt",
+                            "valueText": "parseInt"
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -583,13 +527,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 4,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 4,
-                                        "text": "\"11\""
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 4,
+                                    "text": "\"11\""
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -622,14 +562,10 @@
                                         ]
                                     },
                                     "_expression": {
-                                        "kind": "IdentifierName",
-                                        "fullWidth": 6,
-                                        "_identifier": {
-                                            "kind": "IdentifierNameToken",
-                                            "width": 6,
-                                            "text": "Number",
-                                            "valueText": "Number"
-                                        }
+                                        "kind": "IdentifierNameToken",
+                                        "width": 6,
+                                        "text": "Number",
+                                        "valueText": "Number"
                                     },
                                     "_argumentList": {
                                         "kind": "ArgumentList",
@@ -641,14 +577,10 @@
                                         },
                                         "_arguments": [
                                             {
-                                                "kind": "IdentifierName",
-                                                "fullWidth": 8,
-                                                "_identifier": {
-                                                    "kind": "IdentifierNameToken",
-                                                    "width": 8,
-                                                    "text": "Infinity",
-                                                    "valueText": "Infinity"
-                                                }
+                                                "kind": "IdentifierNameToken",
+                                                "width": 8,
+                                                "text": "Infinity",
+                                                "valueText": "Infinity"
                                             }
                                         ],
                                         "_closeParenToken": {
@@ -691,14 +623,10 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 24,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 8,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 8,
-                                "text": "parseInt",
-                                "valueText": "parseInt"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 8,
+                            "text": "parseInt",
+                            "valueText": "parseInt"
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -710,13 +638,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 4,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 4,
-                                        "text": "\"11\""
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 4,
+                                    "text": "\"11\""
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -732,14 +656,10 @@
                                     ]
                                 },
                                 {
-                                    "kind": "IdentifierName",
-                                    "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 8,
-                                        "text": "Infinity",
-                                        "valueText": "Infinity"
-                                    }
+                                    "kind": "IdentifierNameToken",
+                                    "width": 8,
+                                    "text": "Infinity",
+                                    "valueText": "Infinity"
                                 }
                             ],
                             "_closeParenToken": {
@@ -788,22 +708,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 132,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -818,21 +734,17 @@
                                             "kind": "AddExpression",
                                             "fullWidth": 122,
                                             "_left": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 81,
                                                 "fullWidth": 82,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 81,
-                                                    "fullWidth": 82,
-                                                    "text": "'#2: parseInt(\"11\", new Number(Infinity)) === parseInt(\"11\", Infinity). Actual: '",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'#2: parseInt(\"11\", new Number(Infinity)) === parseInt(\"11\", Infinity). Actual: '",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
@@ -859,14 +771,10 @@
                                                     "kind": "InvocationExpression",
                                                     "fullWidth": 36,
                                                     "_expression": {
-                                                        "kind": "IdentifierName",
-                                                        "fullWidth": 8,
-                                                        "_identifier": {
-                                                            "kind": "IdentifierNameToken",
-                                                            "width": 8,
-                                                            "text": "parseInt",
-                                                            "valueText": "parseInt"
-                                                        }
+                                                        "kind": "IdentifierNameToken",
+                                                        "width": 8,
+                                                        "text": "parseInt",
+                                                        "valueText": "parseInt"
                                                     },
                                                     "_argumentList": {
                                                         "kind": "ArgumentList",
@@ -878,13 +786,9 @@
                                                         },
                                                         "_arguments": [
                                                             {
-                                                                "kind": "StringLiteralExpression",
-                                                                "fullWidth": 4,
-                                                                "_literalToken": {
-                                                                    "kind": "StringLiteral",
-                                                                    "width": 4,
-                                                                    "text": "\"11\""
-                                                                }
+                                                                "kind": "StringLiteral",
+                                                                "width": 4,
+                                                                "text": "\"11\""
                                                             },
                                                             {
                                                                 "kind": "CommaToken",
@@ -917,14 +821,10 @@
                                                                     ]
                                                                 },
                                                                 "_expression": {
-                                                                    "kind": "IdentifierName",
-                                                                    "fullWidth": 6,
-                                                                    "_identifier": {
-                                                                        "kind": "IdentifierNameToken",
-                                                                        "width": 6,
-                                                                        "text": "Number",
-                                                                        "valueText": "Number"
-                                                                    }
+                                                                    "kind": "IdentifierNameToken",
+                                                                    "width": 6,
+                                                                    "text": "Number",
+                                                                    "valueText": "Number"
                                                                 },
                                                                 "_argumentList": {
                                                                     "kind": "ArgumentList",
@@ -936,14 +836,10 @@
                                                                     },
                                                                     "_arguments": [
                                                                         {
-                                                                            "kind": "IdentifierName",
-                                                                            "fullWidth": 8,
-                                                                            "_identifier": {
-                                                                                "kind": "IdentifierNameToken",
-                                                                                "width": 8,
-                                                                                "text": "Infinity",
-                                                                                "valueText": "Infinity"
-                                                                            }
+                                                                            "kind": "IdentifierNameToken",
+                                                                            "width": 8,
+                                                                            "text": "Infinity",
+                                                                            "valueText": "Infinity"
                                                                         }
                                                                     ],
                                                                     "_closeParenToken": {

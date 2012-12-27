@@ -3,7 +3,7 @@
 ///<reference path='SyntaxFacts.ts' />
 
 module Syntax {
-    export var emptySeparatedList = {
+    export var emptySeparatedList: ISeparatedSyntaxList = {
         kind: () => SyntaxKind.SeparatedList,
 
         isNode: () => false,
@@ -15,15 +15,15 @@ module Syntax {
 
         toJSON: (key) => [],
 
-        count: () => 0,
-        syntaxNodeCount: () => 0,
+        itemAndSeparatorCount: () => 0,
+        itemCount: () => 0,
         separatorCount: () => 0,
 
-        itemAt: (index: number): ISyntaxElement => {
+        itemOrSeparatorAt: (index: number): ISyntaxNodeOrToken => {
             throw Errors.argumentOutOfRange("index");
         },
 
-        syntaxNodeAt: (index: number): SyntaxNode => {
+        itemAt: (index: number): ISyntaxNodeOrToken => {
             throw Errors.argumentOutOfRange("index");
         },
 
@@ -39,8 +39,8 @@ module Syntax {
         fullWidth: () => 0,
         fullText: () => "",
 
-        toArray: (): ISyntaxElement[] => [],
-        toSyntaxNodeArray: (): SyntaxNode[] => [],
+        toItemAndSeparatorArray: (): ISyntaxNodeOrToken[] => [],
+        toItemArray: (): ISyntaxNodeOrToken[] => [],
 
         isTypeScriptSpecific: () => false,
         hasSkippedText: () => false,
@@ -58,9 +58,9 @@ module Syntax {
     }
 
     class SingletonSeparatedSyntaxList implements ISeparatedSyntaxList {
-        private item: SyntaxNode;
+        private item: ISyntaxNodeOrToken;
 
-        constructor(item: SyntaxNode) {
+        constructor(item: ISyntaxNodeOrToken) {
             this.item = item;
         }
 
@@ -77,11 +77,10 @@ module Syntax {
         public isSeparatedList(): bool { return true; }
         public isTriviaList(): bool { return false; }
 
-        public count() { return 1; }
-        public syntaxNodeCount() { return 1; }
+        public itemAndSeparatorCount() { return 1; }
+        public itemCount() { return 1; }
         public separatorCount() { return 0; }
-
-        public itemAt(index: number): ISyntaxElement {
+        public itemOrSeparatorAt(index: number): ISyntaxNodeOrToken {
             if (index !== 0) {
                 throw Errors.argumentOutOfRange("index");
             }
@@ -89,7 +88,7 @@ module Syntax {
             return this.item;
         }
 
-        public syntaxNodeAt(index: number) {
+        public itemAt(index: number): ISyntaxNodeOrToken {
             if (index !== 0) {
                 throw Errors.argumentOutOfRange("index");
             }
@@ -125,7 +124,11 @@ module Syntax {
             return [this.item];
         }
 
-        public toSyntaxNodeArray(): SyntaxNode[] {
+        public toItemAndSeparatorArray(): ISyntaxNodeOrToken[] {
+            return [this.item];
+        }
+
+        public toItemArray(): ISyntaxNodeOrToken[] {
             return [this.item];
         }
 
@@ -156,10 +159,10 @@ module Syntax {
     }
 
     class NormalSeparatedSyntaxList implements ISeparatedSyntaxList {
-        private elements: ISyntaxElement[];
+        private elements: ISyntaxNodeOrToken[];
         private _data: number = -1;
 
-        constructor(elements: ISyntaxElement[]) {
+        constructor(elements: ISyntaxNodeOrToken[]) {
             this.elements = elements;
         }
 
@@ -173,11 +176,11 @@ module Syntax {
         public isTriviaList(): bool { return false; }
         public toJSON(key) { return this.elements; }
 
-        public count() { return this.elements.length; }
-        public syntaxNodeCount() { return IntegerUtilities.integerDivide(this.elements.length + 1, 2); }
+        public itemAndSeparatorCount() { return this.elements.length; }
+        public itemCount() { return IntegerUtilities.integerDivide(this.elements.length + 1, 2); }
         public separatorCount() { return IntegerUtilities.integerDivide(this.elements.length, 2); }
 
-        public itemAt(index: number): ISyntaxElement {
+        public itemOrSeparatorAt(index: number): ISyntaxNodeOrToken {
             if (index < 0 || index >= this.elements.length) {
                 throw Errors.argumentOutOfRange("index");
             }
@@ -185,13 +188,13 @@ module Syntax {
             return this.elements[index];
         }
 
-        public syntaxNodeAt(index: number): SyntaxNode {
+        public itemAt(index: number): ISyntaxNodeOrToken {
             var value = index * 2;
             if (value < 0 || value >= this.elements.length) {
                 throw Errors.argumentOutOfRange("index");
             }
 
-            return <SyntaxNode>this.elements[value];
+            return this.elements[value];
         }
 
         public separatorAt(index: number): ISyntaxToken {
@@ -207,8 +210,8 @@ module Syntax {
             var token;
             for (var i = 0, n = this.elements.length; i < n; i++) {
                 if (i % 2 === 0) {
-                    var node = <SyntaxNode>this.elements[i];
-                    token = node.firstToken();
+                    var nodeOrToken = this.elements[i];
+                    token = nodeOrToken.firstToken();
                     if (token !== null) {
                         return token;
                     }
@@ -228,8 +231,8 @@ module Syntax {
             var token;
             for (var i = this.elements.length - 1; i >= 0; i--) {
                 if (i % 2 === 0) {
-                    var node = <SyntaxNode>this.elements[i];
-                    token = node.lastToken();
+                    var nodeOrToken = this.elements[i];
+                    token = nodeOrToken.lastToken();
                     if (token !== null) {
                         return token;
                     }
@@ -251,22 +254,22 @@ module Syntax {
             return elements.join("");
         }
 
-        public toArray(): ISyntaxElement[] {
+        public toItemAndSeparatorArray(): ISyntaxNodeOrToken[] {
             return this.elements.slice(0);
         }
 
-        public toSyntaxNodeArray(): SyntaxNode[] {
-            var result: SyntaxNode[] = [];
-            for (var i = 0, n = this.syntaxNodeCount(); i < n; i++) {
-                result.push(this.syntaxNodeAt(i));
+        public toItemArray(): ISyntaxNodeOrToken[] {
+            var result: ISyntaxNodeOrToken[] = [];
+            for (var i = 0, n = this.itemCount(); i < n; i++) {
+                result.push(this.itemAt(i));
             }
 
             return result;
         }
 
         public isTypeScriptSpecific(): bool {
-            for (var i = 0, n = this.syntaxNodeCount(); i < n; i++) {
-                if (this.syntaxNodeAt(i).isTypeScriptSpecific()) {
+            for (var i = 0, n = this.itemCount(); i < n; i++) {
+                if (this.itemAt(i).isTypeScriptSpecific()) {
                     return true;
                 }
             }
@@ -303,11 +306,11 @@ module Syntax {
                 fullWidth += childWidth;
 
                 if (i % 2 === 0) {
-                    var node = <SyntaxNode>element;
+                    var nodeOrToken = element;
 
-                    hasSkippedText = hasSkippedText || node.hasSkippedText();
-                    hasZeroWidthToken = hasZeroWidthToken || node.hasZeroWidthToken();
-                    hasRegularExpressionToken = hasRegularExpressionToken || node.hasRegularExpressionToken();
+                    hasSkippedText = hasSkippedText || nodeOrToken.hasSkippedText();
+                    hasZeroWidthToken = hasZeroWidthToken || nodeOrToken.hasZeroWidthToken();
+                    hasRegularExpressionToken = hasRegularExpressionToken || nodeOrToken.hasRegularExpressionToken();
                 }
                 else {
                     var token = <ISyntaxToken>element;
@@ -374,11 +377,11 @@ module Syntax {
         }
     }
 
-    export function separatedList(nodes: ISyntaxElement[]): ISeparatedSyntaxList {
+    export function separatedList(nodes: ISyntaxNodeOrToken[]): ISeparatedSyntaxList {
         return separatedListAndValidate(nodes, false);
     }
 
-    export function separatedListAndValidate(nodes: ISyntaxElement[], validate: bool): ISeparatedSyntaxList {
+    export function separatedListAndValidate(nodes: ISyntaxNodeOrToken[], validate: bool): ISeparatedSyntaxList {
         if (nodes === undefined || nodes === null || nodes.length === 0) {
             return emptySeparatedList;
         }
@@ -388,7 +391,7 @@ module Syntax {
                 var item = nodes[i];
 
                 if (i % 2 === 0) {
-                    Debug.assert(!SyntaxFacts.isTokenKind(item.kind()));
+                    // Debug.assert(!SyntaxFacts.isTokenKind(item.kind()));
                 }
                 else {
                     Debug.assert(SyntaxFacts.isTokenKind(item.kind()));
@@ -397,8 +400,8 @@ module Syntax {
         }
 
         if (nodes.length === 1) {
-            Debug.assert(nodes[0].isNode());
-            return new SingletonSeparatedSyntaxList(<SyntaxNode>nodes[0]);
+            // Debug.assert(nodes[0].isNode());
+            return new SingletonSeparatedSyntaxList(nodes[0]);
         }
 
         return new NormalSeparatedSyntaxList(nodes);

@@ -39,81 +39,76 @@
                 "fullWidth": 298,
                 "hasSkippedText": true,
                 "_expression": {
-                    "kind": "NumericLiteralExpression",
+                    "kind": "NumericLiteral",
+                    "width": 1,
                     "fullWidth": 295,
-                    "hasSkippedText": true,
-                    "_literalToken": {
-                        "kind": "NumericLiteral",
-                        "width": 1,
-                        "fullWidth": 295,
-                        "text": "1",
-                        "hasLeadingTrivia": true,
-                        "hasLeadingComment": true,
-                        "hasLeadingNewLine": true,
-                        "hasLeadingSkippedText": true,
-                        "leadingTrivia": [
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "// This code is governed by the BSD license found in the LICENSE file."
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "MultiLineCommentTrivia",
-                                "text": "/**\n * Multi line comments cannot nest\n *\n * @path ch07/7.4/S7.4_A3.js\n * @description Try use nested comments\n * @negative\n */"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "MultiLineCommentTrivia",
-                                "text": "/*CHECK#1*/"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "MultiLineCommentTrivia",
-                                "text": "/* \nvar\n\n/* x */"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "SkippedTextTrivia",
-                                "text": "="
-                            },
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "text": " "
-                            }
-                        ]
-                    }
+                    "text": "1",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingComment": true,
+                    "hasLeadingNewLine": true,
+                    "hasLeadingSkippedText": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "// This code is governed by the BSD license found in the LICENSE file."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "MultiLineCommentTrivia",
+                            "text": "/**\n * Multi line comments cannot nest\n *\n * @path ch07/7.4/S7.4_A3.js\n * @description Try use nested comments\n * @negative\n */"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "MultiLineCommentTrivia",
+                            "text": "/*CHECK#1*/"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "MultiLineCommentTrivia",
+                            "text": "/* \nvar\n\n/* x */"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "SkippedTextTrivia",
+                            "text": "="
+                        },
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "text": " "
+                        }
+                    ]
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
@@ -146,14 +141,9 @@
                     "hasZeroWidthToken": true,
                     "hasRegularExpressionToken": true,
                     "_left": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 0,
-                        "hasZeroWidthToken": true,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 0,
-                            "text": ""
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 0,
+                        "text": ""
                     },
                     "_operatorToken": {
                         "kind": "SlashToken",
@@ -170,14 +160,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 0,
-                        "hasZeroWidthToken": true,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 0,
-                            "text": ""
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 0,
+                        "text": ""
                     }
                 },
                 "_semicolonToken": {

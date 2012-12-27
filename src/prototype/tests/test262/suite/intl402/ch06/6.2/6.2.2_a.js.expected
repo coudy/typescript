@@ -10,52 +10,48 @@
                     "kind": "InvocationExpression",
                     "fullWidth": 268,
                     "_expression": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 8,
                         "fullWidth": 253,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 8,
-                            "fullWidth": 253,
-                            "text": "$INCLUDE",
-                            "valueText": "$INCLUDE",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingComment": true,
-                            "hasLeadingNewLine": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// Copyright 2012 Mozilla Corporation. All rights reserved."
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// This code is governed by the BSD license found in the LICENSE file."
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "MultiLineCommentTrivia",
-                                    "text": "/**\n * @description Tests that structurally valid language tags are accepted.\n * @author Norbert Lindenberg\n */"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                }
-                            ]
-                        }
+                        "text": "$INCLUDE",
+                        "valueText": "$INCLUDE",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingComment": true,
+                        "hasLeadingNewLine": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// Copyright 2012 Mozilla Corporation. All rights reserved."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// This code is governed by the BSD license found in the LICENSE file."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "MultiLineCommentTrivia",
+                                "text": "/**\n * @description Tests that structurally valid language tags are accepted.\n * @author Norbert Lindenberg\n */"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ]
                     },
                     "_argumentList": {
                         "kind": "ArgumentList",
@@ -67,13 +63,9 @@
                         },
                         "_arguments": [
                             {
-                                "kind": "StringLiteralExpression",
-                                "fullWidth": 13,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 13,
-                                    "text": "\"testIntl.js\""
-                                }
+                                "kind": "StringLiteral",
+                                "width": 13,
+                                "text": "\"testIntl.js\""
                             }
                         ],
                         "_closeParenToken": {
@@ -179,21 +171,17 @@
                                     },
                                     "_expressions": [
                                         {
-                                            "kind": "StringLiteralExpression",
+                                            "kind": "StringLiteral",
+                                            "width": 4,
                                             "fullWidth": 8,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 4,
-                                                "fullWidth": 8,
-                                                "text": "\"de\"",
-                                                "hasLeadingTrivia": true,
-                                                "leadingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": "    "
-                                                    }
-                                                ]
-                                            }
+                                            "text": "\"de\"",
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": "    "
+                                                }
+                                            ]
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -219,21 +207,17 @@
                                             ]
                                         },
                                         {
-                                            "kind": "StringLiteralExpression",
+                                            "kind": "StringLiteral",
+                                            "width": 7,
                                             "fullWidth": 11,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 7,
-                                                "fullWidth": 11,
-                                                "text": "\"de-DE\"",
-                                                "hasLeadingTrivia": true,
-                                                "leadingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": "    "
-                                                    }
-                                                ]
-                                            }
+                                            "text": "\"de-DE\"",
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": "    "
+                                                }
+                                            ]
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -259,21 +243,17 @@
                                             ]
                                         },
                                         {
-                                            "kind": "StringLiteralExpression",
+                                            "kind": "StringLiteral",
+                                            "width": 7,
                                             "fullWidth": 11,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 7,
-                                                "fullWidth": 11,
-                                                "text": "\"DE-de\"",
-                                                "hasLeadingTrivia": true,
-                                                "leadingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": "    "
-                                                    }
-                                                ]
-                                            }
+                                            "text": "\"DE-de\"",
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": "    "
+                                                }
+                                            ]
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -299,21 +279,17 @@
                                             ]
                                         },
                                         {
-                                            "kind": "StringLiteralExpression",
+                                            "kind": "StringLiteral",
+                                            "width": 5,
                                             "fullWidth": 9,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 5,
-                                                "fullWidth": 9,
-                                                "text": "\"cmn\"",
-                                                "hasLeadingTrivia": true,
-                                                "leadingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": "    "
-                                                    }
-                                                ]
-                                            }
+                                            "text": "\"cmn\"",
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": "    "
+                                                }
+                                            ]
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -339,21 +315,17 @@
                                             ]
                                         },
                                         {
-                                            "kind": "StringLiteralExpression",
+                                            "kind": "StringLiteral",
+                                            "width": 10,
                                             "fullWidth": 14,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 10,
-                                                "fullWidth": 14,
-                                                "text": "\"cmn-Hans\"",
-                                                "hasLeadingTrivia": true,
-                                                "leadingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": "    "
-                                                    }
-                                                ]
-                                            }
+                                            "text": "\"cmn-Hans\"",
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": "    "
+                                                }
+                                            ]
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -379,21 +351,17 @@
                                             ]
                                         },
                                         {
-                                            "kind": "StringLiteralExpression",
+                                            "kind": "StringLiteral",
+                                            "width": 10,
                                             "fullWidth": 14,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 10,
-                                                "fullWidth": 14,
-                                                "text": "\"CMN-hANS\"",
-                                                "hasLeadingTrivia": true,
-                                                "leadingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": "    "
-                                                    }
-                                                ]
-                                            }
+                                            "text": "\"CMN-hANS\"",
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": "    "
+                                                }
+                                            ]
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -419,21 +387,17 @@
                                             ]
                                         },
                                         {
-                                            "kind": "StringLiteralExpression",
+                                            "kind": "StringLiteral",
+                                            "width": 13,
                                             "fullWidth": 17,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 13,
-                                                "fullWidth": 17,
-                                                "text": "\"cmn-hans-cn\"",
-                                                "hasLeadingTrivia": true,
-                                                "leadingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": "    "
-                                                    }
-                                                ]
-                                            }
+                                            "text": "\"cmn-hans-cn\"",
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": "    "
+                                                }
+                                            ]
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -459,21 +423,17 @@
                                             ]
                                         },
                                         {
-                                            "kind": "StringLiteralExpression",
+                                            "kind": "StringLiteral",
+                                            "width": 8,
                                             "fullWidth": 12,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 8,
-                                                "fullWidth": 12,
-                                                "text": "\"es-419\"",
-                                                "hasLeadingTrivia": true,
-                                                "leadingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": "    "
-                                                    }
-                                                ]
-                                            }
+                                            "text": "\"es-419\"",
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": "    "
+                                                }
+                                            ]
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -499,21 +459,17 @@
                                             ]
                                         },
                                         {
-                                            "kind": "StringLiteralExpression",
+                                            "kind": "StringLiteral",
+                                            "width": 25,
                                             "fullWidth": 29,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 25,
-                                                "fullWidth": 29,
-                                                "text": "\"es-419-u-nu-latn-cu-bob\"",
-                                                "hasLeadingTrivia": true,
-                                                "leadingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": "    "
-                                                    }
-                                                ]
-                                            }
+                                            "text": "\"es-419-u-nu-latn-cu-bob\"",
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": "    "
+                                                }
+                                            ]
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -539,21 +495,17 @@
                                             ]
                                         },
                                         {
-                                            "kind": "StringLiteralExpression",
+                                            "kind": "StringLiteral",
+                                            "width": 11,
                                             "fullWidth": 15,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 11,
-                                                "fullWidth": 15,
-                                                "text": "\"i-klingon\"",
-                                                "hasLeadingTrivia": true,
-                                                "leadingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": "    "
-                                                    }
-                                                ]
-                                            }
+                                            "text": "\"i-klingon\"",
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": "    "
+                                                }
+                                            ]
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -579,21 +531,17 @@
                                             ]
                                         },
                                         {
-                                            "kind": "StringLiteralExpression",
+                                            "kind": "StringLiteral",
+                                            "width": 29,
                                             "fullWidth": 33,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 29,
-                                                "fullWidth": 33,
-                                                "text": "\"cmn-hans-cn-t-ca-u-ca-x-t-u\"",
-                                                "hasLeadingTrivia": true,
-                                                "leadingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": "    "
-                                                    }
-                                                ]
-                                            }
+                                            "text": "\"cmn-hans-cn-t-ca-u-ca-x-t-u\"",
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": "    "
+                                                }
+                                            ]
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -619,21 +567,17 @@
                                             ]
                                         },
                                         {
-                                            "kind": "StringLiteralExpression",
+                                            "kind": "StringLiteral",
+                                            "width": 19,
                                             "fullWidth": 23,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 19,
-                                                "fullWidth": 23,
-                                                "text": "\"enochian-enochian\"",
-                                                "hasLeadingTrivia": true,
-                                                "leadingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": "    "
-                                                    }
-                                                ]
-                                            }
+                                            "text": "\"enochian-enochian\"",
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": "    "
+                                                }
+                                            ]
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -659,38 +603,34 @@
                                             ]
                                         },
                                         {
-                                            "kind": "StringLiteralExpression",
+                                            "kind": "StringLiteral",
+                                            "width": 25,
                                             "fullWidth": 79,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 25,
-                                                "fullWidth": 79,
-                                                "text": "\"de-gregory-u-ca-gregory\"",
-                                                "hasLeadingTrivia": true,
-                                                "hasTrailingTrivia": true,
-                                                "hasTrailingComment": true,
-                                                "hasTrailingNewLine": true,
-                                                "leadingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": "    "
-                                                    }
-                                                ],
-                                                "trailingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": " "
-                                                    },
-                                                    {
-                                                        "kind": "SingleLineCommentTrivia",
-                                                        "text": "// variant and extension subtags may be the same"
-                                                    },
-                                                    {
-                                                        "kind": "NewLineTrivia",
-                                                        "text": "\n"
-                                                    }
-                                                ]
-                                            }
+                                            "text": "\"de-gregory-u-ca-gregory\"",
+                                            "hasLeadingTrivia": true,
+                                            "hasTrailingTrivia": true,
+                                            "hasTrailingComment": true,
+                                            "hasTrailingNewLine": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": "    "
+                                                }
+                                            ],
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
+                                                },
+                                                {
+                                                    "kind": "SingleLineCommentTrivia",
+                                                    "text": "// variant and extension subtags may be the same"
+                                                },
+                                                {
+                                                    "kind": "NewLineTrivia",
+                                                    "text": "\n"
+                                                }
+                                            ]
                                         }
                                     ],
                                     "_closeBracketToken": {
@@ -725,23 +665,19 @@
                     "kind": "InvocationExpression",
                     "fullWidth": 236,
                     "_expression": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 24,
                         "fullWidth": 25,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 24,
-                            "fullWidth": 25,
-                            "text": "testWithIntlConstructors",
-                            "valueText": "testWithIntlConstructors",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingNewLine": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                }
-                            ]
-                        }
+                        "text": "testWithIntlConstructors",
+                        "valueText": "testWithIntlConstructors",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingNewLine": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ]
                     },
                     "_argumentList": {
                         "kind": "ArgumentList",
@@ -835,22 +771,18 @@
                                                     "kind": "MemberAccessExpression",
                                                     "fullWidth": 29,
                                                     "_expression": {
-                                                        "kind": "IdentifierName",
+                                                        "kind": "IdentifierNameToken",
+                                                        "width": 17,
                                                         "fullWidth": 21,
-                                                        "_identifier": {
-                                                            "kind": "IdentifierNameToken",
-                                                            "width": 17,
-                                                            "fullWidth": 21,
-                                                            "text": "validLanguageTags",
-                                                            "valueText": "validLanguageTags",
-                                                            "hasLeadingTrivia": true,
-                                                            "leadingTrivia": [
-                                                                {
-                                                                    "kind": "WhitespaceTrivia",
-                                                                    "text": "    "
-                                                                }
-                                                            ]
-                                                        }
+                                                        "text": "validLanguageTags",
+                                                        "valueText": "validLanguageTags",
+                                                        "hasLeadingTrivia": true,
+                                                        "leadingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "text": "    "
+                                                            }
+                                                        ]
                                                     },
                                                     "_dotToken": {
                                                         "kind": "DotToken",
@@ -858,14 +790,10 @@
                                                         "text": "."
                                                     },
                                                     "_identifierName": {
-                                                        "kind": "IdentifierName",
-                                                        "fullWidth": 7,
-                                                        "_identifier": {
-                                                            "kind": "IdentifierNameToken",
-                                                            "width": 7,
-                                                            "text": "forEach",
-                                                            "valueText": "forEach"
-                                                        }
+                                                        "kind": "IdentifierNameToken",
+                                                        "width": 7,
+                                                        "text": "forEach",
+                                                        "valueText": "forEach"
                                                     }
                                                 },
                                                 "_argumentList": {
@@ -1043,14 +971,10 @@
                                                                                                 ]
                                                                                             },
                                                                                             "_expression": {
-                                                                                                "kind": "IdentifierName",
-                                                                                                "fullWidth": 11,
-                                                                                                "_identifier": {
-                                                                                                    "kind": "IdentifierNameToken",
-                                                                                                    "width": 11,
-                                                                                                    "text": "Constructor",
-                                                                                                    "valueText": "Constructor"
-                                                                                                }
+                                                                                                "kind": "IdentifierNameToken",
+                                                                                                "width": 11,
+                                                                                                "text": "Constructor",
+                                                                                                "valueText": "Constructor"
                                                                                             },
                                                                                             "_argumentList": {
                                                                                                 "kind": "ArgumentList",
@@ -1071,14 +995,10 @@
                                                                                                         },
                                                                                                         "_expressions": [
                                                                                                             {
-                                                                                                                "kind": "IdentifierName",
-                                                                                                                "fullWidth": 3,
-                                                                                                                "_identifier": {
-                                                                                                                    "kind": "IdentifierNameToken",
-                                                                                                                    "width": 3,
-                                                                                                                    "text": "tag",
-                                                                                                                    "valueText": "tag"
-                                                                                                                }
+                                                                                                                "kind": "IdentifierNameToken",
+                                                                                                                "width": 3,
+                                                                                                                "text": "tag",
+                                                                                                                "valueText": "tag"
                                                                                                             }
                                                                                                         ],
                                                                                                         "_closeBracketToken": {
@@ -1178,14 +1098,10 @@
                                                 ]
                                             },
                                             "_expression": {
-                                                "kind": "BooleanLiteralExpression",
-                                                "fullWidth": 4,
-                                                "_literalToken": {
-                                                    "kind": "IdentifierNameToken",
-                                                    "keywordKind": "TrueKeyword",
-                                                    "width": 4,
-                                                    "text": "true"
-                                                }
+                                                "kind": "IdentifierNameToken",
+                                                "keywordKind": "TrueKeyword",
+                                                "width": 4,
+                                                "text": "true"
                                             },
                                             "_semicolonToken": {
                                                 "kind": "SemicolonToken",

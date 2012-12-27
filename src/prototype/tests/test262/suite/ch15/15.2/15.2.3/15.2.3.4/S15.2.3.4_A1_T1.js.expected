@@ -8,51 +8,47 @@
                 "kind": "ExpressionStatement",
                 "fullWidth": 508,
                 "_expression": {
-                    "kind": "StringLiteralExpression",
+                    "kind": "StringLiteral",
+                    "width": 12,
                     "fullWidth": 506,
-                    "_literalToken": {
-                        "kind": "StringLiteral",
-                        "width": 12,
-                        "fullWidth": 506,
-                        "text": "\"use strict\"",
-                        "hasLeadingTrivia": true,
-                        "hasLeadingComment": true,
-                        "hasLeadingNewLine": true,
-                        "leadingTrivia": [
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "// Copyright 2011 Google, Inc.  All rights reserved."
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "// This code is governed by the BSD license found in the LICENSE file."
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "MultiLineCommentTrivia",
-                                "text": "/**\n * Object.getOwnProperties and Object.prototype.hasOwnProperty should\n * agree on what the own properties are.\n *\n * @path ch15/15.2/15.2.3/15.2.3.4/S15.2.3.4_A1_T1.js\n * @description Check that all the own property names reported by\n * Object.getOwnPropertyNames on a strict function are names that\n * hasOwnProperty agrees are own properties.\n * @onlyStrict\n */"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            }
-                        ]
-                    }
+                    "text": "\"use strict\"",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingComment": true,
+                    "hasLeadingNewLine": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "// Copyright 2011 Google, Inc.  All rights reserved."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "// This code is governed by the BSD license found in the LICENSE file."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "MultiLineCommentTrivia",
+                            "text": "/**\n * Object.getOwnProperties and Object.prototype.hasOwnProperty should\n * agree on what the own properties are.\n *\n * @path ch15/15.2/15.2.3/15.2.3.4/S15.2.3.4_A1_T1.js\n * @description Check that all the own property names reported by\n * Object.getOwnPropertyNames on a strict function are names that\n * hasOwnProperty agrees are own properties.\n * @onlyStrict\n */"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        }
+                    ]
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
@@ -213,14 +209,10 @@
                                         "kind": "MemberAccessExpression",
                                         "fullWidth": 26,
                                         "_expression": {
-                                            "kind": "IdentifierName",
-                                            "fullWidth": 6,
-                                            "_identifier": {
-                                                "kind": "IdentifierNameToken",
-                                                "width": 6,
-                                                "text": "Object",
-                                                "valueText": "Object"
-                                            }
+                                            "kind": "IdentifierNameToken",
+                                            "width": 6,
+                                            "text": "Object",
+                                            "valueText": "Object"
                                         },
                                         "_dotToken": {
                                             "kind": "DotToken",
@@ -228,14 +220,10 @@
                                             "text": "."
                                         },
                                         "_identifierName": {
-                                            "kind": "IdentifierName",
-                                            "fullWidth": 19,
-                                            "_identifier": {
-                                                "kind": "IdentifierNameToken",
-                                                "width": 19,
-                                                "text": "getOwnPropertyNames",
-                                                "valueText": "getOwnPropertyNames"
-                                            }
+                                            "kind": "IdentifierNameToken",
+                                            "width": 19,
+                                            "text": "getOwnPropertyNames",
+                                            "valueText": "getOwnPropertyNames"
                                         }
                                     },
                                     "_argumentList": {
@@ -248,14 +236,10 @@
                                         },
                                         "_arguments": [
                                             {
-                                                "kind": "IdentifierName",
-                                                "fullWidth": 3,
-                                                "_identifier": {
-                                                    "kind": "IdentifierNameToken",
-                                                    "width": 3,
-                                                    "text": "foo",
-                                                    "valueText": "foo"
-                                                }
+                                                "kind": "IdentifierNameToken",
+                                                "width": 3,
+                                                "text": "foo",
+                                                "valueText": "foo"
                                             }
                                         ],
                                         "_closeParenToken": {
@@ -358,13 +342,9 @@
                                     ]
                                 },
                                 "_value": {
-                                    "kind": "NumericLiteralExpression",
-                                    "fullWidth": 1,
-                                    "_literalToken": {
-                                        "kind": "NumericLiteral",
-                                        "width": 1,
-                                        "text": "0"
-                                    }
+                                    "kind": "NumericLiteral",
+                                    "width": 1,
+                                    "text": "0"
                                 }
                             }
                         },
@@ -418,14 +398,10 @@
                                     "kind": "MemberAccessExpression",
                                     "fullWidth": 12,
                                     "_expression": {
-                                        "kind": "IdentifierName",
-                                        "fullWidth": 5,
-                                        "_identifier": {
-                                            "kind": "IdentifierNameToken",
-                                            "width": 5,
-                                            "text": "names",
-                                            "valueText": "names"
-                                        }
+                                        "kind": "IdentifierNameToken",
+                                        "width": 5,
+                                        "text": "names",
+                                        "valueText": "names"
                                     },
                                     "_dotToken": {
                                         "kind": "DotToken",
@@ -433,14 +409,10 @@
                                         "text": "."
                                     },
                                     "_identifierName": {
-                                        "kind": "IdentifierName",
-                                        "fullWidth": 6,
-                                        "_identifier": {
-                                            "kind": "IdentifierNameToken",
-                                            "width": 6,
-                                            "text": "length",
-                                            "valueText": "length"
-                                        }
+                                        "kind": "IdentifierNameToken",
+                                        "width": 6,
+                                        "text": "length",
+                                        "valueText": "length"
                                     }
                                 }
                             }
@@ -464,22 +436,18 @@
                     "kind": "LessThanExpression",
                     "fullWidth": 7,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 1,
                         "fullWidth": 2,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 1,
-                            "fullWidth": 2,
-                            "text": "i",
-                            "valueText": "i",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "i",
+                        "valueText": "i",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "LessThanToken",
@@ -495,14 +463,10 @@
                         ]
                     },
                     "_right": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 3,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 3,
-                            "text": "len",
-                            "valueText": "len"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 3,
+                        "text": "len",
+                        "valueText": "len"
                     }
                 },
                 "_secondSemicolonToken": {
@@ -522,14 +486,10 @@
                     "kind": "PostIncrementExpression",
                     "fullWidth": 3,
                     "_operand": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 1,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 1,
-                            "text": "i",
-                            "valueText": "i"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 1,
+                        "text": "i",
+                        "valueText": "i"
                     },
                     "_operatorToken": {
                         "kind": "PlusPlusToken",
@@ -612,14 +572,10 @@
                                         "kind": "MemberAccessExpression",
                                         "fullWidth": 18,
                                         "_expression": {
-                                            "kind": "IdentifierName",
-                                            "fullWidth": 3,
-                                            "_identifier": {
-                                                "kind": "IdentifierNameToken",
-                                                "width": 3,
-                                                "text": "foo",
-                                                "valueText": "foo"
-                                            }
+                                            "kind": "IdentifierNameToken",
+                                            "width": 3,
+                                            "text": "foo",
+                                            "valueText": "foo"
                                         },
                                         "_dotToken": {
                                             "kind": "DotToken",
@@ -627,14 +583,10 @@
                                             "text": "."
                                         },
                                         "_identifierName": {
-                                            "kind": "IdentifierName",
-                                            "fullWidth": 14,
-                                            "_identifier": {
-                                                "kind": "IdentifierNameToken",
-                                                "width": 14,
-                                                "text": "hasOwnProperty",
-                                                "valueText": "hasOwnProperty"
-                                            }
+                                            "kind": "IdentifierNameToken",
+                                            "width": 14,
+                                            "text": "hasOwnProperty",
+                                            "valueText": "hasOwnProperty"
                                         }
                                     },
                                     "_argumentList": {
@@ -650,14 +602,10 @@
                                                 "kind": "ElementAccessExpression",
                                                 "fullWidth": 8,
                                                 "_expression": {
-                                                    "kind": "IdentifierName",
-                                                    "fullWidth": 5,
-                                                    "_identifier": {
-                                                        "kind": "IdentifierNameToken",
-                                                        "width": 5,
-                                                        "text": "names",
-                                                        "valueText": "names"
-                                                    }
+                                                    "kind": "IdentifierNameToken",
+                                                    "width": 5,
+                                                    "text": "names",
+                                                    "valueText": "names"
                                                 },
                                                 "_openBracketToken": {
                                                     "kind": "OpenBracketToken",
@@ -665,14 +613,10 @@
                                                     "text": "["
                                                 },
                                                 "_argumentExpression": {
-                                                    "kind": "IdentifierName",
-                                                    "fullWidth": 1,
-                                                    "_identifier": {
-                                                        "kind": "IdentifierNameToken",
-                                                        "width": 1,
-                                                        "text": "i",
-                                                        "valueText": "i"
-                                                    }
+                                                    "kind": "IdentifierNameToken",
+                                                    "width": 1,
+                                                    "text": "i",
+                                                    "valueText": "i"
                                                 },
                                                 "_closeBracketToken": {
                                                     "kind": "CloseBracketToken",
@@ -727,22 +671,18 @@
                                             "kind": "InvocationExpression",
                                             "fullWidth": 47,
                                             "_expression": {
-                                                "kind": "IdentifierName",
+                                                "kind": "IdentifierNameToken",
+                                                "width": 6,
                                                 "fullWidth": 10,
-                                                "_identifier": {
-                                                    "kind": "IdentifierNameToken",
-                                                    "width": 6,
-                                                    "fullWidth": 10,
-                                                    "text": "$ERROR",
-                                                    "valueText": "$ERROR",
-                                                    "hasLeadingTrivia": true,
-                                                    "leadingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": "    "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "$ERROR",
+                                                "valueText": "$ERROR",
+                                                "hasLeadingTrivia": true,
+                                                "leadingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": "    "
+                                                    }
+                                                ]
                                             },
                                             "_argumentList": {
                                                 "kind": "ArgumentList",
@@ -757,21 +697,17 @@
                                                         "kind": "AddExpression",
                                                         "fullWidth": 35,
                                                         "_left": {
-                                                            "kind": "StringLiteralExpression",
+                                                            "kind": "StringLiteral",
+                                                            "width": 24,
                                                             "fullWidth": 25,
-                                                            "_literalToken": {
-                                                                "kind": "StringLiteral",
-                                                                "width": 24,
-                                                                "fullWidth": 25,
-                                                                "text": "'Phantom own property: '",
-                                                                "hasTrailingTrivia": true,
-                                                                "trailingTrivia": [
-                                                                    {
-                                                                        "kind": "WhitespaceTrivia",
-                                                                        "text": " "
-                                                                    }
-                                                                ]
-                                                            }
+                                                            "text": "'Phantom own property: '",
+                                                            "hasTrailingTrivia": true,
+                                                            "trailingTrivia": [
+                                                                {
+                                                                    "kind": "WhitespaceTrivia",
+                                                                    "text": " "
+                                                                }
+                                                            ]
                                                         },
                                                         "_operatorToken": {
                                                             "kind": "PlusToken",
@@ -790,14 +726,10 @@
                                                             "kind": "ElementAccessExpression",
                                                             "fullWidth": 8,
                                                             "_expression": {
-                                                                "kind": "IdentifierName",
-                                                                "fullWidth": 5,
-                                                                "_identifier": {
-                                                                    "kind": "IdentifierNameToken",
-                                                                    "width": 5,
-                                                                    "text": "names",
-                                                                    "valueText": "names"
-                                                                }
+                                                                "kind": "IdentifierNameToken",
+                                                                "width": 5,
+                                                                "text": "names",
+                                                                "valueText": "names"
                                                             },
                                                             "_openBracketToken": {
                                                                 "kind": "OpenBracketToken",
@@ -805,14 +737,10 @@
                                                                 "text": "["
                                                             },
                                                             "_argumentExpression": {
-                                                                "kind": "IdentifierName",
-                                                                "fullWidth": 1,
-                                                                "_identifier": {
-                                                                    "kind": "IdentifierNameToken",
-                                                                    "width": 1,
-                                                                    "text": "i",
-                                                                    "valueText": "i"
-                                                                }
+                                                                "kind": "IdentifierNameToken",
+                                                                "width": 1,
+                                                                "text": "i",
+                                                                "valueText": "i"
                                                             },
                                                             "_closeBracketToken": {
                                                                 "kind": "CloseBracketToken",

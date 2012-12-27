@@ -111,13 +111,9 @@
                                     ]
                                 },
                                 "_value": {
-                                    "kind": "NumericLiteralExpression",
-                                    "fullWidth": 1,
-                                    "_literalToken": {
-                                        "kind": "NumericLiteral",
-                                        "width": 1,
-                                        "text": "0"
-                                    }
+                                    "kind": "NumericLiteral",
+                                    "width": 1,
+                                    "text": "0"
                                 }
                             }
                         }
@@ -143,23 +139,19 @@
                 "fullWidth": 2,
                 "hasZeroWidthToken": true,
                 "_expression": {
-                    "kind": "IdentifierName",
+                    "kind": "IdentifierNameToken",
+                    "width": 1,
                     "fullWidth": 2,
-                    "_identifier": {
-                        "kind": "IdentifierNameToken",
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": "x",
-                        "valueText": "x",
-                        "hasTrailingTrivia": true,
-                        "hasTrailingNewLine": true,
-                        "trailingTrivia": [
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            }
-                        ]
-                    }
+                    "text": "x",
+                    "valueText": "x",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLine": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        }
+                    ]
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
@@ -181,14 +173,9 @@
                         "text": "++"
                     },
                     "_operand": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 0,
-                        "hasZeroWidthToken": true,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 0,
-                            "text": ""
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 0,
+                        "text": ""
                     }
                 },
                 "_semicolonToken": {
@@ -213,14 +200,10 @@
                     "kind": "InvocationExpression",
                     "fullWidth": 80,
                     "_expression": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 6,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 6,
-                            "text": "$ERROR",
-                            "valueText": "$ERROR"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 6,
+                        "text": "$ERROR",
+                        "valueText": "$ERROR"
                     },
                     "_argumentList": {
                         "kind": "ArgumentList",
@@ -232,13 +215,9 @@
                         },
                         "_arguments": [
                             {
-                                "kind": "StringLiteralExpression",
-                                "fullWidth": 72,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 72,
-                                    "text": "'#1: Check Postfix Increment Operator for automatic semicolon insertion'"
-                                }
+                                "kind": "StringLiteral",
+                                "width": 72,
+                                "text": "'#1: Check Postfix Increment Operator for automatic semicolon insertion'"
                             }
                         ],
                         "_closeParenToken": {

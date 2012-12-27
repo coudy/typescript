@@ -123,14 +123,10 @@
                     ]
                 },
                 "_expression": {
-                    "kind": "ThisExpression",
-                    "fullWidth": 4,
-                    "_thisKeyword": {
-                        "kind": "IdentifierNameToken",
-                        "keywordKind": "ThisKeyword",
-                        "width": 4,
-                        "text": "this"
-                    }
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "ThisKeyword",
+                    "width": 4,
+                    "text": "this"
                 },
                 "_closeParenToken": {
                     "kind": "CloseParenToken",
@@ -204,22 +200,18 @@
                                 "kind": "EqualsExpression",
                                 "fullWidth": 15,
                                 "_left": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 1,
                                     "fullWidth": 2,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": "x",
-                                        "valueText": "x",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
-                                    }
+                                    "text": "x",
+                                    "valueText": "x",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
                                 },
                                 "_operatorToken": {
                                     "kind": "EqualsEqualsEqualsToken",
@@ -235,21 +227,17 @@
                                     ]
                                 },
                                 "_right": {
-                                    "kind": "StringLiteralExpression",
+                                    "kind": "StringLiteral",
+                                    "width": 8,
                                     "fullWidth": 9,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 8,
-                                        "fullWidth": 9,
-                                        "text": "'Object'",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
-                                    }
+                                    "text": "'Object'",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
                                 }
                             },
                             "_closeParenToken": {
@@ -290,22 +278,18 @@
                                             "kind": "InvocationExpression",
                                             "fullWidth": 60,
                                             "_expression": {
-                                                "kind": "IdentifierName",
+                                                "kind": "IdentifierNameToken",
+                                                "width": 6,
                                                 "fullWidth": 10,
-                                                "_identifier": {
-                                                    "kind": "IdentifierNameToken",
-                                                    "width": 6,
-                                                    "fullWidth": 10,
-                                                    "text": "$ERROR",
-                                                    "valueText": "$ERROR",
-                                                    "hasLeadingTrivia": true,
-                                                    "leadingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": "    "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "$ERROR",
+                                                "valueText": "$ERROR",
+                                                "hasLeadingTrivia": true,
+                                                "leadingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": "    "
+                                                    }
+                                                ]
                                             },
                                             "_argumentList": {
                                                 "kind": "ArgumentList",
@@ -317,13 +301,9 @@
                                                 },
                                                 "_arguments": [
                                                     {
-                                                        "kind": "StringLiteralExpression",
-                                                        "fullWidth": 48,
-                                                        "_literalToken": {
-                                                            "kind": "StringLiteral",
-                                                            "width": 48,
-                                                            "text": "\"#1: 'property 'Object' have attribute DontEnum\""
-                                                        }
+                                                        "kind": "StringLiteral",
+                                                        "width": 48,
+                                                        "text": "\"#1: 'property 'Object' have attribute DontEnum\""
                                                     }
                                                 ],
                                                 "_closeParenToken": {
@@ -421,22 +401,18 @@
                                         "kind": "EqualsExpression",
                                         "fullWidth": 16,
                                         "_left": {
-                                            "kind": "IdentifierName",
+                                            "kind": "IdentifierNameToken",
+                                            "width": 1,
                                             "fullWidth": 2,
-                                            "_identifier": {
-                                                "kind": "IdentifierNameToken",
-                                                "width": 1,
-                                                "fullWidth": 2,
-                                                "text": "x",
-                                                "valueText": "x",
-                                                "hasTrailingTrivia": true,
-                                                "trailingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": " "
-                                                    }
-                                                ]
-                                            }
+                                            "text": "x",
+                                            "valueText": "x",
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
+                                                }
+                                            ]
                                         },
                                         "_operatorToken": {
                                             "kind": "EqualsEqualsEqualsToken",
@@ -452,13 +428,9 @@
                                             ]
                                         },
                                         "_right": {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 10,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 10,
-                                                "text": "'Function'"
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 10,
+                                            "text": "'Function'"
                                         }
                                     },
                                     "_closeParenToken": {
@@ -499,22 +471,18 @@
                                                     "kind": "InvocationExpression",
                                                     "fullWidth": 52,
                                                     "_expression": {
-                                                        "kind": "IdentifierName",
+                                                        "kind": "IdentifierNameToken",
+                                                        "width": 6,
                                                         "fullWidth": 10,
-                                                        "_identifier": {
-                                                            "kind": "IdentifierNameToken",
-                                                            "width": 6,
-                                                            "fullWidth": 10,
-                                                            "text": "$ERROR",
-                                                            "valueText": "$ERROR",
-                                                            "hasLeadingTrivia": true,
-                                                            "leadingTrivia": [
-                                                                {
-                                                                    "kind": "WhitespaceTrivia",
-                                                                    "text": "    "
-                                                                }
-                                                            ]
-                                                        }
+                                                        "text": "$ERROR",
+                                                        "valueText": "$ERROR",
+                                                        "hasLeadingTrivia": true,
+                                                        "leadingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "text": "    "
+                                                            }
+                                                        ]
                                                     },
                                                     "_argumentList": {
                                                         "kind": "ArgumentList",
@@ -526,13 +494,9 @@
                                                         },
                                                         "_arguments": [
                                                             {
-                                                                "kind": "StringLiteralExpression",
-                                                                "fullWidth": 40,
-                                                                "_literalToken": {
-                                                                    "kind": "StringLiteral",
-                                                                    "width": 40,
-                                                                    "text": "\"#1: 'Function' have attribute DontEnum\""
-                                                                }
+                                                                "kind": "StringLiteral",
+                                                                "width": 40,
+                                                                "text": "\"#1: 'Function' have attribute DontEnum\""
                                                             }
                                                         ],
                                                         "_closeParenToken": {
@@ -630,22 +594,18 @@
                                                 "kind": "EqualsExpression",
                                                 "fullWidth": 15,
                                                 "_left": {
-                                                    "kind": "IdentifierName",
+                                                    "kind": "IdentifierNameToken",
+                                                    "width": 1,
                                                     "fullWidth": 2,
-                                                    "_identifier": {
-                                                        "kind": "IdentifierNameToken",
-                                                        "width": 1,
-                                                        "fullWidth": 2,
-                                                        "text": "x",
-                                                        "valueText": "x",
-                                                        "hasTrailingTrivia": true,
-                                                        "trailingTrivia": [
-                                                            {
-                                                                "kind": "WhitespaceTrivia",
-                                                                "text": " "
-                                                            }
-                                                        ]
-                                                    }
+                                                    "text": "x",
+                                                    "valueText": "x",
+                                                    "hasTrailingTrivia": true,
+                                                    "trailingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "text": " "
+                                                        }
+                                                    ]
                                                 },
                                                 "_operatorToken": {
                                                     "kind": "EqualsEqualsEqualsToken",
@@ -661,21 +621,17 @@
                                                     ]
                                                 },
                                                 "_right": {
-                                                    "kind": "StringLiteralExpression",
+                                                    "kind": "StringLiteral",
+                                                    "width": 8,
                                                     "fullWidth": 9,
-                                                    "_literalToken": {
-                                                        "kind": "StringLiteral",
-                                                        "width": 8,
-                                                        "fullWidth": 9,
-                                                        "text": "'String'",
-                                                        "hasTrailingTrivia": true,
-                                                        "trailingTrivia": [
-                                                            {
-                                                                "kind": "WhitespaceTrivia",
-                                                                "text": " "
-                                                            }
-                                                        ]
-                                                    }
+                                                    "text": "'String'",
+                                                    "hasTrailingTrivia": true,
+                                                    "trailingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "text": " "
+                                                        }
+                                                    ]
                                                 }
                                             },
                                             "_closeParenToken": {
@@ -716,22 +672,18 @@
                                                             "kind": "InvocationExpression",
                                                             "fullWidth": 50,
                                                             "_expression": {
-                                                                "kind": "IdentifierName",
+                                                                "kind": "IdentifierNameToken",
+                                                                "width": 6,
                                                                 "fullWidth": 10,
-                                                                "_identifier": {
-                                                                    "kind": "IdentifierNameToken",
-                                                                    "width": 6,
-                                                                    "fullWidth": 10,
-                                                                    "text": "$ERROR",
-                                                                    "valueText": "$ERROR",
-                                                                    "hasLeadingTrivia": true,
-                                                                    "leadingTrivia": [
-                                                                        {
-                                                                            "kind": "WhitespaceTrivia",
-                                                                            "text": "    "
-                                                                        }
-                                                                    ]
-                                                                }
+                                                                "text": "$ERROR",
+                                                                "valueText": "$ERROR",
+                                                                "hasLeadingTrivia": true,
+                                                                "leadingTrivia": [
+                                                                    {
+                                                                        "kind": "WhitespaceTrivia",
+                                                                        "text": "    "
+                                                                    }
+                                                                ]
                                                             },
                                                             "_argumentList": {
                                                                 "kind": "ArgumentList",
@@ -743,13 +695,9 @@
                                                                 },
                                                                 "_arguments": [
                                                                     {
-                                                                        "kind": "StringLiteralExpression",
-                                                                        "fullWidth": 38,
-                                                                        "_literalToken": {
-                                                                            "kind": "StringLiteral",
-                                                                            "width": 38,
-                                                                            "text": "\"#1: 'String' have attribute DontEnum\""
-                                                                        }
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 38,
+                                                                        "text": "\"#1: 'String' have attribute DontEnum\""
                                                                     }
                                                                 ],
                                                                 "_closeParenToken": {
@@ -847,22 +795,18 @@
                                                         "kind": "EqualsExpression",
                                                         "fullWidth": 15,
                                                         "_left": {
-                                                            "kind": "IdentifierName",
+                                                            "kind": "IdentifierNameToken",
+                                                            "width": 1,
                                                             "fullWidth": 2,
-                                                            "_identifier": {
-                                                                "kind": "IdentifierNameToken",
-                                                                "width": 1,
-                                                                "fullWidth": 2,
-                                                                "text": "x",
-                                                                "valueText": "x",
-                                                                "hasTrailingTrivia": true,
-                                                                "trailingTrivia": [
-                                                                    {
-                                                                        "kind": "WhitespaceTrivia",
-                                                                        "text": " "
-                                                                    }
-                                                                ]
-                                                            }
+                                                            "text": "x",
+                                                            "valueText": "x",
+                                                            "hasTrailingTrivia": true,
+                                                            "trailingTrivia": [
+                                                                {
+                                                                    "kind": "WhitespaceTrivia",
+                                                                    "text": " "
+                                                                }
+                                                            ]
                                                         },
                                                         "_operatorToken": {
                                                             "kind": "EqualsEqualsEqualsToken",
@@ -878,21 +822,17 @@
                                                             ]
                                                         },
                                                         "_right": {
-                                                            "kind": "StringLiteralExpression",
+                                                            "kind": "StringLiteral",
+                                                            "width": 8,
                                                             "fullWidth": 9,
-                                                            "_literalToken": {
-                                                                "kind": "StringLiteral",
-                                                                "width": 8,
-                                                                "fullWidth": 9,
-                                                                "text": "'Number'",
-                                                                "hasTrailingTrivia": true,
-                                                                "trailingTrivia": [
-                                                                    {
-                                                                        "kind": "WhitespaceTrivia",
-                                                                        "text": " "
-                                                                    }
-                                                                ]
-                                                            }
+                                                            "text": "'Number'",
+                                                            "hasTrailingTrivia": true,
+                                                            "trailingTrivia": [
+                                                                {
+                                                                    "kind": "WhitespaceTrivia",
+                                                                    "text": " "
+                                                                }
+                                                            ]
                                                         }
                                                     },
                                                     "_closeParenToken": {
@@ -933,22 +873,18 @@
                                                                     "kind": "InvocationExpression",
                                                                     "fullWidth": 50,
                                                                     "_expression": {
-                                                                        "kind": "IdentifierName",
+                                                                        "kind": "IdentifierNameToken",
+                                                                        "width": 6,
                                                                         "fullWidth": 10,
-                                                                        "_identifier": {
-                                                                            "kind": "IdentifierNameToken",
-                                                                            "width": 6,
-                                                                            "fullWidth": 10,
-                                                                            "text": "$ERROR",
-                                                                            "valueText": "$ERROR",
-                                                                            "hasLeadingTrivia": true,
-                                                                            "leadingTrivia": [
-                                                                                {
-                                                                                    "kind": "WhitespaceTrivia",
-                                                                                    "text": "    "
-                                                                                }
-                                                                            ]
-                                                                        }
+                                                                        "text": "$ERROR",
+                                                                        "valueText": "$ERROR",
+                                                                        "hasLeadingTrivia": true,
+                                                                        "leadingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": "    "
+                                                                            }
+                                                                        ]
                                                                     },
                                                                     "_argumentList": {
                                                                         "kind": "ArgumentList",
@@ -960,13 +896,9 @@
                                                                         },
                                                                         "_arguments": [
                                                                             {
-                                                                                "kind": "StringLiteralExpression",
-                                                                                "fullWidth": 38,
-                                                                                "_literalToken": {
-                                                                                    "kind": "StringLiteral",
-                                                                                    "width": 38,
-                                                                                    "text": "\"#1: 'Number' have attribute DontEnum\""
-                                                                                }
+                                                                                "kind": "StringLiteral",
+                                                                                "width": 38,
+                                                                                "text": "\"#1: 'Number' have attribute DontEnum\""
                                                                             }
                                                                         ],
                                                                         "_closeParenToken": {
@@ -1064,22 +996,18 @@
                                                                 "kind": "EqualsExpression",
                                                                 "fullWidth": 14,
                                                                 "_left": {
-                                                                    "kind": "IdentifierName",
+                                                                    "kind": "IdentifierNameToken",
+                                                                    "width": 1,
                                                                     "fullWidth": 2,
-                                                                    "_identifier": {
-                                                                        "kind": "IdentifierNameToken",
-                                                                        "width": 1,
-                                                                        "fullWidth": 2,
-                                                                        "text": "x",
-                                                                        "valueText": "x",
-                                                                        "hasTrailingTrivia": true,
-                                                                        "trailingTrivia": [
-                                                                            {
-                                                                                "kind": "WhitespaceTrivia",
-                                                                                "text": " "
-                                                                            }
-                                                                        ]
-                                                                    }
+                                                                    "text": "x",
+                                                                    "valueText": "x",
+                                                                    "hasTrailingTrivia": true,
+                                                                    "trailingTrivia": [
+                                                                        {
+                                                                            "kind": "WhitespaceTrivia",
+                                                                            "text": " "
+                                                                        }
+                                                                    ]
                                                                 },
                                                                 "_operatorToken": {
                                                                     "kind": "EqualsEqualsEqualsToken",
@@ -1095,21 +1023,17 @@
                                                                     ]
                                                                 },
                                                                 "_right": {
-                                                                    "kind": "StringLiteralExpression",
+                                                                    "kind": "StringLiteral",
+                                                                    "width": 7,
                                                                     "fullWidth": 8,
-                                                                    "_literalToken": {
-                                                                        "kind": "StringLiteral",
-                                                                        "width": 7,
-                                                                        "fullWidth": 8,
-                                                                        "text": "'Array'",
-                                                                        "hasTrailingTrivia": true,
-                                                                        "trailingTrivia": [
-                                                                            {
-                                                                                "kind": "WhitespaceTrivia",
-                                                                                "text": " "
-                                                                            }
-                                                                        ]
-                                                                    }
+                                                                    "text": "'Array'",
+                                                                    "hasTrailingTrivia": true,
+                                                                    "trailingTrivia": [
+                                                                        {
+                                                                            "kind": "WhitespaceTrivia",
+                                                                            "text": " "
+                                                                        }
+                                                                    ]
                                                                 }
                                                             },
                                                             "_closeParenToken": {
@@ -1150,22 +1074,18 @@
                                                                             "kind": "InvocationExpression",
                                                                             "fullWidth": 49,
                                                                             "_expression": {
-                                                                                "kind": "IdentifierName",
+                                                                                "kind": "IdentifierNameToken",
+                                                                                "width": 6,
                                                                                 "fullWidth": 10,
-                                                                                "_identifier": {
-                                                                                    "kind": "IdentifierNameToken",
-                                                                                    "width": 6,
-                                                                                    "fullWidth": 10,
-                                                                                    "text": "$ERROR",
-                                                                                    "valueText": "$ERROR",
-                                                                                    "hasLeadingTrivia": true,
-                                                                                    "leadingTrivia": [
-                                                                                        {
-                                                                                            "kind": "WhitespaceTrivia",
-                                                                                            "text": "    "
-                                                                                        }
-                                                                                    ]
-                                                                                }
+                                                                                "text": "$ERROR",
+                                                                                "valueText": "$ERROR",
+                                                                                "hasLeadingTrivia": true,
+                                                                                "leadingTrivia": [
+                                                                                    {
+                                                                                        "kind": "WhitespaceTrivia",
+                                                                                        "text": "    "
+                                                                                    }
+                                                                                ]
                                                                             },
                                                                             "_argumentList": {
                                                                                 "kind": "ArgumentList",
@@ -1177,13 +1097,9 @@
                                                                                 },
                                                                                 "_arguments": [
                                                                                     {
-                                                                                        "kind": "StringLiteralExpression",
-                                                                                        "fullWidth": 37,
-                                                                                        "_literalToken": {
-                                                                                            "kind": "StringLiteral",
-                                                                                            "width": 37,
-                                                                                            "text": "\"#1: 'Array' have attribute DontEnum\""
-                                                                                        }
+                                                                                        "kind": "StringLiteral",
+                                                                                        "width": 37,
+                                                                                        "text": "\"#1: 'Array' have attribute DontEnum\""
                                                                                     }
                                                                                 ],
                                                                                 "_closeParenToken": {
@@ -1281,22 +1197,18 @@
                                                                         "kind": "EqualsExpression",
                                                                         "fullWidth": 16,
                                                                         "_left": {
-                                                                            "kind": "IdentifierName",
+                                                                            "kind": "IdentifierNameToken",
+                                                                            "width": 1,
                                                                             "fullWidth": 2,
-                                                                            "_identifier": {
-                                                                                "kind": "IdentifierNameToken",
-                                                                                "width": 1,
-                                                                                "fullWidth": 2,
-                                                                                "text": "x",
-                                                                                "valueText": "x",
-                                                                                "hasTrailingTrivia": true,
-                                                                                "trailingTrivia": [
-                                                                                    {
-                                                                                        "kind": "WhitespaceTrivia",
-                                                                                        "text": " "
-                                                                                    }
-                                                                                ]
-                                                                            }
+                                                                            "text": "x",
+                                                                            "valueText": "x",
+                                                                            "hasTrailingTrivia": true,
+                                                                            "trailingTrivia": [
+                                                                                {
+                                                                                    "kind": "WhitespaceTrivia",
+                                                                                    "text": " "
+                                                                                }
+                                                                            ]
                                                                         },
                                                                         "_operatorToken": {
                                                                             "kind": "EqualsEqualsEqualsToken",
@@ -1312,21 +1224,17 @@
                                                                             ]
                                                                         },
                                                                         "_right": {
-                                                                            "kind": "StringLiteralExpression",
+                                                                            "kind": "StringLiteral",
+                                                                            "width": 9,
                                                                             "fullWidth": 10,
-                                                                            "_literalToken": {
-                                                                                "kind": "StringLiteral",
-                                                                                "width": 9,
-                                                                                "fullWidth": 10,
-                                                                                "text": "'Boolean'",
-                                                                                "hasTrailingTrivia": true,
-                                                                                "trailingTrivia": [
-                                                                                    {
-                                                                                        "kind": "WhitespaceTrivia",
-                                                                                        "text": " "
-                                                                                    }
-                                                                                ]
-                                                                            }
+                                                                            "text": "'Boolean'",
+                                                                            "hasTrailingTrivia": true,
+                                                                            "trailingTrivia": [
+                                                                                {
+                                                                                    "kind": "WhitespaceTrivia",
+                                                                                    "text": " "
+                                                                                }
+                                                                            ]
                                                                         }
                                                                     },
                                                                     "_closeParenToken": {
@@ -1367,22 +1275,18 @@
                                                                                     "kind": "InvocationExpression",
                                                                                     "fullWidth": 51,
                                                                                     "_expression": {
-                                                                                        "kind": "IdentifierName",
+                                                                                        "kind": "IdentifierNameToken",
+                                                                                        "width": 6,
                                                                                         "fullWidth": 10,
-                                                                                        "_identifier": {
-                                                                                            "kind": "IdentifierNameToken",
-                                                                                            "width": 6,
-                                                                                            "fullWidth": 10,
-                                                                                            "text": "$ERROR",
-                                                                                            "valueText": "$ERROR",
-                                                                                            "hasLeadingTrivia": true,
-                                                                                            "leadingTrivia": [
-                                                                                                {
-                                                                                                    "kind": "WhitespaceTrivia",
-                                                                                                    "text": "    "
-                                                                                                }
-                                                                                            ]
-                                                                                        }
+                                                                                        "text": "$ERROR",
+                                                                                        "valueText": "$ERROR",
+                                                                                        "hasLeadingTrivia": true,
+                                                                                        "leadingTrivia": [
+                                                                                            {
+                                                                                                "kind": "WhitespaceTrivia",
+                                                                                                "text": "    "
+                                                                                            }
+                                                                                        ]
                                                                                     },
                                                                                     "_argumentList": {
                                                                                         "kind": "ArgumentList",
@@ -1394,13 +1298,9 @@
                                                                                         },
                                                                                         "_arguments": [
                                                                                             {
-                                                                                                "kind": "StringLiteralExpression",
-                                                                                                "fullWidth": 39,
-                                                                                                "_literalToken": {
-                                                                                                    "kind": "StringLiteral",
-                                                                                                    "width": 39,
-                                                                                                    "text": "\"#1: 'Boolean' have attribute DontEnum\""
-                                                                                                }
+                                                                                                "kind": "StringLiteral",
+                                                                                                "width": 39,
+                                                                                                "text": "\"#1: 'Boolean' have attribute DontEnum\""
                                                                                             }
                                                                                         ],
                                                                                         "_closeParenToken": {
@@ -1498,22 +1398,18 @@
                                                                                 "kind": "EqualsExpression",
                                                                                 "fullWidth": 13,
                                                                                 "_left": {
-                                                                                    "kind": "IdentifierName",
+                                                                                    "kind": "IdentifierNameToken",
+                                                                                    "width": 1,
                                                                                     "fullWidth": 2,
-                                                                                    "_identifier": {
-                                                                                        "kind": "IdentifierNameToken",
-                                                                                        "width": 1,
-                                                                                        "fullWidth": 2,
-                                                                                        "text": "x",
-                                                                                        "valueText": "x",
-                                                                                        "hasTrailingTrivia": true,
-                                                                                        "trailingTrivia": [
-                                                                                            {
-                                                                                                "kind": "WhitespaceTrivia",
-                                                                                                "text": " "
-                                                                                            }
-                                                                                        ]
-                                                                                    }
+                                                                                    "text": "x",
+                                                                                    "valueText": "x",
+                                                                                    "hasTrailingTrivia": true,
+                                                                                    "trailingTrivia": [
+                                                                                        {
+                                                                                            "kind": "WhitespaceTrivia",
+                                                                                            "text": " "
+                                                                                        }
+                                                                                    ]
                                                                                 },
                                                                                 "_operatorToken": {
                                                                                     "kind": "EqualsEqualsEqualsToken",
@@ -1529,21 +1425,17 @@
                                                                                     ]
                                                                                 },
                                                                                 "_right": {
-                                                                                    "kind": "StringLiteralExpression",
+                                                                                    "kind": "StringLiteral",
+                                                                                    "width": 6,
                                                                                     "fullWidth": 7,
-                                                                                    "_literalToken": {
-                                                                                        "kind": "StringLiteral",
-                                                                                        "width": 6,
-                                                                                        "fullWidth": 7,
-                                                                                        "text": "'Date'",
-                                                                                        "hasTrailingTrivia": true,
-                                                                                        "trailingTrivia": [
-                                                                                            {
-                                                                                                "kind": "WhitespaceTrivia",
-                                                                                                "text": " "
-                                                                                            }
-                                                                                        ]
-                                                                                    }
+                                                                                    "text": "'Date'",
+                                                                                    "hasTrailingTrivia": true,
+                                                                                    "trailingTrivia": [
+                                                                                        {
+                                                                                            "kind": "WhitespaceTrivia",
+                                                                                            "text": " "
+                                                                                        }
+                                                                                    ]
                                                                                 }
                                                                             },
                                                                             "_closeParenToken": {
@@ -1584,22 +1476,18 @@
                                                                                             "kind": "InvocationExpression",
                                                                                             "fullWidth": 48,
                                                                                             "_expression": {
-                                                                                                "kind": "IdentifierName",
+                                                                                                "kind": "IdentifierNameToken",
+                                                                                                "width": 6,
                                                                                                 "fullWidth": 10,
-                                                                                                "_identifier": {
-                                                                                                    "kind": "IdentifierNameToken",
-                                                                                                    "width": 6,
-                                                                                                    "fullWidth": 10,
-                                                                                                    "text": "$ERROR",
-                                                                                                    "valueText": "$ERROR",
-                                                                                                    "hasLeadingTrivia": true,
-                                                                                                    "leadingTrivia": [
-                                                                                                        {
-                                                                                                            "kind": "WhitespaceTrivia",
-                                                                                                            "text": "    "
-                                                                                                        }
-                                                                                                    ]
-                                                                                                }
+                                                                                                "text": "$ERROR",
+                                                                                                "valueText": "$ERROR",
+                                                                                                "hasLeadingTrivia": true,
+                                                                                                "leadingTrivia": [
+                                                                                                    {
+                                                                                                        "kind": "WhitespaceTrivia",
+                                                                                                        "text": "    "
+                                                                                                    }
+                                                                                                ]
                                                                                             },
                                                                                             "_argumentList": {
                                                                                                 "kind": "ArgumentList",
@@ -1611,13 +1499,9 @@
                                                                                                 },
                                                                                                 "_arguments": [
                                                                                                     {
-                                                                                                        "kind": "StringLiteralExpression",
-                                                                                                        "fullWidth": 36,
-                                                                                                        "_literalToken": {
-                                                                                                            "kind": "StringLiteral",
-                                                                                                            "width": 36,
-                                                                                                            "text": "\"#1: 'Date' have attribute DontEnum\""
-                                                                                                        }
+                                                                                                        "kind": "StringLiteral",
+                                                                                                        "width": 36,
+                                                                                                        "text": "\"#1: 'Date' have attribute DontEnum\""
                                                                                                     }
                                                                                                 ],
                                                                                                 "_closeParenToken": {
@@ -1715,22 +1599,18 @@
                                                                                         "kind": "EqualsExpression",
                                                                                         "fullWidth": 15,
                                                                                         "_left": {
-                                                                                            "kind": "IdentifierName",
+                                                                                            "kind": "IdentifierNameToken",
+                                                                                            "width": 1,
                                                                                             "fullWidth": 2,
-                                                                                            "_identifier": {
-                                                                                                "kind": "IdentifierNameToken",
-                                                                                                "width": 1,
-                                                                                                "fullWidth": 2,
-                                                                                                "text": "x",
-                                                                                                "valueText": "x",
-                                                                                                "hasTrailingTrivia": true,
-                                                                                                "trailingTrivia": [
-                                                                                                    {
-                                                                                                        "kind": "WhitespaceTrivia",
-                                                                                                        "text": " "
-                                                                                                    }
-                                                                                                ]
-                                                                                            }
+                                                                                            "text": "x",
+                                                                                            "valueText": "x",
+                                                                                            "hasTrailingTrivia": true,
+                                                                                            "trailingTrivia": [
+                                                                                                {
+                                                                                                    "kind": "WhitespaceTrivia",
+                                                                                                    "text": " "
+                                                                                                }
+                                                                                            ]
                                                                                         },
                                                                                         "_operatorToken": {
                                                                                             "kind": "EqualsEqualsEqualsToken",
@@ -1746,21 +1626,17 @@
                                                                                             ]
                                                                                         },
                                                                                         "_right": {
-                                                                                            "kind": "StringLiteralExpression",
+                                                                                            "kind": "StringLiteral",
+                                                                                            "width": 8,
                                                                                             "fullWidth": 9,
-                                                                                            "_literalToken": {
-                                                                                                "kind": "StringLiteral",
-                                                                                                "width": 8,
-                                                                                                "fullWidth": 9,
-                                                                                                "text": "'RegExp'",
-                                                                                                "hasTrailingTrivia": true,
-                                                                                                "trailingTrivia": [
-                                                                                                    {
-                                                                                                        "kind": "WhitespaceTrivia",
-                                                                                                        "text": " "
-                                                                                                    }
-                                                                                                ]
-                                                                                            }
+                                                                                            "text": "'RegExp'",
+                                                                                            "hasTrailingTrivia": true,
+                                                                                            "trailingTrivia": [
+                                                                                                {
+                                                                                                    "kind": "WhitespaceTrivia",
+                                                                                                    "text": " "
+                                                                                                }
+                                                                                            ]
                                                                                         }
                                                                                     },
                                                                                     "_closeParenToken": {
@@ -1801,22 +1677,18 @@
                                                                                                     "kind": "InvocationExpression",
                                                                                                     "fullWidth": 50,
                                                                                                     "_expression": {
-                                                                                                        "kind": "IdentifierName",
+                                                                                                        "kind": "IdentifierNameToken",
+                                                                                                        "width": 6,
                                                                                                         "fullWidth": 10,
-                                                                                                        "_identifier": {
-                                                                                                            "kind": "IdentifierNameToken",
-                                                                                                            "width": 6,
-                                                                                                            "fullWidth": 10,
-                                                                                                            "text": "$ERROR",
-                                                                                                            "valueText": "$ERROR",
-                                                                                                            "hasLeadingTrivia": true,
-                                                                                                            "leadingTrivia": [
-                                                                                                                {
-                                                                                                                    "kind": "WhitespaceTrivia",
-                                                                                                                    "text": "    "
-                                                                                                                }
-                                                                                                            ]
-                                                                                                        }
+                                                                                                        "text": "$ERROR",
+                                                                                                        "valueText": "$ERROR",
+                                                                                                        "hasLeadingTrivia": true,
+                                                                                                        "leadingTrivia": [
+                                                                                                            {
+                                                                                                                "kind": "WhitespaceTrivia",
+                                                                                                                "text": "    "
+                                                                                                            }
+                                                                                                        ]
                                                                                                     },
                                                                                                     "_argumentList": {
                                                                                                         "kind": "ArgumentList",
@@ -1828,13 +1700,9 @@
                                                                                                         },
                                                                                                         "_arguments": [
                                                                                                             {
-                                                                                                                "kind": "StringLiteralExpression",
-                                                                                                                "fullWidth": 38,
-                                                                                                                "_literalToken": {
-                                                                                                                    "kind": "StringLiteral",
-                                                                                                                    "width": 38,
-                                                                                                                    "text": "\"#1: 'RegExp' have attribute DontEnum\""
-                                                                                                                }
+                                                                                                                "kind": "StringLiteral",
+                                                                                                                "width": 38,
+                                                                                                                "text": "\"#1: 'RegExp' have attribute DontEnum\""
                                                                                                             }
                                                                                                         ],
                                                                                                         "_closeParenToken": {
@@ -1932,22 +1800,18 @@
                                                                                                 "kind": "EqualsExpression",
                                                                                                 "fullWidth": 14,
                                                                                                 "_left": {
-                                                                                                    "kind": "IdentifierName",
+                                                                                                    "kind": "IdentifierNameToken",
+                                                                                                    "width": 1,
                                                                                                     "fullWidth": 2,
-                                                                                                    "_identifier": {
-                                                                                                        "kind": "IdentifierNameToken",
-                                                                                                        "width": 1,
-                                                                                                        "fullWidth": 2,
-                                                                                                        "text": "x",
-                                                                                                        "valueText": "x",
-                                                                                                        "hasTrailingTrivia": true,
-                                                                                                        "trailingTrivia": [
-                                                                                                            {
-                                                                                                                "kind": "WhitespaceTrivia",
-                                                                                                                "text": " "
-                                                                                                            }
-                                                                                                        ]
-                                                                                                    }
+                                                                                                    "text": "x",
+                                                                                                    "valueText": "x",
+                                                                                                    "hasTrailingTrivia": true,
+                                                                                                    "trailingTrivia": [
+                                                                                                        {
+                                                                                                            "kind": "WhitespaceTrivia",
+                                                                                                            "text": " "
+                                                                                                        }
+                                                                                                    ]
                                                                                                 },
                                                                                                 "_operatorToken": {
                                                                                                     "kind": "EqualsEqualsEqualsToken",
@@ -1963,21 +1827,17 @@
                                                                                                     ]
                                                                                                 },
                                                                                                 "_right": {
-                                                                                                    "kind": "StringLiteralExpression",
+                                                                                                    "kind": "StringLiteral",
+                                                                                                    "width": 7,
                                                                                                     "fullWidth": 8,
-                                                                                                    "_literalToken": {
-                                                                                                        "kind": "StringLiteral",
-                                                                                                        "width": 7,
-                                                                                                        "fullWidth": 8,
-                                                                                                        "text": "'Error'",
-                                                                                                        "hasTrailingTrivia": true,
-                                                                                                        "trailingTrivia": [
-                                                                                                            {
-                                                                                                                "kind": "WhitespaceTrivia",
-                                                                                                                "text": " "
-                                                                                                            }
-                                                                                                        ]
-                                                                                                    }
+                                                                                                    "text": "'Error'",
+                                                                                                    "hasTrailingTrivia": true,
+                                                                                                    "trailingTrivia": [
+                                                                                                        {
+                                                                                                            "kind": "WhitespaceTrivia",
+                                                                                                            "text": " "
+                                                                                                        }
+                                                                                                    ]
                                                                                                 }
                                                                                             },
                                                                                             "_closeParenToken": {
@@ -2018,22 +1878,18 @@
                                                                                                             "kind": "InvocationExpression",
                                                                                                             "fullWidth": 49,
                                                                                                             "_expression": {
-                                                                                                                "kind": "IdentifierName",
+                                                                                                                "kind": "IdentifierNameToken",
+                                                                                                                "width": 6,
                                                                                                                 "fullWidth": 10,
-                                                                                                                "_identifier": {
-                                                                                                                    "kind": "IdentifierNameToken",
-                                                                                                                    "width": 6,
-                                                                                                                    "fullWidth": 10,
-                                                                                                                    "text": "$ERROR",
-                                                                                                                    "valueText": "$ERROR",
-                                                                                                                    "hasLeadingTrivia": true,
-                                                                                                                    "leadingTrivia": [
-                                                                                                                        {
-                                                                                                                            "kind": "WhitespaceTrivia",
-                                                                                                                            "text": "    "
-                                                                                                                        }
-                                                                                                                    ]
-                                                                                                                }
+                                                                                                                "text": "$ERROR",
+                                                                                                                "valueText": "$ERROR",
+                                                                                                                "hasLeadingTrivia": true,
+                                                                                                                "leadingTrivia": [
+                                                                                                                    {
+                                                                                                                        "kind": "WhitespaceTrivia",
+                                                                                                                        "text": "    "
+                                                                                                                    }
+                                                                                                                ]
                                                                                                             },
                                                                                                             "_argumentList": {
                                                                                                                 "kind": "ArgumentList",
@@ -2045,13 +1901,9 @@
                                                                                                                 },
                                                                                                                 "_arguments": [
                                                                                                                     {
-                                                                                                                        "kind": "StringLiteralExpression",
-                                                                                                                        "fullWidth": 37,
-                                                                                                                        "_literalToken": {
-                                                                                                                            "kind": "StringLiteral",
-                                                                                                                            "width": 37,
-                                                                                                                            "text": "\"#1: 'Error' have attribute DontEnum\""
-                                                                                                                        }
+                                                                                                                        "kind": "StringLiteral",
+                                                                                                                        "width": 37,
+                                                                                                                        "text": "\"#1: 'Error' have attribute DontEnum\""
                                                                                                                     }
                                                                                                                 ],
                                                                                                                 "_closeParenToken": {
@@ -2149,22 +2001,18 @@
                                                                                                         "kind": "EqualsExpression",
                                                                                                         "fullWidth": 18,
                                                                                                         "_left": {
-                                                                                                            "kind": "IdentifierName",
+                                                                                                            "kind": "IdentifierNameToken",
+                                                                                                            "width": 1,
                                                                                                             "fullWidth": 2,
-                                                                                                            "_identifier": {
-                                                                                                                "kind": "IdentifierNameToken",
-                                                                                                                "width": 1,
-                                                                                                                "fullWidth": 2,
-                                                                                                                "text": "x",
-                                                                                                                "valueText": "x",
-                                                                                                                "hasTrailingTrivia": true,
-                                                                                                                "trailingTrivia": [
-                                                                                                                    {
-                                                                                                                        "kind": "WhitespaceTrivia",
-                                                                                                                        "text": " "
-                                                                                                                    }
-                                                                                                                ]
-                                                                                                            }
+                                                                                                            "text": "x",
+                                                                                                            "valueText": "x",
+                                                                                                            "hasTrailingTrivia": true,
+                                                                                                            "trailingTrivia": [
+                                                                                                                {
+                                                                                                                    "kind": "WhitespaceTrivia",
+                                                                                                                    "text": " "
+                                                                                                                }
+                                                                                                            ]
                                                                                                         },
                                                                                                         "_operatorToken": {
                                                                                                             "kind": "EqualsEqualsEqualsToken",
@@ -2180,21 +2028,17 @@
                                                                                                             ]
                                                                                                         },
                                                                                                         "_right": {
-                                                                                                            "kind": "StringLiteralExpression",
+                                                                                                            "kind": "StringLiteral",
+                                                                                                            "width": 11,
                                                                                                             "fullWidth": 12,
-                                                                                                            "_literalToken": {
-                                                                                                                "kind": "StringLiteral",
-                                                                                                                "width": 11,
-                                                                                                                "fullWidth": 12,
-                                                                                                                "text": "'EvalError'",
-                                                                                                                "hasTrailingTrivia": true,
-                                                                                                                "trailingTrivia": [
-                                                                                                                    {
-                                                                                                                        "kind": "WhitespaceTrivia",
-                                                                                                                        "text": " "
-                                                                                                                    }
-                                                                                                                ]
-                                                                                                            }
+                                                                                                            "text": "'EvalError'",
+                                                                                                            "hasTrailingTrivia": true,
+                                                                                                            "trailingTrivia": [
+                                                                                                                {
+                                                                                                                    "kind": "WhitespaceTrivia",
+                                                                                                                    "text": " "
+                                                                                                                }
+                                                                                                            ]
                                                                                                         }
                                                                                                     },
                                                                                                     "_closeParenToken": {
@@ -2235,22 +2079,18 @@
                                                                                                                     "kind": "InvocationExpression",
                                                                                                                     "fullWidth": 53,
                                                                                                                     "_expression": {
-                                                                                                                        "kind": "IdentifierName",
+                                                                                                                        "kind": "IdentifierNameToken",
+                                                                                                                        "width": 6,
                                                                                                                         "fullWidth": 10,
-                                                                                                                        "_identifier": {
-                                                                                                                            "kind": "IdentifierNameToken",
-                                                                                                                            "width": 6,
-                                                                                                                            "fullWidth": 10,
-                                                                                                                            "text": "$ERROR",
-                                                                                                                            "valueText": "$ERROR",
-                                                                                                                            "hasLeadingTrivia": true,
-                                                                                                                            "leadingTrivia": [
-                                                                                                                                {
-                                                                                                                                    "kind": "WhitespaceTrivia",
-                                                                                                                                    "text": "    "
-                                                                                                                                }
-                                                                                                                            ]
-                                                                                                                        }
+                                                                                                                        "text": "$ERROR",
+                                                                                                                        "valueText": "$ERROR",
+                                                                                                                        "hasLeadingTrivia": true,
+                                                                                                                        "leadingTrivia": [
+                                                                                                                            {
+                                                                                                                                "kind": "WhitespaceTrivia",
+                                                                                                                                "text": "    "
+                                                                                                                            }
+                                                                                                                        ]
                                                                                                                     },
                                                                                                                     "_argumentList": {
                                                                                                                         "kind": "ArgumentList",
@@ -2262,13 +2102,9 @@
                                                                                                                         },
                                                                                                                         "_arguments": [
                                                                                                                             {
-                                                                                                                                "kind": "StringLiteralExpression",
-                                                                                                                                "fullWidth": 41,
-                                                                                                                                "_literalToken": {
-                                                                                                                                    "kind": "StringLiteral",
-                                                                                                                                    "width": 41,
-                                                                                                                                    "text": "\"#1: 'EvalError' have attribute DontEnum\""
-                                                                                                                                }
+                                                                                                                                "kind": "StringLiteral",
+                                                                                                                                "width": 41,
+                                                                                                                                "text": "\"#1: 'EvalError' have attribute DontEnum\""
                                                                                                                             }
                                                                                                                         ],
                                                                                                                         "_closeParenToken": {
@@ -2366,22 +2202,18 @@
                                                                                                                 "kind": "EqualsExpression",
                                                                                                                 "fullWidth": 19,
                                                                                                                 "_left": {
-                                                                                                                    "kind": "IdentifierName",
+                                                                                                                    "kind": "IdentifierNameToken",
+                                                                                                                    "width": 1,
                                                                                                                     "fullWidth": 2,
-                                                                                                                    "_identifier": {
-                                                                                                                        "kind": "IdentifierNameToken",
-                                                                                                                        "width": 1,
-                                                                                                                        "fullWidth": 2,
-                                                                                                                        "text": "x",
-                                                                                                                        "valueText": "x",
-                                                                                                                        "hasTrailingTrivia": true,
-                                                                                                                        "trailingTrivia": [
-                                                                                                                            {
-                                                                                                                                "kind": "WhitespaceTrivia",
-                                                                                                                                "text": " "
-                                                                                                                            }
-                                                                                                                        ]
-                                                                                                                    }
+                                                                                                                    "text": "x",
+                                                                                                                    "valueText": "x",
+                                                                                                                    "hasTrailingTrivia": true,
+                                                                                                                    "trailingTrivia": [
+                                                                                                                        {
+                                                                                                                            "kind": "WhitespaceTrivia",
+                                                                                                                            "text": " "
+                                                                                                                        }
+                                                                                                                    ]
                                                                                                                 },
                                                                                                                 "_operatorToken": {
                                                                                                                     "kind": "EqualsEqualsEqualsToken",
@@ -2397,21 +2229,17 @@
                                                                                                                     ]
                                                                                                                 },
                                                                                                                 "_right": {
-                                                                                                                    "kind": "StringLiteralExpression",
+                                                                                                                    "kind": "StringLiteral",
+                                                                                                                    "width": 12,
                                                                                                                     "fullWidth": 13,
-                                                                                                                    "_literalToken": {
-                                                                                                                        "kind": "StringLiteral",
-                                                                                                                        "width": 12,
-                                                                                                                        "fullWidth": 13,
-                                                                                                                        "text": "'RangeError'",
-                                                                                                                        "hasTrailingTrivia": true,
-                                                                                                                        "trailingTrivia": [
-                                                                                                                            {
-                                                                                                                                "kind": "WhitespaceTrivia",
-                                                                                                                                "text": " "
-                                                                                                                            }
-                                                                                                                        ]
-                                                                                                                    }
+                                                                                                                    "text": "'RangeError'",
+                                                                                                                    "hasTrailingTrivia": true,
+                                                                                                                    "trailingTrivia": [
+                                                                                                                        {
+                                                                                                                            "kind": "WhitespaceTrivia",
+                                                                                                                            "text": " "
+                                                                                                                        }
+                                                                                                                    ]
                                                                                                                 }
                                                                                                             },
                                                                                                             "_closeParenToken": {
@@ -2452,22 +2280,18 @@
                                                                                                                             "kind": "InvocationExpression",
                                                                                                                             "fullWidth": 54,
                                                                                                                             "_expression": {
-                                                                                                                                "kind": "IdentifierName",
+                                                                                                                                "kind": "IdentifierNameToken",
+                                                                                                                                "width": 6,
                                                                                                                                 "fullWidth": 10,
-                                                                                                                                "_identifier": {
-                                                                                                                                    "kind": "IdentifierNameToken",
-                                                                                                                                    "width": 6,
-                                                                                                                                    "fullWidth": 10,
-                                                                                                                                    "text": "$ERROR",
-                                                                                                                                    "valueText": "$ERROR",
-                                                                                                                                    "hasLeadingTrivia": true,
-                                                                                                                                    "leadingTrivia": [
-                                                                                                                                        {
-                                                                                                                                            "kind": "WhitespaceTrivia",
-                                                                                                                                            "text": "    "
-                                                                                                                                        }
-                                                                                                                                    ]
-                                                                                                                                }
+                                                                                                                                "text": "$ERROR",
+                                                                                                                                "valueText": "$ERROR",
+                                                                                                                                "hasLeadingTrivia": true,
+                                                                                                                                "leadingTrivia": [
+                                                                                                                                    {
+                                                                                                                                        "kind": "WhitespaceTrivia",
+                                                                                                                                        "text": "    "
+                                                                                                                                    }
+                                                                                                                                ]
                                                                                                                             },
                                                                                                                             "_argumentList": {
                                                                                                                                 "kind": "ArgumentList",
@@ -2479,13 +2303,9 @@
                                                                                                                                 },
                                                                                                                                 "_arguments": [
                                                                                                                                     {
-                                                                                                                                        "kind": "StringLiteralExpression",
-                                                                                                                                        "fullWidth": 42,
-                                                                                                                                        "_literalToken": {
-                                                                                                                                            "kind": "StringLiteral",
-                                                                                                                                            "width": 42,
-                                                                                                                                            "text": "\"#1: 'RangeError' have attribute DontEnum\""
-                                                                                                                                        }
+                                                                                                                                        "kind": "StringLiteral",
+                                                                                                                                        "width": 42,
+                                                                                                                                        "text": "\"#1: 'RangeError' have attribute DontEnum\""
                                                                                                                                     }
                                                                                                                                 ],
                                                                                                                                 "_closeParenToken": {
@@ -2583,22 +2403,18 @@
                                                                                                                         "kind": "EqualsExpression",
                                                                                                                         "fullWidth": 23,
                                                                                                                         "_left": {
-                                                                                                                            "kind": "IdentifierName",
+                                                                                                                            "kind": "IdentifierNameToken",
+                                                                                                                            "width": 1,
                                                                                                                             "fullWidth": 2,
-                                                                                                                            "_identifier": {
-                                                                                                                                "kind": "IdentifierNameToken",
-                                                                                                                                "width": 1,
-                                                                                                                                "fullWidth": 2,
-                                                                                                                                "text": "x",
-                                                                                                                                "valueText": "x",
-                                                                                                                                "hasTrailingTrivia": true,
-                                                                                                                                "trailingTrivia": [
-                                                                                                                                    {
-                                                                                                                                        "kind": "WhitespaceTrivia",
-                                                                                                                                        "text": " "
-                                                                                                                                    }
-                                                                                                                                ]
-                                                                                                                            }
+                                                                                                                            "text": "x",
+                                                                                                                            "valueText": "x",
+                                                                                                                            "hasTrailingTrivia": true,
+                                                                                                                            "trailingTrivia": [
+                                                                                                                                {
+                                                                                                                                    "kind": "WhitespaceTrivia",
+                                                                                                                                    "text": " "
+                                                                                                                                }
+                                                                                                                            ]
                                                                                                                         },
                                                                                                                         "_operatorToken": {
                                                                                                                             "kind": "EqualsEqualsEqualsToken",
@@ -2614,21 +2430,17 @@
                                                                                                                             ]
                                                                                                                         },
                                                                                                                         "_right": {
-                                                                                                                            "kind": "StringLiteralExpression",
+                                                                                                                            "kind": "StringLiteral",
+                                                                                                                            "width": 16,
                                                                                                                             "fullWidth": 17,
-                                                                                                                            "_literalToken": {
-                                                                                                                                "kind": "StringLiteral",
-                                                                                                                                "width": 16,
-                                                                                                                                "fullWidth": 17,
-                                                                                                                                "text": "'ReferenceError'",
-                                                                                                                                "hasTrailingTrivia": true,
-                                                                                                                                "trailingTrivia": [
-                                                                                                                                    {
-                                                                                                                                        "kind": "WhitespaceTrivia",
-                                                                                                                                        "text": " "
-                                                                                                                                    }
-                                                                                                                                ]
-                                                                                                                            }
+                                                                                                                            "text": "'ReferenceError'",
+                                                                                                                            "hasTrailingTrivia": true,
+                                                                                                                            "trailingTrivia": [
+                                                                                                                                {
+                                                                                                                                    "kind": "WhitespaceTrivia",
+                                                                                                                                    "text": " "
+                                                                                                                                }
+                                                                                                                            ]
                                                                                                                         }
                                                                                                                     },
                                                                                                                     "_closeParenToken": {
@@ -2669,22 +2481,18 @@
                                                                                                                                     "kind": "InvocationExpression",
                                                                                                                                     "fullWidth": 58,
                                                                                                                                     "_expression": {
-                                                                                                                                        "kind": "IdentifierName",
+                                                                                                                                        "kind": "IdentifierNameToken",
+                                                                                                                                        "width": 6,
                                                                                                                                         "fullWidth": 10,
-                                                                                                                                        "_identifier": {
-                                                                                                                                            "kind": "IdentifierNameToken",
-                                                                                                                                            "width": 6,
-                                                                                                                                            "fullWidth": 10,
-                                                                                                                                            "text": "$ERROR",
-                                                                                                                                            "valueText": "$ERROR",
-                                                                                                                                            "hasLeadingTrivia": true,
-                                                                                                                                            "leadingTrivia": [
-                                                                                                                                                {
-                                                                                                                                                    "kind": "WhitespaceTrivia",
-                                                                                                                                                    "text": "    "
-                                                                                                                                                }
-                                                                                                                                            ]
-                                                                                                                                        }
+                                                                                                                                        "text": "$ERROR",
+                                                                                                                                        "valueText": "$ERROR",
+                                                                                                                                        "hasLeadingTrivia": true,
+                                                                                                                                        "leadingTrivia": [
+                                                                                                                                            {
+                                                                                                                                                "kind": "WhitespaceTrivia",
+                                                                                                                                                "text": "    "
+                                                                                                                                            }
+                                                                                                                                        ]
                                                                                                                                     },
                                                                                                                                     "_argumentList": {
                                                                                                                                         "kind": "ArgumentList",
@@ -2696,13 +2504,9 @@
                                                                                                                                         },
                                                                                                                                         "_arguments": [
                                                                                                                                             {
-                                                                                                                                                "kind": "StringLiteralExpression",
-                                                                                                                                                "fullWidth": 46,
-                                                                                                                                                "_literalToken": {
-                                                                                                                                                    "kind": "StringLiteral",
-                                                                                                                                                    "width": 46,
-                                                                                                                                                    "text": "\"#1: 'ReferenceError' have attribute DontEnum\""
-                                                                                                                                                }
+                                                                                                                                                "kind": "StringLiteral",
+                                                                                                                                                "width": 46,
+                                                                                                                                                "text": "\"#1: 'ReferenceError' have attribute DontEnum\""
                                                                                                                                             }
                                                                                                                                         ],
                                                                                                                                         "_closeParenToken": {
@@ -2800,22 +2604,18 @@
                                                                                                                                 "kind": "EqualsExpression",
                                                                                                                                 "fullWidth": 20,
                                                                                                                                 "_left": {
-                                                                                                                                    "kind": "IdentifierName",
+                                                                                                                                    "kind": "IdentifierNameToken",
+                                                                                                                                    "width": 1,
                                                                                                                                     "fullWidth": 2,
-                                                                                                                                    "_identifier": {
-                                                                                                                                        "kind": "IdentifierNameToken",
-                                                                                                                                        "width": 1,
-                                                                                                                                        "fullWidth": 2,
-                                                                                                                                        "text": "x",
-                                                                                                                                        "valueText": "x",
-                                                                                                                                        "hasTrailingTrivia": true,
-                                                                                                                                        "trailingTrivia": [
-                                                                                                                                            {
-                                                                                                                                                "kind": "WhitespaceTrivia",
-                                                                                                                                                "text": " "
-                                                                                                                                            }
-                                                                                                                                        ]
-                                                                                                                                    }
+                                                                                                                                    "text": "x",
+                                                                                                                                    "valueText": "x",
+                                                                                                                                    "hasTrailingTrivia": true,
+                                                                                                                                    "trailingTrivia": [
+                                                                                                                                        {
+                                                                                                                                            "kind": "WhitespaceTrivia",
+                                                                                                                                            "text": " "
+                                                                                                                                        }
+                                                                                                                                    ]
                                                                                                                                 },
                                                                                                                                 "_operatorToken": {
                                                                                                                                     "kind": "EqualsEqualsEqualsToken",
@@ -2831,21 +2631,17 @@
                                                                                                                                     ]
                                                                                                                                 },
                                                                                                                                 "_right": {
-                                                                                                                                    "kind": "StringLiteralExpression",
+                                                                                                                                    "kind": "StringLiteral",
+                                                                                                                                    "width": 13,
                                                                                                                                     "fullWidth": 14,
-                                                                                                                                    "_literalToken": {
-                                                                                                                                        "kind": "StringLiteral",
-                                                                                                                                        "width": 13,
-                                                                                                                                        "fullWidth": 14,
-                                                                                                                                        "text": "'SyntaxError'",
-                                                                                                                                        "hasTrailingTrivia": true,
-                                                                                                                                        "trailingTrivia": [
-                                                                                                                                            {
-                                                                                                                                                "kind": "WhitespaceTrivia",
-                                                                                                                                                "text": " "
-                                                                                                                                            }
-                                                                                                                                        ]
-                                                                                                                                    }
+                                                                                                                                    "text": "'SyntaxError'",
+                                                                                                                                    "hasTrailingTrivia": true,
+                                                                                                                                    "trailingTrivia": [
+                                                                                                                                        {
+                                                                                                                                            "kind": "WhitespaceTrivia",
+                                                                                                                                            "text": " "
+                                                                                                                                        }
+                                                                                                                                    ]
                                                                                                                                 }
                                                                                                                             },
                                                                                                                             "_closeParenToken": {
@@ -2886,22 +2682,18 @@
                                                                                                                                             "kind": "InvocationExpression",
                                                                                                                                             "fullWidth": 55,
                                                                                                                                             "_expression": {
-                                                                                                                                                "kind": "IdentifierName",
+                                                                                                                                                "kind": "IdentifierNameToken",
+                                                                                                                                                "width": 6,
                                                                                                                                                 "fullWidth": 10,
-                                                                                                                                                "_identifier": {
-                                                                                                                                                    "kind": "IdentifierNameToken",
-                                                                                                                                                    "width": 6,
-                                                                                                                                                    "fullWidth": 10,
-                                                                                                                                                    "text": "$ERROR",
-                                                                                                                                                    "valueText": "$ERROR",
-                                                                                                                                                    "hasLeadingTrivia": true,
-                                                                                                                                                    "leadingTrivia": [
-                                                                                                                                                        {
-                                                                                                                                                            "kind": "WhitespaceTrivia",
-                                                                                                                                                            "text": "    "
-                                                                                                                                                        }
-                                                                                                                                                    ]
-                                                                                                                                                }
+                                                                                                                                                "text": "$ERROR",
+                                                                                                                                                "valueText": "$ERROR",
+                                                                                                                                                "hasLeadingTrivia": true,
+                                                                                                                                                "leadingTrivia": [
+                                                                                                                                                    {
+                                                                                                                                                        "kind": "WhitespaceTrivia",
+                                                                                                                                                        "text": "    "
+                                                                                                                                                    }
+                                                                                                                                                ]
                                                                                                                                             },
                                                                                                                                             "_argumentList": {
                                                                                                                                                 "kind": "ArgumentList",
@@ -2913,13 +2705,9 @@
                                                                                                                                                 },
                                                                                                                                                 "_arguments": [
                                                                                                                                                     {
-                                                                                                                                                        "kind": "StringLiteralExpression",
-                                                                                                                                                        "fullWidth": 43,
-                                                                                                                                                        "_literalToken": {
-                                                                                                                                                            "kind": "StringLiteral",
-                                                                                                                                                            "width": 43,
-                                                                                                                                                            "text": "\"#1: 'SyntaxError' have attribute DontEnum\""
-                                                                                                                                                        }
+                                                                                                                                                        "kind": "StringLiteral",
+                                                                                                                                                        "width": 43,
+                                                                                                                                                        "text": "\"#1: 'SyntaxError' have attribute DontEnum\""
                                                                                                                                                     }
                                                                                                                                                 ],
                                                                                                                                                 "_closeParenToken": {
@@ -3017,22 +2805,18 @@
                                                                                                                                         "kind": "EqualsExpression",
                                                                                                                                         "fullWidth": 18,
                                                                                                                                         "_left": {
-                                                                                                                                            "kind": "IdentifierName",
+                                                                                                                                            "kind": "IdentifierNameToken",
+                                                                                                                                            "width": 1,
                                                                                                                                             "fullWidth": 2,
-                                                                                                                                            "_identifier": {
-                                                                                                                                                "kind": "IdentifierNameToken",
-                                                                                                                                                "width": 1,
-                                                                                                                                                "fullWidth": 2,
-                                                                                                                                                "text": "x",
-                                                                                                                                                "valueText": "x",
-                                                                                                                                                "hasTrailingTrivia": true,
-                                                                                                                                                "trailingTrivia": [
-                                                                                                                                                    {
-                                                                                                                                                        "kind": "WhitespaceTrivia",
-                                                                                                                                                        "text": " "
-                                                                                                                                                    }
-                                                                                                                                                ]
-                                                                                                                                            }
+                                                                                                                                            "text": "x",
+                                                                                                                                            "valueText": "x",
+                                                                                                                                            "hasTrailingTrivia": true,
+                                                                                                                                            "trailingTrivia": [
+                                                                                                                                                {
+                                                                                                                                                    "kind": "WhitespaceTrivia",
+                                                                                                                                                    "text": " "
+                                                                                                                                                }
+                                                                                                                                            ]
                                                                                                                                         },
                                                                                                                                         "_operatorToken": {
                                                                                                                                             "kind": "EqualsEqualsEqualsToken",
@@ -3048,21 +2832,17 @@
                                                                                                                                             ]
                                                                                                                                         },
                                                                                                                                         "_right": {
-                                                                                                                                            "kind": "StringLiteralExpression",
+                                                                                                                                            "kind": "StringLiteral",
+                                                                                                                                            "width": 11,
                                                                                                                                             "fullWidth": 12,
-                                                                                                                                            "_literalToken": {
-                                                                                                                                                "kind": "StringLiteral",
-                                                                                                                                                "width": 11,
-                                                                                                                                                "fullWidth": 12,
-                                                                                                                                                "text": "'TypeError'",
-                                                                                                                                                "hasTrailingTrivia": true,
-                                                                                                                                                "trailingTrivia": [
-                                                                                                                                                    {
-                                                                                                                                                        "kind": "WhitespaceTrivia",
-                                                                                                                                                        "text": " "
-                                                                                                                                                    }
-                                                                                                                                                ]
-                                                                                                                                            }
+                                                                                                                                            "text": "'TypeError'",
+                                                                                                                                            "hasTrailingTrivia": true,
+                                                                                                                                            "trailingTrivia": [
+                                                                                                                                                {
+                                                                                                                                                    "kind": "WhitespaceTrivia",
+                                                                                                                                                    "text": " "
+                                                                                                                                                }
+                                                                                                                                            ]
                                                                                                                                         }
                                                                                                                                     },
                                                                                                                                     "_closeParenToken": {
@@ -3103,22 +2883,18 @@
                                                                                                                                                     "kind": "InvocationExpression",
                                                                                                                                                     "fullWidth": 53,
                                                                                                                                                     "_expression": {
-                                                                                                                                                        "kind": "IdentifierName",
+                                                                                                                                                        "kind": "IdentifierNameToken",
+                                                                                                                                                        "width": 6,
                                                                                                                                                         "fullWidth": 10,
-                                                                                                                                                        "_identifier": {
-                                                                                                                                                            "kind": "IdentifierNameToken",
-                                                                                                                                                            "width": 6,
-                                                                                                                                                            "fullWidth": 10,
-                                                                                                                                                            "text": "$ERROR",
-                                                                                                                                                            "valueText": "$ERROR",
-                                                                                                                                                            "hasLeadingTrivia": true,
-                                                                                                                                                            "leadingTrivia": [
-                                                                                                                                                                {
-                                                                                                                                                                    "kind": "WhitespaceTrivia",
-                                                                                                                                                                    "text": "    "
-                                                                                                                                                                }
-                                                                                                                                                            ]
-                                                                                                                                                        }
+                                                                                                                                                        "text": "$ERROR",
+                                                                                                                                                        "valueText": "$ERROR",
+                                                                                                                                                        "hasLeadingTrivia": true,
+                                                                                                                                                        "leadingTrivia": [
+                                                                                                                                                            {
+                                                                                                                                                                "kind": "WhitespaceTrivia",
+                                                                                                                                                                "text": "    "
+                                                                                                                                                            }
+                                                                                                                                                        ]
                                                                                                                                                     },
                                                                                                                                                     "_argumentList": {
                                                                                                                                                         "kind": "ArgumentList",
@@ -3130,13 +2906,9 @@
                                                                                                                                                         },
                                                                                                                                                         "_arguments": [
                                                                                                                                                             {
-                                                                                                                                                                "kind": "StringLiteralExpression",
-                                                                                                                                                                "fullWidth": 41,
-                                                                                                                                                                "_literalToken": {
-                                                                                                                                                                    "kind": "StringLiteral",
-                                                                                                                                                                    "width": 41,
-                                                                                                                                                                    "text": "\"#1: 'TypeError' have attribute DontEnum\""
-                                                                                                                                                                }
+                                                                                                                                                                "kind": "StringLiteral",
+                                                                                                                                                                "width": 41,
+                                                                                                                                                                "text": "\"#1: 'TypeError' have attribute DontEnum\""
                                                                                                                                                             }
                                                                                                                                                         ],
                                                                                                                                                         "_closeParenToken": {
@@ -3234,22 +3006,18 @@
                                                                                                                                                 "kind": "EqualsExpression",
                                                                                                                                                 "fullWidth": 17,
                                                                                                                                                 "_left": {
-                                                                                                                                                    "kind": "IdentifierName",
+                                                                                                                                                    "kind": "IdentifierNameToken",
+                                                                                                                                                    "width": 1,
                                                                                                                                                     "fullWidth": 2,
-                                                                                                                                                    "_identifier": {
-                                                                                                                                                        "kind": "IdentifierNameToken",
-                                                                                                                                                        "width": 1,
-                                                                                                                                                        "fullWidth": 2,
-                                                                                                                                                        "text": "x",
-                                                                                                                                                        "valueText": "x",
-                                                                                                                                                        "hasTrailingTrivia": true,
-                                                                                                                                                        "trailingTrivia": [
-                                                                                                                                                            {
-                                                                                                                                                                "kind": "WhitespaceTrivia",
-                                                                                                                                                                "text": " "
-                                                                                                                                                            }
-                                                                                                                                                        ]
-                                                                                                                                                    }
+                                                                                                                                                    "text": "x",
+                                                                                                                                                    "valueText": "x",
+                                                                                                                                                    "hasTrailingTrivia": true,
+                                                                                                                                                    "trailingTrivia": [
+                                                                                                                                                        {
+                                                                                                                                                            "kind": "WhitespaceTrivia",
+                                                                                                                                                            "text": " "
+                                                                                                                                                        }
+                                                                                                                                                    ]
                                                                                                                                                 },
                                                                                                                                                 "_operatorToken": {
                                                                                                                                                     "kind": "EqualsEqualsEqualsToken",
@@ -3265,21 +3033,17 @@
                                                                                                                                                     ]
                                                                                                                                                 },
                                                                                                                                                 "_right": {
-                                                                                                                                                    "kind": "StringLiteralExpression",
+                                                                                                                                                    "kind": "StringLiteral",
+                                                                                                                                                    "width": 10,
                                                                                                                                                     "fullWidth": 11,
-                                                                                                                                                    "_literalToken": {
-                                                                                                                                                        "kind": "StringLiteral",
-                                                                                                                                                        "width": 10,
-                                                                                                                                                        "fullWidth": 11,
-                                                                                                                                                        "text": "'URIError'",
-                                                                                                                                                        "hasTrailingTrivia": true,
-                                                                                                                                                        "trailingTrivia": [
-                                                                                                                                                            {
-                                                                                                                                                                "kind": "WhitespaceTrivia",
-                                                                                                                                                                "text": " "
-                                                                                                                                                            }
-                                                                                                                                                        ]
-                                                                                                                                                    }
+                                                                                                                                                    "text": "'URIError'",
+                                                                                                                                                    "hasTrailingTrivia": true,
+                                                                                                                                                    "trailingTrivia": [
+                                                                                                                                                        {
+                                                                                                                                                            "kind": "WhitespaceTrivia",
+                                                                                                                                                            "text": " "
+                                                                                                                                                        }
+                                                                                                                                                    ]
                                                                                                                                                 }
                                                                                                                                             },
                                                                                                                                             "_closeParenToken": {
@@ -3320,22 +3084,18 @@
                                                                                                                                                             "kind": "InvocationExpression",
                                                                                                                                                             "fullWidth": 52,
                                                                                                                                                             "_expression": {
-                                                                                                                                                                "kind": "IdentifierName",
+                                                                                                                                                                "kind": "IdentifierNameToken",
+                                                                                                                                                                "width": 6,
                                                                                                                                                                 "fullWidth": 10,
-                                                                                                                                                                "_identifier": {
-                                                                                                                                                                    "kind": "IdentifierNameToken",
-                                                                                                                                                                    "width": 6,
-                                                                                                                                                                    "fullWidth": 10,
-                                                                                                                                                                    "text": "$ERROR",
-                                                                                                                                                                    "valueText": "$ERROR",
-                                                                                                                                                                    "hasLeadingTrivia": true,
-                                                                                                                                                                    "leadingTrivia": [
-                                                                                                                                                                        {
-                                                                                                                                                                            "kind": "WhitespaceTrivia",
-                                                                                                                                                                            "text": "    "
-                                                                                                                                                                        }
-                                                                                                                                                                    ]
-                                                                                                                                                                }
+                                                                                                                                                                "text": "$ERROR",
+                                                                                                                                                                "valueText": "$ERROR",
+                                                                                                                                                                "hasLeadingTrivia": true,
+                                                                                                                                                                "leadingTrivia": [
+                                                                                                                                                                    {
+                                                                                                                                                                        "kind": "WhitespaceTrivia",
+                                                                                                                                                                        "text": "    "
+                                                                                                                                                                    }
+                                                                                                                                                                ]
                                                                                                                                                             },
                                                                                                                                                             "_argumentList": {
                                                                                                                                                                 "kind": "ArgumentList",
@@ -3347,13 +3107,9 @@
                                                                                                                                                                 },
                                                                                                                                                                 "_arguments": [
                                                                                                                                                                     {
-                                                                                                                                                                        "kind": "StringLiteralExpression",
-                                                                                                                                                                        "fullWidth": 40,
-                                                                                                                                                                        "_literalToken": {
-                                                                                                                                                                            "kind": "StringLiteral",
-                                                                                                                                                                            "width": 40,
-                                                                                                                                                                            "text": "\"#1: 'URIError' have attribute DontEnum\""
-                                                                                                                                                                        }
+                                                                                                                                                                        "kind": "StringLiteral",
+                                                                                                                                                                        "width": 40,
+                                                                                                                                                                        "text": "\"#1: 'URIError' have attribute DontEnum\""
                                                                                                                                                                     }
                                                                                                                                                                 ],
                                                                                                                                                                 "_closeParenToken": {

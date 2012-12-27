@@ -90,9 +90,9 @@ module Emitter {
             var moduleElements: ModuleElementSyntax[] = [];
 
             for (var i = 0, n = list.count(); i < n; i++) {
-                var moduleElement = list.syntaxNodeAt(i);
+                var moduleElement = list.itemAt(i);
 
-                var converted = this.visitNode(moduleElement);
+                var converted = this.visitNode(<SyntaxNode>moduleElement);
                 if (converted !== null) {
                     if (ArrayUtilities.isArray(converted)) {
                         moduleElements.push.apply(moduleElements, converted);
@@ -106,11 +106,11 @@ module Emitter {
             return moduleElements;
         }
 
-        private static splitModuleName(name: NameSyntax): IdentifierNameSyntax[] {
-            var result: IdentifierNameSyntax[] = [];
+        private static splitModuleName(name: INameSyntax): ISyntaxToken[] {
+            var result: ISyntaxToken[] = [];
             while (true) {
-                if (name.kind() === SyntaxKind.IdentifierName) {
-                    result.unshift(<IdentifierNameSyntax>name);
+                if (name.kind() === SyntaxKind.IdentifierNameToken) {
+                    result.unshift(<ISyntaxToken>name);
                     return result;
                 }
                 else if (name.kind() === SyntaxKind.QualifiedName) {
@@ -124,18 +124,18 @@ module Emitter {
             }
         }
 
-        private leftmostName(name: NameSyntax): IdentifierNameSyntax {
+        private leftmostName(name: INameSyntax): ISyntaxToken {
             while (name.kind() === SyntaxKind.QualifiedName) {
                 name = (<QualifiedNameSyntax>name).left();
             }
 
-            return <IdentifierNameSyntax>name;
+            return <ISyntaxToken>name;
         }
 
-        private rightmostName(name: NameSyntax): IdentifierNameSyntax {
+        private rightmostName(name: INameSyntax): ISyntaxToken {
             return name.kind() === SyntaxKind.QualifiedName
                 ? (<QualifiedNameSyntax>name).right()
-                : <IdentifierNameSyntax>name;
+                : <ISyntaxToken>name;
         }
 
         private exportModuleElement(moduleIdentifier: ISyntaxToken,
@@ -148,10 +148,10 @@ module Emitter {
                 new BinaryExpressionSyntax(
                     SyntaxKind.AssignmentExpression,
                     MemberAccessExpressionSyntax.create1(
-                        new IdentifierNameSyntax(this.withNoTrivia(moduleIdentifier)),
-                        new IdentifierNameSyntax(elementIdentifier.withTrailingTrivia(Syntax.spaceTriviaList))),
+                        this.withNoTrivia(moduleIdentifier),
+                        elementIdentifier.withTrailingTrivia(Syntax.spaceTriviaList)),
                     Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
-                    new IdentifierNameSyntax(elementIdentifier)))
+                    elementIdentifier))
                         .withLeadingTrivia(this.indentationTriviaForStartOfNode(moduleElement))
                         .withTrailingTrivia(this.newLine);
         }
@@ -163,8 +163,8 @@ module Emitter {
                 var variableStatement = <VariableStatementSyntax>moduleElement;
                 if (variableStatement.exportKeyword() !== null) {
                     var declarators = variableStatement.variableDeclaration().variableDeclarators();
-                    for (var i = 0, n = declarators.syntaxNodeCount(); i < n; i++) {
-                        var declarator = <VariableDeclaratorSyntax>declarators.syntaxNodeAt(i);
+                    for (var i = 0, n = declarators.itemCount(); i < n; i++) {
+                        var declarator = <VariableDeclaratorSyntax>declarators.itemAt(i);
                         elements.push(this.exportModuleElement(parentModule, moduleElement, declarator.identifier()));
                     }
                 }
@@ -186,7 +186,7 @@ module Emitter {
                 var childModule = <ModuleDeclarationSyntax>moduleElement;
                 if (childModule.exportKeyword() !== null) {
                     elements.push(this.exportModuleElement(
-                        parentModule, moduleElement, this.leftmostName(childModule.moduleName()).identifier()));
+                        parentModule, moduleElement, this.leftmostName(childModule.moduleName())));
                 }
             }
         }
@@ -196,10 +196,10 @@ module Emitter {
             var moduleElements = this.convertModuleElements(node.moduleElements());
 
             // Handle the case where the child is an export.
-            var parentModule = this.rightmostName(node.moduleName()).identifier()
+            var parentModule = this.rightmostName(node.moduleName());
             for (var i = 0, n = node.moduleElements().count(); i < n; i++) {
                 this.handleExportedModuleElement(
-                    parentModule, <ModuleElementSyntax>node.moduleElements().syntaxNodeAt(i), moduleElements);
+                    parentModule, <ModuleElementSyntax>node.moduleElements().itemAt(i), moduleElements);
             }
 
             // Break up the dotted name into pieces.
@@ -214,7 +214,7 @@ module Emitter {
                     // We're popping out and generate each outer module.  As we do so, we have to
                     // indent whatever we've created so far appropriately.
                     moduleElements.push(this.exportModuleElement(
-                        names[nameIndex - 1].identifier(), node, names[nameIndex].identifier()));
+                        names[nameIndex - 1], node, names[nameIndex]));
 
                     moduleElements = <ModuleElementSyntax[]>ArrayUtilities.select(moduleElements,
                         e => this.changeIndentation(e, /*indentFirstToken:*/ true, this.options.indentSpaces));
@@ -224,7 +224,7 @@ module Emitter {
             return moduleElements;
         }
 
-        private initializedVariable(name: IdentifierNameSyntax): BinaryExpressionSyntax {
+        private initializedVariable(name: ISyntaxToken): BinaryExpressionSyntax {
             return new BinaryExpressionSyntax(SyntaxKind.LogicalOrExpression,
                 name,
                 Syntax.token(SyntaxKind.BarBarToken),
@@ -236,11 +236,11 @@ module Emitter {
         }
 
         private convertModuleDeclaration(moduleDeclaration: ModuleDeclarationSyntax,
-                                         moduleName: IdentifierNameSyntax,
+                                         moduleName: ISyntaxToken,
                                          moduleElements: ModuleElementSyntax[],
                                          outermost: bool): ModuleElementSyntax[] {
             moduleName = moduleName.withLeadingTrivia(Syntax.emptyTriviaList).withTrailingTrivia(Syntax.emptyTriviaList);
-            var moduleIdentifier = moduleName.identifier();
+            var moduleIdentifier = moduleName;
 
             var moduleIndentation = this.indentationTriviaForStartOfNode(moduleDeclaration);
             var leadingTrivia = outermost ? moduleDeclaration.leadingTrivia() : moduleIndentation;
@@ -308,7 +308,7 @@ module Emitter {
         }
 
         private convertArrowFunctionBody(arrowFunction: ArrowFunctionExpressionSyntax): BlockSyntax {
-            var rewrittenBody = this.visitNode(arrowFunction.body());
+            var rewrittenBody = this.visitNodeOrToken(arrowFunction.body());
 
             if (rewrittenBody.kind() === SyntaxKind.Block) {
                 return <BlockSyntax>rewrittenBody;
@@ -414,7 +414,7 @@ module Emitter {
         }
 
         private static parameterListDefaultParameters(parameterList: ParameterListSyntax): ParameterSyntax[] {
-            return ArrayUtilities.where(parameterList.parameters().toSyntaxNodeArray(), p => p.equalsValueClause() !== null);
+            return ArrayUtilities.where(parameterList.parameters().toItemArray(), p => p.equalsValueClause() !== null);
         }
 
         private generatePropertyAssignmentStatement(parameter: ParameterSyntax): ExpressionStatementSyntax {
@@ -424,14 +424,14 @@ module Emitter {
             return ExpressionStatementSyntax.create1(
                 Syntax.assignmentExpression(
                     MemberAccessExpressionSyntax.create1(
-                        ThisExpressionSyntax.create1(),
-                        new IdentifierNameSyntax(identifier.withTrailingTrivia(Syntax.spaceTriviaList))),
+                        Syntax.token(SyntaxKind.ThisKeyword),
+                        identifier.withTrailingTrivia(Syntax.spaceTriviaList)),
                     Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
-                    new IdentifierNameSyntax(identifier))).withTrailingTrivia(this.newLine);
+                    identifier)).withTrailingTrivia(this.newLine);
         }
 
         private generateDefaultValueAssignmentStatement(parameter: ParameterSyntax): IfStatementSyntax {
-            var identifierName = new IdentifierNameSyntax(this.withNoTrivia(parameter.identifier())).withTrailingTrivia(this.space);
+            var identifierName = this.withNoTrivia(parameter.identifier()).withTrailingTrivia(this.space);
 
             // typeof foo === 'undefined'
             var condition = new BinaryExpressionSyntax(
@@ -509,9 +509,9 @@ module Emitter {
 
             // this.foo = expr;
             var receiver = MemberAccessExpressionSyntax.create1(
-                static ? <ExpressionSyntax>new IdentifierNameSyntax(this.withNoTrivia(classDeclaration.identifier()))
-                       : ThisExpressionSyntax.create1(),
-                new IdentifierNameSyntax(this.withNoTrivia(declarator.identifier()))).withTrailingTrivia(Syntax.spaceTriviaList);
+                static ? <IExpressionSyntax>this.withNoTrivia(classDeclaration.identifier())
+                       : Syntax.token(SyntaxKind.ThisKeyword),
+                this.withNoTrivia(declarator.identifier())).withTrailingTrivia(Syntax.spaceTriviaList);
 
             return ExpressionStatementSyntax.create1(
                 Syntax.assignmentExpression(
@@ -527,7 +527,7 @@ module Emitter {
 
             // TODO: handle alignment here.
             for (var i = 0, n = classDeclaration.classElements().count(); i < n; i++) {
-                var classElement = classDeclaration.classElements().syntaxNodeAt(i);
+                var classElement = classDeclaration.classElements().itemAt(i);
 
                 if (classElement.kind() === SyntaxKind.MemberVariableDeclaration) {
                     var statement = this.generatePropertyAssignment(
@@ -552,7 +552,7 @@ module Emitter {
                                 Syntax.identifierName("_super"), Syntax.identifierName("apply")),
                             ArgumentListSyntax.create1().withArguments(
                                 Syntax.separatedList([
-                                    ThisExpressionSyntax.create1(),
+                                    Syntax.token(SyntaxKind.ThisKeyword),
                                     Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
                                     Syntax.identifierName("arguments")])))
                     ).withLeadingTrivia(this.indentationTrivia(classIndentationColumn + this.options.indentSpaces))
@@ -610,7 +610,7 @@ module Emitter {
             }
 
             var parameterPropertyAssignments = <ExpressionStatementSyntax[]>ArrayUtilities.select(
-                ArrayUtilities.where(constructorDeclaration.parameterList().parameters().toSyntaxNodeArray(), p => p.publicOrPrivateKeyword() !== null),
+                ArrayUtilities.where(constructorDeclaration.parameterList().parameters().toItemArray(), p => p.publicOrPrivateKeyword() !== null),
                 p => this.generatePropertyAssignmentStatement(p));
 
             for (var i = parameterPropertyAssignments.length - 1; i >= 0; i--) {
@@ -648,16 +648,14 @@ module Emitter {
             var classIdentifier = this.withNoTrivia(classDeclaration.identifier());
             var functionIdentifier = this.withNoTrivia(functionDeclaration.functionSignature().identifier());
 
-            var receiver: ExpressionSyntax = new IdentifierNameSyntax(
-                classIdentifier.withLeadingTrivia(functionDeclaration.leadingTrivia()));
+            var receiver: IExpressionSyntax = classIdentifier.withLeadingTrivia(functionDeclaration.leadingTrivia());
 
             receiver = functionDeclaration.staticKeyword() !== null
                 ? receiver
                 : MemberAccessExpressionSyntax.create1(receiver, Syntax.identifierName("prototype"));
 
             receiver = MemberAccessExpressionSyntax.create1(
-                receiver,
-                new IdentifierNameSyntax(functionIdentifier.withTrailingTrivia(Syntax.spaceTriviaList)));
+                receiver, functionIdentifier.withTrailingTrivia(Syntax.spaceTriviaList));
 
             var block: BlockSyntax = functionDeclaration.block().accept(this);
             var blockTrailingTrivia = block.trailingTrivia();
@@ -734,7 +732,7 @@ module Emitter {
 
             var arguments = [
                 <any>MemberAccessExpressionSyntax.create1(
-                    new IdentifierNameSyntax(this.withNoTrivia(classDeclaration.identifier())), Syntax.identifierName("prototype")),
+                    this.withNoTrivia(classDeclaration.identifier()), Syntax.identifierName("prototype")),
                 Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
                 Syntax.stringLiteralExpression('"' + memberAccessor.identifier().text() + '"'),
                 Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space)
@@ -816,7 +814,7 @@ module Emitter {
                     new InvocationExpressionSyntax(
                         Syntax.identifierName("__extends"),
                         ArgumentListSyntax.create1().withArguments(Syntax.separatedList([
-                            <any>new IdentifierNameSyntax(identifier),
+                            <ISyntaxNodeOrToken>identifier,
                             Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
                             Syntax.identifierName("_super")])))).withLeadingTrivia(statementIndentation).withTrailingTrivia(this.newLine));
             }
@@ -837,7 +835,7 @@ module Emitter {
             // return C;
             statements.push(new ReturnStatementSyntax(
                 Syntax.token(SyntaxKind.ReturnKeyword).withTrailingTrivia(this.space),
-                new IdentifierNameSyntax(identifier),
+                identifier,
                 Syntax.token(SyntaxKind.SemicolonToken))
                     .withLeadingTrivia(statementIndentation).withTrailingTrivia(this.newLine));
 
@@ -856,8 +854,8 @@ module Emitter {
                     Syntax.separatedList(callParameters))).withTrailingTrivia(this.space);
 
             var invocationParameters = [];
-            if (node.extendsClause() !== null && node.extendsClause().typeNames().count() > 0) {
-                invocationParameters.push(node.extendsClause().typeNames().syntaxNodeAt(0)
+            if (node.extendsClause() !== null && node.extendsClause().typeNames().itemCount() > 0) {
+                invocationParameters.push(node.extendsClause().typeNames().itemAt(0)
                     .withLeadingTrivia(Syntax.emptyTriviaList)
                     .withTrailingTrivia(Syntax.emptyTriviaList));
             }
@@ -908,7 +906,7 @@ module Emitter {
             return result.withTypeAnnotation(null).withTrailingTrivia(newTrailingTrivia);
         }
 
-        private visitCastExpression(node: CastExpressionSyntax): ExpressionSyntax {
+        private visitCastExpression(node: CastExpressionSyntax): IExpressionSyntax {
             var result: CastExpressionSyntax = super.visitCastExpression(node);
 
             var subExpression = result.expression();
@@ -925,7 +923,7 @@ module Emitter {
         private generateEnumValueExpression(enumDeclaration: EnumDeclarationSyntax,
                                             variableDeclarator: VariableDeclaratorSyntax,
                                             assignDefaultValues: bool,
-                                            index: number): ExpressionSyntax {
+                                            index: number): IExpressionSyntax {
             if (variableDeclarator.equalsValueClause() !== null) {
                 // Use the value if one is provided.
                 return variableDeclarator.equalsValueClause().value().withTrailingTrivia(Syntax.emptyTriviaList);
@@ -939,12 +937,11 @@ module Emitter {
 
             // Add one to the previous value.
             var enumIdentifier = this.withNoTrivia(enumDeclaration.identifier());
-            var previousVariable = <VariableDeclaratorSyntax>enumDeclaration.variableDeclarators().syntaxNodeAt(index - 1);
+            var previousVariable = <VariableDeclaratorSyntax>enumDeclaration.variableDeclarators().itemAt(index - 1);
             var variableIdentifier = this.withNoTrivia(previousVariable.identifier());
 
             var receiver = MemberAccessExpressionSyntax.create1(
-                new IdentifierNameSyntax(enumIdentifier),
-                new IdentifierNameSyntax(variableIdentifier.withTrailingTrivia(Syntax.spaceTriviaList)));
+                enumIdentifier, variableIdentifier.withTrailingTrivia(Syntax.spaceTriviaList));
 
             return new BinaryExpressionSyntax(SyntaxKind.PlusExpression,
                 receiver,
@@ -962,7 +959,7 @@ module Emitter {
             var initIndentationColumn = enumColumn + this.options.indentSpaces;
             var initIndentationTrivia = this.indentationTrivia(initIndentationColumn);
 
-            if (node.variableDeclarators().syntaxNodeCount() > 0) {
+            if (node.variableDeclarators().itemCount() > 0) {
                 // var _ = E;
                 statements.push(VariableStatementSyntax.create1(
                     new VariableDeclarationSyntax(
@@ -971,7 +968,7 @@ module Emitter {
                             Syntax.identifier("_").withTrailingTrivia(this.space), null,
                             new EqualsValueClauseSyntax(
                                 Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
-                                new IdentifierNameSyntax(identifier)))]))).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.newLine));
+                                identifier))]))).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.newLine));
 
                 // _._map = []
                 statements.push(ExpressionStatementSyntax.create1(
@@ -981,8 +978,8 @@ module Emitter {
                         ArrayLiteralExpressionSyntax.create1())).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.newLine));
 
                 var assignDefaultValues = { value: true };
-                for (var i = 0, n = node.variableDeclarators().syntaxNodeCount(); i < n; i++) {
-                    var variableDeclarator = <VariableDeclaratorSyntax>node.variableDeclarators().syntaxNodeAt(i)
+                for (var i = 0, n = node.variableDeclarators().itemCount(); i < n; i++) {
+                    var variableDeclarator = <VariableDeclaratorSyntax>node.variableDeclarators().itemAt(i)
                     var variableIdentifier = this.withNoTrivia(variableDeclarator.identifier());
 
                     assignDefaultValues.value = assignDefaultValues.value && variableDeclarator.equalsValueClause() === null;
@@ -990,7 +987,7 @@ module Emitter {
                     // _.Foo = 1
                     var innerAssign = Syntax.assignmentExpression(
                         MemberAccessExpressionSyntax.create1(
-                            Syntax.identifierName("_"), new IdentifierNameSyntax(variableIdentifier)).withTrailingTrivia(Syntax.spaceTriviaList),
+                            Syntax.identifierName("_"), variableIdentifier).withTrailingTrivia(Syntax.spaceTriviaList),
                         Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
                         this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues.value, i))
 
@@ -1039,7 +1036,7 @@ module Emitter {
             var expressionStatement = ExpressionStatementSyntax.create1(
                 new InvocationExpressionSyntax(
                     ParenthesizedExpressionSyntax.create1(this.generateEnumFunctionExpression(node)),
-                    ArgumentListSyntax.create1().withArgument(this.initializedVariable(new IdentifierNameSyntax(identifier)))))
+                    ArgumentListSyntax.create1().withArgument(this.initializedVariable(identifier))))
                         .withLeadingTrivia(this.indentationTriviaForStartOfNode(node))
                         .withTrailingTrivia(this.newLine);
 
@@ -1051,12 +1048,12 @@ module Emitter {
 
             var expression = MemberAccessExpressionSyntax.create1(Syntax.identifierName("_super"), Syntax.identifierName("call"));
 
-            var arguments = result.argumentList().arguments().toArray();
+            var arguments = result.argumentList().arguments().toItemAndSeparatorArray();
             if (arguments.length > 0) {
                 arguments.unshift(Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space));
             }
 
-            arguments.unshift(ThisExpressionSyntax.create1());
+            arguments.unshift(Syntax.token(SyntaxKind.ThisKeyword));
 
             return result.withExpression(expression)
                          .withArgumentList(result.argumentList().withArguments(Syntax.separatedList(arguments)))
@@ -1066,12 +1063,12 @@ module Emitter {
         private convertSuperMemberAccessInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
             var result: InvocationExpressionSyntax = super.visitInvocationExpression(node);
 
-            var arguments = result.argumentList().arguments().toArray();
+            var arguments = result.argumentList().arguments().toItemAndSeparatorArray();
             if (arguments.length > 0) {
                 arguments.unshift(Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space));
             }
 
-            arguments.unshift(ThisExpressionSyntax.create1());
+            arguments.unshift(Syntax.token(SyntaxKind.ThisKeyword));
 
             var expression = MemberAccessExpressionSyntax.create1(result.expression(), Syntax.identifierName("call"));
             return result.withExpression(expression)

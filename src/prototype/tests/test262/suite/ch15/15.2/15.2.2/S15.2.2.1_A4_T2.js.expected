@@ -95,14 +95,10 @@
                                     ]
                                 },
                                 "_value": {
-                                    "kind": "BooleanLiteralExpression",
-                                    "fullWidth": 5,
-                                    "_literalToken": {
-                                        "kind": "IdentifierNameToken",
-                                        "keywordKind": "FalseKeyword",
-                                        "width": 5,
-                                        "text": "false"
-                                    }
+                                    "kind": "IdentifierNameToken",
+                                    "keywordKind": "FalseKeyword",
+                                    "width": 5,
+                                    "text": "false"
                                 }
                             }
                         }
@@ -183,22 +179,18 @@
                             ]
                         },
                         "_expression": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "BoolKeyword",
+                            "width": 4,
                             "fullWidth": 6,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "BoolKeyword",
-                                "width": 4,
-                                "fullWidth": 6,
-                                "text": "bool",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": "  "
-                                    }
-                                ]
-                            }
+                            "text": "bool",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": "  "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -215,13 +207,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "StringLiteralExpression",
-                        "fullWidth": 9,
-                        "_literalToken": {
-                            "kind": "StringLiteral",
-                            "width": 9,
-                            "text": "'boolean'"
-                        }
+                        "kind": "StringLiteral",
+                        "width": 9,
+                        "text": "'boolean'"
                     }
                 },
                 "_closeParenToken": {
@@ -262,22 +250,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 37,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 5,
                                     "fullWidth": 7,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 5,
-                                        "fullWidth": 7,
-                                        "text": "$FAIL",
-                                        "valueText": "$FAIL",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$FAIL",
+                                    "valueText": "$FAIL",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -289,13 +273,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 28,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 28,
-                                                "text": "'#1: false is NOT a boolean'"
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 28,
+                                            "text": "'#1: false is NOT a boolean'"
                                         }
                                     ],
                                     "_closeParenToken": {
@@ -417,14 +397,10 @@
                                         ]
                                     },
                                     "_expression": {
-                                        "kind": "IdentifierName",
-                                        "fullWidth": 6,
-                                        "_identifier": {
-                                            "kind": "IdentifierNameToken",
-                                            "width": 6,
-                                            "text": "Object",
-                                            "valueText": "Object"
-                                        }
+                                        "kind": "IdentifierNameToken",
+                                        "width": 6,
+                                        "text": "Object",
+                                        "valueText": "Object"
                                     },
                                     "_argumentList": {
                                         "kind": "ArgumentList",
@@ -436,14 +412,10 @@
                                         },
                                         "_arguments": [
                                             {
-                                                "kind": "IdentifierName",
-                                                "fullWidth": 4,
-                                                "_identifier": {
-                                                    "kind": "IdentifierNameToken",
-                                                    "keywordKind": "BoolKeyword",
-                                                    "width": 4,
-                                                    "text": "bool"
-                                                }
+                                                "kind": "IdentifierNameToken",
+                                                "keywordKind": "BoolKeyword",
+                                                "width": 4,
+                                                "text": "bool"
                                             }
                                         ],
                                         "_closeParenToken": {
@@ -518,14 +490,10 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 18,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 5,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 5,
-                                "text": "n_obj",
-                                "valueText": "n_obj"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 5,
+                            "text": "n_obj",
+                            "valueText": "n_obj"
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -533,22 +501,18 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "keywordKind": "ConstructorKeyword",
+                            "width": 11,
                             "fullWidth": 12,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "keywordKind": "ConstructorKeyword",
-                                "width": 11,
-                                "fullWidth": 12,
-                                "text": "constructor",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                            "text": "constructor",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -565,14 +529,10 @@
                         ]
                     },
                     "_right": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 7,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 7,
-                            "text": "Boolean",
-                            "valueText": "Boolean"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 7,
+                        "text": "Boolean",
+                        "valueText": "Boolean"
                     }
                 },
                 "_closeParenToken": {
@@ -613,22 +573,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 100,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -640,13 +596,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 90,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 90,
-                                                "text": "'#2: When the Object constructor is called with Boolean argument return ToObject(boolean)'"
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 90,
+                                            "text": "'#2: When the Object constructor is called with Boolean argument return ToObject(boolean)'"
                                         }
                                     ],
                                     "_closeParenToken": {
@@ -748,22 +700,18 @@
                             ]
                         },
                         "_expression": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 5,
                             "fullWidth": 6,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 5,
-                                "fullWidth": 6,
-                                "text": "n_obj",
-                                "valueText": "n_obj",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                            "text": "n_obj",
+                            "valueText": "n_obj",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -780,13 +728,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "StringLiteralExpression",
-                        "fullWidth": 8,
-                        "_literalToken": {
-                            "kind": "StringLiteral",
-                            "width": 8,
-                            "text": "'object'"
-                        }
+                        "kind": "StringLiteral",
+                        "width": 8,
+                        "text": "'object'"
                     }
                 },
                 "_closeParenToken": {
@@ -827,22 +771,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 100,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -854,13 +794,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 90,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 90,
-                                                "text": "'#3: When the Object constructor is called with Boolean argument return ToObject(boolean)'"
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 90,
+                                            "text": "'#3: When the Object constructor is called with Boolean argument return ToObject(boolean)'"
                                         }
                                     ],
                                     "_closeParenToken": {
@@ -953,22 +889,18 @@
                     "kind": "NotEqualsWithTypeConversionExpression",
                     "fullWidth": 13,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 5,
                         "fullWidth": 6,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 5,
-                            "fullWidth": 6,
-                            "text": "n_obj",
-                            "valueText": "n_obj",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "n_obj",
+                        "valueText": "n_obj",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "ExclamationEqualsToken",
@@ -984,14 +916,10 @@
                         ]
                     },
                     "_right": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 4,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "keywordKind": "BoolKeyword",
-                            "width": 4,
-                            "text": "bool"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "keywordKind": "BoolKeyword",
+                        "width": 4,
+                        "text": "bool"
                     }
                 },
                 "_closeParenToken": {
@@ -1032,22 +960,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 100,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -1059,13 +983,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 90,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 90,
-                                                "text": "'#4: When the Object constructor is called with Boolean argument return ToObject(boolean)'"
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 90,
+                                            "text": "'#4: When the Object constructor is called with Boolean argument return ToObject(boolean)'"
                                         }
                                     ],
                                     "_closeParenToken": {
@@ -1158,22 +1078,18 @@
                     "kind": "EqualsExpression",
                     "fullWidth": 14,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 5,
                         "fullWidth": 6,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 5,
-                            "fullWidth": 6,
-                            "text": "n_obj",
-                            "valueText": "n_obj",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "n_obj",
+                        "valueText": "n_obj",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "EqualsEqualsEqualsToken",
@@ -1189,14 +1105,10 @@
                         ]
                     },
                     "_right": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 4,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "keywordKind": "BoolKeyword",
-                            "width": 4,
-                            "text": "bool"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "keywordKind": "BoolKeyword",
+                        "width": 4,
+                        "text": "bool"
                     }
                 },
                 "_closeParenToken": {
@@ -1237,22 +1149,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 100,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -1264,13 +1172,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 90,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 90,
-                                                "text": "'#5: When the Object constructor is called with Boolean argument return ToObject(boolean)'"
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 90,
+                                            "text": "'#5: When the Object constructor is called with Boolean argument return ToObject(boolean)'"
                                         }
                                     ],
                                     "_closeParenToken": {

@@ -1,7 +1,37 @@
 ///<reference path='ISyntaxElement.ts' />
 ///<reference path='ISyntaxTriviaList.ts' />
 
-interface ISyntaxToken extends ISyntaxElement {
+interface ISyntaxNodeOrToken extends ISyntaxElement {
+    keywordKind(): SyntaxKind;
+    firstToken(): ISyntaxToken;
+    lastToken(): ISyntaxToken;
+    hasSkippedText(): bool;
+    isTypeScriptSpecific(): bool;
+    hasZeroWidthToken(): bool;
+    hasRegularExpressionToken(): bool;
+
+    leadingTrivia(): ISyntaxTriviaList;
+    trailingTrivia(): ISyntaxTriviaList;
+
+    withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
+    withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
+
+    accept(visitor: ISyntaxVisitor): any;
+}
+
+interface IExpressionSyntax extends ISyntaxNodeOrToken {
+}
+
+interface IUnaryExpressionSyntax extends IExpressionSyntax {
+}
+
+interface ITypeSyntax extends IUnaryExpressionSyntax {
+}
+
+interface INameSyntax extends ITypeSyntax {
+}
+
+interface ISyntaxToken extends ISyntaxElement, INameSyntax {
     // Same as syntaxKind, just exposed through a property for perf.
     tokenKind: SyntaxKind;
 

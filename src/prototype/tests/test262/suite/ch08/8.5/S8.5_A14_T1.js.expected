@@ -77,13 +77,9 @@
                         "kind": "MultiplyExpression",
                         "fullWidth": 9,
                         "_left": {
-                            "kind": "NumericLiteralExpression",
-                            "fullWidth": 6,
-                            "_literalToken": {
-                                "kind": "NumericLiteral",
-                                "width": 6,
-                                "text": "1e+308"
-                            }
+                            "kind": "NumericLiteral",
+                            "width": 6,
+                            "text": "1e+308"
                         },
                         "_operatorToken": {
                             "kind": "AsteriskToken",
@@ -91,21 +87,17 @@
                             "text": "*"
                         },
                         "_right": {
-                            "kind": "NumericLiteralExpression",
+                            "kind": "NumericLiteral",
+                            "width": 1,
                             "fullWidth": 2,
-                            "_literalToken": {
-                                "kind": "NumericLiteral",
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": "2",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                            "text": "2",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -122,14 +114,10 @@
                         ]
                     },
                     "_right": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 8,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 8,
-                            "text": "Infinity",
-                            "valueText": "Infinity"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 8,
+                        "text": "Infinity",
+                        "valueText": "Infinity"
                     }
                 },
                 "_closeParenToken": {
@@ -162,22 +150,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 60,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -192,21 +176,17 @@
                                             "kind": "AddExpression",
                                             "fullWidth": 50,
                                             "_left": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 37,
                                                 "fullWidth": 38,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 37,
-                                                    "fullWidth": 38,
-                                                    "text": "'#1: 1e+308*2 === Infinity. Actual: '",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'#1: 1e+308*2 === Infinity. Actual: '",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
@@ -233,13 +213,9 @@
                                                     "kind": "MultiplyExpression",
                                                     "fullWidth": 8,
                                                     "_left": {
-                                                        "kind": "NumericLiteralExpression",
-                                                        "fullWidth": 6,
-                                                        "_literalToken": {
-                                                            "kind": "NumericLiteral",
-                                                            "width": 6,
-                                                            "text": "1e+308"
-                                                        }
+                                                        "kind": "NumericLiteral",
+                                                        "width": 6,
+                                                        "text": "1e+308"
                                                     },
                                                     "_operatorToken": {
                                                         "kind": "AsteriskToken",
@@ -247,13 +223,9 @@
                                                         "text": "*"
                                                     },
                                                     "_right": {
-                                                        "kind": "NumericLiteralExpression",
-                                                        "fullWidth": 1,
-                                                        "_literalToken": {
-                                                            "kind": "NumericLiteral",
-                                                            "width": 1,
-                                                            "text": "2"
-                                                        }
+                                                        "kind": "NumericLiteral",
+                                                        "width": 1,
+                                                        "text": "2"
                                                     }
                                                 },
                                                 "_closeParenToken": {
@@ -360,13 +332,9 @@
                                 "kind": "MultiplyExpression",
                                 "fullWidth": 18,
                                 "_left": {
-                                    "kind": "NumericLiteralExpression",
-                                    "fullWidth": 1,
-                                    "_literalToken": {
-                                        "kind": "NumericLiteral",
-                                        "width": 1,
-                                        "text": "1"
-                                    }
+                                    "kind": "NumericLiteral",
+                                    "width": 1,
+                                    "text": "1"
                                 },
                                 "_operatorToken": {
                                     "kind": "AsteriskToken",
@@ -388,14 +356,10 @@
                                             "kind": "MemberAccessExpression",
                                             "fullWidth": 8,
                                             "_expression": {
-                                                "kind": "IdentifierName",
-                                                "fullWidth": 4,
-                                                "_identifier": {
-                                                    "kind": "IdentifierNameToken",
-                                                    "width": 4,
-                                                    "text": "Math",
-                                                    "valueText": "Math"
-                                                }
+                                                "kind": "IdentifierNameToken",
+                                                "width": 4,
+                                                "text": "Math",
+                                                "valueText": "Math"
                                             },
                                             "_dotToken": {
                                                 "kind": "DotToken",
@@ -403,14 +367,10 @@
                                                 "text": "."
                                             },
                                             "_identifierName": {
-                                                "kind": "IdentifierName",
-                                                "fullWidth": 3,
-                                                "_identifier": {
-                                                    "kind": "IdentifierNameToken",
-                                                    "width": 3,
-                                                    "text": "pow",
-                                                    "valueText": "pow"
-                                                }
+                                                "kind": "IdentifierNameToken",
+                                                "width": 3,
+                                                "text": "pow",
+                                                "valueText": "pow"
                                             }
                                         },
                                         "_argumentList": {
@@ -423,13 +383,9 @@
                                             },
                                             "_arguments": [
                                                 {
-                                                    "kind": "NumericLiteralExpression",
-                                                    "fullWidth": 1,
-                                                    "_literalToken": {
-                                                        "kind": "NumericLiteral",
-                                                        "width": 1,
-                                                        "text": "2"
-                                                    }
+                                                    "kind": "NumericLiteral",
+                                                    "width": 1,
+                                                    "text": "2"
                                                 },
                                                 {
                                                     "kind": "CommaToken",
@@ -437,13 +393,9 @@
                                                     "text": ","
                                                 },
                                                 {
-                                                    "kind": "NumericLiteralExpression",
-                                                    "fullWidth": 2,
-                                                    "_literalToken": {
-                                                        "kind": "NumericLiteral",
-                                                        "width": 2,
-                                                        "text": "53"
-                                                    }
+                                                    "kind": "NumericLiteral",
+                                                    "width": 2,
+                                                    "text": "53"
                                                 }
                                             ],
                                             "_closeParenToken": {
@@ -480,14 +432,10 @@
                                         "kind": "MemberAccessExpression",
                                         "fullWidth": 8,
                                         "_expression": {
-                                            "kind": "IdentifierName",
-                                            "fullWidth": 4,
-                                            "_identifier": {
-                                                "kind": "IdentifierNameToken",
-                                                "width": 4,
-                                                "text": "Math",
-                                                "valueText": "Math"
-                                            }
+                                            "kind": "IdentifierNameToken",
+                                            "width": 4,
+                                            "text": "Math",
+                                            "valueText": "Math"
                                         },
                                         "_dotToken": {
                                             "kind": "DotToken",
@@ -495,14 +443,10 @@
                                             "text": "."
                                         },
                                         "_identifierName": {
-                                            "kind": "IdentifierName",
-                                            "fullWidth": 3,
-                                            "_identifier": {
-                                                "kind": "IdentifierNameToken",
-                                                "width": 3,
-                                                "text": "pow",
-                                                "valueText": "pow"
-                                            }
+                                            "kind": "IdentifierNameToken",
+                                            "width": 3,
+                                            "text": "pow",
+                                            "valueText": "pow"
                                         }
                                     },
                                     "_argumentList": {
@@ -515,13 +459,9 @@
                                         },
                                         "_arguments": [
                                             {
-                                                "kind": "NumericLiteralExpression",
-                                                "fullWidth": 1,
-                                                "_literalToken": {
-                                                    "kind": "NumericLiteral",
-                                                    "width": 1,
-                                                    "text": "2"
-                                                }
+                                                "kind": "NumericLiteral",
+                                                "width": 1,
+                                                "text": "2"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -529,13 +469,9 @@
                                                 "text": ","
                                             },
                                             {
-                                                "kind": "NumericLiteralExpression",
-                                                "fullWidth": 3,
-                                                "_literalToken": {
-                                                    "kind": "NumericLiteral",
-                                                    "width": 3,
-                                                    "text": "971"
-                                                }
+                                                "kind": "NumericLiteral",
+                                                "width": 3,
+                                                "text": "971"
                                             }
                                         ],
                                         "_closeParenToken": {
@@ -580,14 +516,10 @@
                         ]
                     },
                     "_right": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 8,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 8,
-                            "text": "Infinity",
-                            "valueText": "Infinity"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 8,
+                        "text": "Infinity",
+                        "valueText": "Infinity"
                     }
                 },
                 "_closeParenToken": {
@@ -620,22 +552,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 120,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -650,21 +578,17 @@
                                             "kind": "AddExpression",
                                             "fullWidth": 110,
                                             "_left": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 67,
                                                 "fullWidth": 68,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 67,
-                                                    "fullWidth": 68,
-                                                    "text": "'#2: (1*(Math.pow(2,53))*(Math.pow(2,971))) === Infinity. Actual: '",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'#2: (1*(Math.pow(2,53))*(Math.pow(2,971))) === Infinity. Actual: '",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "_operatorToken": {
                                                 "kind": "PlusToken",
@@ -702,13 +626,9 @@
                                                             "kind": "MultiplyExpression",
                                                             "fullWidth": 18,
                                                             "_left": {
-                                                                "kind": "NumericLiteralExpression",
-                                                                "fullWidth": 1,
-                                                                "_literalToken": {
-                                                                    "kind": "NumericLiteral",
-                                                                    "width": 1,
-                                                                    "text": "1"
-                                                                }
+                                                                "kind": "NumericLiteral",
+                                                                "width": 1,
+                                                                "text": "1"
                                                             },
                                                             "_operatorToken": {
                                                                 "kind": "AsteriskToken",
@@ -730,14 +650,10 @@
                                                                         "kind": "MemberAccessExpression",
                                                                         "fullWidth": 8,
                                                                         "_expression": {
-                                                                            "kind": "IdentifierName",
-                                                                            "fullWidth": 4,
-                                                                            "_identifier": {
-                                                                                "kind": "IdentifierNameToken",
-                                                                                "width": 4,
-                                                                                "text": "Math",
-                                                                                "valueText": "Math"
-                                                                            }
+                                                                            "kind": "IdentifierNameToken",
+                                                                            "width": 4,
+                                                                            "text": "Math",
+                                                                            "valueText": "Math"
                                                                         },
                                                                         "_dotToken": {
                                                                             "kind": "DotToken",
@@ -745,14 +661,10 @@
                                                                             "text": "."
                                                                         },
                                                                         "_identifierName": {
-                                                                            "kind": "IdentifierName",
-                                                                            "fullWidth": 3,
-                                                                            "_identifier": {
-                                                                                "kind": "IdentifierNameToken",
-                                                                                "width": 3,
-                                                                                "text": "pow",
-                                                                                "valueText": "pow"
-                                                                            }
+                                                                            "kind": "IdentifierNameToken",
+                                                                            "width": 3,
+                                                                            "text": "pow",
+                                                                            "valueText": "pow"
                                                                         }
                                                                     },
                                                                     "_argumentList": {
@@ -765,13 +677,9 @@
                                                                         },
                                                                         "_arguments": [
                                                                             {
-                                                                                "kind": "NumericLiteralExpression",
-                                                                                "fullWidth": 1,
-                                                                                "_literalToken": {
-                                                                                    "kind": "NumericLiteral",
-                                                                                    "width": 1,
-                                                                                    "text": "2"
-                                                                                }
+                                                                                "kind": "NumericLiteral",
+                                                                                "width": 1,
+                                                                                "text": "2"
                                                                             },
                                                                             {
                                                                                 "kind": "CommaToken",
@@ -779,13 +687,9 @@
                                                                                 "text": ","
                                                                             },
                                                                             {
-                                                                                "kind": "NumericLiteralExpression",
-                                                                                "fullWidth": 2,
-                                                                                "_literalToken": {
-                                                                                    "kind": "NumericLiteral",
-                                                                                    "width": 2,
-                                                                                    "text": "53"
-                                                                                }
+                                                                                "kind": "NumericLiteral",
+                                                                                "width": 2,
+                                                                                "text": "53"
                                                                             }
                                                                         ],
                                                                         "_closeParenToken": {
@@ -822,14 +726,10 @@
                                                                     "kind": "MemberAccessExpression",
                                                                     "fullWidth": 8,
                                                                     "_expression": {
-                                                                        "kind": "IdentifierName",
-                                                                        "fullWidth": 4,
-                                                                        "_identifier": {
-                                                                            "kind": "IdentifierNameToken",
-                                                                            "width": 4,
-                                                                            "text": "Math",
-                                                                            "valueText": "Math"
-                                                                        }
+                                                                        "kind": "IdentifierNameToken",
+                                                                        "width": 4,
+                                                                        "text": "Math",
+                                                                        "valueText": "Math"
                                                                     },
                                                                     "_dotToken": {
                                                                         "kind": "DotToken",
@@ -837,14 +737,10 @@
                                                                         "text": "."
                                                                     },
                                                                     "_identifierName": {
-                                                                        "kind": "IdentifierName",
-                                                                        "fullWidth": 3,
-                                                                        "_identifier": {
-                                                                            "kind": "IdentifierNameToken",
-                                                                            "width": 3,
-                                                                            "text": "pow",
-                                                                            "valueText": "pow"
-                                                                        }
+                                                                        "kind": "IdentifierNameToken",
+                                                                        "width": 3,
+                                                                        "text": "pow",
+                                                                        "valueText": "pow"
                                                                     }
                                                                 },
                                                                 "_argumentList": {
@@ -857,13 +753,9 @@
                                                                     },
                                                                     "_arguments": [
                                                                         {
-                                                                            "kind": "NumericLiteralExpression",
-                                                                            "fullWidth": 1,
-                                                                            "_literalToken": {
-                                                                                "kind": "NumericLiteral",
-                                                                                "width": 1,
-                                                                                "text": "2"
-                                                                            }
+                                                                            "kind": "NumericLiteral",
+                                                                            "width": 1,
+                                                                            "text": "2"
                                                                         },
                                                                         {
                                                                             "kind": "CommaToken",
@@ -871,13 +763,9 @@
                                                                             "text": ","
                                                                         },
                                                                         {
-                                                                            "kind": "NumericLiteralExpression",
-                                                                            "fullWidth": 3,
-                                                                            "_literalToken": {
-                                                                                "kind": "NumericLiteral",
-                                                                                "width": 3,
-                                                                                "text": "971"
-                                                                            }
+                                                                            "kind": "NumericLiteral",
+                                                                            "width": 3,
+                                                                            "text": "971"
                                                                         }
                                                                     ],
                                                                     "_closeParenToken": {

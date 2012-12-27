@@ -10,59 +10,55 @@
                     "kind": "AssignmentExpression",
                     "fullWidth": 778,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 7,
                         "fullWidth": 746,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 7,
-                            "fullWidth": 746,
-                            "text": "FACTORY",
-                            "valueText": "FACTORY",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingComment": true,
-                            "hasLeadingNewLine": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// This code is governed by the BSD license found in the LICENSE file."
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "MultiLineCommentTrivia",
-                                    "text": "/**\n * Assume F is a Function object. When the [[HasInstance]] method of F is called with value V and V is an object, the following steps are taken:\n * i) Call the [[Get]] method of F with property name \"prototype\".\n * ii) Let O be Result(i) and O is an object.\n * iii) Let V be the value of the [[Prototype]] property of V.\n * iv) If V is null, return false.\n * v)  If O and V refer to the same object or if they refer to objects joined to each other (13.1.2), return true.\n * vi) Go to step iii)\n *\n * @path ch15/15.3/15.3.5/S15.3.5.3_A3_T1.js\n * @description F.prototype.type is 1, and V is new F\n */"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "FACTORY",
+                        "valueText": "FACTORY",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingComment": true,
+                        "hasLeadingNewLine": true,
+                        "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// This code is governed by the BSD license found in the LICENSE file."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "MultiLineCommentTrivia",
+                                "text": "/**\n * Assume F is a Function object. When the [[HasInstance]] method of F is called with value V and V is an object, the following steps are taken:\n * i) Call the [[Get]] method of F with property name \"prototype\".\n * ii) Let O be Result(i) and O is an object.\n * iii) Let V be the value of the [[Prototype]] property of V.\n * iv) If V is null, return false.\n * v)  If O and V refer to the same object or if they refer to objects joined to each other (13.1.2), return true.\n * vi) Go to step iii)\n *\n * @path ch15/15.3/15.3.5/S15.3.5.3_A3_T1.js\n * @description F.prototype.type is 1, and V is new F\n */"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ],
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "EqualsToken",
@@ -81,14 +77,10 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 30,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 8,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 8,
-                                "text": "Function",
-                                "valueText": "Function"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 8,
+                            "text": "Function",
+                            "valueText": "Function"
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -100,13 +92,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 20,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 20,
-                                        "text": "\"this.name=\\\"root\\\"\""
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 20,
+                                    "text": "\"this.name=\\\"root\\\"\""
                                 }
                             ],
                             "_closeParenToken": {
@@ -145,23 +133,19 @@
                             "kind": "MemberAccessExpression",
                             "fullWidth": 18,
                             "_expression": {
-                                "kind": "IdentifierName",
+                                "kind": "IdentifierNameToken",
+                                "width": 7,
                                 "fullWidth": 8,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 7,
-                                    "fullWidth": 8,
-                                    "text": "FACTORY",
-                                    "valueText": "FACTORY",
-                                    "hasLeadingTrivia": true,
-                                    "hasLeadingNewLine": true,
-                                    "leadingTrivia": [
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\n"
-                                        }
-                                    ]
-                                }
+                                "text": "FACTORY",
+                                "valueText": "FACTORY",
+                                "hasLeadingTrivia": true,
+                                "hasLeadingNewLine": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\n"
+                                    }
+                                ]
                             },
                             "_dotToken": {
                                 "kind": "DotToken",
@@ -169,14 +153,10 @@
                                 "text": "."
                             },
                             "_identifierName": {
-                                "kind": "IdentifierName",
-                                "fullWidth": 9,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 9,
-                                    "text": "prototype",
-                                    "valueText": "prototype"
-                                }
+                                "kind": "IdentifierNameToken",
+                                "width": 9,
+                                "text": "prototype",
+                                "valueText": "prototype"
                             }
                         },
                         "_dotToken": {
@@ -185,14 +165,10 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 4,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 4,
-                                "text": "type",
-                                "valueText": "type"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 4,
+                            "text": "type",
+                            "valueText": "type"
                         }
                     },
                     "_operatorToken": {
@@ -201,13 +177,9 @@
                         "text": "="
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "1"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "1"
                     }
                 },
                 "_semicolonToken": {
@@ -232,30 +204,26 @@
                     "kind": "AssignmentExpression",
                     "fullWidth": 23,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 8,
                         "fullWidth": 10,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 8,
-                            "fullWidth": 10,
-                            "text": "instance",
-                            "valueText": "instance",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingNewLine": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "instance",
+                        "valueText": "instance",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingNewLine": true,
+                        "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ],
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "EqualsToken",
@@ -288,14 +256,10 @@
                             ]
                         },
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 7,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 7,
-                                "text": "FACTORY",
-                                "valueText": "FACTORY"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 7,
+                            "text": "FACTORY",
+                            "valueText": "FACTORY"
                         }
                     }
                 },
@@ -373,22 +337,18 @@
                             "kind": "InstanceOfExpression",
                             "fullWidth": 27,
                             "_left": {
-                                "kind": "IdentifierName",
+                                "kind": "IdentifierNameToken",
+                                "width": 8,
                                 "fullWidth": 9,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 8,
-                                    "fullWidth": 9,
-                                    "text": "instance",
-                                    "valueText": "instance",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                }
+                                "text": "instance",
+                                "valueText": "instance",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
                             },
                             "_operatorToken": {
                                 "kind": "IdentifierNameToken",
@@ -405,14 +365,10 @@
                                 ]
                             },
                             "_right": {
-                                "kind": "IdentifierName",
-                                "fullWidth": 7,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 7,
-                                    "text": "FACTORY",
-                                    "valueText": "FACTORY"
-                                }
+                                "kind": "IdentifierNameToken",
+                                "width": 7,
+                                "text": "FACTORY",
+                                "valueText": "FACTORY"
                             }
                         },
                         "_closeParenToken": {
@@ -460,22 +416,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 122,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -487,13 +439,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 112,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 112,
-                                                "text": "'#1: If O and V refer to the same object or if they refer to objects joined to each other (13.1.2), return true'"
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 112,
+                                            "text": "'#1: If O and V refer to the same object or if they refer to objects joined to each other (13.1.2), return true'"
                                         }
                                     ],
                                     "_closeParenToken": {

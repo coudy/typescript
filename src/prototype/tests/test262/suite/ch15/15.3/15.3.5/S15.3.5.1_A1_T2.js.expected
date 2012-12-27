@@ -10,59 +10,55 @@
                     "kind": "AssignmentExpression",
                     "fullWidth": 459,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 1,
                         "fullWidth": 413,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 1,
-                            "fullWidth": 413,
-                            "text": "f",
-                            "valueText": "f",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingComment": true,
-                            "hasLeadingNewLine": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// This code is governed by the BSD license found in the LICENSE file."
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "MultiLineCommentTrivia",
-                                    "text": "/**\n * The value of the length property is usually an integer that indicates the 'typical' number of arguments expected by the function\n *\n * @path ch15/15.3/15.3.5/S15.3.5.1_A1_T2.js\n * @description Checking length property of Function(\"arg1,arg2,arg3\",\"arg4,arg5\", null)\n */"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "f",
+                        "valueText": "f",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingComment": true,
+                        "hasLeadingNewLine": true,
+                        "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// This code is governed by the BSD license found in the LICENSE file."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "MultiLineCommentTrivia",
+                                "text": "/**\n * The value of the length property is usually an integer that indicates the 'typical' number of arguments expected by the function\n *\n * @path ch15/15.3/15.3.5/S15.3.5.1_A1_T2.js\n * @description Checking length property of Function(\"arg1,arg2,arg3\",\"arg4,arg5\", null)\n */"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ],
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "EqualsToken",
@@ -81,14 +77,10 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 44,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 8,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 8,
-                                "text": "Function",
-                                "valueText": "Function"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 8,
+                            "text": "Function",
+                            "valueText": "Function"
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -100,13 +92,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 16,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 16,
-                                        "text": "\"arg1,arg2,arg3\""
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 16,
+                                    "text": "\"arg1,arg2,arg3\""
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -114,13 +102,9 @@
                                     "text": ","
                                 },
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 11,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 11,
-                                        "text": "\"arg4,arg5\""
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 11,
+                                    "text": "\"arg4,arg5\""
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -136,14 +120,10 @@
                                     ]
                                 },
                                 {
-                                    "kind": "NullLiteralExpression",
-                                    "fullWidth": 4,
-                                    "_literalToken": {
-                                        "kind": "IdentifierNameToken",
-                                        "keywordKind": "NullKeyword",
-                                        "width": 4,
-                                        "text": "null"
-                                    }
+                                    "kind": "IdentifierNameToken",
+                                    "keywordKind": "NullKeyword",
+                                    "width": 4,
+                                    "text": "null"
                                 }
                             ],
                             "_closeParenToken": {
@@ -231,14 +211,10 @@
                                 "kind": "MemberAccessExpression",
                                 "fullWidth": 16,
                                 "_expression": {
-                                    "kind": "IdentifierName",
-                                    "fullWidth": 1,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 1,
-                                        "text": "f",
-                                        "valueText": "f"
-                                    }
+                                    "kind": "IdentifierNameToken",
+                                    "width": 1,
+                                    "text": "f",
+                                    "valueText": "f"
                                 },
                                 "_dotToken": {
                                     "kind": "DotToken",
@@ -246,14 +222,10 @@
                                     "text": "."
                                 },
                                 "_identifierName": {
-                                    "kind": "IdentifierName",
-                                    "fullWidth": 14,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 14,
-                                        "text": "hasOwnProperty",
-                                        "valueText": "hasOwnProperty"
-                                    }
+                                    "kind": "IdentifierNameToken",
+                                    "width": 14,
+                                    "text": "hasOwnProperty",
+                                    "valueText": "hasOwnProperty"
                                 }
                             },
                             "_argumentList": {
@@ -266,13 +238,9 @@
                                 },
                                 "_arguments": [
                                     {
-                                        "kind": "StringLiteralExpression",
-                                        "fullWidth": 8,
-                                        "_literalToken": {
-                                            "kind": "StringLiteral",
-                                            "width": 8,
-                                            "text": "'length'"
-                                        }
+                                        "kind": "StringLiteral",
+                                        "width": 8,
+                                        "text": "'length'"
                                     }
                                 ],
                                 "_closeParenToken": {
@@ -327,22 +295,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 48,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 5,
                                     "fullWidth": 7,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 5,
-                                        "fullWidth": 7,
-                                        "text": "$FAIL",
-                                        "valueText": "$FAIL",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$FAIL",
+                                    "valueText": "$FAIL",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -354,13 +318,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 39,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 39,
-                                                "text": "'#1: the function has length property.'"
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 39,
+                                            "text": "'#1: the function has length property.'"
                                         }
                                     ],
                                     "_closeParenToken": {
@@ -448,14 +408,10 @@
                         "kind": "MemberAccessExpression",
                         "fullWidth": 9,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 1,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 1,
-                                "text": "f",
-                                "valueText": "f"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 1,
+                            "text": "f",
+                            "valueText": "f"
                         },
                         "_dotToken": {
                             "kind": "DotToken",
@@ -463,22 +419,18 @@
                             "text": "."
                         },
                         "_identifierName": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 6,
                             "fullWidth": 7,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 6,
-                                "fullWidth": 7,
-                                "text": "length",
-                                "valueText": "length",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                            "text": "length",
+                            "valueText": "length",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     },
                     "_operatorToken": {
@@ -495,13 +447,9 @@
                         ]
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "5"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "5"
                     }
                 },
                 "_closeParenToken": {
@@ -542,22 +490,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 144,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 8,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "  "
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "  "
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -569,13 +513,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 134,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 134,
-                                                "text": "'#2: The value of the length property is usually an integer that indicates the \"typical\" number of arguments expected by the function'"
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 134,
+                                            "text": "'#2: The value of the length property is usually an integer that indicates the \"typical\" number of arguments expected by the function'"
                                         }
                                     ],
                                     "_closeParenToken": {

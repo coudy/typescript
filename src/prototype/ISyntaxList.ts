@@ -3,8 +3,8 @@
 
 interface ISyntaxList extends ISyntaxElement {
     count(): number;
-    syntaxNodeAt(index: number): SyntaxNode;
-    toArray(): SyntaxNode[];
+    itemAt(index: number): ISyntaxNodeOrToken;
+    toArray(): ISyntaxNodeOrToken[];
 
     firstToken(): ISyntaxToken;
     lastToken(): ISyntaxToken;

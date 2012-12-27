@@ -19,7 +19,7 @@ module Syntax {
             return 0;
         }
 
-        public syntaxNodeAt(index: number): SyntaxNode {
+        public itemAt(index: number): SyntaxNode {
             throw Errors.argumentOutOfRange("index");
         }
 
@@ -75,9 +75,9 @@ module Syntax {
     export var emptyList: ISyntaxList = new EmptySyntaxList();
 
     class SingletonSyntaxList implements ISyntaxList {
-        private item: SyntaxNode;
+        private item: ISyntaxNodeOrToken;
 
-        constructor(item: SyntaxNode) {
+        constructor(item: ISyntaxNodeOrToken) {
             this.item = item;
         }
 
@@ -98,7 +98,7 @@ module Syntax {
             return 1;
         }
 
-        public syntaxNodeAt(index: number) {
+        public itemAt(index: number): ISyntaxNodeOrToken {
             if (index !== 0) {
                 throw Errors.argumentOutOfRange("index");
             }
@@ -110,7 +110,7 @@ module Syntax {
             (<any>this.item).collectTextElements(elements, this);
         }
 
-        public toArray(): SyntaxNode[] {
+        public toArray(): ISyntaxNodeOrToken[] {
             return [this.item];
         }
 
@@ -157,10 +157,10 @@ module Syntax {
     }
 
     class NormalSyntaxList implements ISyntaxList {
-        private nodes: SyntaxNode[];
+        private nodes: ISyntaxNodeOrToken[];
         private _data: number = -1;
 
-        constructor(nodes: SyntaxNode[]) {
+        constructor(nodes: ISyntaxNodeOrToken[]) {
             this.nodes = nodes;
         }
 
@@ -181,7 +181,7 @@ module Syntax {
             return this.nodes.length;
         }
 
-        public syntaxNodeAt(index: number) {
+        public itemAt(index: number): ISyntaxNodeOrToken {
             if (index < 0 || index >= this.nodes.length) {
                 throw Errors.argumentOutOfRange("index");
             }
@@ -196,7 +196,7 @@ module Syntax {
             }
         }
 
-        public toArray(): SyntaxNode[] {
+        public toArray(): ISyntaxNodeOrToken[] {
             return this.nodes.slice(0);
         }
 
@@ -309,7 +309,7 @@ module Syntax {
         }
     }
 
-    export function list(nodes: SyntaxNode[]): ISyntaxList {
+    export function list(nodes: ISyntaxNodeOrToken[]): ISyntaxList {
         if (nodes === undefined || nodes === null || nodes.length === 0) {
             return emptyList;
         }

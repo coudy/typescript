@@ -2,14 +2,14 @@
 ///<reference path='SyntaxNode.ts' />
 
 interface ISeparatedSyntaxList extends ISyntaxElement {
-    count();
-    itemAt(index: number): ISyntaxElement;
+    itemAndSeparatorCount();
+    itemOrSeparatorAt(index: number): ISyntaxNodeOrToken;
 
-    toArray(): ISyntaxElement[];
-    toSyntaxNodeArray(): SyntaxNode[];
+    toItemAndSeparatorArray(): ISyntaxNodeOrToken[];
+    toItemArray(): ISyntaxNodeOrToken[];
 
-    syntaxNodeCount();
-    syntaxNodeAt(index: number): SyntaxNode;
+    itemCount();
+    itemAt(index: number): ISyntaxNodeOrToken;
 
     separatorCount();
     separatorAt(index: number): ISyntaxToken;

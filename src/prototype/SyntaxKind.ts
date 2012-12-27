@@ -142,12 +142,12 @@ enum SyntaxKind {
     SourceUnit,
 
     // Names
-    IdentifierName,
+    // IdentifierName,
     QualifiedName,
 
     // Types
     ObjectType,
-    PredefinedType,
+    //PredefinedType,
     FunctionType,
     ArrayType,
     ConstructorType,
@@ -204,11 +204,11 @@ enum SyntaxKind {
     DeleteExpression,
     TypeOfExpression,
     VoidExpression,
-    BooleanLiteralExpression,
-    NullLiteralExpression,
-    NumericLiteralExpression,
-    RegularExpressionLiteralExpression,
-    StringLiteralExpression,
+    //BooleanLiteralExpression,
+    //NullLiteralExpression,
+    //NumericLiteralExpression,
+    //RegularExpressionLiteralExpression,
+    //StringLiteralExpression,
     CommaExpression,
     AssignmentExpression,
     AddAssignmentExpression,
@@ -250,7 +250,7 @@ enum SyntaxKind {
     PostDecrementExpression,
     MemberAccessExpression,
     InvocationExpression,
-    ThisExpression,
+    //ThisExpression,
     ArrayLiteralExpression,
     ObjectLiteralExpression,
     ObjectCreationExpression,
@@ -260,7 +260,7 @@ enum SyntaxKind {
     CastExpression,
     ElementAccessExpression,
     FunctionExpression,
-    SuperExpression,
+    //SuperExpression,
     OmittedExpression,
 
     // Variable declarations

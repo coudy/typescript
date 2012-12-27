@@ -79,13 +79,9 @@
                                     "text": "="
                                 },
                                 "_value": {
-                                    "kind": "NumericLiteralExpression",
-                                    "fullWidth": 1,
-                                    "_literalToken": {
-                                        "kind": "NumericLiteral",
-                                        "width": 1,
-                                        "text": "0"
-                                    }
+                                    "kind": "NumericLiteral",
+                                    "width": 1,
+                                    "text": "0"
                                 }
                             }
                         }
@@ -143,13 +139,9 @@
                     "text": "("
                 },
                 "_condition": {
-                    "kind": "NumericLiteralExpression",
-                    "fullWidth": 1,
-                    "_literalToken": {
-                        "kind": "NumericLiteral",
-                        "width": 1,
-                        "text": "0"
-                    }
+                    "kind": "NumericLiteral",
+                    "width": 1,
+                    "text": "0"
                 },
                 "_closeParenToken": {
                     "kind": "CloseParenToken",
@@ -172,22 +164,18 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 55,
                         "_expression": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 6,
                             "fullWidth": 7,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 6,
-                                "fullWidth": 7,
-                                "text": "$ERROR",
-                                "valueText": "$ERROR",
-                                "hasLeadingTrivia": true,
-                                "leadingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": "\t"
-                                    }
-                                ]
-                            }
+                            "text": "$ERROR",
+                            "valueText": "$ERROR",
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": "\t"
+                                }
+                            ]
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -199,13 +187,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 46,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 46,
-                                        "text": "'#1.1: 0 in expression is evaluated to false '"
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 46,
+                                    "text": "'#1.1: 0 in expression is evaluated to false '"
                                 }
                             ],
                             "_closeParenToken": {
@@ -255,22 +239,18 @@
                             "kind": "PostIncrementExpression",
                             "fullWidth": 5,
                             "_operand": {
-                                "kind": "IdentifierName",
+                                "kind": "IdentifierNameToken",
+                                "width": 1,
                                 "fullWidth": 3,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 1,
-                                    "fullWidth": 3,
-                                    "text": "c",
-                                    "valueText": "c",
-                                    "hasLeadingTrivia": true,
-                                    "leadingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "  "
-                                        }
-                                    ]
-                                }
+                                "text": "c",
+                                "valueText": "c",
+                                "hasLeadingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "  "
+                                    }
+                                ]
                             },
                             "_operatorToken": {
                                 "kind": "PlusPlusToken",
@@ -321,14 +301,10 @@
                     "kind": "NotEqualsWithTypeConversionExpression",
                     "fullWidth": 4,
                     "_left": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 1,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 1,
-                            "text": "c",
-                            "valueText": "c"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 1,
+                        "text": "c",
+                        "valueText": "c"
                     },
                     "_operatorToken": {
                         "kind": "ExclamationEqualsToken",
@@ -336,13 +312,9 @@
                         "text": "!="
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "1"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "1"
                     }
                 },
                 "_closeParenToken": {
@@ -365,14 +337,10 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 41,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 6,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 6,
-                                "text": "$ERROR",
-                                "valueText": "$ERROR"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 6,
+                            "text": "$ERROR",
+                            "valueText": "$ERROR"
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -384,13 +352,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 33,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 33,
-                                        "text": "'#1.2: else branch don`t execute'"
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 33,
+                                    "text": "'#1.2: else branch don`t execute'"
                                 }
                             ],
                             "_closeParenToken": {
@@ -473,14 +437,10 @@
                     "text": "("
                 },
                 "_condition": {
-                    "kind": "BooleanLiteralExpression",
-                    "fullWidth": 5,
-                    "_literalToken": {
-                        "kind": "IdentifierNameToken",
-                        "keywordKind": "FalseKeyword",
-                        "width": 5,
-                        "text": "false"
-                    }
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "FalseKeyword",
+                    "width": 5,
+                    "text": "false"
                 },
                 "_closeParenToken": {
                     "kind": "CloseParenToken",
@@ -503,22 +463,18 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 62,
                         "_expression": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 6,
                             "fullWidth": 10,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 6,
-                                "fullWidth": 10,
-                                "text": "$ERROR",
-                                "valueText": "$ERROR",
-                                "hasLeadingTrivia": true,
-                                "leadingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": "    "
-                                    }
-                                ]
-                            }
+                            "text": "$ERROR",
+                            "valueText": "$ERROR",
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": "    "
+                                }
+                            ]
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -530,13 +486,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 50,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 50,
-                                        "text": "'#2.1: false in expression is evaluated to false '"
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 50,
+                                    "text": "'#2.1: false in expression is evaluated to false '"
                                 }
                             ],
                             "_closeParenToken": {
@@ -586,22 +538,18 @@
                             "kind": "PostIncrementExpression",
                             "fullWidth": 5,
                             "_operand": {
-                                "kind": "IdentifierName",
+                                "kind": "IdentifierNameToken",
+                                "width": 1,
                                 "fullWidth": 3,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 1,
-                                    "fullWidth": 3,
-                                    "text": "c",
-                                    "valueText": "c",
-                                    "hasLeadingTrivia": true,
-                                    "leadingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "  "
-                                        }
-                                    ]
-                                }
+                                "text": "c",
+                                "valueText": "c",
+                                "hasLeadingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "  "
+                                    }
+                                ]
                             },
                             "_operatorToken": {
                                 "kind": "PlusPlusToken",
@@ -652,14 +600,10 @@
                     "kind": "NotEqualsWithTypeConversionExpression",
                     "fullWidth": 4,
                     "_left": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 1,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 1,
-                            "text": "c",
-                            "valueText": "c"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 1,
+                        "text": "c",
+                        "valueText": "c"
                     },
                     "_operatorToken": {
                         "kind": "ExclamationEqualsToken",
@@ -667,13 +611,9 @@
                         "text": "!="
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "2"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "2"
                     }
                 },
                 "_closeParenToken": {
@@ -696,14 +636,10 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 41,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 6,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 6,
-                                "text": "$ERROR",
-                                "valueText": "$ERROR"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 6,
+                            "text": "$ERROR",
+                            "valueText": "$ERROR"
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -715,13 +651,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 33,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 33,
-                                        "text": "'#2.2: else branch don`t execute'"
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 33,
+                                    "text": "'#2.2: else branch don`t execute'"
                                 }
                             ],
                             "_closeParenToken": {
@@ -804,14 +736,10 @@
                     "text": "("
                 },
                 "_condition": {
-                    "kind": "NullLiteralExpression",
-                    "fullWidth": 4,
-                    "_literalToken": {
-                        "kind": "IdentifierNameToken",
-                        "keywordKind": "NullKeyword",
-                        "width": 4,
-                        "text": "null"
-                    }
+                    "kind": "IdentifierNameToken",
+                    "keywordKind": "NullKeyword",
+                    "width": 4,
+                    "text": "null"
                 },
                 "_closeParenToken": {
                     "kind": "CloseParenToken",
@@ -834,22 +762,18 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 58,
                         "_expression": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 6,
                             "fullWidth": 7,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 6,
-                                "fullWidth": 7,
-                                "text": "$ERROR",
-                                "valueText": "$ERROR",
-                                "hasLeadingTrivia": true,
-                                "leadingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": "\t"
-                                    }
-                                ]
-                            }
+                            "text": "$ERROR",
+                            "valueText": "$ERROR",
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": "\t"
+                                }
+                            ]
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -861,13 +785,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 49,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 49,
-                                        "text": "'#3.1: null in expression is evaluated to false '"
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 49,
+                                    "text": "'#3.1: null in expression is evaluated to false '"
                                 }
                             ],
                             "_closeParenToken": {
@@ -917,22 +837,18 @@
                             "kind": "PostIncrementExpression",
                             "fullWidth": 5,
                             "_operand": {
-                                "kind": "IdentifierName",
+                                "kind": "IdentifierNameToken",
+                                "width": 1,
                                 "fullWidth": 3,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 1,
-                                    "fullWidth": 3,
-                                    "text": "c",
-                                    "valueText": "c",
-                                    "hasLeadingTrivia": true,
-                                    "leadingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "  "
-                                        }
-                                    ]
-                                }
+                                "text": "c",
+                                "valueText": "c",
+                                "hasLeadingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "  "
+                                    }
+                                ]
                             },
                             "_operatorToken": {
                                 "kind": "PlusPlusToken",
@@ -983,14 +899,10 @@
                     "kind": "NotEqualsWithTypeConversionExpression",
                     "fullWidth": 4,
                     "_left": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 1,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 1,
-                            "text": "c",
-                            "valueText": "c"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 1,
+                        "text": "c",
+                        "valueText": "c"
                     },
                     "_operatorToken": {
                         "kind": "ExclamationEqualsToken",
@@ -998,13 +910,9 @@
                         "text": "!="
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "3"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "3"
                     }
                 },
                 "_closeParenToken": {
@@ -1027,14 +935,10 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 41,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 6,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 6,
-                                "text": "$ERROR",
-                                "valueText": "$ERROR"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 6,
+                            "text": "$ERROR",
+                            "valueText": "$ERROR"
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -1046,13 +950,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 33,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 33,
-                                        "text": "'#3.2: else branch don`t execute'"
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 33,
+                                    "text": "'#3.2: else branch don`t execute'"
                                 }
                             ],
                             "_closeParenToken": {
@@ -1135,14 +1035,10 @@
                     "text": "("
                 },
                 "_condition": {
-                    "kind": "IdentifierName",
-                    "fullWidth": 9,
-                    "_identifier": {
-                        "kind": "IdentifierNameToken",
-                        "width": 9,
-                        "text": "undefined",
-                        "valueText": "undefined"
-                    }
+                    "kind": "IdentifierNameToken",
+                    "width": 9,
+                    "text": "undefined",
+                    "valueText": "undefined"
                 },
                 "_closeParenToken": {
                     "kind": "CloseParenToken",
@@ -1165,22 +1061,18 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 63,
                         "_expression": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 6,
                             "fullWidth": 7,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 6,
-                                "fullWidth": 7,
-                                "text": "$ERROR",
-                                "valueText": "$ERROR",
-                                "hasLeadingTrivia": true,
-                                "leadingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": "\t"
-                                    }
-                                ]
-                            }
+                            "text": "$ERROR",
+                            "valueText": "$ERROR",
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": "\t"
+                                }
+                            ]
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -1192,13 +1084,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 54,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 54,
-                                        "text": "'#4.1: undefined in expression is evaluated to false '"
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 54,
+                                    "text": "'#4.1: undefined in expression is evaluated to false '"
                                 }
                             ],
                             "_closeParenToken": {
@@ -1248,22 +1136,18 @@
                             "kind": "PostIncrementExpression",
                             "fullWidth": 5,
                             "_operand": {
-                                "kind": "IdentifierName",
+                                "kind": "IdentifierNameToken",
+                                "width": 1,
                                 "fullWidth": 3,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 1,
-                                    "fullWidth": 3,
-                                    "text": "c",
-                                    "valueText": "c",
-                                    "hasLeadingTrivia": true,
-                                    "leadingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "  "
-                                        }
-                                    ]
-                                }
+                                "text": "c",
+                                "valueText": "c",
+                                "hasLeadingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "  "
+                                    }
+                                ]
                             },
                             "_operatorToken": {
                                 "kind": "PlusPlusToken",
@@ -1314,14 +1198,10 @@
                     "kind": "NotEqualsWithTypeConversionExpression",
                     "fullWidth": 4,
                     "_left": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 1,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 1,
-                            "text": "c",
-                            "valueText": "c"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 1,
+                        "text": "c",
+                        "valueText": "c"
                     },
                     "_operatorToken": {
                         "kind": "ExclamationEqualsToken",
@@ -1329,13 +1209,9 @@
                         "text": "!="
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "4"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "4"
                     }
                 },
                 "_closeParenToken": {
@@ -1358,14 +1234,10 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 41,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 6,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 6,
-                                "text": "$ERROR",
-                                "valueText": "$ERROR"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 6,
+                            "text": "$ERROR",
+                            "valueText": "$ERROR"
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -1377,13 +1249,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 33,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 33,
-                                        "text": "'#4.2: else branch don`t execute'"
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 33,
+                                    "text": "'#4.2: else branch don`t execute'"
                                 }
                             ],
                             "_closeParenToken": {
@@ -1466,13 +1334,9 @@
                     "text": "("
                 },
                 "_condition": {
-                    "kind": "StringLiteralExpression",
-                    "fullWidth": 2,
-                    "_literalToken": {
-                        "kind": "StringLiteral",
-                        "width": 2,
-                        "text": "\"\""
-                    }
+                    "kind": "StringLiteral",
+                    "width": 2,
+                    "text": "\"\""
                 },
                 "_closeParenToken": {
                     "kind": "CloseParenToken",
@@ -1495,22 +1359,18 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 69,
                         "_expression": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 6,
                             "fullWidth": 10,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 6,
-                                "fullWidth": 10,
-                                "text": "$ERROR",
-                                "valueText": "$ERROR",
-                                "hasLeadingTrivia": true,
-                                "leadingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": "    "
-                                    }
-                                ]
-                            }
+                            "text": "$ERROR",
+                            "valueText": "$ERROR",
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": "    "
+                                }
+                            ]
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -1522,13 +1382,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 57,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 57,
-                                        "text": "'#5.1: empty string in expression is evaluated to false '"
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 57,
+                                    "text": "'#5.1: empty string in expression is evaluated to false '"
                                 }
                             ],
                             "_closeParenToken": {
@@ -1578,22 +1434,18 @@
                             "kind": "PostIncrementExpression",
                             "fullWidth": 5,
                             "_operand": {
-                                "kind": "IdentifierName",
+                                "kind": "IdentifierNameToken",
+                                "width": 1,
                                 "fullWidth": 3,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 1,
-                                    "fullWidth": 3,
-                                    "text": "c",
-                                    "valueText": "c",
-                                    "hasLeadingTrivia": true,
-                                    "leadingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "  "
-                                        }
-                                    ]
-                                }
+                                "text": "c",
+                                "valueText": "c",
+                                "hasLeadingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "  "
+                                    }
+                                ]
                             },
                             "_operatorToken": {
                                 "kind": "PlusPlusToken",
@@ -1644,14 +1496,10 @@
                     "kind": "NotEqualsWithTypeConversionExpression",
                     "fullWidth": 4,
                     "_left": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 1,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 1,
-                            "text": "c",
-                            "valueText": "c"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 1,
+                        "text": "c",
+                        "valueText": "c"
                     },
                     "_operatorToken": {
                         "kind": "ExclamationEqualsToken",
@@ -1659,13 +1507,9 @@
                         "text": "!="
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "5"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "5"
                     }
                 },
                 "_closeParenToken": {
@@ -1688,14 +1532,10 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 41,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 6,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 6,
-                                "text": "$ERROR",
-                                "valueText": "$ERROR"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 6,
+                            "text": "$ERROR",
+                            "valueText": "$ERROR"
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -1707,13 +1547,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 33,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 33,
-                                        "text": "'#5.2: else branch don`t execute'"
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 33,
+                                    "text": "'#5.2: else branch don`t execute'"
                                 }
                             ],
                             "_closeParenToken": {
@@ -1796,14 +1632,10 @@
                     "text": "("
                 },
                 "_condition": {
-                    "kind": "IdentifierName",
-                    "fullWidth": 3,
-                    "_identifier": {
-                        "kind": "IdentifierNameToken",
-                        "width": 3,
-                        "text": "NaN",
-                        "valueText": "NaN"
-                    }
+                    "kind": "IdentifierNameToken",
+                    "width": 3,
+                    "text": "NaN",
+                    "valueText": "NaN"
                 },
                 "_closeParenToken": {
                     "kind": "CloseParenToken",
@@ -1826,22 +1658,18 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 60,
                         "_expression": {
-                            "kind": "IdentifierName",
+                            "kind": "IdentifierNameToken",
+                            "width": 6,
                             "fullWidth": 10,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 6,
-                                "fullWidth": 10,
-                                "text": "$ERROR",
-                                "valueText": "$ERROR",
-                                "hasLeadingTrivia": true,
-                                "leadingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": "    "
-                                    }
-                                ]
-                            }
+                            "text": "$ERROR",
+                            "valueText": "$ERROR",
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": "    "
+                                }
+                            ]
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -1853,13 +1681,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 48,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 48,
-                                        "text": "'#6.1: NaN in expression is evaluated to false '"
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 48,
+                                    "text": "'#6.1: NaN in expression is evaluated to false '"
                                 }
                             ],
                             "_closeParenToken": {
@@ -1909,22 +1733,18 @@
                             "kind": "PostIncrementExpression",
                             "fullWidth": 5,
                             "_operand": {
-                                "kind": "IdentifierName",
+                                "kind": "IdentifierNameToken",
+                                "width": 1,
                                 "fullWidth": 3,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 1,
-                                    "fullWidth": 3,
-                                    "text": "c",
-                                    "valueText": "c",
-                                    "hasLeadingTrivia": true,
-                                    "leadingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "  "
-                                        }
-                                    ]
-                                }
+                                "text": "c",
+                                "valueText": "c",
+                                "hasLeadingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "  "
+                                    }
+                                ]
                             },
                             "_operatorToken": {
                                 "kind": "PlusPlusToken",
@@ -1975,14 +1795,10 @@
                     "kind": "NotEqualsWithTypeConversionExpression",
                     "fullWidth": 4,
                     "_left": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 1,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 1,
-                            "text": "c",
-                            "valueText": "c"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 1,
+                        "text": "c",
+                        "valueText": "c"
                     },
                     "_operatorToken": {
                         "kind": "ExclamationEqualsToken",
@@ -1990,13 +1806,9 @@
                         "text": "!="
                     },
                     "_right": {
-                        "kind": "NumericLiteralExpression",
-                        "fullWidth": 1,
-                        "_literalToken": {
-                            "kind": "NumericLiteral",
-                            "width": 1,
-                            "text": "6"
-                        }
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "6"
                     }
                 },
                 "_closeParenToken": {
@@ -2019,14 +1831,10 @@
                         "kind": "InvocationExpression",
                         "fullWidth": 41,
                         "_expression": {
-                            "kind": "IdentifierName",
-                            "fullWidth": 6,
-                            "_identifier": {
-                                "kind": "IdentifierNameToken",
-                                "width": 6,
-                                "text": "$ERROR",
-                                "valueText": "$ERROR"
-                            }
+                            "kind": "IdentifierNameToken",
+                            "width": 6,
+                            "text": "$ERROR",
+                            "valueText": "$ERROR"
                         },
                         "_argumentList": {
                             "kind": "ArgumentList",
@@ -2038,13 +1846,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 33,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 33,
-                                        "text": "'#6.2: else branch don`t execute'"
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 33,
+                                    "text": "'#6.2: else branch don`t execute'"
                                 }
                             ],
                             "_closeParenToken": {

@@ -10,52 +10,48 @@
                     "kind": "InvocationExpression",
                     "fullWidth": 268,
                     "_expression": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 8,
                         "fullWidth": 253,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 8,
-                            "fullWidth": 253,
-                            "text": "$INCLUDE",
-                            "valueText": "$INCLUDE",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingComment": true,
-                            "hasLeadingNewLine": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// Copyright 2012 Mozilla Corporation. All rights reserved."
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// This code is governed by the BSD license found in the LICENSE file."
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "MultiLineCommentTrivia",
-                                    "text": "/**\n * @description Tests that the option sensitivity is processed correctly.\n * @author Norbert Lindenberg\n */"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                }
-                            ]
-                        }
+                        "text": "$INCLUDE",
+                        "valueText": "$INCLUDE",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingComment": true,
+                        "hasLeadingNewLine": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// Copyright 2012 Mozilla Corporation. All rights reserved."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// This code is governed by the BSD license found in the LICENSE file."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "MultiLineCommentTrivia",
+                                "text": "/**\n * @description Tests that the option sensitivity is processed correctly.\n * @author Norbert Lindenberg\n */"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ]
                     },
                     "_argumentList": {
                         "kind": "ArgumentList",
@@ -67,13 +63,9 @@
                         },
                         "_arguments": [
                             {
-                                "kind": "StringLiteralExpression",
-                                "fullWidth": 13,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 13,
-                                    "text": "\"testIntl.js\""
-                                }
+                                "kind": "StringLiteral",
+                                "width": 13,
+                                "text": "\"testIntl.js\""
                             }
                         ],
                         "_closeParenToken": {
@@ -105,32 +97,28 @@
                     "kind": "InvocationExpression",
                     "fullWidth": 199,
                     "_expression": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 10,
                         "fullWidth": 109,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 10,
-                            "fullWidth": 109,
-                            "text": "testOption",
-                            "valueText": "testOption",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingComment": true,
-                            "hasLeadingNewLine": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// the fallback is variant only for usage === sort, but that happens to be the fallback for usage"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                }
-                            ]
-                        }
+                        "text": "testOption",
+                        "valueText": "testOption",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingComment": true,
+                        "hasLeadingNewLine": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// the fallback is variant only for usage === sort, but that happens to be the fallback for usage"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ]
                     },
                     "_argumentList": {
                         "kind": "ArgumentList",
@@ -145,14 +133,10 @@
                                 "kind": "MemberAccessExpression",
                                 "fullWidth": 13,
                                 "_expression": {
-                                    "kind": "IdentifierName",
-                                    "fullWidth": 4,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 4,
-                                        "text": "Intl",
-                                        "valueText": "Intl"
-                                    }
+                                    "kind": "IdentifierNameToken",
+                                    "width": 4,
+                                    "text": "Intl",
+                                    "valueText": "Intl"
                                 },
                                 "_dotToken": {
                                     "kind": "DotToken",
@@ -160,59 +144,47 @@
                                     "text": "."
                                 },
                                 "_identifierName": {
-                                    "kind": "IdentifierName",
-                                    "fullWidth": 8,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 8,
-                                        "text": "Collator",
-                                        "valueText": "Collator"
-                                    }
-                                }
-                            },
-                            {
-                                "kind": "CommaToken",
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": ",",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            },
-                            {
-                                "kind": "StringLiteralExpression",
-                                "fullWidth": 13,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 13,
-                                    "text": "\"sensitivity\""
-                                }
-                            },
-                            {
-                                "kind": "CommaToken",
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": ",",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            },
-                            {
-                                "kind": "StringLiteralExpression",
-                                "fullWidth": 8,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
+                                    "kind": "IdentifierNameToken",
                                     "width": 8,
-                                    "text": "\"string\""
+                                    "text": "Collator",
+                                    "valueText": "Collator"
                                 }
+                            },
+                            {
+                                "kind": "CommaToken",
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ",",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            },
+                            {
+                                "kind": "StringLiteral",
+                                "width": 13,
+                                "text": "\"sensitivity\""
+                            },
+                            {
+                                "kind": "CommaToken",
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ",",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            },
+                            {
+                                "kind": "StringLiteral",
+                                "width": 8,
+                                "text": "\"string\""
                             },
                             {
                                 "kind": "CommaToken",
@@ -237,13 +209,9 @@
                                 },
                                 "_expressions": [
                                     {
-                                        "kind": "StringLiteralExpression",
-                                        "fullWidth": 6,
-                                        "_literalToken": {
-                                            "kind": "StringLiteral",
-                                            "width": 6,
-                                            "text": "\"base\""
-                                        }
+                                        "kind": "StringLiteral",
+                                        "width": 6,
+                                        "text": "\"base\""
                                     },
                                     {
                                         "kind": "CommaToken",
@@ -259,13 +227,9 @@
                                         ]
                                     },
                                     {
-                                        "kind": "StringLiteralExpression",
-                                        "fullWidth": 8,
-                                        "_literalToken": {
-                                            "kind": "StringLiteral",
-                                            "width": 8,
-                                            "text": "\"accent\""
-                                        }
+                                        "kind": "StringLiteral",
+                                        "width": 8,
+                                        "text": "\"accent\""
                                     },
                                     {
                                         "kind": "CommaToken",
@@ -281,13 +245,9 @@
                                         ]
                                     },
                                     {
-                                        "kind": "StringLiteralExpression",
-                                        "fullWidth": 6,
-                                        "_literalToken": {
-                                            "kind": "StringLiteral",
-                                            "width": 6,
-                                            "text": "\"case\""
-                                        }
+                                        "kind": "StringLiteral",
+                                        "width": 6,
+                                        "text": "\"case\""
                                     },
                                     {
                                         "kind": "CommaToken",
@@ -303,13 +263,9 @@
                                         ]
                                     },
                                     {
-                                        "kind": "StringLiteralExpression",
-                                        "fullWidth": 9,
-                                        "_literalToken": {
-                                            "kind": "StringLiteral",
-                                            "width": 9,
-                                            "text": "\"variant\""
-                                        }
+                                        "kind": "StringLiteral",
+                                        "width": 9,
+                                        "text": "\"variant\""
                                     }
                                 ],
                                 "_closeBracketToken": {
@@ -332,13 +288,9 @@
                                 ]
                             },
                             {
-                                "kind": "StringLiteralExpression",
-                                "fullWidth": 9,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 9,
-                                    "text": "\"variant\""
-                                }
+                                "kind": "StringLiteral",
+                                "width": 9,
+                                "text": "\"variant\""
                             }
                         ],
                         "_closeParenToken": {

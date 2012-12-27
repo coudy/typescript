@@ -124,14 +124,9 @@
                                 ]
                             },
                             "_expression": {
-                                "kind": "IdentifierName",
-                                "fullWidth": 0,
-                                "hasZeroWidthToken": true,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 0,
-                                    "text": ""
-                                }
+                                "kind": "IdentifierNameToken",
+                                "width": 0,
+                                "text": ""
                             },
                             "_semicolonToken": {
                                 "kind": "SemicolonToken",
@@ -143,21 +138,17 @@
                             "kind": "ExpressionStatement",
                             "fullWidth": 5,
                             "_expression": {
-                                "kind": "NumericLiteralExpression",
+                                "kind": "NumericLiteral",
+                                "width": 1,
                                 "fullWidth": 3,
-                                "_literalToken": {
-                                    "kind": "NumericLiteral",
-                                    "width": 1,
-                                    "fullWidth": 3,
-                                    "text": "1",
-                                    "hasLeadingTrivia": true,
-                                    "leadingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "  "
-                                        }
-                                    ]
-                                }
+                                "text": "1",
+                                "hasLeadingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "  "
+                                    }
+                                ]
                             },
                             "_semicolonToken": {
                                 "kind": "SemicolonToken",
@@ -272,14 +263,10 @@
                     "kind": "InvocationExpression",
                     "fullWidth": 69,
                     "_expression": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 6,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 6,
-                            "text": "$ERROR",
-                            "valueText": "$ERROR"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 6,
+                        "text": "$ERROR",
+                        "valueText": "$ERROR"
                     },
                     "_argumentList": {
                         "kind": "ArgumentList",
@@ -291,13 +278,9 @@
                         },
                         "_arguments": [
                             {
-                                "kind": "StringLiteralExpression",
-                                "fullWidth": 61,
-                                "_literalToken": {
-                                    "kind": "StringLiteral",
-                                    "width": 61,
-                                    "text": "'#1: Check throw statement for automatic semicolon insertion'"
-                                }
+                                "kind": "StringLiteral",
+                                "width": 61,
+                                "text": "'#1: Check throw statement for automatic semicolon insertion'"
                             }
                         ],
                         "_closeParenToken": {

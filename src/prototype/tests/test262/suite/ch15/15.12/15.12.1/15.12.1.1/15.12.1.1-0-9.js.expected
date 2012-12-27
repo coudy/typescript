@@ -143,27 +143,23 @@
                                     "kind": "MemberAccessExpression",
                                     "fullWidth": 16,
                                     "_expression": {
-                                        "kind": "IdentifierName",
+                                        "kind": "IdentifierNameToken",
+                                        "width": 4,
                                         "fullWidth": 10,
-                                        "_identifier": {
-                                            "kind": "IdentifierNameToken",
-                                            "width": 4,
-                                            "fullWidth": 10,
-                                            "text": "JSON",
-                                            "valueText": "JSON",
-                                            "hasLeadingTrivia": true,
-                                            "hasLeadingNewLine": true,
-                                            "leadingTrivia": [
-                                                {
-                                                    "kind": "NewLineTrivia",
-                                                    "text": "\r\n"
-                                                },
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "text": "    "
-                                                }
-                                            ]
-                                        }
+                                        "text": "JSON",
+                                        "valueText": "JSON",
+                                        "hasLeadingTrivia": true,
+                                        "hasLeadingNewLine": true,
+                                        "leadingTrivia": [
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "text": "\r\n"
+                                            },
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "    "
+                                            }
+                                        ]
                                     },
                                     "_dotToken": {
                                         "kind": "DotToken",
@@ -171,14 +167,10 @@
                                         "text": "."
                                     },
                                     "_identifierName": {
-                                        "kind": "IdentifierName",
-                                        "fullWidth": 5,
-                                        "_identifier": {
-                                            "kind": "IdentifierNameToken",
-                                            "width": 5,
-                                            "text": "parse",
-                                            "valueText": "parse"
-                                        }
+                                        "kind": "IdentifierNameToken",
+                                        "width": 5,
+                                        "text": "parse",
+                                        "valueText": "parse"
                                     }
                                 },
                                 "_argumentList": {
@@ -203,13 +195,9 @@
                                                         "kind": "AddExpression",
                                                         "fullWidth": 91,
                                                         "_left": {
-                                                            "kind": "StringLiteralExpression",
-                                                            "fullWidth": 17,
-                                                            "_literalToken": {
-                                                                "kind": "StringLiteral",
-                                                                "width": 17,
-                                                                "text": "'\\t\\r \\n{\\t\\r \\n'"
-                                                            }
+                                                            "kind": "StringLiteral",
+                                                            "width": 17,
+                                                            "text": "'\\t\\r \\n{\\t\\r \\n'"
                                                         },
                                                         "_operatorToken": {
                                                             "kind": "PlusToken",
@@ -226,28 +214,24 @@
                                                             ]
                                                         },
                                                         "_right": {
-                                                            "kind": "StringLiteralExpression",
+                                                            "kind": "StringLiteral",
+                                                            "width": 51,
                                                             "fullWidth": 71,
-                                                            "_literalToken": {
-                                                                "kind": "StringLiteral",
-                                                                "width": 51,
-                                                                "fullWidth": 71,
-                                                                "text": "'\"property\"\\t\\r \\n:\\t\\r \\n{\\t\\r \\n}\\t\\r \\n,\\t\\r \\n'",
-                                                                "hasLeadingTrivia": true,
-                                                                "hasTrailingTrivia": true,
-                                                                "leadingTrivia": [
-                                                                    {
-                                                                        "kind": "WhitespaceTrivia",
-                                                                        "text": "                   "
-                                                                    }
-                                                                ],
-                                                                "trailingTrivia": [
-                                                                    {
-                                                                        "kind": "WhitespaceTrivia",
-                                                                        "text": " "
-                                                                    }
-                                                                ]
-                                                            }
+                                                            "text": "'\"property\"\\t\\r \\n:\\t\\r \\n{\\t\\r \\n}\\t\\r \\n,\\t\\r \\n'",
+                                                            "hasLeadingTrivia": true,
+                                                            "hasTrailingTrivia": true,
+                                                            "leadingTrivia": [
+                                                                {
+                                                                    "kind": "WhitespaceTrivia",
+                                                                    "text": "                   "
+                                                                }
+                                                            ],
+                                                            "trailingTrivia": [
+                                                                {
+                                                                    "kind": "WhitespaceTrivia",
+                                                                    "text": " "
+                                                                }
+                                                            ]
                                                         }
                                                     },
                                                     "_operatorToken": {
@@ -265,21 +249,17 @@
                                                         ]
                                                     },
                                                     "_right": {
-                                                        "kind": "StringLiteralExpression",
+                                                        "kind": "StringLiteral",
+                                                        "width": 24,
                                                         "fullWidth": 43,
-                                                        "_literalToken": {
-                                                            "kind": "StringLiteral",
-                                                            "width": 24,
-                                                            "fullWidth": 43,
-                                                            "text": "'\"prop2\"\\t\\r \\n:\\t\\r \\n'",
-                                                            "hasLeadingTrivia": true,
-                                                            "leadingTrivia": [
-                                                                {
-                                                                    "kind": "WhitespaceTrivia",
-                                                                    "text": "                   "
-                                                                }
-                                                            ]
-                                                        }
+                                                        "text": "'\"prop2\"\\t\\r \\n:\\t\\r \\n'",
+                                                        "hasLeadingTrivia": true,
+                                                        "leadingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "text": "                   "
+                                                            }
+                                                        ]
                                                     }
                                                 },
                                                 "_operatorToken": {
@@ -297,21 +277,17 @@
                                                     ]
                                                 },
                                                 "_right": {
-                                                    "kind": "StringLiteralExpression",
+                                                    "kind": "StringLiteral",
+                                                    "width": 56,
                                                     "fullWidth": 80,
-                                                    "_literalToken": {
-                                                        "kind": "StringLiteral",
-                                                        "width": 56,
-                                                        "fullWidth": 80,
-                                                        "text": "'[\\t\\r \\ntrue\\t\\r \\n,\\t\\r \\nnull\\t\\r \\n,123.456\\t\\r \\n]'",
-                                                        "hasLeadingTrivia": true,
-                                                        "leadingTrivia": [
-                                                            {
-                                                                "kind": "WhitespaceTrivia",
-                                                                "text": "                        "
-                                                            }
-                                                        ]
-                                                    }
+                                                    "text": "'[\\t\\r \\ntrue\\t\\r \\n,\\t\\r \\nnull\\t\\r \\n,123.456\\t\\r \\n]'",
+                                                    "hasLeadingTrivia": true,
+                                                    "leadingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "text": "                        "
+                                                        }
+                                                    ]
                                                 }
                                             },
                                             "_operatorToken": {
@@ -329,21 +305,17 @@
                                                 ]
                                             },
                                             "_right": {
-                                                "kind": "StringLiteralExpression",
+                                                "kind": "StringLiteral",
+                                                "width": 17,
                                                 "fullWidth": 38,
-                                                "_literalToken": {
-                                                    "kind": "StringLiteral",
-                                                    "width": 17,
-                                                    "fullWidth": 38,
-                                                    "text": "'\\t\\r \\n}\\t\\r \\n'",
-                                                    "hasLeadingTrivia": true,
-                                                    "leadingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": "                     "
-                                                        }
-                                                    ]
-                                                }
+                                                "text": "'\\t\\r \\n}\\t\\r \\n'",
+                                                "hasLeadingTrivia": true,
+                                                "leadingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": "                     "
+                                                    }
+                                                ]
                                             }
                                         }
                                     ],
@@ -403,14 +375,10 @@
                                 ]
                             },
                             "_expression": {
-                                "kind": "BooleanLiteralExpression",
-                                "fullWidth": 4,
-                                "_literalToken": {
-                                    "kind": "IdentifierNameToken",
-                                    "keywordKind": "TrueKeyword",
-                                    "width": 4,
-                                    "text": "true"
-                                }
+                                "kind": "IdentifierNameToken",
+                                "keywordKind": "TrueKeyword",
+                                "width": 4,
+                                "text": "true"
                             },
                             "_semicolonToken": {
                                 "kind": "SemicolonToken",
@@ -458,14 +426,10 @@
                     "kind": "InvocationExpression",
                     "fullWidth": 21,
                     "_expression": {
-                        "kind": "IdentifierName",
-                        "fullWidth": 11,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 11,
-                            "text": "runTestCase",
-                            "valueText": "runTestCase"
-                        }
+                        "kind": "IdentifierNameToken",
+                        "width": 11,
+                        "text": "runTestCase",
+                        "valueText": "runTestCase"
                     },
                     "_argumentList": {
                         "kind": "ArgumentList",
@@ -477,14 +441,10 @@
                         },
                         "_arguments": [
                             {
-                                "kind": "IdentifierName",
-                                "fullWidth": 8,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 8,
-                                    "text": "testcase",
-                                    "valueText": "testcase"
-                                }
+                                "kind": "IdentifierNameToken",
+                                "width": 8,
+                                "text": "testcase",
+                                "valueText": "testcase"
                             }
                         ],
                         "_closeParenToken": {

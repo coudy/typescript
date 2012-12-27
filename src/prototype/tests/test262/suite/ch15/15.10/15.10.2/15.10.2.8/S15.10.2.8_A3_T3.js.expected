@@ -13,59 +13,55 @@
                     "fullWidth": 858,
                     "hasRegularExpressionToken": true,
                     "_left": {
-                        "kind": "IdentifierName",
+                        "kind": "IdentifierNameToken",
+                        "width": 10,
                         "fullWidth": 737,
-                        "_identifier": {
-                            "kind": "IdentifierNameToken",
-                            "width": 10,
-                            "fullWidth": 737,
-                            "text": "__executed",
-                            "valueText": "__executed",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingComment": true,
-                            "hasLeadingNewLine": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "SingleLineCommentTrivia",
-                                    "text": "// This code is governed by the BSD license found in the LICENSE file."
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "MultiLineCommentTrivia",
-                                    "text": "/**\n * Parentheses of the form ( Disjunction ) serve both to group the components of the Disjunction pattern together and to save the result of the match.\n * The result can be used either in a backreference (\\ followed by a nonzero decimal number),\n * referenced in a replace string,\n * or returned as part of an array from the regular expression matching function\n *\n * @path ch15/15.10/15.10.2/15.10.2.8/S15.10.2.8_A3_T3.js\n * @description Execute /([Jj]ava([Ss]cript)?)\\sis\\s(fun\\w*)/.test(\"Developing with JavaScript is dangerous, do not try it without assistance\") and check results\n */"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
+                        "text": "__executed",
+                        "valueText": "__executed",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingComment": true,
+                        "hasLeadingNewLine": true,
+                        "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// This code is governed by the BSD license found in the LICENSE file."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "MultiLineCommentTrivia",
+                                "text": "/**\n * Parentheses of the form ( Disjunction ) serve both to group the components of the Disjunction pattern together and to save the result of the match.\n * The result can be used either in a backreference (\\ followed by a nonzero decimal number),\n * referenced in a replace string,\n * or returned as part of an array from the regular expression matching function\n *\n * @path ch15/15.10/15.10.2/15.10.2.8/S15.10.2.8_A3_T3.js\n * @description Execute /([Jj]ava([Ss]cript)?)\\sis\\s(fun\\w*)/.test(\"Developing with JavaScript is dangerous, do not try it without assistance\") and check results\n */"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ],
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     },
                     "_operatorToken": {
                         "kind": "EqualsToken",
@@ -89,14 +85,9 @@
                             "fullWidth": 42,
                             "hasRegularExpressionToken": true,
                             "_expression": {
-                                "kind": "RegularExpressionLiteralExpression",
-                                "fullWidth": 37,
-                                "hasRegularExpressionToken": true,
-                                "_literalToken": {
-                                    "kind": "RegularExpressionLiteral",
-                                    "width": 37,
-                                    "text": "/([Jj]ava([Ss]cript)?)\\sis\\s(fun\\w*)/"
-                                }
+                                "kind": "RegularExpressionLiteral",
+                                "width": 37,
+                                "text": "/([Jj]ava([Ss]cript)?)\\sis\\s(fun\\w*)/"
                             },
                             "_dotToken": {
                                 "kind": "DotToken",
@@ -104,14 +95,10 @@
                                 "text": "."
                             },
                             "_identifierName": {
-                                "kind": "IdentifierName",
-                                "fullWidth": 4,
-                                "_identifier": {
-                                    "kind": "IdentifierNameToken",
-                                    "width": 4,
-                                    "text": "test",
-                                    "valueText": "test"
-                                }
+                                "kind": "IdentifierNameToken",
+                                "width": 4,
+                                "text": "test",
+                                "valueText": "test"
                             }
                         },
                         "_argumentList": {
@@ -124,13 +111,9 @@
                             },
                             "_arguments": [
                                 {
-                                    "kind": "StringLiteralExpression",
-                                    "fullWidth": 75,
-                                    "_literalToken": {
-                                        "kind": "StringLiteral",
-                                        "width": 75,
-                                        "text": "\"Developing with JavaScript is dangerous, do not try it without assistance\""
-                                    }
+                                    "kind": "StringLiteral",
+                                    "width": 75,
+                                    "text": "\"Developing with JavaScript is dangerous, do not try it without assistance\""
                                 }
                             ],
                             "_closeParenToken": {
@@ -196,14 +179,10 @@
                     "text": "("
                 },
                 "_condition": {
-                    "kind": "IdentifierName",
-                    "fullWidth": 10,
-                    "_identifier": {
-                        "kind": "IdentifierNameToken",
-                        "width": 10,
-                        "text": "__executed",
-                        "valueText": "__executed"
-                    }
+                    "kind": "IdentifierNameToken",
+                    "width": 10,
+                    "text": "__executed",
+                    "valueText": "__executed"
                 },
                 "_closeParenToken": {
                     "kind": "CloseParenToken",
@@ -243,22 +222,18 @@
                                 "kind": "InvocationExpression",
                                 "fullWidth": 147,
                                 "_expression": {
-                                    "kind": "IdentifierName",
+                                    "kind": "IdentifierNameToken",
+                                    "width": 6,
                                     "fullWidth": 7,
-                                    "_identifier": {
-                                        "kind": "IdentifierNameToken",
-                                        "width": 6,
-                                        "fullWidth": 7,
-                                        "text": "$ERROR",
-                                        "valueText": "$ERROR",
-                                        "hasLeadingTrivia": true,
-                                        "leadingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": "\t"
-                                            }
-                                        ]
-                                    }
+                                    "text": "$ERROR",
+                                    "valueText": "$ERROR",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": "\t"
+                                        }
+                                    ]
                                 },
                                 "_argumentList": {
                                     "kind": "ArgumentList",
@@ -270,13 +245,9 @@
                                     },
                                     "_arguments": [
                                         {
-                                            "kind": "StringLiteralExpression",
-                                            "fullWidth": 138,
-                                            "_literalToken": {
-                                                "kind": "StringLiteral",
-                                                "width": 138,
-                                                "text": "'#1: /([Jj]ava([Ss]cript)?)\\\\sis\\\\s(fun\\\\w*)/.test(\"Developing with JavaScript is dangerous, do not try it without assistance\") === false'"
-                                            }
+                                            "kind": "StringLiteral",
+                                            "width": 138,
+                                            "text": "'#1: /([Jj]ava([Ss]cript)?)\\\\sis\\\\s(fun\\\\w*)/.test(\"Developing with JavaScript is dangerous, do not try it without assistance\") === false'"
                                         }
                                     ],
                                     "_closeParenToken": {

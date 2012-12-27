@@ -35,51 +35,47 @@
                 "kind": "ExpressionStatement",
                 "fullWidth": 402,
                 "_expression": {
-                    "kind": "StringLiteralExpression",
+                    "kind": "StringLiteral",
+                    "width": 12,
                     "fullWidth": 400,
-                    "_literalToken": {
-                        "kind": "StringLiteral",
-                        "width": 12,
-                        "fullWidth": 400,
-                        "text": "\"use strict\"",
-                        "hasLeadingTrivia": true,
-                        "hasLeadingComment": true,
-                        "hasLeadingNewLine": true,
-                        "leadingTrivia": [
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "SingleLineCommentTrivia",
-                                "text": "// This code is governed by the BSD license found in the LICENSE file."
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "MultiLineCommentTrivia",
-                                "text": "/**\n * The \"interface\" token can not be used as identifier in strict code\n *\n * @path ch07/7.6/7.6.1/7.6.1.2/S7.6.1.2_A1.18.js\n * @description Checking if execution of \"interface = 1\" fails in\n *               strict code\n * @onlyStrict\n * @negative\n */"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "text": "\n"
-                            }
-                        ]
-                    }
+                    "text": "\"use strict\"",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingComment": true,
+                    "hasLeadingNewLine": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "// This code is governed by the BSD license found in the LICENSE file."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "MultiLineCommentTrivia",
+                            "text": "/**\n * The \"interface\" token can not be used as identifier in strict code\n *\n * @path ch07/7.6/7.6.1/7.6.1.2/S7.6.1.2_A1.18.js\n * @description Checking if execution of \"interface = 1\" fails in\n *               strict code\n * @onlyStrict\n * @negative\n */"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        }
+                    ]
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
@@ -148,13 +144,9 @@
                 "kind": "ExpressionStatement",
                 "fullWidth": 3,
                 "_expression": {
-                    "kind": "NumericLiteralExpression",
-                    "fullWidth": 1,
-                    "_literalToken": {
-                        "kind": "NumericLiteral",
-                        "width": 1,
-                        "text": "1"
-                    }
+                    "kind": "NumericLiteral",
+                    "width": 1,
+                    "text": "1"
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
