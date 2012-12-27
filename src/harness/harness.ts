@@ -679,7 +679,7 @@ module Harness {
             }
 
             public Close() {
-                this.lines.push(this.currentLine);
+                if (this.currentLine.length > 0) { this.lines.push(this.currentLine); }
                 this.currentLine = "";
             }
 
@@ -698,9 +698,9 @@ module Harness {
         export function isDeclareFile(filename: string) {
             return /\.d\.ts$/.test(filename);
         }
-        
+
         export function makeDefaultCompilerForTest(c?: TypeScript.TypeScriptCompiler) {
-            var compiler = c ? c : new TypeScript.TypeScriptCompiler(stderr);
+            var compiler = c || new TypeScript.TypeScriptCompiler(stderr);
             compiler.parser.errorRecovery = true;
             compiler.settings.codeGenTarget = TypeScript.CodeGenTarget.ES5;
             compiler.settings.controlFlow = true;
@@ -867,7 +867,7 @@ module Harness {
                     throw new Error("Type definition contains errors: " + errors.join(","));
 
                 var matchingIdentifiers = [];
-                
+
                 // This will find the requested identifier in the first script where it's present, a naive search of each member in each script,
                 // which means this won't play nicely if the same identifier is used in multiple units, but it will enable this to work on multi-file tests.
                 // m = 1 because the first script will always be lib.d.ts which we don't want to search.                                
@@ -911,7 +911,7 @@ module Harness {
                     compilationContext.preCompile();
                 }
 
-                addUnit(code, unitName, false, false, references); 
+                addUnit(code, unitName, false, false, references);
                 compiler.reTypeCheck();
 
                 var outputs = {};
@@ -1051,23 +1051,46 @@ module Harness {
             compiler.updateUnit(code, unitName, setRecovery);
         }
 
-        export function compileUnit(path: string, callback: (res: CompilerResult) => void , settingsCallback?: () => void, context?: CompilationContext, references?: TypeScript.IFileReference[]) {
-            var oldCompilerSettings = compiler.settings;
-            var oldEmitSettings = compiler.emitSettings;
+        export function compileFile(path: string, callback: (res: CompilerResult) => void , settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
+            path = switchToForwardSlashes(path);
+            var filename = path.match(/[^\/]*$/)[0];
+            var code = readFile(path);
+
+            compileUnit(code, filename, callback, settingsCallback, context, references);
+        }
+
+        export function compileUnit(code: string, filename: string, callback: (res: CompilerResult) => void , settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
+
+            // not recursive
+            function clone/* <T> */(source: any, target: any) {
+                for (var prop in source) {
+                    target[prop] = source[prop];
+                }
+            }
+
+            // this will get you a copy of the reference... 
+            // not what you expect.
+            var oldCompilerSettings = new TypeScript.CompilationSettings();
+            clone(compiler.settings, oldCompilerSettings);
+            var oldEmitSettings = new TypeScript.EmitOptions(compiler.settings);
+            clone(compiler.emitSettings, oldEmitSettings);
+
             var oldModuleGenTarget = TypeScript.moduleGenTarget;
 
             if (settingsCallback) {
-                settingsCallback();
+                settingsCallback(compiler.settings);
             }
-            path = switchToForwardSlashes(path);
-            compileString(readFile(path), path.match(/[^\/]*$/)[0], callback, context, references);
-
+            try {
+                compileString(code, filename, callback, context, references);
+            } finally {
             // if settingsCallback exists, assume that it modified the global compiler instance's settings in some way.
             // So that a test doesn't have side effects for tests run after it, restore the compiler settings to their previous state.
-            if (settingsCallback) {
-                compiler.settings = oldCompilerSettings;
-                compiler.emitSettings = oldEmitSettings;
-                TypeScript.moduleGenTarget = oldModuleGenTarget;
+            // except that this doesn't work like that... you only copied a reference.
+                if (settingsCallback) {
+                    compiler.settings = oldCompilerSettings;
+                    compiler.emitSettings = oldEmitSettings;
+                    TypeScript.moduleGenTarget = oldModuleGenTarget;
+                }
             }
         }
 
@@ -1085,8 +1108,8 @@ module Harness {
             recreate();
             reset();
         }
-        
-        export function compileString(code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void, context?: CompilationContext, references?: TypeScript.IFileReference[]) {
+
+        export function compileString(code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
             var scripts: TypeScript.Script[] = [];
 
             // TODO: How to overload?
@@ -1104,7 +1127,8 @@ module Harness {
             // TODO: something isn't getting cleaned up correctly and adding with a real unit name is causing some failures (duplicate identifier)
             // For now just only add via unitName for a multi file test
             if (!context) {
-                var units = TestCaseParser.makeUnitsFromTest(code, unitName);
+                var testCaseContent = TestCaseParser.makeUnitsFromTest(code, unitName);
+                var units = testCaseContent.testUnitData;
                 var dependencies = units.slice(0, units.length - 1);
                 var lastUnit = units[units.length - 1];
                 context = defineCompilationContextForTest(lastUnit.name, dependencies);
@@ -1116,9 +1140,9 @@ module Harness {
             else {
                 scripts.push(addUnit(code, unitName, false, Harness.Compiler.isDeclareFile(unitName), references));
             }
-            
+
             compiler.reTypeCheck();
-            
+
             // Before emitting JS, clean any units other than the current one or 0.ts 
             // 0.ts is the unit name where single file units go (which includes when baselining the first unit in a multi file test)
             // Without this, the emitted baseline for a test will include all (non-resident) units in the compiler, so for example a
@@ -1130,8 +1154,20 @@ module Harness {
                 }
             }
 
-            compiler.emitToOutfile(stdout); // emits all units into a single js file
-  
+            var emitterIOHost: TypeScript.EmitterIOHost = {
+                // create file gets the whole path to create, so this works as expected with the --out parameter
+                createFile: (s) => {
+                    //                    stdout.WriteLine('[' + s + ']');
+                    return stdout;
+                },
+                directoryExists: (s) => { return false; },
+                fileExists: (s: string) => { return false; },
+                resolvePath: (s: string) => { return s; },
+            };
+
+            compiler.emit(emitterIOHost);
+            //            compiler.emitToOutfile(stdout); // emits all units into a single js file
+
             if (context) {
                 context.postCompile();
             }
@@ -1186,6 +1222,13 @@ module Harness {
     // extracts options and individual files in a multifile test
     export module TestCaseParser {
 
+        // all the necesarry information to set the 
+        // right compiler settings
+        export interface CompilerSetting {
+            flag: string;
+            value: string;
+        }
+
         // All the necessary information to turn a multi file test into useful units for later compilation
         export interface TestUnitData {
             content: string;
@@ -1194,26 +1237,39 @@ module Harness {
             references: TypeScript.IFileReference[];
         }
 
+        // Regex for parsing options in the format "@Alpha: Value of any sort"
+        private optionRegex = /^[\/]{2}\s*@(\w+):\s*(\S*)/gm;  // multiple matches on multiple lines
+
         // List of allowed metadata names
-        var fileMetadataNames = ['Filename'];
+        var fileMetadataNames = ["filename", "comments", "declaration", "module", "nolib", "sourcemap", "target", "out", ];
 
         function isMultiFileTest(code: string) {
             return (code.indexOf('// @Filename') != -1);
         }
 
-        // Given a test file containing // @Filename directives, return an array of named units of code to be added to an existing compiler instance
-        export function makeUnitsFromTest(code: string, filename: string): TestUnitData[] {
-            if (code.indexOf('@Filename') === -1) {
-                return [{ content: code, name: filename, originalFilePath: filename, references: [] }];
+        function extractCompilerSettings(content: string): CompilerSetting[] {
+
+            var opts = [];
+
+            var match;
+            while ((match = optionRegex.exec(content)) != null) {
+                opts.push({ flag: match[1], value: match[2] });
             }
-            else {          
-                // Regex for parsing options in the format "@Alpha: Value of any sort"
-                var optionRegex = /^\s*@(\w+): (.*)\s*/;
+
+            return opts;
+        }
+
+        // Given a test file containing // @Filename directives, return an array of named units of code to be added to an existing compiler instance
+        export function makeUnitsFromTest(code: string, filename: string): { settings: CompilerSetting[]; testUnitData: TestUnitData[]; } {
+
+            var settings = extractCompilerSettings(code);
+
+            if (!isMultiFileTest(code)) {
+                return { settings: settings, testUnitData: [{ content: code, name: filename, originalFilePath: filename, references: [] }] };
+            } else {
 
                 // List of all the subfiles we've parsed out
                 var files: TestUnitData[] = [];
-                // Global options
-                var opts = {};
 
                 var lines = splitContentByNewlines(code);
 
@@ -1229,29 +1285,30 @@ module Harness {
                     if (line.substr(0, 3) === '///') {
                         var isRef = line.match(/reference\spath='(\w*_?\w*\.?d?\.ts)'/);
                         if (isRef) {
-                            var ref =
-                            {
+                            var ref = {
                                 minChar: 0,
                                 limChar: 0,
                                 path: isRef[1],
                                 isResident: false
                             };
+
                             if (!refs) {
                                 refs = [];
                             }
                             refs.push(ref);
                         }
-                    }
-                    else if (line.substr(0, 2) === '//') {
+                    } else if (line.substr(0, 2) === '//') {
                         // Comment line, check for global/file @options and record them
-                        var match = optionRegex.exec(line.substr(2));
+                        optionRegex.lastIndex = 0;
+                        var match = optionRegex.exec(line);
                         if (match) {
-                            var fileNameIndex = fileMetadataNames.indexOf(match[1]);
+                            var fileNameIndex = fileMetadataNames.indexOf(match[1].toLowerCase());
                             if (fileNameIndex == -1) {
                                 throw new Error('Unrecognized metadata name "' + match[1] + '". Available file metadata names are: ' + fileMetadataNames.join(', '));
-                            } else {
+                            } else if (fileNameIndex == 0) {
                                 currentFileOptions[match[1]] = match[2];
-                            }
+                            } else { continue; }
+
                             // New metadata statement after having collected some code to go with the previous metadata
                             if (currentFileName) {
                                 // Store result file
@@ -1270,14 +1327,12 @@ module Harness {
                                 currentFileOptions = {};
                                 currentFileName = match[2];
                                 refs = null;
-                            }                            
-                            else {
+                            } else {
                                 // First metadata marker in the file
                                 currentFileName = match[2];
-                            };
+                            }
                         }
-                    }
-                    else {
+                    } else {
                         // Subfile content line
                         // Append to the current subfile content, inserting a newline needed
                         if (currentFileContent === null) {
@@ -1302,10 +1357,10 @@ module Harness {
                 files.push(newTestFile);
 
                 if (files.length < 2) {
-                    throw new Error("Only parsed 0 or 1 units out of a supposed multi file test");
+                    throw new Error("Only parsed 0 or 1 units out of a supposed multi file test. \'" + filename + "\'");
                 }
 
-                return files;
+                return { settings: settings, testUnitData: files };
             }
         }
     }

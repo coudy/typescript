@@ -81,8 +81,8 @@ module frmTest {
 }
 
 module frmConfirm {
-    export import Mod1 = mod1;
-    export import iMod1 = mod1.meMod;
+    import Mod1 = mod1;
+    import iMod1 = mod1.meMod;
     Mod1.meX = 1;
     iMod1.iMex = 1; 
 }

@@ -32,7 +32,7 @@ declare export module "m4" {
     export function foo(): d;
 }
 
-export import m4 = module("m4");
+import m4 = module("m4");
 export var x4 = m4.x;
 export var d4 = m4.d;
 export var f4 = m4.foo();
@@ -44,8 +44,8 @@ export module m1 {
         var x: d;
         export function foo(): d;
     }
-    export import m2 = module("m2");
-    export import m3 = module("m4");
+    import m2 = module("m2");
+    import m3 = module("m4");
 
     export var x2 = m2.x;
     export var d2 = m2.d;

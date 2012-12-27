@@ -9,7 +9,6 @@
 ///<reference path='exec.ts'/>
 ///<reference path='diff.ts'/>
 ///<reference path='..\..\tests\runners\runnerfactory.ts' />
-///<reference path='..\..\tests\runners\flags\flagsrunner.ts' />
 ///<reference path='..\..\tests\runners\compiler\runner.ts' />
 ///<reference path='..\..\tests\runners\compiler\sourcemapRunner.ts' />
 ///<reference path='..\..\tests\runners\fourslash\fsrunner.ts' />
@@ -200,19 +199,12 @@ opts.option('compiler', {
         runners.push(new CompilerBaselineRunner());
         runners.push(new SourcemapRunner());
         runners.push(new ProjectRunner());
-        runners.push(new FlagsRunner());
     }
 });
 
 opts.option('project', {
     set: function () {
         runners.push(new ProjectRunner());
-    }
-});
-
-opts.option('flags', {
-    set: function () {
-        runners.push(new FlagsRunner());
     }
 });
 
@@ -260,7 +252,6 @@ if (runners.length === 0) {
         runners.push(new UnitTestRunner('compiler'));
         runners.push(new CompilerBaselineRunner());
         runners.push(new SourcemapRunner());
-        runners.push(new FlagsRunner());
         runners.push(new ProjectRunner());
 
         // language services

@@ -7,7 +7,7 @@ module A {
 }
 
 module D {
-    export import inner = A.B.C; 
+    import inner = A.B.C; 
    
     var c1 = new inner.Class1(); 
 

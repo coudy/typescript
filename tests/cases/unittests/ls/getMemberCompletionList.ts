@@ -171,7 +171,7 @@ describe('getMemberCompletionList', function ()
 
         it("get members of nested module", function ()
         {
-            var namesAndTypes = memberCompletionAtPos(code, 85, 31);
+            var namesAndTypes = memberCompletionAtPos(code, 85, 24);
 
             verifyNumberOfMembers(namesAndTypes, 5);
             verifyNamesAndTypes(namesAndTypes, {

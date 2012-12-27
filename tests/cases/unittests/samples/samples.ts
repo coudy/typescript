@@ -149,7 +149,7 @@ describe('Compiling samples', function ()
     {
         var src = "..//samples//raytracer//raytracer.ts";
 
-        Harness.Compiler.compileUnit(src, function (result)
+        Harness.Compiler.compileFile(src, function (result)
         {
             assert.equal(result.errors.length, 0);
         });
@@ -160,7 +160,7 @@ describe('Compiling samples', function ()
     {
         var src = "..//samples//simple//animals.ts";
 
-        Harness.Compiler.compileUnit(src, function (result)
+        Harness.Compiler.compileFile(src, function (result)
         {
             assert.equal(result.errors.length, 0);
         });
@@ -171,7 +171,7 @@ describe('Compiling samples', function ()
     {
         var src = "..//samples//todomvc//js//todos.ts";
 
-        Harness.Compiler.compileUnit(src, function (result)
+        Harness.Compiler.compileFile(src, function (result)
         {
             assert.equal(result.errors.length, 0);
         });

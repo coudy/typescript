@@ -1,7 +1,6 @@
 ///<reference path="runnerbase.ts" />
 ///<reference path="compiler/runner.ts" />
 ///<reference path="compiler/sourcemapRunner.ts" />
-///<reference path="flags/flagsrunner.ts" />
 ///<reference path="fourslash/fsrunner.ts" />
 ///<reference path="projects/runner.ts" />
 ///<reference path="unittest/unittestrunner.ts" />

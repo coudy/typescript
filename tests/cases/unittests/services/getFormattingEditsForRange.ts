@@ -72,7 +72,7 @@ describe('getFormattingEditsForRange', function() {
         it("formats classes and interfaces correctelly", function() {
             getFormattingEditsForRange('classes');
         });
-        it("formats modules correctelly", function() {
+        it("formats modules correctly", function() {
             getFormattingEditsForRange('modules');
         });
         it("formats fat arrow expressions correctelly", function() {

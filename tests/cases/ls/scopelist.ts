@@ -265,8 +265,8 @@ interface shwint {
 var shwvar = 1;
 
 module mod5 {
-    export import Mod1 = mod1;
-    export import iMod1 = mod1.mod1emod;    
+    import Mod1 = mod1;
+    import iMod1 = mod1.mod1emod;    
 }
 
 class extCls extends shwcls {

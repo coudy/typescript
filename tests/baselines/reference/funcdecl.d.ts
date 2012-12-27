@@ -27,4 +27,3 @@ module m2 {
     function foo(n: () => void): void;
 }
 var f2: () => string;
-

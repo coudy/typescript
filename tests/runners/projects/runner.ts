@@ -108,7 +108,6 @@ class HarnessBatch {
         this.errout.reset();
 
         compiler = new TypeScript.TypeScriptCompiler(this.errout, new TypeScript.NullLogger(), this.compilationSettings);
-        compiler.setErrorOutput(this.errout);
         compiler.parser.errorRecovery = true;
 
         if (this.compilationSettings.emitComments) {
@@ -343,7 +342,7 @@ class ProjectRunner extends RunnerBase {
                         });
                     } else {
                         it("compiles with errors", function () {
-                            assert.equal(batch.errout.lines.join("\n"), spec.errors.join("\n") + "\n");
+                            assert.equal(batch.errout.lines.join("\n"), spec.errors.join("\n"));
                         });
                     }
 
@@ -411,7 +410,7 @@ class ProjectRunner extends RunnerBase {
                     }
                     else {
                         it("compiles with errors", function () {
-                            assert.equal(batch.errout.lines.join("\n"), spec.errors.join("\n") + "\n");
+                            assert.equal(batch.errout.lines.join("\n"), spec.errors.join("\n"));
                         });
                     }
 

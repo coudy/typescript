@@ -52,4 +52,3 @@ class d {
 class e {
     private foo(s);
 }
-

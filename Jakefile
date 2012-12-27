@@ -124,7 +124,6 @@ var harnessSources = [
 	path.join(harnessDirectory, "runner.ts"),
 
 	path.join(runnersDirectory, "runnerbase.ts"),
-	path.join(runnersDirectory, "flags/flagsrunner.ts"),
 	path.join(runnersDirectory, "compiler/runner.ts"),
 	path.join(runnersDirectory, "compiler/sourcemapRunner.ts"),
 	path.join(runnersDirectory, "fourslash/fsrunner.ts"),

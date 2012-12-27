@@ -67,4 +67,3 @@ var x;
 var z;
 function foo(a2): void;
 var b: number;
-

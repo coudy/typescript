@@ -32,4 +32,3 @@ interface d extends a {
 class c1 implements a {
 }
 var instance2: c1;
-
