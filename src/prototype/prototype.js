@@ -2490,14 +2490,14 @@ var SlidingWindow = (function () {
             return false;
         }
         if(this.windowCount >= this.window.length) {
-            this.tryShiftOrGrowTokenWindow();
+            this.tryShiftOrGrowWindow();
         }
         var spaceAvailable = this.window.length - this.windowCount;
         var amountFetched = this.source.fetchMoreItems(argument, this.windowAbsoluteEndIndex(), this.window, this.windowCount, spaceAvailable);
         this.windowCount += amountFetched;
         return amountFetched > 0;
     };
-    SlidingWindow.prototype.tryShiftOrGrowTokenWindow = function () {
+    SlidingWindow.prototype.tryShiftOrGrowWindow = function () {
         var currentIndexIsPastWindowHalfwayPoint = this.currentRelativeItemIndex > (this.window.length >>> 1);
         var isAllowedToShift = this.firstPinnedAbsoluteIndex === -1 || this.firstPinnedAbsoluteIndex > this.windowAbsoluteStartIndex;
         if(currentIndexIsPastWindowHalfwayPoint && isAllowedToShift) {

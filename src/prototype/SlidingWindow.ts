@@ -60,7 +60,7 @@ class SlidingWindow {
 
         // First, make room for the new items if we're out of room.
         if (this.windowCount >= this.window.length) {
-            this.tryShiftOrGrowTokenWindow();
+            this.tryShiftOrGrowWindow();
         }
 
         var spaceAvailable = this.window.length - this.windowCount;
@@ -72,7 +72,7 @@ class SlidingWindow {
         return amountFetched > 0;
     }
 
-    private tryShiftOrGrowTokenWindow(): void {
+    private tryShiftOrGrowWindow(): void {
         // We want to shift if our current item is past the halfway point of the current item window.
         var currentIndexIsPastWindowHalfwayPoint = this.currentRelativeItemIndex > (this.window.length >>> 1);
 
