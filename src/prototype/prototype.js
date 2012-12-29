@@ -8104,25 +8104,23 @@ var Scanner = (function () {
         }
     };
     Scanner.prototype.slowScanIdentifier = function (diagnostics) {
-        var startIndex = this.slidingWindow.getAndPinAbsoluteIndex();
+        var startIndex = this.slidingWindow.absoluteIndex();
         do {
             this.scanCharOrUnicodeEscape(diagnostics);
         }while(this.isIdentifierPart(this.peekCharOrUnicodeEscape()))
         var endIndex = this.slidingWindow.absoluteIndex();
         this.width = endIndex - startIndex;
         this.kind = 9 /* IdentifierNameToken */ ;
-        this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
     };
     Scanner.prototype.scanNumericLiteral = function () {
-        var startIndex = this.slidingWindow.getAndPinAbsoluteIndex();
         if(this.isHexNumericLiteral()) {
-            this.scanHexNumericLiteral(startIndex);
+            this.scanHexNumericLiteral();
         } else {
-            this.scanDecimalNumericLiteral(startIndex);
+            this.scanDecimalNumericLiteral();
         }
-        this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
     };
-    Scanner.prototype.scanDecimalNumericLiteral = function (startIndex) {
+    Scanner.prototype.scanDecimalNumericLiteral = function () {
+        var startIndex = this.slidingWindow.absoluteIndex();
         while(CharacterInfo.isDecimalDigit(this.currentCharCode())) {
             this.slidingWindow.moveToNextItem();
         }
@@ -8149,8 +8147,9 @@ var Scanner = (function () {
         this.width = endIndex - startIndex;
         this.kind = 11 /* NumericLiteral */ ;
     };
-    Scanner.prototype.scanHexNumericLiteral = function (startIndex) {
+    Scanner.prototype.scanHexNumericLiteral = function () {
         Debug.assert(this.isHexNumericLiteral());
+        var startIndex = this.slidingWindow.absoluteIndex();
         this.slidingWindow.moveToNextItem();
         this.slidingWindow.moveToNextItem();
         while(CharacterInfo.isHexDigit(this.currentCharCode())) {

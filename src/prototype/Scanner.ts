@@ -537,7 +537,7 @@ class Scanner implements ISlidingWindowSource {
     // A slow path for scanning identifiers.  Called when we run into a unicode character or 
     // escape sequence while processing the fast path.
     private slowScanIdentifier(diagnostics: SyntaxDiagnostic[]): void {
-        var startIndex = this.slidingWindow.getAndPinAbsoluteIndex();
+        var startIndex = this.slidingWindow.absoluteIndex();
 
         do {
             this.scanCharOrUnicodeEscape(diagnostics);
@@ -547,26 +547,20 @@ class Scanner implements ISlidingWindowSource {
         var endIndex = this.slidingWindow.absoluteIndex();
         this.width = endIndex - startIndex;
         this.kind = SyntaxKind.IdentifierNameToken;
-
-        this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
     }
 
     private scanNumericLiteral(): void {
-        // Because we'll be pulling out the text of the numeric literal and storing it in the token
-        // we need to pin the underling sliding window.
-        var startIndex = this.slidingWindow.getAndPinAbsoluteIndex();
-
         if (this.isHexNumericLiteral()) {
-            this.scanHexNumericLiteral(startIndex);
+            this.scanHexNumericLiteral();
         }
         else {
-            this.scanDecimalNumericLiteral(startIndex);
+            this.scanDecimalNumericLiteral();
         }
-
-        this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
     }
 
-    private scanDecimalNumericLiteral(startIndex: number): void {
+    private scanDecimalNumericLiteral(): void {
+        var startIndex = this.slidingWindow.absoluteIndex();
+
         while (CharacterInfo.isDecimalDigit(this.currentCharCode())) {
             this.slidingWindow.moveToNextItem();
         }
@@ -601,8 +595,11 @@ class Scanner implements ISlidingWindowSource {
         this.kind = SyntaxKind.NumericLiteral;
     }
 
-    private scanHexNumericLiteral(startIndex: number): void {
+    private scanHexNumericLiteral(): void {
         Debug.assert(this.isHexNumericLiteral());
+        var startIndex = this.slidingWindow.absoluteIndex();
+
+        // Move past the 0x.
         this.slidingWindow.moveToNextItem();
         this.slidingWindow.moveToNextItem();
 
