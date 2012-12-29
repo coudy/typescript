@@ -1,3 +1,4 @@
+// @sourcemap: true
 module Foo.Bar {
 	"use strict";
 	

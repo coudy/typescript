@@ -689,10 +689,51 @@ module Harness {
             }
         }
 
+        // Mimics having multiple files, later concatenated to a single file.
+        export class EmitterIOHost implements TypeScript.EmitterIOHost {
+
+            private fileCollection = {};
+
+            // create file gets the whole path to create, so this works as expected with the --out parameter
+            public createFile(s: string, useUTF8?: bool): ITextWriter {
+
+                if (this.fileCollection[s]) {
+                    return <ITextWriter>this.fileCollection[s];
+                }
+
+                var writer = new Harness.Compiler.WriterAggregator();
+                if (s != '0.js') { writer.WriteLine('////[' + s + ']'); }
+                this.fileCollection[s] = writer;
+                return writer;
+            }
+            public directoryExists(s: string) { return false; }
+            public fileExists(s: string) { return typeof this.fileCollection[s] !== 'undefined'; }
+            public resolvePath(s: string) { return s; }
+
+            public reset() { this.fileCollection = {}; }
+            public output() {
+
+                return this.outputLines().join('\n');
+            }
+
+            public outputLines() : string[] {
+
+                var result: string[] = [];
+
+                for (var p in this.fileCollection) {
+                    if (this.fileCollection.hasOwnProperty(p)) {
+                        result = result.concat(this.fileCollection[p].lines);
+                    }
+                }
+
+                return result;
+            }
+        }
+
         var libFolder: string = global['WScript'] ? TypeScript.filePath(global['WScript'].ScriptFullName) : (__dirname + '/');
         export var libText = IO ? IO.readFile(libFolder + "lib.d.ts") : '';
 
-        var stdout = new WriterAggregator();
+        var stdout = new EmitterIOHost();
         var stderr = new WriterAggregator();
 
         export function isDeclareFile(filename: string) {
@@ -1101,9 +1142,10 @@ module Harness {
             }
 
             compiler.reTypeCheck();
-            compiler.emitToOutfile(stdout);
+            compiler.emit(stdout);
+            //compiler.emitToOutfile(stdout);
 
-            callback(new CompilerResult(stdout.lines, stderr.lines, []));
+            callback(new CompilerResult(stdout.outputLines(), stderr.lines, []));
 
             recreate();
             reset();
@@ -1154,25 +1196,14 @@ module Harness {
                 }
             }
 
-            var emitterIOHost: TypeScript.EmitterIOHost = {
-                // create file gets the whole path to create, so this works as expected with the --out parameter
-                createFile: (s) => {
-                    //                    stdout.WriteLine('[' + s + ']');
-                    return stdout;
-                },
-                directoryExists: (s) => { return false; },
-                fileExists: (s: string) => { return false; },
-                resolvePath: (s: string) => { return s; },
-            };
-
-            compiler.emit(emitterIOHost);
-            //            compiler.emitToOutfile(stdout); // emits all units into a single js file
+            compiler.emit(stdout);
+            // compiler.emitToOutfile(stdout); // emits all units into a single js file
 
             if (context) {
                 context.postCompile();
             }
 
-            callback(new CompilerResult(stdout.lines, stderr.lines, scripts));
+            callback(new CompilerResult(stdout.outputLines(), stderr.lines, scripts));
         }
 
         // Returns a set of functions which can be later executed to add and remove given dependencies to the compiler so that
@@ -1307,7 +1338,9 @@ module Harness {
                                 throw new Error('Unrecognized metadata name "' + match[1] + '". Available file metadata names are: ' + fileMetadataNames.join(', '));
                             } else if (fileNameIndex == 0) {
                                 currentFileOptions[match[1]] = match[2];
-                            } else { continue; }
+                            } else {
+                                continue;
+                            }
 
                             // New metadata statement after having collected some code to go with the previous metadata
                             if (currentFileName) {

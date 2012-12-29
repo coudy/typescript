@@ -22,448 +22,448 @@ describe('Contextual typed literals with getTypeAtPosition', function() {
     describe('in class property decls', function() {
         it('contextually types a function literal with different arity', function() {
             // function itself
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(15, 58)), '(i: number, s: string) => number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(16, 58)), '(i: number, s: string) => number');
             
             // parameter
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(15, 53)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(16, 53)), 'number');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(16, 15)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(17, 15)), 'number');
         });
     });
     
     describe('in module property decls', function() {
         it('contextually types a function literal with different arity', function() {
             // function itself
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(22, 60)), '(i: number, s: string) => number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(23, 60)), '(i: number, s: string) => number');
             
             // parameter
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(22, 64)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(23, 64)), 'number');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(23, 15)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(24, 15)), 'number');
         });
     });
     
     describe('in variable decls', function() {
         it('does not contextually type inside a parenthesized expression', function() {
             // function itself
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(28, 40)), '(s: any) => any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(29, 40)), '(s: any) => any');
             
             // Parameter
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(28, 44)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(29, 44)), 'any');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(28, 56)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(29, 56)), 'any');
         });
         
         
         it('contextually types object literals to interfaces', function() {
             // Object literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(29, 16)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(30, 16)), 'IFoo');
             
             // Property
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(30, 4)), '{ n: number; }');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(31, 4)), '{ n: number; }');
         });
         
         it('contextually types array literals', function() {
             // Array literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(32, 21)), 'number[]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(33, 21)), 'number[]');
         });
         
         it('contextually types a function literal with zero parameters', function() {
             // Function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(33, 28)), '() => IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(34, 28)), '() => IFoo');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(33, 43)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(34, 43)), 'IFoo');
         });
         
         it('contextually types a function literal with one parameter', function() {
             // Function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(34, 37)), '(n: number) => IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(35, 37)), '(n: number) => IFoo');
             
             // Parameter
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(34, 41)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(35, 41)), 'number');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(34, 53)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(35, 53)), 'IFoo');
         });
         
         it('contextually types a function literal with two parameters', function() {
             // Function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(35, 47)), '(n: number, s: string) => IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(36, 47)), '(n: number, s: string) => IFoo');
             
             // Parameter 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(35, 52)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(36, 52)), 'number');
             
             // Parameter 2
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(35, 55)), 'string');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(36, 55)), 'string');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(35, 67)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(36, 67)), 'IFoo');
         });
         
         it('does not contextually type a function literal to an overloaded function', function() {
             // Function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(39, 8)), '{ (n: number): number; (s1: string): number; }');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(40, 8)), '{ (n: number): number; (s1: string): number; }');
             
             // Parameter
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(39, 13)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(40, 13)), 'any');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(39, 25)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(40, 25)), 'any');
         });
         
         
         it('contextually types a function literal with different arity than the target', function() {
             // Function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(41, 49)), '(n: number, s: string) => number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(42, 49)), '(n: number, s: string) => number');
             
             // Parameter
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(41, 54)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(42, 54)), 'number');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(41, 66)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(42, 66)), 'number');
         });
         
         it('contextually types a nested array', function() {
             // outer array
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(42, 23)), 'number[][]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(43, 23)), 'number[][]');
             
             // inner array 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(42, 24)), 'number[]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(43, 24)), 'number[]');
             
             // inner array 2
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(42, 27)), 'number[]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(43, 27)), 'number[]');
         });
         
         it('contextually types object literals inside arrays', function() {
             // outer array
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(43, 20)), 'IFoo[]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(44, 20)), 'IFoo[]');
             
             // inner object 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(43, 21)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(44, 21)), 'IFoo');
             
             // inner object 2
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(43, 24)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(44, 24)), 'IFoo');
         });
         
         it('contextually types function literals inside arrays', function() {
             // outer array
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(44, 49)), '{ (n: number, s: string): string; }[]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(45, 49)), '{ (n: number, s: string): string; }[]');
             
             // inner function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(44, 53)), '(n: number, s: string) => string');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(45, 53)), '(n: number, s: string) => string');
             
             // inner parameter 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(44, 59)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(45, 59)), 'number');
             
             // inner parameter 2
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(44, 62)), 'string');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(45, 62)), 'string');
             
             // inner return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(44, 74)), 'string');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(45, 74)), 'string');
         });
         
         it('contextually types nested object', function() {
             // outer literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(45, 18)), 'IBar');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(46, 18)), 'IBar');
             
             // outer property foo
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(46, 6)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(47, 6)), 'IFoo');
             
             // inner literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(46, 9)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(47, 9)), 'IFoo');
         });
         
         it('contextually types functions in objects', function() {
             // outer literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(48, 16)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(49, 16)), 'IFoo');
             
             // outer property f
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(49, 4)), '{ f: (i: any, s: any) => any; }');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(50, 4)), '{ f: (i: any, s: any) => any; }');
             
             // inner function literal
             // Note: this is not '(i: number,s: string) => string', since we're using a type assertion
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(49, 12)), '(i: any, s: any) => any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(50, 12)), '(i: any, s: any) => any');
             
             // inner function parameter 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(49, 16)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(50, 16)), 'any');
             
             // inner function parameter 2
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(49, 19)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(50, 19)), 'any');
             
             // inner function return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(49, 31)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(50, 31)), 'any');
         });
         
         it('contextually types arrays in objects', function() {
             // outer literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(51, 16)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(52, 16)), 'IFoo');
             
             // outer property a
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(52, 4)), '{ a: any[]; }');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(53, 4)), '{ a: any[]; }');
             
             // inner literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(52, 7)), 'any[]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(53, 7)), 'any[]');
         });
     });
     
     describe('in class property assignments', function() {
         it('contextually types a function literal with same arity', function() {
             // function itself
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(59, 20)), '(i: number, s: string) => string');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(60, 20)), '(i: number, s: string) => string');
             
             // parameter 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(59, 28)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(60, 28)), 'number');
             
             // parameter 2
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(59, 31)), 'string');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(60, 31)), 'string');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(60, 19)), 'string');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(61, 19)), 'string');
         });
     });
     
     describe('in module property assignments', function() {
         it('contextually types a function literal with same arity', function() {
             // function itself
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(68, 15)), '(i: number, s: string) => string');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(69, 15)), '(i: number, s: string) => string');
             
             // parameter 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(68, 19)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(69, 19)), 'number');
             
             // parameter 2
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(68, 22)), 'string');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(69, 22)), 'string');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(69, 15)), 'string');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(70, 15)), 'string');
         });
     });
     
     describe('in variable assignments', function() {
         it('contextually types a function literal with one parameter', function() {
             // function itself
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(75, 31)), '(n: number) => IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(76, 31)), '(n: number) => IFoo');
             
             // parameter 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(75, 16)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(76, 16)), 'number');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(75, 28)), '(n: number) => IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(76, 28)), '(n: number) => IFoo');
         });
     });
     
     describe('in array index assignments', function() {
         it('contextually types an object to an interface', function() {
             // object literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(79, 10)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(80, 10)), 'IFoo');
 
             // object literal property
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(79, 11)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(80, 11)), 'IFoo');
         });
     });
     
     describe('in object property assignments', function() {
         it('does not contextually type inside a parenthesized expression', function() {
             // function itself
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(122, 17)), '(s: any) => any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(123, 17)), '(s: any) => any');
             
             // Parameter
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(122, 21)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(123, 21)), 'any');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(122, 33)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(123, 33)), 'any');
         });
         
         
         it('contextually types object literals to interfaces', function() {
             // Object literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(123, 11)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(124, 11)), 'IFoo');
             
             // Property
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(124, 4)), '{ n: number; }');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(125, 4)), '{ n: number; }');
         });
         
         it('contextually types array literals', function() {
             // Array literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(126, 11)), 'number[]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(127, 11)), 'number[]');
         });
         
         it('contextually types a function literal with zero parameters', function() {
             // Function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(127, 16)), '() => IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(128, 16)), '() => IFoo');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(127, 31)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(128, 31)), 'IFoo');
         });
         
         it('contextually types a function literal with one parameter', function() {
             // Function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(128, 16)), '(n: number) => IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(129, 16)), '(n: number) => IFoo');
             
             // Parameter
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(128, 20)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(129, 20)), 'number');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(128, 32)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(129, 32)), 'IFoo');
         });
         
         it('contextually types a function literal with two parameters', function() {
             // Function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(129, 16)), '(n: number, s: string) => IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(130, 16)), '(n: number, s: string) => IFoo');
             
             // Parameter 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(129, 20)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(130, 20)), 'number');
             
             // Parameter 2
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(129, 23)), 'string');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(130, 23)), 'string');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(129, 35)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(130, 35)), 'IFoo');
         });
         
         it('does not contextually type a function literal to an overloaded function', function() {
             // Function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(130, 16)), '(n: number, s: string) => number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(131, 16)), '(n: number, s: string) => number');
             
             // Parameter
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(130, 20)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(131, 20)), 'number');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(130, 40)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(131, 40)), 'number');
         });
         
         it('contextually types a function literal with different arity than the target', function() {
             // Function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(132, 16)), '(n: number, s: string) => number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(133, 16)), '(n: number, s: string) => number');
             
             // Parameter
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(132, 20)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(133, 20)), 'number');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(132, 32)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(133, 32)), 'number');
         });
         
         it('contextually types a nested array', function() {
             // outer array
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(133, 11)), 'number[][]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(134, 11)), 'number[][]');
             
             // inner array 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(133, 12)), 'number[]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(134, 12)), 'number[]');
             
             // inner array 2
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(133, 15)), 'number[]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(134, 15)), 'number[]');
         });
         
         it('contextually types object literals inside arrays', function() {
             // outer array
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(134, 12)), 'IFoo[]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(135, 12)), 'IFoo[]');
             
             // inner object 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(134, 13)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(135, 13)), 'IFoo');
             
             // inner object 2
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(134, 16)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(135, 16)), 'IFoo');
         });
         
         it('contextually types function literals inside arrays', function() {
             // outer array
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(135, 12)), '{ (n: number, s: string): string; }[]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(136, 12)), '{ (n: number, s: string): string; }[]');
             
             // inner function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(135, 18)), '(n: number, s: string) => string');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(136, 18)), '(n: number, s: string) => string');
             
             // inner parameter 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(135, 22)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(136, 22)), 'number');
             
             // inner parameter 2
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(135, 25)), 'string');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(136, 25)), 'string');
             
             // inner return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(135, 37)), 'string');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(136, 37)), 'string');
         });
         
         it('contextually types nested object', function() {
             // outer literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(136, 12)), 'IBar');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(137, 12)), 'IBar');
             
             // outer property foo
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(137, 6)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(138, 6)), 'IFoo');
             
             // inner literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(137, 9)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(138, 9)), 'IFoo');
         });
         
         it('contextually types functions in objects', function() {
             // outer literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(139, 16)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(140, 16)), 'IFoo');
             
             // outer property f
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(140, 4)), '{ f: (i: any, s: any) => any; }');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(141, 4)), '{ f: (i: any, s: any) => any; }');
             
             // inner function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(140, 12)), '(i: any, s: any) => any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(141, 12)), '(i: any, s: any) => any');
             
             // inner function parameter 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(140, 16)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(141, 16)), 'any');
             
             // inner function parameter 2
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(140, 19)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(141, 19)), 'any');
             
             // inner function return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(140, 31)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(141, 31)), 'any');
         });
         
         it('contextually types arrays in objects', function() {
             // outer literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(142, 12)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(143, 12)), 'IFoo');
             
             // outer property a
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(143, 4)), '{ a: any[]; }');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(144, 4)), '{ a: any[]; }');
             
             // inner literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(143, 7)), 'any[]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(144, 7)), 'any[]');
         });
     });
     
     describe('in a function call', function() {
         it('contextually types a function literal with one parameter', function() {
             // function itself
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(147, 10)), '(n: number) => IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(148, 10)), '(n: number) => IFoo');
             
             // parameter 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(147, 14)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(148, 14)), 'number');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(148, 11)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(149, 11)), 'IFoo');
         });
     });
     
     describe('in a return statement call', function() {
         it('contextually types a function literal with one parameter', function() {
             // function itself
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(152, 65)), '(n: any) => IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(153, 65)), '(n: any) => IFoo');
             
             // parameter 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(152, 68)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(153, 68)), 'any');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(152, 80)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(153, 80)), 'IFoo');
         });
     });
     
     describe('in a new expression', function() {
         it('contextually types a function literal with one parameter', function() {
             // function itself
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(156, 22)), '(n: number) => IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(157, 22)), '(n: number) => IFoo');
             
             // parameter 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(156, 27)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(157, 27)), 'number');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(156, 39)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(157, 39)), 'IFoo');
         });
     });
      
@@ -472,221 +472,221 @@ describe('Contextual typed literals with getTypeAtPosition', function() {
             // function itself
             // We have param and return types of 'string' and not 'any' because the type assertion
             // sets the type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(159, 42)), '(s: any) => any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(160, 42)), '(s: any) => any');
             
             // Parameter
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(159, 46)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(160, 46)), 'any');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(159, 58)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(160, 58)), 'any');
         });
         
         
         it('contextually types object literals to interfaces', function() {
             // Object literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(160, 16)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(161, 16)), 'IFoo');
             
             // Property
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(161, 4)), '{ n: number; }');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(162, 4)), '{ n: number; }');
         });
         
         it('contextually types array literals', function() {
             // Array literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(161, 23)), 'number[]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(162, 23)), 'number[]');
         });
         
         it('contextually types a function literal with zero parameters', function() {
             // Function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(164, 30)), '() => IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(165, 30)), '() => IFoo');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(164, 45)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(165, 45)), 'IFoo');
         });
         
         it('contextually types a function literal with one parameter', function() {
             // Function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(165, 38)), '(n: number) => IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(166, 38)), '(n: number) => IFoo');
             
             // Parameter
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(165, 43)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(166, 43)), 'number');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(165, 55)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(166, 55)), 'IFoo');
         });
         
         it('contextually types a function literal with two parameters', function() {
             // Function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(166, 50)), '(n: number, s: string) => IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(167, 50)), '(n: number, s: string) => IFoo');
             
             // Parameter 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(166, 54)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(167, 54)), 'number');
             
             // Parameter 2
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(166, 57)), 'string');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(167, 57)), 'string');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(166, 69)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(167, 69)), 'IFoo');
         });
         
         it('does not contextually type a function literal to an overloaded function', function() {
             // Function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(170, 8)), '(n: number) => number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(171, 8)), '(n: number) => number');
             
             // Parameter
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(170, 12)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(171, 12)), 'number');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(170, 31)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(171, 31)), 'number');
         });
         
         it('contextually types a function literal with different arity than the target', function() {
             // Function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(172, 52)), '(n: number) => number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(173, 52)), '(n: number) => number');
             
             // Parameter
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(172, 56)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(173, 56)), 'number');
             
             // Return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(172, 68)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(173, 68)), 'number');
         });
         
         it('contextually types a nested array', function() {
             // outer array
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(173, 25)), 'number[][]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(174, 25)), 'number[][]');
             
             // inner array 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(173, 26)), 'number[]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(174, 26)), 'number[]');
             
             // inner array 2
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(173, 29)), 'number[]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(174, 29)), 'number[]');
         });
         
         it('contextually types object literals inside arrays', function() {
             // outer array
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(174, 22)), 'IFoo[]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(175, 22)), 'IFoo[]');
             
             // inner object 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(174, 23)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(175, 23)), 'IFoo');
             
             // inner object 2
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(174, 26)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(175, 26)), 'IFoo');
         });
         
         it('contextually types function literals inside arrays', function() {
             // outer array
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(175, 51)), '{ (n: number, s: string): string; }[]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(176, 51)), '{ (n: number, s: string): string; }[]');
             
             // inner function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(175, 56)), '(n: number, s: string) => string');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(176, 56)), '(n: number, s: string) => string');
             
             // inner parameter 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(175, 61)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(176, 61)), 'number');
             
             // inner parameter 2
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(175, 64)), 'string');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(176, 64)), 'string');
             
             // inner return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(175, 76)), 'string');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(176, 76)), 'string');
         });
         
         it('contextually types nested object', function() {
             // outer literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(176, 20)), '{ foo: IFoo; }');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(177, 20)), '{ foo: IFoo; }');
             
             // outer property foo
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(177, 6)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(178, 6)), 'IFoo');
             
             // inner literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(177, 9)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(178, 9)), 'IFoo');
         });
         
         it('contextually types functions in objects', function() {
             // outer literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(179, 16)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(180, 16)), 'IFoo');
             
             // outer property f
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(180, 4)), '{ f: (i: any, s: any) => any; }');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(181, 4)), '{ f: (i: any, s: any) => any; }');
             
             // inner function literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(180, 12)), '(i: any, s: any) => any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(181, 12)), '(i: any, s: any) => any');
             
             // inner function parameter 1
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(180, 16)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(181, 16)), 'any');
             
             // inner function parameter 2
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(180, 19)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(181, 19)), 'any');
             
             // inner function return type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(180, 31)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(181, 31)), 'any');
         });
         
         it('contextually types arrays in objects', function() {
             // outer literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(182, 16)), 'IFoo');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(183, 16)), 'IFoo');
             
             // outer property a
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(183, 4)), '{ a: any[]; }');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(184, 4)), '{ a: any[]; }');
             
             // inner literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(183, 7)), 'any[]');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(184, 7)), 'any[]');
         });
     });
     
     describe('from ambient declarations', function() {
         it('contextually types a function declaration', function() {
             // type of the function
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(190, 12)), '(a: number, b: number) => number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(191, 12)), '(a: number, b: number) => number');
             
             // type of param 'a'
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(191, 13)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(192, 13)), 'number');
             
             // type of param 'b'
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(191, 15)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(192, 15)), 'number');
         });
         it('contextually types a class declaration', function() {
             // constructor function type
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(207, 12)), '{ origin: Point; new(x: number, y: number): Point; }');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(208, 12)), '{ origin: Point; new(x: number, y: number): Point; }');
             
             // constructor param x
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(207, 15)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(208, 15)), 'number');
             
             // constructor param y
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(207, 18)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(208, 18)), 'number');
             
             // constructor 'this' pointer
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(208, 7)), 'any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(209, 7)), 'any');
             
             // constructor 'this.x'
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(208, 11)), 'number');
-            
-            // constructor 'this.y'
             assert.equal(getTypeAtPosition(fileName, lineToOffset(209, 11)), 'number');
             
+            // constructor 'this.y'
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(210, 11)), 'number');
+            
             // constructor type in 'new' expression
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(214, 21)), '{ origin: Point; new(x: number, y: number): Point; }');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(215, 21)), '{ origin: Point; new(x: number, y: number): Point; }');
             
             // target type function on assignment to 'add'
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(216, 25)), '(dx: number, dy: number) => Point');            
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(217, 25)), '(dx: number, dy: number) => Point');            
             
             // target type of 'add' in object literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(223, 6)), '(dx: number, dy: number) => Point');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(224, 6)), '(dx: number, dy: number) => Point');
             
             // target type of add's 'dx' argument in object literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(223, 19)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(224, 19)), 'number');
             
             // target type of add's 'dy' argument in object literal
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(223, 23)), 'number');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(224, 23)), 'number');
             
         });
         it('contextually types a lambda to a library function', function() {
             // type of function
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(229, 25)), '(ev: MouseEvent) => any');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(230, 25)), '(ev: MouseEvent) => any');
             
             // type of function param 'ev'
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(229, 31)), 'MouseEvent');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(230, 31)), 'MouseEvent');
             
             // type of 'ev.bubbles'
-            assert.equal(getTypeAtPosition(fileName, lineToOffset(230, 10)), 'bool');
+            assert.equal(getTypeAtPosition(fileName, lineToOffset(231, 10)), 'bool');
         });        
     });        
 });

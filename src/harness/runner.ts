@@ -10,7 +10,6 @@
 ///<reference path='diff.ts'/>
 ///<reference path='..\..\tests\runners\runnerfactory.ts' />
 ///<reference path='..\..\tests\runners\compiler\runner.ts' />
-///<reference path='..\..\tests\runners\compiler\sourcemapRunner.ts' />
 ///<reference path='..\..\tests\runners\fourslash\fsrunner.ts' />
 ///<reference path='..\..\tests\runners\projects\runner.ts' />
 ///<reference path='..\..\tests\runners\unittest\unittestrunner.ts' />
@@ -197,7 +196,6 @@ opts.option('compiler', {
     set: function () {
         runners.push(new UnitTestRunner('compiler'));
         runners.push(new CompilerBaselineRunner());
-        runners.push(new SourcemapRunner());
         runners.push(new ProjectRunner());
     }
 });
@@ -251,7 +249,6 @@ if (runners.length === 0) {
         // compiler
         runners.push(new UnitTestRunner('compiler'));
         runners.push(new CompilerBaselineRunner());
-        runners.push(new SourcemapRunner());
         runners.push(new ProjectRunner());
 
         // language services
@@ -263,7 +260,7 @@ if (runners.length === 0) {
 
         // samples
         runners.push(new UnitTestRunner('samples'));
-    } else if (runners.length == 0) {
+    } else {
         var runnerFactory = new RunnerFactory();
         var tests = opts.unnamed[0].split(' ');
         for (var i = 0; i < tests.length; i++) {

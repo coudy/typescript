@@ -1,3 +1,4 @@
+// @sourcemap: true
 // DEFAULT INTERFACES
 interface IFoo {
     n: number;
