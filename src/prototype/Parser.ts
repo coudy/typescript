@@ -268,7 +268,7 @@ module Parser {
         }
 
         private addSkippedTokenTo(skippedToken: ISyntaxToken, array: ISyntaxTrivia[]): void {
-            Debug.assert(skippedToken.text().length > 0);
+            // Debug.assert(skippedToken.text().length > 0);
 
             // first, add the leading trivia of the skipped token to the array
             this.addTriviaTo(skippedToken.leadingTrivia(), array);
@@ -345,7 +345,7 @@ module Parser {
             }
 
             // if we're not pinned, we better be pointed at the first item in the list.
-            Debug.assert(this._index === 0);
+            // Debug.assert(this._index === 0);
 
             // Just shift ourselves over so we forget the current element we're pointing at and 
             // we're pointing at the next slibing.
@@ -360,17 +360,17 @@ module Parser {
         public releaseAndUnpinCursorIndex(index: number) {
             // this._index = index;
 
-            Debug.assert(this._pinCount > 0);
+            // Debug.assert(this._pinCount > 0);
             this._pinCount--;
             if (this._pinCount === 0) {
                 // The first pin was given out at index 0.  So we better be back at index 0.
-                Debug.assert(this._index === 0);
+                // Debug.assert(this._index === 0);
             }
         }
 
         public rewindToPinnedCursorIndex(index: number): void {
-            Debug.assert(index >= 0 && index <= this._elements.length);
-            Debug.assert(this._pinCount > 0);
+            // Debug.assert(index >= 0 && index <= this._elements.length);
+            // Debug.assert(this._pinCount > 0);
             this._index = index;
         }
 
@@ -388,7 +388,7 @@ module Parser {
                     continue;
                 }
 
-                Debug.assert(element.isToken());
+                // Debug.assert(element.isToken());
                 return;
             }
         }
@@ -401,7 +401,7 @@ module Parser {
 
             var element = this.currentElement();
 
-            Debug.assert(element.isToken());
+            // Debug.assert(element.isToken());
             return <ISyntaxToken>element;
         }
 
@@ -624,7 +624,7 @@ module Parser {
         }
 
         public releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
-            Debug.assert(this.slidingWindow.pinCount() === rewindPoint.pinCount);
+            // Debug.assert(this.slidingWindow.pinCount() === rewindPoint.pinCount);
             this.slidingWindow.releaseAndUnpinAbsoluteIndex((<any>rewindPoint).absoluteIndex);
 
             this.rewindPointPool[this.rewindPointPoolCount] = rewindPoint;
@@ -633,7 +633,7 @@ module Parser {
 
         private fetchMoreItems(allowRegularExpression: bool, sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
             // Assert disabled because it is actually expensive enugh to affect perf.
-            // Debug.assert(spaceAvailable > 0);
+            // // Debug.assert(spaceAvailable > 0);
             window[destinationIndex] = this.scanner.scan(this._tokenDiagnostics, allowRegularExpression);
             return 1;
         }
@@ -687,7 +687,7 @@ module Parser {
 
         public currentTokenAllowingRegularExpression(): ISyntaxToken {
             // We better be on a divide token right now.
-            Debug.assert(SyntaxFacts.isAnyDivideToken(this.currentToken().kind()));
+            // Debug.assert(SyntaxFacts.isAnyDivideToken(this.currentToken().kind()));
 
             // First, we're going to rewind all our data to the point where this / or /= token started.
             // That's because if it does turn out to be a regular expression, then any tokens or token 
@@ -707,7 +707,7 @@ module Parser {
 
             // We have better gotten some sort of regex token.  Otherwise, something *very* wrong has
             // occurred.
-            Debug.assert(SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.kind()));
+            // Debug.assert(SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.kind()));
 
             return token;
         }
@@ -779,8 +779,7 @@ module Parser {
 
             // The old tree's length, plus whatever length change was caused by the edit better 
             // equal the new text's length!
-            Debug.assert((oldSourceUnit.fullWidth() - this._changeRange.span().length() + this._changeRange.newLength()) ===
-                         newText.length());
+            // Debug.assert((oldSourceUnit.fullWidth() - this._changeRange.span().length() + this._changeRange.newLength()) === newText.length());
 
             // Set up a scanner so that we can scan tokens out of the new text.
             this._normalParserSource = new NormalParserSource(newText, languageVersion, stringTable);
@@ -822,8 +821,8 @@ module Parser {
             {
                 var tokenAndFullStart = sourceUnit.findToken(start);
                 var token = tokenAndFullStart.token;
-                Debug.assert(token.kind() !== SyntaxKind.None);
-                Debug.assert(token.fullWidth() > 0);
+                // Debug.assert(token.kind() !== SyntaxKind.None);
+                // Debug.assert(token.fullWidth() > 0);
 
                 var position = tokenAndFullStart.fullStart;
 
@@ -857,7 +856,7 @@ module Parser {
             rewindPoint.changeRange = this._changeRange;
             rewindPoint.oldSourceUnitCursorIndex = oldSourceUnitCursorIndex;
 
-            Debug.assert(rewindPoint.pinCount === this._oldSourceUnitCursor.pinCount());
+            // Debug.assert(rewindPoint.pinCount === this._oldSourceUnitCursor.pinCount());
 
             return rewindPoint;
         }
@@ -971,7 +970,7 @@ module Parser {
             //   b) (ideally) caught up to the new text position.
             //   c) ahead of the new text position.
             // In case 'b' we can try to reuse a node from teh old tree.
-            Debug.assert(this._oldSourceUnitCursor.isFinished() || this._changeDelta >= 0);
+            // Debug.assert(this._oldSourceUnitCursor.isFinished() || this._changeDelta >= 0);
         }
 
         private intersectsWithChangeRangeSpan(start: number, length: number) {
@@ -979,7 +978,7 @@ module Parser {
         }
 
         private tryGetNodeFromOldSourceUnit(): SyntaxNode {
-            Debug.assert(this.canReadFromOldSourceUnit());
+            // Debug.assert(this.canReadFromOldSourceUnit());
 
             // Keep moving the cursor down to the first node that is safe to return.  A node is 
             // safe to return if:
@@ -1045,7 +1044,7 @@ module Parser {
         }
 
         private tryGetTokenFromOldSourceUnit(): ISyntaxToken {
-            Debug.assert(this.canReadFromOldSourceUnit());
+            // Debug.assert(this.canReadFromOldSourceUnit());
 
             // get the current token that the cursor is pointing at.
             var token = this._oldSourceUnitCursor.currentToken();
@@ -1067,7 +1066,7 @@ module Parser {
         }
 
         private tryPeekTokenFromOldSourceUnit(n: number): ISyntaxToken {
-            Debug.assert(this.canReadFromOldSourceUnit());
+            // Debug.assert(this.canReadFromOldSourceUnit());
 
             // In order to peek the 'nth' token we need all the tokens up to that point.  That way
             // we know we know position that the nth token is at.  The position is necessary so 
@@ -1090,14 +1089,14 @@ module Parser {
         private moveToNextNode(): void {
             // A node could have only come from the old source unit cursor.  Update it and our 
             // current state.
-            Debug.assert(this._changeDelta === 0);
+            // Debug.assert(this._changeDelta === 0);
 
             // Get the current node we were pointing at, and move to the next element.
             var currentElement = this._oldSourceUnitCursor.currentElement();
             var currentNode = this._oldSourceUnitCursor.currentNode();
 
             // We better still be pointing at the node.
-            Debug.assert(currentElement === currentNode);
+            // Debug.assert(currentElement === currentNode);
             this._oldSourceUnitCursor.moveToNextSibling();
 
             // Update the underlying source with where it should now be currently pointing, and 
@@ -1106,13 +1105,13 @@ module Parser {
             var previousToken = currentNode.lastToken();
             this._normalParserSource.resetToPosition(absolutePosition, previousToken);
 
-            Debug.assert(previousToken !== null);
-            Debug.assert(previousToken.width() > 0);
+            // Debug.assert(previousToken !== null);
+            // Debug.assert(previousToken.width() > 0);
 
             if (this._changeRange !== null) {
                 // If we still have a change range, then this node must have ended before the 
                 // change range starts.  Thus, we don't need to call 'skipPastChanges'.
-                Debug.assert(this.absolutePosition() < this._changeRange.span().start());
+                // Debug.assert(this.absolutePosition() < this._changeRange.span().start());
             }
         }
 
@@ -1123,12 +1122,12 @@ module Parser {
 
             if (this._oldSourceUnitCursor.currentToken() === currentToken) {
                 // The token came from the old source unit.  So our tree and text must be in sync.
-                Debug.assert(this._changeDelta === 0);
+                // Debug.assert(this._changeDelta === 0);
 
                 // Move the cursor past this token.
                 this._oldSourceUnitCursor.moveToNextSibling();
 
-                Debug.assert(!this._normalParserSource.isPinned());
+                // Debug.assert(!this._normalParserSource.isPinned());
                 
                 // Update the underlying source with where it should now be currently pointing, and 
                 // what the previous token is before that position.  We don't need to do this when
@@ -1138,13 +1137,13 @@ module Parser {
                 var previousToken = currentToken;
                 this._normalParserSource.resetToPosition(absolutePosition, previousToken);
 
-                Debug.assert(previousToken !== null);
-                Debug.assert(previousToken.width() > 0);
+                // Debug.assert(previousToken !== null);
+                // Debug.assert(previousToken.width() > 0);
 
                 if (this._changeRange !== null) {
                     // If we still have a change range, then this token must have ended before the 
                     // change range starts.  Thus, we don't need to call 'skipPastChanges'.
-                    Debug.assert(this.absolutePosition() < this._changeRange.span().start());
+                    // Debug.assert(this.absolutePosition() < this._changeRange.span().start());
                 }
             }
             else {
@@ -1230,8 +1229,8 @@ module Parser {
         }
 
         private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
-            Debug.assert(this.listParsingState === rewindPoint.listParsingState);
-            Debug.assert(this.isInStrictMode === rewindPoint.isInStrictMode);
+            // Debug.assert(this.listParsingState === rewindPoint.listParsingState);
+            // Debug.assert(this.isInStrictMode === rewindPoint.isInStrictMode);
 
             this.source.releaseRewindPoint(rewindPoint);
         }
@@ -1298,7 +1297,7 @@ module Parser {
         //we should keep it simple so that it can be inlined.
         private eatToken(kind: SyntaxKind): ISyntaxToken {
             // Assert disabled because it is actually expensive enugh to affect perf.
-            // Debug.assert(SyntaxFacts.isTokenKind(kind))
+            // // Debug.assert(SyntaxFacts.isTokenKind(kind))
 
             var token = this.currentToken();
             if (token.tokenKind === kind) {
@@ -1329,7 +1328,7 @@ module Parser {
         }
 
         private eatKeyword(kind: SyntaxKind): ISyntaxToken {
-            Debug.assert(SyntaxFacts.isTokenKind(kind))
+            // Debug.assert(SyntaxFacts.isTokenKind(kind))
 
             var token = this.currentToken();
             if (token.keywordKind() === kind) {
@@ -1685,7 +1684,7 @@ module Parser {
         }
 
         private parseImportDeclaration(): ImportDeclarationSyntax {
-            Debug.assert(this.isImportDeclaration());
+            // Debug.assert(this.isImportDeclaration());
 
             var importKeyword = this.eatKeyword(SyntaxKind.ImportKeyword);
             var identifier = this.eatIdentifierToken();
@@ -1711,7 +1710,7 @@ module Parser {
         }
 
         private parseExternalModuleReference(): ExternalModuleReferenceSyntax {
-            Debug.assert(this.isExternalModuleReference());
+            // Debug.assert(this.isExternalModuleReference());
 
             var moduleKeyword = this.eatKeyword(SyntaxKind.ModuleKeyword);
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
@@ -1767,7 +1766,7 @@ module Parser {
         }
 
         private parseEnumDeclaration(): EnumDeclarationSyntax {
-            Debug.assert(this.isEnumDeclaration());
+            // Debug.assert(this.isEnumDeclaration());
 
             var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
             var enumKeyword = this.eatKeyword(SyntaxKind.EnumKeyword);
@@ -1804,7 +1803,7 @@ module Parser {
         }
 
         private parseClassDeclaration(): ClassDeclarationSyntax {
-            Debug.assert(this.isClassDeclaration());
+            // Debug.assert(this.isClassDeclaration());
 
             var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
             var declareKeyword = this.tryEatKeyword(SyntaxKind.DeclareKeyword);
@@ -1861,7 +1860,7 @@ module Parser {
         }
 
         private parseMemberAccessorDeclaration(): MemberAccessorDeclarationSyntax {
-            Debug.assert(this.isMemberAccessorDeclaration());
+            // Debug.assert(this.isMemberAccessorDeclaration());
 
             var publicOrPrivateKeyword: ISyntaxToken = null;
             if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
@@ -1884,7 +1883,7 @@ module Parser {
 
         private parseGetMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken,
                                                   staticKeyword: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
-            Debug.assert(this.currentToken().keywordKind() === SyntaxKind.GetKeyword);
+            // Debug.assert(this.currentToken().keywordKind() === SyntaxKind.GetKeyword);
 
             var getKeyword = this.eatKeyword(SyntaxKind.GetKeyword);
             var identifier = this.eatIdentifierToken();
@@ -1898,7 +1897,7 @@ module Parser {
 
         private parseSetMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken,
                                                   staticKeyword: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
-            Debug.assert(this.currentToken().keywordKind() === SyntaxKind.SetKeyword);
+            // Debug.assert(this.currentToken().keywordKind() === SyntaxKind.SetKeyword);
 
             var setKeyword = this.eatKeyword(SyntaxKind.SetKeyword);
             var identifier = this.eatIdentifierToken();
@@ -1954,7 +1953,7 @@ module Parser {
         }
 
         private parseConstructorDeclaration(): ConstructorDeclarationSyntax {
-            Debug.assert(this.isConstructorDeclaration());
+            // Debug.assert(this.isConstructorDeclaration());
 
             var constructorKeyword = this.eatKeyword(SyntaxKind.ConstructorKeyword);
             var parameterList = this.parseParameterList();
@@ -1989,7 +1988,7 @@ module Parser {
         }
 
         private parseMemberFunctionDeclaration(): MemberFunctionDeclarationSyntax {
-            Debug.assert(this.isMemberFunctionDeclaration());
+            // Debug.assert(this.isMemberFunctionDeclaration());
 
             var publicOrPrivateKeyword: ISyntaxToken = null;
             if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
@@ -2014,7 +2013,7 @@ module Parser {
         }
 
         private parseMemberVariableDeclaration(): MemberVariableDeclarationSyntax {
-            Debug.assert(this.isMemberVariableDeclaration());
+            // Debug.assert(this.isMemberVariableDeclaration());
 
             var publicOrPrivateKeyword: ISyntaxToken = null;
             if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
@@ -2030,7 +2029,7 @@ module Parser {
         }
 
         private parseClassElement(): IClassElementSyntax {
-            Debug.assert(this.isClassElement());
+            // Debug.assert(this.isClassElement());
 
             if (this.currentNode() !== null && this.currentNode().isClassElement()) {
                 return <IClassElementSyntax>this.eatNode();
@@ -2069,7 +2068,7 @@ module Parser {
         }
 
         private parseFunctionDeclaration(): FunctionDeclarationSyntax {
-            Debug.assert(this.isFunctionDeclaration());
+            // Debug.assert(this.isFunctionDeclaration());
 
             var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
             var declareKeyword = this.tryEatKeyword(SyntaxKind.DeclareKeyword);
@@ -2133,7 +2132,7 @@ module Parser {
         }
 
         private parseModuleDeclaration(): ModuleDeclarationSyntax {
-            Debug.assert(this.isModuleDeclaration());
+            // Debug.assert(this.isModuleDeclaration());
 
             var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
             var declareKeyword = this.tryEatKeyword(SyntaxKind.DeclareKeyword);
@@ -2175,7 +2174,7 @@ module Parser {
         }
 
         private parseInterfaceDeclaration(): InterfaceDeclarationSyntax {
-            Debug.assert(this.isInterfaceDeclaration());
+            // Debug.assert(this.isInterfaceDeclaration());
 
             var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
             var interfaceKeyword = this.eatKeyword(SyntaxKind.InterfaceKeyword);
@@ -2242,7 +2241,7 @@ module Parser {
         }
 
         private parseConstructSignature(): ConstructSignatureSyntax {
-            Debug.assert(this.isConstructSignature());
+            // Debug.assert(this.isConstructSignature());
 
             var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
             var parameterList = this.parseParameterList();
@@ -2252,7 +2251,7 @@ module Parser {
         }
 
         private parseIndexSignature(): IndexSignatureSyntax {
-            Debug.assert(this.isIndexSignature());
+            // Debug.assert(this.isIndexSignature());
 
             var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
             var parameter = this.parseParameter();
@@ -2273,7 +2272,7 @@ module Parser {
         }
 
         private parsePropertySignature(): PropertySignatureSyntax {
-            Debug.assert(this.isPropertySignature());
+            // Debug.assert(this.isPropertySignature());
 
             var identifier = this.eatIdentifierToken();
             var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
@@ -2322,7 +2321,7 @@ module Parser {
         }
 
         private parseExtendsClause(): ExtendsClauseSyntax {
-            Debug.assert(this.isExtendsClause());
+            // Debug.assert(this.isExtendsClause());
 
             var extendsKeyword = this.eatKeyword(SyntaxKind.ExtendsKeyword);
             var typeNames = this.parseSeparatedSyntaxList(ListParsingState.ExtendsOrImplementsClause_TypeNameList);
@@ -2335,7 +2334,7 @@ module Parser {
         }
 
         private parseImplementsClause(): ImplementsClauseSyntax {
-            Debug.assert(this.isImplementsClause());
+            // Debug.assert(this.isImplementsClause());
 
             var implementsKeyword = this.eatKeyword(SyntaxKind.ImplementsKeyword);
             var typeNames = this.parseSeparatedSyntaxList(ListParsingState.ExtendsOrImplementsClause_TypeNameList);
@@ -2451,7 +2450,7 @@ module Parser {
         }
 
         private parseDebuggerStatement(): DebuggerStatementSyntax {
-            Debug.assert(this.isDebuggerStatement());
+            // Debug.assert(this.isDebuggerStatement());
 
             var debuggerKeyword = this.eatKeyword(SyntaxKind.DebuggerKeyword);
             var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
@@ -2464,7 +2463,7 @@ module Parser {
         }
 
         private parseDoStatement(): DoStatementSyntax {
-            Debug.assert(this.isDoStatement());
+            // Debug.assert(this.isDoStatement());
 
             var doKeyword = this.eatKeyword(SyntaxKind.DoKeyword);
             var statement = this.parseStatement();
@@ -2487,7 +2486,7 @@ module Parser {
         }
 
         private parseLabeledStatement(): LabeledStatement {
-            Debug.assert(this.isLabeledStatement());
+            // Debug.assert(this.isLabeledStatement());
 
             var identifier = this.eatIdentifierToken();
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
@@ -2501,7 +2500,7 @@ module Parser {
         }
 
         private parseTryStatement(): TryStatementSyntax {
-            Debug.assert(this.isTryStatement());
+            // Debug.assert(this.isTryStatement());
 
             var tryKeyword = this.eatKeyword(SyntaxKind.TryKeyword);
             var block = this.parseBlock();
@@ -2527,7 +2526,7 @@ module Parser {
         }
 
         private parseCatchClause(): CatchClauseSyntax {
-            Debug.assert(this.isCatchClause());
+            // Debug.assert(this.isCatchClause());
 
             var catchKeyword = this.eatKeyword(SyntaxKind.CatchKeyword);
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
@@ -2543,7 +2542,7 @@ module Parser {
         }
 
         private parseFinallyClause(): FinallyClauseSyntax {
-            Debug.assert(this.isFinallyClause());
+            // Debug.assert(this.isFinallyClause());
 
             var finallyKeyword = this.eatKeyword(SyntaxKind.FinallyKeyword);
             var block = this.parseBlock();
@@ -2556,7 +2555,7 @@ module Parser {
         }
 
         private parseWithStatement(): WithStatementSyntax {
-            Debug.assert(this.isWithStatement());
+            // Debug.assert(this.isWithStatement());
 
             var withKeyword = this.eatKeyword(SyntaxKind.WithKeyword);
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
@@ -2572,7 +2571,7 @@ module Parser {
         }
 
         private parseWhileStatement(): WhileStatementSyntax {
-            Debug.assert(this.isWhileStatement());
+            // Debug.assert(this.isWhileStatement());
 
             var whileKeyword = this.eatKeyword(SyntaxKind.WhileKeyword);
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
@@ -2588,7 +2587,7 @@ module Parser {
         }
 
         private parseEmptyStatement(): EmptyStatementSyntax {
-            Debug.assert(this.isEmptyStatement());
+            // Debug.assert(this.isEmptyStatement());
 
             var semicolonToken = this.eatToken(SyntaxKind.SemicolonToken);
             return new EmptyStatementSyntax(semicolonToken);
@@ -2599,7 +2598,7 @@ module Parser {
         }
 
         private parseForOrForInStatement(): BaseForStatementSyntax {
-            Debug.assert(this.isForOrForInStatement());
+            // Debug.assert(this.isForOrForInStatement());
 
             var forKeyword = this.eatKeyword(SyntaxKind.ForKeyword);
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
@@ -2622,9 +2621,8 @@ module Parser {
         }
 
         private parseForOrForInStatementWithVariableDeclaration(forKeyword: ISyntaxToken, openParenToken: ISyntaxToken): BaseForStatementSyntax {
-            Debug.assert(forKeyword.keywordKind() === SyntaxKind.ForKeyword &&
-                         openParenToken.tokenKind === SyntaxKind.OpenParenToken);
-            Debug.assert(this.currentToken().keywordKind() === SyntaxKind.VarKeyword);
+            // Debug.assert(forKeyword.keywordKind() === SyntaxKind.ForKeyword && openParenToken.tokenKind === SyntaxKind.OpenParenToken);
+            // Debug.assert(this.currentToken().keywordKind() === SyntaxKind.VarKeyword);
 
             // for ( var VariableDeclarationListNoIn; Expressionopt ; Expressionopt ) Statement
             // for ( var VariableDeclarationNoIn in Expression ) Statement
@@ -2643,7 +2641,7 @@ module Parser {
                 openParenToken: ISyntaxToken,
                 variableDeclaration: VariableDeclarationSyntax,
                 initializer: IExpressionSyntax): ForInStatementSyntax {
-            Debug.assert(this.currentToken().keywordKind() === SyntaxKind.InKeyword);
+            // Debug.assert(this.currentToken().keywordKind() === SyntaxKind.InKeyword);
 
             // for ( var VariableDeclarationNoIn in Expression ) Statement
             var inKeyword = this.eatKeyword(SyntaxKind.InKeyword);
@@ -2656,8 +2654,7 @@ module Parser {
         }
 
         private parseForOrForInStatementWithInitializer(forKeyword: ISyntaxToken, openParenToken: ISyntaxToken): BaseForStatementSyntax {
-            Debug.assert(forKeyword.keywordKind() === SyntaxKind.ForKeyword &&
-                         openParenToken.tokenKind === SyntaxKind.OpenParenToken);
+            // Debug.assert(forKeyword.keywordKind() === SyntaxKind.ForKeyword && openParenToken.tokenKind === SyntaxKind.OpenParenToken);
 
             // for ( ExpressionNoInopt; Expressionopt ; Expressionopt ) Statement
             // for ( LeftHandSideExpression in Expression ) Statement
@@ -2672,8 +2669,7 @@ module Parser {
         }
 
         private parseForStatement(forKeyword: ISyntaxToken, openParenToken: ISyntaxToken): ForStatementSyntax {
-            Debug.assert(forKeyword.keywordKind() === SyntaxKind.ForKeyword &&
-                         openParenToken.tokenKind === SyntaxKind.OpenParenToken);
+            // Debug.assert(forKeyword.keywordKind() === SyntaxKind.ForKeyword && openParenToken.tokenKind === SyntaxKind.OpenParenToken);
 
             // for ( ExpressionNoInopt; Expressionopt ; Expressionopt ) Statement
             var initializer: IExpressionSyntax = null;
@@ -2721,7 +2717,7 @@ module Parser {
         }
 
         private parseBreakStatement(): BreakStatementSyntax {
-            Debug.assert(this.isBreakStatement());
+            // Debug.assert(this.isBreakStatement());
 
             var breakKeyword = this.eatKeyword(SyntaxKind.BreakKeyword);
 
@@ -2743,7 +2739,7 @@ module Parser {
         }
 
         private parseContinueStatement(): ContinueStatementSyntax {
-            Debug.assert(this.isContinueStatement());
+            // Debug.assert(this.isContinueStatement());
 
             var continueKeyword = this.eatKeyword(SyntaxKind.ContinueKeyword);
 
@@ -2765,7 +2761,7 @@ module Parser {
         }
 
         private parseSwitchStatement() {
-            Debug.assert(this.isSwitchStatement());
+            // Debug.assert(this.isSwitchStatement());
 
             var switchKeyword = this.eatKeyword(SyntaxKind.SwitchKeyword);
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
@@ -2801,7 +2797,7 @@ module Parser {
         }
 
         private parseSwitchClause(): SwitchClauseSyntax {
-            Debug.assert(this.isSwitchClause());
+            // Debug.assert(this.isSwitchClause());
             if (this.currentNode() !== null && this.currentNode().isSwitchClause()) {
                 return <SwitchClauseSyntax>this.eatNode();
             }
@@ -2818,7 +2814,7 @@ module Parser {
         }
 
         private parseCaseSwitchClause(): CaseSwitchClauseSyntax {
-            Debug.assert(this.isCaseSwitchClause());
+            // Debug.assert(this.isCaseSwitchClause());
 
             var caseKeyword = this.eatKeyword(SyntaxKind.CaseKeyword);
             var expression = this.parseExpression(/*allowIn:*/ true);
@@ -2829,7 +2825,7 @@ module Parser {
         }
 
         private parseDefaultSwitchClause(): DefaultSwitchClauseSyntax {
-            Debug.assert(this.isDefaultSwitchClause());
+            // Debug.assert(this.isDefaultSwitchClause());
 
             var defaultKeyword = this.eatKeyword(SyntaxKind.DefaultKeyword);
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
@@ -2843,7 +2839,7 @@ module Parser {
         }
 
         private parseThrowStatement(): ThrowStatementSyntax {
-            Debug.assert(this.isThrowStatement());
+            // Debug.assert(this.isThrowStatement());
 
             var throwKeyword = this.eatKeyword(SyntaxKind.ThrowKeyword);
 
@@ -2869,7 +2865,7 @@ module Parser {
         }
 
         private parseReturnStatement(): ReturnStatementSyntax {
-            Debug.assert(this.isReturnStatement());
+            // Debug.assert(this.isReturnStatement());
 
             var returnKeyword = this.eatKeyword(SyntaxKind.ReturnKeyword);
 
@@ -2908,7 +2904,7 @@ module Parser {
         }
 
         private parseAssignmentOrOmittedExpression(): IExpressionSyntax {
-            Debug.assert(this.isAssignmentOrOmittedExpression());
+            // Debug.assert(this.isAssignmentOrOmittedExpression());
 
             if (this.currentToken().tokenKind === SyntaxKind.CommaToken) {
                 return new OmittedExpressionSyntax();
@@ -3009,7 +3005,7 @@ module Parser {
         }
 
         private parseIfStatement(): IfStatementSyntax {
-            Debug.assert(this.isIfStatement());
+            // Debug.assert(this.isIfStatement());
 
             var ifKeyword = this.eatKeyword(SyntaxKind.IfKeyword);
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
@@ -3030,7 +3026,7 @@ module Parser {
         }
 
         private parseElseClause(): ElseClauseSyntax {
-            Debug.assert(this.isElseClause());
+            // Debug.assert(this.isElseClause());
 
             var elseKeyword = this.eatKeyword(SyntaxKind.ElseKeyword);
             var statement = this.parseStatement();
@@ -3054,7 +3050,7 @@ module Parser {
         }
 
         private parseVariableStatement(): VariableStatementSyntax {
-            Debug.assert(this.isVariableStatement());
+            // Debug.assert(this.isVariableStatement());
 
             var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
             var declareKeyword = this.tryEatKeyword(SyntaxKind.DeclareKeyword);
@@ -3066,7 +3062,7 @@ module Parser {
         }
 
         private parseVariableDeclaration(allowIn: bool): VariableDeclarationSyntax {
-            Debug.assert(this.currentToken().keywordKind() === SyntaxKind.VarKeyword);
+            // Debug.assert(this.currentToken().keywordKind() === SyntaxKind.VarKeyword);
             var varKeyword = this.eatKeyword(SyntaxKind.VarKeyword);
 
             var listParsingState = allowIn
@@ -3110,7 +3106,7 @@ module Parser {
         }
 
         private parseEqualsValuesClause(allowIn: bool): EqualsValueClauseSyntax {
-            Debug.assert(this.isEqualsValueClause());
+            // Debug.assert(this.isEqualsValueClause());
 
             var equalsToken = this.eatToken(SyntaxKind.EqualsToken);
             var value = this.parseAssignmentExpression(allowIn);
@@ -3175,7 +3171,7 @@ module Parser {
                     var newPrecedence = ParserImpl.getPrecedence(binaryExpressionKind);
 
                     // All binary operators must have precedence > 0!
-                    Debug.assert(newPrecedence > 0);
+                    // Debug.assert(newPrecedence > 0);
 
                     // Check the precedence to see if we should "take" this operator
                     if (newPrecedence < precedence) {
@@ -3296,7 +3292,7 @@ module Parser {
         }
 
         private parseArgumentList(): ArgumentListSyntax {
-            Debug.assert(this.isArgumentList());
+            // Debug.assert(this.isArgumentList());
 
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var arguments = this.parseSeparatedSyntaxList(ListParsingState.ArgumentList_AssignmentExpressions);
@@ -3306,7 +3302,7 @@ module Parser {
         }
 
         private parseElementAccessExpression(expression: IExpressionSyntax): ElementAccessExpressionSyntax {
-            Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenBracketToken);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenBracketToken);
 
             var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
             var argumentExpression = this.parseExpression(/*allowIn:*/ true);
@@ -3438,7 +3434,7 @@ module Parser {
             // contexts.
 
             var currentToken = this.currentToken();
-            Debug.assert(SyntaxFacts.isAnyDivideToken(currentToken.tokenKind));
+            // Debug.assert(SyntaxFacts.isAnyDivideToken(currentToken.tokenKind));
 
             // There are several contexts where we could never see a regex.  Don't even bother 
             // reinterpretting the / in these contexts.
@@ -3494,7 +3490,7 @@ module Parser {
 
             // Note: we *must* have gotten a /, /= or regular expression.  Or else something went *very*
             // wrong with our logic above.
-            Debug.assert(SyntaxFacts.isAnyDivideOrRegularExpressionToken(currentToken.tokenKind));
+            // Debug.assert(SyntaxFacts.isAnyDivideOrRegularExpressionToken(currentToken.tokenKind));
 
             if (currentToken.tokenKind === SyntaxKind.SlashToken || currentToken.tokenKind === SyntaxKind.SlashEqualsToken) {
                 // Still came back as a / or /=.   This is not a regular expression literal.
@@ -3511,7 +3507,7 @@ module Parser {
         }
 
         private parseTypeOfExpression(): TypeOfExpressionSyntax {
-            Debug.assert(this.currentToken().keywordKind() === SyntaxKind.TypeOfKeyword);
+            // Debug.assert(this.currentToken().keywordKind() === SyntaxKind.TypeOfKeyword);
 
             var typeOfKeyword = this.eatKeyword(SyntaxKind.TypeOfKeyword);
             var expression = this.parseUnaryExpression();
@@ -3520,7 +3516,7 @@ module Parser {
         }
 
         private parseDeleteExpression(): DeleteExpressionSyntax {
-            Debug.assert(this.currentToken().keywordKind() === SyntaxKind.DeleteKeyword);
+            // Debug.assert(this.currentToken().keywordKind() === SyntaxKind.DeleteKeyword);
 
             var deleteKeyword = this.eatKeyword(SyntaxKind.DeleteKeyword);
             var expression = this.parseUnaryExpression();
@@ -3529,7 +3525,7 @@ module Parser {
         }
 
         private parseVoidExpression(): VoidExpressionSyntax {
-            Debug.assert(this.currentToken().keywordKind() === SyntaxKind.VoidKeyword);
+            // Debug.assert(this.currentToken().keywordKind() === SyntaxKind.VoidKeyword);
 
             var voidKeyword = this.eatKeyword(SyntaxKind.VoidKeyword);
             var expression = this.parseUnaryExpression();
@@ -3538,14 +3534,14 @@ module Parser {
         }
 
         private parseSuperExpression(): IUnaryExpressionSyntax {
-            Debug.assert(this.currentToken().keywordKind() === SyntaxKind.SuperKeyword);
+            // Debug.assert(this.currentToken().keywordKind() === SyntaxKind.SuperKeyword);
 
             var superKeyword = this.eatKeyword(SyntaxKind.SuperKeyword);
             return superKeyword;
         }
 
         private parseFunctionExpression(): FunctionExpressionSyntax {
-            Debug.assert(this.currentToken().keywordKind() === SyntaxKind.FunctionKeyword);
+            // Debug.assert(this.currentToken().keywordKind() === SyntaxKind.FunctionKeyword);
 
             var functionKeyword = this.eatKeyword(SyntaxKind.FunctionKeyword);
             var identifier: ISyntaxToken = null;
@@ -3561,7 +3557,7 @@ module Parser {
         }
 
         private parseCastExpression(): CastExpressionSyntax {
-            Debug.assert(this.currentToken().tokenKind === SyntaxKind.LessThanToken);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.LessThanToken);
 
             var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
             var type = this.parseType(/*requireCompleteArraySuffix:*/ false);
@@ -3572,7 +3568,7 @@ module Parser {
         }
 
         private parseObjectCreationExpression(): ObjectCreationExpressionSyntax {
-            Debug.assert(this.currentToken().keywordKind() === SyntaxKind.NewKeyword);
+            // Debug.assert(this.currentToken().keywordKind() === SyntaxKind.NewKeyword);
             var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
 
             // While parsing the sub term we don't want to allow invocations to be parsed.  that's because
@@ -3588,7 +3584,7 @@ module Parser {
         }
 
         private parseParenthesizedOrArrowFunctionExpression(): IUnaryExpressionSyntax {
-            Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
 
             var result = this.tryParseArrowFunctionExpression();
             if (result !== null) {
@@ -3604,7 +3600,7 @@ module Parser {
         }
 
         private tryParseArrowFunctionExpression(): ArrowFunctionExpressionSyntax {
-            Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
 
             // Because arrow functions and parenthesized expressions look similar, we have to check far
             // enough ahead to be sure we've actually got an arrow function. For example, both nodes can
@@ -3640,7 +3636,7 @@ module Parser {
         }
 
         private parseParenthesizedArrowFunctionExpression(requireArrow: bool): ParenthesizedArrowFunctionExpressionSyntax {
-            Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
 
             var callSignature = this.parseCallSignature();
 
@@ -3674,7 +3670,7 @@ module Parser {
         }
 
         private parseSimpleArrowFunctionExpression(): SimpleArrowFunctionExpressionSyntax {
-            Debug.assert(this.isSimpleArrowFunctionExpression());
+            // Debug.assert(this.isSimpleArrowFunctionExpression());
 
             var identifier = this.eatIdentifierToken();
             var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
@@ -3689,7 +3685,7 @@ module Parser {
         }
 
         private isDefinitelyArrowFunctionExpression(): bool {
-            Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
 
             var token1 = this.peekToken(1);
 
@@ -3764,7 +3760,7 @@ module Parser {
         }
 
         private isPossiblyArrowFunctionExpression(): bool {
-            Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
 
             var token1 = this.peekToken(1);
 
@@ -3812,7 +3808,7 @@ module Parser {
         }
 
         private parseObjectLiteralExpression(): ObjectLiteralExpressionSyntax {
-            Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenBraceToken);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenBraceToken);
 
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
             var propertyAssignments = this.parseSeparatedSyntaxList(ListParsingState.ObjectLiteralExpression_PropertyAssignments);
@@ -3823,7 +3819,7 @@ module Parser {
         }
 
         private parsePropertyAssignment(): PropertyAssignmentSyntax {
-            Debug.assert(this.isPropertyAssignment(/*inErrorRecovery:*/ false));
+            // Debug.assert(this.isPropertyAssignment(/*inErrorRecovery:*/ false));
             if (this.isGetAccessorPropertyAssignment()) {
                 return this.parseGetAccessorPropertyAssignment();
             }
@@ -3850,7 +3846,7 @@ module Parser {
         }
 
         private parseGetAccessorPropertyAssignment(): GetAccessorPropertyAssignmentSyntax {
-            Debug.assert(this.isGetAccessorPropertyAssignment());
+            // Debug.assert(this.isGetAccessorPropertyAssignment());
 
             var getKeyword = this.eatKeyword(SyntaxKind.GetKeyword);
             var propertyName = this.eatAnyToken();
@@ -3867,7 +3863,7 @@ module Parser {
         }
 
         private parseSetAccessorPropertyAssignment(): SetAccessorPropertyAssignmentSyntax {
-            Debug.assert(this.isSetAccessorPropertyAssignment());
+            // Debug.assert(this.isSetAccessorPropertyAssignment());
 
             var setKeyword = this.eatKeyword(SyntaxKind.SetKeyword);
             var propertyName = this.eatAnyToken();
@@ -3884,7 +3880,7 @@ module Parser {
         }
 
         private parseSimplePropertyAssignment(): SimplePropertyAssignmentSyntax {
-            Debug.assert(this.isSimplePropertyAssignment(/*inErrorRecovery:*/ false));
+            // Debug.assert(this.isSimplePropertyAssignment(/*inErrorRecovery:*/ false));
 
             var propertyName = this.eatAnyToken();
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
@@ -3922,7 +3918,7 @@ module Parser {
         }
 
         private parseArrayLiteralExpression(): ArrayLiteralExpressionSyntax {
-            Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenBracketToken);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenBracketToken);
 
             var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
             var expressions = this.parseSeparatedSyntaxList(ListParsingState.ArrayLiteralExpression_AssignmentExpressions);
@@ -3937,7 +3933,7 @@ module Parser {
         }
 
         private parseThisExpression(): IUnaryExpressionSyntax {
-            Debug.assert(this.currentToken().keywordKind() === SyntaxKind.ThisKeyword);
+            // Debug.assert(this.currentToken().keywordKind() === SyntaxKind.ThisKeyword);
             var thisKeyword = this.eatKeyword(SyntaxKind.ThisKeyword);
             return thisKeyword;
         }
@@ -3988,7 +3984,7 @@ module Parser {
         }
 
         private parseTypeAnnotation(): TypeAnnotationSyntax {
-            Debug.assert(this.isTypeAnnotation());
+            // Debug.assert(this.isTypeAnnotation());
 
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
             var type = this.parseType(/*requireCompleteArraySuffix:*/ false);
@@ -4032,7 +4028,7 @@ module Parser {
         }
 
         private parseTypeLiteral(): ITypeSyntax {
-            Debug.assert(this.isTypeLiteral(/*allowFunctionType:*/ true, /*allowConstructorType:*/ true));
+            // Debug.assert(this.isTypeLiteral(/*allowFunctionType:*/ true, /*allowConstructorType:*/ true));
             if (this.isObjectType()) {
                 return this.parseObjectType();
             }
@@ -4048,7 +4044,7 @@ module Parser {
         }
 
         private parseFunctionType(): FunctionTypeSyntax {
-            Debug.assert(this.isFunctionType());
+            // Debug.assert(this.isFunctionType());
 
             var parameterList = this.parseParameterList();
             var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
@@ -4058,7 +4054,7 @@ module Parser {
         }
 
         private parseConstructorType(): ConstructorTypeSyntax {
-            Debug.assert(this.isConstructorType());
+            // Debug.assert(this.isConstructorType());
 
             var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
             var parameterList = this.parseParameterList();
@@ -4097,7 +4093,7 @@ module Parser {
         }
 
         private parsePredefinedType(): ITypeSyntax {
-            Debug.assert(this.isPredefinedType());
+            // Debug.assert(this.isPredefinedType());
             var keyword = this.eatAnyToken();
             return keyword;
         }
@@ -4222,7 +4218,7 @@ module Parser {
                                          processItems: (parser: ParserImpl, items: any[]) => void ): any[] {
             if (this.isExpectedListItem(currentListType, inErrorRecovery)) {
                 var item = this.parseExpectedListItem(currentListType);
-                Debug.assert(item !== null);
+                // Debug.assert(item !== null);
 
                 items = items || [];
                 items.push(item);
@@ -4287,13 +4283,13 @@ module Parser {
                 // Try to parse an item of the list.  If we fail then decide if we need to abort or 
                 // continue parsing.
                 var oldItemsCount = items === null ? 0 : items.length;
-                Debug.assert(oldItemsCount % 2 === 0);
+                // Debug.assert(oldItemsCount % 2 === 0);
                 items = this.tryParseExpectedListItem(currentListType, inErrorRecovery, items, null);
                 
                 var newItemsCount = items === null ? 0 : items.length;
                 if (newItemsCount === oldItemsCount) {
                     // We weren't able to parse out a list element.
-                    Debug.assert(items === null || items.length % 2 === 0);
+                    // Debug.assert(items === null || items.length % 2 === 0);
                     
                     // That may have been because the list is complete.  In that case, break out 
                     // and return the items we were able parse.
@@ -4315,7 +4311,7 @@ module Parser {
                     }
                 }
 
-                Debug.assert(newItemsCount % 2 === 1);
+                // Debug.assert(newItemsCount % 2 === 1);
 
                 // We were able to successfully parse out a list item.  So we're no longer in error
                 // recovery.
@@ -4354,7 +4350,7 @@ module Parser {
 
                 if (allowAutomaticSemicolonInsertion && this.canEatAutomaticSemicolon(/*allowWithoutNewline:*/ false)) {
                     items.push(this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false));
-                    Debug.assert(items.length % 2 === 0);
+                    // Debug.assert(items.length % 2 === 0);
                     continue;
                 }
 

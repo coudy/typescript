@@ -1367,7 +1367,7 @@ var SyntaxFacts;
     }
     SyntaxFacts.isAnyDivideOrRegularExpressionToken = isAnyDivideOrRegularExpressionToken;
 })(SyntaxFacts || (SyntaxFacts = {}));
-var argumentChecks = true;
+var argumentChecks = false;
 var interfaces = {
     IMemberDeclarationSyntax: "IClassElementSyntax",
     IStatementSyntax: "IModuleElementSyntax",
