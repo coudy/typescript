@@ -12246,6 +12246,9 @@ var PrefixUnaryExpressionSyntax = (function (_super) {
     PrefixUnaryExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitPrefixUnaryExpression(this);
     };
+    PrefixUnaryExpressionSyntax.prototype.isUnaryExpression = function () {
+        return true;
+    };
     PrefixUnaryExpressionSyntax.prototype.firstToken = function () {
         var token = null;
         if(this._operatorToken.width() > 0) {
@@ -12396,6 +12399,9 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
     };
     ArrayLiteralExpressionSyntax.prototype.kind = function () {
         return 209 /* ArrayLiteralExpression */ ;
+    };
+    ArrayLiteralExpressionSyntax.prototype.isUnaryExpression = function () {
+        return true;
     };
     ArrayLiteralExpressionSyntax.prototype.firstToken = function () {
         var token = null;
@@ -12635,6 +12641,9 @@ var ParenthesizedExpressionSyntax = (function (_super) {
     ParenthesizedExpressionSyntax.prototype.kind = function () {
         return 212 /* ParenthesizedExpression */ ;
     };
+    ParenthesizedExpressionSyntax.prototype.isUnaryExpression = function () {
+        return true;
+    };
     ParenthesizedExpressionSyntax.prototype.firstToken = function () {
         var token = null;
         if(this._openParenToken.width() > 0) {
@@ -12786,7 +12795,7 @@ var ArrowFunctionExpressionSyntax = (function (_super) {
     function ArrowFunctionExpressionSyntax() {
         _super.call(this);
     }
-    ArrowFunctionExpressionSyntax.prototype.isArrowFunctionExpression = function () {
+    ArrowFunctionExpressionSyntax.prototype.isUnaryExpression = function () {
         return true;
     };
     ArrowFunctionExpressionSyntax.prototype.equalsGreaterThanToken = function () {
@@ -14743,6 +14752,9 @@ var MemberAccessExpressionSyntax = (function (_super) {
     MemberAccessExpressionSyntax.prototype.kind = function () {
         return 207 /* MemberAccessExpression */ ;
     };
+    MemberAccessExpressionSyntax.prototype.isUnaryExpression = function () {
+        return true;
+    };
     MemberAccessExpressionSyntax.prototype.firstToken = function () {
         var token = null;
         if((token = this._expression.firstToken()) !== null) {
@@ -14909,6 +14921,9 @@ var PostfixUnaryExpressionSyntax = (function (_super) {
     PostfixUnaryExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitPostfixUnaryExpression(this);
     };
+    PostfixUnaryExpressionSyntax.prototype.isUnaryExpression = function () {
+        return true;
+    };
     PostfixUnaryExpressionSyntax.prototype.firstToken = function () {
         var token = null;
         if((token = this._operand.firstToken()) !== null) {
@@ -15060,6 +15075,9 @@ var ElementAccessExpressionSyntax = (function (_super) {
     };
     ElementAccessExpressionSyntax.prototype.kind = function () {
         return 216 /* ElementAccessExpression */ ;
+    };
+    ElementAccessExpressionSyntax.prototype.isUnaryExpression = function () {
+        return true;
     };
     ElementAccessExpressionSyntax.prototype.firstToken = function () {
         var token = null;
@@ -15259,6 +15277,9 @@ var InvocationExpressionSyntax = (function (_super) {
     };
     InvocationExpressionSyntax.prototype.kind = function () {
         return 208 /* InvocationExpression */ ;
+    };
+    InvocationExpressionSyntax.prototype.isUnaryExpression = function () {
+        return true;
     };
     InvocationExpressionSyntax.prototype.firstToken = function () {
         var token = null;
@@ -18270,9 +18291,6 @@ var MemberAccessorDeclarationSyntax = (function (_super) {
     function MemberAccessorDeclarationSyntax() {
         _super.call(this);
     }
-    MemberAccessorDeclarationSyntax.prototype.isMemberAccessorDeclaration = function () {
-        return true;
-    };
     MemberAccessorDeclarationSyntax.prototype.publicOrPrivateKeyword = function () {
         throw Errors.abstract();
     };
@@ -19523,6 +19541,9 @@ var ObjectCreationExpressionSyntax = (function (_super) {
     };
     ObjectCreationExpressionSyntax.prototype.kind = function () {
         return 211 /* ObjectCreationExpression */ ;
+    };
+    ObjectCreationExpressionSyntax.prototype.isUnaryExpression = function () {
+        return true;
     };
     ObjectCreationExpressionSyntax.prototype.firstToken = function () {
         var token = null;
@@ -20789,9 +20810,6 @@ var IterationStatementSyntax = (function (_super) {
     function IterationStatementSyntax() {
         _super.call(this);
     }
-    IterationStatementSyntax.prototype.isIterationStatement = function () {
-        return true;
-    };
     IterationStatementSyntax.prototype.openParenToken = function () {
         throw Errors.abstract();
     };
@@ -20817,9 +20835,6 @@ var BaseForStatementSyntax = (function (_super) {
     function BaseForStatementSyntax() {
         _super.call(this);
     }
-    BaseForStatementSyntax.prototype.isBaseForStatement = function () {
-        return true;
-    };
     BaseForStatementSyntax.prototype.forKeyword = function () {
         throw Errors.abstract();
     };
@@ -22442,6 +22457,9 @@ var CastExpressionSyntax = (function (_super) {
     CastExpressionSyntax.prototype.kind = function () {
         return 215 /* CastExpression */ ;
     };
+    CastExpressionSyntax.prototype.isUnaryExpression = function () {
+        return true;
+    };
     CastExpressionSyntax.prototype.firstToken = function () {
         var token = null;
         if(this._lessThanToken.width() > 0) {
@@ -22642,6 +22660,9 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
     ObjectLiteralExpressionSyntax.prototype.kind = function () {
         return 210 /* ObjectLiteralExpression */ ;
     };
+    ObjectLiteralExpressionSyntax.prototype.isUnaryExpression = function () {
+        return true;
+    };
     ObjectLiteralExpressionSyntax.prototype.firstToken = function () {
         var token = null;
         if(this._openBraceToken.width() > 0) {
@@ -22798,9 +22819,6 @@ var PropertyAssignmentSyntax = (function (_super) {
     function PropertyAssignmentSyntax() {
         _super.call(this);
     }
-    PropertyAssignmentSyntax.prototype.isPropertyAssignment = function () {
-        return true;
-    };
     PropertyAssignmentSyntax.prototype.propertyName = function () {
         throw Errors.abstract();
     };
@@ -23001,9 +23019,6 @@ var AccessorPropertyAssignmentSyntax = (function (_super) {
     function AccessorPropertyAssignmentSyntax() {
         _super.call(this);
     }
-    AccessorPropertyAssignmentSyntax.prototype.isAccessorPropertyAssignment = function () {
-        return true;
-    };
     AccessorPropertyAssignmentSyntax.prototype.propertyName = function () {
         throw Errors.abstract();
     };
@@ -23575,6 +23590,9 @@ var FunctionExpressionSyntax = (function (_super) {
     };
     FunctionExpressionSyntax.prototype.kind = function () {
         return 217 /* FunctionExpression */ ;
+    };
+    FunctionExpressionSyntax.prototype.isUnaryExpression = function () {
+        return true;
     };
     FunctionExpressionSyntax.prototype.firstToken = function () {
         var token = null;
@@ -24966,6 +24984,9 @@ var TypeOfExpressionSyntax = (function (_super) {
     TypeOfExpressionSyntax.prototype.kind = function () {
         return 166 /* TypeOfExpression */ ;
     };
+    TypeOfExpressionSyntax.prototype.isUnaryExpression = function () {
+        return true;
+    };
     TypeOfExpressionSyntax.prototype.firstToken = function () {
         var token = null;
         if(this._typeOfKeyword.width() > 0) {
@@ -25104,6 +25125,9 @@ var DeleteExpressionSyntax = (function (_super) {
     DeleteExpressionSyntax.prototype.kind = function () {
         return 165 /* DeleteExpression */ ;
     };
+    DeleteExpressionSyntax.prototype.isUnaryExpression = function () {
+        return true;
+    };
     DeleteExpressionSyntax.prototype.firstToken = function () {
         var token = null;
         if(this._deleteKeyword.width() > 0) {
@@ -25241,6 +25265,9 @@ var VoidExpressionSyntax = (function (_super) {
     };
     VoidExpressionSyntax.prototype.kind = function () {
         return 167 /* VoidExpression */ ;
+    };
+    VoidExpressionSyntax.prototype.isUnaryExpression = function () {
+        return true;
     };
     VoidExpressionSyntax.prototype.firstToken = function () {
         var token = null;

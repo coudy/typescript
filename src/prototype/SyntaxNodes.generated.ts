@@ -153,7 +153,7 @@ class SourceUnitSyntax extends SyntaxNode {
     }
 }
 
-class ModuleElementSyntax extends SyntaxNode {
+class ModuleElementSyntax extends SyntaxNode implements IModuleElementSyntax {
     constructor() {
         super();
     }
@@ -175,7 +175,7 @@ class ModuleElementSyntax extends SyntaxNode {
     }
 }
 
-class ModuleReferenceSyntax extends SyntaxNode {
+class ModuleReferenceSyntax extends SyntaxNode implements IModuleReferenceSyntax {
     constructor() {
         super();
     }
@@ -1995,7 +1995,7 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
     }
 }
 
-class StatementSyntax extends ModuleElementSyntax {
+class StatementSyntax extends ModuleElementSyntax implements IStatementSyntax {
     constructor() {
         super();
     }
@@ -3055,6 +3055,10 @@ class PrefixUnaryExpressionSyntax extends ExpressionSyntax implements IUnaryExpr
         return visitor.visitPrefixUnaryExpression(this);
     }
 
+    private isUnaryExpression(): bool {
+        return true;
+    }
+
     public firstToken(): ISyntaxToken {
         var token = null;
         if (this._operatorToken.width() > 0) { return this._operatorToken; }
@@ -3215,6 +3219,10 @@ class ArrayLiteralExpressionSyntax extends ExpressionSyntax implements IUnaryExp
 
     public kind(): SyntaxKind {
         return SyntaxKind.ArrayLiteralExpression;
+    }
+
+    private isUnaryExpression(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -3464,6 +3472,10 @@ class ParenthesizedExpressionSyntax extends ExpressionSyntax implements IUnaryEx
         return SyntaxKind.ParenthesizedExpression;
     }
 
+    private isUnaryExpression(): bool {
+        return true;
+    }
+
     public firstToken(): ISyntaxToken {
         var token = null;
         if (this._openParenToken.width() > 0) { return this._openParenToken; }
@@ -3607,7 +3619,7 @@ class ArrowFunctionExpressionSyntax extends ExpressionSyntax implements IUnaryEx
         super();
     }
 
-    private isArrowFunctionExpression(): bool {
+    private isUnaryExpression(): bool {
         return true;
     }
 
@@ -5579,6 +5591,10 @@ class MemberAccessExpressionSyntax extends ExpressionSyntax implements IUnaryExp
         return SyntaxKind.MemberAccessExpression;
     }
 
+    private isUnaryExpression(): bool {
+        return true;
+    }
+
     public firstToken(): ISyntaxToken {
         var token = null;
         if ((token = this._expression.firstToken()) !== null) { return token; }
@@ -5738,6 +5754,10 @@ class PostfixUnaryExpressionSyntax extends ExpressionSyntax implements IUnaryExp
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitPostfixUnaryExpression(this);
+    }
+
+    private isUnaryExpression(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -5901,6 +5921,10 @@ class ElementAccessExpressionSyntax extends ExpressionSyntax implements IUnaryEx
 
     public kind(): SyntaxKind {
         return SyntaxKind.ElementAccessExpression;
+    }
+
+    private isUnaryExpression(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -6094,6 +6118,10 @@ class InvocationExpressionSyntax extends ExpressionSyntax implements IUnaryExpre
 
     public kind(): SyntaxKind {
         return SyntaxKind.InvocationExpression;
+    }
+
+    private isUnaryExpression(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -6847,7 +6875,7 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
     }
 }
 
-class TypeMemberSyntax extends SyntaxNode {
+class TypeMemberSyntax extends SyntaxNode implements ITypeMemberSyntax {
     constructor() {
         super();
     }
@@ -8558,7 +8586,7 @@ class ExpressionStatementSyntax extends StatementSyntax {
     }
 }
 
-class ClassElementSyntax extends SyntaxNode {
+class ClassElementSyntax extends SyntaxNode implements IClassElementSyntax {
     constructor() {
         super();
     }
@@ -8795,7 +8823,7 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
     }
 }
 
-class MemberDeclarationSyntax extends ClassElementSyntax {
+class MemberDeclarationSyntax extends ClassElementSyntax implements IMemberDeclarationSyntax {
     constructor() {
         super();
     }
@@ -9083,10 +9111,6 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
 class MemberAccessorDeclarationSyntax extends MemberDeclarationSyntax {
     constructor() {
         super();
-    }
-
-    private isMemberAccessorDeclaration(): bool {
-        return true;
     }
 
     public publicOrPrivateKeyword(): ISyntaxToken {
@@ -10318,6 +10342,10 @@ class ObjectCreationExpressionSyntax extends ExpressionSyntax implements IUnaryE
         return SyntaxKind.ObjectCreationExpression;
     }
 
+    private isUnaryExpression(): bool {
+        return true;
+    }
+
     public firstToken(): ISyntaxToken {
         var token = null;
         if (this._newKeyword.width() > 0) { return this._newKeyword; }
@@ -10765,7 +10793,7 @@ class SwitchStatementSyntax extends StatementSyntax {
     }
 }
 
-class SwitchClauseSyntax extends SyntaxNode {
+class SwitchClauseSyntax extends SyntaxNode implements ISwitchClauseSyntax {
     constructor() {
         super();
     }
@@ -11556,10 +11584,6 @@ class IterationStatementSyntax extends StatementSyntax {
         super();
     }
 
-    private isIterationStatement(): bool {
-        return true;
-    }
-
     public openParenToken(): ISyntaxToken {
         throw Errors.abstract();
     }
@@ -11588,10 +11612,6 @@ class IterationStatementSyntax extends StatementSyntax {
 class BaseForStatementSyntax extends IterationStatementSyntax {
     constructor() {
         super();
-    }
-
-    private isBaseForStatement(): bool {
-        return true;
     }
 
     public forKeyword(): ISyntaxToken {
@@ -13151,6 +13171,10 @@ class CastExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionS
         return SyntaxKind.CastExpression;
     }
 
+    private isUnaryExpression(): bool {
+        return true;
+    }
+
     public firstToken(): ISyntaxToken {
         var token = null;
         if (this._lessThanToken.width() > 0) { return this._lessThanToken; }
@@ -13352,6 +13376,10 @@ class ObjectLiteralExpressionSyntax extends ExpressionSyntax implements IUnaryEx
         return SyntaxKind.ObjectLiteralExpression;
     }
 
+    private isUnaryExpression(): bool {
+        return true;
+    }
+
     public firstToken(): ISyntaxToken {
         var token = null;
         if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
@@ -13497,10 +13525,6 @@ class ObjectLiteralExpressionSyntax extends ExpressionSyntax implements IUnaryEx
 class PropertyAssignmentSyntax extends SyntaxNode {
     constructor() {
         super();
-    }
-
-    private isPropertyAssignment(): bool {
-        return true;
     }
 
     public propertyName(): ISyntaxToken {
@@ -13703,10 +13727,6 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
 class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
     constructor() {
         super();
-    }
-
-    private isAccessorPropertyAssignment(): bool {
-        return true;
     }
 
     public propertyName(): ISyntaxToken {
@@ -14273,6 +14293,10 @@ class FunctionExpressionSyntax extends ExpressionSyntax implements IUnaryExpress
 
     public kind(): SyntaxKind {
         return SyntaxKind.FunctionExpression;
+    }
+
+    private isUnaryExpression(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -15637,6 +15661,10 @@ class TypeOfExpressionSyntax extends ExpressionSyntax implements IUnaryExpressio
         return SyntaxKind.TypeOfExpression;
     }
 
+    private isUnaryExpression(): bool {
+        return true;
+    }
+
     public firstToken(): ISyntaxToken {
         var token = null;
         if (this._typeOfKeyword.width() > 0) { return this._typeOfKeyword; }
@@ -15780,6 +15808,10 @@ class DeleteExpressionSyntax extends ExpressionSyntax implements IUnaryExpressio
         return SyntaxKind.DeleteExpression;
     }
 
+    private isUnaryExpression(): bool {
+        return true;
+    }
+
     public firstToken(): ISyntaxToken {
         var token = null;
         if (this._deleteKeyword.width() > 0) { return this._deleteKeyword; }
@@ -15921,6 +15953,10 @@ class VoidExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionS
 
     public kind(): SyntaxKind {
         return SyntaxKind.VoidExpression;
+    }
+
+    private isUnaryExpression(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {

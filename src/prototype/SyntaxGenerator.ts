@@ -42,12 +42,14 @@ var definitions:ITypeDefinition[] = [
     <any>{
         name: 'ModuleElementSyntax',
         baseType: 'SyntaxNode',
+        interfaces: ['IModuleElementSyntax'],
         isAbstract: true,
         children: []
     },
     <any>{
         name: 'ModuleReferenceSyntax',
         baseType: 'SyntaxNode',
+        interfaces: ['IModuleReferenceSyntax'],
         isAbstract: true,
         children: [],
         isTypeScriptSpecific: true
@@ -147,6 +149,7 @@ var definitions:ITypeDefinition[] = [
     <any>{
         name: 'StatementSyntax',
         baseType: 'ModuleElementSyntax',
+        interfaces: ['IStatementSyntax'],
         isAbstract: true,
         children: []
     },
@@ -458,6 +461,7 @@ var definitions:ITypeDefinition[] = [
     <any>{
         name: 'TypeMemberSyntax',
         baseType: 'SyntaxNode',
+        interfaces: ['ITypeMemberSyntax'],
         isAbstract: true,
         children: [],
         isTypeScriptSpecific: true
@@ -552,6 +556,7 @@ var definitions:ITypeDefinition[] = [
         name: 'ClassElementSyntax',
         baseType: 'SyntaxNode',
         isAbstract: true,
+        interfaces: ['IClassElementSyntax'],
         children: [],
         isTypeScriptSpecific: true
     },
@@ -569,6 +574,7 @@ var definitions:ITypeDefinition[] = [
     <any>{
         name: 'MemberDeclarationSyntax',
         baseType: 'ClassElementSyntax',
+        interfaces: ['IMemberDeclarationSyntax'],
         isAbstract: true,
         children: [],
         isTypeScriptSpecific: true
@@ -674,6 +680,7 @@ var definitions:ITypeDefinition[] = [
     <any>{
         name: 'SwitchClauseSyntax',
         baseType: 'SyntaxNode',
+        interfaces: ['ISwitchClauseSyntax'],
         isAbstract: true,
         children: []
     },
@@ -953,13 +960,16 @@ var definitions:ITypeDefinition[] = [
 //    return string.substring(string.length - value.length, string.length) === value;
 //}
 
-function getNameWithoutSuffix(definition: ITypeDefinition) {
-    var name = definition.name;
-    if (StringUtilities.endsWith(name, "Syntax")) {
-        return name.substring(0, name.length - "Syntax".length);
+function getStringWithoutSuffix(definition: string) {
+    if (StringUtilities.endsWith(definition, "Syntax")) {
+        return definition.substring(0, definition.length - "Syntax".length);
     }
 
-    return name;
+    return definition;
+}
+
+function getNameWithoutSuffix(definition: ITypeDefinition) {
+    return getStringWithoutSuffix(definition.name);
 }
 
 function getType(child: IMemberDefinition): string {
@@ -1413,11 +1423,26 @@ function generateAcceptMethods(definition: ITypeDefinition): string {
 function generateIsMethod(definition: ITypeDefinition): string {
     var result = "";
 
-    if (definition.isAbstract) {
-        result += "\r\n";
-        result += "    private is" + getNameWithoutSuffix(definition) + "(): bool {\r\n";
-        result += "        return true;\r\n";
-        result += "    }\r\n";
+    //if (definition.isAbstract) {
+    //    result += "\r\n";
+    //    result += "    private is" + getNameWithoutSuffix(definition) + "(): bool {\r\n";
+    //    result += "        return true;\r\n";
+    //    result += "    }\r\n";
+    //}
+
+    if (definition.interfaces) {
+        for (var i = 0; i < definition.interfaces.length; i++) {
+            var type = definition.interfaces[i];
+            type = getStringWithoutSuffix(type);
+            if (isInterface(type)) {
+                type = type.substr(1);
+            }
+
+            result += "\r\n";
+            result += "    private is" + type + "(): bool {\r\n";
+            result += "        return true;\r\n";
+            result += "    }\r\n";
+        }
     }
 
     return result;
@@ -2065,9 +2090,13 @@ function generateNodes(): string {
     return result;
 }
 
+function isInterface(name: string) {
+    return name.substr(0, 1) === "I" && name.substr(1, 1).toUpperCase() === name.substr(1, 1)
+}
+
 function isNodeOrToken(child: IMemberDefinition) {
     // IWhatever.
-    return child.type && child.type.substr(0, 1) === "I" && child.type.substr(1, 1).toUpperCase() === child.type.substr(1, 1);
+    return child.type && isInterface(child.type);
 }
 
 function generateRewriter(): string {

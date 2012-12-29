@@ -19,6 +19,30 @@ interface ISyntaxNodeOrToken extends ISyntaxElement {
     accept(visitor: ISyntaxVisitor): any;
 }
 
+interface ISyntaxNode extends ISyntaxNodeOrToken {
+}
+
+interface IModuleReferenceSyntax extends ISyntaxNode {
+}
+
+interface IModuleElementSyntax extends ISyntaxNode {
+}
+
+interface IStatementSyntax extends IModuleElementSyntax {
+}
+
+interface ITypeMemberSyntax extends ISyntaxNode {
+}
+
+interface IClassElementSyntax extends ISyntaxNode {
+}
+
+interface IMemberDeclarationSyntax extends IClassElementSyntax {
+}
+
+interface ISwitchClauseSyntax extends ISyntaxNode {
+}
+
 interface IExpressionSyntax extends ISyntaxNodeOrToken {
 }
 
