@@ -1,8 +1,8 @@
 ///<reference path='Debug.ts' />
 ///<reference path='SyntaxKind.ts' />
 
-class SyntaxFacts {
-    private static textToKeywordKind: any = {
+module SyntaxFacts {
+    var textToKeywordKind: any = {
         "any": SyntaxKind.AnyKeyword,
         "bool": SyntaxKind.BoolKeyword,
         "break": SyntaxKind.BreakKeyword,
@@ -110,70 +110,66 @@ class SyntaxFacts {
         "/=": SyntaxKind.SlashEqualsToken,
     };
 
-    private static kindToText: string[] = [];
-    private static initializeStaticData() {
-        if (SyntaxFacts.kindToText.length === 0) {
-            for (var name in SyntaxFacts.textToKeywordKind) {
-                if (SyntaxFacts.textToKeywordKind.hasOwnProperty(name)) {
-                    Debug.assert(kindToText[SyntaxFacts.textToKeywordKind[name]] === undefined);
-                    kindToText[SyntaxFacts.textToKeywordKind[name]] = name;
-                }
-            }
+    var kindToText: string[] = [];
 
-            // Manually work around a bug in the CScript 5.8 runtime where 'constructor' is not
-            // listed when SyntaxFacts.textToKeywordKind is enumerated because it is the name of
-            // the constructor function.
-            kindToText[SyntaxKind.ConstructorKeyword] = "constructor";
+    for (var name in textToKeywordKind) {
+        if (textToKeywordKind.hasOwnProperty(name)) {
+            Debug.assert(kindToText[textToKeywordKind[name]] === undefined);
+            kindToText[textToKeywordKind[name]] = name;
         }
     }
 
-    public static getTokenKind(text: string): SyntaxKind {
-        if (SyntaxFacts.textToKeywordKind.hasOwnProperty(text)) {
-            return SyntaxFacts.textToKeywordKind[text];
+    // Manually work around a bug in the CScript 5.8 runtime where 'constructor' is not
+    // listed when SyntaxFacts.textToKeywordKind is enumerated because it is the name of
+    // the constructor function.
+    kindToText[SyntaxKind.ConstructorKeyword] = "constructor";
+
+    export function getTokenKind(text: string): SyntaxKind {
+        if (textToKeywordKind.hasOwnProperty(text)) {
+            return textToKeywordKind[text];
         }
 
         return SyntaxKind.None;
     }
 
-    public static getText(kind: SyntaxKind): string {
-        SyntaxFacts.initializeStaticData();
-        var result = SyntaxFacts.kindToText[kind];
+    export function getText(kind: SyntaxKind): string {
+        var result = kindToText[kind];
         return result !== undefined ? result : null;
     }
 
-    public static isTokenKind(kind: SyntaxKind): bool {
+    export function isTokenKind(kind: SyntaxKind): bool {
         return kind >= SyntaxKind.FirstToken && kind <= SyntaxKind.LastToken;
     }
 
-    public static isAnyKeyword(kind: SyntaxKind): bool {
+    export function isAnyKeyword(kind: SyntaxKind): bool {
         return kind >= SyntaxKind.FirstKeyword && kind <= SyntaxKind.LastKeyword;
     }
 
-    public static isStandardKeyword(kind: SyntaxKind): bool {
+    export function isStandardKeyword(kind: SyntaxKind): bool {
         return kind >= SyntaxKind.FirstStandardKeyword && kind <= SyntaxKind.LastStandardKeyword;
     }
 
-    public static isFutureReservedKeyword(kind: SyntaxKind): bool {
+    export function isFutureReservedKeyword(kind: SyntaxKind): bool {
         return kind >= SyntaxKind.FirstFutureReservedKeyword && kind <= SyntaxKind.LastFutureReservedKeyword;
     }
 
-    public static isFutureReservedStrictKeyword(kind: SyntaxKind): bool {
+    export function isFutureReservedStrictKeyword(kind: SyntaxKind): bool {
         return kind >= SyntaxKind.FirstFutureReservedStrictKeyword && kind <= SyntaxKind.LastFutureReservedStrictKeyword;
     }
 
-    public static isAnyPunctuation(kind: SyntaxKind): bool {
+    export function isAnyPunctuation(kind: SyntaxKind): bool {
         return kind >= SyntaxKind.FirstPunctuation && kind <= SyntaxKind.LastPunctuation;
     }
 
-    public static isPrefixUnaryExpressionOperatorToken(tokenKind: SyntaxKind): bool {
+    export function isPrefixUnaryExpressionOperatorToken(tokenKind: SyntaxKind): bool {
         return getPrefixUnaryExpressionFromOperatorToken(tokenKind) !== SyntaxKind.None;
     }
 
-    public static isBinaryExpressionOperatorToken(tokenKind: SyntaxKind): bool {
+    export function isBinaryExpressionOperatorToken(tokenKind: SyntaxKind): bool {
         return getBinaryExpressionFromOperatorToken(tokenKind) !== SyntaxKind.None;
     }
 
-    public static getPrefixUnaryExpressionFromOperatorToken(tokenKind: SyntaxKind): SyntaxKind {
+    export function getPrefixUnaryExpressionFromOperatorToken(tokenKind: SyntaxKind): SyntaxKind {
         switch (tokenKind) {
             case SyntaxKind.PlusToken:
                 return SyntaxKind.PlusExpression;
@@ -198,7 +194,7 @@ class SyntaxFacts {
         }
     }
 
-    public static getPostfixUnaryExpressionFromOperatorToken(tokenKind: SyntaxKind): SyntaxKind {
+    export function getPostfixUnaryExpressionFromOperatorToken(tokenKind: SyntaxKind): SyntaxKind {
         switch (tokenKind) {
             case SyntaxKind.PlusPlusToken:
                 return SyntaxKind.PostIncrementExpression;
@@ -209,7 +205,7 @@ class SyntaxFacts {
         }
     }
 
-    public static getBinaryExpressionFromOperatorToken(tokenKind: SyntaxKind): SyntaxKind {
+    export function getBinaryExpressionFromOperatorToken(tokenKind: SyntaxKind): SyntaxKind {
         switch (tokenKind) {
             case SyntaxKind.AsteriskToken:
                 return SyntaxKind.MultiplyExpression;
@@ -324,7 +320,7 @@ class SyntaxFacts {
         }
     }
 
-    public static isAnyDivideToken(kind: SyntaxKind): bool {
+    export function isAnyDivideToken(kind: SyntaxKind): bool {
         switch (kind) {
             case SyntaxKind.SlashToken:
             case SyntaxKind.SlashEqualsToken:
@@ -334,7 +330,7 @@ class SyntaxFacts {
         }
     }
 
-    public static isAnyDivideOrRegularExpressionToken(kind: SyntaxKind): bool {
+    export function isAnyDivideOrRegularExpressionToken(kind: SyntaxKind): bool {
         switch (kind) {
             case SyntaxKind.SlashToken:
             case SyntaxKind.SlashEqualsToken:

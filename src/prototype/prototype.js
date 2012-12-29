@@ -1009,9 +1009,9 @@ var Debug = (function () {
     }
     return Debug;
 })();
-var SyntaxFacts = (function () {
-    function SyntaxFacts() { }
-    SyntaxFacts.textToKeywordKind = {
+var SyntaxFacts;
+(function (SyntaxFacts) {
+    var textToKeywordKind = {
         "any": 58 /* AnyKeyword */ ,
         "bool": 59 /* BoolKeyword */ ,
         "break": 13 /* BreakKeyword */ ,
@@ -1117,54 +1117,59 @@ var SyntaxFacts = (function () {
         "/": 115 /* SlashToken */ ,
         "/=": 116 /* SlashEqualsToken */ 
     };
-    SyntaxFacts.kindToText = [];
-    SyntaxFacts.initializeStaticData = function initializeStaticData() {
-        if(SyntaxFacts.kindToText.length === 0) {
-            for(var name in SyntaxFacts.textToKeywordKind) {
-                if(SyntaxFacts.textToKeywordKind.hasOwnProperty(name)) {
-                    Debug.assert(SyntaxFacts.kindToText[SyntaxFacts.textToKeywordKind[name]] === undefined);
-                    SyntaxFacts.kindToText[SyntaxFacts.textToKeywordKind[name]] = name;
-                }
-            }
-            SyntaxFacts.kindToText[60 /* ConstructorKeyword */ ] = "constructor";
+    var kindToText = [];
+    for(var name in textToKeywordKind) {
+        if(textToKeywordKind.hasOwnProperty(name)) {
+            Debug.assert(kindToText[textToKeywordKind[name]] === undefined);
+            kindToText[textToKeywordKind[name]] = name;
         }
     }
-    SyntaxFacts.getTokenKind = function getTokenKind(text) {
-        if(SyntaxFacts.textToKeywordKind.hasOwnProperty(text)) {
-            return SyntaxFacts.textToKeywordKind[text];
+    kindToText[60 /* ConstructorKeyword */ ] = "constructor";
+    function getTokenKind(text) {
+        if(textToKeywordKind.hasOwnProperty(text)) {
+            return textToKeywordKind[text];
         }
         return 0 /* None */ ;
     }
-    SyntaxFacts.getText = function getText(kind) {
-        SyntaxFacts.initializeStaticData();
-        var result = SyntaxFacts.kindToText[kind];
+    SyntaxFacts.getTokenKind = getTokenKind;
+    function getText(kind) {
+        var result = kindToText[kind];
         return result !== undefined ? result : null;
     }
-    SyntaxFacts.isTokenKind = function isTokenKind(kind) {
+    SyntaxFacts.getText = getText;
+    function isTokenKind(kind) {
         return kind >= SyntaxKind.FirstToken && kind <= SyntaxKind.LastToken;
     }
-    SyntaxFacts.isAnyKeyword = function isAnyKeyword(kind) {
+    SyntaxFacts.isTokenKind = isTokenKind;
+    function isAnyKeyword(kind) {
         return kind >= SyntaxKind.FirstKeyword && kind <= SyntaxKind.LastKeyword;
     }
-    SyntaxFacts.isStandardKeyword = function isStandardKeyword(kind) {
+    SyntaxFacts.isAnyKeyword = isAnyKeyword;
+    function isStandardKeyword(kind) {
         return kind >= SyntaxKind.FirstStandardKeyword && kind <= SyntaxKind.LastStandardKeyword;
     }
-    SyntaxFacts.isFutureReservedKeyword = function isFutureReservedKeyword(kind) {
+    SyntaxFacts.isStandardKeyword = isStandardKeyword;
+    function isFutureReservedKeyword(kind) {
         return kind >= SyntaxKind.FirstFutureReservedKeyword && kind <= SyntaxKind.LastFutureReservedKeyword;
     }
-    SyntaxFacts.isFutureReservedStrictKeyword = function isFutureReservedStrictKeyword(kind) {
+    SyntaxFacts.isFutureReservedKeyword = isFutureReservedKeyword;
+    function isFutureReservedStrictKeyword(kind) {
         return kind >= SyntaxKind.FirstFutureReservedStrictKeyword && kind <= SyntaxKind.LastFutureReservedStrictKeyword;
     }
-    SyntaxFacts.isAnyPunctuation = function isAnyPunctuation(kind) {
+    SyntaxFacts.isFutureReservedStrictKeyword = isFutureReservedStrictKeyword;
+    function isAnyPunctuation(kind) {
         return kind >= SyntaxKind.FirstPunctuation && kind <= SyntaxKind.LastPunctuation;
     }
-    SyntaxFacts.isPrefixUnaryExpressionOperatorToken = function isPrefixUnaryExpressionOperatorToken(tokenKind) {
-        return SyntaxFacts.getPrefixUnaryExpressionFromOperatorToken(tokenKind) !== 0 /* None */ ;
+    SyntaxFacts.isAnyPunctuation = isAnyPunctuation;
+    function isPrefixUnaryExpressionOperatorToken(tokenKind) {
+        return getPrefixUnaryExpressionFromOperatorToken(tokenKind) !== 0 /* None */ ;
     }
-    SyntaxFacts.isBinaryExpressionOperatorToken = function isBinaryExpressionOperatorToken(tokenKind) {
-        return SyntaxFacts.getBinaryExpressionFromOperatorToken(tokenKind) !== 0 /* None */ ;
+    SyntaxFacts.isPrefixUnaryExpressionOperatorToken = isPrefixUnaryExpressionOperatorToken;
+    function isBinaryExpressionOperatorToken(tokenKind) {
+        return getBinaryExpressionFromOperatorToken(tokenKind) !== 0 /* None */ ;
     }
-    SyntaxFacts.getPrefixUnaryExpressionFromOperatorToken = function getPrefixUnaryExpressionFromOperatorToken(tokenKind) {
+    SyntaxFacts.isBinaryExpressionOperatorToken = isBinaryExpressionOperatorToken;
+    function getPrefixUnaryExpressionFromOperatorToken(tokenKind) {
         switch(tokenKind) {
             case 86 /* PlusToken */ : {
                 return 159 /* PlusExpression */ ;
@@ -1208,7 +1213,8 @@ var SyntaxFacts = (function () {
             }
         }
     }
-    SyntaxFacts.getPostfixUnaryExpressionFromOperatorToken = function getPostfixUnaryExpressionFromOperatorToken(tokenKind) {
+    SyntaxFacts.getPrefixUnaryExpressionFromOperatorToken = getPrefixUnaryExpressionFromOperatorToken;
+    function getPostfixUnaryExpressionFromOperatorToken(tokenKind) {
         switch(tokenKind) {
             case 90 /* PlusPlusToken */ : {
                 return 205 /* PostIncrementExpression */ ;
@@ -1224,7 +1230,8 @@ var SyntaxFacts = (function () {
             }
         }
     }
-    SyntaxFacts.getBinaryExpressionFromOperatorToken = function getBinaryExpressionFromOperatorToken(tokenKind) {
+    SyntaxFacts.getPostfixUnaryExpressionFromOperatorToken = getPostfixUnaryExpressionFromOperatorToken;
+    function getBinaryExpressionFromOperatorToken(tokenKind) {
         switch(tokenKind) {
             case 88 /* AsteriskToken */ : {
                 return 200 /* MultiplyExpression */ ;
@@ -1376,7 +1383,8 @@ var SyntaxFacts = (function () {
             }
         }
     }
-    SyntaxFacts.isAnyDivideToken = function isAnyDivideToken(kind) {
+    SyntaxFacts.getBinaryExpressionFromOperatorToken = getBinaryExpressionFromOperatorToken;
+    function isAnyDivideToken(kind) {
         switch(kind) {
             case 115 /* SlashToken */ :
             case 116 /* SlashEqualsToken */ : {
@@ -1389,7 +1397,8 @@ var SyntaxFacts = (function () {
             }
         }
     }
-    SyntaxFacts.isAnyDivideOrRegularExpressionToken = function isAnyDivideOrRegularExpressionToken(kind) {
+    SyntaxFacts.isAnyDivideToken = isAnyDivideToken;
+    function isAnyDivideOrRegularExpressionToken(kind) {
         switch(kind) {
             case 115 /* SlashToken */ :
             case 116 /* SlashEqualsToken */ :
@@ -1403,8 +1412,8 @@ var SyntaxFacts = (function () {
             }
         }
     }
-    return SyntaxFacts;
-})();
+    SyntaxFacts.isAnyDivideOrRegularExpressionToken = isAnyDivideOrRegularExpressionToken;
+})(SyntaxFacts || (SyntaxFacts = {}));
 var Syntax;
 (function (Syntax) {
     Syntax.emptySeparatedList = {
@@ -33077,19 +33086,19 @@ var Program = (function () {
         }
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
-            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, true);
+            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);
         });
         Environment.standardOut.WriteLine("Testing trivia.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\trivia\\ecmascript5", function (filePath) {
-            return _this.runTrivia(filePath, 1 /* EcmaScript5 */ , verify, true);
+            return _this.runTrivia(filePath, 1 /* EcmaScript5 */ , verify, false);
         });
         Environment.standardOut.WriteLine("Testing scanner.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
-            return _this.runScanner(filePath, 1 /* EcmaScript5 */ , verify, true);
+            return _this.runScanner(filePath, 1 /* EcmaScript5 */ , verify, false);
         });
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, false);
         });
         Environment.standardOut.WriteLine("Testing Incremental 1.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
@@ -33097,19 +33106,19 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5", function (filePath) {
-            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, true, false);
+            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, false, false);
         });
         Environment.standardOut.WriteLine("Testing emitter 2.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter2\\ecmascript5", function (filePath) {
-            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, true, true);
+            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, false, true);
         });
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");
