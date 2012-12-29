@@ -26894,8 +26894,9 @@ var Parser;
             return this.slidingWindow.peekItemN(n);
         };
         NormalParserSource.prototype.moveToNextToken = function () {
-            this._absolutePosition += this.currentToken().fullWidth();
-            this._previousToken = this.currentToken();
+            var currentToken = this.currentToken();
+            this._absolutePosition += currentToken.fullWidth();
+            this._previousToken = currentToken;
             this.slidingWindow.moveToNextItem();
         };
         NormalParserSource.prototype.currentToken = function () {

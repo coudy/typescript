@@ -643,8 +643,9 @@ module Parser {
         }
 
         public moveToNextToken(): void {
-            this._absolutePosition += this.currentToken().fullWidth();
-            this._previousToken = this.currentToken();
+            var currentToken = this.currentToken();
+            this._absolutePosition += currentToken.fullWidth();
+            this._previousToken = currentToken;
 
             this.slidingWindow.moveToNextItem();
         }
