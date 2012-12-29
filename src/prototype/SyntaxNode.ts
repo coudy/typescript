@@ -171,7 +171,7 @@ class SyntaxNode implements ISyntaxNodeOrToken {
     }
 
     private tryGetEndOfFileAt(position: number): { token: ISyntaxToken; fullStart: number; } {
-        if (this.kind() === SyntaxKind.SourceUnit && position == this.fullWidth()) {
+        if (this.kind() === SyntaxKind.SourceUnit && position === this.fullWidth()) {
             var sourceUnit = <SourceUnitSyntax>this;
             return { token: sourceUnit.endOfFileToken(), fullStart: sourceUnit.moduleElements().fullWidth() };
         }

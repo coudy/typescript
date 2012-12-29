@@ -942,7 +942,7 @@ var SyntaxNode = (function () {
         return this.findTokenInternal(position, 0);
     };
     SyntaxNode.prototype.tryGetEndOfFileAt = function (position) {
-        if(this.kind() === 119 /* SourceUnit */  && position == this.fullWidth()) {
+        if(this.kind() === 119 /* SourceUnit */  && position === this.fullWidth()) {
             var sourceUnit = this;
             return {
                 token: sourceUnit.endOfFileToken(),
