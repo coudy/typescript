@@ -130,13 +130,13 @@ class SlidingWindow {
         // Find the absolute index of this pin point.  i.e. it's the index as if we had an 
         // array containing *all* tokens.  
         var absoluteIndex = this.absoluteIndex();
-        if (this._pinCount === 0) {
+        var pinCount = this._pinCount++;
+        if (pinCount === 0) {
             // If this is the first pinned point, then store off this index.  We will ensure that
             // we never shift the window past this point.
             this.firstPinnedAbsoluteIndex = absoluteIndex;
         }
 
-        this._pinCount++;
         return absoluteIndex;
     }
 

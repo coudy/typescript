@@ -2522,10 +2522,10 @@ var SlidingWindow = (function () {
     };
     SlidingWindow.prototype.getAndPinAbsoluteIndex = function () {
         var absoluteIndex = this.absoluteIndex();
-        if(this._pinCount === 0) {
+        var pinCount = this._pinCount++;
+        if(pinCount === 0) {
             this.firstPinnedAbsoluteIndex = absoluteIndex;
         }
-        this._pinCount++;
         return absoluteIndex;
     };
     SlidingWindow.prototype.releaseAndUnpinAbsoluteIndex = function (absoluteIndex) {
