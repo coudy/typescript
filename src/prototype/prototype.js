@@ -11747,25 +11747,6 @@ var ExpressionSyntax = (function (_super) {
     };
     return ExpressionSyntax;
 })(SyntaxNode);
-var UnaryExpressionSyntax = (function (_super) {
-    __extends(UnaryExpressionSyntax, _super);
-    function UnaryExpressionSyntax() {
-        _super.call(this);
-    }
-    UnaryExpressionSyntax.prototype.isUnaryExpression = function () {
-        return true;
-    };
-    UnaryExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
-        return _super.prototype.withLeadingTrivia.call(this, trivia);
-    };
-    UnaryExpressionSyntax.prototype.withTrailingTrivia = function (trivia) {
-        return _super.prototype.withTrailingTrivia.call(this, trivia);
-    };
-    UnaryExpressionSyntax.prototype.isTypeScriptSpecific = function () {
-        return false;
-    };
-    return UnaryExpressionSyntax;
-})(ExpressionSyntax);
 var VariableDeclarationSyntax = (function (_super) {
     __extends(VariableDeclarationSyntax, _super);
     function VariableDeclarationSyntax(varKeyword, variableDeclarators) {
@@ -12386,7 +12367,7 @@ var PrefixUnaryExpressionSyntax = (function (_super) {
         return true;
     };
     return PrefixUnaryExpressionSyntax;
-})(UnaryExpressionSyntax);
+})(ExpressionSyntax);
 var ArrayLiteralExpressionSyntax = (function (_super) {
     __extends(ArrayLiteralExpressionSyntax, _super);
     function ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken) {
@@ -12566,7 +12547,7 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
         return true;
     };
     return ArrayLiteralExpressionSyntax;
-})(UnaryExpressionSyntax);
+})(ExpressionSyntax);
 var OmittedExpressionSyntax = (function (_super) {
     __extends(OmittedExpressionSyntax, _super);
     function OmittedExpressionSyntax() {
@@ -12799,7 +12780,7 @@ var ParenthesizedExpressionSyntax = (function (_super) {
         return true;
     };
     return ParenthesizedExpressionSyntax;
-})(UnaryExpressionSyntax);
+})(ExpressionSyntax);
 var ArrowFunctionExpressionSyntax = (function (_super) {
     __extends(ArrowFunctionExpressionSyntax, _super);
     function ArrowFunctionExpressionSyntax() {
@@ -12824,7 +12805,7 @@ var ArrowFunctionExpressionSyntax = (function (_super) {
         return true;
     };
     return ArrowFunctionExpressionSyntax;
-})(UnaryExpressionSyntax);
+})(ExpressionSyntax);
 var SimpleArrowFunctionExpressionSyntax = (function (_super) {
     __extends(SimpleArrowFunctionExpressionSyntax, _super);
     function SimpleArrowFunctionExpressionSyntax(identifier, equalsGreaterThanToken, body) {
@@ -13179,7 +13160,7 @@ var TypeSyntax = (function (_super) {
         return false;
     };
     return TypeSyntax;
-})(UnaryExpressionSyntax);
+})(ExpressionSyntax);
 var NameSyntax = (function (_super) {
     __extends(NameSyntax, _super);
     function NameSyntax() {
@@ -14907,7 +14888,7 @@ var MemberAccessExpressionSyntax = (function (_super) {
         return true;
     };
     return MemberAccessExpressionSyntax;
-})(UnaryExpressionSyntax);
+})(ExpressionSyntax);
 var PostfixUnaryExpressionSyntax = (function (_super) {
     __extends(PostfixUnaryExpressionSyntax, _super);
     function PostfixUnaryExpressionSyntax(kind, operand, operatorToken) {
@@ -15049,7 +15030,7 @@ var PostfixUnaryExpressionSyntax = (function (_super) {
         return true;
     };
     return PostfixUnaryExpressionSyntax;
-})(UnaryExpressionSyntax);
+})(ExpressionSyntax);
 var ElementAccessExpressionSyntax = (function (_super) {
     __extends(ElementAccessExpressionSyntax, _super);
     function ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken) {
@@ -15256,7 +15237,7 @@ var ElementAccessExpressionSyntax = (function (_super) {
         return true;
     };
     return ElementAccessExpressionSyntax;
-})(UnaryExpressionSyntax);
+})(ExpressionSyntax);
 var InvocationExpressionSyntax = (function (_super) {
     __extends(InvocationExpressionSyntax, _super);
     function InvocationExpressionSyntax(expression, argumentList) {
@@ -15395,7 +15376,7 @@ var InvocationExpressionSyntax = (function (_super) {
         return true;
     };
     return InvocationExpressionSyntax;
-})(UnaryExpressionSyntax);
+})(ExpressionSyntax);
 var ArgumentListSyntax = (function (_super) {
     __extends(ArgumentListSyntax, _super);
     function ArgumentListSyntax(openParenToken, arguments, closeParenToken) {
@@ -19697,7 +19678,7 @@ var ObjectCreationExpressionSyntax = (function (_super) {
         return true;
     };
     return ObjectCreationExpressionSyntax;
-})(UnaryExpressionSyntax);
+})(ExpressionSyntax);
 var SwitchStatementSyntax = (function (_super) {
     __extends(SwitchStatementSyntax, _super);
     function SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, switchClauses, closeBraceToken) {
@@ -22631,7 +22612,7 @@ var CastExpressionSyntax = (function (_super) {
         return true;
     };
     return CastExpressionSyntax;
-})(UnaryExpressionSyntax);
+})(ExpressionSyntax);
 var ObjectLiteralExpressionSyntax = (function (_super) {
     __extends(ObjectLiteralExpressionSyntax, _super);
     function ObjectLiteralExpressionSyntax(openBraceToken, propertyAssignments, closeBraceToken) {
@@ -22811,7 +22792,7 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
         return true;
     };
     return ObjectLiteralExpressionSyntax;
-})(UnaryExpressionSyntax);
+})(ExpressionSyntax);
 var PropertyAssignmentSyntax = (function (_super) {
     __extends(PropertyAssignmentSyntax, _super);
     function PropertyAssignmentSyntax() {
@@ -23779,7 +23760,7 @@ var FunctionExpressionSyntax = (function (_super) {
         return true;
     };
     return FunctionExpressionSyntax;
-})(UnaryExpressionSyntax);
+})(ExpressionSyntax);
 var EmptyStatementSyntax = (function (_super) {
     __extends(EmptyStatementSyntax, _super);
     function EmptyStatementSyntax(semicolonToken) {
@@ -25100,7 +25081,7 @@ var TypeOfExpressionSyntax = (function (_super) {
         return true;
     };
     return TypeOfExpressionSyntax;
-})(UnaryExpressionSyntax);
+})(ExpressionSyntax);
 var DeleteExpressionSyntax = (function (_super) {
     __extends(DeleteExpressionSyntax, _super);
     function DeleteExpressionSyntax(deleteKeyword, expression) {
@@ -25238,7 +25219,7 @@ var DeleteExpressionSyntax = (function (_super) {
         return true;
     };
     return DeleteExpressionSyntax;
-})(UnaryExpressionSyntax);
+})(ExpressionSyntax);
 var VoidExpressionSyntax = (function (_super) {
     __extends(VoidExpressionSyntax, _super);
     function VoidExpressionSyntax(voidKeyword, expression) {
@@ -25376,7 +25357,7 @@ var VoidExpressionSyntax = (function (_super) {
         return true;
     };
     return VoidExpressionSyntax;
-})(UnaryExpressionSyntax);
+})(ExpressionSyntax);
 var DebuggerStatementSyntax = (function (_super) {
     __extends(DebuggerStatementSyntax, _super);
     function DebuggerStatementSyntax(debuggerKeyword, semicolonToken) {

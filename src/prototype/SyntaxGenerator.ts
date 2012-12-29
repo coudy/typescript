@@ -180,13 +180,6 @@ var definitions:ITypeDefinition[] = [
         children: []
     },
     <any>{
-        name: 'UnaryExpressionSyntax',
-        baseType: 'ExpressionSyntax',
-        interfaces: ['IUnaryExpressionSyntax'],
-        isAbstract: true,
-        children: []
-    },
-    <any>{
         name: 'VariableDeclarationSyntax',
         baseType: 'SyntaxNode',
         children: [
@@ -213,31 +206,18 @@ var definitions:ITypeDefinition[] = [
     },
     <any>{
         name: 'PrefixUnaryExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
             <any>{ name: 'kind', type: 'SyntaxKind' },
             <any>{ name: 'operatorToken', isToken: true, tokenKinds: ["PlusPlusToken", "MinusMinusToken", "PlusToken", "MinusToken", "TildeToken", "ExclamationToken"] },
             <any>{ name: 'operand', type: 'IUnaryExpressionSyntax' }
         ]
     },
-    //<any>{
-    //    name: 'ThisExpressionSyntax',
-    //    baseType: 'UnaryExpressionSyntax',
-    //    children: [
-    //        <any>{ name: 'thisKeyword', isToken: true }
-    //    ]
-    //},
-    //<any>{
-    //    name: 'LiteralExpressionSyntax',
-    //    baseType: 'UnaryExpressionSyntax',
-    //    children: [
-    //        <any>{ name: 'kind', type: 'SyntaxKind' },
-    //        <any>{ name: 'literalToken', isToken: true, tokenKinds: ["RegularExpressionLiteral", "StringLiteral", "NumericLiteral", "FalseKeyword", "TrueKeyword", "NullKeyword"] }
-    //    ]
-    //},
     <any>{
         name: 'ArrayLiteralExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
             <any>{ name: 'openBracketToken', isToken: true },
             <any>{ name: 'expressions', isSeparatedList: true, elementType: 'IExpressionSyntax' },
@@ -251,7 +231,8 @@ var definitions:ITypeDefinition[] = [
     },
     <any>{
         name: 'ParenthesizedExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
             <any>{ name: 'openParenToken', isToken: true },
             <any>{ name: 'expression', type: 'IExpressionSyntax' },
@@ -260,7 +241,8 @@ var definitions:ITypeDefinition[] = [
     },
     <any>{
         name: 'ArrowFunctionExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: ['IUnaryExpressionSyntax'],
         isAbstract: true,
         children: [],
         isTypeScriptSpecific: true
@@ -287,7 +269,7 @@ var definitions:ITypeDefinition[] = [
     },
     <any>{
         name: 'TypeSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
         interfaces: ["ITypeSyntax"],
         isAbstract: true,
         children: []
@@ -396,7 +378,8 @@ var definitions:ITypeDefinition[] = [
     },
     <any>{
         name: 'MemberAccessExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
             <any>{ name: 'expression', type: 'IExpressionSyntax' },
             <any>{ name: 'dotToken', isToken: true },
@@ -405,7 +388,8 @@ var definitions:ITypeDefinition[] = [
     },
     <any>{
         name: 'PostfixUnaryExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
             <any>{ name: 'kind', type: 'SyntaxKind' },
             <any>{ name: 'operand', type: 'IExpressionSyntax' },
@@ -414,7 +398,8 @@ var definitions:ITypeDefinition[] = [
     },
     <any>{
         name: 'ElementAccessExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
             <any>{ name: 'expression', type: 'IExpressionSyntax' },
             <any>{ name: 'openBracketToken', isToken: true },
@@ -424,7 +409,8 @@ var definitions:ITypeDefinition[] = [
     },
     <any>{
         name: 'InvocationExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
             <any>{ name: 'expression', type: 'IExpressionSyntax' },
             <any>{ name: 'argumentList', type: 'ArgumentListSyntax' }
@@ -664,7 +650,8 @@ var definitions:ITypeDefinition[] = [
     },
     <any>{
         name: 'ObjectCreationExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
             <any>{ name: 'newKeyword', isToken: true },
             <any>{ name: 'expression', type: 'IExpressionSyntax' },
@@ -806,7 +793,8 @@ var definitions:ITypeDefinition[] = [
     },
     <any>{
         name: 'CastExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
             <any>{ name: 'lessThanToken', isToken: true },
             <any>{ name: 'type', type: 'ITypeSyntax' },
@@ -817,7 +805,8 @@ var definitions:ITypeDefinition[] = [
     },
     <any>{
         name: 'ObjectLiteralExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
             <any>{ name: 'openBraceToken', isToken: true },
             <any>{ name: 'propertyAssignments', isSeparatedList: true, elementType: "PropertyAssignmentSyntax" },
@@ -868,7 +857,8 @@ var definitions:ITypeDefinition[] = [
     },
     <any>{
         name: 'FunctionExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
             <any>{ name: 'functionKeyword', isToken: true },
             <any>{ name: 'identifier', isToken: true, isOptional: true, tokenKinds: ["IdentifierNameToken"] },
@@ -881,13 +871,6 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'semicolonToken', isToken: true }]
     },
-    //<any>{
-    //    name: 'SuperExpressionSyntax',
-    //    baseType: 'UnaryExpressionSyntax',
-    //    children: [
-    //        <any>{ name: 'superKeyword', isToken: true }],
-    //    isTypeScriptSpecific: true
-    //},
     <any>{
         name: 'TryStatementSyntax',
         baseType: 'StatementSyntax',
@@ -936,21 +919,24 @@ var definitions:ITypeDefinition[] = [
     },
     <any>{
         name: 'TypeOfExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
             <any>{ name: 'typeOfKeyword', isToken: true },
             <any>{ name: 'expression', type: 'IExpressionSyntax' }]
     },
     <any>{
         name: 'DeleteExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
             <any>{ name: 'deleteKeyword', isToken: true },
             <any>{ name: 'expression', type: 'IExpressionSyntax' }]
     },
     <any>{
         name: 'VoidExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
             <any>{ name: 'voidKeyword', isToken: true },
             <any>{ name: 'expression', type: 'IExpressionSyntax' }]

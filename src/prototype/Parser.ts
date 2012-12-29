@@ -3586,7 +3586,7 @@ module Parser {
             return new ObjectCreationExpressionSyntax(newKeyword, expression, argumentList);
         }
 
-        private parseParenthesizedOrArrowFunctionExpression(): UnaryExpressionSyntax {
+        private parseParenthesizedOrArrowFunctionExpression(): IUnaryExpressionSyntax {
             Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
 
             var result = this.tryParseArrowFunctionExpression();

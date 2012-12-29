@@ -962,9 +962,9 @@ var SyntaxKind;
     SyntaxKind.FirstPunctuation = SyntaxKind.OpenBraceToken;
     SyntaxKind.LastPunctuation = SyntaxKind.SlashEqualsToken;
 })(SyntaxKind || (SyntaxKind = {}));
-var SyntaxFacts = (function () {
-    function SyntaxFacts() { }
-    SyntaxFacts.textToKeywordKind = {
+var SyntaxFacts;
+(function (SyntaxFacts) {
+    var textToKeywordKind = {
         "any": 58 /* AnyKeyword */ ,
         "bool": 59 /* BoolKeyword */ ,
         "break": 13 /* BreakKeyword */ ,
@@ -1070,54 +1070,59 @@ var SyntaxFacts = (function () {
         "/": 115 /* SlashToken */ ,
         "/=": 116 /* SlashEqualsToken */ 
     };
-    SyntaxFacts.kindToText = [];
-    SyntaxFacts.initializeStaticData = function initializeStaticData() {
-        if(SyntaxFacts.kindToText.length === 0) {
-            for(var name in SyntaxFacts.textToKeywordKind) {
-                if(SyntaxFacts.textToKeywordKind.hasOwnProperty(name)) {
-                    Debug.assert(SyntaxFacts.kindToText[SyntaxFacts.textToKeywordKind[name]] === undefined);
-                    SyntaxFacts.kindToText[SyntaxFacts.textToKeywordKind[name]] = name;
-                }
-            }
-            SyntaxFacts.kindToText[60 /* ConstructorKeyword */ ] = "constructor";
+    var kindToText = [];
+    for(var name in textToKeywordKind) {
+        if(textToKeywordKind.hasOwnProperty(name)) {
+            Debug.assert(kindToText[textToKeywordKind[name]] === undefined);
+            kindToText[textToKeywordKind[name]] = name;
         }
     }
-    SyntaxFacts.getTokenKind = function getTokenKind(text) {
-        if(SyntaxFacts.textToKeywordKind.hasOwnProperty(text)) {
-            return SyntaxFacts.textToKeywordKind[text];
+    kindToText[60 /* ConstructorKeyword */ ] = "constructor";
+    function getTokenKind(text) {
+        if(textToKeywordKind.hasOwnProperty(text)) {
+            return textToKeywordKind[text];
         }
         return 0 /* None */ ;
     }
-    SyntaxFacts.getText = function getText(kind) {
-        SyntaxFacts.initializeStaticData();
-        var result = SyntaxFacts.kindToText[kind];
+    SyntaxFacts.getTokenKind = getTokenKind;
+    function getText(kind) {
+        var result = kindToText[kind];
         return result !== undefined ? result : null;
     }
-    SyntaxFacts.isTokenKind = function isTokenKind(kind) {
+    SyntaxFacts.getText = getText;
+    function isTokenKind(kind) {
         return kind >= SyntaxKind.FirstToken && kind <= SyntaxKind.LastToken;
     }
-    SyntaxFacts.isAnyKeyword = function isAnyKeyword(kind) {
+    SyntaxFacts.isTokenKind = isTokenKind;
+    function isAnyKeyword(kind) {
         return kind >= SyntaxKind.FirstKeyword && kind <= SyntaxKind.LastKeyword;
     }
-    SyntaxFacts.isStandardKeyword = function isStandardKeyword(kind) {
+    SyntaxFacts.isAnyKeyword = isAnyKeyword;
+    function isStandardKeyword(kind) {
         return kind >= SyntaxKind.FirstStandardKeyword && kind <= SyntaxKind.LastStandardKeyword;
     }
-    SyntaxFacts.isFutureReservedKeyword = function isFutureReservedKeyword(kind) {
+    SyntaxFacts.isStandardKeyword = isStandardKeyword;
+    function isFutureReservedKeyword(kind) {
         return kind >= SyntaxKind.FirstFutureReservedKeyword && kind <= SyntaxKind.LastFutureReservedKeyword;
     }
-    SyntaxFacts.isFutureReservedStrictKeyword = function isFutureReservedStrictKeyword(kind) {
+    SyntaxFacts.isFutureReservedKeyword = isFutureReservedKeyword;
+    function isFutureReservedStrictKeyword(kind) {
         return kind >= SyntaxKind.FirstFutureReservedStrictKeyword && kind <= SyntaxKind.LastFutureReservedStrictKeyword;
     }
-    SyntaxFacts.isAnyPunctuation = function isAnyPunctuation(kind) {
+    SyntaxFacts.isFutureReservedStrictKeyword = isFutureReservedStrictKeyword;
+    function isAnyPunctuation(kind) {
         return kind >= SyntaxKind.FirstPunctuation && kind <= SyntaxKind.LastPunctuation;
     }
-    SyntaxFacts.isPrefixUnaryExpressionOperatorToken = function isPrefixUnaryExpressionOperatorToken(tokenKind) {
-        return SyntaxFacts.getPrefixUnaryExpressionFromOperatorToken(tokenKind) !== 0 /* None */ ;
+    SyntaxFacts.isAnyPunctuation = isAnyPunctuation;
+    function isPrefixUnaryExpressionOperatorToken(tokenKind) {
+        return getPrefixUnaryExpressionFromOperatorToken(tokenKind) !== 0 /* None */ ;
     }
-    SyntaxFacts.isBinaryExpressionOperatorToken = function isBinaryExpressionOperatorToken(tokenKind) {
-        return SyntaxFacts.getBinaryExpressionFromOperatorToken(tokenKind) !== 0 /* None */ ;
+    SyntaxFacts.isPrefixUnaryExpressionOperatorToken = isPrefixUnaryExpressionOperatorToken;
+    function isBinaryExpressionOperatorToken(tokenKind) {
+        return getBinaryExpressionFromOperatorToken(tokenKind) !== 0 /* None */ ;
     }
-    SyntaxFacts.getPrefixUnaryExpressionFromOperatorToken = function getPrefixUnaryExpressionFromOperatorToken(tokenKind) {
+    SyntaxFacts.isBinaryExpressionOperatorToken = isBinaryExpressionOperatorToken;
+    function getPrefixUnaryExpressionFromOperatorToken(tokenKind) {
         switch(tokenKind) {
             case 86 /* PlusToken */ : {
                 return 159 /* PlusExpression */ ;
@@ -1161,7 +1166,8 @@ var SyntaxFacts = (function () {
             }
         }
     }
-    SyntaxFacts.getPostfixUnaryExpressionFromOperatorToken = function getPostfixUnaryExpressionFromOperatorToken(tokenKind) {
+    SyntaxFacts.getPrefixUnaryExpressionFromOperatorToken = getPrefixUnaryExpressionFromOperatorToken;
+    function getPostfixUnaryExpressionFromOperatorToken(tokenKind) {
         switch(tokenKind) {
             case 90 /* PlusPlusToken */ : {
                 return 205 /* PostIncrementExpression */ ;
@@ -1177,7 +1183,8 @@ var SyntaxFacts = (function () {
             }
         }
     }
-    SyntaxFacts.getBinaryExpressionFromOperatorToken = function getBinaryExpressionFromOperatorToken(tokenKind) {
+    SyntaxFacts.getPostfixUnaryExpressionFromOperatorToken = getPostfixUnaryExpressionFromOperatorToken;
+    function getBinaryExpressionFromOperatorToken(tokenKind) {
         switch(tokenKind) {
             case 88 /* AsteriskToken */ : {
                 return 200 /* MultiplyExpression */ ;
@@ -1329,7 +1336,8 @@ var SyntaxFacts = (function () {
             }
         }
     }
-    SyntaxFacts.isAnyDivideToken = function isAnyDivideToken(kind) {
+    SyntaxFacts.getBinaryExpressionFromOperatorToken = getBinaryExpressionFromOperatorToken;
+    function isAnyDivideToken(kind) {
         switch(kind) {
             case 115 /* SlashToken */ :
             case 116 /* SlashEqualsToken */ : {
@@ -1342,7 +1350,8 @@ var SyntaxFacts = (function () {
             }
         }
     }
-    SyntaxFacts.isAnyDivideOrRegularExpressionToken = function isAnyDivideOrRegularExpressionToken(kind) {
+    SyntaxFacts.isAnyDivideToken = isAnyDivideToken;
+    function isAnyDivideOrRegularExpressionToken(kind) {
         switch(kind) {
             case 115 /* SlashToken */ :
             case 116 /* SlashEqualsToken */ :
@@ -1356,8 +1365,8 @@ var SyntaxFacts = (function () {
             }
         }
     }
-    return SyntaxFacts;
-})();
+    SyntaxFacts.isAnyDivideOrRegularExpressionToken = isAnyDivideOrRegularExpressionToken;
+})(SyntaxFacts || (SyntaxFacts = {}));
 var argumentChecks = true;
 var definitions = [
     {
@@ -1691,15 +1700,6 @@ var definitions = [
         children: []
     }, 
     {
-        name: 'UnaryExpressionSyntax',
-        baseType: 'ExpressionSyntax',
-        interfaces: [
-            'IUnaryExpressionSyntax'
-        ],
-        isAbstract: true,
-        children: []
-    }, 
-    {
         name: 'VariableDeclarationSyntax',
         baseType: 'SyntaxNode',
         children: [
@@ -1755,7 +1755,10 @@ var definitions = [
     }, 
     {
         name: 'PrefixUnaryExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: [
+            'IUnaryExpressionSyntax'
+        ],
         children: [
             {
                 name: 'kind',
@@ -1781,7 +1784,10 @@ var definitions = [
     }, 
     {
         name: 'ArrayLiteralExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: [
+            'IUnaryExpressionSyntax'
+        ],
         children: [
             {
                 name: 'openBracketToken',
@@ -1805,7 +1811,10 @@ var definitions = [
     }, 
     {
         name: 'ParenthesizedExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: [
+            'IUnaryExpressionSyntax'
+        ],
         children: [
             {
                 name: 'openParenToken',
@@ -1823,7 +1832,10 @@ var definitions = [
     }, 
     {
         name: 'ArrowFunctionExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: [
+            'IUnaryExpressionSyntax'
+        ],
         isAbstract: true,
         children: [],
         isTypeScriptSpecific: true
@@ -1871,7 +1883,7 @@ var definitions = [
     }, 
     {
         name: 'TypeSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
         interfaces: [
             "ITypeSyntax"
         ],
@@ -2072,7 +2084,10 @@ var definitions = [
     }, 
     {
         name: 'MemberAccessExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: [
+            'IUnaryExpressionSyntax'
+        ],
         children: [
             {
                 name: 'expression',
@@ -2093,7 +2108,10 @@ var definitions = [
     }, 
     {
         name: 'PostfixUnaryExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: [
+            'IUnaryExpressionSyntax'
+        ],
         children: [
             {
                 name: 'kind',
@@ -2115,7 +2133,10 @@ var definitions = [
     }, 
     {
         name: 'ElementAccessExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: [
+            'IUnaryExpressionSyntax'
+        ],
         children: [
             {
                 name: 'expression',
@@ -2137,7 +2158,10 @@ var definitions = [
     }, 
     {
         name: 'InvocationExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: [
+            'IUnaryExpressionSyntax'
+        ],
         children: [
             {
                 name: 'expression',
@@ -2685,7 +2709,10 @@ var definitions = [
     }, 
     {
         name: 'ObjectCreationExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: [
+            'IUnaryExpressionSyntax'
+        ],
         children: [
             {
                 name: 'newKeyword',
@@ -3027,7 +3054,10 @@ var definitions = [
     }, 
     {
         name: 'CastExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: [
+            'IUnaryExpressionSyntax'
+        ],
         children: [
             {
                 name: 'lessThanToken',
@@ -3050,7 +3080,10 @@ var definitions = [
     }, 
     {
         name: 'ObjectLiteralExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: [
+            'IUnaryExpressionSyntax'
+        ],
         children: [
             {
                 name: 'openBraceToken',
@@ -3169,7 +3202,10 @@ var definitions = [
     }, 
     {
         name: 'FunctionExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: [
+            'IUnaryExpressionSyntax'
+        ],
         children: [
             {
                 name: 'functionKeyword',
@@ -3327,7 +3363,10 @@ var definitions = [
     }, 
     {
         name: 'TypeOfExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: [
+            'IUnaryExpressionSyntax'
+        ],
         children: [
             {
                 name: 'typeOfKeyword',
@@ -3341,7 +3380,10 @@ var definitions = [
     }, 
     {
         name: 'DeleteExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: [
+            'IUnaryExpressionSyntax'
+        ],
         children: [
             {
                 name: 'deleteKeyword',
@@ -3355,7 +3397,10 @@ var definitions = [
     }, 
     {
         name: 'VoidExpressionSyntax',
-        baseType: 'UnaryExpressionSyntax',
+        baseType: 'ExpressionSyntax',
+        interfaces: [
+            'IUnaryExpressionSyntax'
+        ],
         children: [
             {
                 name: 'voidKeyword',

@@ -2548,28 +2548,6 @@ class ExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
     }
 }
 
-class UnaryExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
-    constructor() {
-        super();
-    }
-
-    private isUnaryExpression(): bool {
-        return true;
-    }
-
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): UnaryExpressionSyntax {
-        return <UnaryExpressionSyntax>super.withLeadingTrivia(trivia);
-    }
-
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): UnaryExpressionSyntax {
-        return <UnaryExpressionSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    private isTypeScriptSpecific(): bool {
-        return false;
-    }
-}
-
 class VariableDeclarationSyntax extends SyntaxNode {
     private _varKeyword: ISyntaxToken;
     private _variableDeclarators: ISeparatedSyntaxList;
@@ -3044,7 +3022,7 @@ class EqualsValueClauseSyntax extends SyntaxNode {
     }
 }
 
-class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
+class PrefixUnaryExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
     private _kind: SyntaxKind;
     private _operatorToken: ISyntaxToken;
     private _operand: IUnaryExpressionSyntax;
@@ -3200,7 +3178,7 @@ class PrefixUnaryExpressionSyntax extends UnaryExpressionSyntax {
     }
 }
 
-class ArrayLiteralExpressionSyntax extends UnaryExpressionSyntax {
+class ArrayLiteralExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
     private _openBracketToken: ISyntaxToken;
     private _expressions: ISeparatedSyntaxList;
     private _closeBracketToken: ISyntaxToken;
@@ -3452,7 +3430,7 @@ class OmittedExpressionSyntax extends ExpressionSyntax {
     }
 }
 
-class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
+class ParenthesizedExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
     private _openParenToken: ISyntaxToken;
     private _expression: IExpressionSyntax;
     private _closeParenToken: ISyntaxToken;
@@ -3624,7 +3602,7 @@ class ParenthesizedExpressionSyntax extends UnaryExpressionSyntax {
     }
 }
 
-class ArrowFunctionExpressionSyntax extends UnaryExpressionSyntax {
+class ArrowFunctionExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
     constructor() {
         super();
     }
@@ -3998,7 +3976,7 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
     }
 }
 
-class TypeSyntax extends UnaryExpressionSyntax implements ITypeSyntax {
+class TypeSyntax extends ExpressionSyntax implements ITypeSyntax {
     constructor() {
         super();
     }
@@ -5566,7 +5544,7 @@ class ParameterSyntax extends SyntaxNode {
     }
 }
 
-class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
+class MemberAccessExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
     private _expression: IExpressionSyntax;
     private _dotToken: ISyntaxToken;
     private _identifierName: ISyntaxToken;
@@ -5739,7 +5717,7 @@ class MemberAccessExpressionSyntax extends UnaryExpressionSyntax {
     }
 }
 
-class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
+class PostfixUnaryExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
     private _kind: SyntaxKind;
     private _operand: IExpressionSyntax;
     private _operatorToken: ISyntaxToken;
@@ -5885,7 +5863,7 @@ class PostfixUnaryExpressionSyntax extends UnaryExpressionSyntax {
     }
 }
 
-class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
+class ElementAccessExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
     private _expression: IExpressionSyntax;
     private _openBracketToken: ISyntaxToken;
     private _argumentExpression: IExpressionSyntax;
@@ -6089,7 +6067,7 @@ class ElementAccessExpressionSyntax extends UnaryExpressionSyntax {
     }
 }
 
-class InvocationExpressionSyntax extends UnaryExpressionSyntax {
+class InvocationExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
     private _expression: IExpressionSyntax;
     private _argumentList: ArgumentListSyntax;
 
@@ -10302,7 +10280,7 @@ class ReturnStatementSyntax extends StatementSyntax {
     }
 }
 
-class ObjectCreationExpressionSyntax extends UnaryExpressionSyntax {
+class ObjectCreationExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
     private _newKeyword: ISyntaxToken;
     private _expression: IExpressionSyntax;
     private _argumentList: ArgumentListSyntax;
@@ -13133,7 +13111,7 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
     }
 }
 
-class CastExpressionSyntax extends UnaryExpressionSyntax {
+class CastExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
     private _lessThanToken: ISyntaxToken;
     private _type: ITypeSyntax;
     private _greaterThanToken: ISyntaxToken;
@@ -13335,7 +13313,7 @@ class CastExpressionSyntax extends UnaryExpressionSyntax {
     }
 }
 
-class ObjectLiteralExpressionSyntax extends UnaryExpressionSyntax {
+class ObjectLiteralExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
     private _openBraceToken: ISyntaxToken;
     private _propertyAssignments: ISeparatedSyntaxList;
     private _closeBraceToken: ISyntaxToken;
@@ -14250,7 +14228,7 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
     }
 }
 
-class FunctionExpressionSyntax extends UnaryExpressionSyntax {
+class FunctionExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
     private _functionKeyword: ISyntaxToken;
     private _identifier: ISyntaxToken;
     private _callSignature: CallSignatureSyntax;
@@ -15630,7 +15608,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
     }
 }
 
-class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
+class TypeOfExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
     private _typeOfKeyword: ISyntaxToken;
     private _expression: IExpressionSyntax;
 
@@ -15773,7 +15751,7 @@ class TypeOfExpressionSyntax extends UnaryExpressionSyntax {
     }
 }
 
-class DeleteExpressionSyntax extends UnaryExpressionSyntax {
+class DeleteExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
     private _deleteKeyword: ISyntaxToken;
     private _expression: IExpressionSyntax;
 
@@ -15916,7 +15894,7 @@ class DeleteExpressionSyntax extends UnaryExpressionSyntax {
     }
 }
 
-class VoidExpressionSyntax extends UnaryExpressionSyntax {
+class VoidExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
     private _voidKeyword: ISyntaxToken;
     private _expression: IExpressionSyntax;
 
