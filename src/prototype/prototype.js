@@ -8092,10 +8092,11 @@ var Scanner = (function () {
                 } else {
                     var endIndex = this.slidingWindow.absoluteIndex();
                     this.width = endIndex - startIndex;
-                    this.kind = 9 /* IdentifierNameToken */ ;
                     if(Scanner.isKeywordStartCharacter[firstCharacter]) {
                         var offset = startIndex - this.slidingWindow.windowAbsoluteStartIndex;
                         this.kind = ScannerUtilities.identifierKind(this.slidingWindow.window, offset, endIndex - startIndex);
+                    } else {
+                        this.kind = 9 /* IdentifierNameToken */ ;
                     }
                     this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
                     return true;
